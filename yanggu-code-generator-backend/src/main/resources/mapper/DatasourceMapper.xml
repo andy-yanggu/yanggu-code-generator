@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanggu.code.generator.mapper.DatasourceMapper">
+
+    <!-- 所有字段 -->
+    <sql id="allColumns">
+        id,
+        db_type,
+        conn_name,
+        conn_url,
+        username,
+        password,
+        data_source_desc,
+        create_time,
+        update_time,
+        is_delete
+    </sql>
+
+    <!-- 过滤SQL -->
+    <sql id="whereSQL">
+        <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+    </sql>
+
+    <!-- 排序SQL -->
+    <sql id="orderBySQL">
+        <if test="query.orders != null and query.orders.size() > 0">
+            ORDER BY
+            <foreach collection="query.orders" item="order" separator=",">
+                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- Entity类字段映射 -->
+    <resultMap type="com.yanggu.code.generator.domain.entity.DatasourceEntity" id="datasourceMap">
+        <id property="id" column="id"/>
+        <result property="dbType" column="db_type"/>
+        <result property="connName" column="conn_name"/>
+        <result property="connUrl" column="conn_url"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="dataSourceDesc" column="data_source_desc"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <!-- Entity分页 -->
+    <select id="entityPage" resultMap="datasourceMap">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            yanggu_code_generator.gen_datasource
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- Entity列表 -->
+    <select id="entityList" resultMap="datasourceMap">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            yanggu_code_generator.gen_datasource
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- VO分页 -->
+    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.DatasourceVO">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            yanggu_code_generator.gen_datasource
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- VO列表 -->
+    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.DatasourceVO">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            yanggu_code_generator.gen_datasource
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+</mapper>

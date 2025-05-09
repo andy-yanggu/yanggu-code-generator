@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /yanggu-code-generator
+
+spring:
+  # 项目名配置
+  application:
+    name: yanggu-code-generator
+    version: '1.0-SNAPSHOT'
+    description: '代码生成器后端项目'
+
+  main:
+    # 允许循环依赖
+    allow-circular-references: true
+
+  # 配置策略
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+  # jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/yanggu_code_generator?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true
+    username: root
+    password: root
+
+# mybatis-plus配置
+mybatis-plus:
+  # mapper配置文件
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    # 日志配置
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

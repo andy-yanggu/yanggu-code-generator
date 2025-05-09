@@ -1,0 +1,24 @@
+package com.yanggu.code.generator.domain.query;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import com.yanggu.code.generator.common.domain.query.PageQuery;
+import com.yanggu.code.generator.domain.entity.BaseClassEntity;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 基类Entity查询实体类
+ */
+@Data
+@Schema(description = "基类Entity查询实体类")
+@EqualsAndHashCode(callSuper = true)
+public class BaseClassEntityQuery extends PageQuery<BaseClassEntity> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+}
