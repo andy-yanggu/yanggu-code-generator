@@ -21,4 +21,16 @@ public class FieldTypeEntityQuery extends PageQuery<FieldTypeEntity> implements 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 字段类型
+     */
+    @Schema(description = "字段类型")
+    private String columnType;
+
+    /**
+     * 属性类型
+     */
+    @Schema(description = "属性类型")
+    private String attrType;
+
 }

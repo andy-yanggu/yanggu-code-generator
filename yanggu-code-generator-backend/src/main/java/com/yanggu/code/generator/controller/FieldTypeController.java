@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "字段类型管理")
-@RequestMapping("/FieldType")
+@RequestMapping("/fieldType")
 public class FieldTypeController {
 
     @Autowired

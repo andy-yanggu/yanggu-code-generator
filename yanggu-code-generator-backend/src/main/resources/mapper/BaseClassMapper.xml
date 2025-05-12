@@ -18,6 +18,9 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.code != null and query.code.trim() != ''">
+            AND code LIKE CONCAT('%', #{query.code}, '%')
+        </if>
     </sql>
 
     <!-- 排序SQL -->

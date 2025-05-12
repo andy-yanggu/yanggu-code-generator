@@ -14,6 +14,7 @@ import com.yanggu.code.generator.domain.dto.FieldTypeDTO;
 import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 import com.yanggu.code.generator.mapper.FieldTypeMapper;
 import com.yanggu.code.generator.service.FieldTypeService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,10 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
 
     private LambdaQueryWrapper<FieldTypeEntity> buildQueryWrapper(FieldTypeEntityQuery query) {
         LambdaQueryWrapper<FieldTypeEntity> wrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getColumnType()), FieldTypeEntity::getColumnType, query.getColumnType());
+        wrapper.like(StrUtil.isNotBlank(query.getAttrType()), FieldTypeEntity::getAttrType, query.getAttrType());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

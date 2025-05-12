@@ -38,6 +38,12 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.columnType != null and query.columnType.trim() != ''">
+            AND column_type LIKE CONCAT('%', #{query.columnType}, '%')
+        </if>
+        <if test="query.attrType != null and query.attrType.trim() != ''">
+            AND attr_type LIKE CONCAT('%', #{query.attrType}, '%')
+        </if>
     </sql>
 
     <!-- 排序SQL -->

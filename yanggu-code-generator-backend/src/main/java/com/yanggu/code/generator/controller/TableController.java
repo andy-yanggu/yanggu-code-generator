@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "表管理")
-@RequestMapping("/Table")
+@RequestMapping("/table")
 public class TableController {
 
     @Autowired

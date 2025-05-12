@@ -26,6 +26,9 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.projectName != null and query.projectName.trim() != ''">
+            AND project_name LIKE CONCAT('%', #{query.projectName}, '%')
+        </if>
     </sql>
 
     <!-- 排序SQL -->

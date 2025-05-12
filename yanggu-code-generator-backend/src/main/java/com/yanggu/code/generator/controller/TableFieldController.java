@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "表字段管理")
-@RequestMapping("/TableField")
+@RequestMapping("/tableField")
 public class TableFieldController {
 
     @Autowired

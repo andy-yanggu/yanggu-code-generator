@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "数据源管理")
-@RequestMapping("/Datasource")
+@RequestMapping("/datasource")
 public class DatasourceController {
 
     @Autowired

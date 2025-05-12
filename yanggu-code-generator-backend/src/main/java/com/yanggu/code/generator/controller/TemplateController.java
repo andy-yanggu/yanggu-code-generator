@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "模板管理")
-@RequestMapping("/Template")
+@RequestMapping("/template")
 public class TemplateController {
 
     @Autowired

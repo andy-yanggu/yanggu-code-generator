@@ -14,6 +14,7 @@ import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.mapper.BaseClassMapper;
 import com.yanggu.code.generator.service.BaseClassService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,9 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
 
     private LambdaQueryWrapper<BaseClassEntity> buildQueryWrapper(BaseClassEntityQuery query) {
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getCode()), BaseClassEntity::getCode, query.getCode());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

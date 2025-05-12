@@ -14,11 +14,13 @@ import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
 import com.yanggu.code.generator.service.DatasourceService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -150,6 +152,10 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
 
     private LambdaQueryWrapper<DatasourceEntity> buildQueryWrapper(DatasourceEntityQuery query) {
         LambdaQueryWrapper<DatasourceEntity> wrapper = Wrappers.lambdaQuery(DatasourceEntity.class);
+        
+        //过滤字段
+        wrapper.eq(StrUtil.isNotBlank(query.getDbType()), DatasourceEntity::getDbType, query.getDbType());
+        wrapper.like(StrUtil.isNotBlank(query.getConnName()), DatasourceEntity::getConnName, query.getConnName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());
