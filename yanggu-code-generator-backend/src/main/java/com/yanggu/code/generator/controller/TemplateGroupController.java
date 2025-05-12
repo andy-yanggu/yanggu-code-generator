@@ -1,5 +1,7 @@
 package com.yanggu.code.generator.controller;
 
+import com.yanggu.code.generator.common.response.Result;
+import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -140,6 +142,16 @@ public class TemplateGroupController {
     @Operation(summary = "模板组复杂列表")
     public List<TemplateGroupVO> voList(@RequestBody TemplateGroupVOQuery query) {
         return templateGroupService.voList(query);
+    }
+
+    /**
+     * 复制模板组
+     */
+    @PostMapping("/copy")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "复制模板组")
+    public void copy(@RequestBody TemplateGroupDTO dto) {
+        templateGroupService.copy(dto);
     }
 
 }

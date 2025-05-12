@@ -21,4 +21,16 @@ public class TemplateVOQuery extends PageQuery<TemplateVO> implements Serializab
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 模板组id
+     */
+    @Schema(description = "模板组id")
+    private Long templateGroupId;
+
+    /**
+     * 模板名称
+     */
+    @Schema(description = "模板名称")
+    private String templateName;
+
 }

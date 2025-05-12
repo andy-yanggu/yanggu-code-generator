@@ -21,4 +21,16 @@ public class TemplateGroupVOQuery extends PageQuery<TemplateGroupVO> implements 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 模板组名称
+     */
+    @Schema(description = "模板组名称")
+    private String groupName;
+
+    /**
+     * 模板组类型（0-项目，1-表）
+     */
+    @Schema(description = "模板组类型（0-项目，1-表）")
+    private Integer type;
+
 }

@@ -17,6 +17,12 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.groupName != null and query.groupName.trim() != ''">
+            AND group_name LIKE CONCAT('%', #{query.groupName}, '%')
+        </if>
+        <if test="query.type != null">
+            AND type = #{query.type}
+        </if>
     </sql>
 
     <!-- 排序SQL -->

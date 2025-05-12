@@ -14,11 +14,13 @@ import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.service.TemplateService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -150,6 +152,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
 
     private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateEntityQuery query) {
         LambdaQueryWrapper<TemplateEntity> wrapper = Wrappers.lambdaQuery(TemplateEntity.class);
+
+        //过滤字段
+        wrapper.eq(Objects.nonNull(query.getTemplateGroupId()), TemplateEntity::getTemplateGroupId, query.getTemplateGroupId());
+        wrapper.like(StrUtil.isNotBlank(query.getTemplateName()), TemplateEntity::getTemplateName, query.getTemplateName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

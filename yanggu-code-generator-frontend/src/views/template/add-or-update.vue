@@ -1,35 +1,22 @@
 <template>
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="id" prop="id">
-				<el-input v-model="dataForm.id" placeholder="id"></el-input>
-			</el-form-item>
-			<el-form-item label="模板组id" prop="templateGroupId">
-				<el-input v-model="dataForm.templateGroupId" placeholder="模板组id"></el-input>
-			</el-form-item>
 			<el-form-item label="模板名称" prop="templateName">
-				<el-input v-model="dataForm.templateName" placeholder="模板名称"></el-input>
+				<el-input v-model="dataForm.templateName" placeholder="请输入模板名称"></el-input>
 			</el-form-item>
-			<el-form-item label="生成代码的路径" prop="generatorPath">
-				<el-input v-model="dataForm.generatorPath" placeholder="生成代码的路径"></el-input>
+			<el-form-item label="路径" prop="generatorPath">
+				<el-input v-model="dataForm.generatorPath" placeholder="请输入生成代码的路径"></el-input>
+			</el-form-item>
+			<el-form-item label="模板类型" prop="templateType">
+				<el-radio-group v-model="dataForm.templateType" :disabled="dataForm.id">
+					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="模板描述" prop="templateDesc">
-				<el-input v-model="dataForm.templateDesc" placeholder="模板描述"></el-input>
+				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
 			<el-form-item label="模板内容" prop="templateContent">
-				<el-input v-model="dataForm.templateContent" placeholder="模板内容"></el-input>
-			</el-form-item>
-			<el-form-item label="模板类型（0-文件，1-文件夹）" prop="templateType">
-				<el-input v-model="dataForm.templateType" placeholder="模板类型（0-文件，1-文件夹）"></el-input>
-			</el-form-item>
-			<el-form-item label="创建时间" prop="createTime">
-				<el-input v-model="dataForm.createTime" placeholder="创建时间"></el-input>
-			</el-form-item>
-			<el-form-item label="修改时间" prop="updateTime">
-				<el-input v-model="dataForm.updateTime" placeholder="修改时间"></el-input>
-			</el-form-item>
-			<el-form-item label="是否删除（0未删除, 1删除）" prop="isDelete">
-				<el-input v-model="dataForm.isDelete" placeholder="是否删除（0未删除, 1删除）"></el-input>
+				<el-input v-model="dataForm.templateContent" type="textarea" autosize placeholder="请输入模板内容"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -43,6 +30,14 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
+import { TEMPLATE_TYPES } from '@/constant/enum'
+
+const props = defineProps({
+	templateGroupId: {
+		type: Number,
+		required: true
+	}
+})
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -50,8 +45,8 @@ const visible = ref(false)
 const dataFormRef = ref()
 
 const dataForm = reactive({
-	id: '',
-	templateGroupId: '',
+	id: null,
+	templateGroupId: props.templateGroupId,
 	templateName: '',
 	generatorPath: '',
 	templateDesc: '',
@@ -82,7 +77,12 @@ const getTemplate = (id: number) => {
 	})
 }
 
-const dataRules = ref({})
+const dataRules = ref({
+	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	generatorPath: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	templateContent: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+})
 
 // 表单提交
 const submitHandle = () => {

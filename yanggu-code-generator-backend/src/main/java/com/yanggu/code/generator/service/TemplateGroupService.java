@@ -65,4 +65,9 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     List<TemplateGroupVO> voList(TemplateGroupVOQuery query);
 
+    /**
+     * 复制模板组
+     */
+    void copy(TemplateGroupDTO dto);
+
 }

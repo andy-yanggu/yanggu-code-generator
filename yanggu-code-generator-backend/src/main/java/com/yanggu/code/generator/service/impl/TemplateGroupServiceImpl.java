@@ -1,11 +1,13 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
@@ -14,11 +16,14 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.service.TemplateGroupService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -131,6 +136,26 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         return templateGroupMapper.voList(query);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void copy(TemplateGroupDTO dto) {
+        Long oldGroupId = dto.getId();
+        TemplateGroupEntity newGroup = templateGroupMapstruct.dtoToEntity(dto);
+        newGroup.setId(null);
+        newGroup.setCreateTime(new Date());
+        templateGroupMapper.insert(newGroup);
+
+        Long newTemplateGroupId = newGroup.getId();
+        //if (CollUtil.isNotEmpty(templateList)) {
+        //    templateList.forEach(template -> {
+        //        template.setId(null);
+        //        template.setTemplateGroupId(newTemplateGroupId);
+        //        template.setCreateTime(new Date());
+        //        templateService.add(template);
+        //    });
+        //}
+    }
+
     /**
      * 批量查询
      */
@@ -150,6 +175,10 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     private LambdaQueryWrapper<TemplateGroupEntity> buildQueryWrapper(TemplateGroupEntityQuery query) {
         LambdaQueryWrapper<TemplateGroupEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getGroupName()), TemplateGroupEntity::getGroupName, query.getGroupName());
+        wrapper.eq(Objects.nonNull(query.getType()), TemplateGroupEntity::getType, query.getType());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

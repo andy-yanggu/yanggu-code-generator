@@ -1,44 +1,51 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
+			<el-form-item prop="groupName">
+				<el-input v-model="state.queryForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
+			</el-form-item>
+			<el-form-item prop="type">
+				<el-form-item prop="type">
+					<el-select v-model="state.queryForm.type" style="width: 170px" clearable placeholder="请选择模板组类型">
+						<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form-item>
 			<el-form-item>
 				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button icon="RefreshRight" @click="reset(queryRef)">重置</el-button>
+				<el-button icon="RefreshRight" @click="resetQueryRef()">重置</el-button>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
 
 	<el-card>
-		<el-space>
-			<el-space>
-				<el-button icon="Plus" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-			</el-space>
-			<el-space>
-				<el-button icon="Delete" plain type="danger" @click="deleteBatchHandle()">批量删除</el-button>
-			</el-space>
-		</el-space>
 		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column prop="id" label="主键ID" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="groupName" label="模板组名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="type" label="模板组类型（0-项目，1-表）" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="groupDesc" label="模板组描述" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="isDelete" label="是否删除（0未删除, 1删除）" header-align="center" align="center"></el-table-column>
+			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column prop="groupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="type" label="模板组类型" :formatter="handlerType" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
+					<el-button type="primary" link @click="handlerTemplate(scope.row.id)">模板配置</el-button>
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 		<el-pagination
-			:current-page="state.page"
+			:current-page="state.pageNum"
 			:page-sizes="state.pageSizes"
-			:page-size="state.limit"
+			:page-size="state.pageSize"
 			:total="state.total"
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
@@ -48,7 +55,13 @@
 
 		<!-- 弹窗, 新增 / 修改 -->
 		<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+		<!-- 弹窗，复制模板组 -->
+		<copy-template-group ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy-template-group>
 	</el-card>
+
+	<el-dialog v-model="dialogVisible" title="模板配置" width="75%">
+		<template-index ref="templateIndexRef" :key="currentGroupId" :template-group-id="currentGroupId" @close="handleDialogClose" />
+	</el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -56,18 +69,50 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
+import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
+import CopyTemplateGroup from '@/views/template-group/copy-template-group.vue'
+import TemplateIndex from '../template/index.vue'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/templateGroup/entityPage',
 	deleteUrl: '/templateGroup/deleteList',
-	queryForm: {}
+	queryForm: {
+		groupName: '',
+		type: ''
+	}
 })
 
+const dialogVisible = ref(false)
 const queryRef = ref()
 const addOrUpdateRef = ref()
+const copyTemplateGroupRef = ref()
+const currentGroupId = ref<number>(-1)
+const templateIndexRef = ref()
+
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
 }
+const resetQueryRef = () => {
+	queryRef.value.resetFields()
+}
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
+const copyTemplateGroupHandle = (id: number) => {
+	copyTemplateGroupRef.value.init(id)
+}
+
+const handleDialogClose = () => {
+	dialogVisible.value = false
+}
+
+const handlerTemplate = (id: number) => {
+	dialogVisible.value = true
+	currentGroupId.value = id
+	templateIndexRef.value.init()
+}
+
+const handlerType = (row: any) => {
+	return TEMPLATE_GROUP_TYPES.find(item => item.value === row.type)?.label
+}
+
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
 </script>

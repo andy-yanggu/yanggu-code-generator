@@ -50,3 +50,7 @@ export const templateGroupVOPageApi = (queryForm: any) => {
 export const templateGroupVOListApi = (queryForm: any) => {
 	return service.post('/templateGroup/voList', queryForm)
 }
+
+export const copyTemplateApi = (dataForm: any) => {
+	return service.post('/templateGroup/copy', dataForm)
+}

@@ -1,16 +1,16 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" title="复制" :close-on-click-modal="false" width="35%">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="模板组名称" prop="groupName">
-				<el-input v-model="dataForm.groupName" placeholder="请输入模板组名称"></el-input>
+			<el-form-item label="名称" prop="groupName">
+				<el-input v-model="dataForm.groupName" clearable placeholder="请输入名称"></el-input>
 			</el-form-item>
-			<el-form-item label="模板组类型" prop="type">
-				<el-select v-model="dataForm.type" clearable placeholder="请选择模板组类型">
+			<el-form-item label="类型" prop="type">
+				<el-select v-model="dataForm.type" disabled clearable placeholder="请选择模板组类型" style="width: 100%">
 					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="模板组描述" prop="groupDesc">
-				<el-input v-model="dataForm.groupDesc" placeholder="请输入模板组描述"></el-input>
+			<el-form-item label="描述" prop="groupDesc">
+				<el-input v-model="dataForm.groupDesc" clearable placeholder="请输入描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -23,7 +23,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/templateGroup'
+import { templateGroupDetailApi, copyTemplateApi } from '@/api/templateGroup'
+
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
@@ -34,36 +35,28 @@ const dataFormRef = ref()
 const dataForm = reactive({
 	id: '',
 	groupName: '',
-	type: '',
+	type: null,
 	groupDesc: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	createTime: ''
 })
 
-const init = (id?: number) => {
+const init = (id: number) => {
 	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getTemplateGroup(id)
-	}
+	dataForm.id = ''
+	dataForm.createTime = ''
+	getTemplateGroup(id)
 }
 
 const getTemplateGroup = (id: number) => {
 	templateGroupDetailApi(id).then(res => {
 		Object.assign(dataForm, res.data)
+		dataForm.groupName = dataForm.groupName + '_复制'
 	})
 }
 
 const dataRules = ref({
-	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	groupName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
+	type: [{ required: true, message: '类型不能为空', trigger: 'blur' }]
 })
 
 // 表单提交
@@ -73,7 +66,7 @@ const submitHandle = () => {
 			return false
 		}
 
-		templateGroupSubmitApi(dataForm).then(() => {
+		copyTemplateApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '操作成功',
 				duration: 500,
