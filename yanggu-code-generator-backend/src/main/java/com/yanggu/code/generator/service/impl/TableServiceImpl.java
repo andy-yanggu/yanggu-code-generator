@@ -178,6 +178,18 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void deleteByProjectId(List<Long> idList) {
+        LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class).in(TableEntity::getProjectId, idList);
+        List<TableEntity> tableList = tableMapper.selectList(queryWrapper);
+        List<Long> tableIdList = tableList.stream().map(TableEntity::getId).toList();
+        tableMapper.delete(queryWrapper);
+
+        //删除对应的字段
+        tableFieldService.deleteByTableIdList(tableIdList);
+    }
+
     public void importTable(ProjectEntity project, GenDataSourceBO dataSource, String tableName) throws Exception {
         Long projectId = project.getId();
 

@@ -166,6 +166,13 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         }
     }
 
+    @Override
+    public void deleteByTableIdList(List<Long> tableIdList) {
+        LambdaQueryWrapper<TableFieldEntity> queryWrapper = Wrappers.lambdaQuery(TableFieldEntity.class)
+                .in(TableFieldEntity::getTableId, tableIdList);
+        tableFieldMapper.delete(queryWrapper);
+    }
+
     /**
      * 批量查询
      */

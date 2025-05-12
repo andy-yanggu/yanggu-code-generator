@@ -70,4 +70,5 @@ public interface TableFieldService extends IService<TableFieldEntity> {
      */
     void initFieldList(List<TableFieldEntity> tableFieldList);
 
+    void deleteByTableIdList(List<Long> tableIdList);
 }

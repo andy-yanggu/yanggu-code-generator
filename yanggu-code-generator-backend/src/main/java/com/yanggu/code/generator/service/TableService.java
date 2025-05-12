@@ -71,4 +71,9 @@ public interface TableService extends IService<TableEntity> {
      */
     void importTable(TableImportDTO importDTO) throws Exception;
 
+    /**
+     * 根据项目ID删除
+     */
+    void deleteByProjectId(List<Long> idList);
+
 }

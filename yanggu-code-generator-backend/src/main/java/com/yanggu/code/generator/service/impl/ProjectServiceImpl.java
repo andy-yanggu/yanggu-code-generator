@@ -91,6 +91,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity dbEntity = selectById(id);
         //删除校验和关联删除
         projectMapper.deleteById(id);
+        //删除项目对应的表
+        tableService.deleteByProjectId(List.of(id));
     }
 
     /**
@@ -101,6 +103,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     public void deleteList(List<Long> idList) {
         //删除校验和关联删除
         projectMapper.deleteByIds(idList);
+        //删除项目对应的表
+        tableService.deleteByProjectId(idList);
     }
 
     /**
