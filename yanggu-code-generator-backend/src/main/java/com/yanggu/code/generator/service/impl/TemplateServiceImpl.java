@@ -133,6 +133,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         return templateMapper.voList(query);
     }
 
+    @Override
+    public List<TemplateEntity> selectByGroupId(Long oldGroupId) {
+        LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
+                .eq(TemplateEntity::getTemplateGroupId, oldGroupId);
+        return templateMapper.selectList(queryWrapper);
+    }
+
     /**
      * 批量查询
      */
@@ -156,6 +163,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         //过滤字段
         wrapper.eq(Objects.nonNull(query.getTemplateGroupId()), TemplateEntity::getTemplateGroupId, query.getTemplateGroupId());
         wrapper.like(StrUtil.isNotBlank(query.getTemplateName()), TemplateEntity::getTemplateName, query.getTemplateName());
+        wrapper.eq(Objects.nonNull(query.getTemplateType()), TemplateEntity::getTemplateType, query.getTemplateType());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

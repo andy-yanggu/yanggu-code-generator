@@ -66,6 +66,9 @@ public interface TableService extends IService<TableEntity> {
      */
     List<TableVO> voList(TableVOQuery query);
 
-    void importTable(TableImportDTO importDTO);
+    /**
+     * 导入表
+     */
+    void importTable(TableImportDTO importDTO) throws Exception;
 
 }

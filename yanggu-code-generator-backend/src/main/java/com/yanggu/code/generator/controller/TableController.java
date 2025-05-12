@@ -149,7 +149,7 @@ public class TableController {
     @PostMapping("/import")
     @ApiOperationSupport(order = 11)
     @Operation(summary = "导入表")
-    public void importTable(@RequestBody TableImportDTO importDTO) {
+    public void importTable(@RequestBody TableImportDTO importDTO) throws Exception {
         tableService.importTable(importDTO);
     }
 

@@ -26,6 +26,9 @@
         <if test="query.templateName != null and query.templateName.trim() != ''">
             AND template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
+        <if test="query.templateType != null">
+            AND template_type = #{query.templateType}
+        </if>
     </sql>
 
     <!-- 排序SQL -->

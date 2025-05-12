@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.service;
 
 import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
@@ -72,5 +72,11 @@ public interface DatasourceService extends IService<DatasourceEntity> {
      * @param datasourceId 数据源ID
      */
     GenDataSourceBO get(Long datasourceId) throws Exception;
+
+    /**
+     * 测试数据源
+     *
+     */
+    void test(Long id) throws Exception;
 
 }

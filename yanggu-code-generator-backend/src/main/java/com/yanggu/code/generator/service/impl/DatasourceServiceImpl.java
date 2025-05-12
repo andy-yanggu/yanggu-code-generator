@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
@@ -15,13 +15,13 @@ import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
 import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
+import com.yanggu.code.generator.util.DbUtils;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
@@ -142,6 +142,12 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     public GenDataSourceBO get(Long datasourceId) throws Exception {
         // 初始化配置信息
         return new GenDataSourceBO(this.getById(datasourceId));
+    }
+
+    @Override
+    public void test(Long id) throws Exception {
+        DatasourceEntity entity = getById(id);
+        DbUtils.getConnection(new GenDataSourceBO(entity));
     }
 
     /**

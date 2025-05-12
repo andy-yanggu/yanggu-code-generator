@@ -57,6 +57,12 @@ public class TableVO extends BaseVO implements Serializable {
 	private Long projectId;
 
 	/**
+	 * 项目名称
+	 */
+	@Schema(description = "项目名称")
+	private String projectName;
+
+	/**
 	 * 作者
 	 */
 	@Schema(description = "作者")

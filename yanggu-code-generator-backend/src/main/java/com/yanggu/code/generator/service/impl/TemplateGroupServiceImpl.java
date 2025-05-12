@@ -16,6 +16,7 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.service.TemplateGroupService;
+import com.yanggu.code.generator.service.TemplateService;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Autowired
     private TemplateGroupMapstruct templateGroupMapstruct;
+
+    @Autowired
+    private TemplateService templateService;
 
     /**
      * 新增
@@ -146,14 +150,14 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         templateGroupMapper.insert(newGroup);
 
         Long newTemplateGroupId = newGroup.getId();
-        //if (CollUtil.isNotEmpty(templateList)) {
-        //    templateList.forEach(template -> {
-        //        template.setId(null);
-        //        template.setTemplateGroupId(newTemplateGroupId);
-        //        template.setCreateTime(new Date());
-        //        templateService.add(template);
-        //    });
-        //}
+        List<TemplateEntity> templateList = templateService.selectByGroupId(oldGroupId);
+        if (CollUtil.isNotEmpty(templateList)) {
+            templateList.forEach(template -> {
+                template.setId(null);
+                template.setTemplateGroupId(newTemplateGroupId);
+                templateService.save(template);
+            });
+        }
     }
 
     /**

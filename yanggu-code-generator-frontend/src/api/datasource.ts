@@ -50,3 +50,8 @@ export const datasourceVOPageApi = (queryForm: any) => {
 export const datasourceVOListApi = (queryForm: any) => {
 	return service.post('/datasource/voList', queryForm)
 }
+
+//测试数据源接口
+export const datasourceTestApi = (id: number) => {
+	return service.get('/datasource/test?id=' + id)
+}

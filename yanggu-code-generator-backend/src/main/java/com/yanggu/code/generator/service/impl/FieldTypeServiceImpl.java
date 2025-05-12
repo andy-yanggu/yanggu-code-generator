@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -132,6 +134,16 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         //查询全部数据
         query.setPageSize(-1L);
         return fieldTypeMapper.voList(query);
+    }
+
+    @Override
+    public Map<String, FieldTypeEntity> getMap() {
+        List<FieldTypeEntity> list = baseMapper.selectList();
+        Map<String, FieldTypeEntity> map = new LinkedHashMap<>(list.size());
+        for (FieldTypeEntity entity : list) {
+            map.put(entity.getColumnType().toLowerCase(), entity);
+        }
+        return map;
     }
 
     /**

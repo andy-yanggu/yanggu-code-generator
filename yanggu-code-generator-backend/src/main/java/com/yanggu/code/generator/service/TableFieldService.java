@@ -65,4 +65,9 @@ public interface TableFieldService extends IService<TableFieldEntity> {
      */
     List<TableFieldVO> voList(TableFieldVOQuery query);
 
+    /**
+     * 初始化字段数据
+     */
+    void initFieldList(List<TableFieldEntity> tableFieldList);
+
 }

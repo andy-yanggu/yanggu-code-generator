@@ -7,26 +7,28 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.mapstruct.TableMapstruct;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.TableEntityQuery;
-import com.yanggu.code.generator.domain.dto.TableDTO;
+import com.yanggu.code.generator.domain.query.TableVOQuery;
 import com.yanggu.code.generator.domain.vo.TableVO;
+import com.yanggu.code.generator.enums.FormLayoutEnum;
 import com.yanggu.code.generator.mapper.TableMapper;
+import com.yanggu.code.generator.mapstruct.TableMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
+import com.yanggu.code.generator.service.ProjectService;
+import com.yanggu.code.generator.service.TableFieldService;
 import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.util.GenUtils;
 import org.dromara.hutool.core.text.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.rmi.ServerException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +50,12 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     @Autowired
     private DatasourceService datasourceService;
+
+    @Autowired
+    private TableFieldService tableFieldService;
+
+    @Autowired
+    private ProjectService projectService;
 
     /**
      * 新增
@@ -148,27 +156,42 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void importTable(TableImportDTO importDTO) {
+    public void importTable(TableImportDTO importDTO) throws Exception {
+        Long projectId = importDTO.getProjectId();
+        List<String> tableNameList = importDTO.getTableNameList();
 
+        //初始化配置信息
+        ProjectEntity project = projectService.getById(projectId);
+
+        Long datasourceId = project.getDatasourceId();
+        GenDataSourceBO dataSource = datasourceService.get(datasourceId);
+
+        //批量导入
+        for (String tempTableName : tableNameList) {
+            importTable(project, dataSource, tempTableName);
+        }
+        try {
+            //释放数据源
+            dataSource.getConnection().close();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
-    public void importTable(ProjectEntity project, String tableName) throws Exception {
+    public void importTable(ProjectEntity project, GenDataSourceBO dataSource, String tableName) throws Exception {
         Long projectId = project.getId();
-        Long datasourceId = project.getDatasourceId();
 
-        // 初始化配置信息
-        GenDataSourceBO dataSource = datasourceService.get(datasourceId);
-        // 查询表是否存在
+        //查询表是否存在
         TableEntity table = this.getByTableName(projectId, tableName);
-        // 表存在
+        //表存在
         if (table != null) {
-            throw new ServerException(tableName + "已存在");
+            throw new BusinessException(tableName + "已存在");
         }
 
-        // 从数据库获取表信息
+        //从数据库获取表信息
         table = GenUtils.getTable(dataSource, tableName);
 
-        // 保存表信息
+        //保存表信息
         table.setVersion(project.getProjectVersion());
         table.setProjectId(projectId);
         table.setAuthor(project.getAuthor());
@@ -184,14 +207,13 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         tableFieldService.initFieldList(tableFieldList);
 
         // 保存列数据
-        tableFieldList.forEach(tableFieldService::save);
+        tableFieldService.saveBatch(tableFieldList);
+    }
 
-        try {
-            //释放数据源
-            dataSource.getConnection().close();
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
+    private TableEntity getByTableName(Long projectId, String tableName) {
+        return tableMapper.selectOne(Wrappers.lambdaQuery(TableEntity.class)
+                .eq(TableEntity::getProjectId, projectId)
+                .eq(TableEntity::getTableName, tableName));
     }
 
     /**

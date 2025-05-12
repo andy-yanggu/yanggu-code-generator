@@ -5,11 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
-import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +57,15 @@ public class GenUtils {
         }
 
         return tableList;
+    }
+
+    /**
+     * 获取数据表列表
+     */
+    public static List<String> getTableNameList(GenDataSourceBO datasource) {
+        return getTableList(datasource, null).stream()
+                .map(TableImportVO::getTableName)
+                .toList();
     }
 
     /**

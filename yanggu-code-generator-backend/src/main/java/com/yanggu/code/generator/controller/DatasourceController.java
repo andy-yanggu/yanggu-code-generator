@@ -142,4 +142,15 @@ public class DatasourceController {
         return datasourceService.voList(query);
     }
 
+    /**
+     * 测试数据源
+     */
+    @GetMapping("/test")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "测试数据源")
+    public void test(@RequestParam("id") Long id) throws Exception {
+        datasourceService.test(id);
+    }
+
+
 }

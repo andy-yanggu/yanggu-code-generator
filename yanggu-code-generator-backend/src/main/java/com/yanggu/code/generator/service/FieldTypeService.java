@@ -9,6 +9,7 @@ import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字段类型服务层
@@ -64,5 +65,7 @@ public interface FieldTypeService extends IService<FieldTypeEntity> {
      * 复杂列表
      */
     List<FieldTypeVO> voList(FieldTypeVOQuery query);
+
+    Map<String, FieldTypeEntity> getMap();
 
 }

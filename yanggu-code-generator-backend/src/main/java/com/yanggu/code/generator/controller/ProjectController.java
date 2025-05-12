@@ -40,7 +40,7 @@ public class ProjectController {
     @PostMapping("/add")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "新增项目")
-    public void add(@RequestBody @Validated(InsertGroup.class) ProjectDTO dto) {
+    public void add(@RequestBody @Validated(InsertGroup.class) ProjectDTO dto) throws Exception {
         projectService.add(dto);
     }
 
@@ -148,6 +148,8 @@ public class ProjectController {
      * 项目下的表
      */
     @PostMapping("/tableList")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "项目下的表")
     public List<TableImportVO> tableList(@RequestBody ProjectTableQuery query) throws Exception {
         return projectService.tableList(query);
     }

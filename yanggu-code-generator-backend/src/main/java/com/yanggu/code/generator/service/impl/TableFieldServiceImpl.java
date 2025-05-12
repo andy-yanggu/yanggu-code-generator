@@ -1,11 +1,14 @@
 package com.yanggu.code.generator.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
+import com.yanggu.code.generator.enums.AutoFillEnum;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.TableFieldVOQuery;
@@ -13,12 +16,14 @@ import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.mapper.TableFieldMapper;
+import com.yanggu.code.generator.service.FieldTypeService;
 import com.yanggu.code.generator.service.TableFieldService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -33,6 +38,9 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
 
     @Autowired
     private TableFieldMapstruct tableFieldMapstruct;
+
+    @Autowired
+    private FieldTypeService fieldTypeService;
 
     /**
      * 新增
@@ -129,6 +137,33 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         //查询全部数据
         query.setPageSize(-1L);
         return tableFieldMapper.voList(query);
+    }
+
+    @Override
+    public void initFieldList(List<TableFieldEntity> tableFieldList) {
+        // 字段类型、属性类型映射
+        Map<String, FieldTypeEntity> fieldTypeMap = fieldTypeService.getMap();
+        int index = 0;
+        for (TableFieldEntity field : tableFieldList) {
+            field.setAttrName(StringUtils.underlineToCamel(field.getFieldName()));
+            // 获取字段对应的类型
+            FieldTypeEntity fieldTypeMapping = fieldTypeMap.get(field.getFieldType().toLowerCase());
+            if (fieldTypeMapping == null) {
+                // 没找到对应的类型，则为Object类型
+                field.setAttrType("Object");
+            } else {
+                field.setAttrType(fieldTypeMapping.getAttrType());
+                field.setPackageName(fieldTypeMapping.getPackageName());
+            }
+
+            field.setAutoFill(AutoFillEnum.DEFAULT.name());
+            field.setFormItem(1);
+            field.setGridItem(1);
+            field.setQueryType("=");
+            field.setQueryFormType("text");
+            field.setFormType("text");
+            field.setSort(index++);
+        }
     }
 
     /**

@@ -1,13 +1,13 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
+			<el-form-item prop="connName">
+				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名"></el-input>
+			</el-form-item>
 			<el-form-item prop="dbType">
 				<el-select v-model="state.queryForm.dbType" style="width: 160px" clearable placeholder="请选择数据库类型">
 					<el-option v-for="item in DB_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
-			</el-form-item>
-			<el-form-item prop="connName">
-				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
@@ -34,6 +34,7 @@
 			<el-table-column prop="dataSourceDesc" label="描述" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
+					<el-button type="primary" link @click="datasourceHandle(scope.row.id)">测试</el-button>
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
@@ -61,6 +62,8 @@ import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { DB_TYPES } from '@/constant/enum'
+import { ElMessage } from 'element-plus'
+import { datasourceTestApi } from '@/api/datasource'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/datasource/entityPage',
@@ -82,6 +85,12 @@ const resetQueryRef = () => {
 
 const handlerDbType = (row: any) => {
 	return DB_TYPES.find(item => item.value === row.dbType)?.label
+}
+
+const datasourceHandle = (id: number) => {
+	datasourceTestApi(id).then((res: any) => {
+		ElMessage.success(res.message)
+	})
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

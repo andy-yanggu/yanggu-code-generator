@@ -33,4 +33,10 @@ public class TemplateEntityQuery extends PageQuery<TemplateEntity> implements Se
     @Schema(description = "模板名称")
     private String templateName;
 
+    /**
+     * 模板类型
+     */
+    @Schema(description = "模板类型")
+    private Integer templateType;
+
 }

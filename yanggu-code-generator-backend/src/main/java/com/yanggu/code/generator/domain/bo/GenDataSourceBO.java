@@ -1,4 +1,4 @@
-package com.yanggu.code.generator.domain;
+package com.yanggu.code.generator.domain.bo;
 
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;

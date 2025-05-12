@@ -21,7 +21,7 @@ public interface ProjectService extends IService<ProjectEntity> {
     /**
      * 新增
      */
-    void add(ProjectDTO dto);
+    void add(ProjectDTO dto) throws Exception;
 
     /**
      * 修改

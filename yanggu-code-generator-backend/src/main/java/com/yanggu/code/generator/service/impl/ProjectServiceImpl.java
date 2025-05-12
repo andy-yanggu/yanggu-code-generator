@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
-import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.ProjectVOQuery;
@@ -54,10 +54,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void add(ProjectDTO dto) {
+    public void add(ProjectDTO dto) throws Exception {
         ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         //唯一性校验等
         projectMapper.insert(entity);
+
+        //默认导入项目对应数据库下的所有表
+        TableImportDTO tableImportDTO = new TableImportDTO();
+        tableImportDTO.setProjectId(entity.getId());
+
+        GenDataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
+        List<String> tableNameList = GenUtils.getTableNameList(dataSourceBO);
+
+        tableImportDTO.setTableNameList(tableNameList);
+        tableService.importTable(tableImportDTO);
     }
 
     /**

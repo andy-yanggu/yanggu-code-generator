@@ -1,15 +1,13 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
+			<el-form-item prop="projectId">
+				<el-select v-model="state.queryForm.projectId" style="width: 140px" clearable placeholder="请选择项目">
+					<el-option v-for="item in projectList" :key="item.id" :label="item.projectName" :value="item.id"></el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item prop="tableName">
 				<el-input v-model="state.queryForm.tableName" clearable placeholder="请输入表名"></el-input>
-			</el-form-item>
-			<el-form-item prop="projectId">
-				<el-form-item prop="projectId">
-					<el-select v-model="state.queryForm.projectId" style="width: 140px" clearable placeholder="请选择项目">
-						<el-option v-for="item in projectList" :key="item.id" :label="item.projectName" :value="item.id"></el-option>
-					</el-select>
-				</el-form-item>
 			</el-form-item>
 			<el-form-item>
 				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
@@ -30,7 +28,7 @@
 		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="id" label="id" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
@@ -52,6 +50,9 @@
 		</el-pagination>
 
 		<!-- 弹窗, 新增 / 修改 -->
+		<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+
+		<!-- 导入表组件 -->
 		<import ref="importRef" @refresh-data-list="getDataList"></import>
 	</el-card>
 </template>
@@ -61,10 +62,11 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
+import AddOrUpdate from './add-or-update.vue'
 import { projectEntityListApi } from '@/api/project'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/table/entityPage',
+	dataListUrl: '/table/voPage',
 	deleteUrl: '/table/deleteList',
 	queryForm: {
 		tableName: '',

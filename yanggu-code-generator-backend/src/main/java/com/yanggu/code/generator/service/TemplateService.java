@@ -65,4 +65,6 @@ public interface TemplateService extends IService<TemplateEntity> {
      */
     List<TemplateVO> voList(TemplateVOQuery query);
 
+    List<TemplateEntity> selectByGroupId(Long oldGroupId);
+
 }

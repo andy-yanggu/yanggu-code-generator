@@ -5,29 +5,29 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id,
-        table_name,
-        database_name,
-        class_name,
-        table_comment,
-        project_id,
-        author,
-        version,
-        function_name,
-        form_layout,
-        create_time,
-        update_time,
-        is_delete
+        t.id,
+        t.table_name,
+        t.database_name,
+        t.class_name,
+        t.table_comment,
+        t.project_id,
+        t.author,
+        t.version,
+        t.function_name,
+        t.form_layout,
+        t.create_time,
+        t.update_time,
+        t.is_delete
     </sql>
 
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <if test="query.tableName != null and query.tableName.trim() != ''">
-            AND table_name LIKE CONCAT('%', #{query.tableName}, '%')
+            AND t.table_name LIKE CONCAT('%', #{query.tableName}, '%')
         </if>
         <if test="query.projectId != null">
-            AND project_id = #{query.projectId}
+            AND t.project_id = #{query.projectId}
         </if>
     </sql>
 
@@ -87,11 +87,13 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TableVO">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            p.project_name
         FROM
-            yanggu_code_generator.gen_table
+            yanggu_code_generator.gen_table AS t
+        JOIN yanggu_code_generator.gen_project AS p ON t.project_id = p.id AND p.is_delete = 0
         <where>
-            is_delete = 0
+            t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
         <include refid="orderBySQL"/>

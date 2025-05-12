@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.util;
 
-import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
 import com.yanggu.code.generator.enums.DbType;
 import oracle.jdbc.OracleConnection;
 

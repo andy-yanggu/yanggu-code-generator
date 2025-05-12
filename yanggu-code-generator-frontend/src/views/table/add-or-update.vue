@@ -1,45 +1,38 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-	                <el-form-item label="id" prop="id">
-                <el-input v-model="dataForm.id" placeholder="请输入id"></el-input>
-            </el-form-item>
-            <el-form-item label="表名" prop="tableName">
-                <el-input v-model="dataForm.tableName" placeholder="请输入表名"></el-input>
-            </el-form-item>
-            <el-form-item label="数据库名" prop="databaseName">
-                <el-input v-model="dataForm.databaseName" placeholder="请输入数据库名"></el-input>
-            </el-form-item>
-            <el-form-item label="类名" prop="className">
-                <el-input v-model="dataForm.className" placeholder="请输入类名"></el-input>
-            </el-form-item>
-            <el-form-item label="说明" prop="tableComment">
-                <el-input v-model="dataForm.tableComment" placeholder="请输入说明"></el-input>
-            </el-form-item>
-            <el-form-item label="项目ID" prop="projectId">
-                <el-input v-model="dataForm.projectId" placeholder="请输入项目ID"></el-input>
-            </el-form-item>
-            <el-form-item label="作者" prop="author">
-                <el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
-            </el-form-item>
-            <el-form-item label="项目版本号" prop="version">
-                <el-input v-model="dataForm.version" placeholder="请输入项目版本号"></el-input>
-            </el-form-item>
-            <el-form-item label="功能名" prop="functionName">
-                <el-input v-model="dataForm.functionName" placeholder="请输入功能名"></el-input>
-            </el-form-item>
-            <el-form-item label="表单布局  1：一列   2：两列" prop="formLayout">
-                <el-input v-model="dataForm.formLayout" placeholder="请输入表单布局  1：一列   2：两列"></el-input>
-            </el-form-item>
-            <el-form-item label="创建时间" prop="createTime">
-                <el-input v-model="dataForm.createTime" placeholder="请输入创建时间"></el-input>
-            </el-form-item>
-            <el-form-item label="修改时间" prop="updateTime">
-                <el-input v-model="dataForm.updateTime" placeholder="请输入修改时间"></el-input>
-            </el-form-item>
-            <el-form-item label="是否删除（0未删除, 1删除）" prop="isDelete">
-                <el-input v-model="dataForm.isDelete" placeholder="请输入是否删除（0未删除, 1删除）"></el-input>
-            </el-form-item>
+			<el-form-item label="项目" prop="projectId">
+				<el-select v-model="dataForm.projectId" clearable placeholder="请选择项目" disabled>
+					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="表名" prop="tableName">
+				<el-input v-model="dataForm.tableName" placeholder="请输入表名" disabled></el-input>
+			</el-form-item>
+			<el-form-item label="数据库名" prop="databaseName">
+				<el-input v-model="dataForm.databaseName" placeholder="请输入数据库名" disabled></el-input>
+			</el-form-item>
+			<el-form-item label="类名" prop="className">
+				<el-input v-model="dataForm.className" placeholder="请输入类名"></el-input>
+			</el-form-item>
+			<el-form-item label="说明" prop="tableComment">
+				<el-input v-model="dataForm.tableComment" placeholder="请输入说明"></el-input>
+			</el-form-item>
+			<el-form-item label="功能名" prop="functionName">
+				<el-input v-model="dataForm.functionName" placeholder="请输入功能名"></el-input>
+			</el-form-item>
+			<el-form-item label="表单布局" prop="formLayout">
+				<el-radio-group v-model="dataForm.formLayout">
+					<el-radio :label="1">一列</el-radio>
+					<el-radio :label="2">两列</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item label="作者" prop="author">
+				<el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
+			</el-form-item>
+			<el-form-item label="项目版本号" prop="version">
+				<el-input v-model="dataForm.version" placeholder="请输入项目版本号"></el-input>
+			</el-form-item>
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
@@ -52,14 +45,16 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { tableDetailApi, tableSubmitApi } from '@/api/table'
+import { projectEntityListApi } from '@/api/project'
 
 const emit = defineEmits(['refreshDataList'])
 
 const visible = ref(false)
 const dataFormRef = ref()
+const projectList = ref([])
 
 const dataForm = reactive({
-	id: '',
+	id: null,
 	tableName: '',
 	databaseName: '',
 	className: '',
@@ -71,11 +66,20 @@ const dataForm = reactive({
 	formLayout: '',
 	createTime: '',
 	updateTime: '',
-	isDelete: ''})
+	isDelete: ''
+})
+
+const getProjectList = () => {
+	projectEntityListApi({}).then(res => {
+		projectList.value = res.data
+	})
+}
 
 const init = (id?: number) => {
 	visible.value = true
 	dataForm.id = null
+
+	getProjectList()
 
 	// 重置表单数据
 	if (dataFormRef.value) {
@@ -87,14 +91,18 @@ const init = (id?: number) => {
 	}
 }
 
+const dataRules = ref({
+	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+})
+
 const getTable = (id: number) => {
 	tableDetailApi(id).then(res => {
 		Object.assign(dataForm, res.data)
 	})
 }
-
-const dataRules = ref({
-})
 
 // 表单提交
 const submitHandle = () => {
