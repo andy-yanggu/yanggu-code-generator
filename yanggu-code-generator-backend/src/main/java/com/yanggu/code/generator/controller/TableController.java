@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.controller;
 
+import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -140,6 +141,16 @@ public class TableController {
     @Operation(summary = "表复杂列表")
     public List<TableVO> voList(@RequestBody TableVOQuery query) {
         return tableService.voList(query);
+    }
+
+    /**
+     * 导入表
+     */
+    @PostMapping("/import")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "导入表")
+    public void importTable(@RequestBody TableImportDTO importDTO) {
+        tableService.importTable(importDTO);
     }
 
 }

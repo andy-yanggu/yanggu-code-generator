@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-// import { useTableImportSubmitApi } from '@/api/table'
+import { tableImportApi } from '@/api/table'
 import { projectTableListApi } from '@/api/project'
 import { projectEntityListApi } from '@/api/project'
 
@@ -108,7 +108,12 @@ const submitHandle = () => {
 		return
 	}
 
-	useTableImportSubmitApi(dataForm.projectId, tableNameList).then(() => {
+	const importDateForm = {
+		projectId: dataForm.projectId,
+		tableNameList: tableNameList
+	}
+
+	tableImportApi(importDateForm).then(() => {
 		ElMessage.success({
 			message: '操作成功',
 			duration: 500,

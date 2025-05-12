@@ -1,11 +1,16 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.core.text.NamingCase;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.dto.TableImportDTO;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
+import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.mapstruct.TableMapstruct;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.query.TableVOQuery;
@@ -13,12 +18,17 @@ import com.yanggu.code.generator.domain.query.TableEntityQuery;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.mapper.TableMapper;
+import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.TableService;
+import com.yanggu.code.generator.util.GenUtils;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.rmi.ServerException;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +45,9 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     @Autowired
     private TableMapstruct tableMapstruct;
+
+    @Autowired
+    private DatasourceService datasourceService;
 
     /**
      * 新增
@@ -131,6 +144,54 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         //查询全部数据
         query.setPageSize(-1L);
         return tableMapper.voList(query);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void importTable(TableImportDTO importDTO) {
+
+    }
+
+    public void importTable(ProjectEntity project, String tableName) throws Exception {
+        Long projectId = project.getId();
+        Long datasourceId = project.getDatasourceId();
+
+        // 初始化配置信息
+        GenDataSourceBO dataSource = datasourceService.get(datasourceId);
+        // 查询表是否存在
+        TableEntity table = this.getByTableName(projectId, tableName);
+        // 表存在
+        if (table != null) {
+            throw new ServerException(tableName + "已存在");
+        }
+
+        // 从数据库获取表信息
+        table = GenUtils.getTable(dataSource, tableName);
+
+        // 保存表信息
+        table.setVersion(project.getProjectVersion());
+        table.setProjectId(projectId);
+        table.setAuthor(project.getAuthor());
+        table.setFormLayout(FormLayoutEnum.ONE.getValue());
+        table.setClassName(NamingCase.toPascalCase(tableName));
+        table.setFunctionName(GenUtils.getFunctionName(tableName));
+        table.setCreateTime(new Date());
+        this.save(table);
+
+        // 获取原生字段数据
+        List<TableFieldEntity> tableFieldList = GenUtils.getTableFieldList(dataSource, table.getId(), table.getTableName());
+        // 初始化字段数据
+        tableFieldService.initFieldList(tableFieldList);
+
+        // 保存列数据
+        tableFieldList.forEach(tableFieldService::save);
+
+        try {
+            //释放数据源
+            dataSource.getConnection().close();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     /**

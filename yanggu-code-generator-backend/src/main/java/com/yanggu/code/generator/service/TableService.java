@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.service;
 
 import com.yanggu.code.generator.common.domain.vo.PageVO;
+import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.query.TableEntityQuery;
@@ -64,5 +65,7 @@ public interface TableService extends IService<TableEntity> {
      * 复杂列表
      */
     List<TableVO> voList(TableVOQuery query);
+
+    void importTable(TableImportDTO importDTO);
 
 }
