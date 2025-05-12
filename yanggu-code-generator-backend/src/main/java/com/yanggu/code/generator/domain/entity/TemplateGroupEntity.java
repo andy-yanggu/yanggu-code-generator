@@ -8,6 +8,7 @@ import com.yanggu.code.generator.common.domain.entity.BaseEntity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 模板组Entity实体类
@@ -43,5 +44,11 @@ public class TemplateGroupEntity extends BaseEntity implements Serializable {
 	 */
 	@TableField(value = "group_desc")
 	private String groupDesc;
+
+	/**
+	 * 模板列表
+	 */
+	@TableField(exist = false)
+	private List<TemplateEntity> templateList;
 
 }

@@ -65,6 +65,9 @@ public interface TemplateService extends IService<TemplateEntity> {
      */
     List<TemplateVO> voList(TemplateVOQuery query);
 
-    List<TemplateEntity> selectByGroupId(Long oldGroupId);
+    /**
+     * 根据模板组ID查询模板
+     */
+    List<TemplateEntity> selectByGroupId(Long groupId);
 
 }

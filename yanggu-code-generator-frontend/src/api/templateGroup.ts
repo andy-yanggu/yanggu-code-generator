@@ -51,6 +51,13 @@ export const templateGroupVOListApi = (queryForm: any) => {
 	return service.post('/templateGroup/voList', queryForm)
 }
 
+//复制模板组
 export const copyTemplateApi = (dataForm: any) => {
 	return service.post('/templateGroup/copy', dataForm)
+}
+
+//导出模板组
+export const exportTemplateGroupApi = (tableIdList: any) => {
+	const listString = tableIdList.join(',')
+	location.href = import.meta.env.VITE_API_URL + '/templateGroup/export?idList=' + listString
 }

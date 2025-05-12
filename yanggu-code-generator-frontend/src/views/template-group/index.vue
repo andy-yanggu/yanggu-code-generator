@@ -21,6 +21,9 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
+				<el-button type="primary" @click="exportHandle()">导出</el-button>
+			</el-form-item>
+			<el-form-item>
 				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
@@ -72,6 +75,8 @@ import AddOrUpdate from './add-or-update.vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import CopyTemplateGroup from '@/views/template-group/copy-template-group.vue'
 import TemplateIndex from '../template/index.vue'
+import { ElMessage } from 'element-plus'
+import { exportTemplateGroupApi } from '@/api/templateGroup'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/templateGroup/entityPage',
@@ -112,6 +117,15 @@ const handlerTemplate = (id: number) => {
 
 const handlerType = (row: any) => {
 	return TEMPLATE_GROUP_TYPES.find(item => item.value === row.type)?.label
+}
+
+const exportHandle = () => {
+	const idList = state.dataListSelections ? state.dataListSelections : []
+	if (idList.length === 0) {
+		ElMessage.warning('请选择导出的模板组')
+		return
+	}
+	exportTemplateGroupApi(idList)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

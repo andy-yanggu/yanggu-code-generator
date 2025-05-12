@@ -7,7 +7,9 @@ import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -69,5 +71,10 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      * 复制模板组
      */
     void copy(TemplateGroupDTO dto);
+
+    /**
+     * 导出模板组
+     */
+    void export(List<Long> idList, HttpServletResponse response) throws IOException;
 
 }

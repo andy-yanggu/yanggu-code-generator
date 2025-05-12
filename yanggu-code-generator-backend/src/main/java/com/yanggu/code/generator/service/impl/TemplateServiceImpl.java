@@ -134,9 +134,9 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     @Override
-    public List<TemplateEntity> selectByGroupId(Long oldGroupId) {
+    public List<TemplateEntity> selectByGroupId(Long groupId) {
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
-                .eq(TemplateEntity::getTemplateGroupId, oldGroupId);
+                .eq(TemplateEntity::getTemplateGroupId, groupId);
         return templateMapper.selectList(queryWrapper);
     }
 

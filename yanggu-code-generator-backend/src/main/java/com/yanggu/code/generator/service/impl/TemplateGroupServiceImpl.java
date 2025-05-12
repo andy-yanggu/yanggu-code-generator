@@ -1,32 +1,39 @@
 package com.yanggu.code.generator.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.entity.TemplateEntity;
-import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
-import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
-import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
+import com.yanggu.code.generator.domain.entity.TemplateEntity;
+import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
+import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
+import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.text.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
+import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
 /**
  * 模板组Service实现类
@@ -158,6 +165,39 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                 templateService.save(template);
             });
         }
+    }
+
+    @Override
+    public void export(List<Long> idList, HttpServletResponse response) throws IOException {
+        List<TemplateGroupEntity> list = new ArrayList<>();
+        for (Long id : idList) {
+            TemplateGroupEntity templateGroup = this.getById(id);
+            templateGroup.setId(null);
+            templateGroup.setCreateTime(null);
+            templateGroup.setUpdateTime(null);
+            templateGroup.setIsDelete(null);
+            List<TemplateEntity> templateList = templateService.selectByGroupId(id);
+            if (CollUtil.isNotEmpty(templateList)) {
+                for (TemplateEntity template : templateList) {
+                    template.setId(null);
+                    template.setTemplateGroupId(null);
+                    template.setCreateTime(null);
+                    template.setUpdateTime(null);
+                    template.setIsDelete(null);
+                }
+                templateGroup.setTemplateList(templateList);
+            }
+            list.add(templateGroup);
+        }
+        String jsonStr = JSONUtil.toJsonStr(list);
+
+        //写入到响应流中
+        response.reset();
+        String fileName = "templateGroup" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setHeader("Content-Length", String.valueOf(jsonStr.getBytes().length));
+        response.setContentType("application/octet-stream; charset=UTF-");
+        IoUtil.write(response.getOutputStream(), false, jsonStr.getBytes());
     }
 
     /**

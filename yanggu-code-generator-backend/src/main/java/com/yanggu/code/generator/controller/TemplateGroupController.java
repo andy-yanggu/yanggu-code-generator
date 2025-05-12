@@ -1,7 +1,12 @@
 package com.yanggu.code.generator.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
 import com.yanggu.code.generator.common.response.Result;
+import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -20,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -153,5 +160,16 @@ public class TemplateGroupController {
     public void copy(@RequestBody TemplateGroupDTO dto) {
         templateGroupService.copy(dto);
     }
+
+    /**
+     * 导出模板组
+     */
+    @GetMapping("/export")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "导出模板组")
+    public void export(@RequestParam("idList") List<Long> idList, HttpServletResponse response) throws IOException {
+        templateGroupService.export(idList, response);
+    }
+
 
 }
