@@ -18,7 +18,7 @@
 				<el-button icon="RefreshRight" @click="resetQueryRef()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="primary" @click="importHandle()">导入</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
@@ -52,7 +52,7 @@
 		</el-pagination>
 
 		<!-- 弹窗, 新增 / 修改 -->
-		<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+		<import ref="importRef" @refresh-data-list="getDataList"></import>
 	</el-card>
 </template>
 
@@ -60,7 +60,7 @@
 import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
-import AddOrUpdate from './add-or-update.vue'
+import Import from './import.vue'
 import { projectEntityListApi } from '@/api/project'
 
 const state: IHooksOptions = reactive({
@@ -74,6 +74,7 @@ const state: IHooksOptions = reactive({
 
 const queryRef = ref()
 const addOrUpdateRef = ref()
+const importRef = ref()
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
 }
@@ -84,6 +85,10 @@ projectEntityListApi({}).then((res: any) => {
 
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
+}
+
+const importHandle = (id?: number) => {
+	importRef.value.init(id)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

@@ -6,6 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.GenDataSourceBO;
+import com.yanggu.code.generator.domain.entity.TableEntity;
+import com.yanggu.code.generator.domain.query.ProjectTableQuery;
+import com.yanggu.code.generator.domain.vo.TableImportVO;
+import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.ProjectVOQuery;
@@ -13,7 +18,10 @@ import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
 import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
+import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
+import com.yanggu.code.generator.service.TableService;
+import com.yanggu.code.generator.util.GenUtils;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +42,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
     @Autowired
     private ProjectMapstruct projectMapstruct;
+
+    @Autowired
+    private DatasourceService datasourceService;
+
+    @Autowired
+    private TableService tableService;
 
     /**
      * 新增
@@ -130,6 +144,26 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         //查询全部数据
         query.setPageSize(-1L);
         return projectMapper.voList(query);
+    }
+
+    @Override
+    public List<TableImportVO> tableList(ProjectTableQuery query) throws Exception {
+        Long projectId = query.getProjectId();
+        ProjectEntity project = baseMapper.selectById(projectId);
+        Long datasourceId = project.getDatasourceId();
+        // 获取数据源
+        GenDataSourceBO datasource = datasourceService.get(datasourceId);
+        // 根据数据源，获取全部数据表
+        List<TableImportVO> tableList = GenUtils.getTableList(datasource, query.getTableName());
+        tableList.forEach(table -> {
+            LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class);
+            queryWrapper.eq(TableEntity::getProjectId, projectId);
+            queryWrapper.eq(TableEntity::getTableName, table.getTableName());
+            boolean exists = tableService.exists(queryWrapper);
+            table.setExist(exists);
+        });
+
+        return tableList;
     }
 
     /**

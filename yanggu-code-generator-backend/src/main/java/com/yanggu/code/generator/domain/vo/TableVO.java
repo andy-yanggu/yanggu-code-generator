@@ -80,4 +80,10 @@ public class TableVO extends BaseVO implements Serializable {
 	@Schema(description = "表单布局  1：一列   2：两列")
 	private Integer formLayout;
 
+	/**
+	 * 是否存在
+	 */
+	@Schema(description = "是否存在")
+	private Boolean exist;
+
 }

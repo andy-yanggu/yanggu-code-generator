@@ -1,22 +1,24 @@
 package com.yanggu.code.generator.controller;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Parameter;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
-import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
+import com.yanggu.code.generator.domain.query.ProjectTableQuery;
 import com.yanggu.code.generator.domain.query.ProjectVOQuery;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
-import org.springframework.web.bind.annotation.*;
+import com.yanggu.code.generator.domain.vo.TableImportVO;
+import com.yanggu.code.generator.service.ProjectService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -140,6 +142,14 @@ public class ProjectController {
     @Operation(summary = "项目复杂列表")
     public List<ProjectVO> voList(@RequestBody ProjectVOQuery query) {
         return projectService.voList(query);
+    }
+
+    /**
+     * 项目下的表
+     */
+    @PostMapping("/tableList")
+    public List<TableImportVO> tableList(@RequestBody ProjectTableQuery query) throws Exception {
+        return projectService.tableList(query);
     }
 
 }

@@ -6,21 +6,23 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
-import com.yanggu.code.generator.domain.entity.DatasourceEntity;
-import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
-import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
+import com.yanggu.code.generator.domain.GenDataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
+import com.yanggu.code.generator.domain.entity.DatasourceEntity;
+import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
+import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
+import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
 import org.dromara.hutool.core.text.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -35,6 +37,9 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
 
     @Autowired
     private DatasourceMapstruct datasourceMapstruct;
+
+    @Autowired
+    private DataSource dataSource;
 
     /**
      * 新增
@@ -133,6 +138,12 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         return datasourceMapper.voList(query);
     }
 
+    @Override
+    public GenDataSourceBO get(Long datasourceId) throws Exception {
+        // 初始化配置信息
+        return new GenDataSourceBO(this.getById(datasourceId));
+    }
+
     /**
      * 批量查询
      */
@@ -152,7 +163,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
 
     private LambdaQueryWrapper<DatasourceEntity> buildQueryWrapper(DatasourceEntityQuery query) {
         LambdaQueryWrapper<DatasourceEntity> wrapper = Wrappers.lambdaQuery(DatasourceEntity.class);
-        
+
         //过滤字段
         wrapper.eq(StrUtil.isNotBlank(query.getDbType()), DatasourceEntity::getDbType, query.getDbType());
         wrapper.like(StrUtil.isNotBlank(query.getConnName()), DatasourceEntity::getConnName, query.getConnName());
