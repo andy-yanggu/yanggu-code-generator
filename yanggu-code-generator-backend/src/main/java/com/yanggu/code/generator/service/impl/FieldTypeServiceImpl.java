@@ -43,6 +43,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     public void add(FieldTypeDTO dto) {
         FieldTypeEntity entity = fieldTypeMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkExist(dto);
         fieldTypeMapper.insert(entity);
     }
 
@@ -55,6 +56,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         FieldTypeEntity formEntity = fieldTypeMapstruct.dtoToEntity(dto);
         FieldTypeEntity dbEntity = selectById(dto.getId());
         //唯一性校验等
+        checkExist(dto);
         fieldTypeMapper.updateById(formEntity);
     }
 
@@ -147,6 +149,16 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
             throw new BusinessException(DATA_NOT_EXIST, "字段类型", id);
         }
         return entity;
+    }
+
+    private void checkExist(FieldTypeDTO dto) {
+        LambdaQueryWrapper<FieldTypeEntity> queryWrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
+        queryWrapper.ne(dto.getId() != null, FieldTypeEntity::getId, dto.getId());
+        queryWrapper.eq(FieldTypeEntity::getColumnType, dto.getColumnType());
+        boolean exists = fieldTypeMapper.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("字段类型已存在");
+        }
     }
 
     private LambdaQueryWrapper<FieldTypeEntity> buildQueryWrapper(FieldTypeEntityQuery query) {

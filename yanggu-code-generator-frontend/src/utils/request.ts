@@ -42,9 +42,9 @@ service.interceptors.response.use(
 		}
 
 		// 错误提示
-		ElMessage.error(res.msg)
+		ElMessage.error(res.message)
 
-		return Promise.reject(new Error(res.msg || 'Error'))
+		return Promise.reject(new Error(res.message || 'Error'))
 	},
 	error => {
 		ElMessage.error(error.message)
