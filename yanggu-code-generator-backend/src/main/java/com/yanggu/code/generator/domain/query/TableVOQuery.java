@@ -21,4 +21,16 @@ public class TableVOQuery extends PageQuery<TableVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 表名
+     */
+    @Schema(description = "表名")
+    private String tableName;
+
+    /**
+     * 项目ID
+     */
+    @Schema(description = "项目ID")
+    private Long projectId;
+
 }

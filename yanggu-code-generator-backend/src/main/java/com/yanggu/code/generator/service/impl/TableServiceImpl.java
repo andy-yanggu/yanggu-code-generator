@@ -14,11 +14,13 @@ import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.mapper.TableMapper;
 import com.yanggu.code.generator.service.TableService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -150,6 +152,10 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableEntityQuery query) {
         LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getTableName()), TableEntity::getTableName, query.getTableName());
+        wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());
