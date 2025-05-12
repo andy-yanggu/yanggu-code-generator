@@ -21,4 +21,10 @@ public class ProjectEntityQuery extends PageQuery<ProjectEntity> implements Seri
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 项目名
+     */
+    @Schema(description = "项目名")
+    private String projectName;
+
 }

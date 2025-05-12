@@ -27,7 +27,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
 	private Long id;
 
 	/**
-	 * 模板组id
+	 * 模板组ID
 	 */
 	@TableField(value = "template_group_id")
 	private Long templateGroupId;

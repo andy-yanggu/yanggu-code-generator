@@ -14,6 +14,7 @@ import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
 import com.yanggu.code.generator.service.ProjectService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
     private LambdaQueryWrapper<ProjectEntity> buildQueryWrapper(ProjectEntityQuery query) {
         LambdaQueryWrapper<ProjectEntity> wrapper = Wrappers.lambdaQuery(ProjectEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

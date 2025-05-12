@@ -22,9 +22,9 @@ public class TemplateEntityQuery extends PageQuery<TemplateEntity> implements Se
     private static final long serialVersionUID = 1L;
 
     /**
-     * 模板组id
+     * 模板组ID
      */
-    @Schema(description = "模板组id")
+    @Schema(description = "模板组ID")
     private Long templateGroupId;
 
     /**

@@ -27,7 +27,7 @@ public class ProjectEntity extends BaseEntity implements Serializable {
 	private Long id;
 
 	/**
-	 * 项目名
+	 * 项目名称
 	 */
 	@TableField(value = "project_name")
 	private String projectName;

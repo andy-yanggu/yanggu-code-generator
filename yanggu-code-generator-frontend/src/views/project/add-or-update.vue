@@ -1,52 +1,64 @@
 <template>
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="项目名" prop="projectName">
-				<el-input v-model="dataForm.projectName" placeholder="项目名"></el-input>
+			<el-form-item label="项目名称" prop="projectName">
+				<el-input v-model="dataForm.projectName" placeholder="请输入项目名称"></el-input>
 			</el-form-item>
 			<el-form-item label="项目包名" prop="projectPackage">
-				<el-input v-model="dataForm.projectPackage" placeholder="项目包名"></el-input>
+				<el-input v-model="dataForm.projectPackage" placeholder="请输入项目包名"></el-input>
 			</el-form-item>
 			<el-form-item label="项目版本" prop="projectVersion">
-				<el-input v-model="dataForm.projectVersion" placeholder="项目版本"></el-input>
+				<el-input v-model="dataForm.projectVersion" placeholder="请输入项目版本"></el-input>
 			</el-form-item>
-			<el-form-item label="数据源ID" prop="datasourceId">
-				<el-select v-model="dataForm.datasourceId" placeholder="请选择">
-					<el-option label="请选择" value="0"></el-option>
+			<el-form-item label="数据源" prop="datasourceId">
+				<el-select v-model="dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
+					<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
+						<span style="font-weight: bold">{{ item.connName }}</span>
+						<span v-if="item.dataSourceDesc && item.dataSourceDesc.trim()" style="color: #999; font-size: 12px">（{{ item.dataSourceDesc }}） </span>
+					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="项目模板组ID" prop="projectTemplateGroupId">
-				<el-select v-model="dataForm.projectTemplateGroupId" placeholder="请选择">
-					<el-option label="请选择" value="0"></el-option>
+			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
+				<el-select v-model="dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
+					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+						<span style="font-weight: bold">{{ item.groupName }}</span>
+						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="表模板组ID" prop="tableTemplateGroupId">
-				<el-select v-model="dataForm.tableTemplateGroupId" placeholder="请选择">
-					<el-option label="请选择" value="0"></el-option>
+			<el-form-item label="表模板组" prop="tableTemplateGroupId">
+				<el-select v-model="dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
+					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+						<span style="font-weight: bold">{{ item.groupName }}</span>
+						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="生成方式" prop="generatorType">
+				<el-radio-group v-model="dataForm.generatorType">
+					<el-radio :label="0">zip压缩包</el-radio>
+					<el-radio :label="1">服务器本地</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item prop="baseClassId" label="Entity基类">
+				<el-select v-model="dataForm.baseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="item.code" :value="item.id">
+						<span style="font-weight: bold">{{ item.code }}</span>
+						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
+					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="后端路径" prop="backendPath">
-				<el-input v-model="dataForm.backendPath" placeholder="后端路径"></el-input>
+				<el-input v-model="dataForm.backendPath" placeholder="请输入后端路径"></el-input>
 			</el-form-item>
 			<el-form-item label="前端路径" prop="frontendPath">
-				<el-input v-model="dataForm.frontendPath" placeholder="前端路径"></el-input>
-			</el-form-item>
-			<el-form-item label="项目描述" prop="projectDesc">
-				<el-input v-model="dataForm.projectDesc" placeholder="项目描述"></el-input>
+				<el-input v-model="dataForm.frontendPath" placeholder="请输入前端路径"></el-input>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
-				<el-input v-model="dataForm.author" placeholder="作者"></el-input>
+				<el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
 			</el-form-item>
-			<el-form-item label="基类ID" prop="baseClassId">
-				<el-select v-model="dataForm.baseClassId" placeholder="请选择">
-					<el-option label="请选择" value="0"></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="生成方式（0-zip压缩包，1-服务器本地）" prop="generatorType">
-				<el-radio-group v-model="dataForm.generatorType">
-					<el-radio :label="0">启用</el-radio>
-					<el-radio :label="1">禁用</el-radio>
-				</el-radio-group>
+			<el-form-item label="项目描述" prop="projectDesc">
+				<el-input v-model="dataForm.projectDesc" placeholder="请输入项目描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -60,6 +72,9 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { projectDetailApi, projectSubmitApi } from '@/api/project'
+import { datasourceEntityListApi } from '@/api/datasource'
+import { templateGroupEntityListApi } from '@/api/templateGroup'
+import { baseClassEntityListApi } from '@/api/baseClass'
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -67,7 +82,7 @@ const visible = ref(false)
 const dataFormRef = ref()
 
 const dataForm = reactive({
-	id: '',
+	id: null,
 	projectName: '',
 	projectPackage: '',
 	projectVersion: '',
@@ -79,10 +94,7 @@ const dataForm = reactive({
 	projectDesc: '',
 	author: '',
 	baseClassId: '',
-	generatorType: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	generatorType: null
 })
 
 const init = (id?: number) => {
@@ -97,6 +109,9 @@ const init = (id?: number) => {
 	if (id) {
 		getProject(id)
 	}
+
+	//获取下拉数据
+	getList()
 }
 
 const getProject = (id: number) => {
@@ -114,6 +129,29 @@ const dataRules = ref({
 	tableTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	generatorType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
+
+const datasourceList = ref([])
+const projectTemplateGroupList = ref([])
+const tableTemplateGroupList = ref([])
+const baseClassList = ref([])
+
+const getList = () => {
+	//数据源下拉
+	datasourceEntityListApi({}).then(res => {
+		datasourceList.value = res.data
+	})
+
+	//模板组下拉
+	templateGroupEntityListApi({}).then(res => {
+		projectTemplateGroupList.value = res.data.filter(item => item.type === 0)
+		tableTemplateGroupList.value = res.data.filter(item => item.type === 1)
+	})
+
+	//基类下拉
+	baseClassEntityListApi({}).then(res => {
+		baseClassList.value = res.data
+	})
+}
 
 // 表单提交
 const submitHandle = () => {

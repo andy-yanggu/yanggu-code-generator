@@ -21,4 +21,10 @@ public class ProjectVOQuery extends PageQuery<ProjectVO> implements Serializable
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 项目名
+     */
+    @Schema(description = "项目名")
+    private String projectName;
+
 }

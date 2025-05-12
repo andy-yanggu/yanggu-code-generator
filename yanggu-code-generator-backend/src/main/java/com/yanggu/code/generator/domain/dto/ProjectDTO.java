@@ -24,9 +24,9 @@ public class ProjectDTO implements Serializable {
 	private Long id;
 
 	/**
-	 * 项目名
+	 * 项目名称
 	 */
-	@Schema(description = "项目名")
+	@Schema(description = "项目名称")
 	private String projectName;
 
 	/**

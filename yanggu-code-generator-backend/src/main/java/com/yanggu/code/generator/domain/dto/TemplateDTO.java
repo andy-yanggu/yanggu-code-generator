@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -24,9 +25,10 @@ public class TemplateDTO implements Serializable {
 	private Long id;
 
 	/**
-	 * 模板组id
+	 * 模板组ID
 	 */
-	@Schema(description = "模板组id")
+	@NotNull(message = "模板组ID不能为空")
+	@Schema(description = "模板组ID")
 	private Long templateGroupId;
 
 	/**

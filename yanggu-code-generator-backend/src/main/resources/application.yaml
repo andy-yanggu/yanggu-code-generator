@@ -4,7 +4,7 @@ server:
     context-path: /yanggu-code-generator
 
 spring:
-  # 项目名配置
+  # 项目名称配置
   application:
     name: yanggu-code-generator
     version: '1.0-SNAPSHOT'

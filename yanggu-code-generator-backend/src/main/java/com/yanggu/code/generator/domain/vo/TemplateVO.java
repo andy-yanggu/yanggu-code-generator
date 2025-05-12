@@ -27,9 +27,9 @@ public class TemplateVO extends BaseVO implements Serializable {
 	private Long id;
 
 	/**
-	 * 模板组id
+	 * 模板组ID
 	 */
-	@Schema(description = "模板组id")
+	@Schema(description = "模板组ID")
 	private Long templateGroupId;
 
 	/**
