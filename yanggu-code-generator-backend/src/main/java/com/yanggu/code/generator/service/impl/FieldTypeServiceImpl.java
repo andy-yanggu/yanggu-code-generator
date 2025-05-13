@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -144,6 +146,13 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
             map.put(entity.getColumnType().toLowerCase(), entity);
         }
         return map;
+    }
+
+    @Override
+    public Set<String> getPackageByTableId(Long tableId) {
+        Set<String> importList = baseMapper.getPackageByTableId(tableId);
+
+        return importList.stream().filter(cn.hutool.core.util.StrUtil::isNotBlank).collect(Collectors.toSet());
     }
 
     /**

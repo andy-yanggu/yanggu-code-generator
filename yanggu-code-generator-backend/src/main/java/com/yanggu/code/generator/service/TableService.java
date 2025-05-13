@@ -76,4 +76,9 @@ public interface TableService extends IService<TableEntity> {
      */
     void deleteByProjectId(List<Long> idList);
 
+    /**
+     * 获取表模板组ID
+     */
+    Long getTableTemplateGroupId(Long id);
+
 }

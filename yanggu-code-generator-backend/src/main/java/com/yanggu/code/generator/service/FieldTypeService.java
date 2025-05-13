@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 字段类型服务层
@@ -67,5 +68,13 @@ public interface FieldTypeService extends IService<FieldTypeEntity> {
     List<FieldTypeVO> voList(FieldTypeVOQuery query);
 
     Map<String, FieldTypeEntity> getMap();
+
+    /**
+     * 根据tableId，获取包列表
+     *
+     * @param tableId 表ID
+     * @return 返回包列表
+     */
+    Set<String> getPackageByTableId(Long tableId);
 
 }

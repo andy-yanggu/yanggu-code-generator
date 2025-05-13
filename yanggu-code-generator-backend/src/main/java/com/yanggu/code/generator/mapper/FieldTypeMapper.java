@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 字段类型Mapper
@@ -38,5 +39,10 @@ public interface FieldTypeMapper extends BaseMapperPlus<FieldTypeEntity> {
      * VO列表
      */
     List<FieldTypeVO> voList(@Param("query") FieldTypeVOQuery query);
+
+    /**
+     * 根据tableId，获取包列表
+     */
+    Set<String> getPackageByTableId(Long tableId);
 
 }

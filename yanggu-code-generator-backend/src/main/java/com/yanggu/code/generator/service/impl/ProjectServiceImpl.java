@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
@@ -63,7 +63,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         TableImportDTO tableImportDTO = new TableImportDTO();
         tableImportDTO.setProjectId(entity.getId());
 
-        GenDataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
+        DataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
         List<String> tableNameList = GenUtils.getTableNameList(dataSourceBO);
 
         tableImportDTO.setTableNameList(tableNameList);
@@ -166,7 +166,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity project = baseMapper.selectById(projectId);
         Long datasourceId = project.getDatasourceId();
         // 获取数据源
-        GenDataSourceBO datasource = datasourceService.get(datasourceId);
+        DataSourceBO datasource = datasourceService.get(datasourceId);
         // 根据数据源，获取全部数据表
         List<TableImportVO> tableList = GenUtils.getTableList(datasource, query.getTableName());
         tableList.forEach(table -> {

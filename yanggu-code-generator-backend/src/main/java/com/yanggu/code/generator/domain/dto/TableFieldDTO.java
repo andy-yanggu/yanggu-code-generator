@@ -81,13 +81,13 @@ public class TableFieldDTO implements Serializable {
 	 * 主键 0：否  1：是
 	 */
 	@Schema(description = "主键 0：否  1：是")
-	private Integer primaryPk;
+	private Boolean primaryPk;
 
 	/**
 	 * 逻辑删除 0：否  1：是
 	 */
 	@Schema(description = "逻辑删除 0：否  1：是")
-	private Integer logicDelete;
+	private Boolean logicDelete;
 
 	/**
 	 * 逻辑删除值
@@ -105,19 +105,19 @@ public class TableFieldDTO implements Serializable {
 	 * 基类字段 0：否  1：是
 	 */
 	@Schema(description = "基类字段 0：否  1：是")
-	private Integer baseField;
+	private Boolean baseField;
 
 	/**
 	 * 表单项 0：否  1：是
 	 */
 	@Schema(description = "表单项 0：否  1：是")
-	private Integer formItem;
+	private Boolean formItem;
 
 	/**
 	 * 表单必填 0：否  1：是
 	 */
 	@Schema(description = "表单必填 0：否  1：是")
-	private Integer formRequired;
+	private Boolean formRequired;
 
 	/**
 	 * 表单类型
@@ -141,19 +141,19 @@ public class TableFieldDTO implements Serializable {
 	 * 列表项 0：否  1：是
 	 */
 	@Schema(description = "列表项 0：否  1：是")
-	private Integer gridItem;
+	private Boolean gridItem;
 
 	/**
 	 * 列表排序 0：否  1：是
 	 */
 	@Schema(description = "列表排序 0：否  1：是")
-	private Integer gridSort;
+	private Boolean gridSort;
 
 	/**
 	 * 查询项 0：否  1：是
 	 */
 	@Schema(description = "查询项 0：否  1：是")
-	private Integer queryItem;
+	private Boolean queryItem;
 
 	/**
 	 * 查询方式

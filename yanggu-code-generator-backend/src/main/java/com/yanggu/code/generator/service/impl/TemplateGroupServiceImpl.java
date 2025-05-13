@@ -219,6 +219,14 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         IoUtil.write(response.getOutputStream(), false, jsonStr.getBytes());
     }
 
+    @Override
+    public TemplateGroupEntity getById(Long id) {
+        TemplateGroupEntity templateGroup = templateGroupMapper.selectById(id);
+        List<TemplateEntity> templateList = templateService.selectByGroupId(id);
+        templateGroup.setTemplateList(templateList);
+        return templateGroup;
+    }
+
     /**
      * 批量查询
      */

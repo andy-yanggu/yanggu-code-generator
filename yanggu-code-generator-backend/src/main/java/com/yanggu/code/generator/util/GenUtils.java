@@ -5,14 +5,13 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.util.BooleanUtil;
 
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -36,7 +35,7 @@ public class GenUtils {
      *
      * @param datasource 数据源
      */
-    public static List<TableImportVO> getTableList(GenDataSourceBO datasource, String tableName) {
+    public static List<TableImportVO> getTableList(DataSourceBO datasource, String tableName) {
         List<TableImportVO> tableList = new ArrayList<>();
         try {
             AbstractQuery query = datasource.getDbQuery();
@@ -62,7 +61,7 @@ public class GenUtils {
     /**
      * 获取数据表列表
      */
-    public static List<String> getTableNameList(GenDataSourceBO datasource) {
+    public static List<String> getTableNameList(DataSourceBO datasource) {
         return getTableList(datasource, null).stream()
                 .map(TableImportVO::getTableName)
                 .toList();
@@ -74,7 +73,7 @@ public class GenUtils {
      * @param datasource 数据源
      * @param tableName  表名
      */
-    public static TableEntity getTable(GenDataSourceBO datasource, String tableName) {
+    public static TableEntity getTable(DataSourceBO datasource, String tableName) {
         try {
             AbstractQuery query = datasource.getDbQuery();
 
@@ -105,7 +104,7 @@ public class GenUtils {
      * @param tableId    表ID
      * @param tableName  表名
      */
-    public static List<TableFieldEntity> getTableFieldList(GenDataSourceBO datasource, Long tableId, String tableName) {
+    public static List<TableFieldEntity> getTableFieldList(DataSourceBO datasource, Long tableId, String tableName) {
         List<TableFieldEntity> tableFieldList = new ArrayList<>();
 
         try {
@@ -131,10 +130,10 @@ public class GenUtils {
                 field.setFieldComment(rs.getString(query.fieldComment()));
                 String key = rs.getString(query.fieldKey());
                 boolean primaryPk = StringUtils.isNotBlank(key) && "PRI".equalsIgnoreCase(key);
-                field.setPrimaryPk(BooleanUtil.toInt(primaryPk));
+                field.setPrimaryPk(primaryPk);
                 //设置逻辑删除字段
                 boolean logicDeleteResult = setLogicDelete(rs, query);
-                field.setLogicDelete(BooleanUtil.toInt(logicDeleteResult));
+                field.setLogicDelete(logicDeleteResult);
                 if (logicDeleteResult) {
                     field.setLogicDeleteValue(SpringUtil.getProperty("generator.logic-delete-value", "1"));
                     field.setLogicNotDeleteValue(SpringUtil.getProperty("generator.logic-not-delete-value", "0"));

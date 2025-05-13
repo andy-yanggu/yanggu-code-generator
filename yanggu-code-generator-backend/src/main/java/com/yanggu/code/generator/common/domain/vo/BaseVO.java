@@ -58,6 +58,6 @@ public abstract class BaseVO implements Serializable {
      * 是否删除（0正常, 1删除）
      */
     @Schema(description = "是否删除（0正常, 1删除）")
-    private Integer isDelete;
+    private Boolean isDelete;
 
 }

@@ -17,7 +17,7 @@ import java.sql.SQLException;
  */
 @Data
 @Slf4j
-public class GenDataSourceBO {
+public class DataSourceBO {
 
     /**
      * 数据源ID
@@ -48,7 +48,7 @@ public class GenDataSourceBO {
 
     private Connection connection;
 
-    public GenDataSourceBO(DatasourceEntity entity) throws Exception {
+    public DataSourceBO(DatasourceEntity entity) throws Exception {
         this.id = entity.getId();
         this.dbType = DbType.getValue(entity.getDbType());
         this.connUrl = entity.getConnUrl();
@@ -78,7 +78,7 @@ public class GenDataSourceBO {
         }
     }
 
-    public GenDataSourceBO(Connection connection) throws SQLException {
+    public DataSourceBO(Connection connection) throws SQLException {
         this.id = 0L;
         this.dbType = DbType.getValue(connection.getMetaData().getDatabaseProductName());
 

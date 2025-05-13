@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
@@ -151,15 +151,21 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     }
 
     @Override
-    public GenDataSourceBO get(Long datasourceId) throws Exception {
+    public DataSourceBO get(Long datasourceId) throws Exception {
         // 初始化配置信息
-        return new GenDataSourceBO(this.getById(datasourceId));
+        return new DataSourceBO(this.getById(datasourceId));
     }
 
     @Override
     public void test(Long id) throws Exception {
         DatasourceEntity entity = getById(id);
-        DbUtils.getConnection(new GenDataSourceBO(entity));
+        DbUtils.getConnection(new DataSourceBO(entity));
+    }
+
+    @Override
+    public String getDatabaseProductName(Long datasourceId) {
+        DatasourceEntity datasource = getById(datasourceId);
+        return datasource.getDbType();
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.yanggu.code.generator.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
@@ -71,4 +73,14 @@ public interface TableFieldService extends IService<TableFieldEntity> {
     void initFieldList(List<TableFieldEntity> tableFieldList);
 
     void deleteByTableIdList(List<Long> tableIdList);
+
+    /**
+     * 根据表ID查询字段
+     */
+    default List<TableFieldEntity> getByTableId(Long tableId) {
+        LambdaQueryWrapper<TableFieldEntity> queryWrapper = Wrappers.<TableFieldEntity>lambdaQuery()
+                .eq(TableFieldEntity::getTableId, tableId);
+        return getBaseMapper().selectList(queryWrapper);
+    }
+
 }

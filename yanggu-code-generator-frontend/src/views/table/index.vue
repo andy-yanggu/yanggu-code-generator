@@ -34,6 +34,7 @@
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -50,10 +51,13 @@
 		</el-pagination>
 
 		<!-- 弹窗, 新增 / 修改 -->
-		<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+		<update ref="addOrUpdateRef" @refresh-data-list="getDataList"></update>
 
 		<!-- 导入表组件 -->
 		<import ref="importRef" @refresh-data-list="getDataList"></import>
+
+		<!-- 预览 -->
+		<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
 	</el-card>
 </template>
 
@@ -62,7 +66,8 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
-import AddOrUpdate from './add-or-update.vue'
+import Update from './update.vue'
+import Preview from './preview.vue'
 import { projectEntityListApi } from '@/api/project'
 
 const state: IHooksOptions = reactive({
@@ -77,6 +82,8 @@ const state: IHooksOptions = reactive({
 const queryRef = ref()
 const addOrUpdateRef = ref()
 const importRef = ref()
+const previewRef = ref()
+
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
 }
@@ -91,6 +98,10 @@ const resetQueryRef = () => {
 
 const importHandle = (id?: number) => {
 	importRef.value.init(id)
+}
+
+const previewHandle = (tableId?: number) => {
+	previewRef.value.init(tableId)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

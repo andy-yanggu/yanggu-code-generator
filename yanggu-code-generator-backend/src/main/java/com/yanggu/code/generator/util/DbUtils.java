@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.util;
 
-import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.enums.DbType;
 import oracle.jdbc.OracleConnection;
 
@@ -17,7 +17,7 @@ public class DbUtils {
     /**
      * 获得数据库连接
      */
-    public static Connection getConnection(GenDataSourceBO dataSource) throws Exception {
+    public static Connection getConnection(DataSourceBO dataSource) throws Exception {
         DriverManager.setLoginTimeout(CONNECTION_TIMEOUTS_SECONDS);
         Class.forName(dataSource.getDbType().getDriverClass());
 

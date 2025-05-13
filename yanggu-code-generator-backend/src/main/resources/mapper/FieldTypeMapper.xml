@@ -98,4 +98,12 @@
         <include refid="orderBySQL"/>
     </select>
 
+    <select id="getPackageByTableId" resultType="String">
+        select t1.package_name
+        from gen_field_type t1,
+             gen_table_field t2
+        where t1.attr_type = t2.attr_type
+          and t2.table_id = #{value}
+    </select>
+
 </mapper>

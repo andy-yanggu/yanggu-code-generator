@@ -37,6 +37,6 @@ public abstract class BaseEntity implements Serializable {
      */
     @TableField("is_delete")
     @TableLogic(value = "0", delval = "1")
-    private Integer isDelete;
+    private Boolean isDelete;
 
 }

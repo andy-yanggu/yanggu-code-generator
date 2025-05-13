@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
@@ -164,7 +164,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         ProjectEntity project = projectService.getById(projectId);
 
         Long datasourceId = project.getDatasourceId();
-        GenDataSourceBO dataSource = datasourceService.get(datasourceId);
+        DataSourceBO dataSource = datasourceService.get(datasourceId);
 
         //批量导入
         for (String tempTableName : tableNameList) {
@@ -190,7 +190,24 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         tableFieldService.deleteByTableIdList(tableIdList);
     }
 
-    public void importTable(ProjectEntity project, GenDataSourceBO dataSource, String tableName) throws Exception {
+    @Override
+    public Long getTableTemplateGroupId(Long id) {
+        TableEntity table = this.getById(id);
+        if (table == null) {
+            throw new BusinessException("表不存在");
+        }
+        ProjectEntity project = projectService.getById(table.getProjectId());
+        if (project == null) {
+            throw new BusinessException("项目不存在");
+        }
+        Long templateGroupId = project.getTableTemplateGroupId();
+        if (templateGroupId == null) {
+            throw new BusinessException("模板组不存在");
+        }
+        return templateGroupId;
+    }
+
+    private void importTable(ProjectEntity project, DataSourceBO dataSource, String tableName) {
         Long projectId = project.getId();
 
         //查询表是否存在

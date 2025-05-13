@@ -77,4 +77,6 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     void export(List<Long> idList, HttpServletResponse response) throws IOException;
 
+    TemplateGroupEntity getById(Long id);
+
 }

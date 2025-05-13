@@ -157,8 +157,8 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
             }
 
             field.setAutoFill(AutoFillEnum.DEFAULT.name());
-            field.setFormItem(1);
-            field.setGridItem(1);
+            field.setFormItem(true);
+            field.setGridItem(true);
             field.setQueryType("=");
             field.setQueryFormType("text");
             field.setFormType("text");
