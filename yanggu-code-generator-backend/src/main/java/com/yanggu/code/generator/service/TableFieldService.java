@@ -2,13 +2,13 @@ package com.yanggu.code.generator.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
+import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
 import com.yanggu.code.generator.domain.query.TableFieldVOQuery;
-import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.yanggu.code.generator.domain.vo.TableFieldVO;
 
 import java.util.List;
 
@@ -83,4 +83,5 @@ public interface TableFieldService extends IService<TableFieldEntity> {
         return getBaseMapper().selectList(queryWrapper);
     }
 
+    void submitList(List<TableFieldDTO> submitList);
 }

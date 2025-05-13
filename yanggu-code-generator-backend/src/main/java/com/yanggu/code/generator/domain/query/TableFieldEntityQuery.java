@@ -21,4 +21,10 @@ public class TableFieldEntityQuery extends PageQuery<TableFieldEntity> implement
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 表ID
+     */
+    @Schema(description = "表ID")
+    private Long tableId;
+
 }

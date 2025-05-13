@@ -77,4 +77,6 @@ public interface FieldTypeService extends IService<FieldTypeEntity> {
      */
     Set<String> getPackageByTableId(Long tableId);
 
+    List<String> distinctList();
+
 }

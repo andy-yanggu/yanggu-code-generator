@@ -34,6 +34,7 @@
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link @click="editHandle(scope.row.id)">字段配置</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
@@ -58,6 +59,9 @@
 
 		<!-- 预览 -->
 		<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
+
+		<!-- 字段配置 -->
+		<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
 	</el-card>
 </template>
 
@@ -68,6 +72,7 @@ import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
 import Update from './update.vue'
 import Preview from './preview.vue'
+import FieldConfig from './field-config.vue'
 import { projectEntityListApi } from '@/api/project'
 
 const state: IHooksOptions = reactive({
@@ -82,6 +87,7 @@ const state: IHooksOptions = reactive({
 const queryRef = ref()
 const addOrUpdateRef = ref()
 const importRef = ref()
+const editRef = ref()
 const previewRef = ref()
 
 const addOrUpdateHandle = (id: number) => {
@@ -102,6 +108,10 @@ const importHandle = (id?: number) => {
 
 const previewHandle = (tableId?: number) => {
 	previewRef.value.init(tableId)
+}
+
+const editHandle = (id?: number) => {
+	editRef.value.init(id)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

@@ -155,6 +155,11 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         return importList.stream().filter(cn.hutool.core.util.StrUtil::isNotBlank).collect(Collectors.toSet());
     }
 
+    @Override
+    public List<String> distinctList() {
+        return fieldTypeMapper.distinctAttrTypeList();
+    }
+
     /**
      * 批量查询
      */

@@ -50,3 +50,8 @@ export const tableFieldVOPageApi = (queryForm: any) => {
 export const tableFieldVOListApi = (queryForm: any) => {
 	return service.post('/tableField/voList', queryForm)
 }
+
+//提交字段
+export const tableFieldSubmitListApi = (dataFormList: Array<any>) => {
+	return service.post('/tableField/submitList', dataFormList)
+}

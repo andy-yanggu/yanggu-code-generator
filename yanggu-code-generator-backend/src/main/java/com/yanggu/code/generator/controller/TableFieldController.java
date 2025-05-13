@@ -142,4 +142,14 @@ public class TableFieldController {
         return tableFieldService.voList(query);
     }
 
+    /**
+     * 表字段提交
+     */
+    @PostMapping("/submitList")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "表字段提交")
+    public void submitList(@RequestBody @NotEmpty(message = "表字段ID列表不能为空") List<TableFieldDTO> submitList) {
+        tableFieldService.submitList(submitList);
+    }
+
 }

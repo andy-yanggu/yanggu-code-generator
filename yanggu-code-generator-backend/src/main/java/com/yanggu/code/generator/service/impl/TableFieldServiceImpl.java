@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -173,6 +174,13 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         tableFieldMapper.delete(queryWrapper);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void submitList(List<TableFieldDTO> submitList) {
+        List<TableFieldEntity> entityList = tableFieldMapstruct.dtoToEntity(submitList);
+        this.updateBatchById(entityList);
+    }
+
     /**
      * 批量查询
      */
@@ -192,6 +200,9 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
 
     private LambdaQueryWrapper<TableFieldEntity> buildQueryWrapper(TableFieldEntityQuery query) {
         LambdaQueryWrapper<TableFieldEntity> wrapper = Wrappers.lambdaQuery(TableFieldEntity.class);
+
+        //过滤字段
+        wrapper.eq(Objects.nonNull(query.getTableId()), TableFieldEntity::getTableId, query.getTableId());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

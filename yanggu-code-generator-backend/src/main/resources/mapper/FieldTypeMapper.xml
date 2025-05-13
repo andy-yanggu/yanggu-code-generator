@@ -106,4 +106,15 @@
           and t2.table_id = #{value}
     </select>
 
+    <select id="distinctAttrTypeList" resultType="java.lang.String">
+        SELECT
+            attr_type
+        FROM
+            gen_field_type
+        WHERE
+            is_delete = 0
+        GROUP BY
+            attr_type
+    </select>
+
 </mapper>

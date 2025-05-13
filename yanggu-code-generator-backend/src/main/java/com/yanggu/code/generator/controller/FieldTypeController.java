@@ -142,4 +142,14 @@ public class FieldTypeController {
         return fieldTypeService.voList(query);
     }
 
+    /**
+     * 去重字段类型列表
+     */
+    @GetMapping("/distinctList")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "去重字段类型列表")
+    public List<String> distinctList() {
+        return fieldTypeService.distinctList();
+    }
+
 }

@@ -207,6 +207,35 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         return templateGroupId;
     }
 
+    /**
+     * 批量查询
+     */
+    @Override
+    public List<TableVO> detailList(List<Long> idList) {
+        List<TableEntity> entityList = tableMapper.selectByIds(idList);
+        return tableMapstruct.entityToVO(entityList);
+    }
+
+    private TableEntity selectById(Long id) {
+        TableEntity entity = tableMapper.selectById(id);
+        if (entity == null) {
+            throw new BusinessException(DATA_NOT_EXIST, "表", id);
+        }
+        return entity;
+    }
+
+    private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableEntityQuery query) {
+        LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
+
+        //过滤字段
+        wrapper.like(StrUtil.isNotBlank(query.getTableName()), TableEntity::getTableName, query.getTableName());
+        wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
+
+        //排序字段
+        MybatisUtil.orderBy(wrapper, query.getOrders());
+        return wrapper;
+    }
+
     private void importTable(ProjectEntity project, DataSourceBO dataSource, String tableName) {
         Long projectId = project.getId();
 
@@ -243,35 +272,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         return tableMapper.selectOne(Wrappers.lambdaQuery(TableEntity.class)
                 .eq(TableEntity::getProjectId, projectId)
                 .eq(TableEntity::getTableName, tableName));
-    }
-
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<TableVO> detailList(List<Long> idList) {
-        List<TableEntity> entityList = tableMapper.selectByIds(idList);
-        return tableMapstruct.entityToVO(entityList);
-    }
-
-    private TableEntity selectById(Long id) {
-        TableEntity entity = tableMapper.selectById(id);
-        if (entity == null) {
-            throw new BusinessException(DATA_NOT_EXIST, "表", id);
-        }
-        return entity;
-    }
-
-    private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableEntityQuery query) {
-        LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
-
-        //过滤字段
-        wrapper.like(StrUtil.isNotBlank(query.getTableName()), TableEntity::getTableName, query.getTableName());
-        wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
-
-        //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
-        return wrapper;
     }
 
 }

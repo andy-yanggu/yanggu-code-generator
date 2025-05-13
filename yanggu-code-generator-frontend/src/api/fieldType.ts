@@ -50,3 +50,7 @@ export const fieldTypeVOPageApi = (queryForm: any) => {
 export const fieldTypeVOListApi = (queryForm: any) => {
 	return service.post('/fieldType/voList', queryForm)
 }
+
+export const fieldTypeListApi = () => {
+	return service.get('/fieldType/distinctList')
+}
