@@ -4,7 +4,7 @@ package com.yanggu.code.generator.service;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,10 +15,12 @@ public interface GeneratorService {
 
     List<TreeVO> tableTreeData(GeneratorTableQuery tableQuery);
 
-    void tableDownloadTemplateContent(Long tableId, Long templateId, HttpServletResponse response) throws IOException;
+    ResponseEntity<byte[]> tableDownloadTemplateContent(Long tableId, Long templateId) throws IOException;
 
-    void tableDownloadZip(List<Long> tableIds, HttpServletResponse response) throws IOException;
+    ResponseEntity<byte[]> tableBatchDownloadZip(List<Long> tableIds) throws IOException;
 
     void tableDownloadLocal(GeneratorTableQuery tableQuery);
+
+    ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery);
 
 }

@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
 import { ElLoading } from 'element-plus'
-import { generatorTableDownloadZipApi, generatorTableDownloadLocalApi, generatorTablePreviewApi, generatorTableTreeDataApi } from '@/api/generator'
+import { generatorTableDownloadApi, generatorTableDownloadLocalApi, generatorTablePreviewApi, generatorTableTreeDataApi } from '@/api/generator'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
@@ -124,7 +124,11 @@ const handleCopy = (content: string) => {
 const generatorCode = item => {
 	const tableId = item.tableId
 	if (item.generatorType === 0) {
-		generatorTableDownloadZipApi([tableId])
+		const dataForm = {
+			tableId: tableId,
+			templateId: item.templateId
+		}
+		generatorTableDownloadApi(dataForm)
 	} else if (item.generatorType === 1) {
 		const dataForm = {
 			tableId: tableId,

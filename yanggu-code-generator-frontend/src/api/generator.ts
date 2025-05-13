@@ -11,8 +11,14 @@ export const generatorTableTreeDataApi = (dataForm: any) => {
 }
 
 // 生成代码（zip压缩包）
-export const generatorTableDownloadZipApi = (tableIds: number[]) => {
-	return service.get('/generator/table/downloadZip?tableIds=' + tableIds.join(','))
+export const generatorTableDownloadZipApi = (tableList: Array<number>) => {
+	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip?tableIdList=' + tableList.join(',')
+}
+
+//下载单文件
+export const generatorTableDownloadApi = (dataForm: any) => {
+	location.href =
+		import.meta.env.VITE_API_URL + '/generator/table/download-template-content?tableId=' + dataForm.tableId + '&templateId=' + dataForm.templateId
 }
 
 // 下载到本地

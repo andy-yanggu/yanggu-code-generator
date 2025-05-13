@@ -5,6 +5,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.text.NamingCase;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.BaseClassModel;
 import com.yanggu.code.generator.domain.model.TableDataModel;
@@ -22,6 +23,9 @@ import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -143,7 +147,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public void tableDownloadTemplateContent(Long tableId, Long templateId, HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> tableDownloadTemplateContent(Long tableId, Long templateId) throws IOException {
         GeneratorTableQuery tableQuery = new GeneratorTableQuery();
         tableQuery.setTableId(tableId);
         tableQuery.setTemplateIdList(List.of(templateId));
@@ -154,16 +158,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         outputStream.write(preview.getContent().getBytes());
         byte[] data = outputStream.toByteArray();
 
-        response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=" + preview.getFileName());
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-
-        IoUtil.write(response.getOutputStream(), false, data);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + preview.getFileName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(data);
     }
 
     @Override
-    public void tableDownloadZip(List<Long> tableIds, HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> tableBatchDownloadZip(List<Long> tableIds) throws IOException {
         List<PreviewVO> list = new ArrayList<>();
         tableIds.forEach(tableId -> {
             GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
@@ -174,7 +176,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         });
 
-        downloadZip2(list, response);
+        return downloadZip2(list);
     }
 
     @Override
@@ -183,9 +185,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         downloadLocal(list);
     }
 
-    private void downloadZip2(List<PreviewVO> list, HttpServletResponse response) throws IOException {
+    @Override
+    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
+        return null;
+    }
+
+    private ResponseEntity<byte[]> downloadZip2(List<PreviewVO> list) throws IOException {
         if (CollUtil.isEmpty(list)) {
-            return;
+            throw new BusinessException("暂不支持");
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
@@ -205,13 +212,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         // zip压缩包数据
         byte[] data = outputStream.toByteArray();
 
-        String dateTime = cn.hutool.core.date.DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
-        response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=maku_" + dateTime + ".zip");
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-
-        IoUtil.write(response.getOutputStream(), false, data);
+        String dateTime = DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=maku_" + dateTime + ".zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(data);
     }
 
     private void downloadLocal(List<PreviewVO> list) {

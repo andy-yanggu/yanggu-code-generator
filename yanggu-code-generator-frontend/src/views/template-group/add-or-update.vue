@@ -1,17 +1,17 @@
 <template>
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-	                <el-form-item label="模板组名称" prop="groupName">
-                <el-input v-model="dataForm.groupName" placeholder="请输入模板组名称"></el-input>
-            </el-form-item>
-            <el-form-item label="模板组类型（0-项目，1-表）" prop="type">
-                <el-select v-model="dataForm.type" clearable placeholder="请选择模板组类型（0-项目，1-表）">
-                    <el-option v-for="item in gen_template_group_type_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="模板组描述" prop="groupDesc">
-                <el-input v-model="dataForm.groupDesc" placeholder="请输入模板组描述"></el-input>
-            </el-form-item>
+			<el-form-item label="模板组名称" prop="groupName">
+				<el-input v-model="dataForm.groupName" placeholder="请输入模板组名称"></el-input>
+			</el-form-item>
+			<el-form-item label="模板组类型" prop="type">
+				<el-select v-model="dataForm.type" clearable placeholder="请选择模板组类型">
+					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="模板组描述" prop="groupDesc">
+				<el-input v-model="dataForm.groupDesc" placeholder="请输入模板组描述"></el-input>
+			</el-form-item>
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
@@ -24,7 +24,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/templateGroup'
-import { gen_template_group_type_enum } from '@/constant/enum'
+import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -38,7 +38,8 @@ const dataForm = reactive({
 	groupDesc: '',
 	createTime: '',
 	updateTime: '',
-	isDelete: ''})
+	isDelete: ''
+})
 
 const init = (id?: number) => {
 	visible.value = true
@@ -62,7 +63,7 @@ const getTemplateGroup = (id: number) => {
 
 const dataRules = ref({
 	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
 // 表单提交
