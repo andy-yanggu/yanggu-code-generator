@@ -24,6 +24,7 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -169,6 +170,16 @@ public class TemplateGroupController {
     @Operation(summary = "导出模板组")
     public void export(@RequestParam("idList") List<Long> idList, HttpServletResponse response) throws IOException {
         templateGroupService.export(idList, response);
+    }
+
+    /**
+     * 导入模板组
+     */
+    @PostMapping("/import")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "导入模板组")
+    public void importTemplateGroup(@RequestParam("file") MultipartFile file) throws Exception {
+        templateGroupService.importTemplateGroup(file);
     }
 
 }

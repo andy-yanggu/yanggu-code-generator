@@ -2,6 +2,7 @@ package com.yanggu.code.generator.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,7 +14,6 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
-import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
@@ -28,6 +28,7 @@ import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -225,6 +226,28 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         List<TemplateEntity> templateList = templateService.selectByGroupId(id);
         templateGroup.setTemplateList(templateList);
         return templateGroup;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void importTemplateGroup(MultipartFile file) throws IOException {
+        String data = IoUtil.read(file.getInputStream(), CharsetUtil.CHARSET_UTF_8);
+        List<TemplateGroupEntity> list = JSONUtil.toList(data, TemplateGroupEntity.class);
+        list.forEach(templateGroup -> {
+            templateGroup.setId(null);
+            templateGroup.setCreateTime(new Date());
+            templateGroupMapper.insert(templateGroup);
+
+            List<TemplateEntity> templateList = templateGroup.getTemplateList();
+            if (CollUtil.isNotEmpty(templateList)) {
+                templateList.forEach(template -> {
+                    template.setId(null);
+                    template.setTemplateGroupId(templateGroup.getId());
+                    template.setCreateTime(new Date());
+                    templateService.save(template);
+                });
+            }
+        });
     }
 
     /**

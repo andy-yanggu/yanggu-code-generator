@@ -21,6 +21,9 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
+				<import2 ref="templateGroupImportRef" @refresh-data-list="getDataList"></import2>
+			</el-form-item>
+			<el-form-item>
 				<el-button type="primary" @click="exportHandle()">导出</el-button>
 			</el-form-item>
 			<el-form-item>
@@ -59,7 +62,7 @@
 		<!-- 弹窗, 新增 / 修改 -->
 		<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
 		<!-- 弹窗，复制模板组 -->
-		<copy-template-group ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy-template-group>
+		<copy ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy>
 	</el-card>
 
 	<el-dialog v-model="dialogVisible" title="模板配置" width="75%">
@@ -73,10 +76,12 @@ import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
-import CopyTemplateGroup from '@/views/template-group/copy-template-group.vue'
+import Copy from '@/views/template-group/copy.vue'
 import TemplateIndex from '../template/index.vue'
 import { ElMessage } from 'element-plus'
 import { exportTemplateGroupApi } from '@/api/templateGroup'
+import Import from './import.vue'
+import Import2 from './import2.vue'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/templateGroup/entityPage',
@@ -93,6 +98,7 @@ const addOrUpdateRef = ref()
 const copyTemplateGroupRef = ref()
 const currentGroupId = ref<number>(-1)
 const templateIndexRef = ref()
+const templateGroupImportRef = ref()
 
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
@@ -127,6 +133,8 @@ const exportHandle = () => {
 	}
 	exportTemplateGroupApi(idList)
 }
+
+const importHandle = () => {}
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
 </script>

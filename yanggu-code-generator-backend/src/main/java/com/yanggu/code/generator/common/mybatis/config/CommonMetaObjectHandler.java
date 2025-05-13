@@ -15,7 +15,7 @@ public class CommonMetaObjectHandler implements MetaObjectHandler {
         //插入的时候设置添加和修改时间的值
         this.setFieldValByName("createTime", new Date(), metaObject);
         this.setFieldValByName("updateTime", new Date(), metaObject);
-        this.setFieldValByName("isDelete", 0, metaObject);
+        this.setFieldValByName("isDelete", false, metaObject);
     }
 
     @Override
