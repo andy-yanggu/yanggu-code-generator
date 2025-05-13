@@ -9,12 +9,14 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.GenDataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
 import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
 import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
+import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.util.DbUtils;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     private DatasourceMapstruct datasourceMapstruct;
 
     @Autowired
-    private DataSource dataSource;
+    private ProjectService projectService;
 
     /**
      * 新增
@@ -71,6 +73,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         DatasourceEntity dbEntity = selectById(id);
+        check(List.of(id));
         //删除校验和关联删除
         datasourceMapper.deleteById(id);
     }
@@ -81,8 +84,18 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
+        check(idList);
         //删除校验和关联删除
         datasourceMapper.deleteByIds(idList);
+    }
+
+    private void check(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getDatasourceId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("数据源已被项目引用，不能删除");
+        }
     }
 
     /**
