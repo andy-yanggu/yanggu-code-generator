@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.domain.entity.BaseClassEntity;
 import com.yanggu.code.generator.domain.query.BaseClassVOQuery;
@@ -14,6 +15,7 @@ import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.mapper.BaseClassMapper;
 import com.yanggu.code.generator.service.BaseClassService;
+import com.yanggu.code.generator.service.ProjectService;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,9 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
 
     @Autowired
     private BaseClassMapstruct baseClassMapstruct;
+
+    @Autowired
+    private ProjectService projectService;
 
     /**
      * 新增
@@ -65,6 +70,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         BaseClassEntity dbEntity = selectById(id);
+        checkReference(List.of(id));
         //删除校验和关联删除
         baseClassMapper.deleteById(id);
     }
@@ -75,8 +81,18 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
+        checkReference(idList);
         //删除校验和关联删除
         baseClassMapper.deleteByIds(idList);
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getBaseClassId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("基类已被项目引用，不能删除");
+        }
     }
 
     /**

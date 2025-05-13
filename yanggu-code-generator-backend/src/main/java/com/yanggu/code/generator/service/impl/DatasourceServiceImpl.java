@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
@@ -73,7 +72,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         DatasourceEntity dbEntity = selectById(id);
-        check(List.of(id));
+        checkReference(List.of(id));
         //删除校验和关联删除
         datasourceMapper.deleteById(id);
     }
@@ -84,12 +83,12 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
-        check(idList);
+        checkReference(idList);
         //删除校验和关联删除
         datasourceMapper.deleteByIds(idList);
     }
 
-    private void check(List<Long> idList) {
+    private void checkReference(List<Long> idList) {
         LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
                 .in(ProjectEntity::getDatasourceId, idList);
         boolean exists = projectService.exists(queryWrapper);
