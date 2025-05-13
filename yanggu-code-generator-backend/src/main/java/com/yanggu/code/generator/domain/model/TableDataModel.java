@@ -1,7 +1,5 @@
 package com.yanggu.code.generator.domain.model;
 
-import com.yanggu.code.generator.domain.entity.BaseClassEntity;
-import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -83,7 +81,7 @@ public class TableDataModel {
     /**
      * Entity继承基类
      */
-    private BaseClassEntity baseClass;
+    private BaseClassModel baseClass;
 
     private Set<String> importList;
 

@@ -1,11 +1,13 @@
 package com.yanggu.code.generator.controller;
 
 import cn.hutool.core.io.IoUtil;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.common.response.Result;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.service.GeneratorService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +29,12 @@ public class GeneratorController {
     @Autowired
     private GeneratorService generatorService;
 
-    ///**
-    // * 生成代码（zip压缩包）
-    // */
-    //@GetMapping("/table/downloadZip")
-    //public void downloadZip(@RequestParam("tableIds") List<Long> tableIds, HttpServletResponse response) throws Exception {
-    //    generatorService.downloadZip(tableIds, response);
-    //}
-
-    ///**
-    // * 生成代码（本地）
-    // */
-    //@GetMapping("/table/downloadLocal")
-    //public void downloadLocal(@RequestParam("tableId") Long tableId) {
-    //    generatorService.downloadLocal(tableId);
-    //}
-
     /**
      * 表预览代码
      */
     @PostMapping("/table/preview")
+    @ApiOperationSupport(order = 1)
+    @Operation(summary = "表预览代码")
     public List<PreviewVO> tablePreview(@RequestBody GeneratorTableQuery tableQuery) {
         return generatorService.tablePreview(tableQuery);
     }
@@ -55,30 +43,29 @@ public class GeneratorController {
      * 表树形数据
      */
     @PostMapping("/table/treeData")
+    @ApiOperationSupport(order = 2)
+    @Operation(summary = "表树形数据")
     public List<TreeVO> tableTreeData(@RequestBody GeneratorTableQuery tableQuery) {
         return generatorService.tableTreeData(tableQuery);
     }
 
-    ///**
-    // * 下载单个文件代码
-    // */
-    //@GetMapping("/table/download-template-content")
-    //public void download(@RequestParam("tableId") Long tableId,
-    //                     @RequestParam("templateId") Long templateId,
-    //                     HttpServletResponse response) throws Exception {
-    //    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    //    TemplateInfo templateInfo = generatorService.generatorCode(tableId, templateId);
-    //
-    //    outputStream.write(templateInfo.getTemplateData().getBytes());
-    //    byte[] data = outputStream.toByteArray();
-    //
-    //    response.reset();
-    //    response.setHeader("Content-Disposition", "attachment; filename=" + templateInfo.getFileName());
-    //    response.addHeader("Content-Length", "" + data.length);
-    //    response.setContentType("application/octet-stream; charset=UTF-8");
-    //
-    //    IoUtil.write(response.getOutputStream(), false, data);
-    //}
+    /**
+     * 表生成代码（zip压缩包）
+     */
+    @GetMapping("/table/downloadZip")
+    @Operation(summary = "生成代码（zip压缩包）")
+    public void tableDownloadZip(@RequestParam("tableIds") List<Long> tableIds, HttpServletResponse response) throws Exception {
+        generatorService.tableDownloadZip(tableIds, response);
+    }
+
+    /**
+     * 表生成代码（本地）
+     */
+    @PostMapping("/table/downloadLocal")
+    @Operation(summary = "表生成代码（本地）")
+    public void tableDownloadLocal(@RequestBody GeneratorTableQuery tableQuery) {
+        generatorService.tableDownloadLocal(tableQuery);
+    }
 
     ///**
     // * 下载到服务器本地

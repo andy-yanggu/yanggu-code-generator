@@ -1,25 +1,37 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.text.NamingCase;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yanggu.code.generator.domain.entity.*;
+import com.yanggu.code.generator.domain.model.BaseClassModel;
 import com.yanggu.code.generator.domain.model.TableDataModel;
 import com.yanggu.code.generator.domain.model.TableFieldModel;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
+import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.TemplateUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.rmi.ServerException;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static cn.hutool.core.date.DatePattern.PURE_DATETIME_PATTERN;
 
 /**
  * 代码生成服务实现类
@@ -51,6 +63,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Autowired
     private TableFieldMapstruct tableFieldMapstruct;
 
+    @Autowired
+    private BaseClassMapstruct baseClassMapstruct;
+
     @Override
     public List<PreviewVO> tablePreview(GeneratorTableQuery tableQuery) {
         Long tableId = tableQuery.getTableId();
@@ -77,10 +92,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     PreviewVO previewVO = new PreviewVO();
                     if (TemplateTypeEnum.FILE.getCode().equals(templateType)) {
                         content = TemplateUtils.getContent(template.getTemplateContent(), tableDataModel);
-                        previewVO.setIsFile(true);
                     } else {
                         content = "";
-                        previewVO.setIsFile(false);
                     }
                     String filePath = TemplateUtils.getContent(template.getGeneratorPath(), tableDataModel);
                     String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
@@ -91,6 +104,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     previewVO.setTableId(tableId);
                     previewVO.setTemplateType(templateType);
                     previewVO.setTemplateGroupType(templateGroup.getType());
+                    previewVO.setGeneratorType(tableDataModel.getGeneratorType());
                     return previewVO;
                 })
                 .toList();
@@ -110,17 +124,110 @@ public class GeneratorServiceImpl implements GeneratorService {
         //渲染模板并输出
         for (TemplateEntity template : templateGroup.getTemplateList()) {
             dataModel.setTemplateName(template.getTemplateName());
+
+            TreeVO treeVO = new TreeVO();
+            //路径
             String path = TemplateUtils.getContent(template.getGeneratorPath(), dataModel);
-            TreeVO previewVO = new TreeVO();
-            previewVO.setFilePath(path);
-            String fileName = TemplateUtils.getContent(template.getGeneratorPath(), dataModel);
-            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-            previewVO.setLabel(fileName);
-            previewVO.setTemplateId(template.getId());
-            treeList.add(previewVO);
+            treeVO.setFilePath(path);
+
+            //文件名称
+            String fileName = path.substring(path.lastIndexOf("/") + 1);
+            treeVO.setLabel(fileName);
+
+            //模板ID
+            treeVO.setTemplateId(template.getId());
+            treeList.add(treeVO);
         }
 
         return buildTree(treeList);
+    }
+
+    @Override
+    public void tableDownloadTemplateContent(Long tableId, Long templateId, HttpServletResponse response) throws IOException {
+        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+        tableQuery.setTableId(tableId);
+        tableQuery.setTemplateIdList(List.of(templateId));
+        List<PreviewVO> list = tablePreview(tableQuery);
+        PreviewVO preview = list.getFirst();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write(preview.getContent().getBytes());
+        byte[] data = outputStream.toByteArray();
+
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=" + preview.getFileName());
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+
+        IoUtil.write(response.getOutputStream(), false, data);
+    }
+
+    @Override
+    public void tableDownloadZip(List<Long> tableIds, HttpServletResponse response) throws IOException {
+        List<PreviewVO> list = new ArrayList<>();
+        tableIds.forEach(tableId -> {
+            GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
+            generatorTableQuery.setTableId(tableId);
+            List<PreviewVO> tempList = tablePreview(generatorTableQuery);
+            if (CollUtil.isNotEmpty(tempList)) {
+                list.addAll(tempList);
+            }
+        });
+
+        downloadZip2(list, response);
+    }
+
+    @Override
+    public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
+        List<PreviewVO> list = tablePreview(tableQuery);
+        downloadLocal(list);
+    }
+
+    private void downloadZip2(List<PreviewVO> list, HttpServletResponse response) throws IOException {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(outputStream);
+        for (PreviewVO previewVO : list) {
+            try {
+                // 添加到zip
+                zip.putNextEntry(new ZipEntry(previewVO.getFilePath()));
+                IoUtil.writeUtf8(zip, false, previewVO.getContent());
+                zip.flush();
+                zip.closeEntry();
+            } catch (IOException e) {
+                throw new ServerException("模板写入失败：" + previewVO.getFilePath(), e);
+            }
+        }
+        IoUtil.close(zip);
+
+        // zip压缩包数据
+        byte[] data = outputStream.toByteArray();
+
+        String dateTime = cn.hutool.core.date.DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=maku_" + dateTime + ".zip");
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+
+        IoUtil.write(response.getOutputStream(), false, data);
+    }
+
+    private void downloadLocal(List<PreviewVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        for (PreviewVO previewVO : list) {
+            Integer templateType = previewVO.getTemplateType();
+            //写入到文件
+            if (TemplateTypeEnum.FILE.getCode().equals(templateType)) {
+                FileUtil.writeUtf8String(previewVO.getContent(), previewVO.getFilePath());
+            } else {
+                //生成文件夹
+                FileUtil.mkdir(previewVO.getFilePath());
+            }
+        }
     }
 
     /**
@@ -238,11 +345,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (baseClass == null) {
             return;
         }
-        baseClass.setPackageName(baseClass.getPackageName());
-        tableDataModel.setBaseClass(baseClass);
+
+        BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
+        tableDataModel.setBaseClass(baseClassModel);
 
         // 基类字段
-        String[] fields = baseClass.getFields().split(",");
+        String[] fields = baseClassModel.getFields().split(",");
 
         // 标注为基类字段
         for (TableFieldModel field : tableDataModel.getFieldList()) {

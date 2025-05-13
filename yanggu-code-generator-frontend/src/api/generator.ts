@@ -5,7 +5,17 @@ export const generatorTablePreviewApi = (dataForm: any) => {
 	return service.post('/generator/table/preview', dataForm)
 }
 
-//
+//表树形数据
 export const generatorTableTreeDataApi = (dataForm: any) => {
 	return service.post('/generator/table/treeData', dataForm)
+}
+
+// 生成代码（zip压缩包）
+export const generatorTableDownloadZipApi = (tableIds: number[]) => {
+	return service.get('/generator/table/downloadZip?tableIds=' + tableIds.join(','))
+}
+
+// 下载到本地
+export const generatorTableDownloadLocalApi = (dataForm: any) => {
+	return service.post('/generator/table/downloadLocal', dataForm)
 }

@@ -22,7 +22,7 @@
 								<el-col :span="18"></el-col>
 								<el-col :span="6" style="text-align: right">
 									<el-button @click="handleCopy(item.content)">复制</el-button>
-									<el-button @click="downloadTemplateData(item.templateId)">下载</el-button>
+									<el-button @click="generatorCode(item)">生成代码</el-button>
 								</el-col>
 							</el-row>
 							<code-mirror v-model="item.content" :height="680"></code-mirror>
@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
 import { ElLoading } from 'element-plus'
-import { generatorTablePreviewApi, generatorTableTreeDataApi } from '@/api/generator'
+import { generatorTableDownloadZipApi, generatorTableDownloadLocalApi, generatorTablePreviewApi, generatorTableTreeDataApi } from '@/api/generator'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
@@ -120,13 +120,23 @@ const handleCopy = (content: string) => {
 		})
 }
 
-//下载单个模板代码
-const downloadTemplateData = (id: number) => {
-	const params = {
-		templateId: id,
-		tableId: preview.tableId
+//生成代码
+const generatorCode = item => {
+	const tableId = item.tableId
+	if (item.generatorType === 0) {
+		generatorTableDownloadZipApi([tableId])
+	} else if (item.generatorType === 1) {
+		const dataForm = {
+			tableId: tableId,
+			templateIdList: [item.templateId]
+		}
+		generatorTableDownloadLocalApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到本地',
+				duration: 1000
+			})
+		})
 	}
-	// useDownloadTemplateApi(params)
 }
 </script>
 

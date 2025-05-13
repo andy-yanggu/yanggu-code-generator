@@ -9,6 +9,11 @@ import lombok.Data;
 public class PreviewVO {
 
     /**
+     * 表ID
+     */
+    private Long tableId;
+
+    /**
      * 模板ID
      */
     private Long templateId;
@@ -39,13 +44,8 @@ public class PreviewVO {
     private String filePath;
 
     /**
-     * 表ID
+     * 生成方式  0：zip压缩包   1：服务器本地
      */
-    private Long tableId;
-
-    /**
-     * 是否是文件。true-是，false-否
-     */
-    private Boolean isFile;
+    private Integer generatorType;
 
 }
