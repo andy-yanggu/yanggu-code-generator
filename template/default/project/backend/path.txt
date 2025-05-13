@@ -1,0 +1,4 @@
+${backendPath}/pom.xml
+${backendPath}/.gitignore
+${backendPath}/src/main/resources/application.yaml
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameUnderline}/${projectNamePascal}Application.java
