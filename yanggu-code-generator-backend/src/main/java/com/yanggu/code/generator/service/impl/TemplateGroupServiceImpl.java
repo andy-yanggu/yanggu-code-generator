@@ -10,13 +10,16 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
+import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
+import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,6 +53,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Autowired
     private TemplateService templateService;
 
+    @Autowired
+    private ProjectService projectService;
+
     /**
      * 新增
      */
@@ -80,6 +86,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         TemplateGroupEntity dbEntity = selectById(id);
+        checkReference(List.of(id));
         //删除校验和关联删除
         templateGroupMapper.deleteById(id);
     }
@@ -90,8 +97,20 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
+        checkReference(idList);
         //删除校验和关联删除
         templateGroupMapper.deleteByIds(idList);
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getProjectTemplateGroupId, idList)
+                .or()
+                .in(ProjectEntity::getTableTemplateGroupId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("模板组已被项目引用，不能删除");
+        }
     }
 
     /**
