@@ -18,7 +18,6 @@ import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.TemplateUtils;
-import jakarta.servlet.http.HttpServletResponse;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
@@ -176,7 +175,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         });
 
-        return downloadZip2(list);
+        return downloadZip(list);
     }
 
     @Override
@@ -186,11 +185,12 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        return null;
+    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException {
+        List<PreviewVO> tempList = tablePreview(tableQuery);
+        return downloadZip(tempList);
     }
 
-    private ResponseEntity<byte[]> downloadZip2(List<PreviewVO> list) throws IOException {
+    private ResponseEntity<byte[]> downloadZip(List<PreviewVO> list) throws IOException {
         if (CollUtil.isEmpty(list)) {
             throw new BusinessException("暂不支持");
         }
@@ -359,9 +359,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         // 标注为基类字段
         for (TableFieldModel field : tableDataModel.getFieldList()) {
-            if (ArrayUtil.contains(fields, field.getFieldName())) {
-                field.setBaseField(true);
-            }
+            field.setBaseField(ArrayUtil.contains(fields, field.getFieldName()));
         }
     }
 

@@ -88,7 +88,9 @@
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TableVO">
         SELECT
             <include refid="allColumns"/>,
-            p.project_name
+            p.project_name,
+            p.table_template_group_id,
+            p.generator_type
         FROM
             yanggu_code_generator.gen_table AS t
         JOIN yanggu_code_generator.gen_project AS p ON t.project_id = p.id AND p.is_delete = 0

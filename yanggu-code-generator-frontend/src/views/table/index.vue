@@ -34,6 +34,7 @@
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
 					<el-button type="primary" link @click="editHandle(scope.row.id)">字段配置</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
@@ -62,18 +63,29 @@
 
 		<!-- 字段配置 -->
 		<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
+
+		<!-- 模板组展示 -->
+		<template-index
+			ref="templateIndexRef"
+			:key="currentTemplateGroupId"
+			:table-id="currentTableId"
+			:generator-type="currentGeneratorType"
+			:template-group-id="currentTemplateGroupId"
+		></template-index>
 	</el-card>
 </template>
 
 <script setup lang="ts">
 import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
 import Update from './update.vue'
 import Preview from './preview.vue'
 import FieldConfig from './field-config.vue'
+import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
+import { ElMessage } from 'element-plus/es'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/table/voPage',
@@ -89,6 +101,10 @@ const addOrUpdateRef = ref()
 const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
+const currentTemplateGroupId = ref()
+const currentTableId = ref()
+const currentGeneratorType = ref()
+const templateIndexRef = ref()
 
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
@@ -112,6 +128,17 @@ const previewHandle = (tableId?: number) => {
 
 const editHandle = (id?: number) => {
 	editRef.value.init(id)
+}
+
+//生成代码
+const generatorCode = item => {
+	currentTemplateGroupId.value = item.tableTemplateGroupId
+	currentTableId.value = item.id
+	currentGeneratorType.value = item.generatorType
+	nextTick(() => {
+		templateIndexRef.value.init()
+	})
+	console.log('生成代码按钮被点击了')
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

@@ -21,6 +21,6 @@ public interface GeneratorService {
 
     void tableDownloadLocal(GeneratorTableQuery tableQuery);
 
-    ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery);
+    ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException;
 
 }

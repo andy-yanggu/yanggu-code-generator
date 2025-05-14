@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -59,8 +60,8 @@ public class GeneratorController {
      * 表生成代码（下载单个文件代码）
      */
     @GetMapping("/table/download-template-content")
-    public ResponseEntity<byte[]> download(@RequestParam("tableId") Long tableId,
-                                           @RequestParam("templateId") Long templateId) throws Exception {
+    public ResponseEntity<byte[]> tableDownloadTemplateContent(@RequestParam("tableId") Long tableId,
+                                                               @RequestParam("templateId") Long templateId) throws Exception {
         return generatorService.tableDownloadTemplateContent(tableId, templateId);
     }
 
@@ -76,9 +77,9 @@ public class GeneratorController {
     /**
      * 表生成代码（zip压缩包）
      */
-    @PostMapping("/table/downloadZip")
+    @GetMapping("/table/downloadZip")
     @Operation(summary = "表生成代码（zip压缩包）")
-    public ResponseEntity<byte[]> tableDownloadZip(@RequestBody GeneratorTableQuery tableQuery) throws Exception {
+    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException {
         return generatorService.tableDownloadZip(tableQuery);
     }
 

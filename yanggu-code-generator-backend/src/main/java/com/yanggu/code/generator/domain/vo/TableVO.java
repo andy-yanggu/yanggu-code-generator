@@ -99,4 +99,16 @@ public class TableVO extends BaseVO implements Serializable {
 	@Schema(description = "是否存在")
 	private Boolean exist;
 
+	/**
+	 * 表模板组ID
+	 */
+	@Schema(description = "表模板组ID")
+	private Long tableTemplateGroupId;
+
+	/**
+	 * 生成方式（0-zip压缩包，1-服务器本地）
+	 */
+	@Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
+	private Integer generatorType;
+
 }

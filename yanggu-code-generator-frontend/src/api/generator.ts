@@ -10,15 +10,16 @@ export const generatorTableTreeDataApi = (dataForm: any) => {
 	return service.post('/generator/table/treeData', dataForm)
 }
 
-// 生成代码（zip压缩包）
-export const generatorTableDownloadZipApi = (tableList: Array<number>) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip?tableIdList=' + tableList.join(',')
-}
-
 //下载单文件
 export const generatorTableDownloadApi = (dataForm: any) => {
 	location.href =
 		import.meta.env.VITE_API_URL + '/generator/table/download-template-content?tableId=' + dataForm.tableId + '&templateId=' + dataForm.templateId
+}
+
+// 生成代码（zip压缩包）
+export const generatorTableDownloadZipApi = (dataForm: any) => {
+	location.href =
+		import.meta.env.VITE_API_URL + '/generator/table/downloadZip?tableId=' + dataForm.tableId + '&templateIdList=' + dataForm.templateIdList.join(',')
 }
 
 // 下载到本地
