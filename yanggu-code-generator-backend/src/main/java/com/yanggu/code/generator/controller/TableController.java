@@ -153,4 +153,14 @@ public class TableController {
         tableService.importTable(importDTO);
     }
 
+    /**
+     * 同步表
+     */
+    @PutMapping("/sync")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "同步表")
+    public void syncTable(@RequestParam("id") Long id) throws Exception {
+        tableService.syncTable(id);
+    }
+
 }

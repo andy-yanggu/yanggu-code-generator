@@ -54,3 +54,8 @@ export const tableVOListApi = (queryForm: any) => {
 export const tableImportApi = (dataForm: any) => {
 	return service.post('/table/import', dataForm)
 }
+
+//同步表数据
+export const tableSyncApi = (id: number) => {
+	return service.put('/table/sync?id=' + id)
+}

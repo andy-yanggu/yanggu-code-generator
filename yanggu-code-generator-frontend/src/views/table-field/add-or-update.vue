@@ -118,7 +118,6 @@ const dataForm = reactive({
 	logicDelete: '',
 	logicDeleteValue: '',
 	logicNotDeleteValue: '',
-	baseField: '',
 	formItem: '',
 	formRequired: '',
 	formType: '',
@@ -128,10 +127,7 @@ const dataForm = reactive({
 	gridSort: '',
 	queryItem: '',
 	queryType: '',
-	queryFormType: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	queryFormType: ''
 })
 
 const init = (id?: number) => {

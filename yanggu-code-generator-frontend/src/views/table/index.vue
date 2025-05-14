@@ -37,6 +37,7 @@
 					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
 					<el-button type="primary" link @click="editHandle(scope.row.id)">字段配置</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
+					<el-button type="primary" link @click="syncHandle(scope.row)">同步</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -85,7 +86,9 @@ import Preview from './preview.vue'
 import FieldConfig from './field-config.vue'
 import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
+import { tableSyncApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
+import { ElMessageBox } from 'element-plus'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/table/voPage',
@@ -138,7 +141,20 @@ const generatorCode = item => {
 	nextTick(() => {
 		templateIndexRef.value.init()
 	})
-	console.log('生成代码按钮被点击了')
+}
+
+const syncHandle = (row: any) => {
+	ElMessageBox.confirm(`确定同步数据表${row.tableName}吗?`, '提示', {
+		confirmButtonText: '确定',
+		cancelButtonText: '取消',
+		type: 'warning'
+	})
+		.then(() => {
+			tableSyncApi(row.id).then(() => {
+				ElMessage.success('同步成功')
+			})
+		})
+		.catch(() => {})
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

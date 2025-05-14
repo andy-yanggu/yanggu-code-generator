@@ -29,10 +29,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.rmi.ServerException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -205,6 +209,61 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
             throw new BusinessException("模板组不存在");
         }
         return templateGroupId;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncTable(Long id) throws Exception {
+        TableEntity table = this.getById(id);
+        Long projectId = table.getProjectId();
+        ProjectEntity project = projectService.getById(projectId);
+
+        // 初始化配置信息
+        DataSourceBO datasource = datasourceService.get(project.getDatasourceId());
+
+        // 从数据库获取表字段列表
+        List<TableFieldEntity> dbTableFieldList = GenUtils.getTableFieldList(datasource, table.getId(), table.getTableName());
+        if (dbTableFieldList.isEmpty()) {
+            throw new ServerException("同步失败，请检查数据库表：" + table.getTableName());
+        }
+
+        List<String> dbTableFieldNameList = dbTableFieldList.stream()
+                .map(TableFieldEntity::getFieldName)
+                .toList();
+
+        // 表字段列表
+        List<TableFieldEntity> tableFieldList = tableFieldService.getByTableId(id);
+
+        Map<String, TableFieldEntity> tableFieldMap = tableFieldList.stream()
+                .collect(Collectors.toMap(TableFieldEntity::getFieldName, Function.identity()));
+
+        // 初始化字段数据
+        tableFieldService.initFieldList(dbTableFieldList);
+
+        // 同步表结构字段
+        dbTableFieldList.forEach(field -> {
+            // 新增字段
+            if (!tableFieldMap.containsKey(field.getFieldName())) {
+                tableFieldService.save(field);
+                return;
+            }
+
+            // 修改字段
+            TableFieldEntity updateField = tableFieldMap.get(field.getFieldName());
+            updateField.setPrimaryPk(field.getPrimaryPk());
+            updateField.setFieldComment(field.getFieldComment());
+            updateField.setFieldType(field.getFieldType());
+            updateField.setAttrType(field.getAttrType());
+
+            tableFieldService.updateById(updateField);
+        });
+
+        // 删除数据库表中没有的字段
+        List<TableFieldEntity> delFieldList = tableFieldList.stream().filter(field -> !dbTableFieldNameList.contains(field.getFieldName())).toList();
+        if (!delFieldList.isEmpty()) {
+            List<Long> fieldIds = delFieldList.stream().map(TableFieldEntity::getId).collect(Collectors.toList());
+            tableFieldService.removeBatchByIds(fieldIds);
+        }
     }
 
     /**

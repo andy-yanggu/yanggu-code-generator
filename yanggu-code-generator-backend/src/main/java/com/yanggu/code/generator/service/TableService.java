@@ -81,4 +81,8 @@ public interface TableService extends IService<TableEntity> {
      */
     Long getTableTemplateGroupId(Long id);
 
+    /**
+     * 同步表
+     */
+    void syncTable(Long id) throws Exception;
 }

@@ -102,12 +102,6 @@ public class TableFieldDTO implements Serializable {
 	private String logicNotDeleteValue;
 
 	/**
-	 * 基类字段 0：否  1：是
-	 */
-	@Schema(description = "基类字段 0：否  1：是")
-	private Boolean baseField;
-
-	/**
 	 * 表单项 0：否  1：是
 	 */
 	@Schema(description = "表单项 0：否  1：是")
