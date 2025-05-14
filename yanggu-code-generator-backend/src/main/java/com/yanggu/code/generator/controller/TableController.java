@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.controller;
 
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
+import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -161,6 +162,16 @@ public class TableController {
     @Operation(summary = "同步表")
     public void syncTable(@RequestParam("id") Long id) throws Exception {
         tableService.syncTable(id);
+    }
+
+    /**
+     * 表批量生成代码检测接口
+     */
+    @PostMapping("/generateCheck")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "表批量生成代码检测接口")
+    public TableGenerateCheckVO generateCheck(@RequestBody @NotEmpty(message = "表ID列表不能为空") List<Long> idList) {
+        return tableService.generateCheck(idList);
     }
 
 }

@@ -39,4 +39,5 @@ public interface TableMapper extends BaseMapperPlus<TableEntity> {
      */
     List<TableVO> voList(@Param("query") TableVOQuery query);
 
+    List<Long> distinctProjectIdList(@Param("idList") List<Long> idList);
 }

@@ -9,6 +9,8 @@ public class GeneratorTableQuery {
 
     private Long tableId;
 
+    private List<Long> tableIdList;
+
     private List<Long> templateIdList;
 
 }

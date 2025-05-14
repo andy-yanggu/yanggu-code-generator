@@ -180,14 +180,30 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        List<PreviewVO> list = tablePreview(tableQuery);
+        List<PreviewVO> list = getPreviewData(tableQuery);
         downloadLocal(list);
     }
 
     @Override
     public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException {
-        List<PreviewVO> tempList = tablePreview(tableQuery);
-        return downloadZip(tempList);
+        List<PreviewVO> list = getPreviewData(tableQuery);
+        return downloadZip(list);
+    }
+
+    private List<PreviewVO> getPreviewData(GeneratorTableQuery tableQuery) {
+        Long tableId = tableQuery.getTableId();
+        List<Long> tableIdList = tableQuery.getTableIdList();
+        List<PreviewVO> list = new ArrayList<>();
+        if (tableId != null) {
+            list.addAll(tablePreview(tableQuery));
+        } else {
+            tableIdList.forEach(id -> {
+                GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
+                generatorTableQuery.setTableId(id);
+                list.addAll(tablePreview(generatorTableQuery));
+            });
+        }
+        return list;
     }
 
     private ResponseEntity<byte[]> downloadZip(List<PreviewVO> list) throws IOException {

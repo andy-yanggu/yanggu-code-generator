@@ -114,4 +114,19 @@
         <include refid="orderBySQL"/>
     </select>
 
+    <select id="distinctProjectIdList" resultType="java.lang.Long">
+        SELECT
+            project_id
+        FROM
+            yanggu_code_generator.gen_table
+        WHERE
+            is_delete = 0
+            AND id IN
+            <foreach collection="idList" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        GROUP BY
+            project_id
+    </select>
+
 </mapper>

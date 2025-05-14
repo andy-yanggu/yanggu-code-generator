@@ -15,6 +15,7 @@ import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.TableEntityQuery;
 import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.enums.FormLayoutEnum;
 import com.yanggu.code.generator.mapper.TableMapper;
@@ -24,6 +25,7 @@ import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableFieldService;
 import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.util.GenUtils;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -212,7 +214,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void syncTable(Long id) throws Exception {
         TableEntity table = this.getById(id);
         Long projectId = table.getProjectId();
@@ -264,6 +266,20 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
             List<Long> fieldIds = delFieldList.stream().map(TableFieldEntity::getId).collect(Collectors.toList());
             tableFieldService.removeBatchByIds(fieldIds);
         }
+    }
+
+    @Override
+    public TableGenerateCheckVO generateCheck(List<Long> idList) {
+        TableGenerateCheckVO checkVO = new TableGenerateCheckVO();
+        List<Long> projectIdList = tableMapper.distinctProjectIdList(idList);
+        if (CollUtil.isEmpty(projectIdList) || (CollUtil.isNotEmpty(projectIdList) && projectIdList.size() > 1)) {
+            checkVO.setCheckResult(false);
+        } else {
+            checkVO.setCheckResult(true);
+            ProjectEntity project = projectService.getById(projectIdList.getFirst());
+            checkVO.setGeneratorType(project.getGeneratorType());
+        }
+        return checkVO;
     }
 
     /**

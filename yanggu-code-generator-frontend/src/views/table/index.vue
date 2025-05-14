@@ -19,6 +19,9 @@
 				<el-button type="primary" @click="importHandle()">导入</el-button>
 			</el-form-item>
 			<el-form-item>
+				<el-button type="primary" @click="generatorCodeBatch()">生成代码</el-button>
+			</el-form-item>
+			<el-form-item>
 				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
@@ -86,9 +89,10 @@ import Preview from './preview.vue'
 import FieldConfig from './field-config.vue'
 import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
-import { tableSyncApi } from '@/api/table'
+import { tableSyncApi, tableGenerateCheckApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
+import { generatorTableDownloadZipApi, generatorTableDownloadLocalApi } from '@/api/generator'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/table/voPage',
@@ -140,6 +144,36 @@ const generatorCode = item => {
 	currentGeneratorType.value = item.generatorType
 	nextTick(() => {
 		templateIndexRef.value.init()
+	})
+}
+
+const generatorCodeBatch = () => {
+	const data = state.dataListSelections ? state.dataListSelections : []
+	if (data.length === 0) {
+		ElMessage.warning('请选择要生成代码的表')
+		return
+	}
+	tableGenerateCheckApi(data).then(res => {
+		const checkData = res.data
+		if (!checkData.checkResult) {
+			ElMessage.warning('当前选择的表不是同一个项目')
+			return
+		} else {
+			const generatorType = checkData.generatorType
+			const dataForm = {
+				tableIdList: data
+			}
+			if (generatorType === 0) {
+				generatorTableDownloadZipApi(dataForm)
+			} else if (generatorType === 1) {
+				generatorTableDownloadLocalApi(dataForm).then(() => {
+					ElMessage.success({
+						message: '代码已经下载到本地',
+						duration: 1000
+					})
+				})
+			}
+		}
 	})
 }
 

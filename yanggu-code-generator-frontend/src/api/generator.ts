@@ -18,8 +18,16 @@ export const generatorTableDownloadApi = (dataForm: any) => {
 
 // 生成代码（zip压缩包）
 export const generatorTableDownloadZipApi = (dataForm: any) => {
-	location.href =
-		import.meta.env.VITE_API_URL + '/generator/table/downloadZip?tableId=' + dataForm.tableId + '&templateIdList=' + dataForm.templateIdList.join(',')
+	let dataFormString = '?'
+	for (const key in dataForm) {
+		const value = dataForm[key]
+		if (value instanceof Array) {
+			dataFormString += '&' + key + '=' + value.join(',')
+		} else {
+			dataFormString += '&' + key + '=' + dataForm[key]
+		}
+	}
+	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip' + dataFormString
 }
 
 // 下载到本地

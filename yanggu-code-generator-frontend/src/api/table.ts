@@ -59,3 +59,8 @@ export const tableImportApi = (dataForm: any) => {
 export const tableSyncApi = (id: number) => {
 	return service.put('/table/sync?id=' + id)
 }
+
+//表批量生成代码检测
+export const tableGenerateCheckApi = (idList: Array<number>) => {
+	return service.post('/table/generateCheck', idList)
+}
