@@ -359,6 +359,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TableFieldModel> fieldModelList = tableFieldMapstruct.toModel(fieldList);
 
         TableDataModel tableDataModel = new TableDataModel();
+        fieldModelList.sort(Comparator.comparing(TableFieldModel::getFieldSort));
         tableDataModel.setFieldList(fieldModelList);
 
         ProjectEntity project = projectService.getById(table.getProjectId());
@@ -443,8 +444,11 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         }
         tableDataModel.setPrimaryList(primaryList);
+        formList.sort(Comparator.comparingInt(TableFieldModel::getFormFieldSort));
         tableDataModel.setFormList(formList);
+        gridList.sort(Comparator.comparingInt(TableFieldModel::getGridFieldSort));
         tableDataModel.setGridList(gridList);
+        queryList.sort(Comparator.comparingInt(TableFieldModel::getQueryFieldSort));
         tableDataModel.setQueryList(queryList);
     }
 

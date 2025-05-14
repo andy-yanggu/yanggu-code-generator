@@ -55,9 +55,9 @@ public class TableFieldModel implements Serializable {
     private String packageName;
 
     /**
-     * 排序
+     * 字段顺序
      */
-    private Integer sort;
+    private Integer fieldSort;
 
     /**
      * 自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE
@@ -115,6 +115,11 @@ public class TableFieldModel implements Serializable {
     private String formValidator;
 
     /**
+     * 表单字段顺序
+     */
+    private Integer formFieldSort;
+
+    /**
      * 列表项 0：否  1：是
      */
     private Boolean gridItem;
@@ -123,6 +128,11 @@ public class TableFieldModel implements Serializable {
      * 列表排序 0：否  1：是
      */
     private Boolean gridSort;
+
+    /**
+     * 列表字段顺序
+     */
+    private Integer gridFieldSort;
 
     /**
      * 查询项 0：否  1：是
@@ -138,5 +148,10 @@ public class TableFieldModel implements Serializable {
      * 查询表单类型
      */
     private String queryFormType;
+
+    /**
+     * 查询字段顺序
+     */
+    private Integer queryFieldSort;
 
 }
