@@ -20,3 +20,9 @@ export const TEMPLATE_TYPES = [
 	{ label: '文件', value: 0 },
 	{ label: '目录', value: 1 }
 ]
+
+//项目生成方式
+export const PROJECT_GENERATE_TYPES = [
+	{ label: 'zip压缩包', value: 0 },
+	{ label: '服务器本地', value: 1 }
+]

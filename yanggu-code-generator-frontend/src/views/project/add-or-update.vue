@@ -36,8 +36,7 @@
 			</el-form-item>
 			<el-form-item label="生成方式" prop="generatorType">
 				<el-radio-group v-model="dataForm.generatorType">
-					<el-radio :label="0">zip压缩包</el-radio>
-					<el-radio :label="1">服务器本地</el-radio>
+					<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item prop="baseClassId" label="Entity基类">
@@ -75,6 +74,7 @@ import { projectDetailApi, projectSubmitApi } from '@/api/project'
 import { datasourceEntityListApi } from '@/api/datasource'
 import { templateGroupEntityListApi } from '@/api/templateGroup'
 import { baseClassEntityListApi } from '@/api/baseClass'
+import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
 

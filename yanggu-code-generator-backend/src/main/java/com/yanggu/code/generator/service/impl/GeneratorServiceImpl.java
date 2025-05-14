@@ -5,9 +5,13 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.text.NamingCase;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.exception.BusinessException;
+import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.BaseClassModel;
+import com.yanggu.code.generator.domain.model.ProjectDataModel;
 import com.yanggu.code.generator.domain.model.TableDataModel;
 import com.yanggu.code.generator.domain.model.TableFieldModel;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
@@ -251,8 +255,100 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
+    public List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception {
+        //查询项目
+        ProjectEntity project = projectService.getById(projectId);
+
+        //查询该项目下的表
+        List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
+
+        List<PreviewVO> allPreviewList = new ArrayList<>();
+
+        //获取表预览数据
+        List<PreviewVO> tablePreviewList = tableListPreview(tableList);
+        allPreviewList.addAll(tablePreviewList);
+
+        //获取项目预览数据
+        List<PreviewVO> projectPreviewList = projectPreview(project);
+        allPreviewList.addAll(projectPreviewList);
+
+        return allPreviewList;
+    }
+
+    private List<PreviewVO> tableListPreview(List<TableEntity> tableList) {
+        List<PreviewVO> tablePreviewList = new ArrayList<>();
+        for (TableEntity tableEntity : tableList) {
+            GeneratorTableQuery query = new GeneratorTableQuery();
+            query.setTableId(tableEntity.getId());
+            List<PreviewVO> tempList = tablePreview(query);
+            tablePreviewList.addAll(tempList);
+        }
+        return tablePreviewList;
+    }
+
+    private List<PreviewVO> projectPreview(ProjectEntity project) throws Exception {
+        //获取数据源信息
+        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
+        //获取项目模板组信息
+        Long projectTemplateGroupId = project.getProjectTemplateGroupId();
+        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
+        List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
+
+        List<PreviewVO> previewList = new ArrayList<>();
+        for (TemplateEntity template : projecTemplateList) {
+            ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
+            projectDataModel.setTemplateName(template.getTemplateName());
+            Integer templateType = template.getTemplateType();
+            //内容
+            String fileContent;
+            PreviewVO previewVO = new PreviewVO();
+            if (TemplateTypeEnum.FILE.getCode().equals(templateType)) {
+                fileContent = TemplateUtils.getContent(template.getTemplateContent(), projectDataModel);
+            } else {
+                fileContent = "";
+            }
+            //路径
+            String filePath = TemplateUtils.getContent(template.getGeneratorPath(), projectDataModel);
+            //文件名
+            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            previewVO.setContent(fileContent);
+            previewVO.setFileName(fileName);
+            previewVO.setFilePath(filePath);
+            previewVO.setTemplateId(template.getId());
+            previewVO.setTemplateGroupType(templateGroup.getType());
+            previewVO.setTemplateType(templateType);
+            previewList.add(previewVO);
+        }
+        return previewList;
+    }
+
     /**
-     * 获取渲染的数据模型
+     * 构建项目渲染数据
+     */
+    private ProjectDataModel buildProjectDataModel(ProjectEntity project, DataSourceBO dataSource) {
+        //项目数据
+        ProjectDataModel projectDataModel = new ProjectDataModel();
+        projectDataModel.setProjectName(project.getProjectName());
+        projectDataModel.setProjectNameUnderline(StrUtil.replace(project.getProjectName(), "-", "_"));
+        projectDataModel.setProjectNamePascal(NamingCase.toPascalCase(projectDataModel.getProjectNameUnderline()));
+        projectDataModel.setProjectPackage(project.getProjectPackage());
+        projectDataModel.setProjectPackageSlash(projectDataModel.getProjectPackage().replace(".", "/"));
+        projectDataModel.setProjectVersion(project.getProjectVersion());
+        projectDataModel.setBackendPath(project.getBackendPath());
+        projectDataModel.setFrontendPath(project.getFrontendPath());
+        projectDataModel.setProjectDesc(project.getProjectDesc());
+
+        //数据源数据
+        projectDataModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
+        projectDataModel.setDataBaseUrl(dataSource.getConnUrl());
+        projectDataModel.setDataBaseUsername(dataSource.getUsername());
+        projectDataModel.setDataBasePassword(dataSource.getPassword());
+
+        return projectDataModel;
+    }
+
+    /**
+     * 构建表渲染的数据模型
      *
      * @param tableId 表ID
      */

@@ -33,6 +33,7 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="generatorType" label="生成方式" :formatter="handlerType" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -93,6 +94,7 @@ import { tableSyncApi, tableGenerateCheckApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { generatorTableDownloadZipApi, generatorTableDownloadLocalApi } from '@/api/generator'
+import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/table/voPage',
@@ -135,6 +137,10 @@ const previewHandle = (tableId?: number) => {
 
 const editHandle = (id?: number) => {
 	editRef.value.init(id)
+}
+
+const handlerType = (row: any) => {
+	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
 }
 
 //生成代码
