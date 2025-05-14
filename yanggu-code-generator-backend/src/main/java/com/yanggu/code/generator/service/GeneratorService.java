@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface GeneratorService {
 
+    List<PreviewVO> tablePreview2(GeneratorTableQuery tableQuery);
+
     List<PreviewVO> tablePreview(GeneratorTableQuery tableQuery);
 
     List<TreeVO> tableTreeData(GeneratorTableQuery tableQuery);
@@ -22,6 +24,8 @@ public interface GeneratorService {
     void tableDownloadLocal(GeneratorTableQuery tableQuery);
 
     ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException;
+
+    List<PreviewVO> buildProjectPreviewList2(Long projectId) throws Exception;
 
     List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception;
 

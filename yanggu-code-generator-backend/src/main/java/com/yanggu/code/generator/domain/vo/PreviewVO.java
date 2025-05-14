@@ -29,7 +29,7 @@ public class PreviewVO {
     private Integer templateGroupType;
 
     /**
-     * 文件名
+     * 文件名称
      */
     private String fileName;
 

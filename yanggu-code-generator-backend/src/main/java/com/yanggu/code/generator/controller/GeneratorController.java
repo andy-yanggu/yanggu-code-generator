@@ -34,7 +34,7 @@ public class GeneratorController {
     @ApiOperationSupport(order = 1)
     @Operation(summary = "表预览代码")
     public List<PreviewVO> tablePreview(@RequestBody GeneratorTableQuery tableQuery) {
-        return generatorService.tablePreview(tableQuery);
+        return generatorService.tablePreview2(tableQuery);
     }
 
     /**
@@ -95,7 +95,7 @@ public class GeneratorController {
     @ApiOperationSupport(order = 7)
     @Operation(summary = "项目预览代码")
     public List<PreviewVO> projectPreview(@RequestParam("projectId") Long projectId) throws Exception {
-        return generatorService.buildProjectPreviewList(projectId);
+        return generatorService.buildProjectPreviewList2(projectId);
     }
 
     /**
