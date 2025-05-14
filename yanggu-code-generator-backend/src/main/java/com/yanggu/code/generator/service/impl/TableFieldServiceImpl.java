@@ -163,7 +163,11 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
             field.setQueryType("=");
             field.setQueryFormType("text");
             field.setFormType("text");
-            field.setSort(index++);
+            field.setFieldSort(index);
+            field.setQueryFieldSort(index);
+            field.setFormFieldSort(index);
+            field.setGridFieldSort(index);
+            index++;
         }
     }
 

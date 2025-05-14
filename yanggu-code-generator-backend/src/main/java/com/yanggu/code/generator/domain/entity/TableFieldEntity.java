@@ -69,10 +69,10 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	private String packageName;
 
 	/**
-	 * 排序
+	 * 字段顺序
 	 */
-	@TableField(value = "sort")
-	private Integer sort;
+	@TableField(value = "field_sort")
+	private Integer fieldSort;
 
 	/**
 	 * 自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE
@@ -105,12 +105,6 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	private String logicNotDeleteValue;
 
 	/**
-	 * 基类字段 0：否  1：是
-	 */
-	@TableField(value = "base_field")
-	private Boolean baseField;
-
-	/**
 	 * 表单项 0：否  1：是
 	 */
 	@TableField(value = "form_item")
@@ -141,10 +135,22 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	private String formValidator;
 
 	/**
+	 * 表单字段顺序
+	 */
+	@TableField(value = "form_field_sort")
+	private Integer formFieldSort;
+
+	/**
 	 * 列表项 0：否  1：是
 	 */
 	@TableField(value = "grid_item")
 	private Boolean gridItem;
+
+	/**
+	 * 列表字段顺序
+	 */
+	@TableField(value = "grid_field_sort")
+	private Integer gridFieldSort;
 
 	/**
 	 * 列表排序 0：否  1：是
@@ -163,6 +169,12 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 */
 	@TableField(value = "query_type")
 	private String queryType;
+
+	/**
+	 * 查询字段顺序
+	 */
+	@TableField(value = "query_field_sort")
+	private Integer queryFieldSort;
 
 	/**
 	 * 查询表单类型

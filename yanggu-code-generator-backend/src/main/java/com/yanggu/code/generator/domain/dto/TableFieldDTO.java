@@ -66,10 +66,10 @@ public class TableFieldDTO implements Serializable {
 	private String packageName;
 
 	/**
-	 * 排序
+	 * 字段顺序
 	 */
-	@Schema(description = "排序")
-	private Integer sort;
+	@Schema(description = "字段顺序")
+	private Integer fieldSort;
 
 	/**
 	 * 自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE
@@ -132,6 +132,12 @@ public class TableFieldDTO implements Serializable {
 	private String formDict;
 
 	/**
+	 * 表单字段顺序
+	 */
+	@Schema(description = "表单字段顺序")
+	private Integer formFieldSort;
+
+	/**
 	 * 表单效验
 	 */
 	@Schema(description = "表单效验")
@@ -150,6 +156,12 @@ public class TableFieldDTO implements Serializable {
 	private Boolean gridSort;
 
 	/**
+	 * 列表字段顺序
+	 */
+	@Schema(description = "列表字段顺序")
+	private Integer gridFieldSort;
+
+	/**
 	 * 查询项 0：否  1：是
 	 */
 	@Schema(description = "查询项 0：否  1：是")
@@ -166,5 +178,11 @@ public class TableFieldDTO implements Serializable {
 	 */
 	@Schema(description = "查询表单类型")
 	private String queryFormType;
+
+	/**
+	 * 查询字段顺序
+	 */
+	@Schema(description = "查询字段顺序")
+	private Integer queryFieldSort;
 
 }
