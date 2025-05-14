@@ -34,3 +34,14 @@ export const generatorTableDownloadZipApi = (dataForm: any) => {
 export const generatorTableDownloadLocalApi = (dataForm: any) => {
 	return service.post('/generator/table/downloadLocal', dataForm)
 }
+
+// 项目预览代码
+export const generatorProjectPreviewApi = (projectId: number) => {
+	return service.get('/generator/project/preview?projectId=' + projectId)
+}
+
+
+// 项目树形数据
+export const generatorProjectTreeDataApi = (projectId: number) => {
+	return service.get('/generator/project/treeData?projectId=' + projectId)
+}

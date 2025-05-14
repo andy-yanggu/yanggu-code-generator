@@ -23,4 +23,8 @@ public interface GeneratorService {
 
     ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException;
 
+    List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception;
+
+    List<TreeVO> treeData(Long projectId) throws Exception;
+
 }

@@ -254,6 +254,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
+    @Override
     public List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception {
         //查询项目
         ProjectEntity project = projectService.getById(projectId);
@@ -272,6 +273,23 @@ public class GeneratorServiceImpl implements GeneratorService {
         allPreviewList.addAll(projectPreviewList);
 
         return allPreviewList;
+    }
+
+    @Override
+    public List<TreeVO> treeData(Long projectId) throws Exception {
+        List<PreviewVO> previewList = buildProjectPreviewList(projectId);
+
+        List<TreeVO> treeList = new ArrayList<>();
+        // 渲染模板并输出
+        for (PreviewVO previewVO : previewList) {
+            TreeVO treeVO = new TreeVO();
+            treeVO.setFilePath(previewVO.getFilePath());
+            treeVO.setLabel(previewVO.getFileName());
+            treeVO.setTemplateId(previewVO.getTemplateId());
+            treeList.add(treeVO);
+        }
+
+        return buildTree(treeList);
     }
 
     private List<PreviewVO> tableListPreview(List<TableEntity> tableList) {

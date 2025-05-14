@@ -36,10 +36,10 @@
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
 import { ElLoading } from 'element-plus'
-import {} from '@/api/project'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
+import { generatorProjectPreviewApi, generatorProjectTreeDataApi } from '@/api/generator'
 
 const currentNodeKey = ref()
 const preview = reactive({
@@ -79,10 +79,10 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 const init = async (projectId: number) => {
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		let restTreeData = await useTreeDataApi(projectId)
+		let restTreeData = await generatorProjectTreeDataApi(projectId)
 		preview.treeData = restTreeData.data
 
-		let resData = await usePreviewApi(projectId)
+		let resData = await generatorProjectPreviewApi(projectId)
 		preview.data = resData.data
 		preview.visible = true
 		preview.projectId = projectId
@@ -125,7 +125,7 @@ const downloadTemplateData = item => {
 		templateGroupType: item.templateGroupType,
 		tableId: item.tableId ? item.tableId : 0
 	}
-	useDownloadTemplateApi(params)
+	// useDownloadTemplateApi(params)
 }
 </script>
 

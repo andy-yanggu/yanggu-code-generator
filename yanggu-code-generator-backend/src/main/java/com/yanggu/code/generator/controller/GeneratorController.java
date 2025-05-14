@@ -88,4 +88,24 @@ public class GeneratorController {
         return generatorService.tableDownloadZip(tableQuery);
     }
 
+    /**
+     * 项目预览代码
+     */
+    @GetMapping("/project/preview")
+    @ApiOperationSupport(order = 7)
+    @Operation(summary = "项目预览代码")
+    public List<PreviewVO> projectPreview(@RequestParam("projectId") Long projectId) throws Exception {
+        return generatorService.buildProjectPreviewList(projectId);
+    }
+
+    /**
+     * 项目树形数据
+     */
+    @GetMapping("/project/treeData")
+    @ApiOperationSupport(order = 8)
+    @Operation(summary = "项目树形数据")
+    public List<TreeVO> projectTreeData(@RequestParam("projectId") Long projectId) throws Exception {
+        return generatorService.treeData(projectId);
+    }
+
 }
