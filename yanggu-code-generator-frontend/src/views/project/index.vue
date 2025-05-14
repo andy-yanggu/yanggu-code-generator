@@ -14,7 +14,7 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
+				<el-button type="danger" @click="deleteProjectBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
@@ -31,7 +31,7 @@
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link @click="deleteProjectBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -60,6 +60,8 @@ import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import Preview from './preview.vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import service from '@/utils/request'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/project/entityPage',
@@ -81,6 +83,33 @@ const resetQueryRef = () => {
 
 const previewHandle = (projectId?: number) => {
 	previewRef.value.init(projectId)
+}
+
+const deleteProjectBatchHandle = (projectId?: number) => {
+	let data: any[] = []
+	if (projectId) {
+		data = [projectId]
+	} else {
+		data = state.dataListSelections ? state.dataListSelections : []
+	}
+	if (data.length === 0) {
+		ElMessage.warning('请选择删除记录')
+		return
+	}
+	ElMessageBox.confirm('删除项目会删除项目下的所有表，是否继续?', '提示', {
+		confirmButtonText: '确定',
+		cancelButtonText: '取消',
+		type: 'warning'
+	})
+		.then(() => {
+			if (state.deleteUrl) {
+				service.delete(state.deleteUrl, { data }).then(() => {
+					ElMessage.success('删除成功')
+					getDataList()
+				})
+			}
+		})
+		.catch(() => {})
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
