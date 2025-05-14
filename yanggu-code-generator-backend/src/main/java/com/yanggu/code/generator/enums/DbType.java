@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.enums;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.dromara.hutool.core.text.StrUtil;
 
 /**
  * 数据库类型 枚举

@@ -1,11 +1,11 @@
 package com.yanggu.code.generator.util;
 
-import cn.hutool.core.io.IoUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.model.ProjectDataModel;
 import com.yanggu.code.generator.domain.model.TableDataModel;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.io.IoUtil;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -15,6 +15,7 @@ import java.io.StringWriter;
  */
 @Slf4j
 public class TemplateUtils {
+
     /**
      * 获取模板渲染后的内容
      *
@@ -36,8 +37,8 @@ public class TemplateUtils {
 
         content = sw.toString();
 
-        IoUtil.close(reader);
-        IoUtil.close(sw);
+        IoUtil.closeQuietly(reader);
+        IoUtil.closeQuietly(sw);
 
         return content;
     }
@@ -55,8 +56,8 @@ public class TemplateUtils {
         }
         content = sw.toString();
 
-        IoUtil.close(reader);
-        IoUtil.close(sw);
+        IoUtil.closeQuietly(reader);
+        IoUtil.closeQuietly(sw);
 
         return content;
     }

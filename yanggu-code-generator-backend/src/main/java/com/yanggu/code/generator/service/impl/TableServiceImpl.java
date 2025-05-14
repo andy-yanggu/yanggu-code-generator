@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.core.text.NamingCase;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,6 +25,7 @@ import com.yanggu.code.generator.service.TableFieldService;
 import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.util.GenUtils;
 import org.dromara.hutool.core.collection.CollUtil;
+import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

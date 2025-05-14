@@ -1,9 +1,6 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.json.JSONUtil;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,8 +20,12 @@ import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateUtil;
+import org.dromara.hutool.core.io.IoUtil;
 import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.CharsetUtil;
+import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -231,7 +232,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void importTemplateGroup(MultipartFile file) throws IOException {
-        String data = IoUtil.read(file.getInputStream(), CharsetUtil.CHARSET_UTF_8);
+        String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
         List<TemplateGroupEntity> list = JSONUtil.toList(data, TemplateGroupEntity.class);
         list.forEach(templateGroup -> {
             templateGroup.setId(null);

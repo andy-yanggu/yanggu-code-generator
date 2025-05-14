@@ -152,7 +152,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     public Set<String> getPackageByTableId(Long tableId) {
         Set<String> importList = baseMapper.getPackageByTableId(tableId);
 
-        return importList.stream().filter(cn.hutool.core.util.StrUtil::isNotBlank).collect(Collectors.toSet());
+        return importList.stream().filter(StrUtil::isNotBlank).collect(Collectors.toSet());
     }
 
     @Override

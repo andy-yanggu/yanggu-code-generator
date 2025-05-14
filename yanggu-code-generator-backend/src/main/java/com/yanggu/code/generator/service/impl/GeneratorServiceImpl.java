@@ -1,11 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.text.NamingCase;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
@@ -22,9 +16,14 @@ import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.TemplateUtils;
+import org.dromara.hutool.core.array.ArrayUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
+import org.dromara.hutool.core.io.IoUtil;
+import org.dromara.hutool.core.io.file.FileUtil;
+import org.dromara.hutool.core.text.NamingCase;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,7 +37,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static cn.hutool.core.date.DatePattern.PURE_DATETIME_PATTERN;
+import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
 /**
  * 代码生成服务实现类
@@ -227,7 +226,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                 throw new ServerException("模板写入失败：" + previewVO.getFilePath(), e);
             }
         }
-        IoUtil.close(zip);
+        IoUtil.closeQuietly(zip);
 
         // zip压缩包数据
         byte[] data = outputStream.toByteArray();

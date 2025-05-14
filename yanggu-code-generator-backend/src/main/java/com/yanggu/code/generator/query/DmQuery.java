@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.query;
 
-import cn.hutool.core.util.StrUtil;
 import com.yanggu.code.generator.enums.DbType;
+import org.dromara.hutool.core.text.StrUtil;
 
 /**
  * 达梦8 查询
