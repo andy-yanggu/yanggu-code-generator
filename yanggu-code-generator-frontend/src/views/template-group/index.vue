@@ -21,7 +21,7 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
-				<import2 ref="templateGroupImportRef" @refresh-data-list="getDataList"></import2>
+				<Import ref="templateGroupImportRef" @refresh-data-list="getDataList"></Import>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="exportHandle()">导出</el-button>
@@ -81,7 +81,6 @@ import TemplateIndex from '../template/index.vue'
 import { ElMessage } from 'element-plus'
 import { exportTemplateGroupApi } from '@/api/templateGroup'
 import Import from './import.vue'
-import Import2 from './import2.vue'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/templateGroup/entityPage',
@@ -133,8 +132,6 @@ const exportHandle = () => {
 	}
 	exportTemplateGroupApi(idList)
 }
-
-const importHandle = () => {}
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
 </script>
