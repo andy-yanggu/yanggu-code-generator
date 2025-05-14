@@ -79,7 +79,9 @@ const dataFormRef = ref()
 
 const dataForm = reactive({
 	<#list fieldList as field>
+	    <#if !field.baseField>
 	${field.attrName}: ''<#sep>,
+	    </#if>
 	</#list>
 })
 
