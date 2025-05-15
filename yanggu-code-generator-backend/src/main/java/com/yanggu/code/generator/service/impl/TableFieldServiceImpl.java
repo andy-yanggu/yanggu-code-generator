@@ -18,6 +18,7 @@ import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.mapper.TableFieldMapper;
 import com.yanggu.code.generator.service.FieldTypeService;
 import com.yanggu.code.generator.service.TableFieldService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -183,6 +186,32 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
     @Transactional(rollbackFor = RuntimeException.class)
     public void submitList(List<TableFieldDTO> submitList) {
         List<TableFieldEntity> entityList = tableFieldMapstruct.dtoToEntity(submitList);
+        entityList.forEach(tableField -> {
+
+            // 逻辑删除校验
+            if (Boolean.TRUE.equals(tableField.getLogicDelete())) {
+                if (StrUtil.isBlank(tableField.getLogicDeleteValue())) {
+                    throw new BusinessException("逻辑删除值不能为空");
+                }
+                if (StrUtil.isBlank(tableField.getLogicNotDeleteValue())) {
+                    throw new BusinessException("逻辑未删除值不能为空");
+                }
+            }
+
+            if (Boolean.TRUE.equals(tableField.getDict())) {
+                String dictValue = tableField.getDictValue();
+                if (StrUtil.isBlank(dictValue)) {
+                    throw new BusinessException("字典值不能为空");
+                } else {
+                    //需要满足 key-value形式。按照、拼接
+                    String regex = "^(\\d+)-([^、]+)(、\\d+-[^、]+)*$";
+                    Matcher matcher = Pattern.compile(regex).matcher(dictValue);
+                    if (!matcher.matches()) {
+                        throw new BusinessException("字典值格式不正确");
+                    }
+                }
+            }
+        });
         this.updateBatchById(entityList);
     }
 

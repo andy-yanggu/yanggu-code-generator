@@ -57,12 +57,22 @@
 					</el-table-column>
 					<el-table-column prop="logicDeleteValue" label="逻辑删除值" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-input v-model="row.logicDeleteValue" placeholder="输入逻辑删除值"></el-input>
+							<el-input v-model="row.logicDeleteValue" placeholder="例如：1"></el-input>
 						</template>
 					</el-table-column>
 					<el-table-column prop="logicNotDeleteValue" label="逻辑未删除值" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-input v-model="row.logicNotDeleteValue" placeholder="输入逻辑未删除值"></el-input>
+							<el-input v-model="row.logicNotDeleteValue" placeholder="例如：0"></el-input>
+						</template>
+					</el-table-column>
+					<el-table-column prop="dict" label="字典" width="110" header-align="center" align="center">
+						<template #default="{ row }">
+							<el-checkbox v-model="row.dict"></el-checkbox>
+						</template>
+					</el-table-column>
+					<el-table-column prop="dictValue" label="字典值" width="110" header-align="center" align="center">
+						<template #default="{ row }">
+							<el-input v-model="row.dictValue" placeholder="例如：0-男、1-女"></el-input>
 						</template>
 					</el-table-column>
 				</el-table>

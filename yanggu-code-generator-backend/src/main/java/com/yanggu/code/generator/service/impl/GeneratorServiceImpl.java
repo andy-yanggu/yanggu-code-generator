@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
-import com.yanggu.code.generator.domain.model.BaseClassModel;
-import com.yanggu.code.generator.domain.model.ProjectDataModel;
-import com.yanggu.code.generator.domain.model.TableDataModel;
-import com.yanggu.code.generator.domain.model.TableFieldModel;
+import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
@@ -328,8 +325,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
 
         List<PreviewVO> previewList = new ArrayList<>();
+        ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
         for (TemplateEntity template : projecTemplateList) {
-            ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
             projectDataModel.setTemplateName(template.getTemplateName());
             Integer templateType = template.getTemplateType();
             //内容
@@ -377,7 +374,30 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectDataModel.setDataBaseUsername(dataSource.getUsername());
         projectDataModel.setDataBasePassword(dataSource.getPassword());
 
+        //构建枚举数据
+        projectDataModel.setEnumDataModelList(buildEnumDataModel(project));
+
         return projectDataModel;
+    }
+
+    private List<EnumDataModel> buildEnumDataModel(ProjectEntity project) {
+        List<EnumDataModel> list = projectService.selectEnumList(project.getId());
+        if (CollUtil.isNotEmpty(list)) {
+            for (EnumDataModel enumDataModel : list) {
+                String dictValue = enumDataModel.getDictValue();
+                List<EnumDataModel.EnumValueModel> valueList = Arrays.stream(dictValue.split("、"))
+                        .map(item -> {
+                            EnumDataModel.EnumValueModel valueModel = new EnumDataModel.EnumValueModel();
+                            String[] split = item.split("-");
+                            valueModel.setLabel(split[1]);
+                            valueModel.setValue(split[0]);
+                            return valueModel;
+                        })
+                        .toList();
+                enumDataModel.setValueList(valueList);
+            }
+        }
+        return list;
     }
 
     /**

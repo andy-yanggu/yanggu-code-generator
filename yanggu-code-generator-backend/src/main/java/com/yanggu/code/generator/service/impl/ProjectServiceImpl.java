@@ -9,6 +9,7 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
+import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
@@ -178,6 +179,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         });
 
         return tableList;
+    }
+
+    @Override
+    public List<EnumDataModel> selectEnumList(Long id) {
+        return projectMapper.selectEnumList(id);
     }
 
     /**

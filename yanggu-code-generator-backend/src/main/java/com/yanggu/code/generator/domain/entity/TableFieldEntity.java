@@ -105,6 +105,18 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	private String logicNotDeleteValue;
 
 	/**
+	 * 是否为字典 0：否  1：是
+	 */
+	@TableField(value = "dict")
+	private Boolean dict;
+
+	/**
+	 * 字典值。key-value形式。key为字典值，value为展示值，使用"、"拼接
+	 */
+	@TableField(value = "dict_value")
+	private String dictValue;
+
+	/**
 	 * 表单项 0：否  1：是
 	 */
 	@TableField(value = "form_item")

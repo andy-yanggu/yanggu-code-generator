@@ -105,6 +105,18 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	private String logicNotDeleteValue;
 
 	/**
+	 * 是否为字典 0：否  1：是
+	 */
+	@Schema(description = "是否为字典 0：否  1：是")
+	private Boolean dict;
+
+	/**
+	 * 字典值。key-value形式。key为字典值，value为展示值，使用"、"拼接
+	 */
+	@Schema(description = "字典值。key-value形式。key为字典值，value为展示值，使用\"、\"拼接")
+	private String dictValue;
+
+	/**
 	 * 表单项 0：否  1：是
 	 */
 	@Schema(description = "表单项 0：否  1：是")

@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.service;
 
 import com.yanggu.code.generator.common.domain.vo.PageVO;
+import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.domain.dto.ProjectDTO;
@@ -72,5 +73,7 @@ public interface ProjectService extends IService<ProjectEntity> {
      * 项目下的表
      */
     List<TableImportVO> tableList(ProjectTableQuery query) throws Exception;
+
+    List<EnumDataModel> selectEnumList(Long id);
 
 }

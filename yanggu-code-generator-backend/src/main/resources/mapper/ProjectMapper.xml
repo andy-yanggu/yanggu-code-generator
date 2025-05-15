@@ -113,4 +113,18 @@
         <include refid="orderBySQL"/>
     </select>
 
+    <select id="selectEnumList" resultType="com.yanggu.code.generator.domain.model.EnumDataModel">
+        SELECT
+            t.table_name,
+            f.field_name,
+            f.field_comment,
+            f.dict_value
+        FROM
+            gen_project AS p
+        JOIN gen_table AS t ON t.project_id = p.id AND t.is_delete = 0
+        JOIN gen_table_field AS f ON f.table_id = t.id AND f.is_delete = 0
+        WHERE
+            p.id = #{id} AND f.dict = 1 AND f.dict_value IS NOT NULL AND f.dict_value != ''
+    </select>
+
 </mapper>
