@@ -40,8 +40,24 @@ export const generatorProjectPreviewApi = (projectId: number) => {
 	return service.get('/generator/project/preview?projectId=' + projectId)
 }
 
-
 // 项目树形数据
 export const generatorProjectTreeDataApi = (projectId: number) => {
 	return service.get('/generator/project/treeData?projectId=' + projectId)
+}
+
+export const generatorProjectDownloadZipApi = (dataForm: any) => {
+	let dataFormString = '?'
+	for (const key in dataForm) {
+		const value = dataForm[key]
+		if (value instanceof Array) {
+			dataFormString += '&' + key + '=' + value.join(',')
+		} else {
+			dataFormString += '&' + key + '=' + dataForm[key]
+		}
+	}
+	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadZip' + dataFormString
+}
+
+export const generatorProjectDownloadLocalApi = (dataForm: any) => {
+	return service.post('/generator/project/downloadLocal', dataForm)
 }

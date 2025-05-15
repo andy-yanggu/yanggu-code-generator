@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
@@ -106,6 +107,16 @@ public class GeneratorController {
     @Operation(summary = "项目树形数据")
     public List<TreeVO> projectTreeData(@RequestParam("projectId") Long projectId) throws Exception {
         return generatorService.treeData(projectId);
+    }
+
+    /**
+     * 项目生成代码（本地）
+     */
+    @PostMapping("/project/downloadLocal")
+    @ApiOperationSupport(order = 9)
+    @Operation(summary = "项目生成代码（本地）")
+    public void projectDownloadLocal(@RequestBody GeneratorProjectQuery projectQuery) {
+        generatorService.projectDownloadLocal(projectQuery);
     }
 
 }

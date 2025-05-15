@@ -5,29 +5,32 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id,
-        template_group_id,
-        template_name,
-        generator_path,
-        template_desc,
-        template_content,
-        template_type,
-        create_time,
-        update_time,
-        is_delete
+        t.id,
+        t.template_group_id,
+        t.template_name,
+        t.generator_path,
+        t.template_desc,
+        t.template_content,
+        t.template_type,
+        t.create_time,
+        t.update_time,
+        t.is_delete
     </sql>
 
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <if test="query.templateGroupId != null">
-            AND template_group_id = #{query.templateGroupId}
+            AND t.template_group_id = #{query.templateGroupId}
         </if>
         <if test="query.templateName != null and query.templateName.trim() != ''">
-            AND template_name LIKE CONCAT('%', #{query.templateName}, '%')
+            AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
         <if test="query.templateType != null">
-            AND template_type = #{query.templateType}
+            AND t.template_type = #{query.templateType}
+        </if>
+        <if test="query.templateGroupType != null">
+            AND g.type = #{query.templateGroupType}
         </if>
     </sql>
 
@@ -36,7 +39,7 @@
         <if test="query.orders != null and query.orders.size() > 0">
             ORDER BY
             <foreach collection="query.orders" item="order" separator=",">
-                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+                t.${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
             </foreach>
         </if>
     </sql>
@@ -84,11 +87,14 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TemplateVO">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            g.group_name AS template_group_name,
+            g.type AS template_group_type
         FROM
-            yanggu_code_generator.gen_template
+            yanggu_code_generator.gen_template AS t
+        JOIN gen_template_group AS g ON t.template_group_id = g.id AND g.is_delete = 0
         <where>
-            is_delete = 0
+            t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
         <include refid="orderBySQL"/>

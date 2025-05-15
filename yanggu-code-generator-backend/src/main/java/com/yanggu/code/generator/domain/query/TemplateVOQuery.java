@@ -46,4 +46,10 @@ public class TemplateVOQuery extends PageQuery<TemplateVO> implements Serializab
     @Schema(description = "模板类型（0-文件，1-文件夹）")
     private Integer templateType;
 
+    /**
+     * 模板组类型（0-项目，1-表）
+     */
+    @Schema(description = "模板组类型（0-项目，1-表）")
+    private Integer templateGroupType;
+
 }

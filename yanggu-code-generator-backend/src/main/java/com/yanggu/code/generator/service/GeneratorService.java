@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.service;
 
 
+import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
@@ -30,5 +31,7 @@ public interface GeneratorService {
     List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception;
 
     List<TreeVO> treeData(Long projectId) throws Exception;
+
+    void projectDownloadLocal(GeneratorProjectQuery projectQuery);
 
 }

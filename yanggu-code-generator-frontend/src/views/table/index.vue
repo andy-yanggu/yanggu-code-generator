@@ -146,7 +146,7 @@ const handlerType = (row: any) => {
 
 //生成代码
 const generatorCode = item => {
-	currentTemplateGroupId.value = item.tableTemplateGroupId
+	currentTemplateGroupId.value = `${item.tableTemplateGroupId}=${Date.now()}`
 	currentTableId.value = item.id
 	currentGeneratorType.value = item.generatorType
 	nextTick(() => {

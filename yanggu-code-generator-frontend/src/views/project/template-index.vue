@@ -4,6 +4,11 @@
 			<el-form-item prop="templateName">
 				<el-input v-model="state.queryForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
+			<el-form-item prop="templateGroupType">
+				<el-select v-model="state.queryForm.templateGroupType" style="width: 160px" clearable placeholder="请选择模板组类型">
+					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item prop="templateType">
 				<el-select v-model="state.queryForm.templateType" style="width: 160px" clearable placeholder="请选择模板类型">
 					<el-option v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -30,8 +35,17 @@
 		>
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column prop="templateGroupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
 			<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="templateGroupType"
+				label="模板组类型"
+				show-overflow-tooltip
+				header-align="center"
+				align="center"
+				:formatter="handlerGroupType"
+			></el-table-column>
 			<el-table-column prop="templateType" label="模板类型" header-align="center" align="center" :formatter="handlerType"></el-table-column>
 			<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
@@ -52,7 +66,7 @@
 import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
-import { TEMPLATE_TYPES } from '@/constant/enum'
+import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()
@@ -62,6 +76,7 @@ const state: IHooksOptions = reactive({
 	queryForm: {
 		templateGroupIdList: [],
 		templateName: '',
+		templateGroupType: null,
 		templateType: null
 	}
 })
@@ -86,6 +101,10 @@ const resetQueryRef = () => {
 
 const handlerType = (row: any) => {
 	return TEMPLATE_TYPES.find(item => item.value === row.templateType)?.label
+}
+
+const handlerGroupType = (row: any) => {
+	return TEMPLATE_GROUP_TYPES.find(item => item.value === row.templateGroupType)?.label
 }
 
 const selectionChangeHandle = (selections: any[]) => {

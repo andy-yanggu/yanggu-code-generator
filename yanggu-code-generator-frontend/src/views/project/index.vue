@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import Preview from './preview.vue'
@@ -118,7 +118,10 @@ const deleteProjectBatchHandle = (projectId?: number) => {
 }
 
 const generatorCode = item => {
-	stepsRef.value.init(item)
+	currentProjectId.value = `${item.id}-${Date.now()}`
+	nextTick(() => {
+		stepsRef.value.init(item)
+	})
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)

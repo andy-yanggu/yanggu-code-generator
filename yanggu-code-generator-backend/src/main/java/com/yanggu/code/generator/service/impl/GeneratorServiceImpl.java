@@ -5,6 +5,7 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
+import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
@@ -242,6 +243,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         return buildTree(treeList);
+    }
+
+    @Override
+    public void projectDownloadLocal(GeneratorProjectQuery projectQuery) {
+
     }
 
     private List<PreviewVO> getPreviewData(GeneratorTableQuery tableQuery) {
