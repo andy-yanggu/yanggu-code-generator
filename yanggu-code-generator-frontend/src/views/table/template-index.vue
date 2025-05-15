@@ -53,7 +53,11 @@ const props = defineProps({
 	},
 	tableId: {
 		type: Number,
-		required: true // 表示父组件必须传递该值
+		required: false
+	},
+	tableIdList: {
+		type: Array,
+		required: false
 	},
 	generatorType: {
 		type: Number,
@@ -104,8 +108,13 @@ const generateCode = () => {
 		return
 	}
 	const dataForm = {
-		tableId: props.tableId,
 		templateIdList: state.dataListSelections
+	}
+	if (props.tableId) {
+		dataForm.tableId = props.tableId
+	}
+	if (props.tableIdList) {
+		dataForm.tableIdList = props.tableIdList
 	}
 	const generatorType = props.generatorType
 	if (generatorType === 0) {

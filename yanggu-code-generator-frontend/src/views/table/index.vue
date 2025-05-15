@@ -74,6 +74,7 @@
 			ref="templateIndexRef"
 			:key="currentTemplateGroupId"
 			:table-id="currentTableId"
+			:table-id-list="currentTableIdList"
 			:generator-type="currentGeneratorType"
 			:template-group-id="currentTemplateGroupId"
 		></template-index>
@@ -112,6 +113,7 @@ const editRef = ref()
 const previewRef = ref()
 const currentTemplateGroupId = ref()
 const currentTableId = ref()
+const currentTableIdList = ref()
 const currentGeneratorType = ref()
 const templateIndexRef = ref()
 
@@ -165,20 +167,12 @@ const generatorCodeBatch = () => {
 			ElMessage.warning('当前选择的表不是同一个项目')
 			return
 		} else {
-			const generatorType = checkData.generatorType
-			const dataForm = {
-				tableIdList: data
-			}
-			if (generatorType === 0) {
-				generatorTableDownloadZipApi(dataForm)
-			} else if (generatorType === 1) {
-				generatorTableDownloadLocalApi(dataForm).then(() => {
-					ElMessage.success({
-						message: '代码已经下载到本地',
-						duration: 1000
-					})
-				})
-			}
+			currentTemplateGroupId.value = checkData.tableTemplateGroupId
+			currentTableIdList.value = data
+			currentGeneratorType.value = checkData.generatorType
+			nextTick(() => {
+				templateIndexRef.value.init()
+			})
 		}
 	})
 }
