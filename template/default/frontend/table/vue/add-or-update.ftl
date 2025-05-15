@@ -2,57 +2,33 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 	    <#list formList as field>
+            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
 			<#if field.formType == 'text'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-input v-model="dataForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
-            </el-form-item>
 			<#elseif field.formType == 'textarea'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
-            </el-form-item>
 			<#elseif field.formType == 'editor'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
-            </el-form-item>
 			<#elseif field.formType == 'select'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
                     <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-            </el-form-item>
 			<#elseif field.formType == 'radio'>
-				<#if field.formDict??>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
-                <ma-dict-radio v-model="dataForm.${field.attrName}" dict-type="${field.formDict}"></ma-dict-radio>
-            </el-form-item>
-				<#else>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-radio-group v-model="dataForm.${field.attrName}">
-                    <el-radio :label="0">启用</el-radio>
-                    <el-radio :label="1">禁用</el-radio>
+                    <el-radio v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
-            </el-form-item>
-				</#if>
 			<#elseif field.formType == 'checkbox'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-checkbox-group v-model="dataForm.${field.attrName}">
-                    <el-checkbox label="启用" name="type"></el-checkbox>
-                    <el-checkbox label="禁用" name="type"></el-checkbox>
+                    <el-checkbox v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
-            </el-form-item>
 			<#elseif field.formType == 'date'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-date-picker type="date" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
-            </el-form-item>
 			<#elseif field.formType == 'datetime'>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-date-picker type="datetime" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
-            </el-form-item>
 			<#else>
-            <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-input v-model="dataForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
-            </el-form-item>
 			</#if>
+            </el-form-item>
 	    </#list>
 		</el-form>
 		<template #footer>
@@ -67,7 +43,7 @@ import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionName}'
 <#list formList as field>
-<#if field.formType == 'select'>
+<#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
 import { ${tableName}_${field.fieldName}_enum } from '@/constant/enum'
 </#if>
 </#list>

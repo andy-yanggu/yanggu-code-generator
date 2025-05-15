@@ -4,21 +4,19 @@
 		<#list queryList as field>
 			<el-form-item prop="${field.attrName}">
 			<#if field.queryFormType == 'text' || field.queryFormType == 'textarea' || field.queryFormType == 'editor'>
-			  <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment!}"></el-input>
-			<#elseif field.queryFormType == 'select'>
-            <el-form-item prop="${field.attrName}">
-                <el-select v-model="state.queryForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
-                    <el-option v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
+			<#elseif field.formType == 'select'>
+                <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
+                    <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-            </el-form-item>
-			<#elseif field.queryFormType == 'radio'>
-			  <#if field.formDict??>
-			  <ma-dict-radio v-model="state.queryForm.${field.attrName}" dict-type="${field.formDict}"></ma-dict-radio>
-			  <#else>
-			  <el-radio-group v-model="state.queryForm.${field.attrName}">
-				<el-radio :label="0">单选</el-radio>
-			  </el-radio-group>
-			  </#if>
+			<#elseif field.formType == 'radio'>
+                <el-radio-group v-model="dataForm.${field.attrName}">
+                    <el-radio v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+                </el-radio-group>
+			<#elseif field.formType == 'checkbox'>
+                <el-checkbox-group v-model="dataForm.${field.attrName}">
+                    <el-checkbox v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
+                </el-checkbox-group>
 			<#elseif field.queryFormType == 'date'>
                 <el-date-picker
                         v-model="queryFormModel.${field.attrName}"
@@ -38,10 +36,10 @@
                 >
                 </el-date-picker>
 			<#else>
-			  <el-input v-model="state.queryForm.${field.attrName}" placeholder="${field.fieldComment!}"></el-input>
+                <el-input v-model="state.queryForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
 			</#if>
 			</el-form-item>
-		  </#list>
+        </#list>
 			<el-form-item>
 				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
@@ -62,8 +60,8 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
-		  <#if field.formDict??>
-        <el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="handler${field.attrName}"></el-table-column>
+		  <#if field.dict>
+        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="handler${field.attrNamePascal}"></el-table-column>
 		  <#else>
 			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		  </#if>
@@ -96,8 +94,8 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
-<#list formList as field>
-<#if field.formType == 'select'>
+<#list queryList as field>
+<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
 import { ${tableName}_${field.attrName}_enum } from '@/constant/enum'
 </#if>
 </#list>
@@ -130,8 +128,8 @@ const resetQueryRef = () => {
 }
 
 <#list gridList as field>
-<#if field.formDict??>
-const handler${field.attrName} = (row: any) => {
+<#if field.dict>
+const handler${field.attrNamePascal} = (row: any) => {
     return ${tableName}_${field.attrName}_enum.find(item => item.value === row.${field.attrName})?.label
 }
 </#if>
