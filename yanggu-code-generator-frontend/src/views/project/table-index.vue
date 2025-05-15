@@ -11,12 +11,30 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
-			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+		<el-table
+			ref="tableRef"
+			v-loading="state.dataListLoading"
+			row-key="id"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+		>
+			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
+		<el-pagination
+			:current-page="state.pageNum"
+			:page-sizes="state.pageSizes"
+			:page-size="state.pageSize"
+			:total="state.total"
+			layout="total, sizes, prev, pager, next, jumper"
+			@size-change="sizeChangeHandle"
+			@current-change="currentChangeHandle"
+		>
+		</el-pagination>
 	</el-card>
 </template>
 
@@ -25,9 +43,10 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 
+const emit = defineEmits(['selectChange'])
+
 const state: IHooksOptions = reactive({
-	dataListUrl: '/table/entityList',
-	isPage: false,
+	dataListUrl: '/table/entityPage',
 	createdIsNeed: false,
 	queryForm: {
 		tableName: '',
@@ -36,6 +55,7 @@ const state: IHooksOptions = reactive({
 })
 
 const queryRef = ref()
+const tableRef = ref()
 
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
@@ -51,14 +71,16 @@ const init = (projectId: number) => {
 	getDataList()
 }
 
-const getSelections = () => {
-	return state.dataListSelections
+const selectionChangeHandle = (selections: any[]) => {
+	emit('selectChange', selections)
 }
 
-const { getDataList, selectionChangeHandle } = useCrud(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)
 
 defineExpose({
 	init,
-	getSelections
+	toggleRowSelection: (row, selected) => {
+		tableRef.value.toggleRowSelection(row, selected)
+	}
 })
 </script>

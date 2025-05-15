@@ -63,17 +63,20 @@ export const useCrud = (options: IHooksOptions) => {
 		state.dataListLoading = false
 	}
 
+	// 加载数据列表
 	const getDataList = () => {
 		state.pageNum = 1
 		query()
 	}
 
+	//pageSize发生变化
 	const sizeChangeHandle = (val: number) => {
 		state.pageNum = 1
 		state.pageSize = val
 		query()
 	}
 
+	//pageNum发生变化
 	const currentChangeHandle = (val: number) => {
 		state.pageNum = val
 		query()

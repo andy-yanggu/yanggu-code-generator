@@ -10,15 +10,14 @@
 			</el-header>
 			<!-- 表单区域 -->
 			<el-main>
-				<table-index v-if="active === 0" ref="tableIndexRef"></table-index>
-				<template-index v-if="active === 1" ref="templateIndexRef"></template-index>
+				<table-index v-if="active === 0" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
+				<template-index v-if="active === 1" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
 			</el-main>
 			<!-- 操作按钮 -->
 			<el-footer height="60px" style="text-align: center">
-				<el-button :disabled="active === 0" @click="prevStep">上一步</el-button>
-				<el-button type="primary" @click="nextStep">
-					{{ active === 1 ? '完成' : '下一步' }}
-				</el-button>
+				<el-button v-if="active === 1" @click="prevStep()">上一步</el-button>
+				<el-button v-if="active === 0" :disabled="tableListRef.length === 0" @click="nextStep()">下一步</el-button>
+				<el-button v-if="active === 1" :disabled="templateListRef.length === 0" @click="generateCode()">生成代码</el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>
@@ -40,29 +39,10 @@ const projectReactive = reactive({
 	tableTemplateGroupId: null,
 	projectTemplateGroupId: null
 })
-const tableIdListRef = ref([])
+const tableListRef = ref<any[]>([])
+const templateListRef = ref<any[]>([])
 
-const nextStep = () => {
-	if (active.value < 1) {
-		const tableIdList = tableIndexRef.value.getSelections()
-		if (tableIdList.length === 0) {
-			ElMessage.warning('请选择生成的表')
-			return
-		}
-		tableIdListRef.value = tableIdList
-		active.value++
-		nextTick(() => {
-			templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
-		})
-	}
-}
-
-const prevStep = () => {
-	if (active.value > 0) {
-		active.value--
-	}
-}
-
+//初始化方法
 const init = (projectItem: any) => {
 	dialogVisible.value = true
 	projectReactive.id = projectItem.id
@@ -73,34 +53,67 @@ const init = (projectItem: any) => {
 	})
 }
 
-// const generateCode = () => {
-//   const data = state.dataListSelections ? state.dataListSelections : []
-//
-//   if (data.length === 0) {
-//     ElMessage.warning('请选择模板')
-//     return
-//   }
-//   const dataForm = {
-//     templateIdList: state.dataListSelections
-//   }
-//   if (props.tableId) {
-//     dataForm.tableId = props.tableId
-//   }
-//   if (props.tableIdList) {
-//     dataForm.tableIdList = props.tableIdList
-//   }
-//   const generatorType = props.generatorType
-//   if (generatorType === 0) {
-//     generatorTableDownloadZipApi(dataForm)
-//   } else if (generatorType === 1) {
-//     generatorTableDownloadLocalApi(dataForm).then(() => {
-//       ElMessage.success({
-//         message: '代码已经下载到本地',
-//         duration: 1000
-//       })
-//     })
-//   }
-// }
+//上一步
+const prevStep = () => {
+	if (active.value > 0) {
+		active.value--
+		nextTick(() => {
+			tableIndexRef.value.init(projectReactive.id)
+
+			//恢复之前的勾选
+			tableListRef.value.forEach(item => {
+				tableIndexRef.value.toggleRowSelection(item, true)
+			})
+		})
+	}
+}
+
+//下一步
+const nextStep = () => {
+	if (active.value < 1) {
+		active.value++
+		nextTick(() => {
+			templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
+
+			//恢复之前的勾选
+			templateListRef.value.forEach(item => {
+				templateIndexRef.value.toggleRowSelection(item, true)
+			})
+		})
+	}
+}
+
+const generateCode = () => {
+	console.log('generateCode')
+  // const dataForm = {
+  //   templateIdList: state.dataListSelections
+  // }
+  // if (props.tableId) {
+  //   dataForm.tableId = props.tableId
+  // }
+  // if (props.tableIdList) {
+  //   dataForm.tableIdList = props.tableIdList
+  // }
+  // const generatorType = props.generatorType
+  // if (generatorType === 0) {
+  //   generatorTableDownloadZipApi(dataForm)
+  // } else if (generatorType === 1) {
+  //   generatorTableDownloadLocalApi(dataForm).then(() => {
+  //     ElMessage.success({
+  //       message: '代码已经下载到本地',
+  //       duration: 1000
+  //     })
+  //   })
+  // }
+}
+
+const tableSelectChange = (data: any[]) => {
+	tableListRef.value = data
+}
+
+const templateSelectChange = (data: any[]) => {
+	templateListRef.value = data
+}
 
 defineExpose({
 	init
