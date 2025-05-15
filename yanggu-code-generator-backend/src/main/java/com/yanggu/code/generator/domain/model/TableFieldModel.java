@@ -45,6 +45,11 @@ public class TableFieldModel implements Serializable {
     private String attrName;
 
     /**
+     * 属性名大驼峰。例如createTime变成CreateTime
+     */
+    private String attrNamePascal;
+
+    /**
      * 属性类型
      */
     private String attrType;
@@ -85,6 +90,11 @@ public class TableFieldModel implements Serializable {
     private String logicNotDeleteValue;
 
     /**
+     * 是否为字典 0：否  1：是
+     */
+    private Boolean dict;
+
+    /**
      * 基类字段 0：否  1：是
      */
     private Boolean baseField;
@@ -103,11 +113,6 @@ public class TableFieldModel implements Serializable {
      * 表单类型
      */
     private String formType;
-
-    /**
-     * 表单字典类型
-     */
-    private String formDict;
 
     /**
      * 表单效验

@@ -60,9 +60,9 @@ public class TableDTO implements Serializable {
 	private String author;
 
 	/**
-	 * 项目版本号
+	 * 版本
 	 */
-	@Schema(description = "项目版本号")
+	@Schema(description = "版本")
 	private String version;
 
 	/**

@@ -23,15 +23,14 @@
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
 				<el-radio-group v-model="dataForm.formLayout">
-					<el-radio :label="1">一列</el-radio>
-					<el-radio :label="2">两列</el-radio>
+					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
 				<el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
 			</el-form-item>
-			<el-form-item label="项目版本号" prop="version">
-				<el-input v-model="dataForm.version" placeholder="请输入项目版本号"></el-input>
+			<el-form-item label="版本" prop="version">
+				<el-input v-model="dataForm.version" placeholder="请输入版本"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -46,6 +45,7 @@ import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { tableDetailApi, tableSubmitApi } from '@/api/table'
 import { projectEntityListApi } from '@/api/project'
+import { FORM_LAYOUT_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
 

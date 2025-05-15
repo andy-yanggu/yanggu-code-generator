@@ -140,11 +140,6 @@
 							</el-select>
 						</template>
 					</el-table-column>
-					<el-table-column prop="formDict" label="表单字典类型" header-align="center" align="center">
-						<template #default="{ row }">
-							<el-input v-model="row.formDict"></el-input>
-						</template>
-					</el-table-column>
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="列表配置" name="grid">

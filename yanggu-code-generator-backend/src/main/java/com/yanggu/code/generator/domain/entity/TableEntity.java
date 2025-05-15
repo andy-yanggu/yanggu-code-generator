@@ -66,7 +66,7 @@ public class TableEntity extends BaseEntity implements Serializable {
     private String author;
 
     /**
-     * 项目版本号
+     * 版本
      */
     @TableField(value = "version")
     private String version;

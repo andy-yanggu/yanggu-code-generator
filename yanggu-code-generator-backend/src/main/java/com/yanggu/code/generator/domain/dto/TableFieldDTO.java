@@ -132,12 +132,6 @@ public class TableFieldDTO implements Serializable {
 	private String formType;
 
 	/**
-	 * 表单字典类型
-	 */
-	@Schema(description = "表单字典类型")
-	private String formDict;
-
-	/**
 	 * 表单字段顺序
 	 */
 	@Schema(description = "表单字段顺序")

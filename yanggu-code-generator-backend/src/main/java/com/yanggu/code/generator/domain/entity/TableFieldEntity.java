@@ -135,12 +135,6 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	private String formType;
 
 	/**
-	 * 表单字典类型
-	 */
-	@TableField(value = "form_dict")
-	private String formDict;
-
-	/**
 	 * 表单效验
 	 */
 	@TableField(value = "form_validator")

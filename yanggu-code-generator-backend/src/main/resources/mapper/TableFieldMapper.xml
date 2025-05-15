@@ -13,22 +13,25 @@
         attr_name,
         attr_type,
         package_name,
-        sort,
+        field_sort,
         auto_fill,
         primary_pk,
         logic_delete,
         logic_delete_value,
         logic_not_delete_value,
-        base_field,
         form_item,
+        dict,
+        dict_value,
         form_required,
         form_type,
-        form_dict,
+        form_field_sort,
         form_validator,
         grid_item,
         grid_sort,
+        grid_field_sort,
         query_item,
         query_type,
+        query_field_sort,
         query_form_type,
         create_time,
         update_time,
@@ -66,22 +69,25 @@
         <result property="attrName" column="attr_name"/>
         <result property="attrType" column="attr_type"/>
         <result property="packageName" column="package_name"/>
-        <result property="sort" column="sort"/>
+        <result property="fieldSort" column="field_sort"/>
         <result property="autoFill" column="auto_fill"/>
         <result property="primaryPk" column="primary_pk"/>
         <result property="logicDelete" column="logic_delete"/>
         <result property="logicDeleteValue" column="logic_delete_value"/>
         <result property="logicNotDeleteValue" column="logic_not_delete_value"/>
-        <result property="baseField" column="base_field"/>
         <result property="formItem" column="form_item"/>
+        <result property="dict" column="dict"/>
+        <result property="dictValue" column="dict_value"/>
         <result property="formRequired" column="form_required"/>
         <result property="formType" column="form_type"/>
-        <result property="formDict" column="form_dict"/>
+        <result property="formFieldSort" column="form_field_sort"/>
         <result property="formValidator" column="form_validator"/>
         <result property="gridItem" column="grid_item"/>
         <result property="gridSort" column="grid_sort"/>
+        <result property="gridFieldSort" column="grid_field_sort"/>
         <result property="queryItem" column="query_item"/>
         <result property="queryType" column="query_type"/>
+        <result property="queryFieldSort" column="query_field_sort"/>
         <result property="queryFormType" column="query_form_type"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>

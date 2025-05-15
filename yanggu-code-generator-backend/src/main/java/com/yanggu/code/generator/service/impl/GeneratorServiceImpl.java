@@ -413,6 +413,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         TableDataModel tableDataModel = new TableDataModel();
         fieldModelList.sort(Comparator.comparing(TableFieldModel::getFieldSort));
+        // 属性名首字母大写
+        fieldModelList.forEach(fieldModel -> fieldModel.setAttrNamePascal(StrUtil.upperFirst(fieldModel.getAttrName())));
         tableDataModel.setFieldList(fieldModelList);
 
         ProjectEntity project = projectService.getById(table.getProjectId());

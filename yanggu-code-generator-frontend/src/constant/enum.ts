@@ -26,3 +26,9 @@ export const PROJECT_GENERATE_TYPES = [
 	{ label: 'zip压缩包', value: 0 },
 	{ label: '服务器本地', value: 1 }
 ]
+
+//表单布局枚举
+export const FORM_LAYOUT_TYPES = [
+	{ label: '一列', value: 1 },
+	{ label: '两列', value: 2 }
+]
