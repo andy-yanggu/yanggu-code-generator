@@ -277,6 +277,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         } else {
             checkVO.setCheckResult(true);
             ProjectEntity project = projectService.getById(projectIdList.getFirst());
+            checkVO.setTableTemplateGroupId(project.getTableTemplateGroupId());
             checkVO.setGeneratorType(project.getGeneratorType());
         }
         return checkVO;

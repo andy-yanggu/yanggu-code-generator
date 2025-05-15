@@ -102,15 +102,13 @@ const deleteProjectBatchHandle = (projectId?: number) => {
 		type: 'warning'
 	})
 		.then(() => {
-			if (state.deleteUrl) {
-				service.delete(state.deleteUrl, { data }).then(() => {
-					ElMessage.success('删除成功')
-					getDataList()
-				})
-			}
+			service.delete(state.deleteUrl, { data }).then(() => {
+				ElMessage.success('删除成功')
+				getDataList()
+			})
 		})
 		.catch(() => {})
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)
 </script>
