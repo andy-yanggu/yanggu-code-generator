@@ -17,7 +17,7 @@
 			<#elseif field.formType == 'select'>
             <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
                 <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
-                    <el-option v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
 			<#elseif field.formType == 'radio'>
@@ -68,7 +68,7 @@ import { ElMessage } from 'element-plus/es'
 import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionName}'
 <#list formList as field>
 <#if field.formType == 'select'>
-import { ${tableName}_${field.attrName}_enum } from '@/constant/enum'
+import { ${tableName}_${field.fieldName}_enum } from '@/constant/enum'
 </#if>
 </#list>
 
