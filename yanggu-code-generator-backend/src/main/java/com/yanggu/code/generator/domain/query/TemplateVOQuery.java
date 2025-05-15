@@ -9,6 +9,7 @@ import com.yanggu.code.generator.domain.vo.TemplateVO;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 模板VO查询实体类
@@ -28,9 +29,21 @@ public class TemplateVOQuery extends PageQuery<TemplateVO> implements Serializab
     private Long templateGroupId;
 
     /**
+     * 模板组ID列表
+     */
+    @Schema(description = "模板组ID列表")
+    private List<Long> templateGroupIdList;
+
+    /**
      * 模板名称
      */
     @Schema(description = "模板名称")
     private String templateName;
+
+    /**
+     * 模板类型（0-文件，1-文件夹）
+     */
+    @Schema(description = "模板类型（0-文件，1-文件夹）")
+    private Integer templateType;
 
 }

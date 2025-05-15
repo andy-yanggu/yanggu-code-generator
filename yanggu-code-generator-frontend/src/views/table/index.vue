@@ -94,7 +94,6 @@ import { projectEntityListApi } from '@/api/project'
 import { tableSyncApi, tableGenerateCheckApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
-import { generatorTableDownloadZipApi, generatorTableDownloadLocalApi } from '@/api/generator'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
