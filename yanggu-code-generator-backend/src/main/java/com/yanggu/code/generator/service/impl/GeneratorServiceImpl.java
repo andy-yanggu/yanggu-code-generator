@@ -516,6 +516,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         // 基类
         BaseClassEntity baseClass = baseClassService.getById(project.getBaseClassId());
+        List<TableFieldModel> fieldList = tableDataModel.getFieldList();
+        fieldList.forEach(field -> field.setBaseField(false));
         if (baseClass == null) {
             return;
         }
@@ -527,7 +529,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         String[] fields = baseClassModel.getFields().split(",");
 
         // 标注为基类字段
-        for (TableFieldModel field : tableDataModel.getFieldList()) {
+        for (TableFieldModel field : fieldList) {
             field.setBaseField(ArrayUtil.contains(fields, field.getFieldName()));
         }
     }
