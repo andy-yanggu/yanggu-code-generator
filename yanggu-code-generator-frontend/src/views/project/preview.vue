@@ -39,7 +39,7 @@ import { ElLoading } from 'element-plus'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
-import { generatorProjectPreviewApi, generatorProjectTreeDataApi } from '@/api/generator'
+import { generatorProjectPreviewApi, generatorProjectTreeDataApi, generatorProjectDownloadSingleApi } from '@/api/generator'
 
 const currentNodeKey = ref()
 const preview = reactive({
@@ -119,13 +119,13 @@ const handleCopy = (content: string) => {
 
 //下载单个模板代码
 const downloadTemplateData = item => {
+	const id = item.templateGroupType === 0 ? preview.projectId : item.tableId
 	const params = {
-		templateId: item.templateId,
-		projectId: preview.projectId,
 		templateGroupType: item.templateGroupType,
-		tableId: item.tableId ? item.tableId : 0
+		id: id,
+		templateId: item.templateId
 	}
-	// useDownloadTemplateApi(params)
+	generatorProjectDownloadSingleApi(params)
 }
 </script>
 

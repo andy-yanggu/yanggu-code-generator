@@ -9,6 +9,7 @@ import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
@@ -156,21 +157,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<byte[]> tableDownloadTemplateContent(Long tableId, Long templateId) throws IOException {
+    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
         GeneratorTableQuery tableQuery = new GeneratorTableQuery();
         tableQuery.setTableId(tableId);
         tableQuery.setTemplateIdList(List.of(templateId));
         List<PreviewVO> list = tablePreview(tableQuery);
         PreviewVO preview = list.getFirst();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(preview.getContent().getBytes());
-        byte[] data = outputStream.toByteArray();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + preview.getFileName())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(data);
+        return buildResponseEntity(preview);
     }
 
     @Override
@@ -222,7 +216,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         allPreviewList.addAll(tablePreviewList);
 
         //获取项目预览数据
-        List<PreviewVO> projectPreviewList = projectPreview(project);
+        List<PreviewVO> projectPreviewList = projectPreview(project, List.of());
         allPreviewList.addAll(projectPreviewList);
 
         return allPreviewList;
@@ -248,6 +242,26 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public void projectDownloadLocal(GeneratorProjectQuery projectQuery) {
 
+    }
+
+    @Override
+    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
+        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
+            ProjectEntity project = projectService.getById(id);
+            PreviewVO preview = projectPreview(project, List.of(templateId)).getFirst();
+            return buildResponseEntity(preview);
+        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
+            return tableDownloadSingle(id, templateId);
+        } else {
+            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        }
+    }
+
+    private ResponseEntity<byte[]> buildResponseEntity(PreviewVO preview) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + preview.getFileName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(preview.getContent().getBytes());
     }
 
     private List<PreviewVO> getPreviewData(GeneratorTableQuery tableQuery) {
@@ -322,7 +336,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tablePreviewList;
     }
 
-    private List<PreviewVO> projectPreview(ProjectEntity project) throws Exception {
+    private List<PreviewVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
         //获取数据源信息
         DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
         //获取项目模板组信息
@@ -330,32 +344,34 @@ public class GeneratorServiceImpl implements GeneratorService {
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
         List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
 
-        List<PreviewVO> previewList = new ArrayList<>();
         ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
-        for (TemplateEntity template : projecTemplateList) {
-            projectDataModel.setTemplateName(template.getTemplateName());
-            Integer templateType = template.getTemplateType();
-            //内容
-            String fileContent;
-            PreviewVO previewVO = new PreviewVO();
-            if (FILE.getCode().equals(templateType)) {
-                fileContent = TemplateUtils.getContent(template.getTemplateContent(), projectDataModel);
-            } else {
-                fileContent = "";
-            }
-            //路径
-            String filePath = TemplateUtils.getContent(template.getGeneratorPath(), projectDataModel);
-            //文件名
-            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-            previewVO.setContent(fileContent);
-            previewVO.setFileName(fileName);
-            previewVO.setFilePath(filePath);
-            previewVO.setTemplateId(template.getId());
-            previewVO.setTemplateGroupType(templateGroup.getType());
-            previewVO.setTemplateType(templateType);
-            previewList.add(previewVO);
-        }
-        return previewList;
+        return projecTemplateList.stream()
+                .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
+                .map(template -> {
+                    projectDataModel.setTemplateName(template.getTemplateName());
+                    Integer templateType = template.getTemplateType();
+                    //内容
+                    String fileContent;
+                    PreviewVO previewVO = new PreviewVO();
+                    if (FILE.getCode().equals(templateType)) {
+                        fileContent = TemplateUtils.getContent(template.getTemplateContent(), projectDataModel);
+                    } else {
+                        fileContent = "";
+                    }
+                    //路径
+                    String filePath = TemplateUtils.getContent(template.getGeneratorPath(), projectDataModel);
+                    //文件名
+                    String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+                    previewVO.setContent(fileContent);
+                    previewVO.setFileName(fileName);
+                    previewVO.setFilePath(filePath);
+                    previewVO.setTemplateId(template.getId());
+                    previewVO.setTemplateGroupType(templateGroup.getType());
+                    previewVO.setTemplateType(templateType);
+
+                    return previewVO;
+                })
+                .toList();
     }
 
     /**

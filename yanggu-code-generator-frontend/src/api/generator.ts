@@ -1,4 +1,5 @@
 import service from '@/utils/request'
+import qs from 'qs'
 
 //表预览代码
 export const generatorTablePreviewApi = (dataForm: any) => {
@@ -18,16 +19,7 @@ export const generatorTableDownloadApi = (dataForm: any) => {
 
 // 生成代码（zip压缩包）
 export const generatorTableDownloadZipApi = (dataForm: any) => {
-	let dataFormString = '?'
-	for (const key in dataForm) {
-		const value = dataForm[key]
-		if (value instanceof Array) {
-			dataFormString += '&' + key + '=' + value.join(',')
-		} else {
-			dataFormString += '&' + key + '=' + dataForm[key]
-		}
-	}
-	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip' + dataFormString
+	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip?' + qs.stringify(dataForm)
 }
 
 // 下载到本地
@@ -46,18 +38,14 @@ export const generatorProjectTreeDataApi = (projectId: number) => {
 }
 
 export const generatorProjectDownloadZipApi = (dataForm: any) => {
-	let dataFormString = '?'
-	for (const key in dataForm) {
-		const value = dataForm[key]
-		if (value instanceof Array) {
-			dataFormString += '&' + key + '=' + value.join(',')
-		} else {
-			dataFormString += '&' + key + '=' + dataForm[key]
-		}
-	}
-	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadZip' + dataFormString
+	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadZip?' + qs.stringify(dataForm)
 }
 
 export const generatorProjectDownloadLocalApi = (dataForm: any) => {
 	return service.post('/generator/project/downloadLocal', dataForm)
+}
+
+//下载单文件
+export const generatorProjectDownloadSingleApi = (dataForm: any) => {
+	location.href = import.meta.env.VITE_API_URL + '/generator/project/download-template-content?' + qs.stringify(dataForm)
 }

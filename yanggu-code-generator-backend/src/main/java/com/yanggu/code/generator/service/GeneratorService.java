@@ -18,7 +18,7 @@ public interface GeneratorService {
 
     List<TreeVO> tableTreeData(GeneratorTableQuery tableQuery);
 
-    ResponseEntity<byte[]> tableDownloadTemplateContent(Long tableId, Long templateId) throws IOException;
+    ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) throws IOException;
 
     ResponseEntity<byte[]> tableBatchDownloadZip(List<Long> tableIds) throws IOException;
 
@@ -33,5 +33,7 @@ public interface GeneratorService {
     List<TreeVO> treeData(Long projectId) throws Exception;
 
     void projectDownloadLocal(GeneratorProjectQuery projectQuery);
+
+    ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception;
 
 }
