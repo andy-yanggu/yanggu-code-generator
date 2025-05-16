@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -46,6 +47,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(BaseClassDTO dto) {
+        checkUnique(dto);
         BaseClassEntity entity = baseClassMapstruct.dtoToEntity(dto);
         //唯一性校验等
         baseClassMapper.insert(entity);
@@ -57,6 +59,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(BaseClassDTO dto) {
+        checkUnique(dto);
         BaseClassEntity formEntity = baseClassMapstruct.dtoToEntity(dto);
         BaseClassEntity dbEntity = selectById(dto.getId());
         //唯一性校验等
@@ -163,6 +166,21 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
             throw new BusinessException(DATA_NOT_EXIST, "基类", id);
         }
         return entity;
+    }
+
+    /**
+     * 唯一性校验
+     */
+    private void checkUnique(BaseClassDTO dto) {
+        LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
+        wrapper.eq(BaseClassEntity::getCode, dto.getCode());
+        wrapper.eq(BaseClassEntity::getPackageName, dto.getPackageName());
+        wrapper.ne(Objects.nonNull(dto.getId()), BaseClassEntity::getId, dto.getId());
+
+        boolean exists = baseClassMapper.exists(wrapper);
+        if (exists) {
+            throw new BusinessException("基类已存在");
+        }
     }
 
     private LambdaQueryWrapper<BaseClassEntity> buildQueryWrapper(BaseClassEntityQuery query) {
