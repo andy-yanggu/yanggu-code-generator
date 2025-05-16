@@ -99,7 +99,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table_field
+            gen_table_field
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -112,7 +112,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table_field
+            gen_table_field
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -125,7 +125,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table_field
+            gen_table_field
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -138,7 +138,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table_field
+            gen_table_field
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

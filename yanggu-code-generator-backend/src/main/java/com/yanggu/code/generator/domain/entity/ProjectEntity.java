@@ -13,7 +13,7 @@ import java.util.Date;
  * 项目Entity实体类
  */
 @Data
-@TableName(value = "gen_project", schema = "yanggu_code_generator")
+@TableName(value = "gen_project")
 @EqualsAndHashCode(callSuper = true)
 public class ProjectEntity extends BaseEntity implements Serializable {
 

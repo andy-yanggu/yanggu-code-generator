@@ -13,7 +13,7 @@ import java.util.Date;
  * 模板Entity实体类
  */
 @Data
-@TableName(value = "gen_template", schema = "yanggu_code_generator")
+@TableName(value = "gen_template")
 @EqualsAndHashCode(callSuper = true)
 public class TemplateEntity extends BaseEntity implements Serializable {
 

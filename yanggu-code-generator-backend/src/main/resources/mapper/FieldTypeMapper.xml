@@ -51,7 +51,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_field_type
+            gen_field_type
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -64,7 +64,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_field_type
+            gen_field_type
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -77,7 +77,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_field_type
+            gen_field_type
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -90,7 +90,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_field_type
+            gen_field_type
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

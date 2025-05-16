@@ -13,7 +13,7 @@ import java.util.Date;
  * 表字段Entity实体类
  */
 @Data
-@TableName(value = "gen_table_field", schema = "yanggu_code_generator")
+@TableName(value = "gen_table_field")
 @EqualsAndHashCode(callSuper = true)
 public class TableFieldEntity extends BaseEntity implements Serializable {
 

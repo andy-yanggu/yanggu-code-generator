@@ -57,7 +57,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_datasource
+            gen_datasource
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -70,7 +70,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_datasource
+            gen_datasource
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -83,7 +83,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_datasource
+            gen_datasource
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -96,7 +96,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_datasource
+            gen_datasource
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

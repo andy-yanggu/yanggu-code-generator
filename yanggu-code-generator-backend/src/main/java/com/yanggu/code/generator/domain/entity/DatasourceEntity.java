@@ -13,7 +13,7 @@ import java.util.Date;
  * 数据源Entity实体类
  */
 @Data
-@TableName(value = "gen_datasource", schema = "yanggu_code_generator")
+@TableName(value = "gen_datasource")
 @EqualsAndHashCode(callSuper = true)
 public class DatasourceEntity extends BaseEntity implements Serializable {
 

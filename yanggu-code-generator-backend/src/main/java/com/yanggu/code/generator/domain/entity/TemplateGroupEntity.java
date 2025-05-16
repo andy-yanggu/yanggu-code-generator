@@ -14,7 +14,7 @@ import java.util.List;
  * 模板组Entity实体类
  */
 @Data
-@TableName(value = "gen_template_group", schema = "yanggu_code_generator")
+@TableName(value = "gen_template_group")
 @EqualsAndHashCode(callSuper = true)
 public class TemplateGroupEntity extends BaseEntity implements Serializable {
 

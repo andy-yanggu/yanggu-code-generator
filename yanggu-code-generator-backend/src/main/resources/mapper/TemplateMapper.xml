@@ -63,7 +63,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_template
+            gen_template
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -76,7 +76,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_template
+            gen_template
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -91,7 +91,7 @@
             g.group_name AS template_group_name,
             g.type AS template_group_type
         FROM
-            yanggu_code_generator.gen_template AS t
+            gen_template AS t
         JOIN gen_template_group AS g ON t.template_group_id = g.id AND g.is_delete = 0
         <where>
             t.is_delete = 0
@@ -105,7 +105,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_template
+            gen_template
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

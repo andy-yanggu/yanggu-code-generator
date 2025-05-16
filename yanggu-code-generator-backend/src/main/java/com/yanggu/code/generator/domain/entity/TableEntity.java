@@ -16,7 +16,7 @@ import java.util.List;
  * 表Entity实体类
  */
 @Data
-@TableName(value = "gen_table", schema = "yanggu_code_generator")
+@TableName(value = "gen_table")
 @EqualsAndHashCode(callSuper = true)
 public class TableEntity extends BaseEntity implements Serializable {
 

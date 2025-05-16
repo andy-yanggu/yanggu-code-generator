@@ -63,7 +63,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table
+            gen_table
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -76,7 +76,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table
+            gen_table
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -92,8 +92,8 @@
             p.table_template_group_id,
             p.generator_type
         FROM
-            yanggu_code_generator.gen_table AS t
-        JOIN yanggu_code_generator.gen_project AS p ON t.project_id = p.id AND p.is_delete = 0
+            gen_table AS t
+        JOIN gen_project AS p ON t.project_id = p.id AND p.is_delete = 0
         <where>
             t.is_delete = 0
             <include refid="whereSQL"/>
@@ -106,7 +106,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_table
+            gen_table
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -118,7 +118,7 @@
         SELECT
             project_id
         FROM
-            yanggu_code_generator.gen_table
+            gen_table
         WHERE
             is_delete = 0
             AND id IN

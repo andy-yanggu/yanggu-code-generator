@@ -50,7 +50,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_base_class
+            gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -63,7 +63,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_base_class
+            gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -76,7 +76,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_base_class
+            gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -89,7 +89,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            yanggu_code_generator.gen_base_class
+            gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
