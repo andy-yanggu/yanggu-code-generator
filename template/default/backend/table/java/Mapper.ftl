@@ -1,11 +1,11 @@
-package ${projectPackage}.${projectNameUnderline}.mapper;
+package ${projectPackage}.${projectNameDot}.mapper;
 
-import com.yanggu.common.mybatis.mapper.BaseMapperPlus;
+import ${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import ${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity;
-import ${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
+import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

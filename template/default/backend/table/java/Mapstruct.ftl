@@ -1,9 +1,9 @@
-package ${projectPackage}.${projectNameUnderline}.mapstruct;
+package ${projectPackage}.${projectNameDot}.mapstruct;
 
-import com.yanggu.common.mapstruct.BaseMapstruct;
-import ${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO;
-import ${projectPackage}.${projectNameUnderline}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity;
+import ${projectPackage}.${projectNameDot}.common.mapstruct.BaseMapstruct;
+import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
+import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
+import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

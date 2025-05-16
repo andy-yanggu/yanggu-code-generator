@@ -26,6 +26,16 @@ public class ProjectDataModel {
     private String projectNamePascal;
 
     /**
+     * 项目名（点）（test1.demo）
+     */
+    private String projectNameDot;
+
+    /**
+     * 项目名（斜杠）（test1/demo）
+     */
+    private String projectNameSlash;
+
+    /**
      * 项目包名（com.yanggu）
      */
     private String projectPackage;

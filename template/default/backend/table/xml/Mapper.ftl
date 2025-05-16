@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="${projectPackage}.${projectNameUnderline}.mapper.${classNameUpper}Mapper">
+<mapper namespace="${projectPackage}.${projectNameDot}.mapper.${classNameUpper}Mapper">
 
     <!-- 所有字段 -->
     <sql id="allColumns">
@@ -66,7 +66,7 @@
     </sql>
 
     <!-- Entity类字段映射 -->
-    <resultMap type="${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity" id="${className}Map">
+    <resultMap type="${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity" id="${className}Map">
         <#list fieldList as field>
         <#if field.primaryPk>
         <id property="${field.attrName}" column="${field.fieldName}"/>
@@ -116,7 +116,7 @@
     </select>
 
     <!-- VO分页 -->
-    <select id="voPage" resultType="${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO">
+    <select id="voPage" resultType="${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO">
         SELECT
             <include refid="allColumns"/>
         FROM
@@ -131,7 +131,7 @@
     </select>
 
     <!-- VO列表 -->
-    <select id="voList" resultType="${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO">
+    <select id="voList" resultType="${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO">
         SELECT
             <include refid="allColumns"/>
         FROM

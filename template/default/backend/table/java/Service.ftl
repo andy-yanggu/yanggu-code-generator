@@ -1,11 +1,11 @@
-package ${projectPackage}.${projectNameUnderline}.service;
+package ${projectPackage}.${projectNameDot}.service;
 
-import com.yanggu.common.domain.vo.PageVO;
-import ${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO;
-import ${projectPackage}.${projectNameUnderline}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}VOQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity;
+import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
+import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
+import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

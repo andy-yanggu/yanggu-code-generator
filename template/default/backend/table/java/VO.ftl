@@ -1,7 +1,7 @@
-package ${projectPackage}.${projectNameUnderline}.domain.vo;
+package ${projectPackage}.${projectNameDot}.domain.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import com.yanggu.common.domain.vo.BaseVO;
+import ${projectPackage}.${projectNameDot}.common.domain.vo.BaseVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

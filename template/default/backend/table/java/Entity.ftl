@@ -1,4 +1,4 @@
-package ${projectPackage}.${projectNameUnderline}.domain.entity;
+package ${projectPackage}.${projectNameDot}.domain.entity;
 
 import lombok.Data;
 <#if baseClass??>

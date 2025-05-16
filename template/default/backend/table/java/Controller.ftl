@@ -1,4 +1,4 @@
-package ${projectPackage}.${projectNameUnderline}.controller;
+package ${projectPackage}.${projectNameDot}.controller;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
@@ -6,14 +6,14 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
-import com.yanggu.common.domain.vo.PageVO;
-import com.yanggu.common.validation.group.InsertGroup;
-import com.yanggu.common.validation.group.UpdateGroup;
-import ${projectPackage}.${projectNameUnderline}.service.${classNameUpper}Service;
-import ${projectPackage}.${projectNameUnderline}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}VOQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO;
+import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
+import ${projectPackage}.${projectNameDot}.common.validation.group.InsertGroup;
+import ${projectPackage}.${projectNameDot}.common.validation.group.UpdateGroup;
+import ${projectPackage}.${projectNameDot}.service.${classNameUpper}Service;
+import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

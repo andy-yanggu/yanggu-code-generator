@@ -1,4 +1,4 @@
-package ${projectPackage}.${projectNameUnderline}.domain.dto;
+package ${projectPackage}.${projectNameDot}.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

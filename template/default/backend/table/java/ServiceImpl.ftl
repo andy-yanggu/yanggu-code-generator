@@ -1,4 +1,4 @@
-package ${projectPackage}.${projectNameUnderline}.service.impl;
+package ${projectPackage}.${projectNameDot}.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -14,17 +14,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.dromara.hutool.core.text.StrUtil;
     </#if>
 </#if>
-import com.yanggu.common.domain.vo.PageVO;
-import com.yanggu.common.exception.BusinessException;
-import com.yanggu.common.mybatis.util.MybatisUtil;
-import ${projectPackage}.${projectNameUnderline}.mapstruct.${classNameUpper}Mapstruct;
-import ${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}VOQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameUnderline}.domain.vo.${classNameUpper}VO;
-import ${projectPackage}.${projectNameUnderline}.mapper.${classNameUpper}Mapper;
-import ${projectPackage}.${projectNameUnderline}.service.${classNameUpper}Service;
+import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
+import ${projectPackage}.${projectNameDot}.common.exception.BusinessException;
+import ${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil;
+import ${projectPackage}.${projectNameDot}.mapstruct.${classNameUpper}Mapstruct;
+import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
+import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
+import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
+import ${projectPackage}.${projectNameDot}.mapper.${classNameUpper}Mapper;
+import ${projectPackage}.${projectNameDot}.service.${classNameUpper}Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ import java.util.Objects;
     </#if>
 </#if>
 
-import static com.yanggu.common.response.ResultEnum.DATA_NOT_EXIST;
+import static ${projectPackage}.${projectNameDot}.common.response.ResultEnum.DATA_NOT_EXIST;
 
 /**
  * ${tableComment}Service实现类

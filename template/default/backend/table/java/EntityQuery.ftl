@@ -1,10 +1,10 @@
-package ${projectPackage}.${projectNameUnderline}.domain.query;
+package ${projectPackage}.${projectNameDot}.domain.query;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.yanggu.common.domain.query.PageQuery;
-import ${projectPackage}.${projectNameUnderline}.domain.entity.${classNameUpper}Entity;
+import ${projectPackage}.${projectNameDot}.common.domain.query.PageQuery;
+import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
 
 import java.io.Serial;
 import java.io.Serializable;

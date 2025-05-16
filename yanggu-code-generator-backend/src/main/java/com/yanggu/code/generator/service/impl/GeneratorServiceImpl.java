@@ -361,6 +361,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectDataModel.setProjectName(project.getProjectName());
         projectDataModel.setProjectNameUnderline(StrUtil.replace(project.getProjectName(), "-", "_"));
         projectDataModel.setProjectNamePascal(NamingCase.toPascalCase(projectDataModel.getProjectNameUnderline()));
+        projectDataModel.setProjectNameDot(StrUtil.replace(project.getProjectName(), "-", "."));
+        projectDataModel.setProjectNameSlash(StrUtil.replace(project.getProjectName(), "-", "/"));
         projectDataModel.setProjectPackage(project.getProjectPackage());
         projectDataModel.setProjectPackageSlash(projectDataModel.getProjectPackage().replace(".", "/"));
         projectDataModel.setProjectVersion(project.getProjectVersion());
@@ -428,6 +430,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableDataModel.setProjectName(project.getProjectName());
         tableDataModel.setProjectNameUnderline(StrUtil.replace(project.getProjectName(), "-", "_"));
         tableDataModel.setProjectNamePascal(NamingCase.toPascalCase(tableDataModel.getProjectNameUnderline()));
+        tableDataModel.setProjectNameDot(StrUtil.replace(project.getProjectName(), "-", "."));
+        tableDataModel.setProjectNameSlash(StrUtil.replace(project.getProjectName(), "-", "/"));
         tableDataModel.setProjectPackage(project.getProjectPackage());
         tableDataModel.setProjectPackageSlash(project.getProjectPackage().replace(".", "/"));
         tableDataModel.setVersion(table.getVersion());
