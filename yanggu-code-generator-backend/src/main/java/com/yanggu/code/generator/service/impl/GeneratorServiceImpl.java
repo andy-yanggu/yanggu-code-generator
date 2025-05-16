@@ -7,7 +7,8 @@ import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
-import com.yanggu.code.generator.domain.vo.PreviewVO;
+import com.yanggu.code.generator.domain.vo.PreviewDataVO;
+import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
@@ -72,15 +73,97 @@ public class GeneratorServiceImpl implements GeneratorService {
     private BaseClassMapstruct baseClassMapstruct;
 
     @Override
-    public List<PreviewVO> tablePreview2(GeneratorTableQuery tableQuery) {
-        return tablePreview(tableQuery).stream()
+    public PreviewDataVO tablePreview(Long tableId) {
+        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+        tableQuery.setTableId(tableId);
+        List<TemplateContentVO> allList = tablePreview(tableQuery);
+
+        PreviewDataVO previewData = new PreviewDataVO();
+
+        //构建模板内容列表
+        List<TemplateContentVO> templateContentList = allList.stream()
                 //过滤出文件
-                .filter(previewVO -> previewVO.getTemplateType().equals(FILE.getCode()))
+                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
                 .toList();
+        previewData.setTemplateContentList(templateContentList);
+
+        //构建树形列表
+        List<TreeVO> treeList = buildTree(allList);
+        previewData.setTreeList(treeList);
+
+        return previewData;
     }
 
     @Override
-    public List<PreviewVO> tablePreview(GeneratorTableQuery tableQuery) {
+    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
+        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+        tableQuery.setTableId(tableId);
+        tableQuery.setTemplateIdList(List.of(templateId));
+        List<TemplateContentVO> list = tablePreview(tableQuery);
+        TemplateContentVO preview = list.getFirst();
+
+        return buildResponseEntity(preview);
+    }
+
+    @Override
+    public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
+        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        downloadLocal(list);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
+        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        return downloadZip(list);
+    }
+
+    @Override
+    public PreviewDataVO projectPreview(Long projectId) throws Exception {
+        GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
+        projectQuery.setProjectId(projectId);
+        List<TemplateContentVO> allList = buildProjectPreviewList(projectQuery);
+
+        PreviewDataVO previewData = new PreviewDataVO();
+
+        //构建模板内容列表
+        List<TemplateContentVO> templateContentList = allList.stream()
+                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
+                .toList();
+        previewData.setTemplateContentList(templateContentList);
+
+        //构建树形列表
+        List<TreeVO> treeList = buildTree(allList);
+        previewData.setTreeList(treeList);
+
+        return previewData;
+    }
+
+    @Override
+    public void projectDownloadLocal(GeneratorProjectQuery projectQuery) throws Exception {
+        List<TemplateContentVO> list = buildProjectPreviewList(projectQuery);
+        downloadLocal(list);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception {
+        List<TemplateContentVO> list = buildProjectPreviewList(projectQuery);
+        return downloadZip(list);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
+        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
+            ProjectEntity project = projectService.getById(id);
+            TemplateContentVO preview = projectPreview(project, List.of(templateId)).getFirst();
+            return buildResponseEntity(preview);
+        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
+            return tableDownloadSingle(id, templateId);
+        } else {
+            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        }
+    }
+
+    private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
         Long tableId = tableQuery.getTableId();
 
         //获取数据模型
@@ -101,7 +184,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         return templateList.stream()
                 .map(template -> {
                     tableDataModel.setTemplateName(template.getTemplateName());
-                    PreviewVO previewVO = new PreviewVO();
+                    TemplateContentVO templateContentVO = new TemplateContentVO();
 
                     String content = "";
                     if (template.getTemplateType().equals(FILE.getCode())) {
@@ -112,161 +195,56 @@ public class GeneratorServiceImpl implements GeneratorService {
                     //文件名称
                     String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
 
-                    previewVO.setTableId(tableId);
-                    previewVO.setTemplateId(template.getId());
-                    previewVO.setTemplateGroupType(templateGroup.getType());
-                    previewVO.setTemplateType(template.getTemplateType());
-                    previewVO.setFileName(fileName);
-                    previewVO.setContent(content);
-                    previewVO.setFilePath(filePath);
-                    return previewVO;
+                    templateContentVO.setTableId(tableId);
+                    templateContentVO.setTemplateId(template.getId());
+                    templateContentVO.setTemplateGroupType(templateGroup.getType());
+                    templateContentVO.setTemplateType(template.getTemplateType());
+                    templateContentVO.setFileName(fileName);
+                    templateContentVO.setContent(content);
+                    templateContentVO.setFilePath(filePath);
+                    return templateContentVO;
                 })
                 .toList();
     }
 
-    @Override
-    public List<TreeVO> tableTreeData(GeneratorTableQuery tableQuery) {
-        Long tableId = tableQuery.getTableId();
-        //数据模型
-        TableDataModel dataModel = buildTableDataModel(tableId);
-
-        Long templateGroupId = tableService.getTableTemplateGroupId(tableId);
-
-        TemplateGroupEntity templateGroup = templateGroupService.getById(templateGroupId);
-
-        List<TreeVO> treeList = new ArrayList<>();
-        //渲染模板并输出
-        for (TemplateEntity template : templateGroup.getTemplateList()) {
-
-            TreeVO treeVO = new TreeVO();
-            //路径
-            String filePath = TemplateUtils.getContent(template.getGeneratorPath(), dataModel);
-            treeVO.setFilePath(filePath);
-
-            //文件名称
-            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-            treeVO.setLabel(fileName);
-
-            //模板ID
-            treeVO.setTemplateId(template.getId());
-            treeList.add(treeVO);
-        }
-
-        return buildTree(treeList);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
-        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-        tableQuery.setTableId(tableId);
-        tableQuery.setTemplateIdList(List.of(templateId));
-        List<PreviewVO> list = tablePreview(tableQuery);
-        PreviewVO preview = list.getFirst();
-
-        return buildResponseEntity(preview);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> tableBatchDownloadZip(List<Long> tableIds) {
-        List<PreviewVO> list = new ArrayList<>();
-        tableIds.forEach(tableId -> {
-            GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
-            generatorTableQuery.setTableId(tableId);
-            List<PreviewVO> tempList = tablePreview(generatorTableQuery);
-            if (CollUtil.isNotEmpty(tempList)) {
-                list.addAll(tempList);
-            }
-        });
-
-        return downloadZip(list);
-    }
-
-    @Override
-    public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        List<PreviewVO> list = getPreviewData(tableQuery);
-        downloadLocal(list);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        List<PreviewVO> list = getPreviewData(tableQuery);
-        return downloadZip(list);
-    }
-
-    @Override
-    public List<PreviewVO> buildProjectPreviewList2(Long projectId) throws Exception {
-        return buildProjectPreviewList(projectId).stream()
-                .filter(previewVO -> previewVO.getTemplateType().equals(FILE.getCode()))
-                .toList();
-    }
-
-    @Override
-    public List<PreviewVO> buildProjectPreviewList(Long projectId) throws Exception {
+    private List<TemplateContentVO> buildProjectPreviewList(GeneratorProjectQuery projectQuery) throws Exception {
+        Long projectId = projectQuery.getProjectId();
         //查询项目
         ProjectEntity project = projectService.getById(projectId);
 
         //查询该项目下的表
         List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
+        List<Long> tableIdList = projectQuery.getTableIdList();
+        if (CollUtil.isNotEmpty(tableIdList)) {
+            tableList = tableList.stream()
+                    .filter(table -> tableIdList.contains(table.getId()))
+                    .toList();
+        }
 
-        List<PreviewVO> allPreviewList = new ArrayList<>();
+        List<TemplateContentVO> allPreviewList = new ArrayList<>();
 
         //获取表预览数据
-        List<PreviewVO> tablePreviewList = tableListPreview(tableList);
+        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, projectQuery.getTableTemplateIdList());
         allPreviewList.addAll(tablePreviewList);
 
         //获取项目预览数据
-        List<PreviewVO> projectPreviewList = projectPreview(project, List.of());
+        List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
         allPreviewList.addAll(projectPreviewList);
 
         return allPreviewList;
     }
 
-    @Override
-    public List<TreeVO> treeData(Long projectId) throws Exception {
-        List<PreviewVO> previewList = buildProjectPreviewList(projectId);
-
-        List<TreeVO> treeList = new ArrayList<>();
-        // 渲染模板并输出
-        for (PreviewVO previewVO : previewList) {
-            TreeVO treeVO = new TreeVO();
-            treeVO.setFilePath(previewVO.getFilePath());
-            treeVO.setLabel(previewVO.getFileName());
-            treeVO.setTemplateId(previewVO.getTemplateId());
-            treeList.add(treeVO);
-        }
-
-        return buildTree(treeList);
-    }
-
-    @Override
-    public void projectDownloadLocal(GeneratorProjectQuery projectQuery) {
-
-    }
-
-    @Override
-    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
-        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
-            ProjectEntity project = projectService.getById(id);
-            PreviewVO preview = projectPreview(project, List.of(templateId)).getFirst();
-            return buildResponseEntity(preview);
-        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
-            return tableDownloadSingle(id, templateId);
-        } else {
-            throw new BusinessException("模板组类型异常: " + templateGroupType);
-        }
-    }
-
-    private ResponseEntity<byte[]> buildResponseEntity(PreviewVO preview) {
+    private ResponseEntity<byte[]> buildResponseEntity(TemplateContentVO preview) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + preview.getFileName())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(preview.getContent().getBytes());
     }
 
-    private List<PreviewVO> getPreviewData(GeneratorTableQuery tableQuery) {
+    private List<TemplateContentVO> getPreviewData(GeneratorTableQuery tableQuery) {
         Long tableId = tableQuery.getTableId();
         List<Long> tableIdList = tableQuery.getTableIdList();
-        List<PreviewVO> list = new ArrayList<>();
+        List<TemplateContentVO> list = new ArrayList<>();
         if (tableId != null) {
             list.addAll(tablePreview(tableQuery));
         } else {
@@ -279,21 +257,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         return list;
     }
 
-    private ResponseEntity<byte[]> downloadZip(List<PreviewVO> list) {
+    private ResponseEntity<byte[]> downloadZip(List<TemplateContentVO> list) {
         if (CollUtil.isEmpty(list)) {
-            throw new BusinessException("暂不支持");
+            throw new BusinessException("待写入数据为空");
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
-        for (PreviewVO previewVO : list) {
+        for (TemplateContentVO templateContentVO : list) {
             try {
                 // 添加到zip
-                zip.putNextEntry(new ZipEntry(previewVO.getFilePath()));
-                IoUtil.writeUtf8(zip, false, previewVO.getContent());
+                zip.putNextEntry(new ZipEntry(templateContentVO.getFilePath()));
+                IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
                 zip.flush();
                 zip.closeEntry();
             } catch (IOException e) {
-                throw new BusinessException("模板写入失败：" + previewVO.getFilePath(), e);
+                throw new BusinessException("模板写入失败：" + templateContentVO.getFilePath(), e);
             }
         }
         IoUtil.closeQuietly(zip);
@@ -303,39 +281,40 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         String dateTime = DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=maku_" + dateTime + ".zip")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=code_generator_" + dateTime + ".zip")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(data);
     }
 
-    private void downloadLocal(List<PreviewVO> list) {
+    private void downloadLocal(List<TemplateContentVO> list) {
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        for (PreviewVO previewVO : list) {
-            Integer templateType = previewVO.getTemplateType();
+        for (TemplateContentVO templateContentVO : list) {
+            Integer templateType = templateContentVO.getTemplateType();
             //写入到文件
             if (FILE.getCode().equals(templateType)) {
-                FileUtil.writeUtf8String(previewVO.getContent(), previewVO.getFilePath());
+                FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
             } else {
                 //生成文件夹
-                FileUtil.mkdir(previewVO.getFilePath());
+                FileUtil.mkdir(templateContentVO.getFilePath());
             }
         }
     }
 
-    private List<PreviewVO> tableListPreview(List<TableEntity> tableList) {
-        List<PreviewVO> tablePreviewList = new ArrayList<>();
+    private List<TemplateContentVO> tableListPreview(List<TableEntity> tableList, List<Long> tableTemplateIdList) {
+        List<TemplateContentVO> tablePreviewList = new ArrayList<>();
         for (TableEntity tableEntity : tableList) {
             GeneratorTableQuery query = new GeneratorTableQuery();
             query.setTableId(tableEntity.getId());
-            List<PreviewVO> tempList = tablePreview(query);
+            query.setTemplateIdList(tableTemplateIdList);
+            List<TemplateContentVO> tempList = tablePreview(query);
             tablePreviewList.addAll(tempList);
         }
         return tablePreviewList;
     }
 
-    private List<PreviewVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
+    private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
         //获取数据源信息
         DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
         //获取项目模板组信息
@@ -351,7 +330,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     Integer templateType = template.getTemplateType();
                     //内容
                     String fileContent;
-                    PreviewVO previewVO = new PreviewVO();
+                    TemplateContentVO templateContentVO = new TemplateContentVO();
                     if (FILE.getCode().equals(templateType)) {
                         fileContent = TemplateUtils.getContent(template.getTemplateContent(), projectDataModel);
                     } else {
@@ -361,14 +340,14 @@ public class GeneratorServiceImpl implements GeneratorService {
                     String filePath = TemplateUtils.getContent(template.getGeneratorPath(), projectDataModel);
                     //文件名
                     String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-                    previewVO.setContent(fileContent);
-                    previewVO.setFileName(fileName);
-                    previewVO.setFilePath(filePath);
-                    previewVO.setTemplateId(template.getId());
-                    previewVO.setTemplateGroupType(templateGroup.getType());
-                    previewVO.setTemplateType(templateType);
+                    templateContentVO.setContent(fileContent);
+                    templateContentVO.setFileName(fileName);
+                    templateContentVO.setFilePath(filePath);
+                    templateContentVO.setTemplateId(template.getId());
+                    templateContentVO.setTemplateGroupType(templateGroup.getType());
+                    templateContentVO.setTemplateType(templateType);
 
-                    return previewVO;
+                    return templateContentVO;
                 })
                 .toList();
     }
@@ -557,7 +536,16 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
-    private List<TreeVO> buildTree(List<TreeVO> treeList) {
+    private List<TreeVO> buildTree(List<TemplateContentVO> allList) {
+        List<TreeVO> treeList = allList.stream()
+                .map(templateContentVO -> {
+                    TreeVO treeVO = new TreeVO();
+                    treeVO.setFilePath(templateContentVO.getFilePath());
+                    treeVO.setLabel(templateContentVO.getFileName());
+                    treeVO.setTemplateId(templateContentVO.getTemplateId());
+                    return treeVO;
+                })
+                .toList();
         Map<String, TreeVO> nodeMap = new HashMap<>();
 
         for (TreeVO treeVO : treeList) {

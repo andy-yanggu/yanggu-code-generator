@@ -6,6 +6,7 @@
 				<el-aside :style="{ width: '300px', overflowX: 'auto' }">
 					<div class="tree-scroll-wrapper">
 						<el-tree
+							ref="treeRef"
 							:data="preview.treeData"
 							node-key="filePath"
 							:current-node-key="currentNodeKey"
@@ -47,6 +48,7 @@ import {
 } from '@/api/generator'
 
 const currentNodeKey = ref()
+const treeRef = ref()
 const preview = reactive({
 	visible: false,
 	title: '代码预览',
@@ -84,21 +86,20 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 
 const init = async (projectItem: any) => {
 	const projectId = projectItem.id
+	preview.projectId = projectId
+	preview.generatorType = projectItem.generatorType
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		let restTreeData = await generatorProjectTreeDataApi(projectId)
-		preview.treeData = restTreeData.data
+		const res = await generatorProjectPreviewApi(projectId)
+		const { templateContentList, treeList } = res.data
+		preview.data = templateContentList
+		preview.treeData = treeList
+		preview.activeName = templateContentList[0].fileName
 
-		let resData = await generatorProjectPreviewApi(projectId)
-		preview.data = resData.data
 		preview.visible = true
-		preview.projectId = projectId
-		preview.generatorType = projectItem.generatorType
-		preview.activeName = resData.data[0].fileName
-
-		// 确保数据加载完成后再设置树节点
-		await nextTick() // 等待 DOM 更新
-		currentNodeKey.value = resData.data[0].filePath
+		await nextTick()
+		currentNodeKey.value = templateContentList[0].filePath
+		treeRef.value.setCurrentKey(currentNodeKey.value)
 	} finally {
 		loadingInstance.close()
 	}

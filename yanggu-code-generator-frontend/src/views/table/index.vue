@@ -162,6 +162,7 @@ const generatorCodeBatch = () => {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
+	currentTemplateGroupIdTs.value = Date.now()
 	tableGenerateCheckApi(data).then(res => {
 		const checkData = res.data
 		if (!checkData.checkResult) {

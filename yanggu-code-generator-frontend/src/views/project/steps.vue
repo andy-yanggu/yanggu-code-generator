@@ -4,20 +4,20 @@
 			<!-- 步骤条 -->
 			<el-header height="60px">
 				<el-steps :active="activeRef" align-center finish-status="success">
-					<el-step title="选择表"></el-step>
 					<el-step title="选择模板"></el-step>
+					<el-step title="选择表"></el-step>
 				</el-steps>
 			</el-header>
 			<!-- 表单区域 -->
 			<el-main>
-				<table-index v-if="activeRef === 0" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
-				<template-index v-if="activeRef === 1" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
+				<template-index v-if="activeRef === 0" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
+				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
 			</el-main>
 			<!-- 操作按钮 -->
 			<el-footer height="60px" style="text-align: center">
 				<el-button v-if="activeRef === 1" @click="prevStep()">上一步</el-button>
-				<el-button v-if="activeRef === 0" :disabled="tableListRef.length === 0" @click="nextStep()">下一步</el-button>
-				<el-button v-if="activeRef === 1" :disabled="templateListRef.length === 0" @click="generateCode()">生成代码</el-button>
+				<el-button v-if="activeRef === 0" :disabled="templateListRef.length === 0" @click="nextStep()">下一步</el-button>
+				<el-button v-if="activeRef === 1" :disabled="tableListRef.length === 0" @click="generateCode()">生成代码</el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>
@@ -52,7 +52,7 @@ const init = (projectItem: any) => {
 	projectReactive.projectTemplateGroupId = projectItem.projectTemplateGroupId
 	projectReactive.generatorType = projectItem.generatorType
 	nextTick(() => {
-		tableIndexRef.value.init(projectItem.id)
+		templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
 	})
 }
 
@@ -60,21 +60,7 @@ const init = (projectItem: any) => {
 const prevStep = () => {
 	if (activeRef.value > 0) {
 		activeRef.value--
-		nextTick(() => {
-			tableIndexRef.value.init(projectReactive.id)
 
-			//恢复之前的勾选
-			tableListRef.value.forEach(item => {
-				tableIndexRef.value.toggleRowSelection(item, true)
-			})
-		})
-	}
-}
-
-//下一步
-const nextStep = () => {
-	if (activeRef.value < 1) {
-		activeRef.value++
 		nextTick(() => {
 			templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
 
@@ -86,12 +72,29 @@ const nextStep = () => {
 	}
 }
 
+//下一步
+const nextStep = () => {
+	if (activeRef.value < 1) {
+		activeRef.value++
+	}
+
+	nextTick(() => {
+		tableIndexRef.value.init(projectReactive.id)
+
+		//恢复之前的勾选
+		tableListRef.value.forEach(item => {
+			tableIndexRef.value.toggleRowSelection(item, true)
+		})
+	})
+}
+
 //生成代码
 const generateCode = () => {
 	const dataForm = {
 		projectId: projectReactive.id,
 		tableIdList: tableListRef.value.map(item => item.id),
-		templateIdList: templateListRef.value.map(item => item.id)
+		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
+		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id)
 	}
 
 	const generatorType = projectReactive.generatorType

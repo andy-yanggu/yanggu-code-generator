@@ -6,6 +6,7 @@
 				<el-aside :style="{ width: '300px', overflowX: 'auto' }">
 					<div class="tree-scroll-wrapper">
 						<el-tree
+							ref="treeRef"
 							:data="preview.treeData"
 							node-key="filePath"
 							:current-node-key="currentNodeKey"
@@ -35,13 +36,13 @@
 </template>
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
-import { ElLoading } from 'element-plus'
-import { generatorTableDownloadApi, generatorTableDownloadLocalApi, generatorTablePreviewApi, generatorTableTreeDataApi } from '@/api/generator'
+import { generatorTableDownloadSingleApi, generatorTableDownloadLocalApi, generatorTablePreviewApi } from '@/api/generator'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
 
 const currentNodeKey = ref()
+const treeRef = ref()
 const preview = reactive({
 	visible: false,
 	title: '代码预览',
@@ -77,29 +78,23 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 	currentNodeKey.value = currentItem.filePath
 }
 
-const init = async (tableItem: any) => {
+const init = (tableItem: any) => {
 	const tableId = tableItem.id
 	preview.generatorType = tableItem.generatorType
-	const loadingInstance = ElLoading.service({ fullscreen: true })
-	try {
-		const dataForm = {
-			tableId: tableId
-		}
-		let restTreeData = await generatorTableTreeDataApi(dataForm)
-		preview.treeData = restTreeData.data
+	generatorTablePreviewApi(tableId).then(rest => {
+		const { templateContentList, treeList } = rest.data
+		preview.data = templateContentList
+		preview.treeData = treeList
 
-		let resData = await generatorTablePreviewApi(dataForm)
-		preview.data = resData.data
 		preview.visible = true
 		preview.tableId = tableId
-		preview.activeName = resData.data[0].fileName
+		preview.activeName = templateContentList[0].fileName
 
-		// 确保数据加载完成后再设置树节点
-		await nextTick() // 等待 DOM 更新
-		currentNodeKey.value = resData.data[0].filePath
-	} finally {
-		loadingInstance.close()
-	}
+		nextTick(() => {
+			currentNodeKey.value = templateContentList[0].filePath
+			treeRef.value.setCurrentKey(currentNodeKey.value)
+		})
+	})
 }
 defineExpose({
 	init
@@ -131,7 +126,7 @@ const generatorCode = item => {
 			tableId: tableId,
 			templateId: item.templateId
 		}
-		generatorTableDownloadApi(dataForm)
+		generatorTableDownloadSingleApi(dataForm)
 	} else if (preview.generatorType === 1) {
 		const dataForm = {
 			tableId: tableId,
