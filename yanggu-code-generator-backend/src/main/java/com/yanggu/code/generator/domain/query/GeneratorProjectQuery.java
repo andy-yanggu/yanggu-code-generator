@@ -11,6 +11,8 @@ public class GeneratorProjectQuery {
 
     private List<Long> tableIdList;
 
-    private List<Long> templateIdList;
+    private List<Long> projectTemplateIdList;
+
+    private List<Long> tableTemplateIdList;
 
 }

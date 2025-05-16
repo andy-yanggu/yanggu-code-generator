@@ -31,7 +31,7 @@
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
-					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
+					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
 					<el-button type="primary" link @click="deleteProjectBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -53,7 +53,7 @@
 		<!-- 预览 -->
 		<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
 
-		<steps ref="stepsRef" :key="currentProjectId"></steps>
+		<steps ref="stepsRef" :key="currentProjectIdTs"></steps>
 	</el-card>
 </template>
 
@@ -80,7 +80,7 @@ const state: IHooksOptions = reactive({
 const queryRef = ref()
 const addOrUpdateRef = ref()
 const previewRef = ref()
-const currentProjectId = ref()
+const currentProjectIdTs = ref()
 const stepsRef = ref()
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
@@ -89,8 +89,8 @@ const resetQueryRef = () => {
 	queryRef.value.resetFields()
 }
 
-const previewHandle = (projectId?: number) => {
-	previewRef.value.init(projectId)
+const previewHandle = (projectItem: any) => {
+	previewRef.value.init(projectItem)
 }
 
 const deleteProjectBatchHandle = (projectId?: number) => {
@@ -119,7 +119,7 @@ const deleteProjectBatchHandle = (projectId?: number) => {
 }
 
 const generatorCode = item => {
-	currentProjectId.value = `${item.id}-${Date.now()}`
+	currentProjectIdTs.value = Date.now()
 	nextTick(() => {
 		stepsRef.value.init(item)
 	})

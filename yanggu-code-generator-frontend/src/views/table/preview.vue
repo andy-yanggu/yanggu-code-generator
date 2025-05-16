@@ -47,6 +47,7 @@ const preview = reactive({
 	title: '代码预览',
 	data: [],
 	tableId: 0,
+	generatorType: null,
 	treeData: [],
 	activeName: ''
 })
@@ -76,7 +77,9 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 	currentNodeKey.value = currentItem.filePath
 }
 
-const init = async (tableId: number) => {
+const init = async (tableItem: any) => {
+	const tableId = tableItem.id
+	preview.generatorType = tableItem.generatorType
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		const dataForm = {
@@ -123,13 +126,13 @@ const handleCopy = (content: string) => {
 //生成代码
 const generatorCode = item => {
 	const tableId = item.tableId
-	if (item.generatorType === 0) {
+	if (preview.generatorType === 0) {
 		const dataForm = {
 			tableId: tableId,
 			templateId: item.templateId
 		}
 		generatorTableDownloadApi(dataForm)
-	} else if (item.generatorType === 1) {
+	} else if (preview.generatorType === 1) {
 		const dataForm = {
 			tableId: tableId,
 			templateIdList: [item.templateId]

@@ -116,7 +116,6 @@ public class GeneratorServiceImpl implements GeneratorService {
                     previewVO.setTemplateId(template.getId());
                     previewVO.setTemplateGroupType(templateGroup.getType());
                     previewVO.setTemplateType(template.getTemplateType());
-                    previewVO.setGeneratorType(tableDataModel.getGeneratorType());
                     previewVO.setFileName(fileName);
                     previewVO.setContent(content);
                     previewVO.setFilePath(filePath);

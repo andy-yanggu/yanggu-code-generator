@@ -22,7 +22,7 @@
 								<el-col :span="18"></el-col>
 								<el-col :span="6" style="text-align: right">
 									<el-button @click="handleCopy(item.content)">复制</el-button>
-									<el-button @click="downloadTemplateData(item)">下载</el-button>
+									<el-button @click="downloadTemplateData(item)">生成代码</el-button>
 								</el-col>
 							</el-row>
 							<code-mirror v-model="item.content" :height="680"></code-mirror>
@@ -39,7 +39,12 @@ import { ElLoading } from 'element-plus'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
-import { generatorProjectPreviewApi, generatorProjectTreeDataApi, generatorProjectDownloadSingleApi } from '@/api/generator'
+import {
+	generatorProjectPreviewApi,
+	generatorProjectTreeDataApi,
+	generatorProjectDownloadSingleApi,
+	generatorProjectDownloadLocalApi
+} from '@/api/generator'
 
 const currentNodeKey = ref()
 const preview = reactive({
@@ -47,6 +52,7 @@ const preview = reactive({
 	title: '代码预览',
 	data: [],
 	projectId: 0,
+	generatorType: null,
 	treeData: [],
 	activeName: ''
 })
@@ -76,7 +82,8 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 	currentNodeKey.value = currentItem.filePath
 }
 
-const init = async (projectId: number) => {
+const init = async (projectItem: any) => {
+	const projectId = projectItem.id
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		let restTreeData = await generatorProjectTreeDataApi(projectId)
@@ -86,6 +93,7 @@ const init = async (projectId: number) => {
 		preview.data = resData.data
 		preview.visible = true
 		preview.projectId = projectId
+		preview.generatorType = projectItem.generatorType
 		preview.activeName = resData.data[0].fileName
 
 		// 确保数据加载完成后再设置树节点
@@ -119,13 +127,31 @@ const handleCopy = (content: string) => {
 
 //下载单个模板代码
 const downloadTemplateData = item => {
-	const id = item.templateGroupType === 0 ? preview.projectId : item.tableId
-	const params = {
-		templateGroupType: item.templateGroupType,
-		id: id,
-		templateId: item.templateId
+	if (preview.generatorType === 0) {
+		const id = item.templateGroupType === 0 ? preview.projectId : item.tableId
+		const params = {
+			templateGroupType: item.templateGroupType,
+			id: id,
+			templateId: item.templateId
+		}
+		generatorProjectDownloadSingleApi(params)
+	} else if (preview.generatorType === 1) {
+		const dataForm = {
+			projectId: preview.projectId
+		}
+		if (item.templateGroupType === 0) {
+			dataForm.projectTemplateIdList = [item.templateId]
+		} else if (item.templateGroupType === 1) {
+			dataForm.tableIdList = [item.tableId]
+			dataForm.tableTemplateIdList = [item.templateId]
+		}
+		generatorProjectDownloadLocalApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到本地',
+				duration: 1000
+			})
+		})
 	}
-	generatorProjectDownloadSingleApi(params)
 }
 </script>
 

@@ -43,9 +43,4 @@ public class PreviewVO {
      */
     private String filePath;
 
-    /**
-     * 生成方式  0：zip压缩包   1：服务器本地
-     */
-    private Integer generatorType;
-
 }

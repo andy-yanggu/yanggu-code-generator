@@ -40,7 +40,7 @@
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
 					<el-button type="primary" link @click="editHandle(scope.row.id)">字段配置</el-button>
-					<el-button type="primary" link @click="previewHandle(scope.row.id)">预览</el-button>
+					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
 					<el-button type="primary" link @click="syncHandle(scope.row)">同步</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
@@ -72,7 +72,7 @@
 		<!-- 模板组展示 -->
 		<template-index
 			ref="templateIndexRef"
-			:key="currentTemplateGroupId"
+			:key="currentTemplateGroupIdTs"
 			:table-id="currentTableId"
 			:table-id-list="currentTableIdList"
 			:generator-type="currentGeneratorType"
@@ -111,6 +111,7 @@ const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
 const currentTemplateGroupId = ref()
+const currentTemplateGroupIdTs = ref()
 const currentTableId = ref()
 const currentTableIdList = ref()
 const currentGeneratorType = ref()
@@ -132,8 +133,8 @@ const importHandle = (id?: number) => {
 	importRef.value.init(id)
 }
 
-const previewHandle = (tableId?: number) => {
-	previewRef.value.init(tableId)
+const previewHandle = (tableItem: any) => {
+	previewRef.value.init(tableItem)
 }
 
 const editHandle = (id?: number) => {
@@ -146,7 +147,8 @@ const handlerType = (row: any) => {
 
 //生成代码
 const generatorCode = item => {
-	currentTemplateGroupId.value = `${item.tableTemplateGroupId}=${Date.now()}`
+	currentTemplateGroupIdTs.value = Date.now()
+	currentTemplateGroupId.value = item.tableTemplateGroupId
 	currentTableId.value = item.id
 	currentGeneratorType.value = item.generatorType
 	nextTick(() => {
