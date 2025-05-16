@@ -3,17 +3,15 @@
 		<Logo />
 		<div class="navbar-left">代码生成器工作台</div>
 		<div class="navbar-right">
-			<a href="https://github.com/makunet/maku-generator" target="_blank">
-				<svg-icon icon="icon-github-fill"></svg-icon>
-			</a>
-			<a href="https://gitee.com/makunet/maku-generator" target="_blank">
+			<a href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 				<svg-icon icon="icon-gitee"></svg-icon>
 			</a>
 		</div>
 	</div>
 </template>
 <script setup lang="ts">
-import Logo from './components/Logo.vue'
+import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import Logo from '@/layout/components/Navbar/components/Logo.vue'
 </script>
 
 <style lang="scss" scoped>
@@ -44,6 +42,7 @@ import Logo from './components/Logo.vue'
 	height: inherit;
 	display: flex;
 	align-items: center;
+	padding-left: 20px;
 }
 .navbar-right {
 	display: flex;

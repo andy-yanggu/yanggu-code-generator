@@ -1,7 +1,6 @@
 <template>
-	<div class="sidebar-logo">
+	<div>
 		<el-avatar src="./favicon.ico"></el-avatar>
-		<span class="logo-title">Yangu Code Generator</span>
 	</div>
 </template>
 
