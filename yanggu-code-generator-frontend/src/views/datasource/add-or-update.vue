@@ -16,7 +16,7 @@
 				<el-input v-model="dataForm.username" placeholder="请输入用户名"></el-input>
 			</el-form-item>
 			<el-form-item label="密码" prop="password">
-				<el-input v-model="dataForm.password" placeholder="请输入密码"></el-input>
+				<el-input v-model="dataForm.password" type="password" show-password placeholder="请输入密码"></el-input>
 			</el-form-item>
 			<el-form-item label="描述" prop="dataSourceDesc">
 				<el-input v-model="dataForm.dataSourceDesc" placeholder="请输入描述"></el-input>
@@ -47,10 +47,7 @@ const dataForm = reactive({
 	connUrl: '',
 	username: '',
 	password: '',
-	dataSourceDesc: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	dataSourceDesc: ''
 })
 
 const init = (id?: number) => {

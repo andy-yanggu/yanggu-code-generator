@@ -35,10 +35,7 @@ const dataForm = reactive({
 	id: '',
 	groupName: '',
 	type: '',
-	groupDesc: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	groupDesc: ''
 })
 
 const init = (id?: number) => {

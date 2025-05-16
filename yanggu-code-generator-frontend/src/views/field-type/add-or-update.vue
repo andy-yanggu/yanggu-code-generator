@@ -32,10 +32,7 @@ const dataForm = reactive({
 	id: '',
 	columnType: '',
 	attrType: '',
-	packageName: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	packageName: ''
 })
 
 const init = (id?: number) => {

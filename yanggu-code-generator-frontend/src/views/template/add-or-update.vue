@@ -51,10 +51,7 @@ const dataForm = reactive({
 	generatorPath: '',
 	templateDesc: '',
 	templateContent: '',
-	templateType: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
+	templateType: ''
 })
 
 const init = (id?: number) => {
