@@ -25,7 +25,7 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="projectVersion" label="项目版本" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="generatorType" label="生成方式" :formatter="handlerGeneratorType" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -67,6 +67,7 @@ import Preview from './preview.vue'
 import Steps from './steps.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import service from '@/utils/request'
+import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/project/entityPage',
@@ -122,6 +123,10 @@ const generatorCode = item => {
 	nextTick(() => {
 		stepsRef.value.init(item)
 	})
+}
+
+const handlerGeneratorType = (row: any) => {
+	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)

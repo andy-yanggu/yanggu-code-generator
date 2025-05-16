@@ -8,9 +8,6 @@
 				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 		</el-form>
-	</el-card>
-
-	<el-card>
 		<el-table
 			ref="tableRef"
 			v-loading="state.dataListLoading"

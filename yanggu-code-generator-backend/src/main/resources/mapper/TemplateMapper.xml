@@ -23,6 +23,12 @@
         <if test="query.templateGroupId != null">
             AND t.template_group_id = #{query.templateGroupId}
         </if>
+        <if test="query.templateGroupIdList != null and query.templateGroupIdList.size() > 0">
+            AND t.template_group_id IN
+            <foreach item="item" collection="query.templateGroupIdList" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
         <if test="query.templateName != null and query.templateName.trim() != ''">
             AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
