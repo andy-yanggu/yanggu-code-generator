@@ -78,20 +78,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableQuery.setTableId(tableId);
         List<TemplateContentVO> allList = tablePreview(tableQuery);
 
-        PreviewDataVO previewData = new PreviewDataVO();
-
-        //构建模板内容列表
-        List<TemplateContentVO> templateContentList = allList.stream()
-                //过滤出文件
-                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
-                .toList();
-        previewData.setTemplateContentList(templateContentList);
-
-        //构建树形列表
-        List<TreeVO> treeList = buildTree(allList);
-        previewData.setTreeList(treeList);
-
-        return previewData;
+        return buildPreviewData(allList);
     }
 
     @Override
@@ -123,19 +110,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectQuery.setProjectId(projectId);
         List<TemplateContentVO> allList = buildProjectPreviewList(projectQuery);
 
-        PreviewDataVO previewData = new PreviewDataVO();
-
-        //构建模板内容列表
-        List<TemplateContentVO> templateContentList = allList.stream()
-                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
-                .toList();
-        previewData.setTemplateContentList(templateContentList);
-
-        //构建树形列表
-        List<TreeVO> treeList = buildTree(allList);
-        previewData.setTreeList(treeList);
-
-        return previewData;
+        return buildPreviewData(allList);
     }
 
     @Override
@@ -161,6 +136,52 @@ public class GeneratorServiceImpl implements GeneratorService {
         } else {
             throw new BusinessException("模板组类型异常: " + templateGroupType);
         }
+    }
+
+    private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
+        PreviewDataVO previewData = new PreviewDataVO();
+
+        //构建模板内容列表
+        List<TemplateContentVO> templateContentList = allList.stream()
+                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
+                .toList();
+        previewData.setTemplateContentList(templateContentList);
+
+        //构建树形列表
+        List<TreeVO> treeList = buildTree(allList);
+        previewData.setTreeList(treeList);
+
+        //重新排序模板列表
+        sortTemplateContentList(previewData);
+        return previewData;
+    }
+
+    private void sortTemplateContentList(PreviewDataVO previewData) {
+        List<TemplateContentVO> templateContentList = previewData.getTemplateContentList();
+        List<TreeVO> treeList = previewData.getTreeList();
+
+        //生成深度优先遍历的路径顺序
+        List<String> dfsOrder = getDfsOrder(treeList);
+
+        //根据路径顺序对 templateContentList 排序
+        templateContentList = templateContentList.stream()
+                .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
+                .toList();
+        previewData.setTemplateContentList(templateContentList);
+    }
+
+    /**
+     * 深度优先遍历获取路径顺序
+     */
+    private List<String> getDfsOrder(List<TreeVO> treeList) {
+        List<String> order = new ArrayList<>();
+        for (TreeVO node : treeList) {
+            order.add(node.getFilePath());
+            if (CollUtil.isNotEmpty(node.getChildren())) {
+                order.addAll(getDfsOrder(node.getChildren()));
+            }
+        }
+        return order;
     }
 
     private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
