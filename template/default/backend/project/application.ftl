@@ -38,3 +38,6 @@ mybatis-plus:
   configuration:
     # 日志配置
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+knife4j:
+  enable: true
