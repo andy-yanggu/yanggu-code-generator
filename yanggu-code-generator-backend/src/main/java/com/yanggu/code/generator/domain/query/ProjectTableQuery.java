@@ -13,11 +13,13 @@ public class ProjectTableQuery {
     /**
      * 项目ID
      */
+    @Schema(description = "项目ID")
     private Long projectId;
 
     /**
      * 表名
      */
+    @Schema(description = "表名")
     private String tableName;
 
 }
