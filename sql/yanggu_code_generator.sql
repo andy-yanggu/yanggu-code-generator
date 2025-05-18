@@ -1294,4 +1294,29 @@ INSERT INTO `gen_template_group` VALUES (28, '单体前端模板', 1, 'vue3模�
 INSERT INTO `gen_template_group` VALUES (29, '单体java项目模板', 0, '包含启动类、pom文件和配置文件', '2025-05-14 17:56:37', '2025-05-14 17:56:37', 0);
 INSERT INTO `gen_template_group` VALUES (30, '单体前端项目模板', 0, 'vue3+vite模板', '2025-05-15 14:12:58', '2025-05-15 14:12:58', 0);
 
+CREATE TABLE `gen_enum` (
+    `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `enum_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举名称',
+    `enum_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举编码',
+    `enum_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举描述',
+    `project_id` bigint DEFAULT NULL COMMENT '项目ID',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `is_delete` tinyint DEFAULT '0' COMMENT '是否删除（0未删除, 1删除）',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='枚举';
+
+CREATE TABLE `gen_enum_item` (
+     `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+     `enum_id` bigint DEFAULT NULL COMMENT '项目ID',
+     `enum_item_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举项名称',
+     `enum_item_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举项编码',
+     `enum_item_value` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '枚举项值',
+     `enum_item_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '类名',
+     `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+     `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+     `is_delete` tinyint DEFAULT '0' COMMENT '是否删除（0未删除, 1删除）',
+     PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='枚举项';
+
 SET FOREIGN_KEY_CHECKS = 1;
