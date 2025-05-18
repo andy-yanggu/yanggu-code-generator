@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.domain.dto;
 
+import com.yanggu.code.generator.common.validation.enumd.path.UnixPath;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -41,6 +42,7 @@ public class TemplateDTO implements Serializable {
 	 * 生成代码的路径
 	 */
 	@Schema(description = "生成代码的路径")
+	@UnixPath(message = "生成代码的路径格式不正确")
 	private String generatorPath;
 
 	/**
