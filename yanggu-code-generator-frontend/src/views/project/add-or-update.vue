@@ -41,8 +41,8 @@
 			</el-form-item>
 			<el-form-item prop="baseClassId" label="Entity基类">
 				<el-select v-model="dataForm.baseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="item.code" :value="item.id">
-						<span style="font-weight: bold">{{ item.code }}</span>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.code}`" :value="item.id">
+						<span style="font-weight: bold">{{ item.packageName }}.{{ item.code }}</span>
 						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
 					</el-option>
 				</el-select>

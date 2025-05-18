@@ -1,11 +1,11 @@
 <template>
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="基类编码" prop="code">
-				<el-input v-model="dataForm.code" placeholder="请输入基类编码"></el-input>
-			</el-form-item>
 			<el-form-item label="基类包名" prop="packageName">
 				<el-input v-model="dataForm.packageName" placeholder="请输入基类包名"></el-input>
+			</el-form-item>
+			<el-form-item label="基类编码" prop="code">
+				<el-input v-model="dataForm.code" placeholder="请输入基类编码"></el-input>
 			</el-form-item>
 			<el-form-item label="基类字段" prop="fields">
 				<el-input v-model="dataForm.fields" placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>

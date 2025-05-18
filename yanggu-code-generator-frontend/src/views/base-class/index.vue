@@ -5,10 +5,10 @@
 				<el-input v-model="state.queryForm.code" clearable placeholder="请输入基类编码"></el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button icon="Search" type="primary" @click="getDataList()">查询</el-button>
+				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button icon="RefreshRight" @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryRef()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
@@ -23,8 +23,8 @@
 		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="code" label="基类编码" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="packageName" label="基类包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="code" label="基类编码" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
