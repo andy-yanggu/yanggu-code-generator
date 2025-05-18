@@ -561,8 +561,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
-    private List<TreeVO> buildTree(List<TemplateContentVO> allList) {
-        List<TreeVO> treeList = allList.stream()
+    private List<TreeVO> buildTree(List<TemplateContentVO> templateContentList) {
+        List<TreeVO> treeList = templateContentList.stream()
                 .map(templateContentVO -> {
                     TreeVO treeVO = new TreeVO();
                     treeVO.setFilePath(templateContentVO.getFilePath());
@@ -571,6 +571,21 @@ public class GeneratorServiceImpl implements GeneratorService {
                     return treeVO;
                 })
                 .toList();
+        Map<String, TreeVO> nodeMap = getStringTreeVOMap(treeList);
+
+        //将平铺的数据，按照树形进行组装
+        List<TreeVO> allTreeList = new ArrayList<>(nodeMap.values());
+        return allTreeList.stream()
+                //找到层级为0的节点
+                .filter(treeVO -> treeVO.getLevel() == 0)
+                //添加子节点
+                .peek(treeVO -> treeVO.setChildren(getChildren(treeVO, allTreeList)))
+                //进行排序
+                .sorted(TREE_COMPARATOR)
+                .toList();
+    }
+
+    private static Map<String, TreeVO> getStringTreeVOMap(List<TreeVO> treeList) {
         Map<String, TreeVO> nodeMap = new HashMap<>();
 
         for (TreeVO treeVO : treeList) {
@@ -584,43 +599,38 @@ public class GeneratorServiceImpl implements GeneratorService {
                     }
                 }
                 String path = pathBuilder.toString();
-                TreeVO tempTreeVO = nodeMap.get(path);
-                if (tempTreeVO == null) {
-                    tempTreeVO = new TreeVO();
-                    tempTreeVO.setLabel(pathParts[i]);
-                    tempTreeVO.setFilePath(path);
-                    tempTreeVO.setLevel(i);
-                    if (i == pathParts.length - 1) {
-                        tempTreeVO.setTemplateId(treeVO.getTemplateId());
-                        tempTreeVO.setIsFile(true);
-                    } else {
-                        tempTreeVO.setIsFile(false);
-                    }
+                if (nodeMap.containsKey(path)) {
+                    continue;
+                }
+                TreeVO tempTreeVO = new TreeVO();
+                tempTreeVO.setLabel(pathParts[i]);
+                tempTreeVO.setFilePath(path);
+                tempTreeVO.setLevel(i);
+                if (i == pathParts.length - 1) {
+                    tempTreeVO.setTemplateId(treeVO.getTemplateId());
+                    tempTreeVO.setIsFile(true);
+                } else {
+                    tempTreeVO.setIsFile(false);
                 }
                 nodeMap.put(path, tempTreeVO);
             }
         }
-
-        List<TreeVO> values = new ArrayList<>(nodeMap.values());
-        return values.stream()
-                //找到层级为0的节点
-                .filter(treeVO -> treeVO.getLevel() == 0)
-                //添加子节点
-                .peek(treeVO -> treeVO.setChildren(getChildren(treeVO, values)))
-                //进行排序
-                .sorted(TREE_COMPARATOR)
-                .toList();
+        return nodeMap;
     }
 
     private List<TreeVO> getChildren(TreeVO node, List<TreeVO> treeList) {
         return treeList.stream()
-                .filter(treeVO -> treeVO.getFilePath().startsWith(node.getFilePath()))
-                .filter(treeVO -> node.getLevel() + 1 == treeVO.getLevel())
+                //判断是否是子节点
+                .filter(treeVO -> isChild(node, treeVO))
                 //递归添加子节点
                 .peek(treeVO -> treeVO.setChildren(getChildren(treeVO, treeList)))
                 //进行排序
                 .sorted(TREE_COMPARATOR)
                 .toList();
+    }
+
+    private boolean isChild(TreeVO node, TreeVO treeVO) {
+        return treeVO.getFilePath().startsWith(node.getFilePath()) && node.getLevel() + 1 == treeVO.getLevel();
     }
 
 }
