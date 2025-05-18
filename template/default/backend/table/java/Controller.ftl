@@ -36,7 +36,7 @@ public class ${classNameUpper}Controller {
      * 新增${tableComment}
      */
     @PostMapping("/add")
-    @ApiOperationSupport(author = "${author}", order = 1)
+    @ApiOperationSupport(<#if author!?length gt 0><#if author!?length gt 0>author = "${author}", </#if></#if>order = 1)
     @Operation(summary = "新增${tableComment}")
     public void add(@RequestBody @Validated(InsertGroup.class) ${classNameUpper}DTO dto) {
         ${className}Service.add(dto);
@@ -46,7 +46,7 @@ public class ${classNameUpper}Controller {
      * 修改${tableComment}
      */
     @PutMapping("/update")
-    @ApiOperationSupport(author = "${author}", order = 2)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 2)
     @Operation(summary = "修改${tableComment}")
     public void update(@RequestBody @Validated(UpdateGroup.class) ${classNameUpper}DTO dto) {
         ${className}Service.update(dto);
@@ -67,7 +67,7 @@ public class ${classNameUpper}Controller {
      * @param id ${tableComment}ID
      */
     @DeleteMapping("/delete")
-    @ApiOperationSupport(author = "${author}", order = 3)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 3)
     @Operation(summary = "删除${tableComment}")
     @Parameter(name = "id", description = "${tableComment}ID", required = true)
     public void delete(@RequestParam("id") @NotNull(message = "${tableComment}ID不能为空") ${primaryKeyType} id) {
@@ -80,7 +80,7 @@ public class ${classNameUpper}Controller {
      * @param idList ${tableComment}ID列表
      */
     @DeleteMapping("/deleteList")
-    @ApiOperationSupport(author = "${author}", order = 4)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 4)
     @Operation(summary = "批量删除${tableComment}")
     public void deleteList(@RequestBody @NotEmpty(message = "${tableComment}ID列表不能为空") List<${primaryKeyType}> idList) {
         ${className}Service.deleteList(idList);
@@ -92,7 +92,7 @@ public class ${classNameUpper}Controller {
      * @param id ${tableComment}ID
      */
     @GetMapping("/detail")
-    @ApiOperationSupport(author = "${author}", order = 5)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 5)
     @Operation(summary = "${tableComment}详情")
     @Parameter(name = "id", description = "${tableComment}ID", required = true)
     public ${classNameUpper}VO detail(@RequestParam("id") @NotNull(message = "${tableComment}ID不能为空") ${primaryKeyType} id) {
@@ -105,7 +105,7 @@ public class ${classNameUpper}Controller {
      * @param idList ${tableComment}ID列表
      */
     @PostMapping("/detailList")
-    @ApiOperationSupport(author = "${author}", order = 6)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 6)
     @Operation(summary = "${tableComment}批量查询")
     public List<${classNameUpper}VO> detailList(@RequestBody @NotEmpty(message = "${tableComment}ID列表不能为空") List<${primaryKeyType}> idList) {
         return ${className}Service.detailList(idList);
@@ -115,7 +115,7 @@ public class ${classNameUpper}Controller {
      * ${tableComment}简单分页
      */
     @PostMapping("/entityPage")
-    @ApiOperationSupport(author = "${author}", order = 7)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 7)
     @Operation(summary = "${tableComment}简单分页")
     public PageVO<${classNameUpper}VO> entityPage(@RequestBody ${classNameUpper}EntityQuery query) {
         return ${className}Service.entityPage(query);
@@ -125,7 +125,7 @@ public class ${classNameUpper}Controller {
      * ${tableComment}简单列表
      */
     @PostMapping("/entityList")
-    @ApiOperationSupport(author = "${author}", order = 8)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 8)
     @Operation(summary = "${tableComment}简单列表")
     public List<${classNameUpper}VO> entityList(@RequestBody ${classNameUpper}EntityQuery query) {
         return ${className}Service.entityList(query);
@@ -135,7 +135,7 @@ public class ${classNameUpper}Controller {
      * ${tableComment}复杂分页
      */
     @PostMapping("/voPage")
-    @ApiOperationSupport(author = "${author}", order = 9)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 9)
     @Operation(summary = "${tableComment}复杂分页")
     public PageVO<${classNameUpper}VO> voPage(@RequestBody ${classNameUpper}VOQuery query) {
         return ${className}Service.voPage(query);
@@ -145,7 +145,7 @@ public class ${classNameUpper}Controller {
      * ${tableComment}复杂列表
      */
     @PostMapping("/voList")
-    @ApiOperationSupport(author = "${author}", order = 10)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 10)
     @Operation(summary = "${tableComment}复杂列表")
     public List<${classNameUpper}VO> voList(@RequestBody ${classNameUpper}VOQuery query) {
         return ${className}Service.voList(query);
