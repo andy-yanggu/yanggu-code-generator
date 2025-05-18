@@ -19,7 +19,6 @@ import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.io.IoUtil;
@@ -27,6 +26,7 @@ import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.CharsetUtil;
 import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +39,8 @@ import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 /**
  * 模板组Service实现类
@@ -189,7 +191,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    public void export(List<Long> idList, HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> export(List<Long> idList) {
         List<TemplateGroupEntity> list = new ArrayList<>();
         for (Long id : idList) {
             TemplateGroupEntity templateGroup = this.getById(id);
@@ -212,13 +214,11 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         }
         String jsonStr = JSONUtil.toJsonStr(list);
 
-        //写入到响应流中
-        response.reset();
         String fileName = "templateGroup" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-        response.setHeader("Content-Length", String.valueOf(jsonStr.getBytes().length));
-        response.setContentType("application/octet-stream; charset=UTF-");
-        IoUtil.write(response.getOutputStream(), false, jsonStr.getBytes());
+        return ResponseEntity.ok()
+                .header(CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(APPLICATION_OCTET_STREAM)
+                .body(jsonStr.getBytes());
     }
 
     @Override

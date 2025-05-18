@@ -1,13 +1,13 @@
 package com.yanggu.code.generator.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
+import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
-import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     /**
      * 导出模板组
      */
-    void export(List<Long> idList, HttpServletResponse response) throws IOException;
+    ResponseEntity<byte[]> export(List<Long> idList);
 
     TemplateGroupEntity getById(Long id);
 

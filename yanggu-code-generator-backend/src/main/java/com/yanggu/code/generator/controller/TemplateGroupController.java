@@ -12,15 +12,14 @@ import com.yanggu.code.generator.service.TemplateGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -161,8 +160,8 @@ public class TemplateGroupController {
     @GetMapping("/export")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "导出模板组")
-    public void export(@RequestParam("idList") List<Long> idList, HttpServletResponse response) throws IOException {
-        templateGroupService.export(idList, response);
+    public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "模板组ID列表不能为空") List<Long> idList) {
+        return templateGroupService.export(idList);
     }
 
     /**
