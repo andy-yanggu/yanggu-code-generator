@@ -1,6 +1,6 @@
 <template>
 	<el-upload class="upload-demo" :action="serverUrl" :limit="1" :show-file-list="false" :on-success="handlerSuccess">
-		<el-button type="primary">导入</el-button>
+		<el-button type="success">导入</el-button>
 	</el-upload>
 </template>
 
