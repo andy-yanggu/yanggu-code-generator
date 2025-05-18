@@ -3,7 +3,7 @@ package com.yanggu.code.generator.domain.bo;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.*;
-import com.yanggu.code.generator.util.DbUtils;
+import com.yanggu.code.generator.util.DbUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,7 +72,7 @@ public class DataSourceBO {
         }
 
         try {
-            this.connection = DbUtils.getConnection(this);
+            this.connection = DbUtil.getConnection(this);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

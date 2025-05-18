@@ -4,10 +4,7 @@ package com.yanggu.code.generator.query;
 import com.yanggu.code.generator.enums.DbType;
 
 /**
- * Query
- *
- * @author 阿沐 babamu@126.com
- * <a href="https://maku.net">MAKU</a>
+ * 数据库Query接口
  */
 public interface AbstractQuery {
 

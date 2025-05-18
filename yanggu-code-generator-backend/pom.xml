@@ -13,14 +13,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.3.1</spring-boot.version>
-        <hutool.version>5.8.25</hutool.version>
-        <hutool.version>6.0.0-M20</hutool.version>
-        <lombok.version>1.18.36</lombok.version>
+        <hutool.version>6.0.0-M21</hutool.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <knife4j-openapi3-jakarta.version>4.5.0</knife4j-openapi3-jakarta.version>
-        <oracle.version>19.3.0.0</oracle.version>
         <dameng.version>8.1.2.141</dameng.version>
         <clickhouse.version>0.3.2</clickhouse.version>
         <kingbase8.version>8.6.0</kingbase8.version>
@@ -64,6 +60,21 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dameng</groupId>
+                <artifactId>DmJdbcDriver18</artifactId>
+                <version>${dameng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.com.kingbase</groupId>
+                <artifactId>kingbase8</artifactId>
+                <version>${kingbase8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.yandex.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -133,22 +144,18 @@
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>${oracle.version}</version>
         </dependency>
         <dependency>
             <groupId>com.dameng</groupId>
             <artifactId>DmJdbcDriver18</artifactId>
-            <version>${dameng.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.com.kingbase</groupId>
             <artifactId>kingbase8</artifactId>
-            <version>${kingbase8.version}</version>
         </dependency>
         <dependency>
             <groupId>ru.yandex.clickhouse</groupId>
             <artifactId>clickhouse-jdbc</artifactId>
-            <version>${clickhouse.version}</version>
         </dependency>
     </dependencies>
 

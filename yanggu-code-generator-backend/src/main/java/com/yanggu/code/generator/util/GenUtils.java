@@ -23,9 +23,6 @@ import java.util.List;
 
 /**
  * 代码生成器 工具类
- *
- * @author 阿沐 babamu@126.com
- * <a href="https://maku.net">MAKU</a>
  */
 @Slf4j
 public class GenUtils {
@@ -180,30 +177,4 @@ public class GenUtils {
         return StrUtil.toCamelCase(tableName);
     }
 
-    /**
-     * 表名转驼峰并移除前后缀
-     *
-     * @param upperFirst   首字母大写
-     * @param tableName    表名
-     * @param removePrefix 删除前缀
-     * @param removeSuffix 删除后缀
-     * @return java.lang.String
-     */
-    public static String camelCase(boolean upperFirst, String tableName, String removePrefix, String removeSuffix) {
-        String className = tableName;
-        // 移除前缀
-        if (StrUtil.isNotBlank(removePrefix)) {
-            className = StrUtil.removePrefix(tableName, removePrefix);
-        }
-        // 移除后缀
-        if (StrUtil.isNotBlank(removeSuffix)) {
-            className = StrUtil.removeSuffix(className, removeSuffix);
-        }
-        // 是否首字母大写
-        if (upperFirst) {
-            return NamingCase.toPascalCase(className);
-        } else {
-            return NamingCase.toCamelCase(className);
-        }
-    }
 }

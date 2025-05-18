@@ -5,9 +5,6 @@ import com.yanggu.code.generator.enums.DbType;
 
 /**
  * MySQL查询
- *
- * @author 阿沐 babamu@126.com
- * <a href="https://maku.net">MAKU</a>
  */
 public class MySqlQuery implements AbstractQuery {
 

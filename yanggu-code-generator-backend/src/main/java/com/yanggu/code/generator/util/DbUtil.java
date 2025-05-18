@@ -10,7 +10,7 @@ import java.sql.DriverManager;
 /**
  * DB工具类
  */
-public class DbUtils {
+public class DbUtil {
 
     private static final int CONNECTION_TIMEOUTS_SECONDS = 6;
 

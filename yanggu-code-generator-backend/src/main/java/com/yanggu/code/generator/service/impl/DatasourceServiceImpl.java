@@ -17,7 +17,7 @@ import com.yanggu.code.generator.mapper.DatasourceMapper;
 import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.util.DbUtils;
+import com.yanggu.code.generator.util.DbUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,7 +159,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     public void test(Long id) throws Exception {
         DatasourceEntity entity = getById(id);
-        DbUtils.getConnection(new DataSourceBO(entity));
+        DbUtil.getConnection(new DataSourceBO(entity));
     }
 
     @Override

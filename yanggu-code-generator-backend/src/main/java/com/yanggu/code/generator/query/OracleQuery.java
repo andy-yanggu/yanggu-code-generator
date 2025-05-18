@@ -6,9 +6,6 @@ import com.yanggu.code.generator.enums.DbType;
 
 /**
  * Oracle查询
- *
- * @author 阿沐 babamu@126.com
- * <a href="https://maku.net">MAKU</a>
  */
 public class OracleQuery implements AbstractQuery {
 
