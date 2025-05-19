@@ -1,0 +1,99 @@
+<template>
+	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+			<el-form-item label="项目" prop="projectId">
+				<el-select v-model="dataForm.projectId" clearable placeholder="请选择项目">
+					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="枚举名称" prop="enumName">
+				<el-input v-model="dataForm.enumName" placeholder="请输入枚举名称"></el-input>
+			</el-form-item>
+			<el-form-item label="枚举描述" prop="enumDesc">
+				<el-input v-model="dataForm.enumDesc" placeholder="请输入枚举描述"></el-input>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<el-button @click="visible = false">取消</el-button>
+			<el-button type="primary" @click="submitHandle()">确定</el-button>
+		</template>
+	</el-dialog>
+</template>
+
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus/es'
+import { enumDetailApi, enumSubmitApi } from '@/api/enum'
+import { projectEntityListApi } from '@/api/project'
+
+const emit = defineEmits(['refreshDataList'])
+
+const visible = ref(false)
+const projectList = ref([])
+const dataFormRef = ref()
+
+const dataForm = reactive({
+	id: null,
+	enumName: '',
+	enumDesc: '',
+	projectId: ''
+})
+
+const init = (id?: number) => {
+	visible.value = true
+	dataForm.id = null
+
+	// 重置表单数据
+	if (dataFormRef.value) {
+		dataFormRef.value.resetFields()
+	}
+
+	if (id) {
+		getEnum(id)
+	}
+
+	getProjectList()
+}
+
+const getProjectList = () => {
+	projectEntityListApi({}).then((res: any) => {
+		projectList.value = res.data
+	})
+}
+
+const getEnum = (id: number) => {
+	enumDetailApi(id).then(res => {
+		Object.assign(dataForm, res.data)
+	})
+}
+
+const dataRules = ref({
+	enumName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	enumDesc: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+})
+
+// 表单提交
+const submitHandle = () => {
+	dataFormRef.value.validate((valid: boolean) => {
+		if (!valid) {
+			return false
+		}
+
+		enumSubmitApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '操作成功',
+				duration: 500,
+				onClose: () => {
+					visible.value = false
+					emit('refreshDataList')
+				}
+			})
+		})
+	})
+}
+
+defineExpose({
+	init
+})
+</script>

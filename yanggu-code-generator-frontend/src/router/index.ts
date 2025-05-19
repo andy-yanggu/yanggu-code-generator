@@ -10,7 +10,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/gen/project',
-				name: 'ProjectIndex',
+				name: 'Project',
 				component: () => import('../views/project/index.vue'),
 				meta: {
 					title: '项目管理',
@@ -18,11 +18,20 @@ export const menuRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/gen/generator',
-				name: 'Generator',
+				path: '/gen/table',
+				name: 'Table',
 				component: () => import('../views/table/index.vue'),
 				meta: {
 					title: '表管理',
+					icon: 'icon-fire'
+				}
+			},
+			{
+				path: '/gen/enum',
+				name: 'Enum',
+				component: () => import('../views/enum/index.vue'),
+				meta: {
+					title: '枚举管理',
 					icon: 'icon-fire'
 				}
 			},
@@ -80,7 +89,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		component: () => import('../layout/index.vue'),
-		redirect: '/gen/generator',
+		redirect: '/gen/project',
 		children: [...menuRoutes]
 	},
 	{
