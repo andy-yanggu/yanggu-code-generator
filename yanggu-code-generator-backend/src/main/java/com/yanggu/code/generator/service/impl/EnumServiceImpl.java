@@ -149,7 +149,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     }
 
     @Override
-    public List<EnumDataModel> enumList(Long id) {
+    public List<EnumEntity> enumList(Long id) {
         return enumMapper.selectEnumList(id);
     }
 

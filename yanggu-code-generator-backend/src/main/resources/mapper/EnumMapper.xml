@@ -46,10 +46,10 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
-    <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.model.EnumDataModel" autoMapping="true">
+    <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.entity.EnumEntity" autoMapping="true">
         <id property="enumName" column="enum_name"/>
-        <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.model.EnumItemDataModel" autoMapping="true">
-            <id property="enumName" column="enum_item_name"/>
+        <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.entity.EnumItemEntity" autoMapping="true">
+            <id property="enumItemName" column="enum_item_name"/>
         </collection>
     </resultMap>
 

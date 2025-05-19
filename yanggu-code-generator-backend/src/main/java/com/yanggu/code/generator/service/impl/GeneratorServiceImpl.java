@@ -339,7 +339,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private List<TemplateContentVO> enumListPreview(ProjectEntity project) {
-        List<EnumDataModel> enumDataModelList = enumService.enumList(project.getId());
+        List<EnumDataModel> enumDataModelList = enumService.enumList(project.getId()).stream()
+                .map(enumEntity -> buildEnumDataModel(enumEntity, project))
+                .toList();
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
@@ -449,7 +451,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
         tableDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
         tableDataModel.setProjectPackage(project.getProjectPackage());
-        tableDataModel.setProjectPackageSlash(NameUtil.toSlash(project.getProjectPackage()));
+        tableDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         tableDataModel.setVersion(table.getVersion());
 
         //
