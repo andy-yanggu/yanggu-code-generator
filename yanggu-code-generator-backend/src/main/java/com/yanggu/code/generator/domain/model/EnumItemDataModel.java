@@ -11,9 +11,9 @@ public class EnumItemDataModel {
     private String enumItemName;
 
     /**
-     * 枚举项名称（首字母大写）
+     * 枚举项名称（全部大写）
      */
-    private String enumItemNamePascal;
+    private String enumItemNameAllUpper;
 
     /**
      * 枚举项编码

@@ -34,4 +34,11 @@ public class NameUtil {
         return StrUtil.replace(name, "-", "/");
     }
 
+    /**
+     * 中横线转全部大写，下划线分割。demo-test => DEMO_TEST
+     */
+    public static String toAllUpperCase(String name) {
+        return StrUtil.toUnderlineCase(toPascal(name)).toUpperCase();
+    }
+
 }

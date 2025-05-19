@@ -506,7 +506,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .map(enumItemEntity -> {
                     EnumItemDataModel enumItemDataModel = new EnumItemDataModel();
                     enumItemDataModel.setEnumItemName(enumItemEntity.getEnumItemName());
-                    enumItemDataModel.setEnumItemNamePascal(NameUtil.toPascal(enumItemEntity.getEnumItemName()));
+                    enumItemDataModel.setEnumItemNameAllUpper(NameUtil.toAllUpperCase(enumItemEntity.getEnumItemName()));
                     enumItemDataModel.setEnumItemCode(enumItemEntity.getEnumItemCode());
                     enumItemDataModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
                     return enumItemDataModel;

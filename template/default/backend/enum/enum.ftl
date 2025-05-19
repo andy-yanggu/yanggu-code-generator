@@ -7,8 +7,8 @@ import lombok.Getter;
 
 
 /**
-* ${enumDesc}枚举
-*/
+ * ${enumDesc}枚举
+ */
 @Getter
 @AllArgsConstructor
 public enum ${enumNamePascal}Enum {
@@ -17,7 +17,7 @@ public enum ${enumNamePascal}Enum {
     /**
      * ${item.enumItemDesc}
      */
-    ${item.enumItemNamePascal}(${item.enumItemCode}, "${item.enumItemDesc}"),
+    ${item.enumItemNameAllUpper}(${item.enumItemCode}, "${item.enumItemDesc}"),
     <#if item_has_next>
 
     </#if>
