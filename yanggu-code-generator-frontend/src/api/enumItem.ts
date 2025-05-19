@@ -1,4 +1,4 @@
-import service from '@/util/request'
+import service from '@/utils/request'
 
 //提交表单
 export const enumItemSubmitApi = (dataForm: any) => {

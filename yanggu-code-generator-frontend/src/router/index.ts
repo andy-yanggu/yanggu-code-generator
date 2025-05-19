@@ -11,7 +11,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/project',
 				name: 'Project',
-				component: () => import('../views/project/index.vue'),
+				component: () => import('@/views/project/index.vue'),
 				meta: {
 					title: '项目管理',
 					icon: 'icon-edit-square'
@@ -20,7 +20,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/table',
 				name: 'Table',
-				component: () => import('../views/table/index.vue'),
+				component: () => import('@/views/table/index.vue'),
 				meta: {
 					title: '表管理',
 					icon: 'icon-fire'
@@ -29,7 +29,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/enum',
 				name: 'Enum',
-				component: () => import('../views/enum/index.vue'),
+				component: () => import('@/views/enum/index.vue'),
 				meta: {
 					title: '枚举管理',
 					icon: 'icon-fire'
@@ -38,7 +38,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/template-group',
 				name: 'TemplateGroup',
-				component: () => import('../views/template-group/index.vue'),
+				component: () => import('@/views/template-group/index.vue'),
 				meta: {
 					title: '模板组管理',
 					icon: 'icon-file-fill'
@@ -47,7 +47,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/datasource',
 				name: 'DataSource',
-				component: () => import('../views/datasource/index.vue'),
+				component: () => import('@/views/datasource/index.vue'),
 				meta: {
 					title: '数据源管理',
 					icon: 'icon-database-fill'
@@ -56,7 +56,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/base-class',
 				name: 'BaseClass',
-				component: () => import('../views/base-class/index.vue'),
+				component: () => import('@/views/base-class/index.vue'),
 				meta: {
 					title: '基类管理',
 					icon: 'icon-cluster'
@@ -65,7 +65,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 			{
 				path: '/gen/field-type',
 				name: 'FieldType',
-				component: () => import('../views/field-type/index.vue'),
+				component: () => import('@/views/field-type/index.vue'),
 				meta: {
 					title: '字段类型映射',
 					icon: 'icon-menu'
@@ -94,7 +94,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/404',
-		component: () => import('../views/404.vue')
+		component: () => import('@/views/404.vue')
 	},
 	{
 		path: '/:pathMatch(.*)',

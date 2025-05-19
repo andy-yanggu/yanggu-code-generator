@@ -70,7 +70,7 @@ import AddOrUpdate from './add-or-update.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { datasourceTestApi } from '@/api/datasource'
-import { getLabel } from '@/util/enum'
+import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/datasource/entityPage',
