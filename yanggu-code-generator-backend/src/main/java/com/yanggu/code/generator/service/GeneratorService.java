@@ -26,4 +26,6 @@ public interface GeneratorService {
 
     ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception;
 
+    PreviewDataVO enumPreview(Long enumId);
+
 }

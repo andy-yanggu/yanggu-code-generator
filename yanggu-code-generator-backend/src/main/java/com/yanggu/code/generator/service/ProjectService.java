@@ -73,6 +73,4 @@ public interface ProjectService extends IService<ProjectEntity> {
      */
     List<TableImportVO> tableList(ProjectTableQuery query) throws Exception;
 
-    List<EnumDataModel> selectEnumList(Long id);
-
 }

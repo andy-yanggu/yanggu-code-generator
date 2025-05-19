@@ -2,8 +2,6 @@ package com.yanggu.code.generator.domain.model;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 项目数据模型
  */
@@ -66,11 +64,6 @@ public class ProjectDataModel {
     private String projectDesc;
 
     /**
-     * 模板名称
-     */
-    private String templateName;
-
-    /**
      * 数据库驱动类名
      */
     private String databaseDriverClassName;
@@ -89,10 +82,5 @@ public class ProjectDataModel {
      * 数据库密码
      */
     private String dataBasePassword;
-
-    /**
-     * 枚举数据模型
-     */
-    private List<EnumDataModel> enumDataModelList;
 
 }

@@ -14,6 +14,7 @@ import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
+import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtils;
 import com.yanggu.code.generator.util.TreeUtil;
 import org.dromara.hutool.core.array.ArrayUtil;
@@ -72,6 +73,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Autowired
     private BaseClassMapstruct baseClassMapstruct;
 
+    @Autowired
+    private EnumService enumService;
+
     @Override
     public PreviewDataVO tablePreview(Long tableId) {
         GeneratorTableQuery tableQuery = new GeneratorTableQuery();
@@ -123,6 +127,22 @@ public class GeneratorServiceImpl implements GeneratorService {
     public ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception {
         List<TemplateContentVO> list = buildProjectPreviewList(projectQuery);
         return downloadZip(list);
+    }
+
+    @Override
+    public PreviewDataVO enumPreview(Long enumId) {
+        EnumEntity enumEntity = enumService.getById(enumId);
+        ProjectEntity project = projectService.getById(enumEntity.getProjectId());
+        EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
+
+        //查询项目对应的枚举模板
+        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
+        List<TemplateEntity> templateList = templateGroup.getTemplateList();
+        List<TemplateContentVO> templateContentList = templateList.stream()
+                .map(template -> getTemplateContentVO(templateGroup, template, enumDataModel))
+                .toList();
+
+        return buildPreviewData(templateContentList);
     }
 
     @Override
@@ -203,28 +223,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //渲染模板并输出
         return templateList.stream()
-                .map(template -> {
-                    tableDataModel.setTemplateName(template.getTemplateName());
-                    TemplateContentVO templateContentVO = new TemplateContentVO();
-
-                    String content = "";
-                    if (template.getTemplateType().equals(FILE.getCode())) {
-                        content = TemplateUtils.getContent(template.getTemplateContent(), tableDataModel);
-                    }
-                    //文件路径
-                    String filePath = TemplateUtils.getContent(template.getGeneratorPath(), tableDataModel);
-                    //文件名称
-                    String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-
-                    templateContentVO.setTableId(tableId);
-                    templateContentVO.setTemplateId(template.getId());
-                    templateContentVO.setTemplateGroupType(templateGroup.getType());
-                    templateContentVO.setTemplateType(template.getTemplateType());
-                    templateContentVO.setFileName(fileName);
-                    templateContentVO.setContent(content);
-                    templateContentVO.setFilePath(filePath);
-                    return templateContentVO;
-                })
+                .map(template -> getTemplateContentVO(templateGroup, template, tableDataModel))
                 .toList();
     }
 
@@ -247,6 +246,10 @@ public class GeneratorServiceImpl implements GeneratorService {
         //获取表预览数据
         List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, projectQuery.getTableTemplateIdList());
         allPreviewList.addAll(tablePreviewList);
+
+        //获取枚举预览数据
+        List<TemplateContentVO> enumPreviewList = enumListPreview(project);
+        allPreviewList.addAll(enumPreviewList);
 
         //获取项目预览数据
         List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
@@ -335,6 +338,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tablePreviewList;
     }
 
+    private List<TemplateContentVO> enumListPreview(ProjectEntity project) {
+        List<EnumDataModel> enumDataModelList = enumService.enumList(project.getId());
+
+        //查询项目对应的枚举模板
+        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
+        List<TemplateEntity> templateList = templateGroup.getTemplateList();
+
+        return enumDataModelList.stream()
+                .flatMap(enumDataModel ->
+                        templateList.stream()
+                                .map(template -> getTemplateContentVO(templateGroup, template, enumDataModel))
+                )
+                .toList();
+    }
+
     private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
         //获取数据源信息
         DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
@@ -346,31 +364,31 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
         return projecTemplateList.stream()
                 .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
-                .map(template -> {
-                    projectDataModel.setTemplateName(template.getTemplateName());
-                    Integer templateType = template.getTemplateType();
-                    //内容
-                    String fileContent;
-                    TemplateContentVO templateContentVO = new TemplateContentVO();
-                    if (FILE.getCode().equals(templateType)) {
-                        fileContent = TemplateUtils.getContent(template.getTemplateContent(), projectDataModel);
-                    } else {
-                        fileContent = "";
-                    }
-                    //路径
-                    String filePath = TemplateUtils.getContent(template.getGeneratorPath(), projectDataModel);
-                    //文件名
-                    String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-                    templateContentVO.setContent(fileContent);
-                    templateContentVO.setFileName(fileName);
-                    templateContentVO.setFilePath(filePath);
-                    templateContentVO.setTemplateId(template.getId());
-                    templateContentVO.setTemplateGroupType(templateGroup.getType());
-                    templateContentVO.setTemplateType(templateType);
-
-                    return templateContentVO;
-                })
+                .map(template -> getTemplateContentVO(templateGroup, template, projectDataModel))
                 .toList();
+    }
+
+    private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateEntity template, Object dataModel) {
+        Integer templateType = template.getTemplateType();
+        //内容
+        String fileContent;
+        TemplateContentVO templateContentVO = new TemplateContentVO();
+        if (FILE.getCode().equals(templateType)) {
+            fileContent = TemplateUtils.getContent(template.getTemplateContent(), template.getTemplateName(), dataModel);
+        } else {
+            fileContent = "";
+        }
+        //路径
+        String filePath = TemplateUtils.getContent(template.getGeneratorPath(), template.getTemplateName(), dataModel);
+        //文件名
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        templateContentVO.setContent(fileContent);
+        templateContentVO.setFileName(fileName);
+        templateContentVO.setFilePath(filePath);
+        templateContentVO.setTemplateId(template.getId());
+        templateContentVO.setTemplateGroupType(templateGroup.getType());
+        templateContentVO.setTemplateType(templateType);
+        return templateContentVO;
     }
 
     /**
@@ -397,30 +415,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectDataModel.setDataBaseUsername(dataSource.getUsername());
         projectDataModel.setDataBasePassword(dataSource.getPassword());
 
-        //构建枚举数据
-        projectDataModel.setEnumDataModelList(buildEnumDataModel(project));
-
         return projectDataModel;
-    }
-
-    private List<EnumDataModel> buildEnumDataModel(ProjectEntity project) {
-        List<EnumDataModel> list = projectService.selectEnumList(project.getId());
-        if (CollUtil.isNotEmpty(list)) {
-            for (EnumDataModel enumDataModel : list) {
-                String dictValue = enumDataModel.getDictValue();
-                List<EnumDataModel.EnumValueModel> valueList = Arrays.stream(dictValue.split("、"))
-                        .map(item -> {
-                            EnumDataModel.EnumValueModel valueModel = new EnumDataModel.EnumValueModel();
-                            String[] split = item.split("-");
-                            valueModel.setLabel(split[1]);
-                            valueModel.setValue(split[0]);
-                            return valueModel;
-                        })
-                        .toList();
-                enumDataModel.setValueList(valueList);
-            }
-        }
-        return list;
     }
 
     /**
@@ -449,12 +444,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         //项目信息
         tableDataModel.setProjectId(project.getId());
         tableDataModel.setProjectName(project.getProjectName());
-        tableDataModel.setProjectNameUnderline(StrUtil.replace(project.getProjectName(), "-", "_"));
-        tableDataModel.setProjectNamePascal(NamingCase.toPascalCase(tableDataModel.getProjectNameUnderline()));
-        tableDataModel.setProjectNameDot(StrUtil.replace(project.getProjectName(), "-", "."));
-        tableDataModel.setProjectNameSlash(StrUtil.replace(project.getProjectName(), "-", "/"));
+        tableDataModel.setProjectNameUnderline(NameUtil.toUnderLine(project.getProjectName()));
+        tableDataModel.setProjectNamePascal(NameUtil.toPascal(project.getProjectName()));
+        tableDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
+        tableDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
         tableDataModel.setProjectPackage(project.getProjectPackage());
-        tableDataModel.setProjectPackageSlash(project.getProjectPackage().replace(".", "/"));
+        tableDataModel.setProjectPackageSlash(NameUtil.toSlash(project.getProjectPackage()));
         tableDataModel.setVersion(table.getVersion());
 
         //
@@ -492,6 +487,32 @@ public class GeneratorServiceImpl implements GeneratorService {
         //生成方式
         tableDataModel.setGeneratorType(project.getGeneratorType());
         return tableDataModel;
+    }
+
+    private EnumDataModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
+        EnumDataModel enumDataModel = new EnumDataModel();
+
+        enumDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
+        enumDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
+        enumDataModel.setProjectPackage(project.getProjectPackage());
+        enumDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
+        enumDataModel.setBackendPath(project.getBackendPath());
+
+        enumDataModel.setEnumName(enumEntity.getEnumName());
+        enumDataModel.setEnumNamePascal(NameUtil.toPascal(enumEntity.getEnumName()));
+        enumDataModel.setEnumDesc(enumEntity.getEnumDesc());
+        List<EnumItemEntity> enumItemList = enumEntity.getEnumItemList();
+        List<EnumItemDataModel> list = enumItemList.stream()
+                .map(enumItemEntity -> {
+                    EnumItemDataModel enumItemDataModel = new EnumItemDataModel();
+                    enumItemDataModel.setEnumItemName(enumItemEntity.getEnumItemName());
+                    enumItemDataModel.setEnumItemNamePascal(NameUtil.toPascal(enumItemEntity.getEnumItemName()));
+                    enumItemDataModel.setEnumItemCode(enumItemEntity.getEnumItemCode());
+                    enumItemDataModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
+                    return enumItemDataModel;
+                }).toList();
+        enumDataModel.setEnumItemList(list);
+        return enumDataModel;
     }
 
     /**

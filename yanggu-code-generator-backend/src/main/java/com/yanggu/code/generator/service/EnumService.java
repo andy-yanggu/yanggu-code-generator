@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
+import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
 import com.yanggu.code.generator.domain.vo.EnumVO;
@@ -64,5 +65,9 @@ public interface EnumService extends IService<EnumEntity> {
      * 复杂列表
      */
     List<EnumVO> voList(EnumVOQuery query);
+
+    List<EnumDataModel> enumList(Long id);
+
+    EnumEntity getById(Long id);
 
 }

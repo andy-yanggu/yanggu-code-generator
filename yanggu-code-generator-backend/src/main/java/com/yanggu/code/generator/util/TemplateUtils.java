@@ -1,8 +1,6 @@
 package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.domain.model.ProjectDataModel;
-import com.yanggu.code.generator.domain.model.TableDataModel;
 import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.io.IoUtil;
@@ -22,12 +20,11 @@ public class TemplateUtils {
      * @param content   模板内容
      * @param dataModel 数据模型
      */
-    public static String getContent(String content, TableDataModel dataModel) {
+    public static String getContent(String content, String templateName, Object dataModel) {
         StringReader reader = new StringReader(content);
         StringWriter sw = new StringWriter();
         try {
             // 渲染模板
-            String templateName = dataModel.getTemplateName();
             Template template = new Template(templateName, reader, null, "utf-8");
             template.process(dataModel, sw);
         } catch (Exception e) {
@@ -35,25 +32,6 @@ public class TemplateUtils {
             throw new BusinessException("渲染模板失败，请检查模板语法", e);
         }
 
-        content = sw.toString();
-
-        IoUtil.closeQuietly(reader);
-        IoUtil.closeQuietly(sw);
-
-        return content;
-    }
-
-    public static String getContent(String content, ProjectDataModel dataModel) {
-        StringReader reader = new StringReader(content);
-        StringWriter sw = new StringWriter();
-        try {
-            String templateName = dataModel.getTemplateName();
-            Template template = new Template(templateName, reader, null, "utf-8");
-            template.process(dataModel, sw);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new BusinessException("渲染模板失败，请检查模板语法", e);
-        }
         content = sw.toString();
 
         IoUtil.closeQuietly(reader);

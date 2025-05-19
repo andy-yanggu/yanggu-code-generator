@@ -8,11 +8,14 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
+import com.yanggu.code.generator.domain.entity.EnumItemEntity;
+import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.mapper.EnumMapper;
 import com.yanggu.code.generator.mapstruct.EnumMapstruct;
+import com.yanggu.code.generator.service.EnumItemService;
 import com.yanggu.code.generator.service.EnumService;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     @Autowired
     private EnumMapstruct enumMapstruct;
+
+    @Autowired
+    private EnumItemService enumItemService;
 
     /**
      * 新增
@@ -140,6 +146,19 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     public List<EnumVO> detailList(List<Long> idList) {
         List<EnumEntity> entityList = enumMapper.selectByIds(idList);
         return enumMapstruct.entityToVO(entityList);
+    }
+
+    @Override
+    public List<EnumDataModel> enumList(Long id) {
+        return enumMapper.selectEnumList(id);
+    }
+
+    @Override
+    public EnumEntity getById(Long id) {
+        EnumEntity enumEntity = selectById(id);
+        List<EnumItemEntity> enumItemList = enumItemService.selectByEnumId(id);
+        enumEntity.setEnumItemList(enumItemList);
+        return enumEntity;
     }
 
     private EnumEntity selectById(Long id) {

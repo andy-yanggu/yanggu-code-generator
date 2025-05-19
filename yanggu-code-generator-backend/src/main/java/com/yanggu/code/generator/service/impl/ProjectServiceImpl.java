@@ -181,11 +181,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         return tableList;
     }
 
-    @Override
-    public List<EnumDataModel> selectEnumList(Long id) {
-        return projectMapper.selectEnumList(id);
-    }
-
     /**
      * 批量查询
      */

@@ -109,4 +109,46 @@ public class GeneratorController {
         return generatorService.projectDownloadSingle(templateGroupType, id, templateId);
     }
 
+    /**
+     * 枚举预览数据
+     */
+    @GetMapping("/enum/preview")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "枚举预览数据")
+    public PreviewDataVO enumPreview(@RequestParam("enumId") Long enumId) throws Exception {
+        return generatorService.enumPreview(enumId);
+    }
+
+    ///**
+    // * 项目生成代码（本地）
+    // */
+    //@PostMapping("/project/downloadLocal")
+    //@ApiOperationSupport(order = 9)
+    //@Operation(summary = "项目生成代码（本地）")
+    //public void projectDownloadLocal(@RequestBody GeneratorProjectQuery projectQuery) throws Exception {
+    //    generatorService.projectDownloadLocal(projectQuery);
+    //}
+    //
+    ///**
+    // * 项目生成代码（zip压缩包）
+    // */
+    //@GetMapping("/project/downloadZip")
+    //@ApiOperationSupport(order = 10)
+    //@Operation(summary = "项目生成代码（zip压缩包）")
+    //public ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception {
+    //    return generatorService.projectDownloadZip(projectQuery);
+    //}
+    //
+    ///**
+    // * 项目生成代码（下载单个文件代码）
+    // */
+    //@GetMapping("/project/downloadSingle")
+    //@ApiOperationSupport(order = 11)
+    //@Operation(summary = "项目生成代码（下载单个文件代码）")
+    //public ResponseEntity<byte[]> projectDownloadSingle(@RequestParam("templateGroupType") Integer templateGroupType,
+    //                                                    @RequestParam("id") Long id,
+    //                                                    @RequestParam("templateId") Long templateId) throws Exception {
+    //    return generatorService.projectDownloadSingle(templateGroupType, id, templateId);
+    //}
+
 }

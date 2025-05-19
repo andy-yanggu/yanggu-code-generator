@@ -147,6 +147,4 @@ public class TableDataModel {
     // 查询列表
     private List<TableFieldModel> queryList;
 
-    private String templateName;
-
 }

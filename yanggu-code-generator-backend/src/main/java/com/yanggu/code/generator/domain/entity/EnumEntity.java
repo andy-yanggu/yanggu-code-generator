@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 枚举Entity实体类
@@ -45,5 +46,11 @@ public class EnumEntity extends BaseEntity implements Serializable {
 	 */
 	@TableField(value = "project_id")
 	private Long projectId;
+
+	/**
+	 * 枚举项列表
+	 */
+	@TableField(exist = false)
+	private List<EnumItemEntity> enumItemList;
 
 }

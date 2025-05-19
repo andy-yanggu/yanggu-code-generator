@@ -8,43 +8,48 @@ import java.util.List;
 public class EnumDataModel {
 
     /**
-     * 表名（下划线）
+     * 项目名（点）（test1.demo）
      */
-    private String tableName;
+    private String projectNameDot;
 
     /**
-     * 字段名（下划线）
+     * 项目名（斜杠）（test1/demo）
      */
-    private String fieldName;
+    private String projectNameSlash;
 
     /**
-     * 字段注释
+     * 项目包名（com.yanggu）
      */
-    private String fieldComment;
+    private String projectPackage;
 
     /**
-     * 字典值
+     * 项目包名（斜杠）（com/yanggu）
      */
-    private String dictValue;
+    private String projectPackageSlash;
+
+    /**
+     * 后端路径
+     */
+    private String backendPath;
+
+    /**
+     * 枚举名称
+     */
+    private String enumName;
+
+    /**
+     * 枚举名称（大驼峰）
+     */
+    private String enumNamePascal;
+
+    /**
+     * 枚举描述
+     */
+    private String enumDesc;
 
     /**
      * 枚举值列表
      */
-    private List<EnumValueModel> valueList;
-
-    @Data
-    public static class EnumValueModel {
-
-        /**
-         * 展示值
-         */
-        private String label;
-
-        /**
-         * 枚举值
-         */
-        private String value;
-
-    }
+    private List<EnumItemDataModel> enumItemList;
 
 }

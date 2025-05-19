@@ -65,4 +65,6 @@ public interface EnumItemService extends IService<EnumItemEntity> {
      */
     List<EnumItemVO> voList(EnumItemVOQuery query);
 
+    List<EnumItemEntity> selectByEnumId(Long enumId);
+
 }

@@ -107,4 +107,19 @@
         <include refid="orderBySQL"/>
     </select>
 
+    <select id="selectEnumList" resultMap="enumModelMap">
+        SELECT
+            e.enum_name,
+            e.enum_desc,
+            ei.enum_item_name,
+            ei.enum_item_code,
+            ei.enum_item_desc
+        FROM
+            gen_project AS p
+        JOIN gen_enum AS e ON e.project_id = p.id AND e.is_delete = 0
+        JOIN gen_enum_item AS ei ON ei.enum_id = e.id AND ei.is_delete = 0
+        WHERE
+            p.id = #{id} AND p.is_delete = 0
+    </select>
+
 </mapper>

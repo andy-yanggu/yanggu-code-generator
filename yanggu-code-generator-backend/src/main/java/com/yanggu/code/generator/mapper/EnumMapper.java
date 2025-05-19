@@ -3,6 +3,7 @@ package com.yanggu.code.generator.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
+import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
 import com.yanggu.code.generator.domain.vo.EnumVO;
@@ -38,5 +39,7 @@ public interface EnumMapper extends BaseMapperPlus<EnumEntity> {
      * VO列表
      */
     List<EnumVO> voList(@Param("query") EnumVOQuery query);
+
+    List<EnumDataModel> selectEnumList(@Param("id") Long id);
 
 }
