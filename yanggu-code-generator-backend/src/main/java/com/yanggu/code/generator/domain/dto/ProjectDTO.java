@@ -68,6 +68,12 @@ public class ProjectDTO implements Serializable {
 	private Long tableTemplateGroupId;
 
 	/**
+	 * 枚举模板组ID
+	 */
+	@Schema(description = "枚举模板组ID")
+	private Long enumTemplateGroupId;
+
+	/**
 	 * 生成方式（0-zip压缩包，1-服务器本地）
 	 */
 	@Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")

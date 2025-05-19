@@ -34,6 +34,14 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
+				<el-select v-model="dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
+					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+						<span style="font-weight: bold">{{ item.groupName }}</span>
+						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item label="生成方式" prop="generatorType">
 				<el-radio-group v-model="dataForm.generatorType">
 					<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
@@ -89,6 +97,7 @@ const dataForm = reactive({
 	datasourceId: '',
 	projectTemplateGroupId: '',
 	tableTemplateGroupId: '',
+	enumTemplateGroupId: '',
 	backendPath: '',
 	frontendPath: '',
 	projectDesc: '',
@@ -133,6 +142,7 @@ const dataRules = ref({
 const datasourceList = ref([])
 const projectTemplateGroupList = ref([])
 const tableTemplateGroupList = ref([])
+const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
 
 const getList = () => {
@@ -145,6 +155,7 @@ const getList = () => {
 	templateGroupEntityListApi({}).then(res => {
 		projectTemplateGroupList.value = res.data.filter(item => item.type === 0)
 		tableTemplateGroupList.value = res.data.filter(item => item.type === 1)
+		enumTemplateGroupList.value = res.data.filter(item => item.type === 2)
 	})
 
 	//基类下拉
@@ -161,9 +172,11 @@ const submitHandle = () => {
 		}
 
 		projectSubmitApi(dataForm).then(() => {
+			const message = dataForm.id ? '操作成功' : '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+			const duration = dataForm.id ? 500 : 2000
 			ElMessage.success({
-				message: '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看',
-				duration: 2000,
+				message: message,
+				duration: duration,
 				onClose: () => {
 					visible.value = false
 					emit('refreshDataList')

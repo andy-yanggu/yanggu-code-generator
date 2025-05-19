@@ -65,6 +65,12 @@ public class ProjectEntity extends BaseEntity implements Serializable {
 	private Long tableTemplateGroupId;
 
 	/**
+	 * 枚举模板组ID
+	 */
+	@TableField(value = "enum_template_group_id")
+	private Long enumTemplateGroupId;
+
+	/**
 	 * 后端路径
 	 */
 	@TableField(value = "backend_path")

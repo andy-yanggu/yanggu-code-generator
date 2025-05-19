@@ -62,6 +62,12 @@ public class ProjectVO extends BaseVO implements Serializable {
 	private Long tableTemplateGroupId;
 
 	/**
+	 * 枚举模板组ID
+	 */
+	@Schema(description = "枚举模板组ID")
+	private Long enumTemplateGroupId;
+
+	/**
 	 * 后端路径
 	 */
 	@Schema(description = "后端路径")

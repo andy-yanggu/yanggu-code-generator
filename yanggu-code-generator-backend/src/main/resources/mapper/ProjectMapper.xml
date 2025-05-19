@@ -12,6 +12,7 @@
         datasource_id,
         project_template_group_id,
         table_template_group_id,
+        enum_template_group_id,
         backend_path,
         frontend_path,
         project_desc,
@@ -50,6 +51,7 @@
         <result property="datasourceId" column="datasource_id"/>
         <result property="projectTemplateGroupId" column="project_template_group_id"/>
         <result property="tableTemplateGroupId" column="table_template_group_id"/>
+        <result property="enumTemplateGroupId" column="enum_template_group_id"/>
         <result property="backendPath" column="backend_path"/>
         <result property="frontendPath" column="frontend_path"/>
         <result property="projectDesc" column="project_desc"/>
