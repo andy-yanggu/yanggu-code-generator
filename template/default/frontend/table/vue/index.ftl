@@ -6,20 +6,20 @@
 			<#if field.queryFormType == 'text' || field.queryFormType == 'textarea' || field.queryFormType == 'editor'>
                 <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
 			<#elseif field.formType == 'select'>
-                <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
+                <el-select v-model="state.queryForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
                     <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
 			<#elseif field.formType == 'radio'>
-                <el-radio-group v-model="dataForm.${field.attrName}">
+                <el-radio-group v-model="state.queryForm.${field.attrName}">
                     <el-radio v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
 			<#elseif field.formType == 'checkbox'>
-                <el-checkbox-group v-model="dataForm.${field.attrName}">
+                <el-checkbox-group v-model="state.queryForm.${field.attrName}">
                     <el-checkbox v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
 			<#elseif field.queryFormType == 'date'>
                 <el-date-picker
-                        v-model="queryFormModel.${field.attrName}"
+                        v-model="state.queryForm.${field.attrName}"
                         type="daterange"
                         format="YYYY-MM-DD"
                         value-format="YYYY-MM-DD"
@@ -28,7 +28,7 @@
                 </el-date-picker>
             <#elseif field.queryFormType == 'datetime'>
                 <el-date-picker
-                        v-model="queryFormModel.${field.attrName}"
+                        v-model="state.queryForm.${field.attrName}"
                         type="datetimerange"
                         format="YYYY-MM-DD HH:mm:ss"
                         value-format="YYYY-MM-DD HH:mm:ss"
