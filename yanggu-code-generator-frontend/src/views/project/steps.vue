@@ -38,6 +38,7 @@ const projectReactive = reactive({
 	id: null,
 	tableTemplateGroupId: null,
 	projectTemplateGroupId: null,
+	enumTemplateGroupId: null,
 	generatorType: null
 })
 const tableListRef = ref<any[]>([])
@@ -50,9 +51,10 @@ const init = (projectItem: any) => {
 	projectReactive.id = projectItem.id
 	projectReactive.tableTemplateGroupId = projectItem.tableTemplateGroupId
 	projectReactive.projectTemplateGroupId = projectItem.projectTemplateGroupId
+	projectReactive.enumTemplateGroupId = projectItem.enumTemplateGroupId
 	projectReactive.generatorType = projectItem.generatorType
 	nextTick(() => {
-		templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
+		templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId,  projectReactive.enumTemplateGroupId])
 	})
 }
 
