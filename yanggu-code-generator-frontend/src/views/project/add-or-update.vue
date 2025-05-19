@@ -2,7 +2,7 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目名称" prop="projectName">
-				<el-input v-model="dataForm.projectName" placeholder="必须是-分割"></el-input>
+				<el-input v-model="dataForm.projectName" placeholder="使用英文小写，多个单词间使用'-'拼接"></el-input>
 			</el-form-item>
 			<el-form-item label="项目包名" prop="projectPackage">
 				<el-input v-model="dataForm.projectPackage" placeholder="请输入项目包名"></el-input>
@@ -162,8 +162,8 @@ const submitHandle = () => {
 
 		projectSubmitApi(dataForm).then(() => {
 			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
+				message: '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看',
+				duration: 2000,
 				onClose: () => {
 					visible.value = false
 					emit('refreshDataList')
