@@ -1,13 +1,12 @@
 package com.yanggu.code.generator.domain.vo;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.yanggu.code.generator.common.domain.vo.BaseVO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 项目VO实体类

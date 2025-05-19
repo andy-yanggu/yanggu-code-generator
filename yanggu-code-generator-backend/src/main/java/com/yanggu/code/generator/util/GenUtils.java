@@ -9,7 +9,6 @@ import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 

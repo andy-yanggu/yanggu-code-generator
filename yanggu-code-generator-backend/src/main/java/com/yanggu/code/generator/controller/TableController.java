@@ -1,24 +1,24 @@
 package com.yanggu.code.generator.controller;
 
-import com.yanggu.code.generator.domain.dto.TableImportDTO;
-import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotEmpty;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Parameter;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
-import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.domain.dto.TableDTO;
+import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.query.TableEntityQuery;
 import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.TableVO;
-import org.springframework.web.bind.annotation.*;
+import com.yanggu.code.generator.service.TableService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 

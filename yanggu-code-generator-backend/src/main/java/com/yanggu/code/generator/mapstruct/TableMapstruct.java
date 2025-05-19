@@ -1,9 +1,9 @@
 package com.yanggu.code.generator.mapstruct;
 
 import com.yanggu.code.generator.common.mapstruct.BaseMapstruct;
-import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
+import com.yanggu.code.generator.domain.vo.TableVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

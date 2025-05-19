@@ -1,13 +1,15 @@
 package com.yanggu.code.generator.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yanggu.code.generator.common.domain.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.baomidou.mybatisplus.annotation.*;
-import com.yanggu.code.generator.common.domain.entity.BaseEntity;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**

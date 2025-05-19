@@ -1,13 +1,13 @@
 package com.yanggu.code.generator.mapper;
 
-import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
-import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
 import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
-import org.apache.ibatis.annotations.Param;
+import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

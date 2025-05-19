@@ -1,12 +1,12 @@
 package com.yanggu.code.generator.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
+import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
-import com.yanggu.code.generator.domain.entity.TemplateEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.yanggu.code.generator.domain.vo.TemplateVO;
 
 import java.util.List;
 

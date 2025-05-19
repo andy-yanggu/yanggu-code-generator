@@ -4,12 +4,9 @@ package com.yanggu.code.generator.service;
 import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
-import com.yanggu.code.generator.domain.vo.TemplateContentVO;
-import com.yanggu.code.generator.domain.vo.TreeVO;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface GeneratorService {
 

@@ -1,10 +1,10 @@
 package com.yanggu.code.generator.mapstruct;
 
 import com.yanggu.code.generator.common.mapstruct.BaseMapstruct;
-import com.yanggu.code.generator.domain.model.BaseClassModel;
-import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.entity.BaseClassEntity;
+import com.yanggu.code.generator.domain.model.BaseClassModel;
+import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.query;
 
-import org.dromara.hutool.core.text.StrUtil;
 import com.yanggu.code.generator.enums.DbType;
+import org.dromara.hutool.core.text.StrUtil;
 
 /**
  * MySQL查询
