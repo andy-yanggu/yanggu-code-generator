@@ -43,4 +43,10 @@ public class EnumVO extends BaseVO implements Serializable {
 	@Schema(description = "项目ID")
 	private Long projectId;
 
+	/**
+	 * 项目名称
+	 */
+	@Schema(description = "项目名称")
+	private String projectName;
+
 }

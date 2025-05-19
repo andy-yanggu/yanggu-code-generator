@@ -5,23 +5,23 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id,
-        enum_name,
-        enum_desc,
-        project_id,
-        create_time,
-        update_time,
-        is_delete
+        e.id,
+        e.enum_name,
+        e.enum_desc,
+        e.project_id,
+        e.create_time,
+        e.update_time,
+        e.is_delete
     </sql>
 
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <if test="query.projectId != null">
-            AND project_id = #{query.projectId}
+            AND e.project_id = #{query.projectId}
         </if>
         <if test="query.enumName != null and query.enumName.trim() != ''">
-            AND enum_name = #{query.enumName}
+            AND e.enum_name = #{query.enumName}
         </if>
     </sql>
 
@@ -30,7 +30,7 @@
         <if test="query.orders != null and query.orders.size() > 0">
             ORDER BY
             <foreach collection="query.orders" item="order" separator=",">
-                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+                e.${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
             </foreach>
         </if>
     </sql>
@@ -44,6 +44,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.model.EnumDataModel" autoMapping="true">
+        <id property="enumName" column="enum_name"/>
+        <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.model.EnumItemDataModel" autoMapping="true">
+            <id property="enumName" column="enum_item_name"/>
+        </collection>
     </resultMap>
 
     <!-- Entity分页 -->
@@ -75,11 +82,13 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            p.project_name
         FROM
-            gen_enum
+            gen_enum AS e
+        JOIN gen_project AS p ON e.project_id = p.id AND p.is_delete = 0
         <where>
-            is_delete = 0
+            e.is_delete = 0
             <include refid="whereSQL"/>
         </where>
         <include refid="orderBySQL"/>

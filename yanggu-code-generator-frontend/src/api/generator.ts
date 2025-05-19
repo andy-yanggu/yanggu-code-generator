@@ -45,3 +45,8 @@ export const generatorProjectDownloadLocalApi = (dataForm: any) => {
 export const generatorProjectDownloadSingleApi = (dataForm: any) => {
 	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadSingle?' + qs.stringify(dataForm)
 }
+
+//枚举预览代码
+export const generatorEnumPreviewApi = (enumId: number) => {
+	return service.get('/generator/enum/preview?enumId=' + enumId)
+}

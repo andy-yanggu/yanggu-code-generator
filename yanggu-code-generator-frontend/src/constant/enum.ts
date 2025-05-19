@@ -12,7 +12,8 @@ export const DB_TYPES = [
 //模板组类型枚举
 export const TEMPLATE_GROUP_TYPES = [
 	{ label: '项目模板', value: 0 },
-	{ label: '表模板', value: 1 }
+	{ label: '表模板', value: 1 },
+	{ label: '枚举模板', value: 2 }
 ]
 
 //模板类型枚举
