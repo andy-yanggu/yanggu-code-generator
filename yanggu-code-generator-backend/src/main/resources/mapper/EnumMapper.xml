@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanggu.code.generator.mapper.EnumMapper">
+
+    <!-- 所有字段 -->
+    <sql id="allColumns">
+        id,
+        enum_name,
+        enum_desc,
+        project_id,
+        create_time,
+        update_time,
+        is_delete
+    </sql>
+
+    <!-- 过滤SQL -->
+    <sql id="whereSQL">
+        <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.projectId != null">
+            AND project_id = #{query.projectId}
+        </if>
+        <if test="query.enumName != null and query.enumName.trim() != ''">
+            AND enum_name = #{query.enumName}
+        </if>
+    </sql>
+
+    <!-- 排序SQL -->
+    <sql id="orderBySQL">
+        <if test="query.orders != null and query.orders.size() > 0">
+            ORDER BY
+            <foreach collection="query.orders" item="order" separator=",">
+                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- Entity类字段映射 -->
+    <resultMap type="com.yanggu.code.generator.domain.entity.EnumEntity" id="enumMap">
+        <id property="id" column="id"/>
+        <result property="enumName" column="enum_name"/>
+        <result property="enumDesc" column="enum_desc"/>
+        <result property="projectId" column="project_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <!-- Entity分页 -->
+    <select id="entityPage" resultMap="enumMap">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            gen_enum
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- Entity列表 -->
+    <select id="entityList" resultMap="enumMap">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            gen_enum
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- VO分页 -->
+    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            gen_enum
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+    <!-- VO列表 -->
+    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
+        SELECT
+            <include refid="allColumns"/>
+        FROM
+            gen_enum
+        <where>
+            is_delete = 0
+            <include refid="whereSQL"/>
+        </where>
+        <include refid="orderBySQL"/>
+    </select>
+
+</mapper>
