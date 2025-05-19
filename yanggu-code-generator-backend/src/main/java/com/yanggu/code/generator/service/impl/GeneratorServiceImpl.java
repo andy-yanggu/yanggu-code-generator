@@ -5,6 +5,7 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
+import com.yanggu.code.generator.domain.query.GeneratorEnumQuery;
 import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
@@ -77,38 +78,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     private EnumService enumService;
 
     @Override
-    public PreviewDataVO tablePreview(Long tableId) {
-        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-        tableQuery.setTableId(tableId);
-        List<TemplateContentVO> allList = tablePreview(tableQuery);
-
-        return buildPreviewData(allList);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
-        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-        tableQuery.setTableId(tableId);
-        tableQuery.setTemplateIdList(List.of(templateId));
-        List<TemplateContentVO> list = tablePreview(tableQuery);
-        TemplateContentVO preview = list.getFirst();
-
-        return buildResponseEntity(preview);
-    }
-
-    @Override
-    public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getPreviewData(tableQuery);
-        downloadLocal(list);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getPreviewData(tableQuery);
-        return downloadZip(list);
-    }
-
-    @Override
     public PreviewDataVO projectPreview(Long projectId) throws Exception {
         GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
         projectQuery.setProjectId(projectId);
@@ -130,6 +99,51 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
+    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
+        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
+            ProjectEntity project = projectService.getById(id);
+            TemplateContentVO preview = projectPreview(project, List.of(templateId)).getFirst();
+            return buildResponseEntity(preview);
+        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
+            return tableDownloadSingle(id, templateId);
+        } else {
+            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        }
+    }
+
+    @Override
+    public PreviewDataVO tablePreview(Long tableId) {
+        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+        tableQuery.setTableId(tableId);
+        List<TemplateContentVO> allList = tablePreview(tableQuery);
+
+        return buildPreviewData(allList);
+    }
+
+    @Override
+    public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
+        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        downloadLocal(list);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
+        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        return downloadZip(list);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
+        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+        tableQuery.setTableId(tableId);
+        tableQuery.setTemplateIdList(List.of(templateId));
+        List<TemplateContentVO> list = tablePreview(tableQuery);
+        TemplateContentVO preview = list.getFirst();
+
+        return buildResponseEntity(preview);
+    }
+
+    @Override
     public PreviewDataVO enumPreview(Long enumId) {
         EnumEntity enumEntity = enumService.getById(enumId);
         ProjectEntity project = projectService.getById(enumEntity.getProjectId());
@@ -146,16 +160,18 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
-        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
-            ProjectEntity project = projectService.getById(id);
-            TemplateContentVO preview = projectPreview(project, List.of(templateId)).getFirst();
-            return buildResponseEntity(preview);
-        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
-            return tableDownloadSingle(id, templateId);
-        } else {
-            throw new BusinessException("模板组类型异常: " + templateGroupType);
-        }
+    public void enumDownloadLocal(GeneratorEnumQuery enumQuery) {
+
+    }
+
+    @Override
+    public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> enumDownloadSingle(Long enumId, Long templateId) {
+        return null;
     }
 
     private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
@@ -184,24 +200,24 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<String> dfsOrder = getDfsOrder(treeList);
 
         //根据路径顺序对 templateContentList 排序
-        templateContentList = templateContentList.stream()
+        List<TemplateContentVO> newList = templateContentList.stream()
                 .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
                 .toList();
-        previewData.setTemplateContentList(templateContentList);
+        previewData.setTemplateContentList(newList);
     }
 
     /**
      * 深度优先遍历获取路径顺序
      */
     private List<String> getDfsOrder(List<TreeVO> treeList) {
-        List<String> order = new ArrayList<>();
+        List<String> orderList = new ArrayList<>();
         for (TreeVO node : treeList) {
-            order.add(node.getFilePath());
+            orderList.add(node.getFilePath());
             if (CollUtil.isNotEmpty(node.getChildren())) {
-                order.addAll(getDfsOrder(node.getChildren()));
+                orderList.addAll(getDfsOrder(node.getChildren()));
             }
         }
-        return order;
+        return orderList;
     }
 
     private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
@@ -348,8 +364,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateEntity> templateList = templateGroup.getTemplateList();
 
         return enumDataModelList.stream()
-                .flatMap(enumDataModel ->
-                        templateList.stream()
+                .flatMap(enumDataModel -> templateList.stream()
                                 .map(template -> getTemplateContentVO(templateGroup, template, enumDataModel))
                 )
                 .toList();
@@ -399,13 +414,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     private ProjectDataModel buildProjectDataModel(ProjectEntity project, DataSourceBO dataSource) {
         //项目数据
         ProjectDataModel projectDataModel = new ProjectDataModel();
-        projectDataModel.setProjectName(project.getProjectName());
-        projectDataModel.setProjectNameUnderline(StrUtil.replace(project.getProjectName(), "-", "_"));
-        projectDataModel.setProjectNamePascal(NamingCase.toPascalCase(projectDataModel.getProjectNameUnderline()));
-        projectDataModel.setProjectNameDot(StrUtil.replace(project.getProjectName(), "-", "."));
-        projectDataModel.setProjectNameSlash(StrUtil.replace(project.getProjectName(), "-", "/"));
+        String projectName = project.getProjectName();
+        projectDataModel.setProjectName(projectName);
+        projectDataModel.setProjectNameUnderline(NameUtil.toUnderLine(projectName));
+        projectDataModel.setProjectNamePascal(NameUtil.toPascal(projectName));
+        projectDataModel.setProjectNameDot(NameUtil.toDot(projectName));
+        projectDataModel.setProjectNameSlash(NameUtil.toSlash(projectName));
         projectDataModel.setProjectPackage(project.getProjectPackage());
-        projectDataModel.setProjectPackageSlash(projectDataModel.getProjectPackage().replace(".", "/"));
+        projectDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         projectDataModel.setProjectVersion(project.getProjectVersion());
         projectDataModel.setBackendPath(project.getBackendPath());
         projectDataModel.setFrontendPath(project.getFrontendPath());
@@ -454,7 +470,6 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         tableDataModel.setVersion(table.getVersion());
 
-        //
         tableDataModel.setFunctionName(table.getFunctionName());
         tableDataModel.setFunctionNamePascal(StrUtil.upperFirst(table.getFunctionName()));
         tableDataModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));
