@@ -36,7 +36,7 @@ public class ${classNameUpper}Controller {
      * 新增${tableComment}
      */
     @PostMapping("/add")
-    @ApiOperationSupport(<#if author!?length gt 0><#if author!?length gt 0>author = "${author}", </#if></#if>order = 1)
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 1)
     @Operation(summary = "新增${tableComment}")
     public void add(@RequestBody @Validated(InsertGroup.class) ${classNameUpper}DTO dto) {
         ${className}Service.add(dto);

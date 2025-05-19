@@ -1,5 +1,7 @@
+import { EnumItem } from '@/util/enum'
+
 //数据库类型枚举
-export const DB_TYPES = [
+export const DB_TYPES: EnumItem[] = [
 	{ label: 'MySQL', value: 'MySQL' },
 	{ label: 'Oracle', value: 'Oracle' },
 	{ label: 'PostgreSQL', value: 'PostgreSQL' },

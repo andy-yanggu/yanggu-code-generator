@@ -29,7 +29,13 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="connName" label="连接名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="dbType" label="数据库类型" header-align="center" align="center" :formatter="handlerDbType"></el-table-column>
+			<el-table-column
+				prop="dbType"
+				label="数据库类型"
+				header-align="center"
+				align="center"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, DB_TYPES)"
+			></el-table-column>
 			<el-table-column prop="connUrl" label="URL" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="dataSourceDesc" label="描述" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
@@ -64,6 +70,7 @@ import AddOrUpdate from './add-or-update.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { datasourceTestApi } from '@/api/datasource'
+import { getLabel } from '@/util/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/datasource/entityPage',
@@ -81,10 +88,6 @@ const addOrUpdateHandle = (id: number) => {
 }
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
-}
-
-const handlerDbType = (row: any) => {
-	return DB_TYPES.find(item => item.value === row.dbType)?.label
 }
 
 const datasourceHandle = (id: number) => {

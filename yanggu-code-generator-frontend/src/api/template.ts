@@ -1,4 +1,4 @@
-import service from '@/utils/request'
+import service from '@/util/request'
 
 //提交表单
 export const templateSubmitApi = (dataForm: any) => {

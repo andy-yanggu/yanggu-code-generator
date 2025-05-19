@@ -1,4 +1,4 @@
-import service from '@/utils/request'
+import service from '@/util/request'
 import qs from 'qs'
 
 //表预览代码

@@ -61,7 +61,7 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
 		  <#if field.dict>
-        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="handler${field.attrNamePascal}"></el-table-column>
+        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumName})"></el-table-column>
 		  <#else>
 			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		  </#if>
@@ -94,10 +94,11 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
+import { getLabel } from '@/util/enum'
 <#list queryList as field>
-<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
-import { ${tableName}_${field.attrName}_enum } from '@/constant/enum'
-</#if>
+	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
+import { ${field.enumName} } from '@/constant/enum'
+	</#if>
 </#list>
 
 const state: IHooksOptions = reactive({

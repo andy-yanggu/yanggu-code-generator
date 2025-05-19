@@ -66,7 +66,7 @@ import Preview from './preview.vue'
 
 import Steps from './steps.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import service from '@/utils/request'
+import service from '@/util/request'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
