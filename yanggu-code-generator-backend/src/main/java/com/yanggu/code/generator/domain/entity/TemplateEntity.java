@@ -64,10 +64,4 @@ public class TemplateEntity extends BaseEntity implements Serializable {
 	@TableField(value = "template_type")
 	private Integer templateType;
 
-	/**
-	 * 文件写入方式（0-覆盖，1-追加）
-	 */
-	@TableField(value = "file_write_type")
-	private Integer fileWriteType;
-
 }

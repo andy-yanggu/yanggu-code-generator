@@ -12,6 +12,8 @@ public enum TemplateGroupTypeEnum {
     PROJECT(0, "项目模板"),
 
     TABLE(1, "表模板"),
+
+    ENUM(2, "枚举模板"),
     ;
 
     /**

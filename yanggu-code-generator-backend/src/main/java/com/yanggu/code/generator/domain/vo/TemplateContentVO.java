@@ -35,12 +35,6 @@ public class TemplateContentVO {
     private Integer templateType;
 
     /**
-     * 文件写入方式（0-覆盖，1-追加）
-     */
-    @Schema(description = "文件写入方式（0-覆盖，1-追加）")
-    private Integer fileWriteType;
-
-    /**
      * 模板组类型（0-项目模板，1-表模板）
      */
     @Schema(description = "模板组类型（0-项目模板，1-表模板）")

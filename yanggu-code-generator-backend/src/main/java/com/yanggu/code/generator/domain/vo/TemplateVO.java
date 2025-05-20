@@ -73,10 +73,4 @@ public class TemplateVO extends BaseVO implements Serializable {
 	@Schema(description = "模板组类型（0-项目，1-表）")
 	private Integer templateGroupType;
 
-	/**
-	 * 文件写入方式（0-覆盖，1-追加）
-	 */
-	@Schema(description = "文件写入方式（0-覆盖，1-追加）")
-	private Integer fileWriteType;
-
 }
