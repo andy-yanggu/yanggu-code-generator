@@ -50,3 +50,8 @@ export const enumVOPageApi = (queryForm: any) => {
 export const enumVOListApi = (queryForm: any) => {
 	return service.post('/enum/voList', queryForm)
 }
+
+//枚举批量生成代码检测
+export const enumGenerateCheckApi = (idList: Array<number>) => {
+	return service.post('/enum/generateCheck', idList)
+}

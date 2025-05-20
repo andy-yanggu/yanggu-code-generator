@@ -49,4 +49,16 @@ public class EnumVO extends BaseVO implements Serializable {
 	@Schema(description = "项目名称")
 	private String projectName;
 
+	/**
+	 * 枚举模板组ID
+	 */
+	@Schema(description = "枚举模板组ID")
+	private Long enumTemplateGroupId;
+
+	/**
+	 * 生成方式（0-zip压缩包，1-服务器本地）
+	 */
+	@Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
+	private Integer generatorType;
+
 }

@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
-import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
+import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 
 import java.util.List;
@@ -69,5 +69,7 @@ public interface EnumService extends IService<EnumEntity> {
     List<EnumEntity> enumList(Long projectId);
 
     EnumEntity getById(Long id);
+
+    EnumGenerateCheckVO generateCheck(List<Long> idList);
 
 }

@@ -24,12 +24,6 @@ export const TEMPLATE_TYPES: EnumItem[] = [
 	{ label: '目录', value: 1 }
 ]
 
-//文件写入方式
-export const FILE_WRITE_TYPES: EnumItem[] = [
-	{ label: '覆盖', value: 0 },
-	{ label: '追加', value: 1 }
-]
-
 //项目生成方式
 export const PROJECT_GENERATE_TYPES: EnumItem[] = [
 	{ label: 'zip压缩包', value: 0 },

@@ -19,6 +19,9 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
+				<el-button type="primary" @click="generatorBatchHandler()">生成代码</el-button>
+			</el-form-item>
+			<el-form-item>
 				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
@@ -36,6 +39,7 @@
 					<el-button type="primary" link @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
+					<el-button type="primary" link @click="generatorHandler(scope.row)">生成代码</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -57,17 +61,22 @@
 		<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 
 		<preview ref="previewRef"></preview>
+
+		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs"></template-index>
 	</el-card>
 </template>
 
 <script setup lang="ts">
 import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import EnumItemIndex from '@/views/enum-item/index.vue'
+import TemplateIndex from '@/views/enum/template-index.vue'
 import Preview from './preview.vue'
 import { projectEntityListApi } from '@/api/project'
+import { ElMessage } from 'element-plus'
+import { enumGenerateCheckApi } from '@/api/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/enum/voPage',
@@ -82,6 +91,8 @@ const queryRef = ref()
 const addOrUpdateRef = ref()
 const enumItemIndexRef = ref()
 const previewRef = ref()
+const templateIndexRef = ref()
+const currentTemplateGroupIdTs = ref()
 const projectList = ref([])
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
@@ -103,6 +114,33 @@ const configEnumItemHandle = (id: number) => {
 
 const previewHandle = (row: any) => {
 	previewRef.value.init(row)
+}
+
+const generatorBatchHandler = () => {
+	const data = state.dataListSelections ? state.dataListSelections : []
+	if (data.length === 0) {
+		ElMessage.warning('请选择要生成代码的枚举')
+		return
+	}
+	currentTemplateGroupIdTs.value = Date.now()
+	enumGenerateCheckApi(data).then(res => {
+		const checkData = res.data
+		if (!checkData.checkResult) {
+			ElMessage.warning('当前选择的表不是同一个项目')
+			return
+		} else {
+			const enumTemplateGroupId = checkData.enumTemplateGroupId
+			const generatorType = checkData.generatorType
+			nextTick(() => {
+				templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)
+			})
+		}
+	})
+}
+
+const generatorHandler = (row: any) => {
+	currentTemplateGroupIdTs.value = Date.now()
+	templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

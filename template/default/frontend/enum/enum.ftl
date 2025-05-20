@@ -1,6 +1,4 @@
-<#if index == 0>
 import { EnumItem } from '@/util/enum'
-</#if>
 
 //${enumDesc}枚举
 const ${enumNameAllUpper}_ENUM: EnumItem[] = [

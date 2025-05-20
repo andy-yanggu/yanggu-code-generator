@@ -19,7 +19,6 @@ import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtils;
 import com.yanggu.code.generator.util.TreeUtil;
 import org.dromara.hutool.core.array.ArrayUtil;
-import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
@@ -36,7 +35,6 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -126,13 +124,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        List<TemplateContentVO> list = getTablePreviewData(tableQuery);
         downloadLocal(list);
     }
 
     @Override
     public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getPreviewData(tableQuery);
+        List<TemplateContentVO> list = getTablePreviewData(tableQuery);
         return downloadZip(list);
     }
 
@@ -149,37 +147,32 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public PreviewDataVO enumPreview(Long enumId) {
-        EnumEntity enumEntity = enumService.getById(enumId);
-        ProjectEntity project = projectService.getById(enumEntity.getProjectId());
-        EnumDataModel enumDataModel = buildEnumDataModel(0, enumEntity, project);
-
-        //查询项目对应的枚举模板
-        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
-        List<TemplateEntity> templateList = templateGroup.getTemplateList();
-        List<TemplateContentVO> templateContentList = templateList.stream()
-                .map(template -> {
-                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumDataModel);
-                    templateContentVO.setEnumId(enumId);
-                    return templateContentVO;
-                })
-                .toList();
-
-        return buildPreviewData(templateContentList);
+        GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+        enumQuery.setEnumId(enumId);
+        List<TemplateContentVO> list = enumPreview(enumQuery);
+        return buildPreviewData(list);
     }
 
     @Override
     public void enumDownloadLocal(GeneratorEnumQuery enumQuery) {
-
+        List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
+        downloadLocal(enumPreviewData);
     }
 
     @Override
     public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
-        return null;
+        List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
+        return downloadZip(enumPreviewData);
     }
 
     @Override
     public ResponseEntity<byte[]> enumDownloadSingle(Long enumId, Long templateId) {
-        return null;
+        GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+        enumQuery.setEnumId(enumId);
+        enumQuery.setTemplateIdList(List.of(templateId));
+        List<TemplateContentVO> list = enumPreview(enumQuery);
+        TemplateContentVO preview = list.getFirst();
+        return buildResponseEntity(preview);
     }
 
     private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
@@ -256,6 +249,28 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .toList();
     }
 
+    private List<TemplateContentVO> enumPreview(GeneratorEnumQuery enumQuery) {
+        Long enumId = enumQuery.getEnumId();
+        EnumEntity enumEntity = enumService.getById(enumId);
+        ProjectEntity project = projectService.getById(enumEntity.getProjectId());
+        List<Long> templateIdList = enumQuery.getTemplateIdList();
+
+        //查询项目对应的枚举模板
+        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
+        List<TemplateEntity> templateList = templateGroup.getTemplateList();
+        List<TemplateContentVO> list = new ArrayList<>();
+        for (int i = 0; i < templateList.size(); i++) {
+            TemplateEntity templateEntity = templateList.get(i);
+            if (CollUtil.isEmpty(templateIdList) || templateIdList.contains(templateEntity.getId())) {
+                EnumDataModel enumDataModel = buildEnumDataModel(i, enumEntity, project);
+                TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, templateEntity, enumDataModel);
+                templateContentVO.setEnumId(enumId);
+                list.add(templateContentVO);
+            }
+        }
+        return list;
+    }
+
     private List<TemplateContentVO> buildProjectPreviewList(GeneratorProjectQuery projectQuery) throws Exception {
         Long projectId = projectQuery.getProjectId();
         //查询项目
@@ -294,7 +309,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .body(preview.getContent().getBytes());
     }
 
-    private List<TemplateContentVO> getPreviewData(GeneratorTableQuery tableQuery) {
+    private List<TemplateContentVO> getTablePreviewData(GeneratorTableQuery tableQuery) {
         Long tableId = tableQuery.getTableId();
         List<Long> tableIdList = tableQuery.getTableIdList();
         List<TemplateContentVO> list = new ArrayList<>();
@@ -305,6 +320,22 @@ public class GeneratorServiceImpl implements GeneratorService {
                 GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
                 generatorTableQuery.setTableId(id);
                 list.addAll(tablePreview(generatorTableQuery));
+            });
+        }
+        return list;
+    }
+
+    private List<TemplateContentVO> getEnumPreviewData(GeneratorEnumQuery enumQuery) {
+        Long enumId = enumQuery.getEnumId();
+        List<Long> enumIdList = enumQuery.getEnumIdList();
+        List<TemplateContentVO> list = new ArrayList<>();
+        if (enumId != null) {
+            list.addAll(enumPreview(enumQuery));
+        } else {
+            enumIdList.forEach(id -> {
+                GeneratorEnumQuery tempEnumQuery = new GeneratorEnumQuery();
+                tempEnumQuery.setEnumId(id);
+                list.addAll(enumPreview(tempEnumQuery));
             });
         }
         return list;

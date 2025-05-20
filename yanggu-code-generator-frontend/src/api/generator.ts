@@ -50,3 +50,18 @@ export const generatorProjectDownloadSingleApi = (dataForm: any) => {
 export const generatorEnumPreviewApi = (enumId: number) => {
 	return service.get('/generator/enum/preview?enumId=' + enumId)
 }
+
+//枚举下载zip压缩包
+export const generatorEnumDownloadZipApi = (dataForm: any) => {
+	location.href = import.meta.env.VITE_API_URL + '/generator/enum/downloadZip?' + qs.stringify(dataForm)
+}
+
+//枚举下载到本地
+export const generatorEnumDownloadLocalApi = (dataForm: any) => {
+	return service.post('/generator/enum/downloadLocal', dataForm)
+}
+
+//枚举下载单文件
+export const generatorEnumDownloadSingleApi = (dataForm: any) => {
+	location.href = import.meta.env.VITE_API_URL + '/generator/enum/downloadSingle?' + qs.stringify(dataForm)
+}

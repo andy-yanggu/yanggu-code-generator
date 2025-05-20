@@ -42,4 +42,5 @@ public interface EnumMapper extends BaseMapperPlus<EnumEntity> {
 
     List<EnumEntity> selectEnumList(@Param("projectId") Long projectId);
 
+    List<Long> distinctProjectIdList(@Param("idList") List<Long> idList);
 }

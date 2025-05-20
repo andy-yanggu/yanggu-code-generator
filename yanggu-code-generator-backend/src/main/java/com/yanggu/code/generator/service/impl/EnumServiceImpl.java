@@ -9,14 +9,17 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.EnumItemEntity;
-import com.yanggu.code.generator.domain.model.EnumDataModel;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
+import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.mapper.EnumMapper;
 import com.yanggu.code.generator.mapstruct.EnumMapstruct;
 import com.yanggu.code.generator.service.EnumItemService;
 import com.yanggu.code.generator.service.EnumService;
+import com.yanggu.code.generator.service.ProjectService;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     @Autowired
     private EnumItemService enumItemService;
+
+    @Autowired
+    private ProjectService projectService;
 
     /**
      * 新增
@@ -159,6 +165,21 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         List<EnumItemEntity> enumItemList = enumItemService.selectByEnumId(id);
         enumEntity.setEnumItemList(enumItemList);
         return enumEntity;
+    }
+
+    @Override
+    public EnumGenerateCheckVO generateCheck(List<Long> idList) {
+        EnumGenerateCheckVO checkVO = new EnumGenerateCheckVO();
+        List<Long> projectIdList = enumMapper.distinctProjectIdList(idList);
+        if (CollUtil.isEmpty(projectIdList) || (CollUtil.isNotEmpty(projectIdList) && projectIdList.size() > 1)) {
+            checkVO.setCheckResult(false);
+        } else {
+            checkVO.setCheckResult(true);
+            ProjectEntity project = projectService.getById(projectIdList.getFirst());
+            checkVO.setEnumTemplateGroupId(project.getEnumTemplateGroupId());
+            checkVO.setGeneratorType(project.getGeneratorType());
+        }
+        return checkVO;
     }
 
     private EnumEntity selectById(Long id) {

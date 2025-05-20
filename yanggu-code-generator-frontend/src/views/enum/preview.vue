@@ -36,7 +36,7 @@
 </template>
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
-import { /* generatorEnumDownloadSingleApi, generatorEnumDownloadLocalApi,*/ generatorEnumPreviewApi } from '@/api/generator'
+import { generatorEnumDownloadSingleApi, generatorEnumDownloadLocalApi, generatorEnumPreviewApi } from '@/api/generator'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'
@@ -120,25 +120,24 @@ const handleCopy = (content: string) => {
 
 //生成代码
 const generatorCode = item => {
-	console.log('枚举生成代码', item)
-	const tableId = item.tableId
+	const enumId = item.enumId
 	if (preview.generatorType === 0) {
 		const dataForm = {
-			tableId: tableId,
+			enumId: enumId,
 			templateId: item.templateId
 		}
-		// generatorTableDownloadSingleApi(dataForm)
+		generatorEnumDownloadSingleApi(dataForm)
 	} else if (preview.generatorType === 1) {
 		const dataForm = {
-			tableId: tableId,
+			enumId: enumId,
 			templateIdList: [item.templateId]
 		}
-		// generatorTableDownloadLocalApi(dataForm).then(() => {
-		// 	ElMessage.success({
-		// 		message: '代码已经下载到本地',
-		// 		duration: 1000
-		// 	})
-		// })
+		generatorEnumDownloadLocalApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到本地',
+				duration: 1000
+			})
+		})
 	}
 }
 </script>

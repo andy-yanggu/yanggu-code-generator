@@ -30,7 +30,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
-import { FILE_WRITE_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
+import { TEMPLATE_TYPES } from '@/constant/enum'
 
 const props = defineProps({
 	templateGroupId: {

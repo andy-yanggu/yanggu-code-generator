@@ -7,6 +7,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
+import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.service.EnumService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -140,6 +141,16 @@ public class EnumController {
     @Operation(summary = "枚举复杂列表")
     public List<EnumVO> voList(@RequestBody EnumVOQuery query) {
         return enumService.voList(query);
+    }
+
+    /**
+     * 枚举批量生成代码检测接口
+     */
+    @PostMapping("/generateCheck")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "枚举批量生成代码检测接口")
+    public EnumGenerateCheckVO generateCheck(@RequestBody @NotEmpty(message = "枚举ID列表不能为空") List<Long> idList) {
+        return enumService.generateCheck(idList);
     }
 
 }

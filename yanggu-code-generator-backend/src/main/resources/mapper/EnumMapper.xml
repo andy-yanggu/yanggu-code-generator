@@ -83,7 +83,9 @@
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
         SELECT
             <include refid="allColumns"/>,
-            p.project_name
+            p.project_name,
+            p.generator_type,
+            p.enum_template_group_id
         FROM
             gen_enum AS e
         JOIN gen_project AS p ON e.project_id = p.id AND p.is_delete = 0
@@ -122,6 +124,21 @@
         JOIN gen_enum_item AS ei ON ei.enum_id = e.id AND ei.is_delete = 0
         WHERE
             p.id = #{projectId} AND p.is_delete = 0
+    </select>
+
+    <select id="distinctProjectIdList" resultType="java.lang.Long">
+        SELECT
+            project_id
+        FROM
+            gen_enum
+        WHERE
+            is_delete = 0
+        AND id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY
+            project_id
     </select>
 
 </mapper>
