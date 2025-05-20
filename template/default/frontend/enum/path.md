@@ -1,2 +1,2 @@
 #### 1. Enum.ftl
-${frontendPath}/src/enums/${enumNamePascal}Enum.ts
+${frontendPath}/src/consts/enum.ts

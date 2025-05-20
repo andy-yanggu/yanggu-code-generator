@@ -12,6 +12,7 @@
         t.template_desc,
         t.template_content,
         t.template_type,
+        t.file_write_type,
         t.create_time,
         t.update_time,
         t.is_delete
@@ -59,6 +60,7 @@
         <result property="templateDesc" column="template_desc"/>
         <result property="templateContent" column="template_content"/>
         <result property="templateType" column="template_type"/>
+        <result property="fileWriteType" column="file_write_type"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

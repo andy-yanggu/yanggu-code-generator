@@ -40,6 +40,6 @@ public interface EnumMapper extends BaseMapperPlus<EnumEntity> {
      */
     List<EnumVO> voList(@Param("query") EnumVOQuery query);
 
-    List<EnumEntity> selectEnumList(@Param("id") Long id);
+    List<EnumEntity> selectEnumList(@Param("projectId") Long projectId);
 
 }

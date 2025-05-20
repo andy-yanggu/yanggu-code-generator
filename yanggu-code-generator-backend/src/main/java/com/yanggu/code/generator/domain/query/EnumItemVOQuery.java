@@ -20,4 +20,11 @@ public class EnumItemVOQuery extends PageQuery<EnumItemVO> implements Serializab
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 枚举ID
+     */
+    @Schema(description = "枚举ID")
+    private Long enumId;
+
+
 }

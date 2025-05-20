@@ -11,6 +11,7 @@ import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.enums.FileWriteTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
@@ -19,6 +20,7 @@ import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtils;
 import com.yanggu.code.generator.util.TreeUtil;
 import org.dromara.hutool.core.array.ArrayUtil;
+import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -147,13 +150,17 @@ public class GeneratorServiceImpl implements GeneratorService {
     public PreviewDataVO enumPreview(Long enumId) {
         EnumEntity enumEntity = enumService.getById(enumId);
         ProjectEntity project = projectService.getById(enumEntity.getProjectId());
-        EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
+        EnumDataModel enumDataModel = buildEnumDataModel(0, enumEntity, project);
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
         List<TemplateEntity> templateList = templateGroup.getTemplateList();
         List<TemplateContentVO> templateContentList = templateList.stream()
-                .map(template -> getTemplateContentVO(templateGroup, template, enumDataModel))
+                .map(template -> {
+                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumDataModel);
+                    templateContentVO.setEnumId(enumId);
+                    return templateContentVO;
+                })
                 .toList();
 
         return buildPreviewData(templateContentList);
@@ -181,6 +188,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateContentVO> templateContentList = allList.stream()
                 .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
                 .toList();
+
+        //处理文件写入方式
+        templateContentList = handlerFileWrite(templateContentList);
         previewData.setTemplateContentList(templateContentList);
 
         //构建树形列表
@@ -239,7 +249,11 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //渲染模板并输出
         return templateList.stream()
-                .map(template -> getTemplateContentVO(templateGroup, template, tableDataModel))
+                .map(template -> {
+                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, tableDataModel);
+                    templateContentVO.setTableId(tableId);
+                    return templateContentVO;
+                })
                 .toList();
     }
 
@@ -334,7 +348,16 @@ public class GeneratorServiceImpl implements GeneratorService {
             Integer templateType = templateContentVO.getTemplateType();
             //写入到文件
             if (FILE.getCode().equals(templateType)) {
-                FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
+                Integer fileWriteType = templateContentVO.getFileWriteType();
+                //覆盖
+                if (FileWriteTypeEnum.OVERRIDE.getCode().equals(fileWriteType)) {
+                    FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
+                } else if (FileWriteTypeEnum.APPEND.getCode().equals(fileWriteType)) {
+                    //追加
+                    FileUtil.appendUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
+                } else {
+                    throw new BusinessException("未知文件写入方式：" + fileWriteType);
+                }
             } else {
                 //生成文件夹
                 FileUtil.mkdir(templateContentVO.getFilePath());
@@ -355,9 +378,13 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private List<TemplateContentVO> enumListPreview(ProjectEntity project) {
-        List<EnumDataModel> enumDataModelList = enumService.enumList(project.getId()).stream()
-                .map(enumEntity -> buildEnumDataModel(enumEntity, project))
-                .toList();
+        List<EnumDataModel> enumDataModelList = new ArrayList<>();
+        List<EnumEntity> enumList = enumService.enumList(project.getId());
+        for (int i = 0; i < enumList.size(); i++) {
+            EnumEntity enumEntity = enumList.get(i);
+            EnumDataModel dataModel = buildEnumDataModel(i, enumEntity, project);
+            enumDataModelList.add(dataModel);
+        }
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
@@ -365,7 +392,11 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         return enumDataModelList.stream()
                 .flatMap(enumDataModel -> templateList.stream()
-                                .map(template -> getTemplateContentVO(templateGroup, template, enumDataModel))
+                                .map(template -> {
+                                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumDataModel);
+                                    templateContentVO.setEnumId(enumDataModel.getEnumId());
+                                    return templateContentVO;
+                                })
                 )
                 .toList();
     }
@@ -405,6 +436,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         templateContentVO.setTemplateId(template.getId());
         templateContentVO.setTemplateGroupType(templateGroup.getType());
         templateContentVO.setTemplateType(templateType);
+        templateContentVO.setFileWriteType(template.getFileWriteType());
         return templateContentVO;
     }
 
@@ -506,17 +538,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tableDataModel;
     }
 
-    private EnumDataModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
+    private EnumDataModel buildEnumDataModel(Integer index, EnumEntity enumEntity, ProjectEntity project) {
         EnumDataModel enumDataModel = new EnumDataModel();
+        enumDataModel.setIndex(index);
 
         enumDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
         enumDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
         enumDataModel.setProjectPackage(project.getProjectPackage());
         enumDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         enumDataModel.setBackendPath(project.getBackendPath());
+        enumDataModel.setFrontendPath(project.getFrontendPath());
 
+        enumDataModel.setEnumId(enumEntity.getId());
         enumDataModel.setEnumName(enumEntity.getEnumName());
         enumDataModel.setEnumNamePascal(NameUtil.toPascal(enumEntity.getEnumName()));
+        enumDataModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
         enumDataModel.setEnumDesc(enumEntity.getEnumDesc());
         List<EnumItemEntity> enumItemList = enumEntity.getEnumItemList();
         List<EnumItemDataModel> list = enumItemList.stream()
@@ -611,6 +647,36 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .toList();
 
         return TreeUtil.buildTree(treeList);
+    }
+
+    private List<TemplateContentVO> handlerFileWrite(List<TemplateContentVO> templateContentList) {
+        List<TemplateContentVO> returnList = new ArrayList<>();
+        //根据templateId和filePath分组，根据文件生成方式，进行覆盖或者追加
+        templateContentList.stream()
+                .collect(Collectors.groupingBy(TemplateContentVO::getTemplateId, Collectors.groupingBy(TemplateContentVO::getFilePath)))
+                .forEach((templateId, filePathMap) -> filePathMap.forEach((filePath, templateContentVOList) -> {
+                    if (templateContentVOList.size() > 1) {
+                        TemplateContentVO newTemplateContentVO = BeanUtil.copyProperties(templateContentVOList.getFirst(), TemplateContentVO.class);
+                        Integer fileWriteType = newTemplateContentVO.getFileWriteType();
+                        //覆盖
+                        if (FileWriteTypeEnum.OVERRIDE.getCode().equals(fileWriteType)) {
+                            newTemplateContentVO.setContent(templateContentVOList.getLast().getContent());
+                            returnList.add(newTemplateContentVO);
+                        } else if (FileWriteTypeEnum.APPEND.getCode().equals(fileWriteType)) {
+                            //追加
+                            StringBuffer sb  = new StringBuffer();
+                            templateContentVOList.forEach(templateContentVO -> {
+                                sb.append(templateContentVO.getContent());
+                                sb.append("\r\n");
+                            });
+                            newTemplateContentVO.setContent(sb.toString());
+                            returnList.add(newTemplateContentVO);
+                        }
+                    } else {
+                        returnList.addAll(templateContentVOList);
+                    }
+                }));
+        return returnList;
     }
 
 }

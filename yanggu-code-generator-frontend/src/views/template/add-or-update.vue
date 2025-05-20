@@ -12,6 +12,11 @@
 					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
+			<el-form-item label="文件写入方式" prop="fileWriteType">
+				<el-radio-group v-model="dataForm.fileWriteType">
+					<el-radio v-for="item in FILE_WRITE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+				</el-radio-group>
+			</el-form-item>
 			<el-form-item label="模板描述" prop="templateDesc">
 				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
@@ -30,7 +35,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
-import { TEMPLATE_TYPES } from '@/constant/enum'
+import { FILE_WRITE_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 
 const props = defineProps({
 	templateGroupId: {
@@ -51,7 +56,8 @@ const dataForm = reactive({
 	generatorPath: '',
 	templateDesc: '',
 	templateContent: '',
-	templateType: ''
+	templateType: '',
+	fileWriteType: null
 })
 
 const init = (id?: number) => {

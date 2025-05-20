@@ -18,6 +18,9 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="query.enumId != null">
+            AND enum_id = #{query.enumId}
+        </if>
     </sql>
 
     <!-- 排序SQL -->

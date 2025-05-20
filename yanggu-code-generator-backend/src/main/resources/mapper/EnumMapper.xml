@@ -47,9 +47,9 @@
     </resultMap>
 
     <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.entity.EnumEntity" autoMapping="true">
-        <id property="enumName" column="enum_name"/>
+        <id property="id" column="id"/>
         <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.entity.EnumItemEntity" autoMapping="true">
-            <id property="enumItemName" column="enum_item_name"/>
+            <id property="id" column="enum_item_id"/>
         </collection>
     </resultMap>
 
@@ -109,8 +109,10 @@
 
     <select id="selectEnumList" resultMap="enumModelMap">
         SELECT
+            e.id,
             e.enum_name,
             e.enum_desc,
+            ei.id AS enum_item_id,
             ei.enum_item_name,
             ei.enum_item_code,
             ei.enum_item_desc
@@ -119,7 +121,7 @@
         JOIN gen_enum AS e ON e.project_id = p.id AND e.is_delete = 0
         JOIN gen_enum_item AS ei ON ei.enum_id = e.id AND ei.is_delete = 0
         WHERE
-            p.id = #{id} AND p.is_delete = 0
+            p.id = #{projectId} AND p.is_delete = 0
     </select>
 
 </mapper>

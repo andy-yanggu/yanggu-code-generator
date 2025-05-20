@@ -17,6 +17,12 @@ public class TemplateContentVO {
     private Long tableId;
 
     /**
+     * 枚举ID
+     */
+    @Schema(description = "枚举ID")
+    private Long enumId;
+
+    /**
      * 模板ID
      */
     @Schema(description = "模板ID")
@@ -27,6 +33,12 @@ public class TemplateContentVO {
      */
     @Schema(description = "模板类型（0-文件，1-文件夹）")
     private Integer templateType;
+
+    /**
+     * 文件写入方式（0-覆盖，1-追加）
+     */
+    @Schema(description = "文件写入方式（0-覆盖，1-追加）")
+    private Integer fileWriteType;
 
     /**
      * 模板组类型（0-项目模板，1-表模板）

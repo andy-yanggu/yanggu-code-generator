@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="preview.visible" title="代码预览" :size="1200">
+	<el-drawer v-model="preview.visible" title="代码预览" :size="'80%'">
 		<div class="common-layout">
 			<el-container>
 				<el-aside :style="{ width: '300px', overflowX: 'auto' }">
@@ -16,20 +16,32 @@
 						/>
 					</div>
 				</el-aside>
-				<el-main>
-					<el-tabs v-model="preview.activeName" tab-position="top" @tab-click="handleTabNodeClick">
-						<el-tab-pane v-for="(item, key) in preview.data" :key="key" :label="item.fileName" :name="item.fileName">
-							<el-row :gutter="10">
-								<el-col :span="18"></el-col>
-								<el-col :span="6" style="text-align: right">
-									<el-button @click="handleCopy(item.content)">复制</el-button>
-									<el-button @click="downloadTemplateData(item)">生成代码</el-button>
-								</el-col>
-							</el-row>
-							<code-mirror v-model="item.content" :height="680"></code-mirror>
-						</el-tab-pane>
-					</el-tabs>
-				</el-main>
+				<el-container>
+					<el-header style="display: flex; flex-direction: column; gap: 12px">
+						<el-row>
+							<el-col :span="20">
+								路径：<el-text v-for="(path, index) in preview.item.filePath.split('/')" :key="index" size="large">
+									{{ path }}{{ index < preview.item.filePath.split('/').length - 1 ? '/' : '' }}
+								</el-text>
+							</el-col>
+							<el-col :span="4" style="text-align: right">
+								<el-button @click="copyPath(preview.item.filePath)">复制路径</el-button>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="18">
+								名称：<el-text size="large">{{ preview.item.fileName }}</el-text>
+							</el-col>
+							<el-col :span="6" style="text-align: right">
+								<el-button @click="handleCopy(preview.item.content)">复制代码</el-button>
+								<el-button @click="downloadTemplateData(preview.item)">生成代码</el-button>
+							</el-col>
+						</el-row>
+					</el-header>
+					<el-main>
+						<code-mirror v-model="preview.item.content" :height="680"></code-mirror>
+					</el-main>
+				</el-container>
 			</el-container>
 		</div>
 	</el-drawer>
@@ -52,36 +64,29 @@ const treeRef = ref()
 const preview = reactive({
 	visible: false,
 	title: '代码预览',
-	data: [],
+	dataList: [],
 	projectId: 0,
 	generatorType: null,
 	treeData: [],
-	activeName: ''
+	item: {
+		filePath: '',
+		fileName: '',
+		content: '',
+		tableId: null
+	}
 })
 
 interface Tree {
 	label: string
+	filePath: string
 	templateId: number
 	children?: Tree[]
 }
 
 const handleTreeNodeClick = (data: Tree) => {
 	if (data.templateId) {
-		preview.activeName = data.label
+		preview.item = preview.dataList.filter(item => item.filePath === data.filePath)[0]
 	}
-}
-
-const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
-	// 1. 获取当前tab的name
-	const currentTabName = pane.props.name
-
-	// 2. 遍历preview.data查找对应项
-	const currentItem = Object.values(preview.data).find(item => {
-		return item.fileName === currentTabName
-	})
-
-	// 3. 现在currentItem就是当前选中的数据项
-	currentNodeKey.value = currentItem.filePath
 }
 
 const init = async (projectItem: any) => {
@@ -92,9 +97,9 @@ const init = async (projectItem: any) => {
 	try {
 		const res = await generatorProjectPreviewApi(projectId)
 		const { templateContentList, treeList } = res.data
-		preview.data = templateContentList
+		preview.dataList = templateContentList
 		preview.treeData = treeList
-		preview.activeName = templateContentList[0].fileName
+		preview.item = templateContentList[0]
 
 		preview.visible = true
 		await nextTick()
@@ -126,10 +131,25 @@ const handleCopy = (content: string) => {
 		})
 }
 
+const copyPath = (path: string) => {
+	navigator.clipboard.writeText(path).then(() => {
+		ElMessage.success('路径已复制到剪贴板')
+	})
+}
+
 //下载单个模板代码
 const downloadTemplateData = item => {
 	if (preview.generatorType === 0) {
-		const id = item.templateGroupType === 0 ? preview.projectId : item.tableId
+		let id
+		if (item.templateGroupType === 0) {
+			id = preview.projectId
+		} else if (item.templateGroupType === 1) {
+			id = item.tableId
+		} else if (item.templateGroupType === 2) {
+			id = item.enumId
+		} else {
+			ElMessage.error('暂不支持该类型模板下载')
+		}
 		const params = {
 			templateGroupType: item.templateGroupType,
 			id: id,

@@ -8,6 +8,11 @@ import java.util.List;
 public class EnumDataModel {
 
     /**
+     * 索引
+     */
+    private Integer index;
+
+    /**
      * 项目名（点）（test1.demo）
      */
     private String projectNameDot;
@@ -33,6 +38,16 @@ public class EnumDataModel {
     private String backendPath;
 
     /**
+     * 前端路径
+     */
+    private String frontendPath;
+
+    /**
+     * 枚举ID
+     */
+    private Long enumId;
+
+    /**
      * 枚举名称
      */
     private String enumName;
@@ -41,6 +56,11 @@ public class EnumDataModel {
      * 枚举名称（大驼峰）
      */
     private String enumNamePascal;
+
+    /**
+     * 枚举名称（全大写）
+     */
+    private String enumNameAllUpper;
 
     /**
      * 枚举描述

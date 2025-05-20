@@ -20,4 +20,11 @@ public class EnumItemEntityQuery extends PageQuery<EnumItemEntity> implements Se
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 枚举ID
+     */
+    @Schema(description = "枚举ID")
+    private Long enumId;
+
+
 }

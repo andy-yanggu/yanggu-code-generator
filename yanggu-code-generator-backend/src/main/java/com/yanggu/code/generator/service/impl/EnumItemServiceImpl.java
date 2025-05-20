@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -155,6 +156,9 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
 
     private LambdaQueryWrapper<EnumItemEntity> buildQueryWrapper(EnumItemEntityQuery query) {
         LambdaQueryWrapper<EnumItemEntity> wrapper = Wrappers.lambdaQuery(EnumItemEntity.class);
+
+        //过滤字段
+        wrapper.eq(Objects.nonNull(query.getEnumId()), EnumItemEntity::getEnumId, query.getEnumId());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

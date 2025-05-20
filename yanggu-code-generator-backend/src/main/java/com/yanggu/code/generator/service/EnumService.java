@@ -66,7 +66,7 @@ public interface EnumService extends IService<EnumEntity> {
      */
     List<EnumVO> voList(EnumVOQuery query);
 
-    List<EnumEntity> enumList(Long id);
+    List<EnumEntity> enumList(Long projectId);
 
     EnumEntity getById(Long id);
 
