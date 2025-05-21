@@ -94,9 +94,9 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
-import { getLabel } from '@/utils/enum'
-<#list queryList as field>
+<#list gridList as field>
 	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
+import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
 </#list>
