@@ -90,9 +90,19 @@ public class TableFieldModel implements Serializable {
     private String logicNotDeleteValue;
 
     /**
-     * 是否为字典 0：否  1：是
+     * 枚举ID
      */
-    private Integer dict;
+    private Long enumId;
+
+    /**
+     * 枚举名称
+     */
+    private String enumName;
+
+    /**
+     * 枚举名称大写
+     */
+    private String enumNameAllUpper;
 
     /**
      * 基类字段 0：否  1：是

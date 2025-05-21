@@ -502,8 +502,17 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         TableDataModel tableDataModel = new TableDataModel();
         fieldModelList.sort(Comparator.comparing(TableFieldModel::getFieldSort));
-        // 属性名首字母大写
-        fieldModelList.forEach(fieldModel -> fieldModel.setAttrNamePascal(StrUtil.upperFirst(fieldModel.getAttrName())));
+
+        fieldModelList.forEach(fieldModel -> {
+            // 属性名首字母大写
+            fieldModel.setAttrNamePascal(StrUtil.upperFirst(fieldModel.getAttrName()));
+            Long enumId = fieldModel.getEnumId();
+            if (enumId != null) {
+                EnumEntity enumEntity = enumService.getById(enumId);
+                fieldModel.setEnumName(enumEntity.getEnumName());
+                fieldModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
+            }
+        });
         tableDataModel.setFieldList(fieldModelList);
 
         ProjectEntity project = projectService.getById(table.getProjectId());

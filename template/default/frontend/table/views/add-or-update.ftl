@@ -11,15 +11,15 @@
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
 			<#elseif field.formType == 'select'>
                 <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
-                    <el-option v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    <el-option v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
 			<#elseif field.formType == 'radio'>
                 <el-radio-group v-model="dataForm.${field.attrName}">
-                    <el-radio v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+                    <el-radio v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
 			<#elseif field.formType == 'checkbox'>
                 <el-checkbox-group v-model="dataForm.${field.attrName}">
-                    <el-checkbox v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
+                    <el-checkbox v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
 			<#elseif field.formType == 'date'>
                 <el-date-picker type="date" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
@@ -43,9 +43,9 @@ import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionName}'
 <#list formList as field>
-<#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
-import { ${enumNameAllUpper}_ENUM } from '@/constant/enum'
-</#if>
+    <#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
+import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
+    </#if>
 </#list>
 
 const emit = defineEmits(['refreshDataList'])

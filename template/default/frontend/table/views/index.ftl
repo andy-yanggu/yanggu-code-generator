@@ -7,15 +7,15 @@
                 <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
 			<#elseif field.formType == 'select'>
                 <el-select v-model="state.queryForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
-                    <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    <el-option v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
 			<#elseif field.formType == 'radio'>
                 <el-radio-group v-model="state.queryForm.${field.attrName}">
-                    <el-radio v-for="item in ${tableName}_${field.attrName}_enum" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+                    <el-radio v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
 			<#elseif field.formType == 'checkbox'>
                 <el-checkbox-group v-model="state.queryForm.${field.attrName}">
-                    <el-checkbox v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
+                    <el-checkbox v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
 			<#elseif field.queryFormType == 'date'>
                 <el-date-picker
@@ -60,8 +60,8 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
-		  <#if field.dict == 1>
-        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumName})"></el-table-column>
+		  <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
+        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"></el-table-column>
 		  <#else>
 			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		  </#if>
@@ -94,10 +94,10 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
-import { getLabel } from '@/util/enum'
+import { getLabel } from '@/utils/enum'
 <#list queryList as field>
 	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
-import { ${field.enumName} } from '@/constant/enum'
+import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
 </#list>
 
@@ -127,14 +127,6 @@ const addOrUpdateHandle = (id: number) => {
 const resetQueryRef = () => {
   queryRef.value.resetFields()
 }
-
-<#list gridList as field>
-<#if field.dict == 1>
-const handler${field.attrNamePascal} = (row: any) => {
-    return ${tableName}_${field.attrName}_enum.find(item => item.value === row.${field.attrName})?.label
-}
-</#if>
-</#list>
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
 </script>
