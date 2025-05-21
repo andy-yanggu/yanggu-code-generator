@@ -1,4 +1,4 @@
-import { EnumItem } from '@/util/enum'
+import { EnumItem } from '@/utils/enum'
 
 //${enumDesc}枚举
 const ${enumNameAllUpper}_ENUM: EnumItem[] = [
