@@ -46,7 +46,7 @@
 					<el-table-column prop="primaryPk" label="主键" header-align="center" align="center">
 						<template #default="{ row }">
 							<div style="display: flex; justify-content: center">
-								<el-checkbox v-model="row.primaryPk"></el-checkbox>
+								<el-checkbox v-model="row.primaryPk" :true-value="1" :false-value="0"></el-checkbox>
 							</div>
 						</template>
 					</el-table-column>
@@ -65,14 +65,11 @@
 							<el-input v-model="row.logicNotDeleteValue" placeholder="例如：0"></el-input>
 						</template>
 					</el-table-column>
-					<el-table-column prop="dict" label="字典" width="110" header-align="center" align="center">
+					<el-table-column prop="enumId" label="枚举" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.dict" :true-value="1" :false-value="0"></el-checkbox>
-						</template>
-					</el-table-column>
-					<el-table-column prop="dictValue" label="字典值" width="110" header-align="center" align="center">
-						<template #default="{ row }">
-							<el-input v-model="row.dictValue" placeholder="例如：0-男、1-女"></el-input>
+							<el-select v-model="row.enumId" filterable placeholder="请选择枚举" clearable>
+								<el-option v-for="item in enumList" :key="item.id" :value="item.id" :label="item.enumName"></el-option>
+							</el-select>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -175,7 +172,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { tableFieldSubmitListApi, tableFieldEntityListApi } from '@/api/tableField'
+import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/tableField'
+import { enumEntityListApi } from '@/api/enum'
 import { fieldTypeListApi } from '@/api/fieldType'
 
 const activeName = ref()
@@ -189,6 +187,7 @@ const visible = ref(false)
 const dataFormRef = ref()
 const typeList = ref([]) as any
 const tableId = ref()
+const projectIdRef = ref()
 const fieldList = ref([])
 const fillList = reactive([
 	{ label: 'DEFAULT', value: 'DEFAULT' },
@@ -220,8 +219,12 @@ const formTypeList = reactive([
 	{ label: '日期时间', value: 'datetime' }
 ])
 
-const init = (id: number) => {
+const enumList = ref([])
+
+const init = (row: any) => {
 	visible.value = true
+	const id = row.id
+	projectIdRef.value = row.projectId
 	tableId.value = id
 
 	// 重置表单数据
@@ -231,11 +234,17 @@ const init = (id: number) => {
 
 	activeName.value = 'field'
 
-	getTable(id)
+	getTableFieldList(id)
+	const queryForm = {
+		projectId: projectIdRef.value
+	}
+	enumEntityListApi(queryForm).then(res => {
+		enumList.value = res.data
+	})
 	getFieldTypeList()
 }
 
-const getTable = (id: number) => {
+const getTableFieldList = (id: number) => {
 	const queryForm = {
 		tableId: id
 	}

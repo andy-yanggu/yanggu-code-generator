@@ -11,7 +11,7 @@
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
 			<#elseif field.formType == 'select'>
                 <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
-                    <el-option v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    <el-option v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
 			<#elseif field.formType == 'radio'>
                 <el-radio-group v-model="dataForm.${field.attrName}">
@@ -19,7 +19,7 @@
                 </el-radio-group>
 			<#elseif field.formType == 'checkbox'>
                 <el-checkbox-group v-model="dataForm.${field.attrName}">
-                    <el-checkbox v-for="item in ${tableName}_${field.fieldName}_enum" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
+                    <el-checkbox v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
 			<#elseif field.formType == 'date'>
                 <el-date-picker type="date" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
@@ -44,7 +44,7 @@ import { ElMessage } from 'element-plus/es'
 import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionName}'
 <#list formList as field>
 <#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
-import { ${tableName}_${field.fieldName}_enum } from '@/constant/enum'
+import { ${enumNameAllUpper}_ENUM } from '@/constant/enum'
 </#if>
 </#list>
 

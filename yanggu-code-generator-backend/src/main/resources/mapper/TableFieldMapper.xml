@@ -20,8 +20,7 @@
         logic_delete_value,
         logic_not_delete_value,
         form_item,
-        dict,
-        dict_value,
+        enum_id,
         form_required,
         form_type,
         form_field_sort,
@@ -76,8 +75,7 @@
         <result property="logicDeleteValue" column="logic_delete_value"/>
         <result property="logicNotDeleteValue" column="logic_not_delete_value"/>
         <result property="formItem" column="form_item"/>
-        <result property="dict" column="dict"/>
-        <result property="dictValue" column="dict_value"/>
+        <result property="enumId" column="enum_id"/>
         <result property="formRequired" column="form_required"/>
         <result property="formType" column="form_type"/>
         <result property="formFieldSort" column="form_field_sort"/>

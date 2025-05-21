@@ -39,7 +39,7 @@
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
-					<el-button type="primary" link @click="editHandle(scope.row.id)">字段配置</el-button>
+					<el-button type="primary" link @click="editHandle(scope.row)">字段配置</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
 					<el-button type="primary" link @click="syncHandle(scope.row)">字段同步</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
@@ -137,8 +137,8 @@ const previewHandle = (tableItem: any) => {
 	previewRef.value.init(tableItem)
 }
 
-const editHandle = (id?: number) => {
-	editRef.value.init(id)
+const editHandle = (row: any) => {
+	editRef.value.init(row)
 }
 
 const handlerType = (row: any) => {

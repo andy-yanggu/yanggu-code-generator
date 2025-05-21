@@ -189,26 +189,12 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         entityList.forEach(tableField -> {
 
             // 逻辑删除校验
-            if (Boolean.TRUE.equals(tableField.getLogicDelete())) {
+            if (tableField.getLogicDelete() == 1) {
                 if (StrUtil.isBlank(tableField.getLogicDeleteValue())) {
                     throw new BusinessException("逻辑删除值不能为空");
                 }
                 if (StrUtil.isBlank(tableField.getLogicNotDeleteValue())) {
                     throw new BusinessException("逻辑未删除值不能为空");
-                }
-            }
-
-            if (Boolean.TRUE.equals(tableField.getDict())) {
-                String dictValue = tableField.getDictValue();
-                if (StrUtil.isBlank(dictValue)) {
-                    throw new BusinessException("字典值不能为空");
-                } else {
-                    //需要满足 key-value形式。按照、拼接
-                    String regex = "^(\\d+)-([^、]+)(、\\d+-[^、]+)*$";
-                    Matcher matcher = Pattern.compile(regex).matcher(dictValue);
-                    if (!matcher.matches()) {
-                        throw new BusinessException("字典值格式不正确");
-                    }
                 }
             }
         });

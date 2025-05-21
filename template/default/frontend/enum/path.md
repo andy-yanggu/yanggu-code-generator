@@ -1,2 +1,2 @@
 #### 1. Enum.ftl
-${frontendPath}/src/consts/${enumName}.ts
+${frontendPath}/src/constants/${enumName}Enum.ts
