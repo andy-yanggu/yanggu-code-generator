@@ -55,7 +55,7 @@ const dataFormRef = ref()
 
 const dataForm = reactive({
 	<#list fieldList as field>
-	    <#if !field.baseField>
+	    <#if field.baseField == 0>
 	${field.attrName}: ''<#sep>,
 	    </#if>
 	</#list>
@@ -83,7 +83,7 @@ const get${functionNamePascal} = (id: number) => {
 
 const dataRules = ref({
 	<#list formList as field>
-	<#if field.formRequired>
+	<#if field.formRequired == 1>
 	${field.attrName}: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]<#sep>,
 	</#if>
 	</#list>

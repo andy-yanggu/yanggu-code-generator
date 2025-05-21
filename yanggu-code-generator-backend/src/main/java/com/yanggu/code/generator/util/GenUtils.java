@@ -10,6 +10,7 @@ import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.BooleanUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 
 import java.sql.DatabaseMetaData;
@@ -126,10 +127,10 @@ public class GenUtils {
                 field.setFieldComment(rs.getString(query.fieldComment()));
                 String key = rs.getString(query.fieldKey());
                 boolean primaryPk = StringUtils.isNotBlank(key) && "PRI".equalsIgnoreCase(key);
-                field.setPrimaryPk(primaryPk);
+                field.setPrimaryPk(BooleanUtil.toInteger(primaryPk));
                 //设置逻辑删除字段
                 boolean logicDeleteResult = setLogicDelete(rs, query);
-                field.setLogicDelete(logicDeleteResult);
+                field.setLogicDelete(BooleanUtil.toInteger(logicDeleteResult));
                 if (logicDeleteResult) {
                     field.setLogicDeleteValue(SpringUtil.getProperty("generator.logic-delete-value", "1"));
                     field.setLogicNotDeleteValue(SpringUtil.getProperty("generator.logic-not-delete-value", "0"));

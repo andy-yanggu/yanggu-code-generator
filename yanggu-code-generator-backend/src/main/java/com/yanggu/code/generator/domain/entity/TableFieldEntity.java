@@ -86,13 +86,13 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 * 主键 0：否  1：是
 	 */
 	@TableField(value = "primary_pk")
-	private Boolean primaryPk;
+	private Integer primaryPk;
 
 	/**
 	 * 逻辑删除 0：否  1：是
 	 */
 	@TableField(value = "logic_delete")
-	private Boolean logicDelete;
+	private Integer logicDelete;
 
 	/**
 	 * 逻辑删除值
@@ -110,7 +110,7 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 * 是否为字典 0：否  1：是
 	 */
 	@TableField(value = "dict")
-	private Boolean dict;
+	private Integer dict;
 
 	/**
 	 * 字典值。key-value形式。key为字典值，value为展示值，使用"、"拼接
@@ -122,13 +122,13 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 * 表单项 0：否  1：是
 	 */
 	@TableField(value = "form_item")
-	private Boolean formItem;
+	private Integer formItem;
 
 	/**
 	 * 表单必填 0：否  1：是
 	 */
 	@TableField(value = "form_required")
-	private Boolean formRequired;
+	private Integer formRequired;
 
 	/**
 	 * 表单类型
@@ -152,7 +152,7 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 * 列表项 0：否  1：是
 	 */
 	@TableField(value = "grid_item")
-	private Boolean gridItem;
+	private Integer gridItem;
 
 	/**
 	 * 列表字段顺序
@@ -164,13 +164,13 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
 	 * 列表排序 0：否  1：是
 	 */
 	@TableField(value = "grid_sort")
-	private Boolean gridSort;
+	private Integer gridSort;
 
 	/**
 	 * 查询项 0：否  1：是
 	 */
 	@TableField(value = "query_item")
-	private Boolean queryItem;
+	private Integer queryItem;
 
 	/**
 	 * 查询方式

@@ -80,7 +80,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     }
 <#function getPrimaryKeyType fieldList>
     <#list fieldList as field>
-        <#if field.primaryPk>
+        <#if field.primaryPk == 1>
             <#return field.attrType>
         </#if>
     </#list>

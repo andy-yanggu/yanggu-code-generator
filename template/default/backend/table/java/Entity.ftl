@@ -29,13 +29,13 @@ public class ${classNameUpper}Entity<#if baseClass??> extends ${baseClass.code}<
 	private static final long serialVersionUID = 1L;
 
 <#list fieldList as field>
-<#if !field.baseField>
+<#if field.baseField == 0>
 	<#if field.fieldComment!?length gt 0>
 	/**
 	 * ${field.fieldComment}
 	 */
 	</#if>
-	<#if field.primaryPk>
+	<#if field.primaryPk == 1>
 	@TableId(value = "${field.fieldName}", type = IdType.AUTO)
 	<#else>
 		<#if field.autoFill == "DEFAULT">
@@ -51,7 +51,7 @@ public class ${classNameUpper}Entity<#if baseClass??> extends ${baseClass.code}<
 	@TableField(value = "${field.fieldName}", fill = FieldFill.UPDATE)
 		</#if>
 	</#if>
-	<#if field.logicDelete>
+	<#if field.logicDelete == 1>
 	@TableLogic(value = "${field.logicNotDeleteValue}", delval = "${field.logicDeleteValue}")
 	</#if>
 	private ${field.attrType} ${field.attrName};

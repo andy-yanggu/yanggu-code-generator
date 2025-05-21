@@ -60,7 +60,7 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
-		  <#if field.dict>
+		  <#if field.dict == 1>
         	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumName})"></el-table-column>
 		  <#else>
 			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -129,7 +129,7 @@ const resetQueryRef = () => {
 }
 
 <#list gridList as field>
-<#if field.dict>
+<#if field.dict == 1>
 const handler${field.attrNamePascal} = (row: any) => {
     return ${tableName}_${field.attrName}_enum.find(item => item.value === row.${field.attrName})?.label
 }

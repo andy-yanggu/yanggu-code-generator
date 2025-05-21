@@ -53,7 +53,7 @@ public class ${classNameUpper}Controller {
     }
 <#function getPrimaryKeyType fieldList>
     <#list fieldList as field>
-        <#if field.primaryPk>
+        <#if field.primaryPk == 1>
             <#return field.attrType>
         </#if>
     </#list>

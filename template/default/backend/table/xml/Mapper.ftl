@@ -68,7 +68,7 @@
     <!-- Entity类字段映射 -->
     <resultMap type="${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity" id="${className}Map">
         <#list fieldList as field>
-        <#if field.primaryPk>
+        <#if field.primaryPk == 1>
         <id property="${field.attrName}" column="${field.fieldName}"/>
         <#else>
         <result property="${field.attrName}" column="${field.fieldName}"/>
@@ -77,7 +77,7 @@
     </resultMap>
 <#function getLogicDeleteField fieldList >
     <#list fieldList as field>
-        <#if field.logicDelete?? && field.logicDelete>
+        <#if field.logicDelete?? && field.logicDelete == 1>
             <#return field.fieldName + " = " + field.logicNotDeleteValue>
         </#if>
     </#list>

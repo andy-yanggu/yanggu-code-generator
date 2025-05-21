@@ -26,6 +26,7 @@ import org.dromara.hutool.core.io.IoUtil;
 import org.dromara.hutool.core.io.file.FileUtil;
 import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.BooleanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -604,16 +605,16 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TableFieldModel> queryList = new ArrayList<>();
 
         for (TableFieldModel field : tableDataModel.getFieldList()) {
-            if (field.getPrimaryPk()) {
+            if (field.getPrimaryPk() == 1) {
                 primaryList.add(field);
             }
-            if (field.getFormItem()) {
+            if (field.getFormItem() == 1) {
                 formList.add(field);
             }
-            if (field.getGridItem()) {
+            if (field.getGridItem() == 1) {
                 gridList.add(field);
             }
-            if (field.getQueryItem()) {
+            if (field.getQueryItem() == 1) {
                 queryList.add(field);
             }
         }
@@ -638,7 +639,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 基类
         BaseClassEntity baseClass = baseClassService.getById(project.getBaseClassId());
         List<TableFieldModel> fieldList = tableDataModel.getFieldList();
-        fieldList.forEach(field -> field.setBaseField(false));
+        fieldList.forEach(field -> field.setBaseField(0));
         if (baseClass == null) {
             return;
         }
@@ -651,7 +652,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         // 标注为基类字段
         for (TableFieldModel field : fieldList) {
-            field.setBaseField(ArrayUtil.contains(fields, field.getFieldName()));
+            field.setBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
         }
     }
 

@@ -26,7 +26,7 @@ public interface ${classNameUpper}Service extends IService<${classNameUpper}Enti
     void update(${classNameUpper}DTO dto);
 <#function getPrimaryKeyType fieldList>
     <#list fieldList as field>
-        <#if field.primaryPk>
+        <#if field.primaryPk == 1>
             <#return field.attrType>
         </#if>
     </#list>

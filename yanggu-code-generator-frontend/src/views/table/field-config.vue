@@ -52,7 +52,7 @@
 					</el-table-column>
 					<el-table-column prop="logicDelete" label="逻辑删除" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.logicDelete"></el-checkbox>
+							<el-checkbox v-model="row.logicDelete" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="logicDeleteValue" label="逻辑删除值" width="110" header-align="center" align="center">
@@ -67,7 +67,7 @@
 					</el-table-column>
 					<el-table-column prop="dict" label="字典" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.dict"></el-checkbox>
+							<el-checkbox v-model="row.dict" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="dictValue" label="字典值" width="110" header-align="center" align="center">
@@ -84,7 +84,7 @@
 					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="queryItem" label="查询显示" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.queryItem"></el-checkbox>
+							<el-checkbox v-model="row.queryItem" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="queryFieldSort" label="字段排序" width="150" header-align="center" align="center">
@@ -115,7 +115,7 @@
 					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="formItem" label="表单显示" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.formItem"></el-checkbox>
+							<el-checkbox v-model="row.formItem" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formFieldSort" label="字段排序" width="150" header-align="center" align="center">
@@ -125,7 +125,7 @@
 					</el-table-column>
 					<el-table-column prop="formRequired" label="表单必填" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.formRequired"></el-checkbox>
+							<el-checkbox v-model="row.formRequired" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formValidator" label="表单效验" header-align="center" align="center">
@@ -149,7 +149,7 @@
 					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="gridItem" label="列表显示" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.gridItem"></el-checkbox>
+							<el-checkbox v-model="row.gridItem" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 					<el-table-column prop="gridFieldSort" label="字段排序" width="150" header-align="center" align="center">
@@ -159,7 +159,7 @@
 					</el-table-column>
 					<el-table-column prop="gridSort" label="列表排序" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-checkbox v-model="row.gridSort"></el-checkbox>
+							<el-checkbox v-model="row.gridSort" :true-value="1" :false-value="0"></el-checkbox>
 						</template>
 					</el-table-column>
 				</el-table>

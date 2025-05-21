@@ -83,13 +83,13 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	 * 主键 0：否  1：是
 	 */
 	@Schema(description = "主键 0：否  1：是")
-	private Boolean primaryPk;
+	private Integer primaryPk;
 
 	/**
 	 * 逻辑删除 0：否  1：是
 	 */
 	@Schema(description = "逻辑删除 0：否  1：是")
-	private Boolean logicDelete;
+	private Integer logicDelete;
 
 	/**
 	 * 逻辑删除值
@@ -107,7 +107,7 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	 * 是否为字典 0：否  1：是
 	 */
 	@Schema(description = "是否为字典 0：否  1：是")
-	private Boolean dict;
+	private Integer dict;
 
 	/**
 	 * 字典值。key-value形式。key为字典值，value为展示值，使用"、"拼接
@@ -119,13 +119,13 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	 * 表单项 0：否  1：是
 	 */
 	@Schema(description = "表单项 0：否  1：是")
-	private Boolean formItem;
+	private Integer formItem;
 
 	/**
 	 * 表单必填 0：否  1：是
 	 */
 	@Schema(description = "表单必填 0：否  1：是")
-	private Boolean formRequired;
+	private Integer formRequired;
 
 	/**
 	 * 表单类型
@@ -149,13 +149,13 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	 * 列表项 0：否  1：是
 	 */
 	@Schema(description = "列表项 0：否  1：是")
-	private Boolean gridItem;
+	private Integer gridItem;
 
 	/**
 	 * 列表排序 0：否  1：是
 	 */
 	@Schema(description = "列表排序 0：否  1：是")
-	private Boolean gridSort;
+	private Integer gridSort;
 
 	/**
 	 * 列表字段顺序
@@ -167,7 +167,7 @@ public class TableFieldVO extends BaseVO implements Serializable {
 	 * 查询项 0：否  1：是
 	 */
 	@Schema(description = "查询项 0：否  1：是")
-	private Boolean queryItem;
+	private Integer queryItem;
 
 	/**
 	 * 查询方式

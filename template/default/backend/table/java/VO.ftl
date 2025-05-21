@@ -23,7 +23,7 @@ public class ${classNameUpper}VO extends BaseVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 <#list fieldList as field>
-	<#if !field.baseField>
+	<#if field.baseField == 0>
 	<#if field.fieldComment!?length gt 0>
 	/**
 	 * ${field.fieldComment}

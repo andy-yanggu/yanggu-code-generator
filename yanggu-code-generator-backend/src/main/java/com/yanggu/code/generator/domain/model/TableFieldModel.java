@@ -72,12 +72,12 @@ public class TableFieldModel implements Serializable {
     /**
      * 主键 0：否  1：是
      */
-    private Boolean primaryPk;
+    private Integer primaryPk;
 
     /**
      * 逻辑删除 0：否  1：是
      */
-    private Boolean logicDelete;
+    private Integer logicDelete;
 
     /**
      * 逻辑删除值
@@ -92,22 +92,22 @@ public class TableFieldModel implements Serializable {
     /**
      * 是否为字典 0：否  1：是
      */
-    private Boolean dict;
+    private Integer dict;
 
     /**
      * 基类字段 0：否  1：是
      */
-    private Boolean baseField;
+    private Integer baseField;
 
     /**
      * 表单项 0：否  1：是
      */
-    private Boolean formItem;
+    private Integer formItem;
 
     /**
      * 表单必填 0：否  1：是
      */
-    private Boolean formRequired;
+    private Integer formRequired;
 
     /**
      * 表单类型
@@ -127,12 +127,12 @@ public class TableFieldModel implements Serializable {
     /**
      * 列表项 0：否  1：是
      */
-    private Boolean gridItem;
+    private Integer gridItem;
 
     /**
      * 列表排序 0：否  1：是
      */
-    private Boolean gridSort;
+    private Integer gridSort;
 
     /**
      * 列表字段顺序
@@ -142,7 +142,7 @@ public class TableFieldModel implements Serializable {
     /**
      * 查询项 0：否  1：是
      */
-    private Boolean queryItem;
+    private Integer queryItem;
 
     /**
      * 查询方式
