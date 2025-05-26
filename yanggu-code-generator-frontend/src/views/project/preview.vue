@@ -17,29 +17,27 @@
 					</div>
 				</el-aside>
 				<el-container>
-					<el-header style="display: flex; flex-direction: column; gap: 12px">
+					<el-header style="display: flex; flex-direction: column; gap: 10px">
 						<el-row>
-							<el-col :span="20">
-								路径：<el-text v-for="(path, index) in preview.item.filePath.split('/')" :key="index" size="large">
-									{{ path }}{{ index < preview.item.filePath.split('/').length - 1 ? '/' : '' }}
-								</el-text>
+							<el-col :span="18">
+								路径：<el-text>{{ preview.item.filePath }}</el-text>
 							</el-col>
-							<el-col :span="4" style="text-align: right">
-								<el-button @click="copyPath(preview.item.filePath)">复制路径</el-button>
+							<el-col :span="6" style="text-align: right">
+								<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
-							<el-col :span="18">
-								名称：<el-text size="large">{{ preview.item.fileName }}</el-text>
+							<el-col :span="12">
+								名称：<el-text>{{ preview.item.fileName }}</el-text>
 							</el-col>
-							<el-col :span="6" style="text-align: right">
-								<el-button @click="handleCopy(preview.item.content)">复制代码</el-button>
-								<el-button @click="downloadTemplateData(preview.item)">生成代码</el-button>
+							<el-col :span="12" style="text-align: right">
+								<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
+								<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
 							</el-col>
 						</el-row>
 					</el-header>
-					<el-main>
-						<code-mirror v-model="preview.item.content" :height="680"></code-mirror>
+					<el-main style="margin-top: 10px">
+						<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
 					</el-main>
 				</el-container>
 			</el-container>
@@ -47,17 +45,11 @@
 	</el-drawer>
 </template>
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import { ElLoading } from 'element-plus'
 import CodeMirror from '@/components/codemirror/CodeMirror.vue'
 import { ElMessage } from 'element-plus'
-import { TabsPaneContext } from 'element-plus/es'
-import {
-	generatorProjectPreviewApi,
-	generatorProjectTreeDataApi,
-	generatorProjectDownloadSingleApi,
-	generatorProjectDownloadLocalApi
-} from '@/api/generator'
+import { generatorProjectPreviewApi, generatorProjectDownloadSingleApi, generatorProjectDownloadLocalApi } from '@/api/generator'
 
 const currentNodeKey = ref()
 const treeRef = ref()
@@ -74,6 +66,12 @@ const preview = reactive({
 		content: '',
 		tableId: null
 	}
+})
+
+// 计算内容行数
+const contentHeight = computed(() => {
+	const length = preview.item.content.split('\n').length
+	return Math.min(Math.max(20 * length, 200), 1000)
 })
 
 interface Tree {
