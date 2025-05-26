@@ -54,7 +54,7 @@ const getTemplateGroup = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	groupName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
 	type: [{ required: true, message: '类型不能为空', trigger: 'blur' }]
 })

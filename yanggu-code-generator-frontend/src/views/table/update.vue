@@ -91,7 +91,7 @@ const init = (id?: number) => {
 	}
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

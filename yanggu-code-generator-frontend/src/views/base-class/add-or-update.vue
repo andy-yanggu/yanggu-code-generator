@@ -32,7 +32,7 @@ const visible = ref(false)
 const dataFormRef = ref()
 
 const dataForm = reactive({
-	id: '',
+	id: null,
 	packageName: '',
 	code: '',
 	fields: '',
@@ -59,7 +59,7 @@ const getBaseClass = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	code: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]

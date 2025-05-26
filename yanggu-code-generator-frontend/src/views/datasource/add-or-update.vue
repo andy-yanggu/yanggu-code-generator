@@ -70,7 +70,7 @@ const getDatasource = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	dbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	connName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	connUrl: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

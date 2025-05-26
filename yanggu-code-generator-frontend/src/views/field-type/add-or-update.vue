@@ -55,7 +55,7 @@ const getFieldType = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	columnType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })

@@ -61,6 +61,14 @@ const dataForm = reactive({
 	</#list>
 })
 
+const dataRules = reactive({
+    <#list formList as field>
+        <#if field.formRequired == 1>
+    ${field.attrName}: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]<#sep>,
+        </#if>
+    </#list>
+})
+
 const init = (id?: number) => {
 	visible.value = true
 	dataForm.id = null
@@ -80,14 +88,6 @@ const get${functionNamePascal} = (id: number) => {
 		Object.assign(dataForm, res.data)
 	})
 }
-
-const dataRules = ref({
-	<#list formList as field>
-	<#if field.formRequired == 1>
-	${field.attrName}: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]<#sep>,
-	</#if>
-	</#list>
-})
 
 // 表单提交
 const submitHandle = () => {

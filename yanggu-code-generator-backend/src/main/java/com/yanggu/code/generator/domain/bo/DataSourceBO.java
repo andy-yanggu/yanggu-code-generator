@@ -48,7 +48,7 @@ public class DataSourceBO {
 
     private Connection connection;
 
-    public DataSourceBO(DatasourceEntity entity) throws Exception {
+    public DataSourceBO(DatasourceEntity entity) {
         this.id = entity.getId();
         this.dbType = DbType.getValue(entity.getDbType());
         this.connUrl = entity.getConnUrl();

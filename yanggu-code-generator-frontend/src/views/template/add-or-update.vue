@@ -15,7 +15,7 @@
 			<el-form-item label="模板描述" prop="templateDesc">
 				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
-			<el-form-item label="模板内容" prop="templateContent">
+			<el-form-item v-if="dataForm.templateType === 0" label="模板内容" prop="templateContent">
 				<el-input v-model="dataForm.templateContent" type="textarea" autosize placeholder="请输入模板内容"></el-input>
 			</el-form-item>
 		</el-form>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
@@ -51,8 +51,20 @@ const dataForm = reactive({
 	generatorPath: '',
 	templateDesc: '',
 	templateContent: '',
-	templateType: ''
+	templateType: null
 })
+
+watch(
+	//添加模板类型监听（当类型变化时重新校验内容字段）
+	() => dataForm.templateType,
+	(newVal, _) => {
+		if (newVal === 0) {
+			dataRules.templateContent = [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }]
+		} else {
+			dataRules.templateContent = []
+		}
+	}
+)
 
 const init = (id?: number) => {
 	visible.value = true
@@ -74,10 +86,10 @@ const getTemplate = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	generatorPath: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	templateContent: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	templateContent: [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }],
 	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 

@@ -57,7 +57,7 @@ const getEnumItem = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	enumItemName: [{ required: true, message: '请输入枚举项名称', trigger: 'blur' }],
 	enumItemCode: [{ required: true, message: '请输入枚举项编码', trigger: 'blur' }],
 	enumItemDesc: [{ required: true, message: '请输入枚举项描述', trigger: 'blur' }]

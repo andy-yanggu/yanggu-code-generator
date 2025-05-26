@@ -67,7 +67,7 @@ const getEnum = (id: number) => {
 	})
 }
 
-const dataRules = ref({
+const dataRules = reactive({
 	enumName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	enumDesc: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
