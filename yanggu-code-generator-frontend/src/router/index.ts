@@ -23,7 +23,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 				component: () => import('@/views/table/index.vue'),
 				meta: {
 					title: '表管理',
-					icon: 'icon-fire'
+					icon: 'icon-detail'
 				}
 			},
 			{
@@ -32,7 +32,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 				component: () => import('@/views/enum/index.vue'),
 				meta: {
 					title: '枚举管理',
-					icon: 'icon-fire'
+					icon: 'icon-merge-cells'
 				}
 			},
 			{
