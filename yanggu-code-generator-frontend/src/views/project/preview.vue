@@ -16,30 +16,32 @@
 						/>
 					</div>
 				</el-aside>
-				<el-container>
-					<el-header style="display: flex; flex-direction: column; gap: 10px">
-						<el-row>
-							<el-col :span="18">
-								路径：<el-text>{{ preview.item.filePath }}</el-text>
-							</el-col>
-							<el-col :span="6" style="text-align: right">
-								<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="12">
-								名称：<el-text>{{ preview.item.fileName }}</el-text>
-							</el-col>
-							<el-col :span="12" style="text-align: right">
-								<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
-								<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
-							</el-col>
-						</el-row>
-					</el-header>
-					<el-main style="margin-top: 10px">
-						<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
-					</el-main>
-				</el-container>
+				<el-main>
+					<el-container>
+						<el-header style="display: flex; flex-direction: column; gap: 10px">
+							<el-row>
+								<el-col :span="18">
+									路径：<el-text>{{ preview.item.filePath }}</el-text>
+								</el-col>
+								<el-col :span="6" style="text-align: right">
+									<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
+								</el-col>
+							</el-row>
+							<el-row>
+								<el-col :span="12">
+									名称：<el-text>{{ preview.item.fileName }}</el-text>
+								</el-col>
+								<el-col :span="12" style="text-align: right">
+									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
+									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+								</el-col>
+							</el-row>
+						</el-header>
+						<el-main style="margin-top: 10px">
+							<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
+						</el-main>
+					</el-container>
+				</el-main>
 			</el-container>
 		</div>
 	</el-drawer>
@@ -71,7 +73,7 @@ const preview = reactive({
 // 计算内容行数
 const contentHeight = computed(() => {
 	const length = preview.item.content.split('\n').length
-	return Math.min(Math.max(20 * length, 200), 1000)
+	return Math.min(Math.max(20 * length, 800), 1000)
 })
 
 interface Tree {
