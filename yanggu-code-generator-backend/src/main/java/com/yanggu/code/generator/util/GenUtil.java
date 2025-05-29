@@ -2,12 +2,15 @@ package com.yanggu.code.generator.util;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.yanggu.code.generator.common.exception.BusinessException;
+import com.yanggu.code.generator.config.GeneratorConfig;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
@@ -16,16 +19,15 @@ import org.dromara.hutool.extra.spring.SpringUtil;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * 代码生成器 工具类
+ * 代码生成器工具类
  */
 @Slf4j
-public class GenUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class GenUtil {
 
     /**
      * 根据数据源，获取全部数据表
@@ -129,12 +131,7 @@ public class GenUtils {
                 boolean primaryPk = StringUtils.isNotBlank(key) && "PRI".equalsIgnoreCase(key);
                 field.setPrimaryPk(BooleanUtil.toInteger(primaryPk));
                 //设置逻辑删除字段
-                boolean logicDeleteResult = setLogicDelete(rs, query);
-                field.setLogicDelete(BooleanUtil.toInteger(logicDeleteResult));
-                if (logicDeleteResult) {
-                    field.setLogicDeleteValue(SpringUtil.getProperty("generator.logic-delete-value", "1"));
-                    field.setLogicNotDeleteValue(SpringUtil.getProperty("generator.logic-not-delete-value", "0"));
-                }
+                setLogicDeleteInfo(field);
                 tableFieldList.add(field);
             }
         } catch (Exception e) {
@@ -145,26 +142,16 @@ public class GenUtils {
     }
 
     /**
-     * 判断字段是否为逻辑删除字段
+     * 设置逻辑删除相关字段
      */
-    private static boolean setLogicDelete(ResultSet rs, AbstractQuery query) throws SQLException {
-        String columnName = rs.getString(query.fieldName());
-        String property = SpringUtil.getProperty("generator.logic-delete-column");
-        List<String> list = List.of("is_deleted", "del_flag", "is_del", "del_status", "is_del", "del_status", "is_delete");
-        if (StrUtil.isNotBlank(property)) {
-            list = Arrays.stream(property.split(",")).toList();
+    private static void setLogicDeleteInfo(TableFieldEntity field) {
+        GeneratorConfig generatorConfig = SpringUtil.getBean(GeneratorConfig.class);
+        boolean contains = generatorConfig.getLogicDeleteColumnList().contains(field.getFieldName());
+        field.setLogicDelete(BooleanUtil.toInteger(contains));
+        if (contains) {
+            field.setLogicDeleteValue(generatorConfig.getLogicDeleteValue());
+            field.setLogicNotDeleteValue(generatorConfig.getLogicNotDeleteValue());
         }
-        return list.contains(columnName);
-    }
-
-    /**
-     * 获取模块名
-     *
-     * @param packageName 包名
-     * @return 模块名
-     */
-    public static String getModuleName(String packageName) {
-        return StrUtil.subAfter(packageName, ".", true);
     }
 
     /**

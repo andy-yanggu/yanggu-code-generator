@@ -11,7 +11,6 @@ import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.model.EnumDataModel;
 import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
 import com.yanggu.code.generator.domain.query.ProjectVOQuery;
@@ -22,7 +21,7 @@ import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableService;
-import com.yanggu.code.generator.util.GenUtils;
+import com.yanggu.code.generator.util.GenUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         tableImportDTO.setProjectId(entity.getId());
 
         DataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
-        List<String> tableNameList = GenUtils.getTableNameList(dataSourceBO);
+        List<String> tableNameList = GenUtil.getTableNameList(dataSourceBO);
 
         tableImportDTO.setTableNameList(tableNameList);
         tableService.importTable(tableImportDTO);
@@ -169,7 +168,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         // 获取数据源
         DataSourceBO datasource = datasourceService.get(datasourceId);
         // 根据数据源，获取全部数据表
-        List<TableImportVO> tableList = GenUtils.getTableList(datasource, query.getTableName());
+        List<TableImportVO> tableList = GenUtil.getTableList(datasource, query.getTableName());
         tableList.forEach(table -> {
             LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class);
             queryWrapper.eq(TableEntity::getProjectId, projectId);

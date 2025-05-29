@@ -14,21 +14,12 @@ import java.util.List;
 @Schema(description = "树形数据VO实体类")
 public class TreeVO {
 
+    /**
+     * 树形数据排序。默认：模板，标签排序
+     */
     public static final Comparator<TreeVO> TREE_COMPARATOR = ComparatorChain.of(
-            Comparator.comparing(TreeVO::getIsFile), Comparator.comparing(TreeVO::getLabel)
+            Comparator.comparing(TreeVO::getIsTemplate), Comparator.comparing(TreeVO::getLabel)
     );
-
-    /**
-     * 树节点标签
-     */
-    @Schema(description = "树节点标签")
-    private String label;
-
-    /**
-     * 模板ID
-     */
-    @Schema(description = "模板ID")
-    private Long templateId;
 
     /**
      * 文件路径
@@ -37,21 +28,33 @@ public class TreeVO {
     private String filePath;
 
     /**
+     * 树节点标签
+     */
+    @Schema(description = "树节点标签")
+    private String label;
+
+    /**
      * 树节点层级
      */
     @Schema(description = "树节点层级")
     private Integer level;
 
     /**
-     * 是否是文件
-     */
-    @Schema(description = "是否是文件")
-    private Boolean isFile;
-
-    /**
      * 子节点列表
      */
     @Schema(description = "子节点列表")
     private List<TreeVO> children;
+
+    /**
+     * 是否是模板
+     */
+    @Schema(description = "是否是模板")
+    private Boolean isTemplate;
+
+    /**
+     * 模板ID
+     */
+    @Schema(description = "模板ID")
+    private Long templateId;
 
 }

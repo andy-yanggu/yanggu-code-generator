@@ -57,4 +57,5 @@ public interface AbstractQuery {
      * 主键字段
      */
     String fieldKey();
+
 }

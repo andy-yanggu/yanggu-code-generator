@@ -1,18 +1,29 @@
 package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.domain.vo.TreeVO;
+import lombok.NoArgsConstructor;
+import org.dromara.hutool.core.collection.CollUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.yanggu.code.generator.domain.vo.TreeVO.TREE_COMPARATOR;
+import static lombok.AccessLevel.PRIVATE;
 
+/**
+ * 树形工具类
+ */
+@NoArgsConstructor(access = PRIVATE)
 public class TreeUtil {
 
+    /**
+     * 构建树形结构
+     */
     public static List<TreeVO> buildTree(List<TreeVO> expandTreeList) {
-        Map<String, TreeVO> nodeMap = getStringTreeVOMap(expandTreeList);
+        if (CollUtil.isEmpty(expandTreeList)) {
+            return Collections.emptyList();
+        }
+
+        Map<String, TreeVO> nodeMap = buildNodeMap(expandTreeList);
 
         //将平铺的数据，按照树形进行组装
         List<TreeVO> allTreeList = new ArrayList<>(nodeMap.values());
@@ -26,52 +37,67 @@ public class TreeUtil {
                 .toList();
     }
 
-    private static Map<String, TreeVO> getStringTreeVOMap(List<TreeVO> expandTreeList) {
+    /**
+     * 深度优先遍历获取路径顺序
+     */
+    public static List<String> getDfsOrder(List<TreeVO> treeList) {
+        List<String> orderList = new ArrayList<>();
+        for (TreeVO node : treeList) {
+            orderList.add(node.getFilePath());
+            if (CollUtil.isNotEmpty(node.getChildren())) {
+                orderList.addAll(getDfsOrder(node.getChildren()));
+            }
+        }
+        return orderList;
+    }
+
+    private static Map<String, TreeVO> buildNodeMap(List<TreeVO> expandTreeList) {
         Map<String, TreeVO> nodeMap = new HashMap<>();
 
+        //将树形数据，平铺成Map
         for (TreeVO treeVO : expandTreeList) {
             String[] pathParts = treeVO.getFilePath().split("/");
-            for (int i = 0; i < pathParts.length; i++) {
-                StringBuilder pathBuilder = new StringBuilder();
-                for (int j = 0; j <= i; j++) {
-                    pathBuilder.append(pathParts[j]);
-                    if (j < i) {
-                        pathBuilder.append("/");
-                    }
-                }
-                String path = pathBuilder.toString();
-                if (nodeMap.containsKey(path)) {
+            int pathLength = pathParts.length;
+            for (int level = 0; level < pathLength; level++) {
+                //当前路径
+                String currentPath = String.join("/", Arrays.copyOfRange(pathParts, 0, level + 1));
+                if (nodeMap.containsKey(currentPath)) {
                     continue;
                 }
                 TreeVO tempTreeVO = new TreeVO();
-                tempTreeVO.setLabel(pathParts[i]);
-                tempTreeVO.setFilePath(path);
-                tempTreeVO.setLevel(i);
-                if (i == pathParts.length - 1) {
+                //节点名称
+                tempTreeVO.setLabel(pathParts[level]);
+                //文件路径
+                tempTreeVO.setFilePath(currentPath);
+                //层级
+                tempTreeVO.setLevel(level);
+                tempTreeVO.setIsTemplate(level == pathParts.length - 1);
+                if (tempTreeVO.getIsTemplate()) {
                     tempTreeVO.setTemplateId(treeVO.getTemplateId());
-                    tempTreeVO.setIsFile(true);
-                } else {
-                    tempTreeVO.setIsFile(false);
                 }
-                nodeMap.put(path, tempTreeVO);
+                nodeMap.put(currentPath, tempTreeVO);
             }
         }
         return nodeMap;
     }
 
-    private static List<TreeVO> getChildren(TreeVO node, List<TreeVO> treeList) {
+    private static List<TreeVO> getChildren(TreeVO parent, List<TreeVO> treeList) {
         return treeList.stream()
                 //判断是否是子节点
-                .filter(treeVO -> isChild(node, treeVO))
+                .filter(child -> isDirectChild(parent, child))
                 //递归添加子节点
-                .peek(treeVO -> treeVO.setChildren(getChildren(treeVO, treeList)))
+                .peek(child -> child.setChildren(getChildren(child, treeList)))
                 //进行排序
                 .sorted(TREE_COMPARATOR)
                 .toList();
     }
 
-    private static boolean isChild(TreeVO node, TreeVO treeVO) {
-        return treeVO.getFilePath().startsWith(node.getFilePath()) && node.getLevel() + 1 == treeVO.getLevel();
+    /**
+     * 直接子节点
+     */
+    private static boolean isDirectChild(TreeVO parent, TreeVO child) {
+        return child.getLevel() == parent.getLevel() + 1
+                && child.getFilePath().startsWith(parent.getFilePath() + "/");
     }
 
 }

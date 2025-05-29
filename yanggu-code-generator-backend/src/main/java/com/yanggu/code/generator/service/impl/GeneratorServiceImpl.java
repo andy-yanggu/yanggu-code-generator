@@ -16,7 +16,7 @@ import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.NameUtil;
-import com.yanggu.code.generator.util.TemplateUtils;
+import com.yanggu.code.generator.util.TemplateUtil;
 import com.yanggu.code.generator.util.TreeUtil;
 import org.dromara.hutool.core.array.ArrayUtil;
 import org.dromara.hutool.core.collection.CollUtil;
@@ -200,27 +200,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TreeVO> treeList = previewData.getTreeList();
 
         //生成深度优先遍历的路径顺序
-        List<String> dfsOrder = getDfsOrder(treeList);
+        List<String> dfsOrder = TreeUtil.getDfsOrder(treeList);
 
         //根据路径顺序对 templateContentList 排序
         List<TemplateContentVO> newList = templateContentList.stream()
                 .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
                 .toList();
         previewData.setTemplateContentList(newList);
-    }
-
-    /**
-     * 深度优先遍历获取路径顺序
-     */
-    private List<String> getDfsOrder(List<TreeVO> treeList) {
-        List<String> orderList = new ArrayList<>();
-        for (TreeVO node : treeList) {
-            orderList.add(node.getFilePath());
-            if (CollUtil.isNotEmpty(node.getChildren())) {
-                orderList.addAll(getDfsOrder(node.getChildren()));
-            }
-        }
-        return orderList;
     }
 
     private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
@@ -444,12 +430,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         String fileContent;
         TemplateContentVO templateContentVO = new TemplateContentVO();
         if (FILE.getCode().equals(templateType)) {
-            fileContent = TemplateUtils.getContent(template.getTemplateContent(), template.getTemplateName(), dataModel);
+            fileContent = TemplateUtil.getContent(template.getTemplateContent(), template.getTemplateName(), dataModel);
         } else {
             fileContent = "";
         }
         //路径
-        String filePath = TemplateUtils.getContent(template.getGeneratorPath(), template.getTemplateName(), dataModel);
+        String filePath = TemplateUtil.getContent(template.getGeneratorPath(), template.getTemplateName(), dataModel);
         //文件名
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         templateContentVO.setContent(fileContent);

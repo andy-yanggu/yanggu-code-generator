@@ -23,7 +23,7 @@ import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableFieldService;
 import com.yanggu.code.generator.service.TableService;
-import com.yanggu.code.generator.util.GenUtils;
+import com.yanggu.code.generator.util.GenUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
@@ -224,7 +224,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         DataSourceBO datasource = datasourceService.get(project.getDatasourceId());
 
         // 从数据库获取表字段列表
-        List<TableFieldEntity> dbTableFieldList = GenUtils.getTableFieldList(datasource, table.getId(), table.getTableName());
+        List<TableFieldEntity> dbTableFieldList = GenUtil.getTableFieldList(datasource, table.getId(), table.getTableName());
         if (dbTableFieldList.isEmpty()) {
             throw new ServerException("同步失败，请检查数据库表：" + table.getTableName());
         }
@@ -323,7 +323,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         }
 
         //从数据库获取表信息
-        table = GenUtils.getTable(dataSource, tableName);
+        table = GenUtil.getTable(dataSource, tableName);
 
         //保存表信息
         table.setVersion(project.getProjectVersion());
@@ -331,12 +331,12 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setAuthor(project.getAuthor());
         table.setFormLayout(FormLayoutEnum.ONE.getValue());
         table.setClassName(NamingCase.toPascalCase(tableName));
-        table.setFunctionName(GenUtils.getFunctionName(tableName));
+        table.setFunctionName(GenUtil.getFunctionName(tableName));
         table.setCreateTime(new Date());
         this.save(table);
 
         // 获取原生字段数据
-        List<TableFieldEntity> tableFieldList = GenUtils.getTableFieldList(dataSource, table.getId(), table.getTableName());
+        List<TableFieldEntity> tableFieldList = GenUtil.getTableFieldList(dataSource, table.getId(), table.getTableName());
         // 初始化字段数据
         tableFieldService.initFieldList(tableFieldList);
 

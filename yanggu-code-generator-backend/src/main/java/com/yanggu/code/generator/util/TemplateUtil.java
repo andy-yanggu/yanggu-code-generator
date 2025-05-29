@@ -2,17 +2,21 @@ package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.common.exception.BusinessException;
 import freemarker.template.Template;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.io.IoUtil;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import static lombok.AccessLevel.PRIVATE;
+
 /**
  * 模板工具类
  */
 @Slf4j
-public class TemplateUtils {
+@NoArgsConstructor(access = PRIVATE)
+public class TemplateUtil {
 
     /**
      * 获取模板渲染后的内容
