@@ -15,10 +15,10 @@ import java.util.List;
 public class TreeVO {
 
     /**
-     * 树形数据排序。默认：模板，标签排序
+     * 树形数据排序。类型，标签
      */
     public static final Comparator<TreeVO> TREE_COMPARATOR = ComparatorChain.of(
-            Comparator.comparing(TreeVO::getIsTemplate), Comparator.comparing(TreeVO::getLabel)
+            Comparator.comparing(TreeVO::getType).reversed(), Comparator.comparing(TreeVO::getLabel)
     );
 
     /**
@@ -40,6 +40,12 @@ public class TreeVO {
     private Integer level;
 
     /**
+     * 树类型（0-文件，1-文件夹）
+     */
+    @Schema(description = "树类型（0-文件，1-文件夹）")
+    private Integer type;
+
+    /**
      * 子节点列表
      */
     @Schema(description = "子节点列表")
@@ -56,5 +62,11 @@ public class TreeVO {
      */
     @Schema(description = "模板ID")
     private Long templateId;
+
+    /**
+     * 模板类型（0-文件，1-文件夹）
+     */
+    @Schema(description = "模板类型（0-文件，1-文件夹）")
+    private Integer templateType;
 
 }

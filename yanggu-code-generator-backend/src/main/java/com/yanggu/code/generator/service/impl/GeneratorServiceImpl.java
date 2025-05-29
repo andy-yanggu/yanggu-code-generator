@@ -658,6 +658,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     treeVO.setFilePath(templateContentVO.getFilePath());
                     treeVO.setLabel(templateContentVO.getFileName());
                     treeVO.setTemplateId(templateContentVO.getTemplateId());
+                    treeVO.setTemplateType(templateContentVO.getTemplateType());
                     return treeVO;
                 })
                 .toList();

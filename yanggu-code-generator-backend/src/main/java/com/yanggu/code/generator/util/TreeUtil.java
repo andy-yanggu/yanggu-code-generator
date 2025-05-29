@@ -1,6 +1,8 @@
 package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.enums.TemplateTypeEnum;
+import com.yanggu.code.generator.enums.TreeTypeEnum;
 import lombok.NoArgsConstructor;
 import org.dromara.hutool.core.collection.CollUtil;
 
@@ -74,6 +76,13 @@ public class TreeUtil {
                 tempTreeVO.setIsTemplate(level == pathParts.length - 1);
                 if (tempTreeVO.getIsTemplate()) {
                     tempTreeVO.setTemplateId(treeVO.getTemplateId());
+                    tempTreeVO.setTemplateType(treeVO.getTemplateType());
+                }
+                //设置树类型
+                if (TemplateTypeEnum.FILE.getCode().equals(tempTreeVO.getTemplateType())) {
+                    tempTreeVO.setType(TreeTypeEnum.FILE.getCode());
+                } else {
+                    tempTreeVO.setType(TreeTypeEnum.DIRECTORY.getCode());
                 }
                 nodeMap.put(currentPath, tempTreeVO);
             }
