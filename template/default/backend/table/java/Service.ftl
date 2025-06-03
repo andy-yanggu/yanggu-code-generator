@@ -50,7 +50,7 @@ public interface ${classNameUpper}Service extends IService<${classNameUpper}Enti
     ${classNameUpper}VO detail(${primaryKeyType} id);
 
     /**
-     * 批量查询
+     * 详情列表
      */
     List<${classNameUpper}VO> detailList(List<${primaryKeyType}> idList);
 

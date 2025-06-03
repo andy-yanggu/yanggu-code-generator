@@ -100,13 +100,13 @@ public class ${classNameUpper}Controller {
     }
 
     /**
-     * ${tableComment}批量查询
+     * ${tableComment}详情列表
      *
      * @param idList ${tableComment}ID列表
      */
     @PostMapping("/detailList")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 6)
-    @Operation(summary = "${tableComment}批量查询")
+    @Operation(summary = "${tableComment}详情列表")
     public List<${classNameUpper}VO> detailList(@RequestBody @NotEmpty(message = "${tableComment}ID列表不能为空") List<${primaryKeyType}> idList) {
         return ${className}Service.detailList(idList);
     }

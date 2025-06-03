@@ -21,12 +21,12 @@ export const ${functionName}DeleteListApi = (idList: Array<number>) => {
     return service.delete('/${functionName}/deleteList', { data: idList })
 }
 
-//查询详情
+//详情
 export const ${functionName}DetailApi = (id: number) => {
     return service.get('/${functionName}/detail?id=' + id)
 }
 
-//批量查询
+//详情列表
 export const ${functionName}DetailListApi = (idList: Array<number>) => {
     return service.post('/${functionName}/detailList', idList)
 }

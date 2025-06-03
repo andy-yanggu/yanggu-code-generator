@@ -30,17 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-<#if queryList?has_content>
-    <#assign needStrUtil = false>
-    <#list queryList as field>
-        <#if field.queryType?matches("(=|!=|>|<|>=|<=)")>
-            <#assign needStrUtil = true>
-        </#if>
-    </#list>
-    <#if needStrUtil>
 import java.util.Objects;
-    </#if>
-</#if>
 
 import static ${projectPackage}.${projectNameDot}.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -62,8 +52,9 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(${classNameUpper}DTO dto) {
-        ${classNameUpper}Entity entity = ${className}Mapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkUnique(dto);
+        ${classNameUpper}Entity entity = ${className}Mapstruct.dtoToEntity(dto);
         ${className}Mapper.insert(entity);
     }
 
@@ -73,9 +64,10 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(${classNameUpper}DTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         ${classNameUpper}Entity formEntity = ${className}Mapstruct.dtoToEntity(dto);
         ${classNameUpper}Entity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         ${className}Mapper.updateById(formEntity);
     }
 <#function getPrimaryKeyType fieldList>
@@ -95,6 +87,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(${primaryKeyType} id) {
         ${classNameUpper}Entity dbEntity = selectById(id);
+        checkReference(List.of(id));
         //删除校验和关联删除
         ${className}Mapper.deleteById(id);
     }
@@ -105,6 +98,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<${primaryKeyType}> idList) {
+        checkReference(idList);
         //删除校验和关联删除
         ${className}Mapper.deleteByIds(idList);
     }
@@ -116,6 +110,15 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     public ${classNameUpper}VO detail(${primaryKeyType} id) {
         ${classNameUpper}Entity dbEntity = selectById(id);
         return ${className}Mapstruct.entityToVO(dbEntity);
+    }
+
+    /**
+     * 详情列表
+     */
+    @Override
+    public List<${classNameUpper}VO> detailList(List<${primaryKeyType}> idList) {
+        List<${classNameUpper}Entity> entityList = ${className}Mapper.selectByIds(idList);
+        return ${className}Mapstruct.entityToVO(entityList);
     }
 
     /**
@@ -163,20 +166,35 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     }
 
     /**
-     * 批量查询
+     * ID查询
      */
-    @Override
-    public List<${classNameUpper}VO> detailList(List<${primaryKeyType}> idList) {
-        List<${classNameUpper}Entity> entityList = ${className}Mapper.selectByIds(idList);
-        return ${className}Mapstruct.entityToVO(entityList);
-    }
-
     private ${classNameUpper}Entity selectById(${primaryKeyType} id) {
         ${classNameUpper}Entity entity = ${className}Mapper.selectById(id);
         if (entity == null) {
             throw new BusinessException(DATA_NOT_EXIST, "${tableComment}", id);
         }
         return entity;
+    }
+
+    /**
+     * 唯一性校验
+     */
+    private void checkUnique(${classNameUpper}DTO dto) {
+        LambdaQueryWrapper<${classNameUpper}Entity> wrapper = Wrappers.lambdaQuery(${classNameUpper}Entity.class);
+        wrapper.ne(Objects.nonNull(dto.getId()), ${classNameUpper}Entity::getId, dto.getId());
+        //其余字段校验
+
+        boolean exists = ${className}Mapper.exists(wrapper);
+        if (exists) {
+            throw new BusinessException("${tableComment}已存在");
+        }
+    }
+
+    /**
+     * 校验关联数据是否存在
+     */
+    private void checkReference(List<${primaryKeyType}> idList) {
+        //校验是否被引用
     }
 
     private LambdaQueryWrapper<${classNameUpper}Entity> buildQueryWrapper(${classNameUpper}EntityQuery query) {
