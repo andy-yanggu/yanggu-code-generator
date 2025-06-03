@@ -9,10 +9,6 @@ public class UnixPathValidator implements ConstraintValidator<UnixPath, String> 
     private static final String UNIX_PATH_REGEX = "^[^\\\\]*$";
 
     @Override
-    public void initialize(UnixPath constraintAnnotation) {
-    }
-
-    @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (StrUtil.isBlank(value)) {
             return true;

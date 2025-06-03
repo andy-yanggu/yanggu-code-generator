@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 
 /**
- * 枚举校验注解
+ * 枚举校验注解。字段的值需要在枚举的指定字段的指定值范围内
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
