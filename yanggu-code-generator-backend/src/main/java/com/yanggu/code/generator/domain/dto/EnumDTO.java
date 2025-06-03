@@ -1,6 +1,9 @@
 package com.yanggu.code.generator.domain.dto;
 
+import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,12 +23,14 @@ public class EnumDTO implements Serializable {
 	 * id
 	 */
 	@Schema(description = "id")
+	@NotNull(message = "id不能为空", groups = {UpdateGroup.class})
 	private Long id;
 
 	/**
 	 * 枚举名称
 	 */
 	@Schema(description = "枚举名称")
+ 	@NotBlank(message = "枚举名称不能为空")
 	private String enumName;
 
 	/**
@@ -38,6 +43,7 @@ public class EnumDTO implements Serializable {
 	 * 项目ID
 	 */
 	@Schema(description = "项目ID")
+	@NotNull(message = "项目ID不能为空")
 	private Long projectId;
 
 }

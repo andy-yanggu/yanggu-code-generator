@@ -1,6 +1,9 @@
 package com.yanggu.code.generator.domain.dto;
 
-import com.yanggu.code.generator.common.validation.enumd.path.UnixPath;
+import com.yanggu.code.generator.common.validation.code.EnumCode;
+import com.yanggu.code.generator.common.validation.group.UpdateGroup;
+import com.yanggu.code.generator.common.validation.path.UnixPath;
+import com.yanggu.code.generator.enums.GeneratorTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +26,7 @@ public class ProjectDTO implements Serializable {
 	 * ID主键自增
 	 */
 	@Schema(description = "ID主键自增")
+	@NotNull(message = "ID主键自增不能为空", groups = {UpdateGroup.class})
 	private Long id;
 
 	/**
@@ -77,6 +81,8 @@ public class ProjectDTO implements Serializable {
 	 * 生成方式（0-zip压缩包，1-服务器本地）
 	 */
 	@Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
+	@NotNull(message = "生成方式（0-zip压缩包，1-服务器本地）不能为空")
+	@EnumCode(GeneratorTypeEnum.class)
 	private Integer generatorType;
 
 	/**

@@ -1,6 +1,8 @@
 package com.yanggu.code.generator.domain.dto;
 
+import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,6 +22,7 @@ public class TableFieldDTO implements Serializable {
 	 * id
 	 */
 	@Schema(description = "id")
+ 	@NotNull(message = "id不能为空", groups = {UpdateGroup.class})
 	private Long id;
 
 	/**

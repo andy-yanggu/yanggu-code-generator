@@ -5,15 +5,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 模板类型枚举
- */
 @Getter
 @AllArgsConstructor
-public enum TemplateTypeEnum {
+public enum GeneratorTypeEnum {
 
-    FILE(0, "文件"),
-    DIRECTORY(1, "目录"),
+    ZIP(0, "zip压缩包"),
+    LOCAL(1, "本地"),
     ;
 
     @EnumValue

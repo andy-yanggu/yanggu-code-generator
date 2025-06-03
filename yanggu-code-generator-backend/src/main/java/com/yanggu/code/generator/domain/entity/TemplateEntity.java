@@ -59,7 +59,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
 	private String templateContent;
 
 	/**
-	 * 模板类型（0-文件，1-文件夹）
+	 * 模板类型（0-文件，1-目录）
 	 */
 	@TableField(value = "template_type")
 	private Integer templateType;
