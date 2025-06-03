@@ -430,12 +430,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         String fileContent;
         TemplateContentVO templateContentVO = new TemplateContentVO();
         if (FILE.getCode().equals(templateType)) {
-            fileContent = TemplateUtil.getContent(template.getTemplateContent(), template.getTemplateName(), dataModel);
+            fileContent = TemplateUtil.renderTemplate(template.getTemplateContent(), template.getTemplateName(), dataModel);
         } else {
             fileContent = "";
         }
         //路径
-        String filePath = TemplateUtil.getContent(template.getGeneratorPath(), template.getTemplateName(), dataModel);
+        String filePath = TemplateUtil.renderTemplate(template.getGeneratorPath(), template.getTemplateName(), dataModel);
         //文件名
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         templateContentVO.setContent(fileContent);

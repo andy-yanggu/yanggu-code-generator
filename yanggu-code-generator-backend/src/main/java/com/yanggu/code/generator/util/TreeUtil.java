@@ -3,18 +3,17 @@ package com.yanggu.code.generator.util;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.enums.TreeTypeEnum;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.dromara.hutool.core.collection.CollUtil;
 
 import java.util.*;
 
 import static com.yanggu.code.generator.domain.vo.TreeVO.TREE_COMPARATOR;
-import static lombok.AccessLevel.PRIVATE;
 
 /**
  * 树形工具类
  */
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class TreeUtil {
 
     /**

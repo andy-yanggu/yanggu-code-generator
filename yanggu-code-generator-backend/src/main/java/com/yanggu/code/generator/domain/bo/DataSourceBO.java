@@ -78,35 +78,4 @@ public class DataSourceBO {
         }
     }
 
-    public DataSourceBO(Connection connection) throws SQLException {
-        this.id = 0L;
-        this.dbType = DbType.getValue(connection.getMetaData().getDatabaseProductName());
-
-        if (dbType == DbType.MySQL) {
-            this.dbQuery = new MySqlQuery();
-        } else if (dbType == DbType.Oracle) {
-            this.dbQuery = new OracleQuery();
-        } else if (dbType == DbType.PostgreSQL) {
-            this.dbQuery = new PostgreSqlQuery();
-        } else if (dbType == DbType.SQLServer) {
-            this.dbQuery = new SQLServerQuery();
-        } else if (dbType == DbType.DM) {
-            this.dbQuery = new DmQuery();
-        } else if (dbType == DbType.Clickhouse) {
-            this.dbQuery = new ClickHouseQuery();
-        } else if (dbType == DbType.KingBase) {
-            this.dbQuery = new KingBaseSqlQuery();
-        }
-
-        this.connection = connection;
-    }
-
-    public String getDatabaseName() throws Exception {
-        //设置数据库名称
-        PreparedStatement preparedStatement = connection.prepareStatement(dbQuery.databaseName());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        return resultSet.getString(1);
-    }
-
 }

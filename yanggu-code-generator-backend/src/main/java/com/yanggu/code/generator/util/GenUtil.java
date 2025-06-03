@@ -9,8 +9,7 @@ import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
@@ -26,7 +25,7 @@ import java.util.List;
  * 代码生成器工具类
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class GenUtil {
 
     /**
@@ -76,18 +75,19 @@ public class GenUtil {
         try {
             AbstractQuery query = datasource.getDbQuery();
 
-            // 查询数据
+            //查询表元数据
             PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName));
             ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                TableEntity table = new TableEntity();
-                table.setTableName(rs.getString(query.tableName()));
-                table.setTableComment(rs.getString(query.tableComment()));
+            rs.next();
+            TableEntity table = new TableEntity();
+            //设置表名
+            table.setTableName(rs.getString(query.tableName()));
+            //设置表注释
+            table.setTableComment(rs.getString(query.tableComment()));
 
-                //设置数据库名称
-                table.setDatabaseName(datasource.getDatabaseName());
-                return table;
-            }
+            //设置数据库名称
+            table.setDatabaseName(DbUtil.getDatabaseName(datasource));
+            return table;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

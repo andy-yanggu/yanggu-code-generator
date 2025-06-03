@@ -1,9 +1,11 @@
 package com.yanggu.code.generator.util;
 
 
+import lombok.experimental.UtilityClass;
 import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 
+@UtilityClass
 public class NameUtil {
 
     /**

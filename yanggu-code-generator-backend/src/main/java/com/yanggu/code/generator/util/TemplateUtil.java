@@ -2,46 +2,35 @@ package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.common.exception.BusinessException;
 import freemarker.template.Template;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.io.IoUtil;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-
-import static lombok.AccessLevel.PRIVATE;
 
 /**
  * 模板工具类
  */
 @Slf4j
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class TemplateUtil {
 
     /**
      * 获取模板渲染后的内容
      *
-     * @param content   模板内容
-     * @param dataModel 数据模型
+     * @param templateContent 模板内容
+     * @param dataModel       数据模型
      */
-    public static String getContent(String content, String templateName, Object dataModel) {
-        StringReader reader = new StringReader(content);
-        StringWriter sw = new StringWriter();
-        try {
-            // 渲染模板
+    public static String renderTemplate(String templateContent, String templateName, Object dataModel) {
+        try (StringReader reader = new StringReader(templateContent);
+             StringWriter sw = new StringWriter()) {
             Template template = new Template(templateName, reader, null, "utf-8");
             template.process(dataModel, sw);
+            return sw.toString();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("模板渲染失败: {}", e.getMessage(), e);
             throw new BusinessException("渲染模板失败，请检查模板语法", e);
         }
-
-        content = sw.toString();
-
-        IoUtil.closeQuietly(reader);
-        IoUtil.closeQuietly(sw);
-
-        return content;
     }
 
 }
