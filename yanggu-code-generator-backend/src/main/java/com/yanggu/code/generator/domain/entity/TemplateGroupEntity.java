@@ -36,7 +36,7 @@ public class TemplateGroupEntity extends BaseEntity implements Serializable {
 	private String groupName;
 
 	/**
-	 * 模板组类型（0-项目，1-表）
+	 * 模板组类型（0-项目，1-表，2-枚举）
 	 */
 	@TableField(value = "type")
 	private Integer type;

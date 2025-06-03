@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * ${projectNamePascal}主启动类
  */
+@SpringBootApplication
 @MapperScan("${projectPackage}.${projectNameDot}.mapper")
-@SpringBootApplication(scanBasePackages = "${projectPackage}.${projectNameDot}.*")
 public class ${projectNamePascal}Application {
 
     public static void main(String[] args) {

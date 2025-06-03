@@ -71,16 +71,16 @@ public class ProjectDataModel {
     /**
      * 数据库连接
      */
-    private String dataBaseUrl;
+    private String databaseUrl;
 
     /**
      * 数据库用户名
      */
-    private String dataBaseUsername;
+    private String databaseUsername;
 
     /**
      * 数据库密码
      */
-    private String dataBasePassword;
+    private String databasePassword;
 
 }

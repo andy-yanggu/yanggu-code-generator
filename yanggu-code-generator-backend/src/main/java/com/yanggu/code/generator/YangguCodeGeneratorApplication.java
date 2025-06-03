@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * 代码生成器主启动类
  */
-@MapperScan("com.yanggu.code.generator.mapper")
 @SpringBootApplication
+@MapperScan("com.yanggu.code.generator.mapper")
 public class YangguCodeGeneratorApplication {
 
     public static void main(String[] args) {

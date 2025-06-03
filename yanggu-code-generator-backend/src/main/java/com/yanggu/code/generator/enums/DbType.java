@@ -1,5 +1,7 @@
 package com.yanggu.code.generator.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dromara.hutool.core.text.StrUtil;
@@ -11,19 +13,23 @@ import org.dromara.hutool.core.text.StrUtil;
 @AllArgsConstructor
 public enum DbType {
 
-    MySQL("com.mysql.cj.jdbc.Driver"),
+    MySQL("MySQL", "com.mysql.cj.jdbc.Driver"),
 
-    Oracle("oracle.jdbc.driver.OracleDriver"),
+    Oracle("Oracle", "oracle.jdbc.driver.OracleDriver"),
 
-    PostgreSQL("org.postgresql.Driver"),
+    PostgreSQL("PostgreSQL", "org.postgresql.Driver"),
 
-    SQLServer("com.microsoft.sqlserver.jdbc.SQLServerDriver"),
+    SQLServer("SQLServer", "com.microsoft.sqlserver.jdbc.SQLServerDriver"),
 
-    DM("dm.jdbc.driver.DmDriver"),
+    DM("DM", "dm.jdbc.driver.DmDriver"),
 
-    Clickhouse("com.clickhouse.jdbc.ClickHouseDriver"),
+    Clickhouse("Clickhouse", "com.clickhouse.jdbc.ClickHouseDriver"),
 
-    KingBase("com.kingbase8.Driver");
+    KingBase("KingBase", "com.kingbase8.Driver");
+
+    @EnumValue
+    @JsonValue
+    private final String code;
 
     private final String driverClass;
 

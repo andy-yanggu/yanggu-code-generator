@@ -73,7 +73,8 @@ public class TreeUtil {
                 tempTreeVO.setFilePath(currentPath);
                 //层级
                 tempTreeVO.setLevel(level);
-                tempTreeVO.setIsTemplate(level == pathParts.length - 1);
+                //是否为模板
+                tempTreeVO.setIsTemplate(level == pathLength - 1);
                 if (tempTreeVO.getIsTemplate()) {
                     tempTreeVO.setTemplateId(treeVO.getTemplateId());
                     tempTreeVO.setTemplateType(treeVO.getTemplateType());

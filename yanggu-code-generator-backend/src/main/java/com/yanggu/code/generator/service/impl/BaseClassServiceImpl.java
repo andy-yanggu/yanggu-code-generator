@@ -89,15 +89,6 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         baseClassMapper.deleteByIds(idList);
     }
 
-    private void checkReference(List<Long> idList) {
-        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
-                .in(ProjectEntity::getBaseClassId, idList);
-        boolean exists = projectService.exists(queryWrapper);
-        if (exists) {
-            throw new BusinessException("基类已被项目引用，不能删除");
-        }
-    }
-
     /**
      * 详情
      */
@@ -180,6 +171,15 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {
             throw new BusinessException("基类已存在");
+        }
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getBaseClassId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("基类已被项目引用，不能删除");
         }
     }
 

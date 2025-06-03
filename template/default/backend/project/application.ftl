@@ -27,9 +27,9 @@ spring:
   # 数据源配置
   datasource:
     driver-class-name: ${databaseDriverClassName}
-    url: ${dataBaseUrl}
-    username: ${dataBaseUsername}
-    password: ${dataBasePassword}
+    url: ${databaseUrl}
+    username: ${databaseUsername}
+    password: ${databasePassword}
 
 # mybatis-plus配置
 mybatis-plus:

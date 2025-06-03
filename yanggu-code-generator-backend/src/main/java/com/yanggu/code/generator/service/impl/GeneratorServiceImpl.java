@@ -468,9 +468,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //数据源数据
         projectDataModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
-        projectDataModel.setDataBaseUrl(dataSource.getConnUrl());
-        projectDataModel.setDataBaseUsername(dataSource.getUsername());
-        projectDataModel.setDataBasePassword(dataSource.getPassword());
+        projectDataModel.setDatabaseUrl(dataSource.getConnUrl());
+        projectDataModel.setDatabaseUsername(dataSource.getUsername());
+        projectDataModel.setDatabasePassword(dataSource.getPassword());
 
         return projectDataModel;
     }

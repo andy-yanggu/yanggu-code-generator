@@ -151,7 +151,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     }
 
     @Override
-    public DataSourceBO get(Long datasourceId) throws Exception {
+    public DataSourceBO get(Long datasourceId) {
         // 初始化配置信息
         return new DataSourceBO(this.getById(datasourceId));
     }
