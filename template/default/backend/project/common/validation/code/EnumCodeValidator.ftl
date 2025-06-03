@@ -1,4 +1,4 @@
-package com.yanggu.code.generator.common.validation.enumd.enum_code;
+package ${projectPackage}.${projectNameDot}.common.validation.code;
 
 public class EnumCodeValidator extends AbstractEnumCodeValidator<Object> {
 

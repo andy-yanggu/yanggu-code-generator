@@ -1,4 +1,4 @@
-package com.yanggu.code.generator.common.validation.enumd.enum_code;
+package com.yanggu.code.generator.common.validation.code;
 
 
 import org.dromara.hutool.core.collection.CollUtil;

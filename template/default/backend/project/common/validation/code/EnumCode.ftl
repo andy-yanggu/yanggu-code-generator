@@ -1,4 +1,4 @@
-package ${projectPackage}.${projectNameDot}.common.validation.enumd.enum_code;
+package ${projectPackage}.${projectNameDot}.common.validation.code;
 
 
 import jakarta.validation.Constraint;

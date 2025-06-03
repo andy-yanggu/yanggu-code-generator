@@ -1,4 +1,4 @@
-package com.yanggu.code.generator.common.validation.enumd.path;
+package com.yanggu.code.generator.common.validation.path;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

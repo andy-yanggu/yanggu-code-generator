@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.domain.dto;
 
-import com.yanggu.code.generator.common.validation.enumd.enum_code.EnumCode;
+import com.yanggu.code.generator.common.validation.code.EnumCode;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.enums.DbType;
 import io.swagger.v3.oas.annotations.media.Schema;
