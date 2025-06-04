@@ -2,7 +2,7 @@
 <configuration>
 
     <!-- 日志格式 -->
-    <springProperty name="LOG_PATTERN" source="logging.pattern" defaultValue="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n" />
+    <springProperty name="LOG_PATTERN" source="logging.pattern.console" defaultValue="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n" />
     <!-- 指定日志输出路径 -->
     <springProperty name="LOG_PATH" source="logging.file.path" defaultValue="./logs" />
     <!-- 服务名称 -->
@@ -115,11 +115,7 @@
     </appender>
 
     <!-- mapper接口日志配置 -->
-    <logger name="com.yanggu.code.generator.mapper" level="DEBUG">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="DEBUG_FILE"/>
-        <appender-ref ref="ALL_FILE"/>
-    </logger>
+    <logger name="com.yanggu.code.generator.mapper" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
