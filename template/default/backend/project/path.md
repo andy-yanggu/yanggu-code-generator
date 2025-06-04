@@ -9,7 +9,7 @@ ${backendPath}/.gitignore
 
 ${backendPath}/src/main/resources/application.yaml
 
-#### 4. Application.ftl
+#### 4. SpringbootApplication.ftl
 
 ${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/${projectNamePascal}Application.java
 
@@ -148,3 +148,7 @@ ${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/v
 #### 37. UpdateGroup.ftl
 
 ${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/validation/group/UpdateGroup.java
+
+#### 38. logback-spring.ftl
+
+${backendPath}/src/main/resources/logback-spring.xml
