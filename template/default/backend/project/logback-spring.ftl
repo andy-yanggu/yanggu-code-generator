@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <!-- 服务名称 -->
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="app" />
     <!-- 日志格式 -->
     <springProperty name="LOG_PATTERN" source="logging.pattern.console" defaultValue="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n" />
     <!-- 指定日志输出路径 -->
     <springProperty name="LOG_PATH" source="logging.file.path" defaultValue="./logs" />
-    <!-- 服务名称 -->
-    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="app" />
     <!-- 日志文件最大大小 -->
     <springProperty name="MAX_FILE_SIZE" source="logging.max-file-size" defaultValue="200MB" />
+    <!-- 日志保留天数 -->
     <springProperty name="MAX_HISTORY" source="logging.max-history" defaultValue="30" />
 
     <!-- 输出到控制台 -->
