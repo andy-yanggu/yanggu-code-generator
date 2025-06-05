@@ -16,9 +16,13 @@
 				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
 			<el-form-item v-if="dataForm.templateType === 0" label="模板内容" prop="templateContent">
-				<div class="code-editor" :class="{ 'full-screen': isFullScreen }">
+				<div
+					class="code-editor"
+					:class="{ 'full-screen': isFullScreen }"
+					:style="!dataForm.templateContent && !isFullScreen ? { height: '250px' } : {}"
+				>
 					<codemirror v-model="dataForm.templateContent" :options="cmOptions" class="code-mirror" @ready="handleEditorReady" />
-					<el-button v-if="isFullScreen" class="confirm-btn" type="primary" @click="toggleFullscreen"> 确定 </el-button>
+					<el-button v-if="isFullScreen" class="confirm-btn" type="primary" @click="toggleFullscreen">退出全屏</el-button>
 				</div>
 				<el-button class="fullscreen-btn" @click="toggleFullscreen">全屏编辑</el-button>
 			</el-form-item>
@@ -80,6 +84,7 @@ const init = (id?: number) => {
 	// 重置表单数据
 	if (dataFormRef.value) {
 		dataFormRef.value.resetFields()
+		dataForm.templateContent = ''
 	}
 
 	if (id) {
@@ -96,7 +101,6 @@ const getTemplate = (id: number) => {
 const dataRules = reactive({
 	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	generatorPath: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	templateContent: [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }],
 	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
@@ -127,8 +131,6 @@ const cmOptions = reactive({
 	extensions: [keymap.of([]), EditorView.contentAttributes.of({ autocomplete: 'on' })],
 	lineNumbers: true,
 	tabSize: 2,
-	// 修改为更专业的暗色主题
-	theme: 'github-dark',
 	autocompletion: true
 })
 
@@ -159,8 +161,10 @@ defineExpose({
 
 <style scoped>
 .code-editor {
+	width: 100%; /* 继承父容器宽度 */
 	position: relative;
-	height: 300px;
+	height: auto; /* 当有内容时保持自适应 */
+	min-height: 40px; /* 保持与常规输入框一致的最小高度 */
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
 	overflow: hidden;

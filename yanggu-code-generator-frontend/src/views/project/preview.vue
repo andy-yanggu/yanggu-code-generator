@@ -34,11 +34,12 @@
 								<el-col :span="12" style="text-align: right">
 									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
 									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+									<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
 								</el-col>
 							</el-row>
 						</el-header>
-						<el-main style="margin-top: 10px">
-							<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
+						<el-main ref="codeContainer" style="margin-top: 10px">
+							<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
 						</el-main>
 					</el-container>
 				</el-main>
@@ -174,6 +175,44 @@ const downloadTemplateData = item => {
 		})
 	}
 }
+
+const isFullScreen = ref(false)
+const codeContainer = ref<HTMLElement>()
+
+const handleFullScreen = () => {
+	if (!codeContainer.value) {
+		return
+	}
+
+	if (!document.fullscreenElement) {
+		isFullScreen.value = true
+		const container = codeContainer.value.$el || codeContainer.value
+
+		if (container.requestFullscreen) {
+			container.requestFullscreen().catch(err => {
+				ElMessage.error(`全屏请求失败: ${err}`)
+				isFullScreen.value = false
+			})
+		} else {
+			// 处理浏览器前缀
+			const docElm = document.documentElement as any
+			if (docElm.webkitRequestFullScreen) {
+				docElm.webkitRequestFullScreen()
+			}
+			ElMessage.warning('当前浏览器不支持原生全屏功能')
+		}
+	} else {
+		isFullScreen.value = false
+		if (document.exitFullscreen) {
+			document.exitFullscreen()
+		}
+	}
+}
+
+// 监听全屏状态变化
+document.addEventListener('fullscreenchange', () => {
+	isFullScreen.value = !!document.fullscreenElement
+})
 </script>
 
 <style scoped>
@@ -194,5 +233,17 @@ const downloadTemplateData = item => {
 	.el-tree-node__children {
 		overflow: visible !important; /* 防止子节点溢出隐藏 */
 	}
+}
+
+:deep(.full-screen-mode) {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+	background: white;
+	margin: 0 !important;
+	padding: 20px;
 }
 </style>
