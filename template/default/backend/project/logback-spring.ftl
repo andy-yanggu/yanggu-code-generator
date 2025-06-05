@@ -15,7 +15,7 @@
     <!-- 输出到控制台 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>${LOG_PATTERN}</Pattern>
+            <Pattern><#noparse>${LOG_PATTERN}</#noparse></Pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -23,32 +23,32 @@
     <!-- 所有日志级别 -->
     <appender name="ALL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${LOG_PATH}/${APP_NAME}-all.log</file>
+        <file><#noparse>${LOG_PATH}/${APP_NAME}-all.log</#noparse></file>
         <!--日志文档输出格式-->
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern><#noparse>${LOG_PATTERN}</#noparse></pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${APP_NAME}-all-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <fileNamePattern><#noparse>${LOG_PATH}/${APP_NAME}-all-%d{yyyy-MM-dd}-%i.log.gz</#noparse></fileNamePattern>
+            <maxFileSize><#noparse>${MAX_FILE_SIZE}</#noparse></maxFileSize>
+            <maxHistory><#noparse>${MAX_HISTORY}</#noparse></maxHistory>
         </rollingPolicy>
     </appender>
 
     <!-- DEBUG日志级别 -->
     <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文档的路径及文档名 -->
-        <file>${LOG_PATH}/${APP_NAME}-debug.log</file>
+        <file><#noparse>${LOG_PATH}/${APP_NAME}-debug.log</#noparse></file>
         <!--日志文档输出格式-->
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern><#noparse>${LOG_PATTERN}</#noparse></pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${APP_NAME}-debug-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <fileNamePattern><#noparse>${LOG_PATH}/${APP_NAME}-debug-%d{yyyy-MM-dd}-%i.log.gz</#noparse></fileNamePattern>
+            <maxFileSize><#noparse>${MAX_FILE_SIZE}</#noparse></maxFileSize>
+            <maxHistory><#noparse>${MAX_HISTORY}</#noparse></maxHistory>
         </rollingPolicy>
         <!-- 此日志文档只记录debug级别的 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -60,15 +60,15 @@
 
     <!-- INFO日志级别 -->
     <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${APP_NAME}-info.log</file>
+        <file><#noparse>${LOG_PATH}/${APP_NAME}-info.log</#noparse></file>
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern><#noparse>${LOG_PATTERN}</#noparse></pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${APP_NAME}-info-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <fileNamePattern><#noparse>${LOG_PATH}/${APP_NAME}-info-%d{yyyy-MM-dd}-%i.log.gz</#noparse></fileNamePattern>
+            <maxFileSize><#noparse>${MAX_FILE_SIZE}</#noparse></maxFileSize>
+            <maxHistory><#noparse>${MAX_HISTORY}</#noparse></maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -79,15 +79,15 @@
 
     <!-- WARN日志级别 -->
     <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${APP_NAME}-warn.log</file>
+        <file><#noparse>${LOG_PATH}/${APP_NAME}-warn.log</#noparse></file>
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern><#noparse>${LOG_PATTERN}</#noparse></pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${APP_NAME}-warn-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <fileNamePattern><#noparse>${LOG_PATH}/${APP_NAME}-warn-%d{yyyy-MM-dd}-%i.log.gz</#noparse></fileNamePattern>
+            <maxFileSize><#noparse>${MAX_FILE_SIZE}</#noparse></maxFileSize>
+            <maxHistory><#noparse>${MAX_HISTORY}</#noparse></maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>WARN</level>
@@ -98,15 +98,15 @@
 
     <!-- ERROR日志级别 -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/${APP_NAME}-error.log</file>
+        <file><#noparse>${LOG_PATH}/${APP_NAME}-error.log</#noparse></file>
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern><#noparse>${LOG_PATTERN}</#noparse></pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${APP_NAME}-error-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
-            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <fileNamePattern><#noparse>${LOG_PATH}/${APP_NAME}-error-%d{yyyy-MM-dd}-%i.log.gz</#noparse></fileNamePattern>
+            <maxFileSize><#noparse>${MAX_FILE_SIZE}</#noparse></maxFileSize>
+            <maxHistory><#noparse>${MAX_HISTORY}</#noparse></maxHistory>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
