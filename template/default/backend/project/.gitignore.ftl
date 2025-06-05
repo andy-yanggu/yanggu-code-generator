@@ -33,6 +33,7 @@ build/
 ### Mac OS ###
 .DS_Store
 
+.idea/**
 /**/target/**
 /**/logs/**
 /**/log/**
