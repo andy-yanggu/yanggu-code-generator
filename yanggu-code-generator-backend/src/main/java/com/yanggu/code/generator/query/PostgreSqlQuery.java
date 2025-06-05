@@ -6,7 +6,7 @@ import org.dromara.hutool.core.text.StrUtil;
 /**
  * PostgreSql查询
  */
-public class PostgreSqlQuery implements AbstractQuery {
+public class PostgreSqlQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

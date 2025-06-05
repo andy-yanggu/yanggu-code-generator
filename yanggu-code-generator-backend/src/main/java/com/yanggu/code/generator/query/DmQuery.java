@@ -4,9 +4,9 @@ import com.yanggu.code.generator.enums.DbType;
 import org.dromara.hutool.core.text.StrUtil;
 
 /**
- * 达梦8 查询
+ * 达梦8查询
  */
-public class DmQuery implements AbstractQuery {
+public class DmQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

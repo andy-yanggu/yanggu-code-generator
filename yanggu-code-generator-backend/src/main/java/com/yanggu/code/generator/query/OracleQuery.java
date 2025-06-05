@@ -7,7 +7,7 @@ import org.dromara.hutool.core.text.StrUtil;
 /**
  * Oracle查询
  */
-public class OracleQuery implements AbstractQuery {
+public class OracleQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

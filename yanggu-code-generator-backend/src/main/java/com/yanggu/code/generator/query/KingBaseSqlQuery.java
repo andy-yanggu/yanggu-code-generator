@@ -4,9 +4,9 @@ import com.yanggu.code.generator.enums.DbType;
 import org.dromara.hutool.core.text.StrUtil;
 
 /**
- * KingBase 查询
+ * KingBase查询
  */
-public class KingBaseSqlQuery implements AbstractQuery {
+public class KingBaseSqlQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

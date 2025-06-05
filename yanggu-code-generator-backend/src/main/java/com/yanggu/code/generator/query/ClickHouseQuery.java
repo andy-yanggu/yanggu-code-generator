@@ -5,22 +5,18 @@ import com.yanggu.code.generator.enums.DbType;
 import org.dromara.hutool.core.text.StrUtil;
 
 /**
- * ClickHouse 表数据查询
- *
- * @author ratelfu
- * @since 2021-03-10
+ * ClickHouse查询
  */
-public class ClickHouseQuery implements AbstractQuery {
-
-
-    @Override
-    public String tableFieldsSql() {
-        return "select * from system.columns where table='%s'";
-    }
+public class ClickHouseQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {
         return DbType.Clickhouse;
+    }
+
+    @Override
+    public String tableFieldsSql() {
+        return "select * from system.columns where table='%s'";
     }
 
     @Override

@@ -2,15 +2,13 @@ package com.yanggu.code.generator.domain.bo;
 
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;
-import com.yanggu.code.generator.query.*;
+import com.yanggu.code.generator.query.AbstractQuery;
 import com.yanggu.code.generator.util.DbUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.util.EnumUtil;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * 数据源业务实体类
@@ -50,26 +48,11 @@ public class DataSourceBO {
 
     public DataSourceBO(DatasourceEntity entity) {
         this.id = entity.getId();
-        this.dbType = DbType.getValue(entity.getDbType());
+        this.dbType = EnumUtil.getBy(DbType::getCode, entity.getDbType());
         this.connUrl = entity.getConnUrl();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
-
-        if (dbType == DbType.MySQL) {
-            this.dbQuery = new MySqlQuery();
-        } else if (dbType == DbType.Oracle) {
-            this.dbQuery = new OracleQuery();
-        } else if (dbType == DbType.PostgreSQL) {
-            this.dbQuery = new PostgreSqlQuery();
-        } else if (dbType == DbType.SQLServer) {
-            this.dbQuery = new SQLServerQuery();
-        } else if (dbType == DbType.DM) {
-            this.dbQuery = new DmQuery();
-        } else if (dbType == DbType.Clickhouse) {
-            this.dbQuery = new ClickHouseQuery();
-        } else if (dbType == DbType.KingBase) {
-            this.dbQuery = new KingBaseSqlQuery();
-        }
+        this.dbQuery = AbstractQuery.getQuery(this.dbType);
 
         try {
             this.connection = DbUtil.getConnection(this);

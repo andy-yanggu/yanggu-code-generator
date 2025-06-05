@@ -6,7 +6,7 @@ import org.dromara.hutool.core.text.StrUtil;
 /**
  * SQLServer查询
  */
-public class SQLServerQuery implements AbstractQuery {
+public class SQLServerQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

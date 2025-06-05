@@ -6,7 +6,7 @@ import org.dromara.hutool.core.text.StrUtil;
 /**
  * MySQL查询
  */
-public class MySqlQuery implements AbstractQuery {
+public class MySqlQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {
