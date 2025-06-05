@@ -69,4 +69,5 @@ public class PostgreSqlQuery extends AbstractQuery {
     public String fieldKey() {
         return "columnKey";
     }
+
 }

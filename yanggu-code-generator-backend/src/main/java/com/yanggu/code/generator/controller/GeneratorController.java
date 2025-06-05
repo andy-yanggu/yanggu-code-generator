@@ -126,7 +126,7 @@ public class GeneratorController {
     @PostMapping("/enum/downloadLocal")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "枚举生成代码（本地）")
-    public void enumDownloadLocal(@RequestBody GeneratorEnumQuery enumQuery) throws Exception {
+    public void enumDownloadLocal(@RequestBody GeneratorEnumQuery enumQuery) {
         generatorService.enumDownloadLocal(enumQuery);
     }
 
@@ -136,7 +136,7 @@ public class GeneratorController {
     @GetMapping("/enum/downloadZip")
     @ApiOperationSupport(order = 11)
     @Operation(summary = "枚举生成代码（zip压缩包）")
-    public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) throws Exception {
+    public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
         return generatorService.enumDownloadZip(enumQuery);
     }
 
@@ -147,7 +147,7 @@ public class GeneratorController {
     @ApiOperationSupport(order = 12)
     @Operation(summary = "枚举生成代码（下载单个文件代码）")
     public ResponseEntity<byte[]> enumDownloadSingle(@RequestParam("enumId") Long enumId,
-                                                     @RequestParam("templateId") Long templateId) throws Exception {
+                                                     @RequestParam("templateId") Long templateId) {
         return generatorService.enumDownloadSingle(enumId, templateId);
     }
 

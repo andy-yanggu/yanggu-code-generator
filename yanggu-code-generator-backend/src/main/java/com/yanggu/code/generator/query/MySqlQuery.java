@@ -67,4 +67,5 @@ public class MySqlQuery extends AbstractQuery {
     public String fieldKey() {
         return "column_key";
     }
+
 }

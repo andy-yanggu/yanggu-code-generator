@@ -30,8 +30,6 @@ public class GenUtil {
 
     /**
      * 根据数据源，获取全部数据表
-     *
-     * @param datasource 数据源
      */
     public static List<TableImportVO> getTableList(DataSourceBO datasource, String tableName) {
         List<TableImportVO> tableList = new ArrayList<>();

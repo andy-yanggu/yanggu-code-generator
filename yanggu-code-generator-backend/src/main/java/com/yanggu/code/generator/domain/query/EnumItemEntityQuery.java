@@ -26,5 +26,4 @@ public class EnumItemEntityQuery extends PageQuery<EnumItemEntity> implements Se
     @Schema(description = "枚举ID")
     private Long enumId;
 
-
 }

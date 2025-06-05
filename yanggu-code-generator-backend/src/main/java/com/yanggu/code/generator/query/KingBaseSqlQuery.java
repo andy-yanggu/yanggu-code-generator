@@ -69,4 +69,5 @@ public class KingBaseSqlQuery extends AbstractQuery {
     public String fieldKey() {
         return "columnKey";
     }
+
 }

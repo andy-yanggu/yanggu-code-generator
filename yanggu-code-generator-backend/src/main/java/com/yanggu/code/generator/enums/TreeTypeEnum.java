@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum TreeTypeEnum {
 
     FILE(0, "文件"),
+
     DIRECTORY(1, "目录"),
     ;
 

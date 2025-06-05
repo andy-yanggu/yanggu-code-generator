@@ -10,6 +10,7 @@ import lombok.Getter;
 public enum GeneratorTypeEnum {
 
     ZIP(0, "zip压缩包"),
+
     LOCAL(1, "本地"),
     ;
 

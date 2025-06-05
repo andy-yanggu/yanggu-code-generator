@@ -24,7 +24,8 @@ public enum DbType {
 
     Clickhouse("Clickhouse", "com.clickhouse.jdbc.ClickHouseDriver"),
 
-    KingBase("KingBase", "com.kingbase8.Driver");
+    KingBase("KingBase", "com.kingbase8.Driver"),
+    ;
 
     @EnumValue
     @JsonValue

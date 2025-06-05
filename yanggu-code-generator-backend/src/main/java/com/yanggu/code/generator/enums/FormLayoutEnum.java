@@ -9,7 +9,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FormLayoutEnum {
+
     ONE(1),
+
     TWO(2);
     
     private final Integer value;

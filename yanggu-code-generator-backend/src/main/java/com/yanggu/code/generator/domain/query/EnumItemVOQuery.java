@@ -26,5 +26,4 @@ public class EnumItemVOQuery extends PageQuery<EnumItemVO> implements Serializab
     @Schema(description = "枚举ID")
     private Long enumId;
 
-
 }
