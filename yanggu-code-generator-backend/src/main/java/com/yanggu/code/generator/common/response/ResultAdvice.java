@@ -37,13 +37,15 @@ public class ResultAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        //类上或者方法上有IgnoreResult注解的，不增强
-        if (returnType.getDeclaringClass().isAnnotationPresent(IgnoreResult.class)
-                || returnType.getDeclaringClass().isAnnotationPresent(IgnoreResult.class)) {
+        //类上有IgnoreResult注解的，不增强
+        IgnoreResult annotation = AnnotationUtils.findAnnotation(returnType.getDeclaringClass(), IgnoreResult.class);
+        if (annotation != null) {
             return false;
         }
-        boolean result = AnnotationUtils.findAnnotation(returnType.getAnnotatedElement(), IgnoreResult.class) == null;
-        if (!result) {
+
+        //方法上有IgnoreResult注解的，不增强
+        annotation = AnnotationUtils.findAnnotation(returnType.getAnnotatedElement(), IgnoreResult.class);
+        if (annotation != null) {
             return false;
         }
         Method method = returnType.getMethod();
