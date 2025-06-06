@@ -28,16 +28,6 @@
         </if>
     </sql>
 
-    <!-- 排序SQL -->
-    <sql id="orderBySQL">
-        <if test="query.orders != null and query.orders.size() > 0">
-            ORDER BY
-            <foreach collection="query.orders" item="order" separator=",">
-                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
-            </foreach>
-        </if>
-    </sql>
-
     <!-- Entity类字段映射 -->
     <resultMap type="com.yanggu.code.generator.domain.entity.DatasourceEntity" id="datasourceMap">
         <id property="id" column="id"/>
@@ -62,7 +52,7 @@
             is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- Entity列表 -->
@@ -75,7 +65,7 @@
             is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- VO分页 -->
@@ -88,7 +78,7 @@
             is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- VO列表 -->
@@ -101,7 +91,7 @@
             is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
 </mapper>
