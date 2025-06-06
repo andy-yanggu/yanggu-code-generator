@@ -329,7 +329,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setVersion(project.getProjectVersion());
         table.setProjectId(projectId);
         table.setAuthor(project.getAuthor());
-        table.setFormLayout(FormLayoutEnum.ONE.getValue());
+        table.setFormLayout(FormLayoutEnum.ONE.getCode());
         table.setClassName(NamingCase.toPascalCase(tableName));
         table.setFunctionName(GenUtil.getFunctionName(tableName));
         table.setCreateTime(new Date());
