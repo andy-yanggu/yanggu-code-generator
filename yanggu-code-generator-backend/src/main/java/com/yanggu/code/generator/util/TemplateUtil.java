@@ -18,10 +18,11 @@ public class TemplateUtil {
     /**
      * 获取模板渲染后的内容
      *
+     * @param templateName    模板名称
      * @param templateContent 模板内容
      * @param dataModel       数据模型
      */
-    public static String renderTemplate(String templateContent, String templateName, Object dataModel) {
+    public static String renderTemplate(String templateName, String templateContent, Object dataModel) {
         try (StringReader reader = new StringReader(templateContent);
              StringWriter sw = new StringWriter()) {
             Template template = new Template(templateName, reader, null, "utf-8");

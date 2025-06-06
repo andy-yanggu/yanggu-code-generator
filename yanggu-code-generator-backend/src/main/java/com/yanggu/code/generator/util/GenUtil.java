@@ -11,7 +11,6 @@ import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 
@@ -150,16 +149,6 @@ public class GenUtil {
             field.setLogicDeleteValue(generatorConfig.getLogicDeleteValue());
             field.setLogicNotDeleteValue(generatorConfig.getLogicNotDeleteValue());
         }
-    }
-
-    /**
-     * 获取功能名，默认使用表名作为功能名
-     *
-     * @param tableName 表名
-     * @return 功能名
-     */
-    public static String getFunctionName(String tableName) {
-        return StrUtil.toCamelCase(tableName);
     }
 
 }

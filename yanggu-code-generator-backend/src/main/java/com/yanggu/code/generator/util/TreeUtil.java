@@ -92,7 +92,7 @@ public class TreeUtil {
 
     private static List<TreeVO> getChildren(TreeVO parent, List<TreeVO> treeList) {
         return treeList.stream()
-                //判断是否是子节点
+                //判断是否是直接子节点
                 .filter(child -> isDirectChild(parent, child))
                 //递归添加子节点
                 .peek(child -> child.setChildren(getChildren(child, treeList)))
@@ -102,7 +102,7 @@ public class TreeUtil {
     }
 
     /**
-     * 直接子节点
+     * 判断是否是直接子节点
      */
     private static boolean isDirectChild(TreeVO parent, TreeVO child) {
         return child.getLevel() == parent.getLevel() + 1
