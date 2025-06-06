@@ -43,7 +43,7 @@ public interface FieldTypeMapper extends BaseMapperPlus<FieldTypeEntity> {
     /**
      * 根据tableId，获取包列表
      */
-    Set<String> getPackageByTableId(Long tableId);
+    Set<String> getPackageByTableId(@Param("tableId") Long tableId);
 
     List<String> distinctAttrTypeList();
 }

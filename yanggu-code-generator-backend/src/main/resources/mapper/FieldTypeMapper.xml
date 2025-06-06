@@ -89,11 +89,15 @@
     </select>
 
     <select id="getPackageByTableId" resultType="String">
-        select t1.package_name
-        from gen_field_type t1,
-             gen_table_field t2
-        where t1.attr_type = t2.attr_type
-          and t2.table_id = #{value}
+        SELECT
+            DISTINCT t2.package_name
+        FROM
+            gen_table_field t1
+        LEFT JOIN gen_field_type t2 ON t1.attr_type = t2.attr_type AND t2.is_delete = 0
+        WHERE
+            t1.is_delete = 0
+        AND t1.table_id = #{tableId}
+        AND t2.package_name IS NOT NULL AND t2.package_name != ''
     </select>
 
     <select id="distinctAttrTypeList" resultType="java.lang.String">

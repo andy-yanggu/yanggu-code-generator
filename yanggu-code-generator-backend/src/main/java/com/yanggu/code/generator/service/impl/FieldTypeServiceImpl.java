@@ -150,9 +150,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
 
     @Override
     public Set<String> getPackageByTableId(Long tableId) {
-        Set<String> importList = baseMapper.getPackageByTableId(tableId);
-
-        return importList.stream().filter(StrUtil::isNotBlank).collect(Collectors.toSet());
+        return baseMapper.getPackageByTableId(tableId);
     }
 
     @Override
