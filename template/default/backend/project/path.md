@@ -152,3 +152,7 @@ ${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/v
 #### 38. logback-spring.ftl
 
 ${backendPath}/src/main/resources/logback-spring.xml
+
+#### 39. BaseMapperPlus.xml.ftl
+
+${backendPath}/src/main/resources/mapper/BaseMapperPlus.xml

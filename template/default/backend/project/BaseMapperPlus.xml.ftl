@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus">
+
+    <!-- 排序SQL -->
+    <sql id="orderBySQL">
+        <if test="query.orders != null and query.orders.size() > 0">
+            ORDER BY
+            <foreach collection="query.orders" item="order" separator=",">
+                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+            </foreach>
+        </if>
+    </sql>
+
+</mapper>

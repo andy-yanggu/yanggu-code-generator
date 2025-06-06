@@ -55,16 +55,6 @@
         </#list>
     </sql>
 
-    <!-- 排序SQL -->
-    <sql id="orderBySQL">
-        <if test="query.orders != null and query.orders.size() > 0">
-            ORDER BY
-            <foreach collection="query.orders" item="order" separator=",">
-                <#noparse>${order.column}</#noparse> <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
-            </foreach>
-        </if>
-    </sql>
-
     <!-- Entity类字段映射 -->
     <resultMap type="${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity" id="${className}Map">
         <#list fieldList as field>
@@ -97,7 +87,7 @@
             </#if>
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- Entity列表 -->
@@ -112,7 +102,7 @@
             </#if>
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- VO分页 -->
@@ -127,7 +117,7 @@
             </#if>
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
     <!-- VO列表 -->
@@ -142,7 +132,7 @@
             </#if>
             <include refid="whereSQL"/>
         </where>
-        <include refid="orderBySQL"/>
+        <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
 </mapper>
