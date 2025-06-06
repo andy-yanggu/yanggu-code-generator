@@ -11,7 +11,7 @@ public enum AutoFillEnum {
 
     UPDATE,
 
-    INSERT_UPDATE
+    INSERT_UPDATE,
     ;
 
 }
