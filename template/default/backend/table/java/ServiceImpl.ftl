@@ -53,7 +53,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(${classNameUpper}DTO dto) {
         //唯一性校验等
-        checkUnique(dto);
+        //checkUnique(dto);
         ${classNameUpper}Entity entity = ${className}Mapstruct.dtoToEntity(dto);
         ${className}Mapper.insert(entity);
     }
@@ -65,7 +65,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(${classNameUpper}DTO dto) {
         //唯一性校验等
-        checkUnique(dto);
+        //checkUnique(dto);
         ${classNameUpper}Entity formEntity = ${className}Mapstruct.dtoToEntity(dto);
         ${classNameUpper}Entity dbEntity = selectById(dto.getId());
         ${className}Mapper.updateById(formEntity);
@@ -87,7 +87,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(${primaryKeyType} id) {
         ${classNameUpper}Entity dbEntity = selectById(id);
-        checkReference(List.of(id));
+        //checkReference(List.of(dbEntity));
         //删除校验和关联删除
         ${className}Mapper.deleteById(id);
     }
@@ -98,7 +98,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<${primaryKeyType}> idList) {
-        checkReference(idList);
+        List<${classNameUpper}Entity> dbEntityList = ${className}Mapper.selectByIds(idList);
+        //checkReference(dbEntityList);
         //删除校验和关联删除
         ${className}Mapper.deleteByIds(idList);
     }
@@ -182,7 +183,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     private void checkUnique(${classNameUpper}DTO dto) {
         LambdaQueryWrapper<${classNameUpper}Entity> wrapper = Wrappers.lambdaQuery(${classNameUpper}Entity.class);
         wrapper.ne(Objects.nonNull(dto.getId()), ${classNameUpper}Entity::getId, dto.getId());
-        //其余字段校验
+        //TODO 其余字段校验
 
         boolean exists = ${className}Mapper.exists(wrapper);
         if (exists) {
@@ -191,10 +192,13 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     }
 
     /**
-     * 校验关联数据是否存在
+     * 校验能否被删除
      */
-    private void checkReference(List<${primaryKeyType}> idList) {
-        //校验是否被引用
+    private void checkReference(List<${classNameUpper}Entity> dbEntityList) {
+        //TODO 校验是否被引用
+        for (${classNameUpper}Entity dbEntity : dbEntityList) {
+
+        }
     }
 
     private LambdaQueryWrapper<${classNameUpper}Entity> buildQueryWrapper(${classNameUpper}EntityQuery query) {
