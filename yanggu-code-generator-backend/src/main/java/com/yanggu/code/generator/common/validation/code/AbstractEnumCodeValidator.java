@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.SneakyThrows;
 import org.dromara.hutool.core.array.ArrayUtil;
 import org.dromara.hutool.core.convert.ConvertUtil;
+import org.dromara.hutool.core.reflect.FieldUtil;
 import org.dromara.hutool.core.util.EnumUtil;
 
 import java.lang.reflect.Field;
@@ -26,6 +27,9 @@ public abstract class AbstractEnumCodeValidator<T> implements ConstraintValidato
         Class<? extends Enum<?>> value = annotation.value();
         this.enumName = value.getName();
         this.enumFieldName = annotation.fieldName();
+        if (!FieldUtil.hasField(value, this.enumFieldName)) {
+            throw new IllegalArgumentException("枚举属性名称: " + enumName + ", 枚举属性名称: " + enumFieldName + " 不存在");
+        }
         List<Object> fieldValues = EnumUtil.getFieldValues(value, this.enumFieldName);
         String[] valueList = annotation.valueList();
         if (ArrayUtil.isNotEmpty(valueList)) {
