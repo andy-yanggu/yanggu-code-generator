@@ -19,30 +19,6 @@ public abstract class BaseVO implements Serializable {
     private static final long serialVersionUID = -5814569213714989166L;
 
     /**
-     * 创建人ID
-     */
-    @Schema(description = "创建人ID")
-    private Long createUserId;
-
-    /**
-     * 创建人
-     */
-    @Schema(description = "创建人")
-    private String createUser;
-
-    /**
-     * 修改人ID
-     */
-    @Schema(description = "修改人ID")
-    private Long updateUserId;
-
-    /**
-     * 修改人
-     */
-    @Schema(description = "修改人")
-    private String updateUser;
-
-    /**
      * 创建时间
      */
     @Schema(description = "创建时间")
