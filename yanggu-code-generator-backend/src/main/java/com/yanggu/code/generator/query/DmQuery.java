@@ -14,16 +14,19 @@ public class DmQuery extends AbstractQuery {
     }
 
     @Override
-    public String tableSql(String tableName) {
+    public String tableSql(String tableName, Boolean isLike) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT T.* FROM (SELECT DISTINCT T1.TABLE_NAME AS TABLE_NAME,T2.COMMENTS AS TABLE_COMMENT FROM USER_TAB_COLUMNS T1 ");
         sql.append("INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME) T WHERE 1=1 ");
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
-            sql.append("and T.TABLE_NAME = '").append(tableName).append("' ");
+            if (isLike) {
+                sql.append("and T.TABLE_NAME like '%").append(tableName).append("%' ")
+                        .append(" order by T.TABLE_NAME asc");
+            } else {
+                sql.append("and T.TABLE_NAME = '").append(tableName).append("' ");
+            }
         }
-        sql.append("order by T.TABLE_NAME asc");
-
         return sql.toString();
     }
 

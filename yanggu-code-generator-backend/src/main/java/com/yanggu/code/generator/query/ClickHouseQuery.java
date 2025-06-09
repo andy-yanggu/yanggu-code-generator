@@ -20,13 +20,18 @@ public class ClickHouseQuery extends AbstractQuery {
     }
 
     @Override
-    public String tableSql(String tableName) {
+    public String tableSql(String tableName, Boolean isLike) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM system.tables WHERE 1=1 ");
 
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
-            sql.append("and name = '").append(tableName).append("' ");
+            if (isLike) {
+                sql.append("and name like '").append(tableName).append("%' ")
+                        .append(" order by name asc");
+            } else {
+                sql.append("and name = '").append(tableName).append("' ");
+            }
         }
         return sql.toString();
     }

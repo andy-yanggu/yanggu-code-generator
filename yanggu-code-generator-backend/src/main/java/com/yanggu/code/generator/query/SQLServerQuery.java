@@ -14,17 +14,20 @@ public class SQLServerQuery extends AbstractQuery {
     }
 
     @Override
-    public String tableSql(String tableName) {
+    public String tableSql(String tableName, Boolean isLike) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cast(so.name as varchar(500)) as TABLE_NAME, cast(sep.value as varchar(500)) as COMMENTS from sysobjects so ");
-        sql.append("left JOIN sys.extended_properties sep on sep.major_id=so.id and sep.minor_id=0 where (xtype='U' or xtype='V') ");
+        sql.append("left join sys.extended_properties sep on sep.major_id=so.id and sep.minor_id=0 where (xtype='U' or xtype='V') ");
 
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
-            sql.append("and cast(so.name as varchar(500)) = '").append(tableName).append("' ");
+            if (isLike) {
+                sql.append("and cast(so.name as varchar(500)) like '%").append(tableName).append("%' ")
+                        .append(" order by cast(so.name as varchar(500)) asc");
+            } else {
+                sql.append("and cast(so.name as varchar(500)) = '").append(tableName).append("' ");
+            }
         }
-        sql.append(" order by cast(so.name as varchar(500))");
-
         return sql.toString();
     }
 

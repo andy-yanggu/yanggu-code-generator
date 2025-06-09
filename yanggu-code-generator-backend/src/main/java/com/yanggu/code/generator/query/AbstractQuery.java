@@ -45,7 +45,7 @@ public abstract class AbstractQuery {
     /**
      * 表信息查询 SQL
      */
-    public abstract String tableSql(String tableName);
+    public abstract String tableSql(String tableName, Boolean isLike);
 
     /**
      * 当前数据库名称

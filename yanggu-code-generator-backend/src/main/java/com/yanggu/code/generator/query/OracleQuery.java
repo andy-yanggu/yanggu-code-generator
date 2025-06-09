@@ -15,13 +15,18 @@ public class OracleQuery extends AbstractQuery {
     }
 
     @Override
-    public String tableSql(String tableName) {
+    public String tableSql(String tableName, Boolean isLike) {
         StringBuilder sql = new StringBuilder();
         sql.append("select dt.table_name, dtc.comments from user_tables dt,user_tab_comments dtc ");
         sql.append("where dt.table_name = dtc.table_name ");
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
-            sql.append("and dt.table_name = '").append(tableName).append("' ");
+            if (isLike) {
+                sql.append("and dt.table_name like '%").append(tableName).append("%' ")
+                        .append(" order by dt.table_name asc");
+            } else {
+                sql.append("and dt.table_name = '").append(tableName).append("' ");
+            }
         }
         sql.append("order by dt.table_name asc");
 

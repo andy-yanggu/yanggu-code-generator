@@ -36,7 +36,7 @@ public class GenUtil {
             AbstractQuery query = datasource.getDbQuery();
 
             //查询数据
-            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName));
+            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, true));
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 TableImportVO table = new TableImportVO();
@@ -73,7 +73,7 @@ public class GenUtil {
             AbstractQuery query = datasource.getDbQuery();
 
             //查询表元数据
-            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName));
+            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, false));
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
             TableEntity table = new TableEntity();

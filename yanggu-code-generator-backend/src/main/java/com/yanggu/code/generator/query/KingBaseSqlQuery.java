@@ -14,13 +14,18 @@ public class KingBaseSqlQuery extends AbstractQuery {
     }
 
     @Override
-    public String tableSql(String tableName) {
+    public String tableSql(String tableName, Boolean isLike) {
         StringBuilder sql = new StringBuilder();
         sql.append("select t1.tablename, obj_description(relfilenode, 'pg_class') as comments from pg_tables t1, pg_class t2 ");
         sql.append("where t1.tablename not like 'pg%' and t1.tablename not like 'sql_%' and t1.tablename = t2.relname ");
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
-            sql.append("and t1.tablename = '").append(tableName).append("' ");
+            if (isLike) {
+                sql.append("and t1.tablename like '%").append(tableName).append("%' ")
+                        .append(" order by t1.tablename asc");
+            } else {
+                sql.append("and t1.tablename = '").append(tableName).append("' ");
+            }
         }
 
         return sql.toString();
