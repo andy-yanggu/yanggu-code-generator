@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.common.mybatis.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.yanggu.code.generator.common.domain.query.OrderItemQuery;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.func.LambdaFactory;
@@ -21,7 +21,7 @@ public class MybatisUtil {
     /**
      * 设置排序字段
      */
-    public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItem> orders) {
+    public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItemQuery> orders) {
         if (CollUtil.isEmpty(orders)) {
             return;
         }
