@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/***
- * 创建Knife4j配置
+/**
+ * Knife4j配置
  */
 @Configuration
 @EnableKnife4j

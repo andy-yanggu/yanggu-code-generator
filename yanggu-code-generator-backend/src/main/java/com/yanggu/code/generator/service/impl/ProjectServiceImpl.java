@@ -22,7 +22,6 @@ import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.util.GenUtil;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,7 +200,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         LambdaQueryWrapper<ProjectEntity> wrapper = Wrappers.lambdaQuery(ProjectEntity.class);
 
         //过滤字段
-        wrapper.like(StrUtil.isNotBlank(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

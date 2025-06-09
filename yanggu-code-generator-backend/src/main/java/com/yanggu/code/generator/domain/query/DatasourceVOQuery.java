@@ -20,16 +20,4 @@ public class DatasourceVOQuery extends PageQuery<DatasourceVO> implements Serial
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 数据库类型
-     */
-    @Schema(description = "数据库类型")
-    private String dbType;
-
-    /**
-     * 连接名
-     */
-    @Schema(description = "连接名")
-    private String connName;
-
 }

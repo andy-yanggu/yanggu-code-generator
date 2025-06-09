@@ -23,10 +23,10 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
-        <if test="query.tableName != null and query.tableName.trim() != ''">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'tableName')">
             AND t.table_name LIKE CONCAT('%', #{query.tableName}, '%')
         </if>
-        <if test="query.projectId != null">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'projectId')">
             AND t.project_id = #{query.projectId}
         </if>
     </sql>

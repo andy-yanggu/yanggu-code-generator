@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 数据库Query接口
+ * 数据库Query抽象类
  */
 public abstract class AbstractQuery {
 

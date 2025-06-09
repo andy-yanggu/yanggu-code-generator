@@ -93,6 +93,9 @@ public class TableDataModel {
      */
     private BaseClassModel baseClass;
 
+    /**
+     * 导入列表
+     */
     private Set<String> importList;
 
     /**
@@ -110,10 +113,19 @@ public class TableDataModel {
      */
     private String tableComment;
 
+    /**
+     * 类名（小写）
+     */
     private String className;
 
+    /**
+     * 类名（大写）
+     */
     private String classNameUpper;
 
+    /**
+     * 字段列表
+     */
     private List<TableFieldModel> fieldList;
 
     /**
@@ -131,6 +143,9 @@ public class TableDataModel {
      */
     private Integer generatorType;
 
+    /**
+     * 数据库类型
+     */
     private String dbType;
 
     /**
@@ -138,13 +153,19 @@ public class TableDataModel {
      */
     private List<TableFieldModel> primaryList;
 
-    // 表单列表
+    /**
+     * 表单列表
+     */
     private List<TableFieldModel> formList;
 
-    // 网格列表
+    /**
+     * 网格列表
+     */
     private List<TableFieldModel> gridList;
 
-    // 查询列表
+    /**
+     * 查询列表
+     */
     private List<TableFieldModel> queryList;
 
 }

@@ -17,10 +17,10 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
-        <if test="query.projectId != null">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'projectId')">
             AND e.project_id = #{query.projectId}
         </if>
-        <if test="query.enumName != null and query.enumName.trim() != ''">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'enumName')">
             AND e.enum_name = #{query.enumName}
         </if>
     </sql>

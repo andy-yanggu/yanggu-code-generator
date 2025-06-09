@@ -20,10 +20,4 @@ public class BaseClassVOQuery extends PageQuery<BaseClassVO> implements Serializ
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 基类编码
-     */
-    @Schema(description = "基类编码")
-    private String code;
-
 }

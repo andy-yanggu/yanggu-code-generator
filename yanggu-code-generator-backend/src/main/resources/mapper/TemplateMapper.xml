@@ -20,22 +20,22 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
-        <if test="query.templateGroupId != null">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupId')">
             AND t.template_group_id = #{query.templateGroupId}
         </if>
-        <if test="query.templateGroupIdList != null and query.templateGroupIdList.size() > 0">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupIdList')">
             AND t.template_group_id IN
             <foreach item="item" collection="query.templateGroupIdList" separator="," open="(" close=")" index="">
                 #{item}
             </foreach>
         </if>
-        <if test="query.templateName != null and query.templateName.trim() != ''">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateName')">
             AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
-        <if test="query.templateType != null">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateType')">
             AND t.template_type = #{query.templateType}
         </if>
-        <if test="query.templateGroupType != null">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupType')">
             AND g.type = #{query.templateGroupType}
         </if>
     </sql>

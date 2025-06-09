@@ -20,10 +20,10 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
-        <if test="query.dbType != null and query.dbType.trim() != ''">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'dbType')">
             AND db_type = #{query.dbType}
         </if>
-        <if test="query.connName != null and query.connName.trim() != ''">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'connName')">
             AND conn_name LIKE CONCAT('%', #{query.connName}, '%')
         </if>
     </sql>

@@ -25,9 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -222,7 +219,7 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         LambdaQueryWrapper<TableFieldEntity> wrapper = Wrappers.lambdaQuery(TableFieldEntity.class);
 
         //过滤字段
-        wrapper.eq(Objects.nonNull(query.getTableId()), TableFieldEntity::getTableId, query.getTableId());
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getTableId()), TableFieldEntity::getTableId, query.getTableId());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

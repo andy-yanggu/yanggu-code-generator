@@ -20,13 +20,11 @@ import com.yanggu.code.generator.service.EnumItemService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
 import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -192,10 +190,6 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumEntityQuery query) {
         LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
-
-        //过滤字段
-        wrapper.eq(Objects.nonNull(query.getProjectId()), EnumEntity::getProjectId, query.getProjectId());
-        wrapper.eq(StrUtil.isNotBlank(query.getEnumName()), EnumEntity::getEnumName, query.getEnumName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

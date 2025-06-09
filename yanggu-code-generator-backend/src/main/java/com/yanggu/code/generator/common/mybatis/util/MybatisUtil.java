@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.func.LambdaFactory;
+import org.dromara.hutool.core.reflect.FieldUtil;
 import org.dromara.hutool.core.reflect.method.MethodInvoker;
 import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.ObjUtil;
 
 import java.util.List;
 
@@ -52,6 +54,33 @@ public class MybatisUtil {
             throw new IllegalArgumentException("column is not exist");
         }
         return LambdaFactory.build(SFunction.class, getter.getMethod());
+    }
+
+    /**
+     * 判断对象不为空
+     */
+    public static boolean isNotEmpty(Object object) {
+        if (object instanceof CharSequence) {
+            object = StrUtil.trim((CharSequence) object);
+        }
+
+        return ObjUtil.isNotEmpty(object);
+    }
+
+    /**
+     * 判断对象中某个字段不为空
+     */
+    public static boolean isNotEmpty(Object object, String propertyName) {
+        if (object == null) {
+            return false;
+        }
+        boolean hasField = FieldUtil.hasField(object.getClass(), propertyName);
+        if (!hasField) {
+            return false;
+        }
+        Object fieldValue = FieldUtil.getFieldValue(object, propertyName);
+
+        return isNotEmpty(fieldValue);
     }
 
 }

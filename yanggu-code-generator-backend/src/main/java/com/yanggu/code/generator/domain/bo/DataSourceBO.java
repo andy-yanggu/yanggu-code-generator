@@ -58,6 +58,7 @@ public class DataSourceBO {
             this.connection = DbUtil.getConnection(this);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException("数据源连接失败：" + e.getMessage());
         }
     }
 

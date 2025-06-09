@@ -22,7 +22,6 @@ import com.yanggu.code.generator.service.TemplateService;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.io.IoUtil;
-import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.CharsetUtil;
 import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
@@ -272,8 +270,8 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         LambdaQueryWrapper<TemplateGroupEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupEntity.class);
 
         //过滤字段
-        wrapper.like(StrUtil.isNotBlank(query.getGroupName()), TemplateGroupEntity::getGroupName, query.getGroupName());
-        wrapper.eq(Objects.nonNull(query.getType()), TemplateGroupEntity::getType, query.getType());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getGroupName()), TemplateGroupEntity::getGroupName, query.getGroupName());
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getType()), TemplateGroupEntity::getType, query.getType());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());

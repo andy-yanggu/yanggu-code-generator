@@ -14,7 +14,6 @@ import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 import com.yanggu.code.generator.mapper.FieldTypeMapper;
 import com.yanggu.code.generator.mapstruct.FieldTypeMapstruct;
 import com.yanggu.code.generator.service.FieldTypeService;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -189,8 +187,8 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         LambdaQueryWrapper<FieldTypeEntity> wrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
 
         //过滤字段
-        wrapper.like(StrUtil.isNotBlank(query.getColumnType()), FieldTypeEntity::getColumnType, query.getColumnType());
-        wrapper.like(StrUtil.isNotBlank(query.getAttrType()), FieldTypeEntity::getAttrType, query.getAttrType());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getColumnType()), FieldTypeEntity::getColumnType, query.getColumnType());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getAttrType()), FieldTypeEntity::getAttrType, query.getAttrType());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());
