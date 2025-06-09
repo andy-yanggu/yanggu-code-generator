@@ -21,7 +21,7 @@
             AND e.project_id = #{query.projectId}
         </if>
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'enumName')">
-            AND e.enum_name = #{query.enumName}
+            AND e.enum_name LIKE CONCAT('%', #{query.enumName}, '%')
         </if>
     </sql>
 
