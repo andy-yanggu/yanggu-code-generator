@@ -21,6 +21,9 @@
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'enumId')">
             AND enum_id = #{query.enumId}
         </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'enumItemName')">
+            AND enum_item_name LIKE CONCAT('%',#{query.enumItemName},'%')
+        </if>
     </sql>
 
     <!-- Entity类字段映射 -->
