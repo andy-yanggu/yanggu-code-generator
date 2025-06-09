@@ -14,44 +14,28 @@
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <#list queryList as field>
+        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@notEmpty(query, '${field.attrName}')">
             <#if field.queryType == '='>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} = <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == '!='>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} != <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == '>'>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} &gt; <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == '>='>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} &gt;= <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == '<'>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} &lt; <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == '<='>
-        <if test="query.${field.attrName} != null<#if field.attrType == 'String'> and query.${field.attrName}.trim() != ''</#if>">
             AND ${field.fieldName} &lt;= <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
-        </if>
             <#elseif field.queryType == 'like'>
-        <if test="query.${field.attrName} != null and query.${field.attrName}.trim() != ''">
             AND ${field.fieldName} LIKE CONCAT('%', <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>, '%')
-        </if>
             <#elseif field.queryType == 'left like'>
-        <if test="query.${field.attrName} != null and query.${field.attrName}.trim() != ''">
             AND ${field.fieldName} LIKE CONCAT('%', <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>)
-        </if>
             <#elseif field.queryType == 'right like'>
-        <if test="query.${field.attrName} != null and query.${field.attrName}.trim() != ''">
             AND ${field.fieldName} LIKE CONCAT(<#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>, '%')
-        </if>
             <#else>
             </#if>
+        </if>
         </#list>
     </sql>
 
