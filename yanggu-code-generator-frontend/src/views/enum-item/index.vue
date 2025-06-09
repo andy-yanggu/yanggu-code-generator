@@ -61,6 +61,7 @@ const enumIdRef = ref()
 const state: IHooksOptions = reactive({
 	dataListUrl: '/enumItem/entityPage',
 	deleteUrl: '/enumItem/deleteList',
+	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',
 		enumId: -1
