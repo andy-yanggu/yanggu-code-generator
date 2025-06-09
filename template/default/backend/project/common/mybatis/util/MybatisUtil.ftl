@@ -59,7 +59,7 @@ public class MybatisUtil {
     /**
      * 判断对象不为空
      */
-    public static boolean notEmpty(Object object) {
+    public static boolean isNotEmpty(Object object) {
         if (object instanceof CharSequence) {
             object = StrUtil.trim((CharSequence) object);
         }
@@ -70,7 +70,7 @@ public class MybatisUtil {
     /**
      * 判断对象中某个字段不为空
      */
-    public static boolean notEmpty(Object object, String propertyName) {
+    public static boolean isNotEmpty(Object object, String propertyName) {
         if (object == null) {
             return false;
         }

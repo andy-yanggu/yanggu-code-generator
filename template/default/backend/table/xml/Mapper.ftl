@@ -14,7 +14,7 @@
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <#list queryList as field>
-        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@notEmpty(query, '${field.attrName}')">
+        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, '${field.attrName}')">
             <#if field.queryType == '='>
             AND ${field.fieldName} = <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>
             <#elseif field.queryType == '!='>

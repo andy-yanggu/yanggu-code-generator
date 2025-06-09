@@ -6,7 +6,7 @@
 
     <!-- 排序SQL -->
     <sql id="orderBySQL">
-        <if test="query.orders != null and query.orders.size() > 0">
+        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orders')">
             ORDER BY
             <foreach collection="query.orders" item="order" separator=",">
                 ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
