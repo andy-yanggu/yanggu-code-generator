@@ -7,6 +7,9 @@
 			<el-form-item>
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
+			<el-form-item>
+				<el-button @click="resetQueryRef()">重置</el-button>
+			</el-form-item>
 		</el-form>
 		<el-table
 			ref="tableRef"

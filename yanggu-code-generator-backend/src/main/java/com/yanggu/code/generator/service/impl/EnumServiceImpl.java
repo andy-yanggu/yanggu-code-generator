@@ -191,6 +191,10 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumEntityQuery query) {
         LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
 
+        //过滤字段
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getProjectId()), EnumEntity::getProjectId, query.getProjectId());
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getEnumName()), EnumEntity::getEnumName, query.getEnumName());
+
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrders());
         return wrapper;

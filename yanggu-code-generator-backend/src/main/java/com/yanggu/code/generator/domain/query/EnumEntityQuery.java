@@ -20,4 +20,16 @@ public class EnumEntityQuery extends PageQuery<EnumEntity> implements Serializab
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 项目ID
+     */
+    @Schema(description = "项目ID")
+    private Long projectId;
+
+    /**
+     * 枚举名称
+     */
+    @Schema(description = "枚举名称")
+    private String enumName;
+
 }

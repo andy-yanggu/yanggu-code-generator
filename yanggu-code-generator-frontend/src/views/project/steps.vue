@@ -6,18 +6,20 @@
 				<el-steps :active="activeRef" align-center finish-status="success">
 					<el-step title="选择模板"></el-step>
 					<el-step title="选择表"></el-step>
+					<el-step title="选择枚举"></el-step>
 				</el-steps>
 			</el-header>
 			<!-- 表单区域 -->
 			<el-main>
 				<template-index v-if="activeRef === 0" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
 				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
+				<enum-index v-if="activeRef === 2" ref="enumIndexRef" @select-change="enumSelectChange"></enum-index>
 			</el-main>
 			<!-- 操作按钮 -->
 			<el-footer height="60px" style="text-align: center">
-				<el-button v-if="activeRef === 1" @click="prevStep()">上一步</el-button>
-				<el-button v-if="activeRef === 0" :disabled="templateListRef.length === 0" @click="nextStep()">下一步</el-button>
-				<el-button v-if="activeRef === 1" :disabled="tableListRef.length === 0" @click="generateCode()">生成代码</el-button>
+				<el-button v-if="activeRef > 0" @click="prevStep()">上一步</el-button>
+				<el-button v-if="activeRef < 2" @click="nextStep()">下一步</el-button>
+				<el-button v-if="activeRef === 2" type="primary" @click="generateCode()">生成代码</el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>
@@ -25,8 +27,9 @@
 
 <script lang="ts" setup>
 import { nextTick, reactive, ref } from 'vue'
-import TableIndex from './table-index.vue'
 import TemplateIndex from './template-index.vue'
+import TableIndex from './table-index.vue'
+import EnumIndex from './enum-index.vue'
 import { ElMessage } from 'element-plus'
 import { generatorProjectDownloadZipApi, generatorProjectDownloadLocalApi } from '@/api/generator'
 
@@ -34,6 +37,7 @@ const activeRef = ref(0)
 const dialogVisible = ref(false)
 const tableIndexRef = ref()
 const templateIndexRef = ref()
+const enumIndexRef = ref()
 const projectReactive = reactive({
 	id: null,
 	tableTemplateGroupId: null,
@@ -43,8 +47,39 @@ const projectReactive = reactive({
 })
 const tableListRef = ref<any[]>([])
 const templateListRef = ref<any[]>([])
+const enumListRef = ref<any[]>([])
 
-//初始化方法
+// 修改生成代码方法
+const generateCode = () => {
+	const dataForm = {
+		projectId: projectReactive.id,
+		tableIdList: tableListRef.value.map(item => item.id),
+		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
+		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
+		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id)
+	}
+
+	const generatorType = projectReactive.generatorType
+	if (generatorType === 0) {
+		generatorProjectDownloadZipApi(dataForm)
+		dialogVisible.value = false
+	} else if (generatorType === 1) {
+		generatorProjectDownloadLocalApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到本地',
+				duration: 1000
+			})
+			dialogVisible.value = false
+		})
+	}
+}
+
+// 新增枚举选择处理
+const enumSelectChange = (data: any[]) => {
+	enumListRef.value = data
+}
+
+// 修改初始化方法
 const init = (projectItem: any) => {
 	activeRef.value = 0
 	dialogVisible.value = true
@@ -54,7 +89,8 @@ const init = (projectItem: any) => {
 	projectReactive.enumTemplateGroupId = projectItem.enumTemplateGroupId
 	projectReactive.generatorType = projectItem.generatorType
 	nextTick(() => {
-		templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId,  projectReactive.enumTemplateGroupId])
+		const templateGroupIdList = [projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId, projectReactive.enumTemplateGroupId]
+		templateIndexRef.value.init(templateGroupIdList)
 	})
 }
 
@@ -74,9 +110,9 @@ const prevStep = () => {
 	}
 }
 
-//下一步
+// 修改步骤切换逻辑
 const nextStep = () => {
-	if (activeRef.value < 1) {
+	if (activeRef.value < 2) {
 		activeRef.value++
 	}
 
@@ -88,28 +124,13 @@ const nextStep = () => {
 			tableIndexRef.value.toggleRowSelection(item, true)
 		})
 	})
-}
-
-//生成代码
-const generateCode = () => {
-	const dataForm = {
-		projectId: projectReactive.id,
-		tableIdList: tableListRef.value.map(item => item.id),
-		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
-		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id)
-	}
-
-	const generatorType = projectReactive.generatorType
-	if (generatorType === 0) {
-		generatorProjectDownloadZipApi(dataForm)
-		dialogVisible.value = false
-	} else if (generatorType === 1) {
-		generatorProjectDownloadLocalApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到本地',
-				duration: 1000
+	if (activeRef.value === 2) {
+		nextTick(() => {
+			enumIndexRef.value.init(projectReactive.id)
+			// 恢复枚举选中状态
+			enumListRef.value.forEach(item => {
+				enumIndexRef.value.toggleRowSelection(item, true)
 			})
-			dialogVisible.value = false
 		})
 	}
 }
