@@ -24,7 +24,6 @@ public class ${classNameUpper}EntityQuery extends PageQuery<${classNameUpper}Ent
     private static final long serialVersionUID = 1L;
 
 <#list queryList as field>
-    <#if field.baseField == 0>
     <#if field.fieldComment!?length gt 0>
     /**
      * ${field.fieldComment}
@@ -35,6 +34,5 @@ public class ${classNameUpper}EntityQuery extends PageQuery<${classNameUpper}Ent
     </#if>
     private ${field.attrType} ${field.attrName};
 
-    </#if>
 </#list>
 }

@@ -9,7 +9,7 @@
         <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orders')">
             ORDER BY
             <foreach collection="query.orders" item="order" separator=",">
-                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+                <#noparse>${order.column}</#noparse> <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
             </foreach>
         </if>
     </sql>

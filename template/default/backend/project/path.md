@@ -156,3 +156,7 @@ ${backendPath}/src/main/resources/logback-spring.xml
 #### 39. BaseMapperPlus.xml.ftl
 
 ${backendPath}/src/main/resources/mapper/BaseMapperPlus.xml
+
+#### 40. OrderItemQuery.ftl
+
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/domain/query/OrderItemQuery.java

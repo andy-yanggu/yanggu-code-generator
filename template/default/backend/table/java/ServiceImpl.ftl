@@ -197,23 +197,23 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         //过滤字段
         <#list queryList as field>
             <#if field.queryType == '='>
-        wrapper.eq(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.eq(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == '!='>
-        wrapper.ne(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.ne(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == '>'>
-        wrapper.gt(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.gt(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == '>='>
-        wrapper.ge(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.ge(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == '<'>
-        wrapper.lt(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.lt(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == '<='>
-        wrapper.le(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.le(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == 'like'>
-        wrapper.like(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.like(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == 'left like'>
-        wrapper.likeLeft(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.likeLeft(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == 'right like'>
-        wrapper.likeRight(MybatisUtil.notEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+        wrapper.likeRight(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#else>
             </#if>
         </#list>
