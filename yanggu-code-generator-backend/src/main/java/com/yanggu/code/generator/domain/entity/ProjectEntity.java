@@ -95,10 +95,16 @@ public class ProjectEntity extends BaseEntity implements Serializable {
 	private String author;
 
 	/**
-	 * 基类ID
+	 * Entity基类ID
 	 */
-	@TableField(value = "base_class_id")
-	private Long baseClassId;
+	@TableField(value = "entity_base_class_id")
+	private Long entityBaseClassId;
+
+	/**
+	 * VO基类ID
+	 */
+	@TableField(value = "vo_base_class_id")
+	private Long voBaseClassId;
 
 	/**
 	 * 生成方式（0-zip压缩包，1-服务器本地）

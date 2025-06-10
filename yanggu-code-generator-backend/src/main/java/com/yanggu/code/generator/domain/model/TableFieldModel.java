@@ -105,9 +105,14 @@ public class TableFieldModel implements Serializable {
     private String enumNameAllUpper;
 
     /**
-     * 基类字段 0：否  1：是
+     * Entity基类字段 0：否  1：是
      */
-    private Integer baseField;
+    private Integer entityBaseField;
+
+    /**
+     * VO基类字段 0：否  1：是
+     */
+    private Integer voBaseField;
 
     /**
      * 表单项 0：否  1：是

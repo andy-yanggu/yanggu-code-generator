@@ -92,10 +92,16 @@ public class ProjectVO extends BaseVO implements Serializable {
 	private String author;
 
 	/**
-	 * 基类ID
+	 * Entity基类ID
 	 */
-	@Schema(description = "基类ID")
-	private Long baseClassId;
+	@Schema(description = "Entity基类ID")
+	private Long entityBaseClassId;
+
+	/**
+	 * VO基类ID
+	 */
+	@Schema(description = "VO基类ID")
+	private Long voBaseClassId;
 
 	/**
 	 * 生成方式（0-zip压缩包，1-服务器本地）

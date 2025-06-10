@@ -632,23 +632,34 @@ public class GeneratorServiceImpl implements GeneratorService {
         Long projectId = tableDataModel.getProjectId();
         ProjectEntity project = projectService.getById(projectId);
 
-        // 基类
-        BaseClassEntity baseClass = baseClassService.getById(project.getBaseClassId());
+        //Entity基类
+        BaseClassEntity baseClass = baseClassService.getById(project.getEntityBaseClassId());
         List<TableFieldModel> fieldList = tableDataModel.getFieldList();
-        fieldList.forEach(field -> field.setBaseField(0));
-        if (baseClass == null) {
-            return;
+        fieldList.forEach(field -> field.setEntityBaseField(0));
+        if (baseClass != null) {
+            BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
+            tableDataModel.setEntityBaseClass(baseClassModel);
+
+            // 基类字段
+            String[] fields = baseClassModel.getFields().split(",");
+
+            // 标注为基类字段
+            for (TableFieldModel field : fieldList) {
+                field.setEntityBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
+            }
         }
 
-        BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
-        tableDataModel.setBaseClass(baseClassModel);
-
-        // 基类字段
-        String[] fields = baseClassModel.getFields().split(",");
-
-        // 标注为基类字段
-        for (TableFieldModel field : fieldList) {
-            field.setBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
+        //VO基类
+        BaseClassEntity voBaseClass = baseClassService.getById(project.getVoBaseClassId());
+        fieldList.forEach(field -> field.setVoBaseField(0));
+        if (voBaseClass != null) {
+            BaseClassModel baseClassModel = baseClassMapstruct.toModel(voBaseClass);
+            tableDataModel.setVoBaseClass(baseClassModel);
+            // 基类字段
+            String[] fields = baseClassModel.getFields().split(",");
+            for (TableFieldModel field : fieldList) {
+                field.setVoBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
+            }
         }
     }
 

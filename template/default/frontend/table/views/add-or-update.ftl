@@ -55,7 +55,7 @@ const dataFormRef = ref()
 
 const dataForm = reactive({
 	<#list fieldList as field>
-	    <#if field.baseField == 0>
+	    <#if field.entityBaseField == 0>
 	${field.attrName}: ''<#sep>,
 	    </#if>
 	</#list>

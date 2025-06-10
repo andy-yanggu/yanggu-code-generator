@@ -10,7 +10,7 @@ public class DmQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {
-        return DbType.MySQL;
+        return DbType.DM;
     }
 
     @Override

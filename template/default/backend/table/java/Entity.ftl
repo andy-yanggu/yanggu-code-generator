@@ -1,12 +1,12 @@
 package ${projectPackage}.${projectNameDot}.domain.entity;
 
 import lombok.Data;
-<#if baseClass??>
+<#if entityBaseClass??>
 import lombok.EqualsAndHashCode;
 <#else></#if>
 import com.baomidou.mybatisplus.annotation.*;
-<#if baseClass??>
-import ${baseClass.packageName}.${baseClass.code};
+<#if entityBaseClass??>
+import ${entityBaseClass.packageName}.${entityBaseClass.code};
 </#if>
 
 import java.io.Serial;
@@ -20,16 +20,16 @@ import ${i!};
  */
 @Data
 @TableName(value = "${tableName}", schema = "${databaseName}")
-<#if baseClass??>
+<#if entityBaseClass??>
 @EqualsAndHashCode(callSuper = true)
 <#else></#if>
-public class ${classNameUpper}Entity<#if baseClass??> extends ${baseClass.code}</#if> implements Serializable {
+public class ${classNameUpper}Entity<#if entityBaseClass??> extends ${entityBaseClass.code}</#if> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
 
 <#list fieldList as field>
-<#if field.baseField == 0>
+<#if field.entityBaseField == 0>
 	<#if field.fieldComment!?length gt 0>
 	/**
 	 * ${field.fieldComment}

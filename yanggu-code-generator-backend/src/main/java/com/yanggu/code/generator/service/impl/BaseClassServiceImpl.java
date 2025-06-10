@@ -175,7 +175,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
 
     private void checkReference(List<Long> idList) {
         LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
-                .in(ProjectEntity::getBaseClassId, idList);
+                .in(ProjectEntity::getEntityBaseClassId, idList);
         boolean exists = projectService.exists(queryWrapper);
         if (exists) {
             throw new BusinessException("基类已被项目引用，不能删除");

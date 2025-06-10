@@ -17,7 +17,8 @@
         frontend_path,
         project_desc,
         author,
-        base_class_id,
+        entity_base_class_id,
+        vo_base_class_id,
         generator_type,
         create_time,
         update_time,
@@ -46,7 +47,8 @@
         <result property="frontendPath" column="frontend_path"/>
         <result property="projectDesc" column="project_desc"/>
         <result property="author" column="author"/>
-        <result property="baseClassId" column="base_class_id"/>
+        <result property="entityBaseClassId" column="entity_base_class_id"/>
+        <result property="voBaseClassId" column="vo_base_class_id"/>
         <result property="generatorType" column="generator_type"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>

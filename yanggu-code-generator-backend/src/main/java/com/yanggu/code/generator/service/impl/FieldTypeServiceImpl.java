@@ -18,10 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -138,17 +139,14 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
 
     @Override
     public Map<String, FieldTypeEntity> getMap() {
-        List<FieldTypeEntity> list = baseMapper.selectList();
-        Map<String, FieldTypeEntity> map = new LinkedHashMap<>(list.size());
-        for (FieldTypeEntity entity : list) {
-            map.put(entity.getColumnType().toLowerCase(), entity);
-        }
-        return map;
+        List<FieldTypeEntity> list = fieldTypeMapper.selectList();
+        return list.stream()
+                .collect(Collectors.toMap(FieldTypeEntity::getColumnType, Function.identity()));
     }
 
     @Override
     public Set<String> getPackageByTableId(Long tableId) {
-        return baseMapper.getPackageByTableId(tableId);
+        return fieldTypeMapper.getPackageByTableId(tableId);
     }
 
     @Override

@@ -25,7 +25,10 @@ public abstract class AbstractQuery {
         }
         for (Class<?> clazz : classes) {
             AbstractQuery query = (AbstractQuery) ReflectUtil.newInstance(clazz);
-            MAP.put(query.dbType(), query);
+            AbstractQuery put = MAP.put(query.dbType(), query);
+            if (put != null) {
+                throw new RuntimeException("AbstractQuery实现类重复: " + query.dbType());
+            }
         }
     }
 

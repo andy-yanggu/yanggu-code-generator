@@ -91,7 +91,12 @@ public class TableDataModel {
     /**
      * Entity继承基类
      */
-    private BaseClassModel baseClass;
+    private BaseClassModel entityBaseClass;
+
+    /**
+     * VO继承基类
+     */
+    private BaseClassModel voBaseClass;
 
     /**
      * 导入列表

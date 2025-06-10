@@ -17,13 +17,13 @@ import ${i!};
 @Data
 @Schema(description = "${tableComment}VO实体类")
 @EqualsAndHashCode(callSuper = true)
-public class ${classNameUpper}VO extends BaseVO implements Serializable {
+public class ${classNameUpper}VO<#if voBaseClass??> extends ${voBaseClass.code}</#if> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
 
 <#list fieldList as field>
-	<#if field.baseField == 0>
+	<#if field.voBaseField == 0>
 	<#if field.fieldComment!?length gt 0>
 	/**
 	 * ${field.fieldComment}
