@@ -203,7 +203,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         wrapper.like(MybatisUtil.isNotEmpty(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

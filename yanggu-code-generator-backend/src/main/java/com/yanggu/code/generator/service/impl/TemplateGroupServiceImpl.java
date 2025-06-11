@@ -274,7 +274,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         wrapper.eq(MybatisUtil.isNotEmpty(query.getType()), TemplateGroupEntity::getType, query.getType());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

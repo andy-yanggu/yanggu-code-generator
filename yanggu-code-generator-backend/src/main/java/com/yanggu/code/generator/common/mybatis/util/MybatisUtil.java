@@ -8,6 +8,7 @@ import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.func.LambdaFactory;
 import org.dromara.hutool.core.reflect.FieldUtil;
 import org.dromara.hutool.core.reflect.method.MethodInvoker;
+import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.ObjUtil;
 
@@ -21,17 +22,17 @@ public class MybatisUtil {
     /**
      * 设置排序字段
      */
-    public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItemQuery> orders) {
-        if (CollUtil.isEmpty(orders)) {
+    public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItemQuery> orderItemList) {
+        if (CollUtil.isEmpty(orderItemList)) {
             return;
         }
         Class<T> entityClass = wrapper.getEntityClass();
         if (entityClass == null) {
             throw new IllegalArgumentException("entityClass is null");
         }
-        orders.forEach(orderItem -> {
+        orderItemList.forEach(orderItem -> {
             SFunction<T, ?> column = buildGetter(entityClass, orderItem.getColumn());
-            if (orderItem.isAsc()) {
+            if (orderItem.getAsc()) {
                 wrapper.orderByAsc(column);
             } else {
                 wrapper.orderByDesc(column);
@@ -46,10 +47,8 @@ public class MybatisUtil {
         if (StrUtil.isBlank(column)) {
             throw new IllegalArgumentException("column is blank");
         }
-        //user_name转换成userName
-        String camelCase = StrUtil.toCamelCase(column);
         //获取字段对应的getter方法
-        MethodInvoker getter = (MethodInvoker) BeanUtil.getBeanDesc(clazz).getGetter(camelCase);
+        MethodInvoker getter = (MethodInvoker) BeanUtil.getBeanDesc(clazz).getGetter(column);
         if (getter == null) {
             throw new IllegalArgumentException("column is not exist");
         }
@@ -81,6 +80,13 @@ public class MybatisUtil {
         Object fieldValue = FieldUtil.getFieldValue(object, propertyName);
 
         return isNotEmpty(fieldValue);
+    }
+
+    /**
+     * 小驼峰转下划线
+     */
+    public static String toUnderlineCase(String str) {
+        return NamingCase.toUnderlineCase(str);
     }
 
 }

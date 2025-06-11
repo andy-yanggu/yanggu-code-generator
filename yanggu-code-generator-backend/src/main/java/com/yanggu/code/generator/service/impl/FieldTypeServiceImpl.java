@@ -189,7 +189,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         wrapper.like(MybatisUtil.isNotEmpty(query.getAttrType()), FieldTypeEntity::getAttrType, query.getAttrType());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

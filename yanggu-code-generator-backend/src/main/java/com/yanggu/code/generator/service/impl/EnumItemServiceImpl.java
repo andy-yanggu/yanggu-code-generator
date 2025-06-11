@@ -161,7 +161,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
         wrapper.like(MybatisUtil.isNotEmpty(query.getEnumItemName()), EnumItemEntity::getEnumItemName, query.getEnumItemName());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

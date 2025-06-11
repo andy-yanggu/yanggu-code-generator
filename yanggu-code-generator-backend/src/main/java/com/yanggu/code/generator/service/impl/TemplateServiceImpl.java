@@ -162,8 +162,9 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         wrapper.eq(MybatisUtil.isNotEmpty(query.getTemplateGroupId()), TemplateEntity::getTemplateGroupId, query.getTemplateGroupId());
         wrapper.like(MybatisUtil.isNotEmpty(query.getTemplateName()), TemplateEntity::getTemplateName, query.getTemplateName());
         wrapper.eq(MybatisUtil.isNotEmpty(query.getTemplateType()), TemplateEntity::getTemplateType, query.getTemplateType());
+
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

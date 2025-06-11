@@ -192,7 +192,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         wrapper.like(MybatisUtil.isNotEmpty(query.getConnName()), DatasourceEntity::getConnName, query.getConnName());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

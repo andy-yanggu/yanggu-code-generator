@@ -189,7 +189,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         wrapper.like(MybatisUtil.isNotEmpty(query.getCode()), BaseClassEntity::getCode, query.getCode());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

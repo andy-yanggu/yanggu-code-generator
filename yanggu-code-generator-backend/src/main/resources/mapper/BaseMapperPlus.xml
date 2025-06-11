@@ -6,10 +6,10 @@
 
     <!-- 排序SQL -->
     <sql id="orderBySQL">
-        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orders')">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
             ORDER BY
-            <foreach collection="query.orders" item="order" separator=",">
-                ${order.column} <if test="order.isAsc">ASC</if><if test="!order.isAsc">DESC</if>
+            <foreach collection="query.orderItemList" item="order" separator=",">
+                ${@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
             </foreach>
         </if>
     </sql>

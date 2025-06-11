@@ -222,7 +222,7 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         wrapper.eq(MybatisUtil.isNotEmpty(query.getTableId()), TableFieldEntity::getTableId, query.getTableId());
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 
