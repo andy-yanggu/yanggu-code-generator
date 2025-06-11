@@ -40,7 +40,7 @@ public class PageQuery<T> implements IPage<T>, Serializable {
      * 排序字段列表
      */
     @Schema(description = "排序字段列表")
-    private List<OrderItemQuery> orders = List.of(OrderItemQuery.desc("update_time"));
+    private List<OrderItemQuery> orderItemList = List.of(OrderItemQuery.desc("updateTime"));
 
     /**
      * 分页数据

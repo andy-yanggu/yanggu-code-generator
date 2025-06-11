@@ -50,7 +50,7 @@ public class MybatisUtil {
         //获取字段对应的getter方法
         MethodInvoker getter = (MethodInvoker) BeanUtil.getBeanDesc(clazz).getGetter(column);
         if (getter == null) {
-            throw new IllegalArgumentException("column is not exist");
+            throw new IllegalArgumentException(StrUtil.format("column: {} is not exist", column));
         }
         return LambdaFactory.build(SFunction.class, getter.getMethod());
     }

@@ -220,7 +220,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         </#if>
 
         //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrders());
+        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;
     }
 

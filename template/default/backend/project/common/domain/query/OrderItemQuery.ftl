@@ -30,7 +30,7 @@ public class OrderItemQuery implements Serializable {
      * 是否正序排列，默认 true
      */
     @Schema(description = "是否正序排列，默认 true")
-    private boolean asc = true;
+    private Boolean asc = true;
 
     public static OrderItemQuery asc(String column) {
         return build(column, true);
