@@ -37,9 +37,9 @@ public class PageQuery<T> implements IPage<T>, Serializable {
     private Long pageSize = 10L;
 
     /**
-     * 排序字段列表
+     * 排序字段列表，默认按updateTime和id降序
      */
-    @Schema(description = "排序字段列表")
+    @Schema(description = "排序字段列表，默认按updateTime和id降序")
     private List<OrderItemQuery> orderItemList = OrderItemQuery.descs("updateTime", "id");
 
     /**
