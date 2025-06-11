@@ -19,12 +19,6 @@ public class GeneratorProjectQuery {
     private Long projectId;
 
     /**
-     * 表ID列表
-     */
-    @Schema(description = "表ID列表")
-    private List<Long> tableIdList;
-
-    /**
      * 项目模板ID列表
      */
     @Schema(description = "项目模板ID列表")
@@ -35,5 +29,23 @@ public class GeneratorProjectQuery {
      */
     @Schema(description = "表模板ID列表")
     private List<Long> tableTemplateIdList;
+
+    /**
+     * 枚举模板ID列表
+     */
+    @Schema(description = "枚举模板ID列表")
+    private List<Long> enumTemplateIdList;
+
+    /**
+     * 表ID列表
+     */
+    @Schema(description = "表ID列表")
+    private List<Long> tableIdList;
+
+    /**
+     * 枚举ID列表
+     */
+    @Schema(description = "枚举ID列表")
+    private List<Long> enumIdList;
 
 }

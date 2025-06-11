@@ -279,7 +279,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         allPreviewList.addAll(tablePreviewList);
 
         //获取枚举预览数据
-        List<TemplateContentVO> enumPreviewList = enumListPreview(project);
+        List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
         allPreviewList.addAll(enumPreviewList);
 
         //获取项目预览数据
@@ -385,9 +385,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tablePreviewList;
     }
 
-    private List<TemplateContentVO> enumListPreview(ProjectEntity project) {
+    private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enmumIdList, List<Long> enumTemplateIdList) {
         List<EnumDataModel> enumDataModelList = new ArrayList<>();
         List<EnumEntity> enumList = enumService.enumList(project.getId());
+        enumList = enumList.stream()
+                .filter(enumEntity -> CollUtil.isEmpty(enmumIdList) || enmumIdList.contains(enumEntity.getId()))
+                .toList();
         for (int i = 0; i < enumList.size(); i++) {
             EnumEntity enumEntity = enumList.get(i);
             EnumDataModel dataModel = buildEnumDataModel(i, enumEntity, project);
@@ -396,8 +399,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
-        List<TemplateEntity> templateList = templateGroup.getTemplateList();
-
+        List<TemplateEntity> templateList = templateGroup.getTemplateList().stream()
+                .filter(template -> CollUtil.isEmpty(enumTemplateIdList) || enumTemplateIdList.contains(template.getId()))
+                .toList();
         return enumDataModelList.stream()
                 .flatMap(enumDataModel -> templateList.stream()
                         .map(template -> {

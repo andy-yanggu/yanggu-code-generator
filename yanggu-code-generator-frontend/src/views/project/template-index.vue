@@ -77,6 +77,7 @@ const state: IHooksOptions = reactive({
 		templateType: null
 	}
 })
+let isManualSelection = true
 
 const queryRef = ref()
 
@@ -105,15 +106,23 @@ const handlerGroupType = (row: any) => {
 }
 
 const selectionChangeHandle = (selections: any[]) => {
-	emit('selectChange', selections)
+	if (isManualSelection) {
+		emit('selectChange', selections)
+	}
+}
+
+const toggleRowSelection = (rowList: any[]) => {
+	isManualSelection = false
+	rowList.forEach((row: any) => {
+		tableRef.value.toggleRowSelection(row, true)
+	})
+	isManualSelection = true
 }
 
 const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)
 
 defineExpose({
 	init,
-	toggleRowSelection: (row, selected) => {
-		tableRef.value.toggleRowSelection(row, selected)
-	}
+	toggleRowSelection
 })
 </script>

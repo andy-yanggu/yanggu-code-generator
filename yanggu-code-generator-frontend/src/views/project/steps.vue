@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" title="请选择表和模板" width="75%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" title="请选择模板、表和枚举" width="75%" @close="dialogVisible = false">
 		<el-container>
 			<!-- 步骤条 -->
 			<el-header height="60px">
@@ -45,18 +45,19 @@ const projectReactive = reactive({
 	enumTemplateGroupId: null,
 	generatorType: null
 })
-const tableListRef = ref<any[]>([])
 const templateListRef = ref<any[]>([])
+const tableListRef = ref<any[]>([])
 const enumListRef = ref<any[]>([])
 
 // 修改生成代码方法
 const generateCode = () => {
 	const dataForm = {
 		projectId: projectReactive.id,
-		tableIdList: tableListRef.value.map(item => item.id),
 		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
 		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
-		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id)
+		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id),
+		tableIdList: tableListRef.value.map(item => item.id),
+		enumIdList: enumListRef.value.map(item => item.id)
 	}
 
 	const generatorType = projectReactive.generatorType
@@ -72,11 +73,6 @@ const generateCode = () => {
 			dialogVisible.value = false
 		})
 	}
-}
-
-// 新增枚举选择处理
-const enumSelectChange = (data: any[]) => {
-	enumListRef.value = data
 }
 
 // 修改初始化方法
@@ -99,48 +95,65 @@ const prevStep = () => {
 	if (activeRef.value > 0) {
 		activeRef.value--
 
-		nextTick(() => {
-			templateIndexRef.value.init([projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId])
+		if (activeRef.value === 0) {
+			nextTick(() => {
+				const templateGroupIdList = [
+					projectReactive.projectTemplateGroupId,
+					projectReactive.tableTemplateGroupId,
+					projectReactive.enumTemplateGroupId
+				]
+				templateIndexRef.value.init(templateGroupIdList)
 
-			//恢复之前的勾选
-			templateListRef.value.forEach(item => {
-				templateIndexRef.value.toggleRowSelection(item, true)
+				//恢复之前的勾选
+				templateIndexRef.value.toggleRowSelection(templateListRef.value)
 			})
-		})
+		}
+
+		if (activeRef.value === 1) {
+			nextTick(() => {
+				tableIndexRef.value.init(projectReactive.id)
+
+				//恢复之前的勾选
+				tableIndexRef.value.toggleRowSelection(tableListRef.value)
+			})
+		}
 	}
 }
 
-// 修改步骤切换逻辑
+//下一步
 const nextStep = () => {
 	if (activeRef.value < 2) {
 		activeRef.value++
 	}
 
-	nextTick(() => {
-		tableIndexRef.value.init(projectReactive.id)
+	if (activeRef.value === 1) {
+		nextTick(() => {
+			tableIndexRef.value.init(projectReactive.id)
 
-		//恢复之前的勾选
-		tableListRef.value.forEach(item => {
-			tableIndexRef.value.toggleRowSelection(item, true)
+			//恢复之前的勾选
+			tableIndexRef.value.toggleRowSelection(tableListRef.value)
 		})
-	})
+	}
 	if (activeRef.value === 2) {
 		nextTick(() => {
 			enumIndexRef.value.init(projectReactive.id)
-			// 恢复枚举选中状态
-			enumListRef.value.forEach(item => {
-				enumIndexRef.value.toggleRowSelection(item, true)
-			})
+
+			//恢复枚举选中状态
+			enumIndexRef.value.toggleRowSelection(enumListRef.value)
 		})
 	}
+}
+
+const templateSelectChange = (data: any[]) => {
+	templateListRef.value = data
 }
 
 const tableSelectChange = (data: any[]) => {
 	tableListRef.value = data
 }
 
-const templateSelectChange = (data: any[]) => {
-	templateListRef.value = data
+const enumSelectChange = (data: any[]) => {
+	enumListRef.value = data
 }
 
 defineExpose({

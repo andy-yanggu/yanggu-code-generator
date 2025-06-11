@@ -56,6 +56,7 @@ const state: IHooksOptions = reactive({
 
 const queryRef = ref()
 const tableRef = ref()
+let isManualSelection = true
 
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
@@ -72,15 +73,25 @@ const init = (projectId: number) => {
 }
 
 const selectionChangeHandle = (selections: any[]) => {
-	emit('selectChange', selections)
+	// 仅用户操作时触发事件
+	if (isManualSelection) {
+		emit('selectChange', selections)
+	}
 }
-
 const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)
 
+const toggleRowSelection = (rowList: any[]) => {
+	if (rowList.length === 0) {
+		return
+	}
+	isManualSelection = false
+	rowList.forEach((row: any) => {
+		tableRef.value.toggleRowSelection(row, true)
+	})
+	isManualSelection = true
+}
 defineExpose({
 	init,
-	toggleRowSelection: (row, selected) => {
-		tableRef.value.toggleRowSelection(row, selected)
-	}
+	toggleRowSelection
 })
 </script>
