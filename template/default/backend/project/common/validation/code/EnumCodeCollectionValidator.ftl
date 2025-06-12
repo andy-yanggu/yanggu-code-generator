@@ -13,4 +13,3 @@ public class EnumCodeCollectionValidator extends AbstractEnumCodeValidator<Colle
     }
 
 }
-

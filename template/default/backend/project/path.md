@@ -160,3 +160,19 @@ ${backendPath}/src/main/resources/mapper/BaseMapperPlus.xml
 #### 40. OrderItemQuery.ftl
 
 ${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/domain/query/OrderItemQuery.java
+
+#### 41. AbstractEnumCodeValidator.ftl
+
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/validation/code/AbstractEnumCodeValidator.java
+
+#### 42. EnumCode.ftl
+
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/validation/code/EnumCode.java
+
+#### 43. EnumCodeCollectionValidator.ftl
+
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/validation/code/EnumCodeCollectionValidator.java
+
+#### 44. EnumCodeValidator.ftl
+
+${backendPath}/src/main/java/${projectPackageSlash}/${projectNameSlash}/common/validation/code/EnumCodeValidator.java

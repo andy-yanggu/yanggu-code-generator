@@ -1,6 +1,25 @@
 package ${projectPackage}.${projectNameDot}.domain.dto;
 
+<#function importEnumcode formList>
+	<#list formList as formField>
+		<#if formField.entityBaseField == 0 && formField.enumId??>
+			<#return true>
+		</#if>
+	</#list>
+	<#return false>
+</#function>
+<#assign importEnumcode = importEnumcode(formList)>
+import ${projectPackage}.${projectNameDot}.common.validation.group.UpdateGroup;
+<#if importEnumcode>
+import ${projectPackage}.${projectNameDot}.common.validation.code.EnumCode;
+</#if>
+<#list formList as formField >
+<#if formField.entityBaseField == 0 && formField.enumId??>
+import ${projectPackage}.${projectNameDot}.enums.${formField.enumNamePascal}Enum;
+</#if>
+</#list>
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,15 +38,22 @@ public class ${classNameUpper}DTO implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
-<#list fieldList as field>
-<#if field.entityBaseField == 0>
-	<#if field.fieldComment!?length gt 0>
+<#list formList as formField>
+<#if formField.entityBaseField == 0>
 	/**
-	 * ${field.fieldComment}
+	 * ${formField.fieldComment}
 	 */
-	@Schema(description = "${field.fieldComment}")
+	@Schema(description = "${formField.fieldComment}")
+	<#if formField.primaryPk == 1>
+	@NotNull(message = "${formField.fieldComment}不能为空", groups = {UpdateGroup.class})
 	</#if>
-	private ${field.attrType} ${field.attrName};
+	<#if formField.formValidator?? && formField_has_next>
+	@${formField.formValidator}(message = "${formField.fieldComment}不能为空")
+	</#if>
+	<#if formField.enumId??>
+	@EnumCode(${formField.enumNamePascal}Enum.class)
+	</#if>
+	private ${formField.attrType} ${formField.attrName};
 
 </#if>
 </#list>

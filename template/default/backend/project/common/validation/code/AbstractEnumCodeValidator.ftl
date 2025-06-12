@@ -78,4 +78,3 @@ public abstract class AbstractEnumCodeValidator<T> implements ConstraintValidato
     }
 
 }
-

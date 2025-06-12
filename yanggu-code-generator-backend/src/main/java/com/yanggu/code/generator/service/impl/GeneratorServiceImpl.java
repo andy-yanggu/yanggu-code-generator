@@ -501,6 +501,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             if (enumId != null) {
                 EnumEntity enumEntity = enumService.getById(enumId);
                 fieldModel.setEnumName(enumEntity.getEnumName());
+                fieldModel.setEnumNamePascal(NameUtil.toPascal(enumEntity.getEnumName()));
                 fieldModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
             }
         });

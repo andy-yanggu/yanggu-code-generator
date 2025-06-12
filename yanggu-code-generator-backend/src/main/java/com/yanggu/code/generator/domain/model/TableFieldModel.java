@@ -100,6 +100,11 @@ public class TableFieldModel implements Serializable {
     private String enumName;
 
     /**
+     * 枚举名称（大驼峰）
+     */
+    private String enumNamePascal;
+
+    /**
      * 枚举名称大写
      */
     private String enumNameAllUpper;
