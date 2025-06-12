@@ -127,7 +127,9 @@
 					</el-table-column>
 					<el-table-column prop="formValidator" label="表单效验" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-input v-model="row.formValidator"></el-input>
+							<el-select v-model="row.formValidator">
+								<el-option v-for="item in formValidatorList" :key="item.value" :value="item.value" :label="item.label"></el-option>
+							</el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formType" label="表单类型" header-align="center" align="center">
@@ -195,7 +197,12 @@ const fillList = reactive([
 	{ label: 'UPDATE', value: 'UPDATE' },
 	{ label: 'INSERT_UPDATE', value: 'INSERT_UPDATE' }
 ])
-
+const formValidatorList = reactive([
+	{ label: 'NotNull', value: 'NotNull' },
+	{ label: 'NotBlank', value: 'NotBlank' },
+	{ label: 'NotEmpty', value: 'NotEmpty' },
+	{ label: 'Null', value: 'Null' }
+])
 const queryList = reactive([
 	{ label: '=', value: '=' },
 	{ label: '!=', value: '!=' },

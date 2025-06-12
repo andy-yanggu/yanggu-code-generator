@@ -30,21 +30,21 @@ public class BaseClassDTO implements Serializable {
 	 * 基类包名
 	 */
 	@Schema(description = "基类包名")
-	@NotBlank (message = "基类包名不能为空")
+	@NotBlank(message = "基类包名不能为空")
 	private String packageName;
 
 	/**
 	 * 基类编码
 	 */
 	@Schema(description = "基类编码")
-	@NotBlank (message = "基类编码不能为空")
+	@NotBlank(message = "基类编码不能为空")
 	private String code;
 
 	/**
 	 * 基类字段，多个用英文逗号分隔
 	 */
 	@Schema(description = "基类字段，多个用英文逗号分隔")
-	@NotBlank (message = "基类字段不能为空")
+	@NotBlank(message = "基类字段不能为空")
 	private String fields;
 
 	/**
