@@ -18,35 +18,35 @@ import java.io.Serializable;
 @Schema(description = "模板组DTO实体类")
 public class TemplateGroupDTO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主键ID
-	 */
-	@Schema(description = "主键ID")
- 	@NotNull(message = "主键ID不能为空", groups = {UpdateGroup.class})
-	private Long id;
+    /**
+     * 主键ID
+     */
+    @Schema(description = "主键ID")
+    @NotNull(message = "主键ID不能为空", groups = {UpdateGroup.class})
+    private Long id;
 
-	/**
-	 * 模板组名称
-	 */
-	@Schema(description = "模板组名称")
-	@NotBlank(message = "模板组名称不能为空")
-	private String groupName;
+    /**
+     * 模板组名称
+     */
+    @Schema(description = "模板组名称")
+    @NotBlank(message = "模板组名称不能为空")
+    private String groupName;
 
-	/**
-	 * 模板组类型（0-项目，1-表，2-枚举）
-	 */
-	@Schema(description = "模板组类型（0-项目，1-表，2-枚举）")
-	@NotNull(message = "模板组类型不能为空")
-	@EnumCode(TemplateGroupTypeEnum.class)
-	private Integer type;
+    /**
+     * 模板组类型（0-项目，1-表，2-枚举）
+     */
+    @Schema(description = "模板组类型（0-项目，1-表，2-枚举）")
+    @NotNull(message = "模板组类型不能为空")
+    @EnumCode(TemplateGroupTypeEnum.class)
+    private Integer type;
 
-	/**
-	 * 模板组描述
-	 */
-	@Schema(description = "模板组描述")
-	private String groupDesc;
+    /**
+     * 模板组描述
+     */
+    @Schema(description = "模板组描述")
+    private String groupDesc;
 
 }

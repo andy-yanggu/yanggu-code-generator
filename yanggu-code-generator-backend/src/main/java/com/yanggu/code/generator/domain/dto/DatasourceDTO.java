@@ -18,56 +18,56 @@ import java.io.Serializable;
 @Schema(description = "数据源DTO实体类")
 public class DatasourceDTO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@Schema(description = "id")
-	@NotNull(message = "id不能为空", groups = {UpdateGroup.class})
-	private Long id;
+    /**
+     * id
+     */
+    @Schema(description = "id")
+    @NotNull(message = "id不能为空", groups = {UpdateGroup.class})
+    private Long id;
 
-	/**
-	 * 连接名
-	 */
-	@Schema(description = "连接名")
-	@NotBlank(message = "连接名不能为空")
-	private String connName;
+    /**
+     * 连接名
+     */
+    @Schema(description = "连接名")
+    @NotBlank(message = "连接名不能为空")
+    private String connName;
 
-	/**
-	 * 数据库类型
-	 */
-	@Schema(description = "数据库类型")
-	@NotBlank(message = "数据库类型不能为空")
- 	@EnumCode(DbType.class)
-	private String dbType;
+    /**
+     * 数据库类型
+     */
+    @Schema(description = "数据库类型")
+    @NotBlank(message = "数据库类型不能为空")
+    @EnumCode(DbType.class)
+    private String dbType;
 
-	/**
-	 * URL
-	 */
-	@Schema(description = "URL")
+    /**
+     * URL
+     */
+    @Schema(description = "URL")
     @NotBlank(message = "URL不能为空")
-	private String connUrl;
+    private String connUrl;
 
-	/**
-	 * 用户名
-	 */
-	@Schema(description = "用户名")
+    /**
+     * 用户名
+     */
+    @Schema(description = "用户名")
     @NotBlank(message = "用户名不能为空")
-	private String username;
+    private String username;
 
-	/**
-	 * 密码
-	 */
-	@Schema(description = "密码")
+    /**
+     * 密码
+     */
+    @Schema(description = "密码")
     @NotBlank(message = "密码不能为空")
-	private String password;
+    private String password;
 
-	/**
-	 * 描述
-	 */
-	@Schema(description = "描述")
-	private String dataSourceDesc;
+    /**
+     * 描述
+     */
+    @Schema(description = "描述")
+    private String dataSourceDesc;
 
 }

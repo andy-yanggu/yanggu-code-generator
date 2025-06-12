@@ -75,7 +75,6 @@ public interface DatasourceService extends IService<DatasourceEntity> {
 
     /**
      * 测试数据源
-     *
      */
     void test(Long id) throws Exception;
 

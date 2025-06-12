@@ -16,34 +16,34 @@ import java.io.Serializable;
 @Schema(description = "枚举DTO实体类")
 public class EnumDTO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@Schema(description = "id")
-	@NotNull(message = "id不能为空", groups = {UpdateGroup.class})
-	private Long id;
+    /**
+     * id
+     */
+    @Schema(description = "id")
+    @NotNull(message = "id不能为空", groups = {UpdateGroup.class})
+    private Long id;
 
-	/**
-	 * 枚举名称
-	 */
-	@Schema(description = "枚举名称")
- 	@NotBlank(message = "枚举名称不能为空")
-	private String enumName;
+    /**
+     * 枚举名称
+     */
+    @Schema(description = "枚举名称")
+    @NotBlank(message = "枚举名称不能为空")
+    private String enumName;
 
-	/**
-	 * 枚举描述
-	 */
-	@Schema(description = "枚举描述")
-	private String enumDesc;
+    /**
+     * 枚举描述
+     */
+    @Schema(description = "枚举描述")
+    private String enumDesc;
 
-	/**
-	 * 项目ID
-	 */
-	@Schema(description = "项目ID")
-	@NotNull(message = "项目ID不能为空")
-	private Long projectId;
+    /**
+     * 项目ID
+     */
+    @Schema(description = "项目ID")
+    @NotNull(message = "项目ID不能为空")
+    private Long projectId;
 
 }

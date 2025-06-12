@@ -16,169 +16,169 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class TableFieldVO extends BaseVO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@Schema(description = "id")
-	private Long id;
+    /**
+     * id
+     */
+    @Schema(description = "id")
+    private Long id;
 
-	/**
-	 * 表ID
-	 */
-	@Schema(description = "表ID")
-	private Long tableId;
+    /**
+     * 表ID
+     */
+    @Schema(description = "表ID")
+    private Long tableId;
 
-	/**
-	 * 字段名称
-	 */
-	@Schema(description = "字段名称")
-	private String fieldName;
+    /**
+     * 字段名称
+     */
+    @Schema(description = "字段名称")
+    private String fieldName;
 
-	/**
-	 * 字段类型
-	 */
-	@Schema(description = "字段类型")
-	private String fieldType;
+    /**
+     * 字段类型
+     */
+    @Schema(description = "字段类型")
+    private String fieldType;
 
-	/**
-	 * 字段说明
-	 */
-	@Schema(description = "字段说明")
-	private String fieldComment;
+    /**
+     * 字段说明
+     */
+    @Schema(description = "字段说明")
+    private String fieldComment;
 
-	/**
-	 * 属性名
-	 */
-	@Schema(description = "属性名")
-	private String attrName;
+    /**
+     * 属性名
+     */
+    @Schema(description = "属性名")
+    private String attrName;
 
-	/**
-	 * 属性类型
-	 */
-	@Schema(description = "属性类型")
-	private String attrType;
+    /**
+     * 属性类型
+     */
+    @Schema(description = "属性类型")
+    private String attrType;
 
-	/**
-	 * 属性包名
-	 */
-	@Schema(description = "属性包名")
-	private String packageName;
+    /**
+     * 属性包名
+     */
+    @Schema(description = "属性包名")
+    private String packageName;
 
-	/**
-	 * 字段顺序
-	 */
-	@Schema(description = "字段顺序")
-	private Integer fieldSort;
+    /**
+     * 字段顺序
+     */
+    @Schema(description = "字段顺序")
+    private Integer fieldSort;
 
-	/**
-	 * 自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE
-	 */
-	@Schema(description = "自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE")
-	private String autoFill;
+    /**
+     * 自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE
+     */
+    @Schema(description = "自动填充  DEFAULT、INSERT、UPDATE、INSERT_UPDATE")
+    private String autoFill;
 
-	/**
-	 * 主键 0：否  1：是
-	 */
-	@Schema(description = "主键 0：否  1：是")
-	private Integer primaryPk;
+    /**
+     * 主键 0：否  1：是
+     */
+    @Schema(description = "主键 0：否  1：是")
+    private Integer primaryPk;
 
-	/**
-	 * 逻辑删除 0：否  1：是
-	 */
-	@Schema(description = "逻辑删除 0：否  1：是")
-	private Integer logicDelete;
+    /**
+     * 逻辑删除 0：否  1：是
+     */
+    @Schema(description = "逻辑删除 0：否  1：是")
+    private Integer logicDelete;
 
-	/**
-	 * 逻辑删除值
-	 */
-	@Schema(description = "逻辑删除值")
-	private String logicDeleteValue;
+    /**
+     * 逻辑删除值
+     */
+    @Schema(description = "逻辑删除值")
+    private String logicDeleteValue;
 
-	/**
-	 * 逻辑未删除值
-	 */
-	@Schema(description = "逻辑未删除值")
-	private String logicNotDeleteValue;
+    /**
+     * 逻辑未删除值
+     */
+    @Schema(description = "逻辑未删除值")
+    private String logicNotDeleteValue;
 
-	/**
-	 * 枚举ID
-	 */
-	@Schema(description = "枚举ID")
-	private Long enumId;
+    /**
+     * 枚举ID
+     */
+    @Schema(description = "枚举ID")
+    private Long enumId;
 
-	/**
-	 * 表单项 0：否  1：是
-	 */
-	@Schema(description = "表单项 0：否  1：是")
-	private Integer formItem;
+    /**
+     * 表单项 0：否  1：是
+     */
+    @Schema(description = "表单项 0：否  1：是")
+    private Integer formItem;
 
-	/**
-	 * 表单必填 0：否  1：是
-	 */
-	@Schema(description = "表单必填 0：否  1：是")
-	private Integer formRequired;
+    /**
+     * 表单必填 0：否  1：是
+     */
+    @Schema(description = "表单必填 0：否  1：是")
+    private Integer formRequired;
 
-	/**
-	 * 表单类型
-	 */
-	@Schema(description = "表单类型")
-	private String formType;
+    /**
+     * 表单类型
+     */
+    @Schema(description = "表单类型")
+    private String formType;
 
-	/**
-	 * 表单字段顺序
-	 */
-	@Schema(description = "表单字段顺序")
-	private Integer formFieldSort;
+    /**
+     * 表单字段顺序
+     */
+    @Schema(description = "表单字段顺序")
+    private Integer formFieldSort;
 
-	/**
-	 * 表单效验
-	 */
-	@Schema(description = "表单效验")
-	private String formValidator;
+    /**
+     * 表单效验
+     */
+    @Schema(description = "表单效验")
+    private String formValidator;
 
-	/**
-	 * 列表项 0：否  1：是
-	 */
-	@Schema(description = "列表项 0：否  1：是")
-	private Integer gridItem;
+    /**
+     * 列表项 0：否  1：是
+     */
+    @Schema(description = "列表项 0：否  1：是")
+    private Integer gridItem;
 
-	/**
-	 * 列表排序 0：否  1：是
-	 */
-	@Schema(description = "列表排序 0：否  1：是")
-	private Integer gridSort;
+    /**
+     * 列表排序 0：否  1：是
+     */
+    @Schema(description = "列表排序 0：否  1：是")
+    private Integer gridSort;
 
-	/**
-	 * 列表字段顺序
-	 */
-	@Schema(description = "列表字段顺序")
-	private Integer gridFieldSort;
+    /**
+     * 列表字段顺序
+     */
+    @Schema(description = "列表字段顺序")
+    private Integer gridFieldSort;
 
-	/**
-	 * 查询项 0：否  1：是
-	 */
-	@Schema(description = "查询项 0：否  1：是")
-	private Integer queryItem;
+    /**
+     * 查询项 0：否  1：是
+     */
+    @Schema(description = "查询项 0：否  1：是")
+    private Integer queryItem;
 
-	/**
-	 * 查询方式
-	 */
-	@Schema(description = "查询方式")
-	private String queryType;
+    /**
+     * 查询方式
+     */
+    @Schema(description = "查询方式")
+    private String queryType;
 
-	/**
-	 * 查询表单类型
-	 */
-	@Schema(description = "查询表单类型")
-	private String queryFormType;
+    /**
+     * 查询表单类型
+     */
+    @Schema(description = "查询表单类型")
+    private String queryFormType;
 
-	/**
-	 * 查询字段顺序
-	 */
-	@Schema(description = "查询字段顺序")
-	private Integer queryFieldSort;
+    /**
+     * 查询字段顺序
+     */
+    @Schema(description = "查询字段顺序")
+    private Integer queryFieldSort;
 
 }

@@ -19,37 +19,37 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class EnumItemEntity extends BaseEntity implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@TableId(value = "id", type = IdType.AUTO)
-	private Long id;
+    /**
+     * id
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 枚举ID
-	 */
-	@TableField(value = "enum_id")
-	private Long enumId;
+    /**
+     * 枚举ID
+     */
+    @TableField(value = "enum_id")
+    private Long enumId;
 
-	/**
-	 * 枚举项名称
-	 */
-	@TableField(value = "enum_item_name")
-	private String enumItemName;
+    /**
+     * 枚举项名称
+     */
+    @TableField(value = "enum_item_name")
+    private String enumItemName;
 
-	/**
-	 * 枚举项编码
-	 */
-	@TableField(value = "enum_item_code")
-	private String enumItemCode;
+    /**
+     * 枚举项编码
+     */
+    @TableField(value = "enum_item_code")
+    private String enumItemCode;
 
-	/**
-	 * 枚举项描述
-	 */
-	@TableField(value = "enum_item_desc")
-	private String enumItemDesc;
+    /**
+     * 枚举项描述
+     */
+    @TableField(value = "enum_item_desc")
+    private String enumItemDesc;
 
 }

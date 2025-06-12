@@ -16,31 +16,31 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class FieldTypeVO extends BaseVO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@Schema(description = "id")
-	private Long id;
+    /**
+     * id
+     */
+    @Schema(description = "id")
+    private Long id;
 
-	/**
-	 * 字段类型
-	 */
-	@Schema(description = "字段类型")
-	private String columnType;
+    /**
+     * 字段类型
+     */
+    @Schema(description = "字段类型")
+    private String columnType;
 
-	/**
-	 * 属性类型
-	 */
-	@Schema(description = "属性类型")
-	private String attrType;
+    /**
+     * 属性类型
+     */
+    @Schema(description = "属性类型")
+    private String attrType;
 
-	/**
-	 * 属性包名
-	 */
-	@Schema(description = "属性包名")
-	private String packageName;
+    /**
+     * 属性包名
+     */
+    @Schema(description = "属性包名")
+    private String packageName;
 
 }

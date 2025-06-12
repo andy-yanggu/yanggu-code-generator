@@ -1,4 +1,3 @@
-
 package com.yanggu.code.generator.query;
 
 import com.yanggu.code.generator.enums.DbType;

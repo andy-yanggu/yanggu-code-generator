@@ -20,37 +20,37 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class TemplateGroupEntity extends BaseEntity implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主键ID
-	 */
-	@TableId(value = "id", type = IdType.AUTO)
-	private Long id;
+    /**
+     * 主键ID
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 模板组名称
-	 */
-	@TableField(value = "group_name")
-	private String groupName;
+    /**
+     * 模板组名称
+     */
+    @TableField(value = "group_name")
+    private String groupName;
 
-	/**
-	 * 模板组类型（0-项目，1-表，2-枚举）
-	 */
-	@TableField(value = "type")
-	private Integer type;
+    /**
+     * 模板组类型（0-项目，1-表，2-枚举）
+     */
+    @TableField(value = "type")
+    private Integer type;
 
-	/**
-	 * 模板组描述
-	 */
-	@TableField(value = "group_desc")
-	private String groupDesc;
+    /**
+     * 模板组描述
+     */
+    @TableField(value = "group_desc")
+    private String groupDesc;
 
-	/**
-	 * 模板列表
-	 */
-	@TableField(exist = false)
-	private List<TemplateEntity> templateList;
+    /**
+     * 模板列表
+     */
+    @TableField(exist = false)
+    private List<TemplateEntity> templateList;
 
 }

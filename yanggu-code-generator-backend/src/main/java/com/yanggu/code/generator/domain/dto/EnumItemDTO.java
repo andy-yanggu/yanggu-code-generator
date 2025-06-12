@@ -16,42 +16,42 @@ import java.io.Serializable;
 @Schema(description = "枚举项DTO实体类")
 public class EnumItemDTO implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@Schema(description = "id")
-	@NotNull(message = "id不能为空", groups = {UpdateGroup.class})
-	private Long id;
+    /**
+     * id
+     */
+    @Schema(description = "id")
+    @NotNull(message = "id不能为空", groups = {UpdateGroup.class})
+    private Long id;
 
-	/**
-	 * 枚举ID
-	 */
-	@Schema(description = "枚举ID")
-	@NotNull(message = "枚举ID不能为空")
-	private Long enumId;
+    /**
+     * 枚举ID
+     */
+    @Schema(description = "枚举ID")
+    @NotNull(message = "枚举ID不能为空")
+    private Long enumId;
 
-	/**
-	 * 枚举项名称
-	 */
-	@Schema(description = "枚举项名称")
-	@NotBlank(message = "枚举项名称不能为空")
-	private String enumItemName;
+    /**
+     * 枚举项名称
+     */
+    @Schema(description = "枚举项名称")
+    @NotBlank(message = "枚举项名称不能为空")
+    private String enumItemName;
 
-	/**
-	 * 枚举项编码
-	 */
-	@Schema(description = "枚举项编码")
-	@NotBlank(message = "枚举项编码不能为空")
-	private String enumItemCode;
+    /**
+     * 枚举项编码
+     */
+    @Schema(description = "枚举项编码")
+    @NotBlank(message = "枚举项编码不能为空")
+    private String enumItemCode;
 
-	/**
-	 * 枚举项描述
-	 */
-	@Schema(description = "枚举项描述")
-	@NotBlank(message = "枚举项描述不能为空")
-	private String enumItemDesc;
+    /**
+     * 枚举项描述
+     */
+    @Schema(description = "枚举项描述")
+    @NotBlank(message = "枚举项描述不能为空")
+    private String enumItemDesc;
 
 }

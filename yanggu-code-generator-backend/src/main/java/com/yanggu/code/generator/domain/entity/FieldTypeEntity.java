@@ -19,31 +19,31 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class FieldTypeEntity extends BaseEntity implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * id
-	 */
-	@TableId(value = "id", type = IdType.AUTO)
-	private Long id;
+    /**
+     * id
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 字段类型
-	 */
-	@TableField(value = "column_type")
-	private String columnType;
+    /**
+     * 字段类型
+     */
+    @TableField(value = "column_type")
+    private String columnType;
 
-	/**
-	 * 属性类型
-	 */
-	@TableField(value = "attr_type")
-	private String attrType;
+    /**
+     * 属性类型
+     */
+    @TableField(value = "attr_type")
+    private String attrType;
 
-	/**
-	 * 属性包名
-	 */
-	@TableField(value = "package_name")
-	private String packageName;
+    /**
+     * 属性包名
+     */
+    @TableField(value = "package_name")
+    private String packageName;
 
 }
