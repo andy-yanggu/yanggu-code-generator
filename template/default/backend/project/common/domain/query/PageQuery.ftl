@@ -83,7 +83,7 @@ public class PageQuery<T> implements IPage<T>, Serializable {
 
     @Override
     public IPage<T> setCurrent(long current) {
-        this.pageSize = current;
+        this.pageNum = current;
         return this;
     }
 
