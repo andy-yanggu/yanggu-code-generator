@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.util;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.config.GeneratorConfig;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
@@ -11,12 +10,14 @@ import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
 import org.dromara.hutool.extra.spring.SpringUtil;
 
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,26 +117,48 @@ public class GenUtil {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 TableFieldEntity field = new TableFieldEntity();
+                tableFieldList.add(field);
+
+                //设置表ID
                 field.setTableId(tableId);
+
+                //设置字段名称
                 field.setFieldName(rs.getString(query.fieldName()));
-                String fieldType = rs.getString(query.fieldType());
-                if (fieldType.contains(" ")) {
-                    fieldType = fieldType.substring(0, fieldType.indexOf(" "));
-                }
-                field.setFieldType(fieldType);
+
+                //设置字段类型
+                setFieldType(rs, query, field);
+
+                //设置字段注释
                 field.setFieldComment(rs.getString(query.fieldComment()));
-                String key = rs.getString(query.fieldKey());
-                boolean primaryPk = StringUtils.isNotBlank(key) && "PRI".equalsIgnoreCase(key);
-                field.setPrimaryPk(BooleanUtil.toInteger(primaryPk));
+
+                //设置主键字段
+                setPrimaryKey(rs, query, field);
+
                 //设置逻辑删除字段
                 setLogicDeleteInfo(field);
-                tableFieldList.add(field);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
 
         return tableFieldList;
+    }
+
+    private static void setFieldType(ResultSet rs, AbstractQuery query, TableFieldEntity field) throws SQLException {
+        String fieldType = rs.getString(query.fieldType());
+        if (fieldType.contains(" ")) {
+            fieldType = fieldType.substring(0, fieldType.indexOf(" "));
+        }
+        field.setFieldType(fieldType);
+    }
+
+    /**
+     * 设置主键字段
+     */
+    private static void setPrimaryKey(ResultSet rs, AbstractQuery query, TableFieldEntity field) throws SQLException {
+        String key = rs.getString(query.fieldKey());
+        boolean primaryPk = StrUtil.isNotBlank(key) && "PRI".equalsIgnoreCase(key);
+        field.setPrimaryPk(BooleanUtil.toInteger(primaryPk));
     }
 
     /**

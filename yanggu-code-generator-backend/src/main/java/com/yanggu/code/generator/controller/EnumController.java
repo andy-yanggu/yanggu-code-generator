@@ -145,6 +145,8 @@ public class EnumController {
 
     /**
      * 枚举批量生成代码检测接口
+     *
+     * @param idList 枚举ID列表
      */
     @PostMapping("/generateCheck")
     @ApiOperationSupport(order = 11)

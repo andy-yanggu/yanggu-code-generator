@@ -144,10 +144,13 @@ public class DatasourceController {
 
     /**
      * 测试数据源
+     *
+     * @param id 数据源ID
      */
     @GetMapping("/test")
     @ApiOperationSupport(order = 11)
     @Operation(summary = "测试数据源")
+    @Parameter(name = "id", description = "数据源ID", required = true)
     public void test(@RequestParam("id") Long id) throws Exception {
         datasourceService.test(id);
     }

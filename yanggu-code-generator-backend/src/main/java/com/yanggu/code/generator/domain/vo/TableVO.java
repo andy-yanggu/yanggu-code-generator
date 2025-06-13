@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 表VO实体类
@@ -85,18 +84,6 @@ public class TableVO extends BaseVO implements Serializable {
      */
     @Schema(description = "表单布局  1：一列   2：两列")
     private Integer formLayout;
-
-    /**
-     * 表字段列表
-     */
-    @Schema(description = "表字段列表")
-    private List<TableFieldVO> tableFieldList;
-
-    /**
-     * 是否存在
-     */
-    @Schema(description = "是否存在")
-    private Boolean exist;
 
     /**
      * 表模板组ID

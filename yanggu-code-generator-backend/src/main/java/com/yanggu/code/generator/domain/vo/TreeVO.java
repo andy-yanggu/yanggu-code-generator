@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.dromara.hutool.core.comparator.ComparatorChain;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -12,7 +14,10 @@ import java.util.List;
  */
 @Data
 @Schema(description = "树形数据VO实体类")
-public class TreeVO {
+public class TreeVO implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 树形数据排序。类型，标签

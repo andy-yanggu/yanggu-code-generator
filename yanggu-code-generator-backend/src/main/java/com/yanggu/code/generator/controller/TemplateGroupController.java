@@ -156,20 +156,26 @@ public class TemplateGroupController {
 
     /**
      * 导出模板组
+     *
+     * @param idList 模板组ID列表
      */
     @GetMapping("/export")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "导出模板组")
+    @Parameter(name = "idList", description = "模板组ID列表", required = true)
     public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "模板组ID列表不能为空") List<Long> idList) {
         return templateGroupService.export(idList);
     }
 
     /**
      * 导入模板组
+     *
+     * @param file 文件
      */
     @PostMapping("/import")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "导入模板组")
+    @Parameter(name = "file", description = "文件", required = true, ref = "MultipartFile")
     public void importTemplateGroup(@RequestParam("file") MultipartFile file) throws Exception {
         templateGroupService.importTemplateGroup(file);
     }

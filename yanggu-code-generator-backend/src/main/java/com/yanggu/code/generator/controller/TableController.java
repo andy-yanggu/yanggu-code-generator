@@ -156,16 +156,21 @@ public class TableController {
 
     /**
      * 同步表
+     *
+     * @param id 表ID
      */
     @PutMapping("/sync")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "同步表")
+    @Parameter(name = "id", description = "表ID", required = true)
     public void syncTable(@RequestParam("id") Long id) throws Exception {
         tableService.syncTable(id);
     }
 
     /**
      * 表批量生成代码检测接口
+     *
+     * @param idList 表ID列表
      */
     @PostMapping("/generateCheck")
     @ApiOperationSupport(order = 13)

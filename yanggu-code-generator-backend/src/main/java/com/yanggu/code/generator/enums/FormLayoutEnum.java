@@ -14,7 +14,8 @@ public enum FormLayoutEnum {
 
     ONE(1, "一列"),
 
-    TWO(2, "两列");
+    TWO(2, "两列"),
+    ;
 
     @JsonValue
     @EnumValue
