@@ -650,7 +650,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             // 标注为基类字段
             for (TableFieldModel field : fieldList) {
-                field.setEntityBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
+                field.setEntityBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getAttrName())));
             }
         }
 
@@ -663,7 +663,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             // 基类字段
             String[] fields = baseClassModel.getFields().split(",");
             for (TableFieldModel field : fieldList) {
-                field.setVoBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getFieldName())));
+                field.setVoBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getAttrName())));
             }
         }
     }
