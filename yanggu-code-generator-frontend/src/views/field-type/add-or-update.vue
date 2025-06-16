@@ -5,7 +5,9 @@
 				<el-input v-model="dataForm.columnType" placeholder="请输入字段类型"></el-input>
 			</el-form-item>
 			<el-form-item label="属性类型" prop="attrType">
-				<el-input v-model="dataForm.attrType" placeholder="请输入属性类型"></el-input>
+				<el-select v-model="dataForm.attrType" clearable placeholder="请选择属性类型">
+					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
 			</el-form-item>
 			<el-form-item label="属性包名" prop="packageName">
 				<el-input v-model="dataForm.packageName" placeholder="请输入属性包名"></el-input>
@@ -22,6 +24,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { fieldTypeDetailApi, fieldTypeSubmitApi } from '@/api/fieldType'
+import { ATTR_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
 

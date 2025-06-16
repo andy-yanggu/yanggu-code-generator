@@ -5,7 +5,9 @@
 				<el-input v-model="state.queryForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
 			<el-form-item prop="attrType">
-				<el-input v-model="state.queryForm.attrType" clearable placeholder="请输入属性类型"></el-input>
+				<el-select v-model="state.queryForm.attrType" style="width: 160px" clearable placeholder="请选择属性类型">
+					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="getDataList()">查询</el-button>
@@ -57,6 +59,7 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
+import { ATTR_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/fieldType/entityPage',

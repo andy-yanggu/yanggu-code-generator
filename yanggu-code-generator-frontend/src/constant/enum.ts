@@ -35,3 +35,19 @@ export const FORM_LAYOUT_TYPES: EnumItem[] = [
 	{ label: '一列', value: 1 },
 	{ label: '两列', value: 2 }
 ]
+
+//属性类型枚举
+export const ATTR_TYPES: EnumItem[] = [
+	{ label: 'Byte', value: 'Byte' },
+	{ label: 'Short', value: 'Short' },
+	{ label: 'Integer', value: 'Integer' },
+	{ label: 'Long', value: 'Long' },
+	{ label: 'BigInteger', value: 'BigInteger' },
+	{ label: 'Float', value: 'Float' },
+	{ label: 'Double', value: 'Double' },
+	{ label: 'BigDecimal', value: 'BigDecimal' },
+	{ label: 'Boolean', value: 'Boolean' },
+	{ label: 'Character', value: 'Character' },
+	{ label: 'String', value: 'String' },
+	{ label: 'Date', value: 'Date' }
+]
