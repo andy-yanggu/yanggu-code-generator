@@ -151,7 +151,13 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
 
     @Override
     public List<String> distinctList() {
-        return fieldTypeMapper.distinctAttrTypeList();
+        LambdaQueryWrapper<FieldTypeEntity> queryWrapper = Wrappers.lambdaQuery(FieldTypeEntity.class)
+                .select(FieldTypeEntity::getAttrType)
+                .groupBy(FieldTypeEntity::getAttrType);
+        return fieldTypeMapper.selectList(queryWrapper)
+                .stream()
+                .map(FieldTypeEntity::getAttrType)
+                .toList();
     }
 
     /**

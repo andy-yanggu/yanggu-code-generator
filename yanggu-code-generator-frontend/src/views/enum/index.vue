@@ -19,7 +19,7 @@
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="generatorBatchHandler()">生成代码</el-button>
+				<el-button type="success" @click="generatorBatchHandler()">生成代码</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>

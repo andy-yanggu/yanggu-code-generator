@@ -50,6 +50,18 @@
 							</div>
 						</template>
 					</el-table-column>
+					<el-table-column prop="enumId" label="枚举配置" width="110" header-align="center" align="center">
+						<template #default="{ row }">
+							<el-select v-model="row.enumId" filterable placeholder="请选择枚举" clearable>
+								<el-option v-for="item in enumList" :key="item.id" :value="item.id" :label="item.enumName"></el-option>
+							</el-select>
+						</template>
+					</el-table-column>
+					<el-table-column prop="uniqueField" label="唯一性" width="110" header-align="center" align="center">
+						<template #default="{ row }">
+							<el-checkbox v-model="row.uniqueField" :true-value="1" :false-value="0"></el-checkbox>
+						</template>
+					</el-table-column>
 					<el-table-column prop="logicDelete" label="逻辑删除" width="110" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-checkbox v-model="row.logicDelete" :true-value="1" :false-value="0"></el-checkbox>
@@ -63,13 +75,6 @@
 					<el-table-column prop="logicNotDeleteValue" label="逻辑未删除值" width="110" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-input v-model="row.logicNotDeleteValue" placeholder="例如：0"></el-input>
-						</template>
-					</el-table-column>
-					<el-table-column prop="enumId" label="枚举" width="110" header-align="center" align="center">
-						<template #default="{ row }">
-							<el-select v-model="row.enumId" filterable placeholder="请选择枚举" clearable>
-								<el-option v-for="item in enumList" :key="item.id" :value="item.id" :label="item.enumName"></el-option>
-							</el-select>
 						</template>
 					</el-table-column>
 				</el-table>

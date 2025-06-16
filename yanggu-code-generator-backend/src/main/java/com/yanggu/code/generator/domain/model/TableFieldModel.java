@@ -95,6 +95,11 @@ public class TableFieldModel implements Serializable {
     private Long enumId;
 
     /**
+     * 唯一字段 0：否 1：是
+     */
+    private Integer uniqueField;
+
+    /**
      * 枚举名称
      */
     private String enumName;

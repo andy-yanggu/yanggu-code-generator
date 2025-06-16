@@ -113,6 +113,12 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
     private Long enumId;
 
     /**
+     * 唯一字段 0：否 1：是
+     */
+    @TableField(value = "unique_field")
+    private Integer uniqueField;
+
+    /**
      * 表单项 0：否  1：是
      */
     @TableField(value = "form_item")

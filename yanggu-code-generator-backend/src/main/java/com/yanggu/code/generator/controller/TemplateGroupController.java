@@ -11,6 +11,8 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -175,7 +177,8 @@ public class TemplateGroupController {
     @PostMapping("/import")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "导入模板组")
-    @Parameter(name = "file", description = "文件", required = true, ref = "MultipartFile")
+    @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
+            schema = @Schema(name = "file", format = "binary"))
     public void importTemplateGroup(@RequestParam("file") MultipartFile file) throws Exception {
         templateGroupService.importTemplateGroup(file);
     }

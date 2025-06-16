@@ -110,6 +110,12 @@ public class TableFieldVO extends BaseVO implements Serializable {
     private Long enumId;
 
     /**
+     * 唯一字段 0：否 1：是
+     */
+    @Schema(description = "唯一字段 0：否 1：是")
+    private Integer uniqueField;
+
+    /**
      * 表单项 0：否  1：是
      */
     @Schema(description = "表单项 0：否  1：是")

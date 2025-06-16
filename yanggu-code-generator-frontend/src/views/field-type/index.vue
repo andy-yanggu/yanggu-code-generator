@@ -29,7 +29,13 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="columnType" label="字段类型" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="attrType" label="属性类型" header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="attrType"
+				label="属性类型"
+				header-align="center"
+				align="center"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, ATTR_TYPES)"
+			></el-table-column>
 			<el-table-column prop="packageName" label="属性包名" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -60,6 +66,7 @@ import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
+import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/fieldType/entityPage',

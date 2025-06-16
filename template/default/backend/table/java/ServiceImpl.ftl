@@ -171,8 +171,13 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      */
     private void checkUnique(${classNameUpper}DTO dto) {
         LambdaQueryWrapper<${classNameUpper}Entity> wrapper = Wrappers.lambdaQuery(${classNameUpper}Entity.class);
+
         wrapper.ne(Objects.nonNull(dto.getId()), ${classNameUpper}Entity::getId, dto.getId());
-        //TODO 其余字段校验
+        <#list fieldList as field>
+            <#if field.uniqueField == 1>
+        wrapper.eq(${classNameUpper}Entity::get${field.attrName?cap_first}, dto.get${field.attrName?cap_first}());
+            </#if>
+        </#list>
 
         boolean exists = ${className}Mapper.exists(wrapper);
         if (exists) {
