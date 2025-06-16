@@ -37,6 +37,7 @@ public class EnumDTO implements Serializable {
      * 枚举描述
      */
     @Schema(description = "枚举描述")
+    @NotBlank(message = "枚举描述不能为空")
     private String enumDesc;
 
     /**

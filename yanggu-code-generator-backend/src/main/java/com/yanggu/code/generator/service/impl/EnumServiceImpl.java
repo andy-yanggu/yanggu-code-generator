@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -52,8 +53,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(EnumDTO dto) {
-        EnumEntity entity = enumMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkUnique(dto);
+        EnumEntity entity = enumMapstruct.dtoToEntity(dto);
         enumMapper.insert(entity);
     }
 
@@ -63,9 +65,10 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(EnumDTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         EnumEntity formEntity = enumMapstruct.dtoToEntity(dto);
         EnumEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         enumMapper.updateById(formEntity);
     }
 
@@ -186,6 +189,22 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
             throw new BusinessException(DATA_NOT_EXIST, "枚举", id);
         }
         return entity;
+    }
+
+    private void checkUnique(EnumDTO dto) {
+        LambdaQueryWrapper<EnumEntity> queryWrapper = Wrappers.lambdaQuery(EnumEntity.class)
+                .ne(Objects.nonNull(dto.getId()), EnumEntity::getId, dto.getId())
+                .eq(EnumEntity::getProjectId, dto.getProjectId())
+                .and(wrapper -> wrapper
+                        .eq(EnumEntity::getEnumName, dto.getEnumName())
+                        .or()
+                        .eq(EnumEntity::getEnumDesc, dto.getEnumDesc())
+                );
+
+        boolean exists = enumMapper.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("枚举名称或者描述在项目下已存在");
+        }
     }
 
     private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumEntityQuery query) {

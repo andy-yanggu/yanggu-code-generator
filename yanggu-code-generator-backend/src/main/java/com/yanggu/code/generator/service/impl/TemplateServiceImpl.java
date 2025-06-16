@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -40,8 +41,9 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(TemplateDTO dto) {
-        TemplateEntity entity = templateMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkUnique(dto);
+        TemplateEntity entity = templateMapstruct.dtoToEntity(dto);
         templateMapper.insert(entity);
     }
 
@@ -51,9 +53,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(TemplateDTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         TemplateEntity formEntity = templateMapstruct.dtoToEntity(dto);
         TemplateEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         templateMapper.updateById(formEntity);
     }
 
@@ -153,6 +156,22 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
             throw new BusinessException(DATA_NOT_EXIST, "模板", id);
         }
         return entity;
+    }
+
+    private void checkUnique(TemplateDTO dto) {
+        LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
+                .ne(Objects.nonNull(dto.getId()), TemplateEntity::getId, dto.getId())
+                .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
+                .and(wrapper -> wrapper
+                        .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
+                        .or()
+                        .eq(TemplateEntity::getGeneratorPath, dto.getGeneratorPath())
+                );
+
+        boolean exists = templateMapper.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("模板名称或生成代码的路径已存在");
+        }
     }
 
     private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateEntityQuery query) {

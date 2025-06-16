@@ -64,8 +64,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(TemplateGroupDTO dto) {
-        TemplateGroupEntity entity = templateGroupMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkUnique(dto);
+        TemplateGroupEntity entity = templateGroupMapstruct.dtoToEntity(dto);
         templateGroupMapper.insert(entity);
     }
 
@@ -75,9 +76,14 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(TemplateGroupDTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         TemplateGroupEntity formEntity = templateGroupMapstruct.dtoToEntity(dto);
         TemplateGroupEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
+        if (!dbEntity.getType().equals(formEntity.getType())) {
+            throw new BusinessException("模板组类型不能修改");
+        }
+
         templateGroupMapper.updateById(formEntity);
     }
 
@@ -102,17 +108,6 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         checkReference(idList);
         //删除校验和关联删除
         templateGroupMapper.deleteByIds(idList);
-    }
-
-    private void checkReference(List<Long> idList) {
-        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
-                .in(ProjectEntity::getProjectTemplateGroupId, idList)
-                .or()
-                .in(ProjectEntity::getTableTemplateGroupId, idList);
-        boolean exists = projectService.exists(queryWrapper);
-        if (exists) {
-            throw new BusinessException("模板组已被项目引用，不能删除");
-        }
     }
 
     /**
@@ -172,9 +167,11 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Transactional(rollbackFor = RuntimeException.class)
     public void copy(TemplateGroupDTO dto) {
         Long oldGroupId = dto.getId();
+        dto.setId(null);
         TemplateGroupEntity newGroup = templateGroupMapstruct.dtoToEntity(dto);
-        newGroup.setId(null);
         newGroup.setCreateTime(new Date());
+
+        checkUnique(dto);
         templateGroupMapper.insert(newGroup);
 
         Long newTemplateGroupId = newGroup.getId();
@@ -235,6 +232,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         list.forEach(templateGroup -> {
             templateGroup.setId(null);
             templateGroup.setCreateTime(new Date());
+
+            TemplateGroupDTO dto = templateGroupMapstruct.entityToDTO(templateGroup);
+            checkUnique(dto);
             templateGroupMapper.insert(templateGroup);
 
             List<TemplateEntity> templateList = templateGroup.getTemplateList();
@@ -264,6 +264,28 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
             throw new BusinessException(DATA_NOT_EXIST, "模板组", id);
         }
         return entity;
+    }
+
+    private void checkUnique(TemplateGroupDTO dto) {
+        LambdaQueryWrapper<TemplateGroupEntity> queryWrapper = Wrappers.lambdaQuery(TemplateGroupEntity.class)
+                .eq(TemplateGroupEntity::getGroupName, dto.getGroupName())
+                .ne(MybatisUtil.isNotEmpty(dto.getId()), TemplateGroupEntity::getId, dto.getId());
+
+        boolean exists = templateGroupMapper.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("模板组: {}, 已存在", dto.getGroupName());
+        }
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getProjectTemplateGroupId, idList)
+                .or()
+                .in(ProjectEntity::getTableTemplateGroupId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("模板组已被项目引用，不能删除");
+        }
     }
 
     private LambdaQueryWrapper<TemplateGroupEntity> buildQueryWrapper(TemplateGroupEntityQuery query) {

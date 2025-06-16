@@ -13,7 +13,14 @@ const serverUrl = ref('')
 const apiUrl = import.meta.env.VITE_API_URL
 serverUrl.value = `${apiUrl}/templateGroup/import`
 
-const handlerSuccess = () => {
+const handlerSuccess = (response: any) => {
+	if (response.code !== 200) {
+		ElMessage.error({
+			message: response.message,
+			duration: 1000
+		})
+		return
+	}
 	ElMessage.success({
 		message: '导入成功',
 		duration: 1000,

@@ -47,6 +47,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(DatasourceDTO dto) {
+        checkUnique(dto);
         DatasourceEntity entity = datasourceMapstruct.dtoToEntity(dto);
         //唯一性校验等
         datasourceMapper.insert(entity);
@@ -58,6 +59,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(DatasourceDTO dto) {
+        checkUnique(dto);
         DatasourceEntity formEntity = datasourceMapstruct.dtoToEntity(dto);
         DatasourceEntity dbEntity = selectById(dto.getId());
         //唯一性校验等
@@ -85,15 +87,6 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         checkReference(idList);
         //删除校验和关联删除
         datasourceMapper.deleteByIds(idList);
-    }
-
-    private void checkReference(List<Long> idList) {
-        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
-                .in(ProjectEntity::getDatasourceId, idList);
-        boolean exists = projectService.exists(queryWrapper);
-        if (exists) {
-            throw new BusinessException("数据源已被项目引用，不能删除");
-        }
     }
 
     /**
@@ -182,6 +175,26 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
             throw new BusinessException(DATA_NOT_EXIST, "数据源", id);
         }
         return entity;
+    }
+
+    private void checkUnique(DatasourceDTO dto) {
+        LambdaQueryWrapper<DatasourceEntity> queryWrapper = Wrappers.lambdaQuery(DatasourceEntity.class)
+                .eq(DatasourceEntity::getConnName, dto.getConnName())
+                .ne(MybatisUtil.isNotEmpty(dto.getId()), DatasourceEntity::getId, dto.getId());
+
+        boolean exists = datasourceMapper.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("数据源: {}, 已存在", dto.getConnName());
+        }
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+                .in(ProjectEntity::getDatasourceId, idList);
+        boolean exists = projectService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("数据源已被项目引用，不能删除");
+        }
     }
 
     private LambdaQueryWrapper<DatasourceEntity> buildQueryWrapper(DatasourceEntityQuery query) {
