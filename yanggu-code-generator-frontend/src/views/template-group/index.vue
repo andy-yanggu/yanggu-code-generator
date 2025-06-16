@@ -41,7 +41,7 @@
 			<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="handlerTemplate(scope.row.id)">模板配置</el-button>
+					<el-button type="primary" link @click="handlerTemplate(scope.row)">模板配置</el-button>
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
@@ -65,9 +65,7 @@
 		<copy ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy>
 	</el-card>
 
-	<el-dialog v-model="dialogVisible" title="模板配置" width="75%">
-		<template-index ref="templateIndexRef" :key="currentGroupId" :template-group-id="currentGroupId" @close="handleDialogClose" />
-	</el-dialog>
+	<template-index ref="templateIndexRef" :key="currentGroupId"></template-index>
 </template>
 
 <script setup lang="ts">
@@ -91,7 +89,6 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const dialogVisible = ref(false)
 const queryRef = ref()
 const addOrUpdateRef = ref()
 const copyTemplateGroupRef = ref()
@@ -110,14 +107,8 @@ const copyTemplateGroupHandle = (id: number) => {
 	copyTemplateGroupRef.value.init(id)
 }
 
-const handleDialogClose = () => {
-	dialogVisible.value = false
-}
-
-const handlerTemplate = (id: number) => {
-	dialogVisible.value = true
-	currentGroupId.value = id
-	templateIndexRef.value.init()
+const handlerTemplate = (row: any) => {
+	templateIndexRef.value.init(row)
 }
 
 const handlerType = (row: any) => {
