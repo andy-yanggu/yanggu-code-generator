@@ -57,7 +57,7 @@ export const copyTemplateApi = (dataForm: any) => {
 }
 
 //导出模板组
-export const exportTemplateGroupApi = (tableIdList: any) => {
+export const exportTemplateGroupApi = (tableIdList: number[]) => {
 	const listString = tableIdList.join(',')
 	location.href = import.meta.env.VITE_API_URL + '/templateGroup/export?idList=' + listString
 }

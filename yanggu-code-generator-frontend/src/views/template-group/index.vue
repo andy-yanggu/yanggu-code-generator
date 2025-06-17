@@ -31,7 +31,14 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			ref="tableRef"
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="groupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -95,6 +102,7 @@ const state: IHooksOptions = reactive({
 })
 
 const queryRef = ref()
+const tableRef = ref()
 const addOrUpdateRef = ref()
 const copyTemplateGroupRef = ref()
 const currentGroupId = ref<number>(-1)
@@ -123,6 +131,11 @@ const exportHandle = () => {
 		return
 	}
 	exportTemplateGroupApi(idList)
+	setTimeout(() => {
+		tableRef.value.clearSelection()
+		state.dataListSelections = []
+		ElMessage.success('导出成功，请查看下载的文件')
+	}, 500)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

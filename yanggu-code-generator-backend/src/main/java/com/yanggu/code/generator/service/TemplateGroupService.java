@@ -21,7 +21,7 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     /**
      * 新增
      */
-    void add(TemplateGroupDTO dto);
+    TemplateGroupEntity add(TemplateGroupDTO dto);
 
     /**
      * 修改

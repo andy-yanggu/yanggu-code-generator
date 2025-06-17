@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.bo.TemplateBO;
+import com.yanggu.code.generator.domain.bo.TemplateGroupBO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
@@ -69,11 +71,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void add(TemplateGroupDTO dto) {
+    public TemplateGroupEntity add(TemplateGroupDTO dto) {
         //唯一性校验等
         checkUnique(dto);
         TemplateGroupEntity entity = templateGroupMapstruct.dtoToEntity(dto);
         templateGroupMapper.insert(entity);
+        return entity;
     }
 
     /**
@@ -146,7 +149,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         //简单sql使用QueryWrapper
         List<TemplateGroupEntity> entityList = templateGroupMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
-        //List<TemplateGroupEntity> entityList = templateGroupMapper.entityList(query);
+        //List<TemplateGroupBO> entityList = templateGroupMapper.entityList(query);
         return templateGroupMapstruct.entityToVO(entityList);
     }
 
@@ -196,23 +199,10 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         List<TemplateGroupEntity> list = new ArrayList<>();
         for (Long id : idList) {
             TemplateGroupEntity templateGroup = this.getById(id);
-            templateGroup.setId(null);
-            templateGroup.setCreateTime(null);
-            templateGroup.setUpdateTime(null);
-            templateGroup.setIsDelete(null);
-            List<TemplateEntity> templateList = templateService.selectByGroupId(id);
-            if (CollUtil.isNotEmpty(templateList)) {
-                for (TemplateEntity template : templateList) {
-                    template.setId(null);
-                    template.setTemplateGroupId(null);
-                    template.setCreateTime(null);
-                    template.setUpdateTime(null);
-                    template.setIsDelete(null);
-                }
-            }
             list.add(templateGroup);
         }
-        String jsonStr = JSONUtil.toJsonStr(list);
+        List<TemplateGroupBO> boList = templateGroupMapstruct.entityToBO(list);
+        String jsonStr = JSONUtil.toJsonStr(boList);
 
         String fileName = "TemplateGroup_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
         return ResponseEntity.ok()
@@ -236,24 +226,19 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         if (StrUtil.isBlank(data)) {
             throw new BusinessException("导入数据不能为空");
         }
-        List<TemplateGroupEntity> list = JSONUtil.toList(data, TemplateGroupEntity.class);
+        List<TemplateGroupBO> list = JSONUtil.toList(data, TemplateGroupBO.class);
         if (CollUtil.isEmpty(list)) {
             throw new BusinessException("导入数据不能为空");
         }
         list.forEach(templateGroup -> {
-            templateGroup.setId(null);
-            templateGroup.setCreateTime(new Date());
+            TemplateGroupDTO groupDTO = templateGroupMapstruct.boToDTO(templateGroup);
+            TemplateGroupEntity groupEntity = add(groupDTO);
 
-            TemplateGroupDTO groupDTO = templateGroupMapstruct.entityToDTO(templateGroup);
-            add(groupDTO);
-
-            List<TemplateEntity> templateList = templateGroup.getTemplateList();
+            List<TemplateBO> templateList = templateGroup.getTemplateList();
             if (CollUtil.isNotEmpty(templateList)) {
                 templateList.forEach(template -> {
-                    template.setId(null);
-                    template.setTemplateGroupId(templateGroup.getId());
-                    template.setCreateTime(new Date());
-                    TemplateDTO templateDTO = templateMapstruct.entityToDTO(template);
+                    TemplateDTO templateDTO = templateMapstruct.boToDTO(template);
+                    templateDTO.setTemplateGroupId(groupEntity.getId());
                     templateService.add(templateDTO);
                 });
             }

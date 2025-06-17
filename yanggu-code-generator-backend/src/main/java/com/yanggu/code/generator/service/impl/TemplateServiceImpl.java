@@ -111,7 +111,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         //简单sql使用QueryWrapper
         List<TemplateEntity> entityList = templateMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
-        //List<TemplateEntity> entityList = templateMapper.entityList(query);
+        //List<TemplateBO> entityList = templateMapper.entityList(query);
         return templateMapstruct.entityToVO(entityList);
     }
 
