@@ -88,10 +88,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(${primaryKeyType} id) {
-        ${classNameUpper}Entity dbEntity = selectById(id);
-        //checkReference(List.of(dbEntity));
-        //删除校验和关联删除
-        ${className}Mapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**
@@ -101,8 +98,9 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<${primaryKeyType}> idList) {
         List<${classNameUpper}Entity> dbEntityList = ${className}Mapper.selectByIds(idList);
+        //删除校验
         //checkReference(dbEntityList);
-        //删除校验和关联删除
+        //关联删除
         ${className}Mapper.deleteByIds(idList);
     }
 
