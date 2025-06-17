@@ -7,6 +7,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
 import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.service.DatasourceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -151,8 +152,8 @@ public class DatasourceController {
     @ApiOperationSupport(order = 11)
     @Operation(summary = "测试数据源")
     @Parameter(name = "id", description = "数据源ID", required = true)
-    public void test(@RequestParam("id") Long id) throws Exception {
-        datasourceService.test(id);
+    public DatasourceTestVO test(@RequestParam("id") Long id) throws Exception {
+        return datasourceService.test(id);
     }
 
 }

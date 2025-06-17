@@ -12,16 +12,19 @@ import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
 import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
 import com.yanggu.code.generator.mapstruct.DatasourceMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.util.DbUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
 import java.util.List;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
@@ -29,6 +32,7 @@ import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIS
 /**
  * 数据源Service实现类
  */
+@Slf4j
 @Service
 public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, DatasourceEntity> implements DatasourceService {
 
@@ -143,15 +147,28 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     }
 
     @Override
-    public DataSourceBO get(Long datasourceId) {
+    public DataSourceBO get(Long datasourceId) throws Exception {
         // 初始化配置信息
-        return new DataSourceBO(this.getById(datasourceId));
+        DataSourceBO dataSourceBO = new DataSourceBO(this.getById(datasourceId));
+        Connection connection = DbUtil.getConnection(dataSourceBO);
+        dataSourceBO.setConnection(connection);
+        return dataSourceBO;
     }
 
     @Override
-    public void test(Long id) throws Exception {
+    public DatasourceTestVO test(Long id) throws Exception {
         DatasourceEntity entity = getById(id);
-        DbUtil.getConnection(new DataSourceBO(entity));
+        DatasourceTestVO result = new DatasourceTestVO();
+        try (Connection ignored = DbUtil.getConnection(new DataSourceBO(entity))) {
+            result.setResult(true);
+            result.setMessage("测试成功");
+            return result;
+        } catch (Exception e) {
+            log.warn("数据源测试失败, 异常信息: {}", e.getMessage(), e);
+            result.setResult(false);
+            result.setMessage(e.getMessage());
+            return result;
+        }
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.yanggu.code.generator.domain.bo;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
-import com.yanggu.code.generator.util.DbUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.util.EnumUtil;
@@ -53,13 +52,6 @@ public class DataSourceBO {
         this.username = entity.getUsername();
         this.password = entity.getPassword();
         this.dbQuery = AbstractQuery.getQuery(this.dbType);
-
-        try {
-            this.connection = DbUtil.getConnection(this);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException("数据源连接失败：" + e.getMessage());
-        }
     }
 
 }

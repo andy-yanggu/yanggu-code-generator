@@ -2,11 +2,13 @@ package com.yanggu.code.generator.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
+import com.yanggu.code.generator.common.response.Result;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
 import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 
 import java.util.List;
@@ -76,7 +78,7 @@ public interface DatasourceService extends IService<DatasourceEntity> {
     /**
      * 测试数据源
      */
-    void test(Long id) throws Exception;
+    DatasourceTestVO test(Long id) throws Exception;
 
     /**
      * 获取数据库产品名，如：MySQL

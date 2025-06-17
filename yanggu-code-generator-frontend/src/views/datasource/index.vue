@@ -40,7 +40,7 @@
 			<el-table-column prop="dataSourceDesc" label="描述" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="datasourceHandle(scope.row.id)">测试</el-button>
+					<el-button type="primary" link @click="datasourceTestHandle(scope.row.id)">测试</el-button>
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
@@ -90,9 +90,14 @@ const resetQueryRef = () => {
 	queryRef.value.resetFields()
 }
 
-const datasourceHandle = (id: number) => {
+const datasourceTestHandle = (id: number) => {
 	datasourceTestApi(id).then((res: any) => {
-		ElMessage.success(res.message)
+		const { result, message } = res.data
+		if (result === true) {
+			ElMessage.success(message)
+		} else {
+			ElMessage.error(message)
+		}
 	})
 }
 
