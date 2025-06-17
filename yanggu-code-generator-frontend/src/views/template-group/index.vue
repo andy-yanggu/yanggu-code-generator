@@ -124,18 +124,16 @@ const handlerTemplate = (row: any) => {
 	templateIndexRef.value.init(row)
 }
 
-const exportHandle = () => {
+const exportHandle = async () => {
 	const idList = state.dataListSelections ? state.dataListSelections : []
 	if (idList.length === 0) {
 		ElMessage.warning('请选择导出的模板组')
 		return
 	}
-	exportTemplateGroupApi(idList)
-	setTimeout(() => {
-		tableRef.value.clearSelection()
-		state.dataListSelections = []
-		ElMessage.success('导出成功，请查看下载的文件')
-	}, 500)
+	await exportTemplateGroupApi(idList)
+	tableRef.value.clearSelection()
+	state.dataListSelections = []
+	ElMessage.success('导出成功，请查看下载的文件')
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

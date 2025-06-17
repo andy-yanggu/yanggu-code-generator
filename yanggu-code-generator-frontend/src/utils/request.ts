@@ -35,6 +35,12 @@ service.interceptors.response.use(
 			return Promise.reject(new Error(response.statusText || 'Error'))
 		}
 
+		//如果是文件下载请求
+		if (response.config.responseType === 'blob') {
+			//直接返回响应数据
+			return response
+		}
+
 		const res = response.data
 		// 响应成功
 		if (res.code === 200) {
