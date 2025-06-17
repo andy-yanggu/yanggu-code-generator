@@ -102,6 +102,15 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<EnumVO> detailList(List<Long> idList) {
+        List<EnumEntity> entityList = enumMapper.selectByIds(idList);
+        return enumMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -143,15 +152,6 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         //查询全部数据
         query.setPageSize(-1L);
         return enumMapper.voList(query);
-    }
-
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<EnumVO> detailList(List<Long> idList) {
-        List<EnumEntity> entityList = enumMapper.selectByIds(idList);
-        return enumMapstruct.entityToVO(entityList);
     }
 
     @Override

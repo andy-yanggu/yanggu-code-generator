@@ -133,7 +133,7 @@ const exportHandle = async () => {
 	await exportTemplateGroupApi(idList)
 	tableRef.value.clearSelection()
 	state.dataListSelections = []
-	ElMessage.success('导出成功，请查看下载的文件')
+	ElMessage.success('导出成功，请查看已下载的文件')
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
