@@ -40,8 +40,8 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(EnumItemDTO dto) {
-        EnumItemEntity entity = enumItemMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        EnumItemEntity entity = enumItemMapstruct.dtoToEntity(dto);
         enumItemMapper.insert(entity);
     }
 
@@ -51,9 +51,9 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(EnumItemDTO dto) {
+        //唯一性校验等
         EnumItemEntity formEntity = enumItemMapstruct.dtoToEntity(dto);
         EnumItemEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         enumItemMapper.updateById(formEntity);
     }
 
@@ -64,8 +64,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         EnumItemEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        enumItemMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**

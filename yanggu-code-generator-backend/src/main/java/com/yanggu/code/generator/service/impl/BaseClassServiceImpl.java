@@ -46,9 +46,9 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(BaseClassDTO dto) {
+        //唯一性校验等
         checkUnique(dto);
         BaseClassEntity entity = baseClassMapstruct.dtoToEntity(dto);
-        //唯一性校验等
         baseClassMapper.insert(entity);
     }
 
@@ -58,10 +58,10 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(BaseClassDTO dto) {
+        //唯一性校验等
         checkUnique(dto);
         BaseClassEntity formEntity = baseClassMapstruct.dtoToEntity(dto);
         BaseClassEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         baseClassMapper.updateById(formEntity);
     }
 
@@ -72,9 +72,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         BaseClassEntity dbEntity = selectById(id);
-        checkReference(List.of(id));
-        //删除校验和关联删除
-        baseClassMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**
@@ -83,8 +81,9 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
+        //删除校验
         checkReference(idList);
-        //删除校验和关联删除
+        //关联删除
         baseClassMapper.deleteByIds(idList);
     }
 

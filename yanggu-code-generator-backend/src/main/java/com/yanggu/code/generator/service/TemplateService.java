@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
@@ -69,5 +70,12 @@ public interface TemplateService extends IService<TemplateEntity> {
      * 根据模板组ID查询模板
      */
     List<TemplateEntity> selectByGroupId(Long groupId);
+
+    /**
+     * 根据模板组ID删除模板
+     */
+    default void deleteByGroupId(List<Long> groupIdList) {
+        this.remove(Wrappers.<TemplateEntity>lambdaQuery().in(TemplateEntity::getTemplateGroupId, groupIdList));
+    }
 
 }

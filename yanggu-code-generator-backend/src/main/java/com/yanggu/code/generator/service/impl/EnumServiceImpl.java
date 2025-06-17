@@ -79,8 +79,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         EnumEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        enumMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**

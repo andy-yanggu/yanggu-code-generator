@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
@@ -16,12 +17,14 @@ import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
+import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.io.IoUtil;
+import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.CharsetUtil;
 import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Autowired
     private TemplateGroupMapstruct templateGroupMapstruct;
+
+    @Autowired
+    private TemplateMapstruct templateMapstruct;
 
     @Autowired
     private TemplateService templateService;
@@ -94,9 +100,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         TemplateGroupEntity dbEntity = selectById(id);
-        checkReference(List.of(id));
-        //删除校验和关联删除
-        templateGroupMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**
@@ -105,9 +109,11 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
+        //删除校验
         checkReference(idList);
-        //删除校验和关联删除
+        //关联删除
         templateGroupMapper.deleteByIds(idList);
+        templateService.deleteByGroupId(idList);
     }
 
     /**
@@ -203,13 +209,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                     template.setUpdateTime(null);
                     template.setIsDelete(null);
                 }
-                templateGroup.setTemplateList(templateList);
             }
             list.add(templateGroup);
         }
         String jsonStr = JSONUtil.toJsonStr(list);
 
-        String fileName = "templateGroup" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
+        String fileName = "TemplateGroup_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
         return ResponseEntity.ok()
                 .header(CONTENT_DISPOSITION, "attachment; filename=" + fileName)
                 .contentType(APPLICATION_OCTET_STREAM)
@@ -218,7 +223,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Override
     public TemplateGroupEntity getById(Long id) {
-        TemplateGroupEntity templateGroup = templateGroupMapper.selectById(id);
+        TemplateGroupEntity templateGroup = selectById(id);
         List<TemplateEntity> templateList = templateService.selectByGroupId(id);
         templateGroup.setTemplateList(templateList);
         return templateGroup;
@@ -228,14 +233,19 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Transactional(rollbackFor = RuntimeException.class)
     public void importTemplateGroup(MultipartFile file) throws IOException {
         String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
+        if (StrUtil.isBlank(data)) {
+            throw new BusinessException("导入数据不能为空");
+        }
         List<TemplateGroupEntity> list = JSONUtil.toList(data, TemplateGroupEntity.class);
+        if (CollUtil.isEmpty(list)) {
+            throw new BusinessException("导入数据不能为空");
+        }
         list.forEach(templateGroup -> {
             templateGroup.setId(null);
             templateGroup.setCreateTime(new Date());
 
-            TemplateGroupDTO dto = templateGroupMapstruct.entityToDTO(templateGroup);
-            checkUnique(dto);
-            templateGroupMapper.insert(templateGroup);
+            TemplateGroupDTO groupDTO = templateGroupMapstruct.entityToDTO(templateGroup);
+            add(groupDTO);
 
             List<TemplateEntity> templateList = templateGroup.getTemplateList();
             if (CollUtil.isNotEmpty(templateList)) {
@@ -243,7 +253,8 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                     template.setId(null);
                     template.setTemplateGroupId(templateGroup.getId());
                     template.setCreateTime(new Date());
-                    templateService.save(template);
+                    TemplateDTO templateDTO = templateMapstruct.entityToDTO(template);
+                    templateService.add(templateDTO);
                 });
             }
         });
@@ -279,9 +290,13 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     private void checkReference(List<Long> idList) {
         LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
-                .in(ProjectEntity::getProjectTemplateGroupId, idList)
-                .or()
-                .in(ProjectEntity::getTableTemplateGroupId, idList);
+                .and(wrapper -> wrapper
+                        .in(ProjectEntity::getProjectTemplateGroupId, idList)
+                        .or()
+                        .in(ProjectEntity::getTableTemplateGroupId, idList)
+                        .or()
+                        .in(ProjectEntity::getEnumTemplateGroupId, idList)
+                );
         boolean exists = projectService.exists(queryWrapper);
         if (exists) {
             throw new BusinessException("模板组已被项目引用，不能删除");

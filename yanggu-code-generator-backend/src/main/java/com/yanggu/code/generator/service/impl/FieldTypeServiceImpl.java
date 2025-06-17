@@ -44,9 +44,9 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(FieldTypeDTO dto) {
-        FieldTypeEntity entity = fieldTypeMapstruct.dtoToEntity(dto);
         //唯一性校验等
-        checkExist(dto);
+        checkUnique(dto);
+        FieldTypeEntity entity = fieldTypeMapstruct.dtoToEntity(dto);
         fieldTypeMapper.insert(entity);
     }
 
@@ -56,10 +56,10 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(FieldTypeDTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         FieldTypeEntity formEntity = fieldTypeMapstruct.dtoToEntity(dto);
         FieldTypeEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
-        checkExist(dto);
         fieldTypeMapper.updateById(formEntity);
     }
 
@@ -71,7 +71,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     public void delete(Long id) {
         FieldTypeEntity dbEntity = selectById(id);
         //删除校验和关联删除
-        fieldTypeMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**
@@ -177,7 +177,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         return entity;
     }
 
-    private void checkExist(FieldTypeDTO dto) {
+    private void checkUnique(FieldTypeDTO dto) {
         LambdaQueryWrapper<FieldTypeEntity> queryWrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
         queryWrapper.ne(dto.getId() != null, FieldTypeEntity::getId, dto.getId());
         queryWrapper.eq(FieldTypeEntity::getColumnType, dto.getColumnType());
