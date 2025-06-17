@@ -34,6 +34,15 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
 
     @Autowired
     private ${classNameUpper}Mapstruct ${className}Mapstruct;
+<#function checkUnique fieldList>
+    <#list fieldList as field>
+        <#if field.uniqueField == 1>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
+<#assign isUnique = checkUnique(fieldList)>
 
     /**
      * 新增
@@ -41,8 +50,10 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(${classNameUpper}DTO dto) {
+        <#if isUnique>
         //唯一性校验等
-        //checkUnique(dto);
+        checkUnique(dto);
+        </#if>
         ${classNameUpper}Entity entity = ${className}Mapstruct.dtoToEntity(dto);
         ${className}Mapper.insert(entity);
     }
@@ -53,8 +64,10 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(${classNameUpper}DTO dto) {
+        <#if isUnique>
         //唯一性校验等
-        //checkUnique(dto);
+        checkUnique(dto);
+        </#if>
         ${classNameUpper}Entity formEntity = ${className}Mapstruct.dtoToEntity(dto);
         ${classNameUpper}Entity dbEntity = selectById(dto.getId());
         ${className}Mapper.updateById(formEntity);
@@ -166,6 +179,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return entity;
     }
 
+    <#if isUnique>
     /**
      * 唯一性校验
      */
@@ -185,6 +199,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         }
     }
 
+    </#if>
     /**
      * 校验能否被删除
      */

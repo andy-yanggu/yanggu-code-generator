@@ -101,26 +101,6 @@ export const useCrud = (options: IHooksOptions) => {
 		query()
 	}
 
-	const deleteHandle = (key: number | string) => {
-		if (!state.deleteUrl) {
-			return
-		}
-
-		ElMessageBox.confirm('确定进行删除操作?', '提示', {
-			confirmButtonText: '确定',
-			cancelButtonText: '取消',
-			type: 'warning'
-		})
-			.then(() => {
-				service.delete(state.deleteUrl + '/' + key).then(() => {
-					ElMessage.success('删除成功')
-
-					query()
-				})
-			})
-			.catch(() => {})
-	}
-
 	const deleteBatchHandle = (key?: number | string) => {
 		let data: any[] = []
 		if (key) {
@@ -151,5 +131,5 @@ export const useCrud = (options: IHooksOptions) => {
 			.catch(() => {})
 	}
 
-	return { getDataList, sizeChangeHandle, currentChangeHandle, selectionChangeHandle, sortChangeHandle, deleteHandle, deleteBatchHandle }
+	return { getDataList, sizeChangeHandle, currentChangeHandle, selectionChangeHandle, sortChangeHandle, deleteBatchHandle }
 }
