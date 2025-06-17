@@ -9,6 +9,9 @@ const service = axios.create({
 	headers: { 'Content-Type': 'application/json;charset=UTF-8' }
 })
 
+// 设置允许携带cookie
+service.defaults.withCredentials = true
+
 // 请求拦截器
 service.interceptors.request.use(
 	(config: any) => {
