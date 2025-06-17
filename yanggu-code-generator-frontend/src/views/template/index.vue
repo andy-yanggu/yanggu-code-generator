@@ -100,7 +100,7 @@ const init = (row: any) => {
 	resetQueryRef()
 	state.queryForm.templateGroupId = row.id
 	getDataList()
-	templateGroupDialogTitleRef.value = `${row.groupName}（${getLabel(row.type, TEMPLATE_GROUP_TYPES)}）管理`
+	templateGroupDialogTitleRef.value = `${row.groupName}（${getLabel(row.type, TEMPLATE_GROUP_TYPES)}）模板配置`
 	currentGroupId.value = row.id
 }
 

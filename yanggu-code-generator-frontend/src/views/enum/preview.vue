@@ -70,7 +70,7 @@ const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
 	const currentTabName = pane.props.name
 
 	// 2. 遍历preview.data查找对应项
-	const currentItem = Object.values(preview.data).find(item => {
+	const currentItem: any = Object.values(preview.data).find((item: any) => {
 		return item.fileName === currentTabName
 	})
 
@@ -119,7 +119,7 @@ const handleCopy = (content: string) => {
 }
 
 //生成代码
-const generatorCode = item => {
+const generatorCode = (item: any) => {
 	const enumId = item.enumId
 	if (preview.generatorType === 0) {
 		const dataForm = {

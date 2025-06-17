@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { useCrud } from '@/hooks'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
 import Update from './update.vue'
@@ -95,6 +95,10 @@ import { tableSyncApi, tableGenerateCheckApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+
+onMounted(() => {
+	getProjectList()
+})
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/table/voPage',
@@ -121,9 +125,12 @@ const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
 }
 const projectList = ref([])
-projectEntityListApi({}).then((res: any) => {
-	projectList.value = res.data
-})
+
+const getProjectList = () => {
+	projectEntityListApi({}).then(res => {
+		projectList.value = res.data
+	})
+}
 
 const resetQueryRef = () => {
 	queryRef.value.resetFields()

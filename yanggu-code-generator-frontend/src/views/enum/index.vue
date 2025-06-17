@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { useCrud } from '@/hooks'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import EnumItemIndex from '@/views/enum-item/index.vue'
@@ -77,6 +77,10 @@ import Preview from './preview.vue'
 import { projectEntityListApi } from '@/api/project'
 import { ElMessage } from 'element-plus'
 import { enumGenerateCheckApi } from '@/api/enum'
+
+onMounted(() => {
+	getProjectList()
+})
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/enum/voPage',
@@ -106,7 +110,6 @@ const getProjectList = () => {
 		projectList.value = res.data
 	})
 }
-getProjectList()
 
 const configEnumItemHandle = (id: number) => {
 	enumItemIndexRef.value.init(id)

@@ -5,11 +5,9 @@
 				<el-input v-model="state.queryForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
 			<el-form-item prop="type">
-				<el-form-item prop="type">
-					<el-select v-model="state.queryForm.type" style="width: 170px" clearable placeholder="请选择模板组类型">
-						<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
-				</el-form-item>
+				<el-select v-model="state.queryForm.type" style="width: 170px" clearable placeholder="请选择模板组类型">
+					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+				</el-select>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="getDataList()">查询</el-button>
@@ -37,7 +35,13 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="groupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="type" label="模板组类型" :formatter="handlerType" header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="type"
+				label="模板组类型"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_GROUP_TYPES)"
+				header-align="center"
+				align="center"
+			></el-table-column>
 			<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -79,6 +83,7 @@ import TemplateIndex from '../template/index.vue'
 import { ElMessage } from 'element-plus'
 import { exportTemplateGroupApi } from '@/api/templateGroup'
 import Import from './import.vue'
+import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/templateGroup/entityPage',
@@ -109,10 +114,6 @@ const copyTemplateGroupHandle = (id: number) => {
 
 const handlerTemplate = (row: any) => {
 	templateIndexRef.value.init(row)
-}
-
-const handlerType = (row: any) => {
-	return TEMPLATE_GROUP_TYPES.find(item => item.value === row.type)?.label
 }
 
 const exportHandle = () => {
