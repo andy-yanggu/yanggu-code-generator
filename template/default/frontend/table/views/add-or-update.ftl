@@ -25,6 +25,8 @@
                 <el-date-picker type="date" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
 			<#elseif field.formType == 'datetime'>
                 <el-date-picker type="datetime" placeholder="请选择${field.fieldComment!}" v-model="dataForm.${field.attrName}"></el-date-picker>
+            <#elseif field.formType == 'number'>
+                <el-input-number v-model="dataForm.${field.attrName}" size="small"></el-input-number>
 			<#else>
                 <el-input v-model="dataForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
 			</#if>
@@ -64,7 +66,7 @@ const dataForm = reactive({
 const dataRules = reactive({
     <#list formList as field>
         <#if field.formRequired == 1>
-    ${field.attrName}: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]<#sep>,
+    ${field.attrName}: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]<#if field_has_next>,</#if>
         </#if>
     </#list>
 })

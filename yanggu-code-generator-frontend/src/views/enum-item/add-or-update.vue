@@ -10,6 +10,9 @@
 			<el-form-item label="枚举项描述" prop="enumItemDesc">
 				<el-input v-model="dataForm.enumItemDesc" placeholder="请输入枚举项描述"></el-input>
 			</el-form-item>
+			<el-form-item label="枚举项排序" prop="enumItemOrder">
+				<el-input-number v-model="dataForm.enumItemOrder" :min="0" size="small"></el-input-number>
+			</el-form-item>
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
@@ -33,7 +36,8 @@ const dataForm = reactive({
 	enumId: -1,
 	enumItemName: '',
 	enumItemCode: '',
-	enumItemDesc: ''
+	enumItemDesc: '',
+	enumItemOrder: 0
 })
 
 const init = (enumId: number, id?: number) => {

@@ -52,4 +52,10 @@ public class EnumItemEntity extends BaseEntity implements Serializable {
     @TableField(value = "enum_item_desc")
     private String enumItemDesc;
 
+    /**
+     * 枚举项排序
+     */
+    @TableField(value = "enum_item_order")
+    private Integer enumItemOrder;
+
 }

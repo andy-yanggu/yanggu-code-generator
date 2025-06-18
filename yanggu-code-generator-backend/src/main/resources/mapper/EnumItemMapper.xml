@@ -10,6 +10,7 @@
         enum_item_name,
         enum_item_code,
         enum_item_desc,
+        enum_item_order,
         create_time,
         update_time,
         is_delete
@@ -33,6 +34,7 @@
         <result property="enumItemName" column="enum_item_name"/>
         <result property="enumItemCode" column="enum_item_code"/>
         <result property="enumItemDesc" column="enum_item_desc"/>
+        <result property="enumItemOrder" column="enum_item_order"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

@@ -54,4 +54,11 @@ public class EnumItemDTO implements Serializable {
     @NotBlank(message = "枚举项描述不能为空")
     private String enumItemDesc;
 
+    /**
+     * 枚举项排序
+     */
+    @Schema(description = "枚举项排序")
+    @NotNull(message = "枚举项顺序不能为空")
+    private Integer enumItemOrder;
+
 }

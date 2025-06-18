@@ -228,7 +228,8 @@ const formTypeList = reactive([
 	{ label: '单选按钮', value: 'radio' },
 	{ label: '复选框', value: 'checkbox' },
 	{ label: '日期', value: 'date' },
-	{ label: '日期时间', value: 'datetime' }
+	{ label: '日期时间', value: 'datetime' },
+	{ label: '数值', value: 'number' }
 ])
 
 const enumList = ref([])

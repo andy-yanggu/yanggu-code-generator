@@ -49,4 +49,10 @@ public class EnumItemVO extends BaseVO implements Serializable {
     @Schema(description = "枚举项描述")
     private String enumItemDesc;
 
+    /**
+     * 枚举项排序
+     */
+    @Schema(description = "枚举项排序")
+    private Integer enumItemOrder;
+
 }

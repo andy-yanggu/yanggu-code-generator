@@ -27,6 +27,7 @@
 				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="enumItemOrder" label="枚举项排序" header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -83,6 +84,7 @@ const init = (enumId: number) => {
 	if (queryRef.value) {
 		resetQueryRef()
 	}
+	enumIdRef.value = enumId
 	state.queryForm.enumId = enumId
 	getDataList()
 }

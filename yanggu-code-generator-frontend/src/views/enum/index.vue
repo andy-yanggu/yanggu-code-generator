@@ -41,6 +41,14 @@
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enumName" label="枚举名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="generatorType"
+				label="生成类型"
+				show-overflow-tooltip
+				header-align="center"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
+				align="center"
+			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
@@ -84,6 +92,8 @@ import Preview from './preview.vue'
 import { projectEntityListApi } from '@/api/project'
 import { ElMessage } from 'element-plus'
 import { enumGenerateCheckApi } from '@/api/enum'
+import { getLabel } from '@/utils/enum'
+import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 onMounted(() => {
 	getProjectList()
@@ -135,13 +145,10 @@ const generatorBatchHandler = () => {
 	}
 	currentTemplateGroupIdTs.value = Date.now()
 	enumGenerateCheckApi(data).then(res => {
-		const checkData = res.data
-		if (!checkData.checkResult) {
+		const { checkResult, enumTemplateGroupId, generatorType } = res.data
+		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
-			return
 		} else {
-			const enumTemplateGroupId = checkData.enumTemplateGroupId
-			const generatorType = checkData.generatorType
 			nextTick(() => {
 				templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)
 			})
@@ -156,7 +163,9 @@ const clearSelectionHandler = () => {
 
 const generatorHandler = (row: any) => {
 	currentTemplateGroupIdTs.value = Date.now()
-	templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
+	nextTick(() => {
+		templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
+	})
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

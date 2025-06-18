@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.common.domain.query;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.dromara.hutool.core.text.StrUtil;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -53,7 +53,7 @@ public class OrderItemQuery implements Serializable {
     }
 
     public OrderItemQuery setColumn(String column) {
-        this.column = StringUtils.replaceAllBlank(column);
+        this.column = StrUtil.trim(column);
         return this;
     }
 

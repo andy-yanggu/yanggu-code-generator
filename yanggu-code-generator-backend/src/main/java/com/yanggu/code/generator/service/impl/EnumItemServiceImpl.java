@@ -132,7 +132,10 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
 
     @Override
     public List<EnumItemEntity> selectByEnumId(Long enumId) {
-        return enumItemMapper.selectList(Wrappers.lambdaQuery(EnumItemEntity.class).eq(EnumItemEntity::getEnumId, enumId));
+        EnumItemEntityQuery enumItemEntityQuery = new EnumItemEntityQuery();
+        enumItemEntityQuery.setEnumId(enumId);
+        enumItemEntityQuery.setPageSize(-1L);
+        return enumItemMapper.entityList(enumItemEntityQuery);
     }
 
     /**
