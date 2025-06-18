@@ -69,7 +69,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(TableDTO dto) {
         TableEntity entity = tableMapstruct.dtoToEntity(dto);
-        //唯一性校验等
         tableMapper.insert(entity);
     }
 
@@ -81,7 +80,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     public void update(TableDTO dto) {
         TableEntity formEntity = tableMapstruct.dtoToEntity(dto);
         TableEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         tableMapper.updateById(formEntity);
     }
 
@@ -92,8 +90,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         TableEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        tableMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**
@@ -102,8 +99,9 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
-        //删除校验和关联删除
+        //关联删除
         tableMapper.deleteByIds(idList);
+        tableFieldService.deleteByTableIdList(idList);
     }
 
     /**
@@ -327,7 +325,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setFormLayout(FormLayoutEnum.ONE.getCode());
         table.setClassName(NamingCase.toPascalCase(tableName));
         table.setFunctionName(StrUtil.toCamelCase(tableName));
-        table.setCreateTime(new Date());
         this.save(table);
 
         // 获取原生字段数据

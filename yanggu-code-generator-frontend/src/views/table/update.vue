@@ -1,16 +1,11 @@
 <template>
 	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="项目" prop="projectId">
-				<el-select v-model="dataForm.projectId" clearable placeholder="请选择项目" disabled>
-					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
-				</el-select>
+			<el-form-item label="数据库名" prop="databaseName">
+				<el-input v-model="dataForm.databaseName" placeholder="请输入数据库名" disabled></el-input>
 			</el-form-item>
 			<el-form-item label="表名" prop="tableName">
 				<el-input v-model="dataForm.tableName" placeholder="请输入表名" disabled></el-input>
-			</el-form-item>
-			<el-form-item label="数据库名" prop="databaseName">
-				<el-input v-model="dataForm.databaseName" placeholder="请输入数据库名" disabled></el-input>
 			</el-form-item>
 			<el-form-item label="类名" prop="className">
 				<el-input v-model="dataForm.className" placeholder="请输入类名"></el-input>

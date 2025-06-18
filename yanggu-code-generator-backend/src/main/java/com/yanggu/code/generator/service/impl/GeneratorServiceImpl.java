@@ -297,19 +297,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private List<TemplateContentVO> getTablePreviewData(GeneratorTableQuery tableQuery) {
-        Long tableId = tableQuery.getTableId();
-        List<Long> tableIdList = tableQuery.getTableIdList();
-        List<TemplateContentVO> list = new ArrayList<>();
-        if (tableId != null) {
-            list.addAll(tablePreview(tableQuery));
-        } else {
-            tableIdList.forEach(id -> {
-                GeneratorTableQuery generatorTableQuery = new GeneratorTableQuery();
-                generatorTableQuery.setTableId(id);
-                list.addAll(tablePreview(generatorTableQuery));
-            });
-        }
-        return list;
+        return tableQuery.getTableIdList().stream()
+                .flatMap(tempTableId -> {
+                    GeneratorTableQuery query = new GeneratorTableQuery();
+                    query.setTableId(tempTableId);
+                    query.setTemplateIdList(tableQuery.getTemplateIdList());
+                    return tablePreview(query).stream();
+                })
+                .toList();
     }
 
     private List<TemplateContentVO> getEnumPreviewData(GeneratorEnumQuery enumQuery) {
