@@ -147,7 +147,7 @@ const generatorBatchHandler = () => {
 	enumGenerateCheckApi(data).then(res => {
 		const { checkResult, enumTemplateGroupId, generatorType } = res.data
 		if (!checkResult) {
-			ElMessage.warning('当前选择的表不是同一个项目')
+			ElMessage.warning('当前选择的枚举不是同一个项目')
 		} else {
 			nextTick(() => {
 				templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)

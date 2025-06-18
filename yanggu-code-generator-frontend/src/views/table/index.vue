@@ -28,12 +28,25 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			ref="tableRef"
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="generatorType" label="生成方式" :formatter="handlerType" header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="generatorType"
+				label="生成方式"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
+				header-align="center"
+				align="center"
+			></el-table-column>
 			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -70,14 +83,7 @@
 		<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
 
 		<!-- 模板组展示 -->
-		<template-index
-			ref="templateIndexRef"
-			:key="currentTemplateGroupIdTs"
-			:table-id="currentTableId"
-			:table-id-list="currentTableIdList"
-			:generator-type="currentGeneratorType"
-			:template-group-id="currentTemplateGroupId"
-		></template-index>
+		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs" @clear-selection="clearSelectionHandler()"></template-index>
 	</el-card>
 </template>
 
@@ -95,6 +101,7 @@ import { tableSyncApi, tableGenerateCheckApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { getLabel } from '@/utils/enum'
 
 onMounted(() => {
 	getProjectList()
@@ -114,12 +121,9 @@ const addOrUpdateRef = ref()
 const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
-const currentTemplateGroupId = ref()
 const currentTemplateGroupIdTs = ref()
-const currentTableId = ref()
-const currentTableIdList = ref()
-const currentGeneratorType = ref()
 const templateIndexRef = ref()
+const tableRef = ref()
 
 const addOrUpdateHandle = (id: number) => {
 	addOrUpdateRef.value.init(id)
@@ -148,18 +152,11 @@ const editHandle = (row: any) => {
 	editRef.value.init(row)
 }
 
-const handlerType = (row: any) => {
-	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
-}
-
 //生成代码
-const generatorCode = item => {
+const generatorCode = (item: any) => {
 	currentTemplateGroupIdTs.value = Date.now()
-	currentTemplateGroupId.value = item.tableTemplateGroupId
-	currentTableId.value = item.id
-	currentGeneratorType.value = item.generatorType
 	nextTick(() => {
-		templateIndexRef.value.init()
+		templateIndexRef.value.init(item.tableTemplateGroupId, item.generatorType, [item.id])
 	})
 }
 
@@ -171,16 +168,12 @@ const generatorCodeBatch = () => {
 	}
 	currentTemplateGroupIdTs.value = Date.now()
 	tableGenerateCheckApi(data).then(res => {
-		const checkData = res.data
-		if (!checkData.checkResult) {
+		const { checkResult, tableTemplateGroupId, generatorType } = res.data
+		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
-			return
 		} else {
-			currentTemplateGroupId.value = checkData.tableTemplateGroupId
-			currentTableIdList.value = data
-			currentGeneratorType.value = checkData.generatorType
 			nextTick(() => {
-				templateIndexRef.value.init()
+				templateIndexRef.value.init(tableTemplateGroupId, generatorType, data)
 			})
 		}
 	})
@@ -198,6 +191,11 @@ const syncHandle = (row: any) => {
 			})
 		})
 		.catch(() => {})
+}
+
+const clearSelectionHandler = () => {
+	state.dataListSelections = []
+	tableRef.value.clearSelection()
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)

@@ -126,7 +126,12 @@ const generatorCode = (item: any) => {
 			enumId: enumId,
 			templateId: item.templateId
 		}
-		generatorEnumDownloadSingleApi(dataForm)
+		generatorEnumDownloadSingleApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到浏览器本地，请查看',
+				duration: 1000
+			})
+		})
 	} else if (preview.generatorType === 1) {
 		const dataForm = {
 			enumId: enumId,
@@ -134,7 +139,7 @@ const generatorCode = (item: any) => {
 		}
 		generatorEnumDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
-				message: '代码已经下载到本地',
+				message: '代码已经下载到服务器本地',
 				duration: 1000
 			})
 		})

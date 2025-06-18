@@ -63,40 +63,27 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
 
-const props = defineProps({
-	templateGroupId: {
-		type: Number,
-		required: true // 表示父组件必须传递该值
-	},
-	tableId: {
-		type: Number,
-		required: false
-	},
-	tableIdList: {
-		type: Array,
-		required: false
-	},
-	generatorType: {
-		type: Number,
-		required: true // 表示父组件必须传递该值
-	}
-})
+const emit = defineEmits(['clearSelection'])
 
 const state: IHooksOptions = reactive({
 	dataListUrl: '/template/entityPage',
 	createdIsNeed: false,
 	queryForm: {
-		templateGroupId: props.templateGroupId,
+		templateGroupId: null,
 		templateName: '',
 		templateType: null
 	}
 })
-
+const generatorTypeRef = ref()
+const tableIdRef = ref()
 const dialogVisible = ref(false)
 const queryRef = ref()
 
-const init = () => {
+const init = (templateGroupId: number, generatorType: number, tableIdList: number[]) => {
 	dialogVisible.value = true
+	state.queryForm.templateGroupId = templateGroupId
+	generatorTypeRef.value = generatorType
+	tableIdRef.value = tableIdList
 
 	//重置查询表单数据
 	if (queryRef.value) {
@@ -123,23 +110,25 @@ const generateCode = () => {
 		return
 	}
 	const dataForm = {
-		templateIdList: state.dataListSelections
+		templateIdList: state.dataListSelections,
+		tableIdList: tableIdRef.value
 	}
-	if (props.tableId) {
-		dataForm.tableId = props.tableId
-	}
-	if (props.tableIdList) {
-		dataForm.tableIdList = props.tableIdList
-	}
-	const generatorType = props.generatorType
+	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
-		generatorTableDownloadZipApi(dataForm)
+		generatorTableDownloadZipApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到浏览器',
+				duration: 1000
+			})
+			emit('clearSelection')
+		})
 	} else if (generatorType === 1) {
 		generatorTableDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
-				message: '代码已经下载到本地',
+				message: '代码已经下载到服务器本地',
 				duration: 1000
 			})
+			emit('clearSelection')
 		})
 	}
 	dialogVisible.value = false
