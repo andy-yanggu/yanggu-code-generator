@@ -28,7 +28,14 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			ref="tableRef"
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -62,7 +69,7 @@
 
 		<preview ref="previewRef"></preview>
 
-		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs"></template-index>
+		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs" @clear-selection="clearSelectionHandler()"></template-index>
 	</el-card>
 </template>
 
@@ -95,6 +102,7 @@ const queryRef = ref()
 const addOrUpdateRef = ref()
 const enumItemIndexRef = ref()
 const previewRef = ref()
+const tableRef = ref()
 const templateIndexRef = ref()
 const currentTemplateGroupIdTs = ref()
 const projectList = ref([])
@@ -139,6 +147,11 @@ const generatorBatchHandler = () => {
 			})
 		}
 	})
+}
+
+const clearSelectionHandler = () => {
+	state.dataListSelections = []
+	tableRef.value.clearSelection()
 }
 
 const generatorHandler = (row: any) => {

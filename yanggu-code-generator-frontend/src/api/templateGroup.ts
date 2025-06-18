@@ -1,5 +1,5 @@
 import service from '@/utils/request'
-import { ElMessage } from 'element-plus'
+import { downloadFile } from '@/utils/download'
 
 //提交表单
 export const templateGroupSubmitApi = (dataForm: any) => {
@@ -58,50 +58,16 @@ export const copyTemplateApi = (dataForm: any) => {
 }
 
 //导出模板组
-export const exportTemplateGroupApi = async (tableIdList: number[]) => {
-	const listString = tableIdList.join(',')
-	const url = `/templateGroup/export?idList=${listString}`
+export const exportTemplateGroupApi = (tableIdList: number[]): Promise<void> => {
+	const url = `/templateGroup/export?idList=${tableIdList.join(',')}`
+	return downloadFile(url)
+}
 
-	try {
-		const response = await service.get(url, {
-			responseType: 'blob' //文件下载
-		})
-
-		// 提取文件名
-		const contentDisposition = response.headers['content-disposition']
-		let filename = 'templateGroups.json' // 默认文件名
-
-		if (contentDisposition) {
-			const matches = /filename="?(.+)"?/.exec(contentDisposition)
-			if (matches && matches[1]) {
-				filename = matches[1]
-			}
+//导入模板组
+export const importTemplateGroupApi = (dataForm: any) => {
+	return service.post('/templateGroup/import', dataForm, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
 		}
-
-		// 创建下载链接并触发下载
-		const downloadUrl = window.URL.createObjectURL(new Blob([response.data]))
-		const a = document.createElement('a')
-		a.href = downloadUrl
-		a.download = filename
-		document.body.appendChild(a)
-		a.click()
-		window.URL.revokeObjectURL(downloadUrl)
-		document.body.removeChild(a)
-
-		return true
-	} catch (error: any) {
-		console.error('导出失败:', error)
-
-		if (error.response) {
-			// 后端返回了错误状态码（如 400, 500）
-			ElMessage.error(`导出失败，服务器返回状态码：${error.response.status}`)
-		} else if (error.request) {
-			// 请求已发出，但无响应（如网络中断）
-			ElMessage.error('导出失败，请检查网络连接或稍后重试')
-		} else {
-			// 其他错误
-			ElMessage.error('导出失败，请稍后重试或联系管理员')
-		}
-		return false
-	}
+	})
 }

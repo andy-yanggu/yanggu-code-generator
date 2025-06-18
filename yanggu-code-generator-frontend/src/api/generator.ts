@@ -1,5 +1,6 @@
 import service from '@/utils/request'
 import qs from 'qs'
+import { downloadFile } from '@/utils/download'
 
 //表预览代码
 export const generatorTablePreviewApi = (tableId: number) => {
@@ -8,12 +9,14 @@ export const generatorTablePreviewApi = (tableId: number) => {
 
 //表下载单文件
 export const generatorTableDownloadSingleApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadSingle?' + qs.stringify(dataForm)
+	const url = '/generator/table/downloadSingle?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }
 
 //表生成代码（zip压缩包）
 export const generatorTableDownloadZipApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/table/downloadZip?' + qs.stringify(dataForm)
+	const url = '/generator/table/downloadZip?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }
 
 //表下载到本地
@@ -26,14 +29,10 @@ export const generatorProjectPreviewApi = (projectId: number) => {
 	return service.get('/generator/project/preview?projectId=' + projectId)
 }
 
-//项目树形数据
-export const generatorProjectTreeDataApi = (projectId: number) => {
-	return service.get('/generator/project/treeData?projectId=' + projectId)
-}
-
 //项目下载zip压缩包
 export const generatorProjectDownloadZipApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadZip?' + qs.stringify(dataForm)
+	const url = '/generator/project/downloadZip?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }
 
 //项目下载到本地
@@ -43,7 +42,8 @@ export const generatorProjectDownloadLocalApi = (dataForm: any) => {
 
 //项目下载单文件
 export const generatorProjectDownloadSingleApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/project/downloadSingle?' + qs.stringify(dataForm)
+	const url = '/generator/project/downloadSingle?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }
 
 //枚举预览代码
@@ -53,7 +53,8 @@ export const generatorEnumPreviewApi = (enumId: number) => {
 
 //枚举下载zip压缩包
 export const generatorEnumDownloadZipApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/enum/downloadZip?' + qs.stringify(dataForm)
+	const url = '/generator/enum/downloadZip?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }
 
 //枚举下载到本地
@@ -63,5 +64,6 @@ export const generatorEnumDownloadLocalApi = (dataForm: any) => {
 
 //枚举下载单文件
 export const generatorEnumDownloadSingleApi = (dataForm: any) => {
-	location.href = import.meta.env.VITE_API_URL + '/generator/enum/downloadSingle?' + qs.stringify(dataForm)
+	const url = '/generator/enum/downloadSingle?' + qs.stringify(dataForm)
+	return downloadFile(url)
 }

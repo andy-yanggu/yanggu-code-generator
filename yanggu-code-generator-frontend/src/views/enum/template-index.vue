@@ -63,6 +63,8 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorEnumDownloadLocalApi, generatorEnumDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
 
+const emit = defineEmits(['clearSelection'])
+
 const state: IHooksOptions = reactive({
 	dataListUrl: '/template/entityPage',
 	createdIsNeed: false,
@@ -121,13 +123,20 @@ const generateCode = () => {
 	}
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
-		generatorEnumDownloadZipApi(dataForm)
+		generatorEnumDownloadZipApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到本地，请查看',
+				duration: 1000
+			})
+			emit('clearSelection')
+		})
 	} else if (generatorType === 1) {
 		generatorEnumDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
-				message: '代码已经下载到本地',
+				message: '代码已经下载到服务器本地，请查看',
 				duration: 1000
 			})
+			emit('clearSelection')
 		})
 	}
 	dialogVisible.value = false

@@ -1,32 +1,24 @@
 <template>
-	<el-upload class="upload-demo" :action="serverUrl" :limit="1" :show-file-list="false" :on-success="handlerSuccess">
+	<el-upload class="upload-demo" :limit="1" :show-file-list="false" :http-request="handleManualUpload">
 		<el-button type="success">导入</el-button>
 	</el-upload>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { importTemplateGroupApi } from '@/api/templateGroup'
 import { ElMessage } from 'element-plus'
 
 const emit = defineEmits(['refreshDataList'])
-const serverUrl = ref('')
-const apiUrl = import.meta.env.VITE_API_URL
-serverUrl.value = `${apiUrl}/templateGroup/import`
 
-const handlerSuccess = (response: any) => {
-	if (response.code !== 200) {
-		ElMessage.error({
-			message: response.message,
-			duration: 1000
-		})
-		return
-	}
-	ElMessage.success({
-		message: '导入成功',
-		duration: 1000,
-		onClose: () => {
-			emit('refreshDataList')
-		}
+// 自定义上传处理
+const handleManualUpload = (options: any) => {
+	const { file } = options
+	const formData = new FormData()
+	formData.append('file', file)
+
+	importTemplateGroupApi(formData).then(() => {
+		ElMessage.success('模板组导入成功')
+		emit('refreshDataList')
 	})
 }
 </script>
