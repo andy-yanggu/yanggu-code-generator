@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" title="复制" :close-on-click-modal="false" width="35%">
+	<el-dialog v-model="visible" title="复制" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="名称" prop="groupName">
 				<el-input v-model="dataForm.groupName" clearable placeholder="请输入名称"></el-input>

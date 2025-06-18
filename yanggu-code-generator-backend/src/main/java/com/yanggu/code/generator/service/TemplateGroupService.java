@@ -78,8 +78,14 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     ResponseEntity<byte[]> export(List<Long> idList);
 
-    TemplateGroupEntity getById(Long id);
-
+    /**
+     * 导入模板组
+     */
     void importTemplateGroup(MultipartFile file) throws IOException;
+
+    /**
+     * 根据ID查询（包含所有模板）
+     */
+    TemplateGroupEntity getById(Long id);
 
 }

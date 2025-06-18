@@ -16,7 +16,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  */
 @Named("templateMapstruct")
 @Mapper(componentModel = SPRING, implementationName = "GeneratorTemplateMapstructImpl")
-public interface TemplateMapstruct extends BaseMapstruct<TemplateEntity, TemplateVO, TemplateDTO> {
+public interface TemplateMapstruct extends BaseMapstruct<TemplateEntity, TemplateVO, TemplateDTO>, EntityToDTOMapstruct<TemplateEntity, TemplateDTO> {
 
     TemplateDTO boToDTO(TemplateBO bo);
 

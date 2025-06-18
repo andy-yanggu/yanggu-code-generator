@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
@@ -129,6 +131,15 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<TemplateGroupVO> detailList(List<Long> idList) {
+        List<TemplateGroupEntity> entityList = templateGroupMapper.selectByIds(idList);
+        return templateGroupMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -177,30 +188,32 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     public void copy(TemplateGroupDTO dto) {
         Long oldGroupId = dto.getId();
         dto.setId(null);
-        TemplateGroupEntity newGroup = templateGroupMapstruct.dtoToEntity(dto);
-        newGroup.setCreateTime(new Date());
 
-        checkUnique(dto);
-        templateGroupMapper.insert(newGroup);
+        //新增模板组
+        TemplateGroupEntity add = add(dto);
+        Long newTemplateGroupId = add.getId();
 
-        Long newTemplateGroupId = newGroup.getId();
+        //查询原有模板组下的所有模板
         List<TemplateEntity> templateList = templateService.selectByGroupId(oldGroupId);
         if (CollUtil.isNotEmpty(templateList)) {
             templateList.forEach(template -> {
-                template.setId(null);
-                template.setTemplateGroupId(newTemplateGroupId);
-                templateService.save(template);
+                TemplateDTO templateDTO = templateMapstruct.entityToDTO(template);
+                templateDTO.setId(null);
+                templateDTO.setTemplateGroupId(newTemplateGroupId);
+
+                //新增模板
+                templateService.add(templateDTO);
             });
         }
     }
 
     @Override
     public ResponseEntity<byte[]> export(List<Long> idList) {
-        List<TemplateGroupEntity> list = new ArrayList<>();
-        for (Long id : idList) {
-            TemplateGroupEntity templateGroup = this.getById(id);
-            list.add(templateGroup);
-        }
+        List<TemplateGroupEntity> list = idList.stream()
+                .map(this::getById)
+                .toList();
+
+        //转换成导出对象
         List<TemplateGroupBO> boList = templateGroupMapstruct.entityToBO(list);
         String jsonStr = JSONUtil.toJsonStr(boList);
 
@@ -209,14 +222,6 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                 .header(CONTENT_DISPOSITION, "attachment; filename=" + fileName)
                 .contentType(APPLICATION_OCTET_STREAM)
                 .body(jsonStr.getBytes());
-    }
-
-    @Override
-    public TemplateGroupEntity getById(Long id) {
-        TemplateGroupEntity templateGroup = selectById(id);
-        List<TemplateEntity> templateList = templateService.selectByGroupId(id);
-        templateGroup.setTemplateList(templateList);
-        return templateGroup;
     }
 
     @Override
@@ -245,13 +250,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         });
     }
 
-    /**
-     * 批量查询
-     */
     @Override
-    public List<TemplateGroupVO> detailList(List<Long> idList) {
-        List<TemplateGroupEntity> entityList = templateGroupMapper.selectByIds(idList);
-        return templateGroupMapstruct.entityToVO(entityList);
+    public TemplateGroupEntity getById(Long id) {
+        TemplateGroupEntity templateGroup = selectById(id);
+        List<TemplateEntity> templateList = templateService.selectByGroupId(id);
+        templateGroup.setTemplateList(templateList);
+        return templateGroup;
     }
 
     private TemplateGroupEntity selectById(Long id) {
@@ -264,8 +268,8 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     private void checkUnique(TemplateGroupDTO dto) {
         LambdaQueryWrapper<TemplateGroupEntity> queryWrapper = Wrappers.lambdaQuery(TemplateGroupEntity.class)
-                .eq(TemplateGroupEntity::getGroupName, dto.getGroupName())
-                .ne(MybatisUtil.isNotEmpty(dto.getId()), TemplateGroupEntity::getId, dto.getId());
+                .ne(Objects.nonNull(dto.getId()), TemplateGroupEntity::getId, dto.getId())
+                .eq(TemplateGroupEntity::getGroupName, dto.getGroupName());
 
         boolean exists = templateGroupMapper.exists(queryWrapper);
         if (exists) {
