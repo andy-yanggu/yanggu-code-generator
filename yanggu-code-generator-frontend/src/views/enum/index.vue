@@ -40,7 +40,6 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enumName" label="枚举名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="generatorType"
 				label="生成类型"
@@ -49,6 +48,7 @@
 				:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
 				align="center"
 			></el-table-column>
+			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>

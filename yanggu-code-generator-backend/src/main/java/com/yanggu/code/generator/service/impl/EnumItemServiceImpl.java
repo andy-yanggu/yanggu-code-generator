@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -41,6 +42,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(EnumItemDTO dto) {
         //唯一性校验等
+        checkUnique(dto);
         EnumItemEntity entity = enumItemMapstruct.dtoToEntity(dto);
         enumItemMapper.insert(entity);
     }
@@ -52,6 +54,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(EnumItemDTO dto) {
         //唯一性校验等
+        checkUnique(dto);
         EnumItemEntity formEntity = enumItemMapstruct.dtoToEntity(dto);
         EnumItemEntity dbEntity = selectById(dto.getId());
         enumItemMapper.updateById(formEntity);
@@ -153,6 +156,26 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
             throw new BusinessException(DATA_NOT_EXIST, "枚举项", id);
         }
         return entity;
+    }
+
+    /**
+     * 唯一性校验
+     */
+    private void checkUnique(EnumItemDTO dto) {
+        LambdaQueryWrapper<EnumItemEntity> wrapper = Wrappers.lambdaQuery(EnumItemEntity.class);
+
+        wrapper.ne(Objects.nonNull(dto.getId()), EnumItemEntity::getId, dto.getId());
+        wrapper.eq(EnumItemEntity::getEnumId, dto.getEnumId());
+        wrapper.and(queryWrapper -> queryWrapper
+                .eq(EnumItemEntity::getEnumItemName, dto.getEnumItemName())
+                .or()
+                .eq(EnumItemEntity::getEnumItemCode, dto.getEnumItemCode())
+        );
+
+        boolean exists = enumItemMapper.exists(wrapper);
+        if (exists) {
+            throw new BusinessException("枚举项名称或者编码已存在");
+        }
     }
 
     private LambdaQueryWrapper<EnumItemEntity> buildQueryWrapper(EnumItemEntityQuery query) {

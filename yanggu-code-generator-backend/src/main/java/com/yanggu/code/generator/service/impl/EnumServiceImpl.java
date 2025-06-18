@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.impl;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +11,7 @@ import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.EnumItemEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
+import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.EnumEntityQuery;
 import com.yanggu.code.generator.domain.query.EnumVOQuery;
 import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
@@ -19,6 +21,7 @@ import com.yanggu.code.generator.mapstruct.EnumMapstruct;
 import com.yanggu.code.generator.service.EnumItemService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
+import com.yanggu.code.generator.service.TableFieldService;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private TableFieldService tableFieldService;
 
     /**
      * 新增
@@ -88,7 +94,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteList(List<Long> idList) {
-        //删除校验和关联删除
+        //删除校验
+        checkReference(idList);
+        //关联删除
         enumMapper.deleteByIds(idList);
     }
 
@@ -171,7 +179,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     public EnumGenerateCheckVO generateCheck(List<Long> idList) {
         EnumGenerateCheckVO checkVO = new EnumGenerateCheckVO();
         List<Long> projectIdList = enumMapper.distinctProjectIdList(idList);
-        if (CollUtil.isEmpty(projectIdList) || (CollUtil.isNotEmpty(projectIdList) && projectIdList.size() > 1)) {
+        if (CollUtil.size(projectIdList) > 1) {
             checkVO.setCheckResult(false);
         } else {
             checkVO.setCheckResult(true);
@@ -203,6 +211,16 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         boolean exists = enumMapper.exists(queryWrapper);
         if (exists) {
             throw new BusinessException("枚举名称或者描述在项目下已存在");
+        }
+    }
+
+    private void checkReference(List<Long> idList) {
+        LambdaQueryWrapper<TableFieldEntity> queryWrapper = Wrappers.lambdaQuery(TableFieldEntity.class)
+                .in(TableFieldEntity::getEnumId, idList);
+
+        boolean exists = tableFieldService.exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException("枚举已被表字段引用，不能删除");
         }
     }
 
