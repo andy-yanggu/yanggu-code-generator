@@ -23,7 +23,7 @@ public class MybatisUtil {
      * 设置排序字段
      */
     public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItemQuery> orderItemList) {
-        if (CollUtil.isEmpty(orderItemList)) {
+        if (wrapper == null || CollUtil.isEmpty(orderItemList)) {
             return;
         }
         Class<T> entityClass = wrapper.getEntityClass();
@@ -70,7 +70,7 @@ public class MybatisUtil {
      * 判断对象中某个字段不为空
      */
     public static boolean isNotEmpty(Object object, String propertyName) {
-        if (object == null) {
+        if (object == null || StrUtil.isBlank(propertyName)) {
             return false;
         }
         boolean hasField = FieldUtil.hasField(object.getClass(), propertyName);

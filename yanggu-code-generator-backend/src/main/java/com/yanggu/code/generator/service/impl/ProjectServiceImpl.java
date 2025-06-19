@@ -88,10 +88,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         ProjectEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        projectMapper.deleteById(id);
-        //删除项目对应的表
-        tableService.deleteByProjectId(List.of(id));
+        deleteList(List.of(id));
     }
 
     /**

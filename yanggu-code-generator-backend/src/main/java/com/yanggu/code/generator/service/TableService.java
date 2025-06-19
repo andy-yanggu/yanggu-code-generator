@@ -87,6 +87,9 @@ public interface TableService extends IService<TableEntity> {
      */
     void syncTable(Long id) throws Exception;
 
+    /**
+     * 表生成代码检测接口
+     */
     TableGenerateCheckVO generateCheck(List<Long> idList);
 
 }

@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
 import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
 import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
-import com.yanggu.code.generator.domain.query.TableFieldVOQuery;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.enums.AutoFillEnum;
 import com.yanggu.code.generator.mapper.TableFieldMapper;
@@ -25,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
 /**
  * 表字段Service实现类
@@ -44,71 +40,6 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
     private FieldTypeService fieldTypeService;
 
     /**
-     * 新增
-     */
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void add(TableFieldDTO dto) {
-        TableFieldEntity entity = tableFieldMapstruct.dtoToEntity(dto);
-        //唯一性校验等
-        tableFieldMapper.insert(entity);
-    }
-
-    /**
-     * 修改
-     */
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void update(TableFieldDTO dto) {
-        TableFieldEntity formEntity = tableFieldMapstruct.dtoToEntity(dto);
-        TableFieldEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
-        tableFieldMapper.updateById(formEntity);
-    }
-
-    /**
-     * 删除
-     */
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void delete(Long id) {
-        TableFieldEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        tableFieldMapper.deleteById(id);
-    }
-
-    /**
-     * 批量删除
-     */
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void deleteList(List<Long> idList) {
-        //删除校验和关联删除
-        tableFieldMapper.deleteByIds(idList);
-    }
-
-    /**
-     * 详情
-     */
-    @Override
-    public TableFieldVO detail(Long id) {
-        TableFieldEntity dbEntity = selectById(id);
-        return tableFieldMapstruct.entityToVO(dbEntity);
-    }
-
-    /**
-     * 简单分页
-     */
-    @Override
-    public PageVO<TableFieldVO> entityPage(TableFieldEntityQuery query) {
-        //简单sql使用QueryWrapper
-        tableFieldMapper.selectPage(query, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //tableFieldMapper.entityPage(query);
-        return tableFieldMapstruct.entityToPageVO(query);
-    }
-
-    /**
      * 简单列表
      */
     @Override
@@ -121,23 +52,30 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         return tableFieldMapstruct.entityToVO(entityList);
     }
 
-    /**
-     * 复杂分页
-     */
     @Override
-    public PageVO<TableFieldVO> voPage(TableFieldVOQuery query) {
-        tableFieldMapper.voPage(query);
-        return tableFieldMapstruct.voToPageVO(query);
-    }
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void submitList(List<TableFieldDTO> submitList) {
+        List<TableFieldEntity> entityList = tableFieldMapstruct.dtoToEntity(submitList);
 
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<TableFieldVO> voList(TableFieldVOQuery query) {
-        //查询全部数据
-        query.setPageSize(-1L);
-        return tableFieldMapper.voList(query);
+        // 字段类型、属性类型映射
+        Map<String, FieldTypeEntity> fieldTypeMap = fieldTypeService.getMap();
+        entityList.forEach(tableField -> {
+
+            //设置包名
+            FieldTypeEntity fieldTypeEntity = fieldTypeMap.get(tableField.getFieldType());
+            tableField.setPackageName(fieldTypeEntity.getPackageName());
+
+            // 逻辑删除校验
+            if (tableField.getLogicDelete() == 1) {
+                if (StrUtil.isBlank(tableField.getLogicDeleteValue())) {
+                    throw new BusinessException("逻辑删除值不能为空");
+                }
+                if (StrUtil.isBlank(tableField.getLogicNotDeleteValue())) {
+                    throw new BusinessException("逻辑未删除值不能为空");
+                }
+            }
+        });
+        this.updateBatchById(entityList);
     }
 
     @Override
@@ -171,49 +109,6 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
             field.setGridFieldSort(index);
             index++;
         }
-    }
-
-    @Override
-    public void deleteByTableIdList(List<Long> tableIdList) {
-        LambdaQueryWrapper<TableFieldEntity> queryWrapper = Wrappers.lambdaQuery(TableFieldEntity.class)
-                .in(TableFieldEntity::getTableId, tableIdList);
-        tableFieldMapper.delete(queryWrapper);
-    }
-
-    @Override
-    @Transactional(rollbackFor = RuntimeException.class)
-    public void submitList(List<TableFieldDTO> submitList) {
-        List<TableFieldEntity> entityList = tableFieldMapstruct.dtoToEntity(submitList);
-        entityList.forEach(tableField -> {
-
-            // 逻辑删除校验
-            if (tableField.getLogicDelete() == 1) {
-                if (StrUtil.isBlank(tableField.getLogicDeleteValue())) {
-                    throw new BusinessException("逻辑删除值不能为空");
-                }
-                if (StrUtil.isBlank(tableField.getLogicNotDeleteValue())) {
-                    throw new BusinessException("逻辑未删除值不能为空");
-                }
-            }
-        });
-        this.updateBatchById(entityList);
-    }
-
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<TableFieldVO> detailList(List<Long> idList) {
-        List<TableFieldEntity> entityList = tableFieldMapper.selectByIds(idList);
-        return tableFieldMapstruct.entityToVO(entityList);
-    }
-
-    private TableFieldEntity selectById(Long id) {
-        TableFieldEntity entity = tableFieldMapper.selectById(id);
-        if (entity == null) {
-            throw new BusinessException(DATA_NOT_EXIST, "表字段", id);
-        }
-        return entity;
     }
 
     private LambdaQueryWrapper<TableFieldEntity> buildQueryWrapper(TableFieldEntityQuery query) {

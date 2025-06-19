@@ -179,13 +179,13 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     public EnumGenerateCheckVO generateCheck(List<Long> idList) {
         EnumGenerateCheckVO checkVO = new EnumGenerateCheckVO();
         List<Long> projectIdList = enumMapper.distinctProjectIdList(idList);
-        if (CollUtil.size(projectIdList) > 1) {
-            checkVO.setCheckResult(false);
-        } else {
+        if (CollUtil.size(projectIdList) == 1) {
             checkVO.setCheckResult(true);
             ProjectEntity project = projectService.getById(projectIdList.getFirst());
             checkVO.setEnumTemplateGroupId(project.getEnumTemplateGroupId());
             checkVO.setGeneratorType(project.getGeneratorType());
+        } else {
+            checkVO.setCheckResult(false);
         }
         return checkVO;
     }

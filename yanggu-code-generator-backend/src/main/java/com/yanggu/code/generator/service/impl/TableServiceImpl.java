@@ -269,13 +269,13 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     public TableGenerateCheckVO generateCheck(List<Long> idList) {
         TableGenerateCheckVO checkVO = new TableGenerateCheckVO();
         List<Long> projectIdList = tableMapper.distinctProjectIdList(idList);
-        if (CollUtil.isEmpty(projectIdList) || (CollUtil.isNotEmpty(projectIdList) && projectIdList.size() > 1)) {
-            checkVO.setCheckResult(false);
-        } else {
+        if (CollUtil.size(projectIdList) == 1) {
             checkVO.setCheckResult(true);
             ProjectEntity project = projectService.getById(projectIdList.getFirst());
             checkVO.setTableTemplateGroupId(project.getTableTemplateGroupId());
             checkVO.setGeneratorType(project.getGeneratorType());
+        } else {
+            checkVO.setCheckResult(false);
         }
         return checkVO;
     }
