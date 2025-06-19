@@ -3,6 +3,8 @@ package com.yanggu.code.generator.common.mybatis.util;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.yanggu.code.generator.common.domain.query.OrderItemQuery;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.func.LambdaFactory;
@@ -17,14 +19,19 @@ import java.util.List;
 /**
  * mybatis工具类
  */
+@Slf4j
+@UtilityClass
 public class MybatisUtil {
 
     /**
      * 设置排序字段
      */
     public static <T> void orderBy(LambdaQueryWrapper<T> wrapper, List<OrderItemQuery> orderItemList) {
-        if (wrapper == null || CollUtil.isEmpty(orderItemList)) {
+        if (CollUtil.isEmpty(orderItemList)) {
             return;
+        }
+        if (wrapper == null) {
+            throw new IllegalArgumentException("wrapper is null");
         }
         Class<T> entityClass = wrapper.getEntityClass();
         if (entityClass == null) {
@@ -44,6 +51,9 @@ public class MybatisUtil {
      * 获取getter方法的lambda表达式
      */
     public static <T> SFunction<T, ?> buildGetter(Class<T> clazz, String column) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("clazz is null");
+        }
         if (StrUtil.isBlank(column)) {
             throw new IllegalArgumentException("column is blank");
         }
@@ -71,6 +81,7 @@ public class MybatisUtil {
      */
     public static boolean isNotEmpty(Object object, String propertyName) {
         if (object == null || StrUtil.isBlank(propertyName)) {
+            log.warn("object or propertyName is null or blank");
             return false;
         }
         boolean hasField = FieldUtil.hasField(object.getClass(), propertyName);
