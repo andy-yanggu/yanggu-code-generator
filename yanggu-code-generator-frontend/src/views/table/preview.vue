@@ -126,7 +126,12 @@ const generatorCode = item => {
 			tableId: tableId,
 			templateId: item.templateId
 		}
-		generatorTableDownloadSingleApi(dataForm)
+		generatorTableDownloadSingleApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到浏览器',
+				duration: 1000
+			})
+		})
 	} else if (preview.generatorType === 1) {
 		const dataForm = {
 			tableId: tableId,
@@ -134,7 +139,7 @@ const generatorCode = item => {
 		}
 		generatorTableDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
-				message: '代码已经下载到本地',
+				message: '代码已经下载到服务器本地',
 				duration: 1000
 			})
 		})

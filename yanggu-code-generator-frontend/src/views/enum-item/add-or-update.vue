@@ -64,7 +64,8 @@ const getEnumItem = (id: number) => {
 const dataRules = reactive({
 	enumItemName: [{ required: true, message: '请输入枚举项名称', trigger: 'blur' }],
 	enumItemCode: [{ required: true, message: '请输入枚举项编码', trigger: 'blur' }],
-	enumItemDesc: [{ required: true, message: '请输入枚举项描述', trigger: 'blur' }]
+	enumItemDesc: [{ required: true, message: '请输入枚举项描述', trigger: 'blur' }],
+	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
 // 表单提交

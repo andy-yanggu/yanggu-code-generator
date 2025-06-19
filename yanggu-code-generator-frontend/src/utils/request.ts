@@ -6,11 +6,9 @@ import { ElMessage } from 'element-plus'
 const service = axios.create({
 	baseURL: import.meta.env.VITE_API_URL as any,
 	timeout: 60000,
-	headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+	withCredentials: true // 允许携带cookie
 })
-
-// 设置允许携带cookie
-service.defaults.withCredentials = true
 
 // 请求拦截器
 service.interceptors.request.use(
