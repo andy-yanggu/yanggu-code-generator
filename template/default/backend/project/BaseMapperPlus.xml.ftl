@@ -9,7 +9,17 @@
         <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
             ORDER BY
             <foreach collection="query.orderItemList" item="order" separator=",">
-                <#noparse>$</#noparse>{@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
+                <#noparse>${@</#noparse>${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- 排序SQL（带前缀） -->
+    <sql id="prefixOrderBySQL">
+        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
+            ORDER BY
+            <foreach collection="query.orderItemList" item="order" separator=",">
+                <#noparse>${columnPrefix}.${@</#noparse>${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
             </foreach>
         </if>
     </sql>
