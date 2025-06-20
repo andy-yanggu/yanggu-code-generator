@@ -1,6 +1,7 @@
-import type { App, Plugin } from 'vue'
-// 全局组件安装
-export const withInstall = <T>(component: T, alias?: string) => {
+import type { App, Plugin, Component } from 'vue' // 添加 Component 类型
+
+// 修改泛型约束为 Component
+export const withInstall = <T extends Component>(component: T, alias?: string) => {
 	const comp = component as any
 	comp.install = (app: App) => {
 		app.component(comp.__name || comp.displayName, component)

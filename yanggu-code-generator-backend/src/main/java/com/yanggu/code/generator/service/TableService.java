@@ -92,4 +92,9 @@ public interface TableService extends IService<TableEntity> {
      */
     TableGenerateCheckVO generateCheck(List<Long> idList);
 
+    /**
+     * 根据项目ID获取表列表
+     */
+    List<TableEntity> getTableListByProjectId(Long projectId);
+
 }

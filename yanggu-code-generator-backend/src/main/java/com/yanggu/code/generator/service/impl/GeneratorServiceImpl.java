@@ -8,7 +8,9 @@ import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.GeneratorEnumQuery;
 import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
+import com.yanggu.code.generator.domain.query.TableEntityQuery;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
+import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
@@ -212,8 +214,13 @@ public class GeneratorServiceImpl implements GeneratorService {
     private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
         Long tableId = tableQuery.getTableId();
 
+        // 表信息
+        TableEntity table = tableService.getById(tableId);
+
+        ProjectEntity project = projectService.getById(table.getProjectId());
+
         //获取数据模型
-        TableDataModel tableDataModel = buildTableDataModel(tableId);
+        TableDataModel tableDataModel = buildTableDataModel(table, project);
 
         Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
 
@@ -246,10 +253,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
         List<TemplateEntity> templateList = templateGroup.getTemplateList();
         List<TemplateContentVO> list = new ArrayList<>();
-        for (int i = 0; i < templateList.size(); i++) {
-            TemplateEntity templateEntity = templateList.get(i);
+        for (TemplateEntity templateEntity : templateList) {
             if (CollUtil.isEmpty(templateIdList) || templateIdList.contains(templateEntity.getId())) {
-                EnumDataModel enumDataModel = buildEnumDataModel(i, enumEntity, project);
+                EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
                 TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, templateEntity, enumDataModel);
                 templateContentVO.setEnumId(enumId);
                 list.add(templateContentVO);
@@ -386,9 +392,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         enumList = enumList.stream()
                 .filter(enumEntity -> CollUtil.isEmpty(enmumIdList) || enmumIdList.contains(enumEntity.getId()))
                 .toList();
-        for (int i = 0; i < enumList.size(); i++) {
-            EnumEntity enumEntity = enumList.get(i);
-            EnumDataModel dataModel = buildEnumDataModel(i, enumEntity, project);
+        for (EnumEntity enumEntity : enumList) {
+            EnumDataModel dataModel = buildEnumDataModel(enumEntity, project);
             enumDataModelList.add(dataModel);
         }
 
@@ -472,18 +477,35 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectDataModel.setDatabaseUsername(dataSource.getUsername());
         projectDataModel.setDatabasePassword(dataSource.getPassword());
 
+        //表模型数据列表
+        List<TableDataModel> tableDataModelList = new ArrayList<>();
+        projectDataModel.setTableDataModelList(tableDataModelList);
+
+        List<TableEntity> tableList = tableService.getTableListByProjectId(project.getId());
+
+        for (TableEntity table : tableList) {
+            TableDataModel tableDataModel = buildTableDataModel(table, project);
+            tableDataModelList.add(tableDataModel);
+        }
+
+        //枚举模型数据列表
+        List<EnumDataModel> enumDataModelList = new ArrayList<>();
+        projectDataModel.setEnumDataModelList(enumDataModelList);
+
+        List<EnumEntity> enumList = enumService.enumList(project.getId());
+        for (EnumEntity enumEntity : enumList) {
+            EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
+            enumDataModelList.add(enumDataModel);
+        }
+
         return projectDataModel;
     }
 
     /**
      * 构建表渲染的数据模型
-     *
-     * @param tableId 表ID
      */
-    private TableDataModel buildTableDataModel(Long tableId) {
-        // 表信息
-        TableEntity table = tableService.getById(tableId);
-        List<TableFieldEntity> fieldList = tableFieldService.getByTableId(tableId);
+    private TableDataModel buildTableDataModel(TableEntity table, ProjectEntity project) {
+        List<TableFieldEntity> fieldList = tableFieldService.getByTableId(table.getId());
         List<TableFieldModel> fieldModelList = tableFieldMapstruct.toModel(fieldList);
 
         TableDataModel tableDataModel = new TableDataModel();
@@ -501,8 +523,6 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         });
         tableDataModel.setFieldList(fieldModelList);
-
-        ProjectEntity project = projectService.getById(table.getProjectId());
 
         // 获取数据库类型
         String dbType = datasourceService.getDatabaseProductName(project.getDatasourceId());
@@ -555,9 +575,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tableDataModel;
     }
 
-    private EnumDataModel buildEnumDataModel(Integer index, EnumEntity enumEntity, ProjectEntity project) {
+    private EnumDataModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
         EnumDataModel enumDataModel = new EnumDataModel();
-        enumDataModel.setIndex(index);
 
         enumDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
         enumDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));

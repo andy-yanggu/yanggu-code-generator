@@ -14,4 +14,14 @@
         </if>
     </sql>
 
+    <!-- 排序SQL（带前缀） -->
+    <sql id="prefixOrderBySQL">
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
+            ORDER BY
+            <foreach collection="query.orderItemList" item="order" separator=",">
+                ${columnPrefix}.${@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
+            </foreach>
+        </if>
+    </sql>
+
 </mapper>

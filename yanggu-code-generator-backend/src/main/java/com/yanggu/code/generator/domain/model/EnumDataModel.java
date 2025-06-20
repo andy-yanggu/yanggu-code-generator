@@ -8,11 +8,6 @@ import java.util.List;
 public class EnumDataModel {
 
     /**
-     * 索引
-     */
-    private Integer index;
-
-    /**
      * 项目名（点）（test1.demo）
      */
     private String projectNameDot;

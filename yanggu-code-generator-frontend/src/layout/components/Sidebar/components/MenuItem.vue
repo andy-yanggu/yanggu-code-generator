@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { PropType } from 'vue'
+import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 
 defineProps({
 	menu: {

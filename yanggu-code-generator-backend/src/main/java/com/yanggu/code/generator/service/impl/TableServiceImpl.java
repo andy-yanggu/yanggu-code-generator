@@ -114,6 +114,15 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<TableVO> detailList(List<Long> idList) {
+        List<TableEntity> entityList = tableMapper.selectByIds(idList);
+        return tableMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -280,13 +289,11 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         return checkVO;
     }
 
-    /**
-     * 批量查询
-     */
     @Override
-    public List<TableVO> detailList(List<Long> idList) {
-        List<TableEntity> entityList = tableMapper.selectByIds(idList);
-        return tableMapstruct.entityToVO(entityList);
+    public List<TableEntity> getTableListByProjectId(Long projectId) {
+        TableEntityQuery query = new TableEntityQuery();
+        query.setProjectId(projectId);
+        return tableMapper.entityList(query);
     }
 
     private TableEntity selectById(Long id) {

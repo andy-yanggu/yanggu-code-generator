@@ -53,12 +53,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_table
+            gen_table AS t
         <where>
-            is_delete = 0
+            t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'t'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- Entity列表 -->
@@ -66,12 +67,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_table
+            gen_table AS t
         <where>
-            is_delete = 0
+            t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'t'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO分页 -->
@@ -88,7 +90,8 @@
             t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'t'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO列表 -->
@@ -96,12 +99,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_table
+            gen_table AS t
         <where>
-            is_delete = 0
+            t.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'t'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <select id="distinctProjectIdList" resultType="java.lang.Long">

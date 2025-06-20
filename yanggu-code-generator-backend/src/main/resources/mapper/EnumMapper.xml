@@ -48,12 +48,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_enum
+            gen_enum AS e
         <where>
-            is_delete = 0
+            e.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'e'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- Entity列表 -->
@@ -61,12 +62,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_enum
+            gen_enum AS e
         <where>
-            is_delete = 0
+            e.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'e'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO分页 -->
@@ -83,7 +85,8 @@
             e.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'e'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO列表 -->
@@ -91,12 +94,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_enum
+            gen_enum AS e
         <where>
-            is_delete = 0
+            e.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'e'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <select id="selectEnumList" resultMap="enumModelMap">

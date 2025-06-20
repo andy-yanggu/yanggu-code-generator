@@ -17,7 +17,7 @@ import java.util.List;
 @ConditionalOnProperty(name = "web.cors.enable", havingValue = "true", matchIfMissing = true)
 public class CorsConfig {
 
-    @Value("#{'${web.cors.expose-headers:Content-Disposition,Authorization,token}'.split(',')}")
+    @Value("#{'${web.cors.expose-headers:Content-Disposition,Authorization,token,Cookie}'.split(',')}")
     private List<String> exposedHeaders;
 
     @Bean
