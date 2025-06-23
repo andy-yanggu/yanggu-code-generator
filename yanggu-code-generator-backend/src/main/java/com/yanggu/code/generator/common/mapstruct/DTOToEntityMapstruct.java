@@ -2,7 +2,6 @@ package com.yanggu.code.generator.common.mapstruct;
 
 import org.dromara.hutool.core.collection.CollUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ public interface DTOToEntityMapstruct<D, E> {
      */
     default List<E> dtoToEntity(List<D> dtoList) {
         if (CollUtil.isEmpty(dtoList)) {
-            return Collections.emptyList();
+            return List.of();
         }
         return dtoList.stream().map(this::dtoToEntity).toList();
     }

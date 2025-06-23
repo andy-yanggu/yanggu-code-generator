@@ -1,15 +1,17 @@
 <template>
 	<el-container class="layout-container">
-		<el-header class="layout-header">
-			<Navbar />
-		</el-header>
+		<el-aside class="layout-sidebar">
+			<Sidebar></Sidebar>
+		</el-aside>
 		<el-container>
-			<Sidebar />
+			<el-header class="layout-header">
+				<Navbar></Navbar>
+			</el-header>
 			<el-main class="layout-main">
 				<el-scrollbar class="layout-scrollbar">
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
-							<component :is="Component" :key="route.name" />
+							<component :is="Component" :key="route.fullPath"></component>
 						</router-view>
 					</div>
 				</el-scrollbar>

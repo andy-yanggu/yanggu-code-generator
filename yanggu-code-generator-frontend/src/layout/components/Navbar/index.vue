@@ -1,7 +1,5 @@
 <template>
 	<div class="navbar-container">
-		<Logo />
-		<div class="navbar-left">代码生成器工作台</div>
 		<div class="navbar-right">
 			<a href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 				<svg-icon icon="icon-gitee"></svg-icon>
@@ -9,9 +7,9 @@
 		</div>
 	</div>
 </template>
+
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
-import Logo from '@/layout/components/Navbar/components/Logo.vue'
 </script>
 
 <style lang="scss" scoped>
@@ -37,17 +35,11 @@ import Logo from '@/layout/components/Navbar/components/Logo.vue'
 		}
 	}
 }
-.navbar-left {
-	flex: 1;
-	height: inherit;
-	display: flex;
-	align-items: center;
-	padding-left: 20px;
-}
 .navbar-right {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
+	flex: 1 0 0;
 	&-link {
 		height: 100%;
 		display: flex;

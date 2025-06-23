@@ -90,6 +90,15 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<EnumItemVO> detailList(List<Long> idList) {
+        List<EnumItemEntity> entityList = enumItemMapper.selectByIds(idList);
+        return enumItemMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -139,15 +148,6 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
         enumItemEntityQuery.setEnumId(enumId);
         enumItemEntityQuery.setPageSize(-1L);
         return enumItemMapper.entityList(enumItemEntityQuery);
-    }
-
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<EnumItemVO> detailList(List<Long> idList) {
-        List<EnumItemEntity> entityList = enumItemMapper.selectByIds(idList);
-        return enumItemMapstruct.entityToVO(entityList);
     }
 
     private EnumItemEntity selectById(Long id) {

@@ -1,9 +1,9 @@
 <template>
-	<el-aside class="layout-sidebar">
-		<Menu />
-	</el-aside>
+	<Logo></Logo>
+	<Menu></Menu>
 </template>
 
 <script setup lang="ts">
-import Menu from './components/Menu.vue'
+import Logo from '@/layout/components/Sidebar/components/Logo.vue'
+import Menu from '@/layout/components/Sidebar/components/Menu.vue'
 </script>

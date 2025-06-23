@@ -80,8 +80,12 @@ public class MybatisUtil {
      * 判断对象中某个字段不为空
      */
     public static boolean isNotEmpty(Object object, String propertyName) {
-        if (object == null || StrUtil.isBlank(propertyName)) {
-            log.warn("object or propertyName is null or blank");
+        if (object == null) {
+            log.warn("object is null");
+            return false;
+        }
+        if (StrUtil.isBlank(propertyName)) {
+            log.warn("propertyName is null or blank");
             return false;
         }
         boolean hasField = FieldUtil.hasField(object.getClass(), propertyName);

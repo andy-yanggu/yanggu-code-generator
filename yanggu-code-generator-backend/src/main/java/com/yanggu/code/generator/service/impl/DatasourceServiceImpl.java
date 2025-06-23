@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -99,6 +100,15 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     public DatasourceVO detail(Long id) {
         DatasourceEntity dbEntity = selectById(id);
         return datasourceMapstruct.entityToVO(dbEntity);
+    }
+
+    /**
+     * 批量查询
+     */
+    @Override
+    public List<DatasourceVO> detailList(List<Long> idList) {
+        List<DatasourceEntity> entityList = datasourceMapper.selectByIds(idList);
+        return datasourceMapstruct.entityToVO(entityList);
     }
 
     /**
@@ -176,15 +186,6 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         return datasource.getDbType();
     }
 
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<DatasourceVO> detailList(List<Long> idList) {
-        List<DatasourceEntity> entityList = datasourceMapper.selectByIds(idList);
-        return datasourceMapstruct.entityToVO(entityList);
-    }
-
     private DatasourceEntity selectById(Long id) {
         DatasourceEntity entity = datasourceMapper.selectById(id);
         if (entity == null) {
@@ -195,8 +196,8 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
 
     private void checkUnique(DatasourceDTO dto) {
         LambdaQueryWrapper<DatasourceEntity> queryWrapper = Wrappers.lambdaQuery(DatasourceEntity.class)
-                .eq(DatasourceEntity::getConnName, dto.getConnName())
-                .ne(MybatisUtil.isNotEmpty(dto.getId()), DatasourceEntity::getId, dto.getId());
+                .ne(Objects.nonNull(dto.getId()), DatasourceEntity::getId, dto.getId())
+                .eq(DatasourceEntity::getConnName, dto.getConnName());
 
         boolean exists = datasourceMapper.exists(queryWrapper);
         if (exists) {

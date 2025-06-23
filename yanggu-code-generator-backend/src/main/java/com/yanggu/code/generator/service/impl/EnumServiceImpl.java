@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.service.impl;
 
-import ch.qos.logback.classic.LoggerContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
@@ -98,6 +98,10 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         checkReference(idList);
         //关联删除
         enumMapper.deleteByIds(idList);
+        //删除枚举项
+        LambdaQueryWrapper<EnumItemEntity> queryWrapper = Wrappers.lambdaQuery(EnumItemEntity.class)
+                .in(EnumItemEntity::getEnumId, idList);
+        enumItemService.remove(queryWrapper);
     }
 
     /**
@@ -188,6 +192,19 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
             checkVO.setCheckResult(false);
         }
         return checkVO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void deleteByProjectId(List<Long> idList) {
+        LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
+        wrapper.in(EnumEntity::getProjectId, idList);
+
+        List<EnumEntity> enumList = enumMapper.selectList(wrapper);
+
+        List<Long> enumIdList = enumList.stream().map(EnumEntity::getId).toList();
+
+        deleteList(enumIdList);
     }
 
     private EnumEntity selectById(Long id) {

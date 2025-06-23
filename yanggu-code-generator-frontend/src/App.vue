@@ -1,6 +1,6 @@
 <template>
 	<el-config-provider :locale="zh_cn">
-		<router-view />
+		<router-view></router-view>
 	</el-config-provider>
 </template>
 

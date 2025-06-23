@@ -97,6 +97,15 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<BaseClassVO> detailList(List<Long> idList) {
+        List<BaseClassEntity> entityList = baseClassMapper.selectByIds(idList);
+        return baseClassMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -140,15 +149,6 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         return baseClassMapper.voList(query);
     }
 
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<BaseClassVO> detailList(List<Long> idList) {
-        List<BaseClassEntity> entityList = baseClassMapper.selectByIds(idList);
-        return baseClassMapstruct.entityToVO(entityList);
-    }
-
     private BaseClassEntity selectById(Long id) {
         BaseClassEntity entity = baseClassMapper.selectById(id);
         if (entity == null) {
@@ -162,9 +162,9 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
      */
     private void checkUnique(BaseClassDTO dto) {
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
-        wrapper.eq(BaseClassEntity::getCode, dto.getCode());
-        wrapper.eq(BaseClassEntity::getPackageName, dto.getPackageName());
         wrapper.ne(Objects.nonNull(dto.getId()), BaseClassEntity::getId, dto.getId());
+        wrapper.eq(BaseClassEntity::getPackageName, dto.getPackageName());
+        wrapper.eq(BaseClassEntity::getCode, dto.getCode());
 
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {

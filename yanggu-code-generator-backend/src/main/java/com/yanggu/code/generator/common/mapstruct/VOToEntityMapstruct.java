@@ -2,7 +2,6 @@ package com.yanggu.code.generator.common.mapstruct;
 
 import org.dromara.hutool.core.collection.CollUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ public interface VOToEntityMapstruct<V, E> {
      */
     default List<E> voToEntity(List<V> voList) {
         if (CollUtil.isEmpty(voList)) {
-            return Collections.emptyList();
+            return List.of();
         }
         return voList.stream().map(this::voToEntity).toList();
     }

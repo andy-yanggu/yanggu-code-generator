@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -94,6 +95,15 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<FieldTypeVO> detailList(List<Long> idList) {
+        List<FieldTypeEntity> entityList = fieldTypeMapper.selectByIds(idList);
+        return fieldTypeMapstruct.entityToVO(entityList);
+    }
+
+    /**
      * 简单分页
      */
     @Override
@@ -160,15 +170,6 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
                 .toList();
     }
 
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<FieldTypeVO> detailList(List<Long> idList) {
-        List<FieldTypeEntity> entityList = fieldTypeMapper.selectByIds(idList);
-        return fieldTypeMapstruct.entityToVO(entityList);
-    }
-
     private FieldTypeEntity selectById(Long id) {
         FieldTypeEntity entity = fieldTypeMapper.selectById(id);
         if (entity == null) {
@@ -179,7 +180,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
 
     private void checkUnique(FieldTypeDTO dto) {
         LambdaQueryWrapper<FieldTypeEntity> queryWrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
-        queryWrapper.ne(dto.getId() != null, FieldTypeEntity::getId, dto.getId());
+        queryWrapper.ne(Objects.nonNull(dto.getId()), FieldTypeEntity::getId, dto.getId());
         queryWrapper.eq(FieldTypeEntity::getColumnType, dto.getColumnType());
         boolean exists = fieldTypeMapper.exists(queryWrapper);
         if (exists) {

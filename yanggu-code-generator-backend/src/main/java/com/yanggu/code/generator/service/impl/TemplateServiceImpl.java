@@ -91,6 +91,16 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     /**
+     * 批量查询
+     */
+    @Override
+    public List<TemplateVO> detailList(List<Long> idList) {
+        List<TemplateEntity> entityList = templateMapper.selectByIds(idList);
+        return templateMapstruct.entityToVO(entityList);
+    }
+
+
+    /**
      * 简单分页
      */
     @Override
@@ -139,15 +149,6 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
                 .eq(TemplateEntity::getTemplateGroupId, groupId);
         return templateMapper.selectList(queryWrapper);
-    }
-
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<TemplateVO> detailList(List<Long> idList) {
-        List<TemplateEntity> entityList = templateMapper.selectByIds(idList);
-        return templateMapstruct.entityToVO(entityList);
     }
 
     private TemplateEntity selectById(Long id) {

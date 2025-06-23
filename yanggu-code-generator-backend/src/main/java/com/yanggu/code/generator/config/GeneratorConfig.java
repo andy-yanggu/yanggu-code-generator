@@ -16,19 +16,19 @@ public class GeneratorConfig {
     /**
      * 逻辑删除字段列表
      */
-    @Value("#{'${generator.logic-delete-column:is_deleted,del_flag,is_del,del_status,is_del,del_status,is_delete}'.split(',')}")
+    @Value("#{'${generator.logic-delete.column-list:is_deleted,del_flag,is_del,del_status,is_del,del_status,is_delete}'.split(',')}")
     private List<String> logicDeleteColumnList;
 
     /**
      * 逻辑删除字段值
      */
-    @Value("${generator.logic-delete-value:1}")
+    @Value("${generator.logic-delete.delete-value:1}")
     private String logicDeleteValue;
 
     /**
      * 逻辑未删除字段值
      */
-    @Value("${generator.logic-not-delete-value:0}")
+    @Value("${generator.logic-delete.not-delete-value:0}")
     private String logicNotDeleteValue;
 
 }

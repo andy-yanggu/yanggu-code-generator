@@ -40,8 +40,14 @@ public @interface EnumCode {
      */
     String message() default "枚举属性名称: {enumName}.{enumFieldName}, 传入的枚举属性枚举值: {enumValue}, 必须在指定范围: {valueList}";
 
+    /**
+     * 默认分组
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * 负载
+     */
     Class<? extends Payload>[] payload() default {};
 
 }

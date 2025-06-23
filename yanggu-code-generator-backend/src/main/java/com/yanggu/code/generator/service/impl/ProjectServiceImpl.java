@@ -19,15 +19,19 @@ import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
 import com.yanggu.code.generator.service.DatasourceService;
+import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableService;
 import com.yanggu.code.generator.util.GenUtil;
+import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
+import static com.yanggu.code.generator.common.response.ResultEnum.DATA_ALREADY_EXIST;
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
 /**
@@ -48,22 +52,30 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private EnumService enumService;
+
     /**
      * 新增
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void add(ProjectDTO dto) throws Exception {
-        ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         //唯一性校验等
+        checkUnique(dto);
+        ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         projectMapper.insert(entity);
 
         //默认导入项目对应数据库下的所有表
-        TableImportDTO tableImportDTO = new TableImportDTO();
-        tableImportDTO.setProjectId(entity.getId());
-
         DataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
         List<String> tableNameList = GenUtil.getTableNameList(dataSourceBO);
+
+        if (CollUtil.isEmpty(tableNameList)) {
+            return;
+        }
+
+        TableImportDTO tableImportDTO = new TableImportDTO();
+        tableImportDTO.setProjectId(entity.getId());
 
         tableImportDTO.setTableNameList(tableNameList);
         tableService.importTable(tableImportDTO);
@@ -75,9 +87,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void update(ProjectDTO dto) {
+        //唯一性校验等
+        checkUnique(dto);
         ProjectEntity formEntity = projectMapstruct.dtoToEntity(dto);
         ProjectEntity dbEntity = selectById(dto.getId());
-        //唯一性校验等
         projectMapper.updateById(formEntity);
     }
 
@@ -101,6 +114,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         projectMapper.deleteByIds(idList);
         //删除项目对应的表
         tableService.deleteByProjectId(idList);
+        //删除项目对应的枚举
+        enumService.deleteByProjectId(idList);
     }
 
     /**
@@ -110,6 +125,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     public ProjectVO detail(Long id) {
         ProjectEntity dbEntity = selectById(id);
         return projectMapstruct.entityToVO(dbEntity);
+    }
+
+    /**
+     * 批量查询
+     */
+    @Override
+    public List<ProjectVO> detailList(List<Long> idList) {
+        List<ProjectEntity> entityList = projectMapper.selectByIds(idList);
+        return projectMapstruct.entityToVO(entityList);
     }
 
     /**
@@ -176,21 +200,23 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         return tableList;
     }
 
-    /**
-     * 批量查询
-     */
-    @Override
-    public List<ProjectVO> detailList(List<Long> idList) {
-        List<ProjectEntity> entityList = projectMapper.selectByIds(idList);
-        return projectMapstruct.entityToVO(entityList);
-    }
-
     private ProjectEntity selectById(Long id) {
         ProjectEntity entity = projectMapper.selectById(id);
         if (entity == null) {
             throw new BusinessException(DATA_NOT_EXIST, "项目", id);
         }
         return entity;
+    }
+
+    private void checkUnique(ProjectDTO dto) {
+        //唯一性校验
+        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class);
+        queryWrapper.ne(Objects.nonNull(dto.getId()), ProjectEntity::getId, dto.getId());
+        queryWrapper.eq(ProjectEntity::getProjectName, dto.getProjectName());
+        boolean exists = exists(queryWrapper);
+        if (exists) {
+            throw new BusinessException(DATA_ALREADY_EXIST, "项目", dto.getProjectName());
+        }
     }
 
     private LambdaQueryWrapper<ProjectEntity> buildQueryWrapper(ProjectEntityQuery query) {

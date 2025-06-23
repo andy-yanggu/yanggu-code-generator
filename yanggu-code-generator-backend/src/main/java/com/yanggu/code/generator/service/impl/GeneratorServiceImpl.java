@@ -8,9 +8,7 @@ import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.GeneratorEnumQuery;
 import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
 import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
-import com.yanggu.code.generator.domain.query.TableEntityQuery;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
-import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
@@ -106,7 +104,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
             ProjectEntity project = projectService.getById(id);
             TemplateContentVO preview = projectPreview(project, List.of(templateId)).getFirst();
-            return buildResponseEntity(preview);
+            return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
         } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
             return tableDownloadSingle(id, templateId);
         } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
@@ -145,7 +143,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateContentVO> list = tablePreview(tableQuery);
         TemplateContentVO preview = list.getFirst();
 
-        return buildResponseEntity(preview);
+        return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
     }
 
     @Override
@@ -175,7 +173,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         enumQuery.setTemplateIdList(List.of(templateId));
         List<TemplateContentVO> list = enumPreview(enumQuery);
         TemplateContentVO preview = list.getFirst();
-        return buildResponseEntity(preview);
+        return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
     }
 
     private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
@@ -295,13 +293,6 @@ public class GeneratorServiceImpl implements GeneratorService {
         return allPreviewList;
     }
 
-    private ResponseEntity<byte[]> buildResponseEntity(TemplateContentVO preview) {
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + preview.getFileName())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(preview.getContent().getBytes());
-    }
-
     private List<TemplateContentVO> getTablePreviewData(GeneratorTableQuery tableQuery) {
         return tableQuery.getTableIdList().stream()
                 .flatMap(tempTableId -> {
@@ -352,10 +343,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         byte[] data = outputStream.toByteArray();
 
         String dateTime = DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=code_generator_" + dateTime + ".zip")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(data);
+        String fileName = "code_generator_" + dateTime + ".zip";
+        return buildResponseEntity(fileName, data);
     }
 
     private void downloadLocal(List<TemplateContentVO> list) {
@@ -695,6 +684,13 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .toList();
 
         return TreeUtil.buildTree(treeList);
+    }
+
+    private ResponseEntity<byte[]> buildResponseEntity(String fileName, byte[] data) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .body(data);
     }
 
 }

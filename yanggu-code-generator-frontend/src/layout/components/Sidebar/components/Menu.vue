@@ -1,6 +1,6 @@
 <template>
 	<el-scrollbar>
-		<el-menu :default-active="defaultActive" background-color="transparent" :collapse-transition="false" mode="vertical" router>
+		<el-menu :default-active="defaultActive" background-color="transparent" mode="vertical" router>
 			<menu-item v-for="menu in menuRoutes" :key="menu.path" :menu="menu"></menu-item>
 		</el-menu>
 	</el-scrollbar>

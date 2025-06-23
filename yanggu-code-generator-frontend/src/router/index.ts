@@ -78,17 +78,17 @@ export const menuRoutes: RouteRecordRaw[] = [
 export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: '/redirect',
-		component: () => import('../layout/index.vue'),
+		component: () => import('@/layout/index.vue'),
 		children: [
 			{
 				path: '/redirect/:path(.*)',
-				component: () => import('../layout/components/Router/Redirect.vue')
+				component: () => import('@/layout/components/Router/Redirect.vue')
 			}
 		]
 	},
 	{
 		path: '/',
-		component: () => import('../layout/index.vue'),
+		component: () => import('@/layout/index.vue'),
 		redirect: '/gen/project',
 		children: [...menuRoutes]
 	},

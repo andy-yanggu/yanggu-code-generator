@@ -72,4 +72,6 @@ public interface EnumService extends IService<EnumEntity> {
 
     EnumGenerateCheckVO generateCheck(List<Long> idList);
 
+    void deleteByProjectId(List<Long> idList);
+
 }

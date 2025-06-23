@@ -45,9 +45,10 @@ knife4j:
 
 # 代码生成器相关配置
 generator:
-  # 逻辑删除字段
-  logic-delete-column: 'is_deleted,del_flag,is_del,del_status,is_del,del_status,is_delete'
-  # 逻辑删除值 
-  logic-delete-value: 1
-  # 逻辑未删除值
-  logic-not-delete-value: 0
+  logic-delete:
+    # 逻辑删除字段
+    column-list: 'is_deleted,del_flag,is_del,del_status,is_del,del_status,is_delete'
+    # 逻辑删除值
+    delete-value: 1
+    # 逻辑未删除值
+    not-delete-value: 0
