@@ -69,11 +69,12 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorEnumDownloadLocalApi, generatorEnumDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
+import { templateEntityPageApi } from '@/api/template'
 
 const emit = defineEmits(['clearSelection'])
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/template/entityPage',
+	dataListApi: templateEntityPageApi,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupId: null,

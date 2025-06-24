@@ -42,10 +42,11 @@
 import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
+import { enumEntityPageApi } from '@/api/enum'
 
 const emit = defineEmits(['selectChange'])
 const state: IHooksOptions = reactive({
-	dataListUrl: '/enum/entityPage',
+	dataListApi: enumEntityPageApi,
 	createdIsNeed: false,
 	queryForm: {
 		enumName: '',

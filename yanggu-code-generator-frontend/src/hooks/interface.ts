@@ -1,12 +1,15 @@
+type DataListApi<T = any> = (params: any) => Promise<T>
+type DeleteListApi<T = any> = (params: any) => Promise<T>
+
 export interface IHooksOptions {
 	// 否在创建页面时，调用数据列表接口
 	createdIsNeed?: boolean
-	// 数据列表 Url
-	dataListUrl?: string
 	// 是否需要分页
 	isPage?: boolean
-	// 删除 Url
-	deleteUrl?: string
+	// 数据列表接口
+	dataListApi?: DataListApi
+	// 删除接口
+	deleteListApi?: DeleteListApi
 	// 主键key，用于删除场景
 	primaryKey?: string
 	// 导出 Url

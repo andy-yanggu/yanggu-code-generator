@@ -42,11 +42,12 @@
 import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
+import { tableEntityPageApi } from '@/api/table'
 
 const emit = defineEmits(['selectChange'])
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/table/entityPage',
+	dataListApi: tableEntityPageApi,
 	createdIsNeed: false,
 	queryForm: {
 		tableName: '',

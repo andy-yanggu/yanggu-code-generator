@@ -1,14 +1,13 @@
 import { IHooksOptions } from '@/hooks/interface'
-import service from '@/utils/request'
 import { onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 export const useCrud = (options: IHooksOptions) => {
 	const defaultOptions: IHooksOptions = {
+		dataListApi: () => Promise.resolve({ data: [] }),
+		deleteListApi: () => Promise.resolve(),
 		createdIsNeed: true,
-		dataListUrl: '',
 		isPage: true,
-		deleteUrl: '',
 		primaryKey: 'id',
 		exportUrl: '',
 		queryForm: {},
@@ -42,7 +41,7 @@ export const useCrud = (options: IHooksOptions) => {
 	})
 
 	const query = () => {
-		if (!state.dataListUrl) {
+		if (!state.dataListApi) {
 			return
 		}
 
@@ -55,7 +54,7 @@ export const useCrud = (options: IHooksOptions) => {
 			order: state.order,
 			asc: state.asc
 		}
-		service.post(state.dataListUrl, pageQueryForm).then((res: any) => {
+		state.dataListApi(pageQueryForm).then((res: any) => {
 			state.dataList = state.isPage ? res.data.records : res.data
 			state.total = state.isPage ? res.data.total : 0
 		})
@@ -63,17 +62,20 @@ export const useCrud = (options: IHooksOptions) => {
 		state.dataListLoading = false
 	}
 
+	// 加载数据列表
 	const getDataList = () => {
 		state.pageNum = 1
 		query()
 	}
 
+	//pageSize发生变化
 	const sizeChangeHandle = (val: number) => {
 		state.pageNum = 1
 		state.pageSize = val
 		query()
 	}
 
+	//pageNum发生变化
 	const currentChangeHandle = (val: number) => {
 		state.pageNum = val
 		query()
@@ -117,8 +119,8 @@ export const useCrud = (options: IHooksOptions) => {
 			type: 'warning'
 		})
 			.then(() => {
-				if (state.deleteUrl) {
-					service.delete(state.deleteUrl, { data }).then(() => {
+				if (state.deleteListApi) {
+					state.deleteListApi({ data }).then(() => {
 						ElMessage.success('删除成功')
 
 						query()

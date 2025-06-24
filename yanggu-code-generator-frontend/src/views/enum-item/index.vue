@@ -57,11 +57,12 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
+import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enumItem'
 
 const enumIdRef = ref()
 const state: IHooksOptions = reactive({
-	dataListUrl: '/enumItem/entityPage',
-	deleteUrl: '/enumItem/deleteList',
+	dataListApi: enumItemEntityPageApi,
+	deleteListApi: enumItemDeleteListApi,
 	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',

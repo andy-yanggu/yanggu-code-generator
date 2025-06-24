@@ -64,11 +64,12 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
+import { templateVOPageApi } from '@/api/template'
 
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()
 const state: IHooksOptions = reactive({
-	dataListUrl: '/template/voPage',
+	dataListApi: templateVOPageApi,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupIdList: [],

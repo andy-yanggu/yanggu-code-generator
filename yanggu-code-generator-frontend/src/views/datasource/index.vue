@@ -69,12 +69,12 @@ import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
-import { datasourceTestApi } from '@/api/datasource'
+import { datasourceDeleteListApi, datasourceEntityPageApi, datasourceTestApi } from '@/api/datasource'
 import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/datasource/entityPage',
-	deleteUrl: '/datasource/deleteList',
+	dataListApi: datasourceEntityPageApi,
+	deleteListApi: datasourceDeleteListApi,
 	queryForm: {
 		dbType: '',
 		connName: ''

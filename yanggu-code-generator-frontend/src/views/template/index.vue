@@ -70,10 +70,11 @@ import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
+import { templateDeleteListApi, templateEntityPageApi } from '@/api/template'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/template/entityPage',
-	deleteUrl: '/template/deleteList',
+	dataListApi: templateEntityPageApi,
+	deleteListApi: templateDeleteListApi,
 	queryForm: {
 		templateGroupId: null,
 		templateName: '',

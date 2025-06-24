@@ -100,10 +100,11 @@ import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
 </#list>
+import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionName}'
 
 const state: IHooksOptions = reactive({
-    dataListUrl: '/${functionName}/entityPage',
-    deleteUrl: '/${functionName}/deleteList',
+    dataListApi: ${functionName}EntityPageApi,
+    deleteListApi: ${functionName}DeleteListApi,
     queryForm: {
         <#list queryList as field>
         <#if field.formType == 'date'>

@@ -63,15 +63,15 @@ import { nextTick, reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import Preview from './preview.vue'
-import { projectDeleteListApi } from '@/api/project'
+import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
 
 import Steps from './steps.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/project/entityPage',
-	deleteUrl: '/project/deleteList',
+	dataListApi: projectEntityPageApi,
+	deleteListApi: projectDeleteListApi,
 	queryForm: {
 		projectName: ''
 	}

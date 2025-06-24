@@ -88,13 +88,13 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import Copy from '@/views/template-group/copy.vue'
 import TemplateIndex from '../template/index.vue'
 import { ElMessage } from 'element-plus'
-import { exportTemplateGroupApi } from '@/api/templateGroup'
+import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/templateGroup'
 import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/templateGroup/entityPage',
-	deleteUrl: '/templateGroup/deleteList',
+	dataListApi: templateGroupEntityPageApi,
+	deleteListApi: templateGroupDeleteListApi,
 	queryForm: {
 		groupName: '',
 		type: ''

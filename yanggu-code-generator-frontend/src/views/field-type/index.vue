@@ -67,10 +67,11 @@ import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
+import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/fieldType'
 
 const state: IHooksOptions = reactive({
-	dataListUrl: '/fieldType/entityPage',
-	deleteUrl: '/fieldType/deleteList',
+	dataListApi: fieldTypeEntityPageApi,
+	deleteListApi: fieldTypeDeleteListApi,
 	queryForm: {
 		columnType: '',
 		attrType: ''
