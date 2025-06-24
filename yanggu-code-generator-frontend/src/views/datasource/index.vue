@@ -1,10 +1,10 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="connName">
+			<el-form-item label="连接名" prop="connName">
 				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名"></el-input>
 			</el-form-item>
-			<el-form-item prop="dbType">
+			<el-form-item label="数据库类型" prop="dbType">
 				<el-select v-model="state.queryForm.dbType" style="width: 160px" clearable placeholder="请选择数据库类型">
 					<el-option v-for="item in DB_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>

@@ -1,10 +1,10 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="columnType">
+			<el-form-item label="字段类型" prop="columnType">
 				<el-input v-model="state.queryForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
-			<el-form-item prop="attrType">
+			<el-form-item label="属性类型" prop="attrType">
 				<el-select v-model="state.queryForm.attrType" style="width: 160px" clearable placeholder="请选择属性类型">
 					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>

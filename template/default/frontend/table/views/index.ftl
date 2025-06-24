@@ -2,7 +2,7 @@
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 		<#list queryList as field>
-			<el-form-item prop="${field.attrName}">
+			<el-form-item label="${field.fieldComment}" prop="${field.attrName}">
 			<#if field.queryFormType == 'text' || field.queryFormType == 'textarea' || field.queryFormType == 'editor'>
                 <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
 			<#elseif field.formType == 'select'>

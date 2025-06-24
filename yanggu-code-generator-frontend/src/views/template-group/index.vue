@@ -1,10 +1,10 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="groupName">
+			<el-form-item label="模板组名称" prop="groupName">
 				<el-input v-model="state.queryForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
-			<el-form-item prop="type">
+			<el-form-item label="模板组类型" prop="type">
 				<el-select v-model="state.queryForm.type" style="width: 170px" clearable placeholder="请选择模板组类型">
 					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>

@@ -2,10 +2,10 @@
 	<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" @close="dialogVisible = false">
 		<el-card class="layout-query">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item prop="templateName">
+				<el-form-item label="模板名称" prop="templateName">
 					<el-input v-model="state.queryForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 				</el-form-item>
-				<el-form-item prop="templateType">
+				<el-form-item label="模板类型" prop="templateType">
 					<el-select v-model="state.queryForm.templateType" style="width: 160px" clearable placeholder="请选择模板类型">
 						<el-option v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>

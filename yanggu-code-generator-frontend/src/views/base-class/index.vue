@@ -1,7 +1,7 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="code">
+			<el-form-item label="基类编码" prop="code">
 				<el-input v-model="state.queryForm.code" clearable placeholder="请输入基类编码"></el-input>
 			</el-form-item>
 			<el-form-item>
