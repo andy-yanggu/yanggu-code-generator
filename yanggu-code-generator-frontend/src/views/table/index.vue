@@ -97,7 +97,7 @@ import Preview from './preview.vue'
 import FieldConfig from './field-config.vue'
 import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
-import { tableSyncApi, tableGenerateCheckApi, tableEntityListApi, tableDeleteListApi } from '@/api/table'
+import { tableSyncApi, tableGenerateCheckApi, tableDeleteListApi, tableVOPageApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
@@ -108,7 +108,7 @@ onMounted(() => {
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: tableEntityListApi,
+	dataListApi: tableVOPageApi,
 	deleteListApi: tableDeleteListApi,
 	queryForm: {
 		tableName: '',

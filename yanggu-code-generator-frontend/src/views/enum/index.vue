@@ -91,7 +91,7 @@ import TemplateIndex from '@/views/enum/template-index.vue'
 import Preview from './preview.vue'
 import { projectEntityListApi } from '@/api/project'
 import { ElMessage } from 'element-plus'
-import { enumDeleteListApi, enumEntityListApi, enumGenerateCheckApi } from '@/api/enum'
+import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/enum'
 import { getLabel } from '@/utils/enum'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
@@ -100,7 +100,7 @@ onMounted(() => {
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: enumEntityListApi,
+	dataListApi: enumVOPageApi,
 	deleteListApi: enumDeleteListApi,
 	queryForm: {
 		enumName: '',
