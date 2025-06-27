@@ -2,7 +2,7 @@
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="模板组名称" prop="groupName">
-				<el-input v-model="state.queryForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
+				<el-input v-model="state.queryForm.groupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板组类型" prop="type">
 				<el-select v-model="state.queryForm.type" style="width: 170px" clearable placeholder="请选择模板组类型">
@@ -38,6 +38,7 @@
 			border
 			class="layout-table"
 			@selection-change="selectionChangeHandle"
+			@sort-change="sortChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
@@ -50,6 +51,8 @@
 				align="center"
 			></el-table-column>
 			<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="handlerTemplate(scope.row)">模板配置</el-button>
@@ -137,5 +140,5 @@ const exportHandle = () => {
 	})
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
 </script>

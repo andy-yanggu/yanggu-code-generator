@@ -20,13 +20,22 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+			@sort-change="sortChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="generatorType" label="生成方式" :formatter="handlerGeneratorType" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -129,5 +138,5 @@ const handlerGeneratorType = (row: any) => {
 	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useCrud(state)
 </script>

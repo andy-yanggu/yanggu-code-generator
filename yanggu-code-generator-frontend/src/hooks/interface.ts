@@ -28,7 +28,8 @@ export interface IHooksOptions {
 	pageSize?: number
 	// 总条数
 	total?: number
-	pageSizes?: any[]
+	// 每页数选择项
+	pageSizes?: number[]
 	// 数据列表，loading状态
 	dataListLoading?: boolean
 	// 数据列表，多选项

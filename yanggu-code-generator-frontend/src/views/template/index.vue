@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" :title="templateGroupDialogTitleRef" width="75%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" :title="templateGroupDialogTitleRef" width="80%" @close="dialogVisible = false">
 		<el-card class="layout-query">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="模板名称" prop="templateName">
@@ -26,7 +26,14 @@
 		</el-card>
 
 		<el-card>
-			<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+			<el-table
+				v-loading="state.dataListLoading"
+				:data="state.dataList"
+				border
+				class="layout-table"
+				@selection-change="selectionChangeHandle"
+				@sort-change="sortChangeHandle"
+			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -39,6 +46,8 @@
 					:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_TYPES)"
 				></el-table-column>
 				<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
+				<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -105,7 +114,7 @@ const init = (row: any) => {
 	currentGroupId.value = row.id
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
 
 defineExpose({
 	init

@@ -50,9 +50,10 @@ export const useCrud = (options: IHooksOptions) => {
 		const pageQueryForm = {
 			...state.queryForm,
 			pageNum: state.pageNum,
-			pageSize: state.pageSize,
-			order: state.order,
-			asc: state.asc
+			pageSize: state.pageSize
+		}
+		if (state.order) {
+			pageQueryForm.orderItemList = [{ column: state.order, asc: state.asc }]
 		}
 		state.dataListApi(pageQueryForm).then((res: any) => {
 			state.dataList = state.isPage ? res.data.records : res.data
@@ -88,16 +89,17 @@ export const useCrud = (options: IHooksOptions) => {
 
 	// 排序
 	const sortChangeHandle = (data: any) => {
-		const { prop, order } = data
-
-		if (prop && order) {
-			state.order = prop
-			state.asc = order === 'ascending'
+		const order = data.order
+		if (order === 'ascending') {
+			state.order = data.prop
+			state.asc = true
+		} else if (order === 'descending') {
+			state.order = data.prop
+			state.asc = false
 		} else {
 			state.order = ''
 		}
-
-		query()
+		getDataList()
 	}
 
 	const deleteBatchHandle = (key?: number | string) => {

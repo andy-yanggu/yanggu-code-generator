@@ -20,13 +20,22 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+			@sort-change="sortChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="packageName" label="基类包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="code" label="基类编码" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -74,5 +83,5 @@ const resetQueryRef = () => {
 	queryRef.value.resetFields()
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
 </script>
