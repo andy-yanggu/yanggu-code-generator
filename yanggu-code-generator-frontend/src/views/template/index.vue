@@ -87,7 +87,7 @@ const templateGroupDialogTitleRef = ref('')
 const currentGroupId = ref<number>(-1)
 const queryRef = ref()
 const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id: number) => {
+const addOrUpdateHandle = (id?: number) => {
 	addOrUpdateRef.value.init(id)
 }
 const resetQueryRef = () => {

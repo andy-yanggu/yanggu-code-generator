@@ -82,7 +82,7 @@ const addOrUpdateRef = ref()
 const previewRef = ref()
 const currentProjectIdTs = ref()
 const stepsRef = ref()
-const addOrUpdateHandle = (id: number) => {
+const addOrUpdateHandle = (id?: number) => {
 	addOrUpdateRef.value.init(id)
 }
 const resetQueryRef = () => {

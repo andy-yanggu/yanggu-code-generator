@@ -116,7 +116,7 @@ const tableRef = ref()
 const templateIndexRef = ref()
 const currentTemplateGroupIdTs = ref()
 const projectList = ref([])
-const addOrUpdateHandle = (id: number) => {
+const addOrUpdateHandle = (id?: number) => {
 	addOrUpdateRef.value.init(id)
 }
 const resetQueryRef = () => {

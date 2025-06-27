@@ -73,7 +73,7 @@ const state: IHooksOptions = reactive({
 const queryRef = ref()
 const dialogVisible = ref(false)
 const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id: number) => {
+const addOrUpdateHandle = (id?: number) => {
 	addOrUpdateRef.value.init(enumIdRef.value, id)
 }
 const resetQueryRef = () => {
