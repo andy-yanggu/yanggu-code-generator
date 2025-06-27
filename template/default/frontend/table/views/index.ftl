@@ -5,15 +5,15 @@
 			<el-form-item label="${field.fieldComment}" prop="${field.attrName}">
 			<#if field.queryFormType == 'text' || field.queryFormType == 'textarea' || field.queryFormType == 'editor'>
                 <el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
-			<#elseif field.formType == 'select'>
+			<#elseif field.queryFormType == 'select'>
                 <el-select v-model="state.queryForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
                     <el-option v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
-			<#elseif field.formType == 'radio'>
+			<#elseif field.queryFormType == 'radio'>
                 <el-radio-group v-model="state.queryForm.${field.attrName}">
                     <el-radio v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
-			<#elseif field.formType == 'checkbox'>
+			<#elseif field.queryFormType == 'checkbox'>
                 <el-checkbox-group v-model="state.queryForm.${field.attrName}">
                     <el-checkbox v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
@@ -56,15 +56,18 @@
 	</el-card>
 
 	<el-card>
-		<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @selection-change="selectionChangeHandle">
+		<el-table
+			v-loading="state.dataListLoading"
+			:data="state.dataList"
+			border
+			class="layout-table"
+			@selection-change="selectionChangeHandle"
+			@sort-change="sortChangeHandle"
+		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
-		  <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
-        	<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" :formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"></el-table-column>
-		  <#else>
-			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-		  </#if>
+			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>:formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if></el-table-column>
         </#list>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -95,7 +98,7 @@ import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 <#list gridList as field>
-	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
+	<#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>
 import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
@@ -107,10 +110,10 @@ const state: IHooksOptions = reactive({
     deleteListApi: ${functionName}DeleteListApi,
     queryForm: {
         <#list queryList as field>
-        <#if field.formType == 'date'>
+        <#if field.queryFormType == 'date'>
         startDate: '',
         endDate: ''<#sep>, </#sep>
-        <#elseif field.formType == 'datetime'>
+        <#elseif field.queryFormType == 'datetime'>
         startDateTime: '',
         endDateTime: ''<#sep>, </#sep>
         <#else>
@@ -129,5 +132,5 @@ const resetQueryRef = () => {
   queryRef.value.resetFields()
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
 </script>

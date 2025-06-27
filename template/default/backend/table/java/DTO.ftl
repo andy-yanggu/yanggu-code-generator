@@ -47,7 +47,7 @@ public class ${classNameUpper}DTO implements Serializable {
 	<#if formField.primaryPk == 1>
 	@NotNull(message = "${formField.fieldComment}不能为空", groups = {UpdateGroup.class})
 	</#if>
-	<#if formField.formValidator?? && formField_has_next>
+	<#if formField.formValidator??>
 	@${formField.formValidator}(message = "${formField.fieldComment}不能为空")
 	</#if>
 	<#if formField.enumId??>
