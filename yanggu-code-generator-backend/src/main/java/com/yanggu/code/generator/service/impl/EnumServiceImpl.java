@@ -246,7 +246,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
         //过滤字段
         wrapper.eq(MybatisUtil.isNotEmpty(query.getProjectId()), EnumEntity::getProjectId, query.getProjectId());
-        wrapper.eq(MybatisUtil.isNotEmpty(query.getEnumName()), EnumEntity::getEnumName, query.getEnumName());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getEnumName()), EnumEntity::getEnumName, query.getEnumName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());

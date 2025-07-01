@@ -122,7 +122,7 @@ export const useCrud = (options: IHooksOptions) => {
 		})
 			.then(() => {
 				if (state.deleteListApi) {
-					state.deleteListApi({ data }).then(() => {
+					state.deleteListApi(data).then(() => {
 						ElMessage.success('删除成功')
 
 						query()
