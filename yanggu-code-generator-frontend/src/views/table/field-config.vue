@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="visible" title="编辑" :size="1200" :with-header="false">
+	<el-dialog v-model="visible" title="字段配置" width="80%" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性设置" name="field">
 				<el-table
@@ -173,7 +173,7 @@
 			<el-button @click="visible = false">取消</el-button>
 			<el-button type="primary" @click="submitHandle()">确定</el-button>
 		</template>
-	</el-drawer>
+	</el-dialog>
 </template>
 
 <script setup lang="ts">

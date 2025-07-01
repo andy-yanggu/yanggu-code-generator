@@ -155,16 +155,16 @@ public class TableController {
     }
 
     /**
-     * 同步表
+     * 同步表字段
      *
      * @param id 表ID
      */
     @PutMapping("/sync")
     @ApiOperationSupport(order = 12)
-    @Operation(summary = "同步表")
+    @Operation(summary = "同步表字段")
     @Parameter(name = "id", description = "表ID", required = true)
-    public void syncTable(@RequestParam("id") Long id) throws Exception {
-        tableService.syncTable(id);
+    public void syncTableField(@RequestParam("id") Long id) throws Exception {
+        tableService.syncTableField(id);
     }
 
     /**

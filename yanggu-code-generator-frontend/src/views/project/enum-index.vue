@@ -1,7 +1,7 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="enumName">
+			<el-form-item label="枚举名称" prop="enumName">
 				<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
 			</el-form-item>
 			<el-form-item>
@@ -24,6 +24,13 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="enumName" label="枚举名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="updateTime" label="更新时间" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
+				<template #default="scope">
+					<el-button type="primary" link @click="enumItemIndexShow(scope.row.id)">查看枚举项</el-button>
+				</template>
+			</el-table-column>
 		</el-table>
 		<el-pagination
 			:current-page="state.pageNum"
@@ -36,6 +43,8 @@
 		>
 		</el-pagination>
 	</el-card>
+
+	<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 </template>
 
 <script setup lang="ts">
@@ -43,6 +52,7 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { enumEntityPageApi } from '@/api/enum'
+import EnumItemIndex from '@/views/project/enum-item-index.vue'
 
 const emit = defineEmits(['selectChange'])
 const state: IHooksOptions = reactive({
@@ -57,6 +67,7 @@ let isManualSelection = true
 
 const queryRef = ref()
 const tableRef = ref()
+const enumItemIndexRef = ref()
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
 }
@@ -84,6 +95,10 @@ const toggleRowSelection = (rowList: any[]) => {
 		tableRef.value.toggleRowSelection(row, true)
 	})
 	isManualSelection = true
+}
+
+const enumItemIndexShow = (enumId: number) => {
+	enumItemIndexRef.value.init(enumId)
 }
 
 const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)

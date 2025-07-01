@@ -62,7 +62,12 @@ const generateCode = () => {
 
 	const generatorType = projectReactive.generatorType
 	if (generatorType === 0) {
-		generatorProjectDownloadZipApi(dataForm)
+		generatorProjectDownloadZipApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到浏览器',
+				duration: 1000
+			})
+		})
 		dialogVisible.value = false
 	} else if (generatorType === 1) {
 		generatorProjectDownloadLocalApi(dataForm).then(() => {

@@ -183,7 +183,7 @@ const generatorCodeBatch = () => {
 }
 
 const syncHandle = (row: any) => {
-	ElMessageBox.confirm(`确定同步数据表${row.tableName}吗?`, '提示', {
+	ElMessageBox.confirm(`确定同步表${row.tableName}的字段吗?`, '提示', {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'

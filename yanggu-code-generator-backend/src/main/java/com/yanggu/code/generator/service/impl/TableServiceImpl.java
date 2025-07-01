@@ -36,6 +36,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -221,7 +222,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void syncTable(Long id) throws Exception {
+    public void syncTableField(Long id) throws Exception {
         TableEntity table = this.getById(id);
         Long projectId = table.getProjectId();
         ProjectEntity project = projectService.getById(projectId);
@@ -306,6 +307,9 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableEntityQuery query) {
         LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
+
+        wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getTableName()), TableEntity::getTableName, query.getTableName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());

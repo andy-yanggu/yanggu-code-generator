@@ -1,7 +1,7 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item prop="tableName">
+			<el-form-item label="表名" prop="tableName">
 				<el-input v-model="state.queryForm.tableName" clearable placeholder="请输入表名"></el-input>
 			</el-form-item>
 			<el-form-item>
@@ -23,7 +23,11 @@
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="className" label="类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="functionName" label="功能名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="version" label="版本" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
 		<el-pagination
 			:current-page="state.pageNum"
