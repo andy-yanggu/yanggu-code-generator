@@ -17,7 +17,7 @@ import ${i!};
 @Data
 @Schema(description = "${tableComment}VO实体类")
 @EqualsAndHashCode(callSuper = true)
-public class ${classNameUpper}VO<#if voBaseClass??> extends ${voBaseClass.code}</#if> implements Serializable {
+public class ${classNameUpper}VO<#if voBaseClass??> extends ${voBaseClass.className}</#if> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;

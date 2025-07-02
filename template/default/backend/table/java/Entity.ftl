@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 <#else></#if>
 import com.baomidou.mybatisplus.annotation.*;
 <#if entityBaseClass??>
-import ${entityBaseClass.packageName}.${entityBaseClass.code};
+import ${entityBaseClass.packageName}.${entityBaseClass.className};
 </#if>
 
 import java.io.Serial;
@@ -23,7 +23,7 @@ import ${i!};
 <#if entityBaseClass??>
 @EqualsAndHashCode(callSuper = true)
 <#else></#if>
-public class ${classNameUpper}Entity<#if entityBaseClass??> extends ${entityBaseClass.code}</#if> implements Serializable {
+public class ${classNameUpper}Entity<#if entityBaseClass??> extends ${entityBaseClass.className}</#if> implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
