@@ -35,7 +35,7 @@ public class DatasourceEntity extends BaseEntity implements Serializable {
     private String dbType;
 
     /**
-     * 连接名
+     * 连接名称
      */
     @TableField(value = "conn_name")
     private String connName;

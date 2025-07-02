@@ -25,7 +25,7 @@
 				<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="checkRowSelectable"></el-table-column>
 				<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="tableName" label="表名" header-align="center" align="center"></el-table-column>
-				<el-table-column prop="tableComment" label="说明" header-align="center" align="center"></el-table-column>
+				<el-table-column prop="tableComment" label="注释" header-align="center" align="center"></el-table-column>
 			</el-table>
 		</el-form>
 		<template #footer>

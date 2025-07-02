@@ -27,9 +27,9 @@ public class DatasourceEntityQuery extends PageQuery<DatasourceEntity> implement
     private String dbType;
 
     /**
-     * 连接名
+     * 连接名称
      */
-    @Schema(description = "连接名")
+    @Schema(description = "连接名称")
     private String connName;
 
 }

@@ -29,9 +29,9 @@ public class DatasourceDTO implements Serializable {
     private Long id;
 
     /**
-     * 连接名
+     * 连接名称
      */
-    @Schema(description = "连接名")
+    @Schema(description = "连接名称")
     @NotBlank(message = "连接名不能为空")
     private String connName;
 

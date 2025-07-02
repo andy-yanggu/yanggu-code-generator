@@ -1,7 +1,7 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item label="连接名" prop="connName">
+			<el-form-item label="连接名称" prop="connName">
 				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">
@@ -35,7 +35,7 @@
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="connName" label="连接名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="connName" label="连接名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="dbType"
 				label="数据库类型"

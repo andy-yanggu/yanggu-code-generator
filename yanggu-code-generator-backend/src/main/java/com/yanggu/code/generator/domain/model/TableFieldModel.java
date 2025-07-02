@@ -35,12 +35,12 @@ public class TableFieldModel implements Serializable {
     private String fieldType;
 
     /**
-     * 字段说明
+     * 字段注释
      */
     private String fieldComment;
 
     /**
-     * 属性名
+     * 属性名称
      */
     private String attrName;
 

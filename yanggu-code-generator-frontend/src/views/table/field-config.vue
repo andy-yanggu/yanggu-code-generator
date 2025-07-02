@@ -12,14 +12,14 @@
 					:show-overflow-tooltip="true"
 				>
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center">
+					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名称" header-align="center" align="center" width="100"></el-table-column>
+					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-input v-model="row.fieldComment"></el-input>
 						</template>
 					</el-table-column>
-					<el-table-column prop="fieldType" label="字段类型" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="attrName" label="属性名" header-align="center" align="center">
+					<el-table-column prop="fieldType" label="字段类型" header-align="center" align="center" width="100"></el-table-column>
+					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center" width="100">
 						<template #default="{ row }">
 							<el-input v-model="row.attrName"></el-input>
 						</template>
@@ -82,8 +82,8 @@
 			<el-tab-pane label="查询配置" name="query">
 				<el-table ref="queryTable" border :row-key="id" :data="getFieldListData(1)" :row-class-name="tableRowClassName">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="attrName" label="属性名" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="queryItem" label="查询显示" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-checkbox v-model="row.queryItem" :true-value="1" :false-value="0"></el-checkbox>
@@ -113,8 +113,8 @@
 			<el-tab-pane label="表单配置" name="form">
 				<el-table ref="formTable" border :row-key="id" :data="getFieldListData(2)" :row-class-name="tableRowClassName">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="attrName" label="属性名" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="formItem" label="表单显示" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-checkbox v-model="row.formItem" :true-value="1" :false-value="0"></el-checkbox>
@@ -149,8 +149,8 @@
 			<el-tab-pane label="列表配置" name="grid">
 				<el-table ref="gridTable" border :row-key="id" :data="getFieldListData(3)" :row-class-name="tableRowClassName">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="attrName" label="属性名" header-align="center" align="center"></el-table-column>
-					<el-table-column prop="fieldComment" label="说明" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
+					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="gridItem" label="列表显示" header-align="center" align="center">
 						<template #default="{ row }">
 							<el-checkbox v-model="row.gridItem" :true-value="1" :false-value="0"></el-checkbox>

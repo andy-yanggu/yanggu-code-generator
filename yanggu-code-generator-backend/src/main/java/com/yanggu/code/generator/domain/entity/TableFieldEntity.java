@@ -47,13 +47,13 @@ public class TableFieldEntity extends BaseEntity implements Serializable {
     private String fieldType;
 
     /**
-     * 字段说明
+     * 字段注释
      */
     @TableField(value = "field_comment")
     private String fieldComment;
 
     /**
-     * 属性名
+     * 属性名称
      */
     @TableField(value = "attr_name")
     private String attrName;

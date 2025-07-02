@@ -48,10 +48,10 @@ public class TableDTO implements Serializable {
     private String className;
 
     /**
-     * 说明
+     * 注释
      */
-    @Schema(description = "说明")
-    @NotBlank(message = "说明不能为空")
+    @Schema(description = "注释")
+    @NotBlank(message = "注释不能为空")
     private String tableComment;
 
     /**

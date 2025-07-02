@@ -1,7 +1,7 @@
 <template>
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="连接名" prop="connName">
+			<el-form-item label="连接名称" prop="connName">
 				<el-input v-model="dataForm.connName" placeholder="请输入连接名"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">

@@ -10,7 +10,7 @@
 			<el-form-item label="类名" prop="className">
 				<el-input v-model="dataForm.className" placeholder="请输入类名"></el-input>
 			</el-form-item>
-			<el-form-item label="说明" prop="tableComment">
+			<el-form-item label="注释" prop="tableComment">
 				<el-input v-model="dataForm.tableComment" placeholder="请输入说明"></el-input>
 			</el-form-item>
 			<el-form-item label="功能名" prop="functionName">

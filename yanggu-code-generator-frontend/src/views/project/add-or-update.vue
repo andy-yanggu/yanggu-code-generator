@@ -49,16 +49,16 @@
 			</el-form-item>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
 				<el-select v-model="dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.code}`" :value="item.id">
-						<span style="font-weight: bold">{{ item.packageName }}.{{ item.code }}</span>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+						<span style="font-weight: bold">{{ item.packageName }}.{{ item.className }}</span>
 						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item prop="voBaseClassId" label="VO基类">
 				<el-select v-model="dataForm.voBaseClassId" placeholder="请选择VO基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.code}`" :value="item.id">
-						<span style="font-weight: bold">{{ item.packageName }}.{{ item.code }}</span>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+						<span style="font-weight: bold">{{ item.packageName }}.{{ item.className }}</span>
 						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
 					</el-option>
 				</el-select>

@@ -25,7 +25,7 @@
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="className" label="类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="functionName" label="功能名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="tableComment" label="说明" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="version" label="版本" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>

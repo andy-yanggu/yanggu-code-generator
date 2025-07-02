@@ -23,9 +23,9 @@ public class TableImportVO implements Serializable {
     private String tableName;
 
     /**
-     * 说明
+     * 注释
      */
-    @Schema(description = "说明")
+    @Schema(description = "注释")
     private String tableComment;
 
     /**

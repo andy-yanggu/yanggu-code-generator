@@ -48,7 +48,7 @@ public class TableEntity extends BaseEntity implements Serializable {
     private String className;
 
     /**
-     * 说明
+     * 注释
      */
     @TableField(value = "table_comment")
     private String tableComment;

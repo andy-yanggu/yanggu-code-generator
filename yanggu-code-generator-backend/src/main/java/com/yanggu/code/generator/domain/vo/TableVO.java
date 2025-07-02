@@ -44,9 +44,9 @@ public class TableVO extends BaseVO implements Serializable {
     private String className;
 
     /**
-     * 说明
+     * 注释
      */
-    @Schema(description = "说明")
+    @Schema(description = "注释")
     private String tableComment;
 
     /**
