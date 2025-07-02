@@ -56,11 +56,15 @@ export const useCrud = (options: IHooksOptions) => {
 			pageQueryForm.orderItemList = [{ column: state.order, asc: state.asc }]
 		}
 		state.dataListApi(pageQueryForm).then((res: any) => {
-			state.dataList = state.isPage ? res.data.records : res.data
-			state.total = state.isPage ? res.data.total : 0
+			if (state.isPage) {
+				state.dataList = res.data.records
+				state.total = res.data.total
+			} else {
+				state.dataList = res.data
+				state.total = 0
+			}
+			state.dataListLoading = false
 		})
-
-		state.dataListLoading = false
 	}
 
 	// 加载数据列表
@@ -69,16 +73,16 @@ export const useCrud = (options: IHooksOptions) => {
 		query()
 	}
 
-	//pageSize发生变化
-	const sizeChangeHandle = (val: number) => {
-		state.pageNum = 1
-		state.pageSize = val
+	//pageNum发生变化
+	const currentChangeHandle = (pageNum: number) => {
+		state.pageNum = pageNum
 		query()
 	}
 
-	//pageNum发生变化
-	const currentChangeHandle = (val: number) => {
-		state.pageNum = val
+	//pageSize发生变化
+	const sizeChangeHandle = (pageSize: number) => {
+		state.pageNum = 1
+		state.pageSize = pageSize
 		query()
 	}
 
@@ -88,13 +92,12 @@ export const useCrud = (options: IHooksOptions) => {
 	}
 
 	// 排序
-	const sortChangeHandle = (data: any) => {
-		const order = data.order
+	const sortChangeHandle = ({ order, prop }: any) => {
 		if (order === 'ascending') {
-			state.order = data.prop
+			state.order = prop
 			state.asc = true
 		} else if (order === 'descending') {
-			state.order = data.prop
+			state.order = prop
 			state.asc = false
 		} else {
 			state.order = ''

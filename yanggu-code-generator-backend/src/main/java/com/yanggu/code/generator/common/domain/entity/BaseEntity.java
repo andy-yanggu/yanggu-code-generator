@@ -33,7 +33,7 @@ public abstract class BaseEntity implements Serializable {
     private Date updateTime;
 
     /**
-     * 是否删除（0未删除, 1删除）
+     * 是否删除（0-未删除，1-删除）
      */
     @TableField("is_delete")
     @TableLogic(value = "0", delval = "1")
