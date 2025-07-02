@@ -1,22 +1,19 @@
 package com.yanggu.code.generator.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.common.validation.group.InsertGroup;
-import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
 import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
-import com.yanggu.code.generator.domain.query.TableFieldVOQuery;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.service.TableFieldService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
