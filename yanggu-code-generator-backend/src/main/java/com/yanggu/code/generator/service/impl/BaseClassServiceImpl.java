@@ -164,7 +164,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
         wrapper.ne(Objects.nonNull(dto.getId()), BaseClassEntity::getId, dto.getId());
         wrapper.eq(BaseClassEntity::getPackageName, dto.getPackageName());
-        wrapper.eq(BaseClassEntity::getCode, dto.getCode());
+        wrapper.eq(BaseClassEntity::getClassName, dto.getClassName());
 
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {
@@ -189,7 +189,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
 
         //过滤字段
-        wrapper.like(MybatisUtil.isNotEmpty(query.getCode()), BaseClassEntity::getCode, query.getCode());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getClassName()), BaseClassEntity::getClassName, query.getClassName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());

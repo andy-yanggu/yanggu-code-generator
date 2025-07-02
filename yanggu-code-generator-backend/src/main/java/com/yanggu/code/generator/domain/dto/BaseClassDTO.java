@@ -34,11 +34,11 @@ public class BaseClassDTO implements Serializable {
     private String packageName;
 
     /**
-     * 基类编码
+     * 基类类名
      */
-    @Schema(description = "基类编码")
-    @NotBlank(message = "基类编码不能为空")
-    private String code;
+    @Schema(description = "基类类名")
+    @NotBlank(message = "基类类名不能为空")
+    private String className;
 
     /**
      * 基类字段，多个用英文逗号分隔

@@ -4,8 +4,8 @@
 			<el-form-item label="基类包名" prop="packageName">
 				<el-input v-model="dataForm.packageName" placeholder="请输入基类包名"></el-input>
 			</el-form-item>
-			<el-form-item label="基类编码" prop="code">
-				<el-input v-model="dataForm.code" placeholder="请输入基类编码"></el-input>
+			<el-form-item label="基类类名" prop="className">
+				<el-input v-model="dataForm.className" placeholder="请输入基类类名"></el-input>
 			</el-form-item>
 			<el-form-item label="基类字段" prop="fields">
 				<el-input v-model="dataForm.fields" placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
@@ -34,7 +34,7 @@ const dataFormRef = ref()
 const dataForm = reactive({
 	id: null,
 	packageName: '',
-	code: '',
+	className: '',
 	fields: '',
 	remark: ''
 })
@@ -61,7 +61,7 @@ const getBaseClass = (id: number) => {
 
 const dataRules = reactive({
 	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	code: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 

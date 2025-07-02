@@ -32,10 +32,10 @@ public class BaseClassVO extends BaseVO implements Serializable {
     private String packageName;
 
     /**
-     * 基类编码
+     * 基类类名
      */
-    @Schema(description = "基类编码")
-    private String code;
+    @Schema(description = "基类类名")
+    private String className;
 
     /**
      * 基类字段，多个用英文逗号分隔

@@ -1,8 +1,8 @@
 <template>
 	<el-card class="layout-query">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item label="基类编码" prop="code">
-				<el-input v-model="state.queryForm.code" clearable placeholder="请输入基类编码"></el-input>
+			<el-form-item label="基类类名" prop="className">
+				<el-input v-model="state.queryForm.className" clearable placeholder="请输入基类类名"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="getDataList()">查询</el-button>
@@ -31,7 +31,7 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="packageName" label="基类包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="code" label="基类编码" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="className" label="基类类名" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
@@ -70,7 +70,7 @@ const state: IHooksOptions = reactive({
 	dataListApi: baseClassEntityPageApi,
 	deleteListApi: baseClassDeleteListApi,
 	queryForm: {
-		code: ''
+		className: ''
 	}
 })
 

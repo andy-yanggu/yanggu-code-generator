@@ -25,9 +25,9 @@ public class BaseClassModel implements Serializable {
     private String packageName;
 
     /**
-     * 基类编码
+     * 基类类名
      */
-    private String code;
+    private String className;
 
     /**
      * 基类字段，多个用英文逗号分隔

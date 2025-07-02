@@ -35,10 +35,10 @@ public class BaseClassEntity extends BaseEntity implements Serializable {
     private String packageName;
 
     /**
-     * 基类编码
+     * 基类类名
      */
-    @TableField(value = "code")
-    private String code;
+    @TableField(value = "class_name")
+    private String className;
 
     /**
      * 基类字段，多个用英文逗号分隔

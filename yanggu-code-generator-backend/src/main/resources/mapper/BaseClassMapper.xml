@@ -7,7 +7,7 @@
     <sql id="allColumns">
         id,
         package_name,
-        code,
+        class_name,
         fields,
         remark,
         create_time,
@@ -18,8 +18,8 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
-        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'code')">
-            AND code LIKE CONCAT('%', #{query.code}, '%')
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'className')">
+            AND code LIKE CONCAT('%', #{query.className}, '%')
         </if>
     </sql>
 
@@ -27,7 +27,7 @@
     <resultMap type="com.yanggu.code.generator.domain.entity.BaseClassEntity" id="baseClassMap">
         <id property="id" column="id"/>
         <result property="packageName" column="package_name"/>
-        <result property="code" column="code"/>
+        <result property="className" column="class_name"/>
         <result property="fields" column="fields"/>
         <result property="remark" column="remark"/>
         <result property="createTime" column="create_time"/>
