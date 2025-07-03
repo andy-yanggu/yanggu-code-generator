@@ -22,16 +22,49 @@
 
 
 ## 3. 部署说明
-### 3.1 后端项目
+### 3.1 本地运行 
+
+#### 3.1.1 后端项目
+
 1. 创建数据库yanggu_code_generator
 2. 运行sql文件夹下的yanggu_code_generator.sql文件，创建表和添加一些默认数据
-3. 修改application.yaml，更新MySQL账号和密码、数据库名称。运行主启动类YangguCodeGeneratorApplication
-4. 访问http://localhost:8888/yanggu-code-generator/doc.html#/home，说明项目正常启动
-### 3.2 前端项目
-1. npm install
-2. npm run dev
-### 3.3 访问地址
+3. 修改application.yaml，更新数据库驱动、URL、账号和密码。运行主启动类CodeGeneratorApplication，启动项目
+4. 访问http://localhost:8888/code-generator/doc.html#/home，说明后端项目正常启动
+#### 3.1.2 前端项目
+1. npm install（下载依赖包）
+2. npm run dev（开发环境）
+3. npm run build（打包生成dist静态资源包）
+#### 3.1.3 访问地址
 前端地址: http://localhost:5000/#/gen/project
+
+### 3.2 生产运行
+
+- 前往发行版页面，下载最新版本zip文件
+
+- 解压zip，在application.yaml文件中修改相关配置信息，数据库链接，端口等配置
+
+- 在sql文件夹下，在数据库中运行sql文件，创建表和内置数据
+
+- 浏览器访问`http://localhost:8888/#/gen/project`
+
+- 代码预览时，复制功能受限，浏览器仅支持localhost或者https。使用keytool生成自签名证书，同时配置一下springboot的https
+
+  - 运行`keytool -genkeypair -alias mydomain -keyalg RSA -keysize 2048 -validity 365 -storetype PKCS12 -keystore ./keystore.p12 -storepass changeit -dname "CN=你的IP地址, OU=Dev, O=MyOrg, L=City, ST=State, C=CN"`命令，生成keystore.p12文件
+
+  - 在application.yaml文件中进行配置
+
+    ```yaml
+    server:  
+      ssl:  # 新增SSL配置
+        key-store: ./keystore.p12
+        key-store-password: changeit  # 与生成证书时的密码一致
+        key-store-type: PKCS12
+        key-alias: mydomain
+    ```
+
+  - 访问地址需要修改成`https://你的IP地址:你的端口/#/gen/project`
+
+- 后续更新前后端代码时，只需要更新jar包和dist文件夹即可
 
 
 
@@ -142,3 +175,47 @@
 ![image-20250702151756655](./images/image-20250702151756655.png)
 
 ![image-20250702152004300](./images/image-20250702152004300.png)
+
+
+
+## 5. 内置模板
+
+在项目template文件夹下内置了一些前后端模板，可供参考。
+
+```yaml
+template
+└───default
+    ├───backend
+    │   ├───enum
+    │   ├───project
+    │   │   └───common
+    │   │       ├───config
+    │   │       ├───domain
+    │   │       │   ├───entity
+    │   │       │   ├───query
+    │   │       │   └───vo
+    │   │       ├───exception
+    │   │       ├───mapstruct
+    │   │       ├───mybatis
+    │   │       │   ├───config
+    │   │       │   ├───mapper
+    │   │       │   └───util
+    │   │       ├───response
+    │   │       └───validation
+    │   │           ├───code
+    │   │           └───group
+    │   └───table
+    │       ├───java
+    │       └───xml
+    └───frontend
+        ├───enum
+        ├───project
+        │   ├───hooks
+        │   ├───types
+        │   └───utils
+        └───table
+            ├───api
+            └───views
+```
+
+path.md文档用于说明模板的用途和路径
