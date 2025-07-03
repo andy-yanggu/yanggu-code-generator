@@ -1,14 +1,22 @@
 server:
   port: 8888
   servlet:
-    context-path: /yanggu-code-generator
+    context-path: /code-generator
 
 spring:
   # 项目名称配置
   application:
-    name: yanggu-code-generator
+    name: code-generator
     version: '1.0-SNAPSHOT'
     description: '代码生成器后端项目'
+  web:
+    resources:
+      static-locations:
+      - classpath:/static/
+      - classpath:/public/
+      - classpath:/resources/
+      - classpath:/META-INF/resources/
+      - file:./dist/
 
   main:
     # 允许循环依赖
