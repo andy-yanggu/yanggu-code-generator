@@ -16,7 +16,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 模板组Mapstruct
  */
 @Named("templateGroupMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorTemplateGroupMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorTemplateGroupMapstructImpl")
 public interface TemplateGroupMapstruct extends BaseMapstruct<TemplateGroupEntity, TemplateGroupVO, TemplateGroupDTO> {
 
     List<TemplateGroupBO> entityToBO(List<TemplateGroupEntity> entityList);

@@ -13,6 +13,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 项目Mapstruct
  */
 @Named("projectMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorProjectMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorProjectMapstructImpl")
 public interface ProjectMapstruct extends BaseMapstruct<ProjectEntity, ProjectVO, ProjectDTO> {
 }

@@ -13,6 +13,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 数据源Mapstruct
  */
 @Named("datasourceMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorDatasourceMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorDatasourceMapstructImpl")
 public interface DatasourceMapstruct extends BaseMapstruct<DatasourceEntity, DatasourceVO, DatasourceDTO> {
 }

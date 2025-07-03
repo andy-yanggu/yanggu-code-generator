@@ -23,10 +23,10 @@ public class ProjectDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID主键自增
+     * 主键ID
      */
-    @Schema(description = "ID主键自增")
-    @NotNull(message = "ID主键自增不能为空", groups = {UpdateGroup.class})
+    @Schema(description = "主键ID")
+    @NotNull(message = "主键ID不能为空", groups = {UpdateGroup.class})
     private Long id;
 
     /**

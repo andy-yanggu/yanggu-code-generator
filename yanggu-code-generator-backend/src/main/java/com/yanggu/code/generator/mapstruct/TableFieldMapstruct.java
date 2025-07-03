@@ -16,7 +16,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 表字段Mapstruct
  */
 @Named("tableFieldMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorTableFieldMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorTableFieldMapstructImpl")
 public interface TableFieldMapstruct extends BaseMapstruct<TableFieldEntity, TableFieldVO, TableFieldDTO> {
 
     List<TableFieldModel> toModel(List<TableFieldEntity> entityList);

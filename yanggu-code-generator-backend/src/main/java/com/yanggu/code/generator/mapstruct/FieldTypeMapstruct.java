@@ -13,6 +13,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 字段类型Mapstruct
  */
 @Named("fieldTypeMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorFieldTypeMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorFieldTypeMapstructImpl")
 public interface FieldTypeMapstruct extends BaseMapstruct<FieldTypeEntity, FieldTypeVO, FieldTypeDTO> {
 }

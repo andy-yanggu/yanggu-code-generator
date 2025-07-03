@@ -20,9 +20,9 @@ public class ProjectVO extends BaseVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID主键自增
+     * 主键ID
      */
-    @Schema(description = "ID主键自增")
+    @Schema(description = "主键ID")
     private Long id;
 
     /**

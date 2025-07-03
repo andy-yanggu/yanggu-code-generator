@@ -20,9 +20,9 @@ public class DatasourceVO extends BaseVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
+     * 主键ID
      */
-    @Schema(description = "id")
+    @Schema(description = "主键ID")
     private Long id;
 
     /**

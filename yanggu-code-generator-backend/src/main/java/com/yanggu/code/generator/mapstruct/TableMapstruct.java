@@ -13,6 +13,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 表Mapstruct
  */
 @Named("tableMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorTableMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorTableMapstructImpl")
 public interface TableMapstruct extends BaseMapstruct<TableEntity, TableVO, TableDTO> {
 }

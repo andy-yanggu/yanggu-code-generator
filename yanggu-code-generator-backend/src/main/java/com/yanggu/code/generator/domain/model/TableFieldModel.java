@@ -15,7 +15,7 @@ public class TableFieldModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
+     * 主键ID
      */
     private Long id;
 

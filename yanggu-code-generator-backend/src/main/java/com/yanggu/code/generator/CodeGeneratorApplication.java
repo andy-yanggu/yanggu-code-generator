@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan("com.yanggu.code.generator.mapper")
-public class YangguCodeGeneratorApplication {
+public class CodeGeneratorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YangguCodeGeneratorApplication.class, args);
+        SpringApplication.run(CodeGeneratorApplication.class, args);
     }
 
 }

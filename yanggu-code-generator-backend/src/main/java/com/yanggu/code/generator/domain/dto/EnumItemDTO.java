@@ -20,10 +20,10 @@ public class EnumItemDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
+     * 主键ID
      */
-    @Schema(description = "id")
-    @NotNull(message = "id不能为空", groups = {UpdateGroup.class})
+    @Schema(description = "主键ID")
+    @NotNull(message = "主键ID不能为空", groups = {UpdateGroup.class})
     private Long id;
 
     /**

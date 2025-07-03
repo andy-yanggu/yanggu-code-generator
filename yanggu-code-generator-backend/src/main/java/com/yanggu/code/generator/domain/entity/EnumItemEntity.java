@@ -23,7 +23,7 @@ public class EnumItemEntity extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
+     * 主键ID
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;

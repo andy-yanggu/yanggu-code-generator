@@ -2,20 +2,14 @@ package com.yanggu.code.generator.domain.model;
 
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
  * 基类Entity实体类
  */
 @Data
-public class BaseClassModel implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class BaseClassModel {
 
     /**
-     * id
+     * 主键ID
      */
     private Long id;
 

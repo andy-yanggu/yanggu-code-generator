@@ -23,7 +23,7 @@ public class ProjectEntity extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID主键自增
+     * 主键ID
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;

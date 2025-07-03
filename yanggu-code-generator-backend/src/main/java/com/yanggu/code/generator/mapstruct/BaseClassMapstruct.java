@@ -14,7 +14,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * 基类Mapstruct
  */
 @Named("baseClassMapstruct")
-@Mapper(componentModel = SPRING, implementationName = "GeneratorBaseClassMapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "CodeGeneratorBaseClassMapstructImpl")
 public interface BaseClassMapstruct extends BaseMapstruct<BaseClassEntity, BaseClassVO, BaseClassDTO> {
 
     BaseClassModel toModel(BaseClassEntity entity);
