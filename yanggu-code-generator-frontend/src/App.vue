@@ -7,8 +7,4 @@
 <script setup lang="ts">
 import zh_cn from 'element-plus/es/locale/lang/zh-cn'
 import { RouterView } from 'vue-router'
-import { useTitle } from '@vueuse/core'
-
-// 设置标题
-useTitle('Code Generator')
 </script>

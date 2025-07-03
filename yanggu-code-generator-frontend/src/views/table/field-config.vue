@@ -179,9 +179,9 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/tableField'
+import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/table-field'
 import { enumEntityListApi } from '@/api/enum'
-import { fieldTypeListApi } from '@/api/fieldType'
+import { fieldTypeListApi } from '@/api/field-type'
 
 const activeName = ref()
 const fieldTable = ref()

@@ -22,6 +22,6 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Sidebar from '@/layout/components/Sidebar/index.vue'
-import Navbar from '@/layout/components/Navbar/index.vue'
+import Sidebar from '@/layout/components/sidebar/index.vue'
+import Navbar from '@/layout/components/navbar/index.vue'
 </script>

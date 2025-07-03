@@ -103,7 +103,7 @@ import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
 </#list>
-import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionName}'
+import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionNameKebabCase}'
 
 const state: IHooksOptions = reactive({
     dataListApi: ${functionName}EntityPageApi,

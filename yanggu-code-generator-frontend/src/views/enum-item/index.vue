@@ -66,7 +66,7 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
-import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enumItem'
+import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
 
 const enumIdRef = ref()
 const state: IHooksOptions = reactive({

@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { enumItemDetailApi, enumItemSubmitApi } from '@/api/enumItem'
+import { enumItemDetailApi, enumItemSubmitApi } from '@/api/enum-item'
 
 const emit = defineEmits(['refreshDataList'])
 

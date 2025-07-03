@@ -64,7 +64,7 @@ import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
-import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/baseClass'
+import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/base-class'
 
 const state: IHooksOptions = reactive({
 	dataListApi: baseClassEntityPageApi,

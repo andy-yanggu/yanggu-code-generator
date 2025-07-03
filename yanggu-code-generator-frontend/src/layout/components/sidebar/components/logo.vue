@@ -1,9 +1,15 @@
 <template>
 	<div class="logo-container">
 		<el-avatar src="./favicon.ico" size="small" class="logo-avatar"></el-avatar>
-		<el-text class="logo-title">Code Generator</el-text>
+		<el-text class="logo-title">
+			{{ appTitle }}
+		</el-text>
 	</div>
 </template>
+<script setup lang="ts">
+const appTitle = import.meta.env.VITE_APP_TITLE
+</script>
+
 <style scoped>
 .logo-container {
 	display: flex;

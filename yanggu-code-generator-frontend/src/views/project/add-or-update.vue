@@ -88,8 +88,8 @@ import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { projectDetailApi, projectSubmitApi } from '@/api/project'
 import { datasourceEntityListApi } from '@/api/datasource'
-import { templateGroupEntityListApi } from '@/api/templateGroup'
-import { baseClassEntityListApi } from '@/api/baseClass'
+import { templateGroupEntityListApi } from '@/api/template-group'
+import { baseClassEntityListApi } from '@/api/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])

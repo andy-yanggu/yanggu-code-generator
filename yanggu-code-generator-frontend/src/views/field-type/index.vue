@@ -76,7 +76,7 @@ import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/fieldType'
+import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/field-type'
 
 const state: IHooksOptions = reactive({
 	dataListApi: fieldTypeEntityPageApi,

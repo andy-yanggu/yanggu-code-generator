@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionName}'
+import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionNameKebabCase}'
 <#list formList as field>
     <#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'

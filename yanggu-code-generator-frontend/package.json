@@ -53,7 +53,7 @@
     "vite",
     "element-plus",
     "generator",
-    "yanggu-code-generator"
+    "code-generator"
   ],
   "license": "MIT"
 }

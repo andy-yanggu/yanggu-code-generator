@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/templateGroup'
+import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])

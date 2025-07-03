@@ -91,7 +91,7 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import Copy from '@/views/template-group/copy.vue'
 import TemplateIndex from '../template/index.vue'
 import { ElMessage } from 'element-plus'
-import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/templateGroup'
+import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/template-group'
 import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 

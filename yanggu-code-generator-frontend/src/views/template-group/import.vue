@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { importTemplateGroupApi } from '@/api/templateGroup'
+import { importTemplateGroupApi } from '@/api/template-group'
 import { ElMessage } from 'element-plus'
 
 const emit = defineEmits(['refreshDataList'])
