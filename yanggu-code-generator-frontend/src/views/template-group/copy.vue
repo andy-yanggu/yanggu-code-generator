@@ -21,63 +21,34 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
-import { templateGroupDetailApi, copyTemplateApi } from '@/api/template-group'
-
+import { reactive } from 'vue'
+import { copyTemplateApi, templateGroupDetailApi } from '@/api/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: '',
-	groupName: '',
-	type: null,
-	groupDesc: '',
-	createTime: ''
+const state: FormOptions = reactive({
+	// 提交API
+	submitApi: copyTemplateApi,
+	// 详情API
+	detailApi: templateGroupDetailApi,
+	// 初始表单数据
+	initFormData: {
+		id: '',
+		groupName: '',
+		type: '',
+		groupDesc: ''
+	},
+	emit
 })
-
-const init = (id: number) => {
-	visible.value = true
-	dataForm.id = ''
-	dataForm.createTime = ''
-	getTemplateGroup(id)
-}
-
-const getTemplateGroup = (id: number) => {
-	templateGroupDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-		dataForm.groupName = dataForm.groupName + '_复制'
-	})
-}
 
 const dataRules = reactive({
-	groupName: [{ required: true, message: '名称不能为空', trigger: 'blur' }],
-	type: [{ required: true, message: '类型不能为空', trigger: 'blur' }]
+	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		copyTemplateApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

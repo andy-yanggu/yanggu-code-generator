@@ -14,7 +14,7 @@
 					<el-button type="primary" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryRef()">重置</el-button>
+					<el-button @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
@@ -56,9 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
@@ -78,7 +77,6 @@ const state: IHooksOptions = reactive({
 const generatorTypeRef = ref()
 const tableIdRef = ref()
 const dialogVisible = ref(false)
-const queryRef = ref()
 
 const init = (templateGroupId: number, generatorType: number, tableIdList: number[]) => {
 	dialogVisible.value = true
@@ -87,16 +85,10 @@ const init = (templateGroupId: number, generatorType: number, tableIdList: numbe
 	tableIdRef.value = tableIdList
 
 	//重置查询表单数据
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 
 	//加载列表数据
 	getDataList()
-}
-
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
 }
 
 const handlerType = (row: any) => {
@@ -135,7 +127,7 @@ const generateCode = () => {
 	dialogVisible.value = false
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
 
 defineExpose({
 	init

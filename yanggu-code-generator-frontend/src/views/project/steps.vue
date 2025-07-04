@@ -31,7 +31,7 @@ import TemplateIndex from './template-index.vue'
 import TableIndex from './table-index.vue'
 import EnumIndex from './enum-index.vue'
 import { ElMessage } from 'element-plus'
-import { generatorProjectDownloadZipApi, generatorProjectDownloadLocalApi } from '@/api/generator'
+import { generatorProjectDownloadLocalApi, generatorProjectDownloadZipApi } from '@/api/generator'
 
 const activeRef = ref(0)
 const dialogVisible = ref(false)

@@ -78,65 +78,44 @@
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" @click="submitDataHandle()">确定</el-button>
 		</template>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { onMounted, reactive, ref } from 'vue'
 import { projectDetailApi, projectSubmitApi } from '@/api/project'
 import { datasourceEntityListApi } from '@/api/datasource'
 import { templateGroupEntityListApi } from '@/api/template-group'
 import { baseClassEntityListApi } from '@/api/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: null,
-	projectName: '',
-	projectPackage: '',
-	projectVersion: '',
-	datasourceId: '',
-	projectTemplateGroupId: '',
-	tableTemplateGroupId: '',
-	enumTemplateGroupId: '',
-	backendPath: '',
-	frontendPath: '',
-	projectDesc: '',
-	author: '',
-	entityBaseClassId: '',
-	voBaseClassId: '',
-	generatorType: null
+const state: FormOptions = reactive({
+	submitApi: projectSubmitApi,
+	detailApi: projectDetailApi,
+	initFormData: {
+		id: null,
+		projectName: '',
+		projectPackage: '',
+		projectVersion: '',
+		datasourceId: '',
+		projectTemplateGroupId: '',
+		tableTemplateGroupId: '',
+		enumTemplateGroupId: '',
+		backendPath: '',
+		frontendPath: '',
+		projectDesc: '',
+		author: '',
+		entityBaseClassId: '',
+		voBaseClassId: '',
+		generatorType: null
+	},
+	emit: emit
 })
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getProject(id)
-	}
-
-	//获取下拉数据
-	getList()
-}
-
-const getProject = (id: number) => {
-	projectDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -162,9 +141,9 @@ const getList = () => {
 
 	//模板组下拉
 	templateGroupEntityListApi({}).then(res => {
-		projectTemplateGroupList.value = res.data.filter(item => item.type === 0)
-		tableTemplateGroupList.value = res.data.filter(item => item.type === 1)
-		enumTemplateGroupList.value = res.data.filter(item => item.type === 2)
+		projectTemplateGroupList.value = res.data.filter((item: any) => item.type === 0)
+		tableTemplateGroupList.value = res.data.filter((item: any) => item.type === 1)
+		enumTemplateGroupList.value = res.data.filter((item: any) => item.type === 2)
 	})
 
 	//基类下拉
@@ -173,27 +152,19 @@ const getList = () => {
 	})
 }
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		projectSubmitApi(dataForm).then(() => {
-			const message = dataForm.id ? '操作成功' : '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
-			const duration = dataForm.id ? 500 : 2000
-			ElMessage.success({
-				message: message,
-				duration: duration,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
+const submitDataHandle = () => {
+	if (!dataForm.id) {
+		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+		state.duration = 2000
+	}
+	submitHandle()
 }
+
+onMounted(() => {
+	getList()
+})
+
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

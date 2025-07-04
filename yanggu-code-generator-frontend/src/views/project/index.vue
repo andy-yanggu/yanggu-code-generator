@@ -67,9 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import Preview from './preview.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
@@ -138,5 +137,5 @@ const handlerGeneratorType = (row: any) => {
 	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useIndexQuery(state)
 </script>

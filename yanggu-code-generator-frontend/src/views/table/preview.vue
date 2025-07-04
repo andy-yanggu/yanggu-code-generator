@@ -36,7 +36,7 @@
 </template>
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
-import { generatorTableDownloadSingleApi, generatorTableDownloadLocalApi, generatorTablePreviewApi } from '@/api/generator'
+import { generatorTableDownloadLocalApi, generatorTableDownloadSingleApi, generatorTablePreviewApi } from '@/api/generator'
 import CodeMirror from '@/components/code-mirror/code-mirror.vue'
 import { ElMessage } from 'element-plus'
 import { TabsPaneContext } from 'element-plus/es'

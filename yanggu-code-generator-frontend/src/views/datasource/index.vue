@@ -13,7 +13,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
@@ -72,14 +72,14 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import { reactive } from 'vue'
 import AddOrUpdate from './add-or-update.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { datasourceDeleteListApi, datasourceEntityPageApi, datasourceTestApi } from '@/api/datasource'
 import { getLabel } from '@/utils/enum'
+import { useInitForm } from '@/hooks/use-init-form'
 
 const state: IHooksOptions = reactive({
 	dataListApi: datasourceEntityPageApi,
@@ -89,15 +89,6 @@ const state: IHooksOptions = reactive({
 		connName: ''
 	}
 })
-
-const queryRef = ref()
-const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(id)
-}
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
 
 const datasourceTestHandle = (id: number) => {
 	datasourceTestApi(id).then((res: any) => {
@@ -110,5 +101,8 @@ const datasourceTestHandle = (id: number) => {
 	})
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
+
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

@@ -22,42 +22,26 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { baseClassDetailApi, baseClassSubmitApi } from '@/api/base-class'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
-
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: null,
-	packageName: '',
-	className: '',
-	fields: '',
-	remark: ''
+const state: FormOptions = reactive({
+	// 提交API
+	submitApi: baseClassSubmitApi,
+	// 详情API
+	detailApi: baseClassDetailApi,
+	// 详情数据
+	initFormData: {
+		id: null,
+		packageName: '',
+		className: '',
+		fields: '',
+		remark: ''
+	},
+	emit
 })
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getBaseClass(id)
-	}
-}
-
-const getBaseClass = (id: number) => {
-	baseClassDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -65,25 +49,7 @@ const dataRules = reactive({
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		baseClassSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

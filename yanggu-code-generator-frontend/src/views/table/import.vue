@@ -39,8 +39,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { tableImportApi } from '@/api/table'
-import { projectTableListApi } from '@/api/project'
-import { projectEntityListApi } from '@/api/project'
+import { projectEntityListApi, projectTableListApi } from '@/api/project'
 
 const emit = defineEmits(['refreshDataList'])
 

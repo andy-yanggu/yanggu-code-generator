@@ -21,49 +21,32 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { onMounted, reactive, ref } from 'vue'
 import { enumDetailApi, enumSubmitApi } from '@/api/enum'
 import { projectEntityListApi } from '@/api/project'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
-const emit = defineEmits(['refreshDataList'])
-
-const visible = ref(false)
 const projectList = ref([])
-const dataFormRef = ref()
 
-const dataForm = reactive({
-	id: null,
-	enumName: '',
-	enumDesc: '',
-	projectId: ''
+onMounted(() => {
+	getProjectList()
 })
 
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getEnum(id)
-	}
-
-	getProjectList()
-}
+const emit = defineEmits(['refreshDataList'])
+const state: FormOptions = reactive({
+	submitApi: enumSubmitApi,
+	detailApi: enumDetailApi,
+	initFormData: {
+		projectId: null,
+		enumName: '',
+		enumDesc: ''
+	},
+	emit
+})
 
 const getProjectList = () => {
 	projectEntityListApi({}).then((res: any) => {
 		projectList.value = res.data
-	})
-}
-
-const getEnum = (id: number) => {
-	enumDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
 	})
 }
 
@@ -73,25 +56,7 @@ const dataRules = reactive({
 	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		enumSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

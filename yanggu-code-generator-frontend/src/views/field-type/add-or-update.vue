@@ -21,67 +21,31 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { fieldTypeDetailApi, fieldTypeSubmitApi } from '@/api/field-type'
 import { ATTR_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: '',
-	columnType: '',
-	attrType: '',
-	packageName: ''
+const state: FormOptions = reactive({
+	submitApi: fieldTypeSubmitApi,
+	detailApi: fieldTypeDetailApi,
+	initFormData: {
+		id: '',
+		columnType: '',
+		attrType: '',
+		packageName: ''
+	},
+	emit
 })
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getFieldType(id)
-	}
-}
-
-const getFieldType = (id: number) => {
-	fieldTypeDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	columnType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		fieldTypeSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

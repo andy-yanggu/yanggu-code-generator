@@ -49,10 +49,9 @@
 </template>
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/code-mirror.vue'
-import { ElMessage } from 'element-plus'
-import { generatorProjectPreviewApi, generatorProjectDownloadSingleApi, generatorProjectDownloadLocalApi } from '@/api/generator'
+import { generatorProjectDownloadLocalApi, generatorProjectDownloadSingleApi, generatorProjectPreviewApi } from '@/api/generator'
 
 const currentNodeKey = ref()
 const treeRef = ref()

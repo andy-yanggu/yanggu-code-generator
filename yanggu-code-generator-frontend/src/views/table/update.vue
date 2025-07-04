@@ -36,54 +36,29 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { tableDetailApi, tableSubmitApi } from '@/api/table'
-import { projectEntityListApi } from '@/api/project'
 import { FORM_LAYOUT_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-const projectList = ref([])
-
-const dataForm = reactive({
-	id: null,
-	tableName: '',
-	databaseName: '',
-	className: '',
-	tableComment: '',
-	projectId: '',
-	author: '',
-	version: '',
-	functionName: '',
-	formLayout: '',
-	createTime: '',
-	updateTime: '',
-	isDelete: ''
-})
-
-const getProjectList = () => {
-	projectEntityListApi({}).then(res => {
-		projectList.value = res.data
-	})
-}
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	getProjectList()
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getTable(id)
-	}
+const state: FormOptions = {
+	submitApi: tableSubmitApi,
+	detailApi: tableDetailApi,
+	initFormData: {
+		id: null,
+		tableName: '',
+		databaseName: '',
+		className: '',
+		tableComment: '',
+		projectId: '',
+		author: '',
+		version: '',
+		functionName: '',
+		formLayout: ''
+	},
+	emit
 }
 
 const dataRules = reactive({
@@ -93,31 +68,7 @@ const dataRules = reactive({
 	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const getTable = (id: number) => {
-	tableDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
-
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		tableSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

@@ -8,7 +8,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
@@ -60,10 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
-import AddOrUpdate from './add-or-update.vue'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import { useInitForm } from '@/hooks/use-init-form'
+import { reactive } from 'vue'
+import AddOrUpdate from '@/views/base-class/add-or-update.vue'
 import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/base-class'
 
 const state: IHooksOptions = reactive({
@@ -74,14 +74,8 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const queryRef = ref()
-const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(id)
-}
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

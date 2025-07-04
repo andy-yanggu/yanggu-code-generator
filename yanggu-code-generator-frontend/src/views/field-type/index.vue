@@ -70,13 +70,13 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/field-type'
+import { useInitForm } from '@/hooks/use-init-form'
 
 const state: IHooksOptions = reactive({
 	dataListApi: fieldTypeEntityPageApi,
@@ -88,13 +88,11 @@ const state: IHooksOptions = reactive({
 })
 
 const queryRef = ref()
-const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(id)
-}
 const resetQueryRef = () => {
 	queryRef.value.resetFields()
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useIndexQuery(state)
+
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

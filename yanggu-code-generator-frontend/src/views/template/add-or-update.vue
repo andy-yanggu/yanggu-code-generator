@@ -15,7 +15,7 @@
 			<el-form-item label="模板描述" prop="templateDesc">
 				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
-			<el-form-item v-if="dataForm.templateType === 0" label="模板内容" prop="templateContent">
+			<el-form-item v-show="dataForm.templateType === 0" label="模板内容" prop="templateContent">
 				<div
 					class="code-editor"
 					:class="{ 'full-screen': isFullScreen }"
@@ -35,13 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch, nextTick } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { nextTick, reactive, ref, watch } from 'vue'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { Codemirror } from 'vue-codemirror'
-import { keymap } from '@codemirror/view'
-import { EditorView } from '@codemirror/view'
+import { EditorView, keymap } from '@codemirror/view'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const props = defineProps({
 	templateGroupId: {
@@ -52,51 +51,21 @@ const props = defineProps({
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: null,
-	templateGroupId: props.templateGroupId,
-	templateName: '',
-	generatorPath: '',
-	templateDesc: '',
-	templateContent: '',
-	templateType: null
+const state: FormOptions = reactive({
+	visible: false,
+	submitApi: templateSubmitApi,
+	detailApi: templateDetailApi,
+	initFormData: {
+		id: null,
+		templateGroupId: props.templateGroupId,
+		templateName: '',
+		generatorPath: '',
+		templateDesc: '',
+		templateContent: '',
+		templateType: null
+	},
+	emit
 })
-
-watch(
-	//添加模板类型监听（当类型变化时重新校验内容字段）
-	() => dataForm.templateType,
-	(newVal, _) => {
-		if (newVal === 0) {
-			dataRules.templateContent = [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }]
-		} else {
-			dataRules.templateContent = []
-		}
-	}
-)
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-		dataForm.templateContent = ''
-	}
-
-	if (id) {
-		getTemplate(id)
-	}
-}
-
-const getTemplate = (id: number) => {
-	templateDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -134,25 +103,20 @@ const cmOptions = reactive({
 	autocompletion: true
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
-		templateSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+watch(
+	//添加模板类型监听（当类型变化时重新校验内容字段）
+	() => dataForm.templateType,
+	(newValue, _) => {
+		if (newValue === 0) {
+			dataRules.templateContent = [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }]
+		} else if (newValue === 1) {
+			dataRules.templateContent = []
+			dataForm.templateContent = ''
+		}
+	}
+)
 
 defineExpose({
 	init

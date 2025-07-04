@@ -1,4 +1,4 @@
-import type { App, Plugin, Component } from 'vue' // 添加 Component 类型
+import type { App, Component, Plugin } from 'vue' // 添加 Component 类型
 
 // 修改泛型约束为 Component
 export const withInstall = <T extends Component>(component: T, alias?: string) => {

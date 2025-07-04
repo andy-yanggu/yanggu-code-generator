@@ -48,9 +48,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import { enumEntityPageApi } from '@/api/enum'
 import EnumItemIndex from '@/views/project/enum-item-index.vue'
 
@@ -101,7 +100,7 @@ const enumItemIndexShow = (enumId: number) => {
 	enumItemIndexRef.value.init(enumId)
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle } = useIndexQuery(state)
 
 defineExpose({
 	init,

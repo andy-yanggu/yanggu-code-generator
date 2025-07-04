@@ -60,9 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { templateVOPageApi } from '@/api/template'
 
@@ -120,7 +119,7 @@ const toggleRowSelection = (rowList: any[]) => {
 	isManualSelection = true
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle } = useCrud(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle } = useIndexQuery(state)
 
 defineExpose({
 	init,

@@ -30,45 +30,27 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { datasourceDetailApi, datasourceSubmitApi } from '@/api/datasource'
 import { DB_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: '',
-	dbType: '',
-	connName: '',
-	connUrl: '',
-	username: '',
-	password: '',
-	dataSourceDesc: ''
+const state: FormOptions = reactive({
+	submitApi: datasourceSubmitApi,
+	detailApi: datasourceDetailApi,
+	initFormData: {
+		id: '',
+		dbType: '',
+		connName: '',
+		connUrl: '',
+		username: '',
+		password: '',
+		dataSourceDesc: ''
+	},
+	emit
 })
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getDatasource(id)
-	}
-}
-
-const getDatasource = (id: number) => {
-	datasourceDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	dbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -78,25 +60,7 @@ const dataRules = reactive({
 	password: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		datasourceSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

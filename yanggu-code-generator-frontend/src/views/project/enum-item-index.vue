@@ -42,9 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
 
@@ -80,5 +79,5 @@ defineExpose({
 	init
 })
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useIndexQuery(state)
 </script>

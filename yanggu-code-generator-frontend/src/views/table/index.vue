@@ -13,7 +13,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="importHandle()">导入</el-button>
@@ -91,20 +91,20 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import Import from './import.vue'
 import Update from './update.vue'
 import Preview from './preview.vue'
 import FieldConfig from './field-config.vue'
 import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
-import { tableSyncApi, tableGenerateCheckApi, tableDeleteListApi, tableVOPageApi } from '@/api/table'
+import { tableDeleteListApi, tableGenerateCheckApi, tableSyncApi, tableVOPageApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
+import { useInitForm } from '@/hooks/use-init-form'
 
 onMounted(() => {
 	getProjectList()
@@ -119,28 +119,18 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const queryRef = ref()
-const addOrUpdateRef = ref()
 const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
 const currentTemplateGroupIdTs = ref()
 const templateIndexRef = ref()
 const tableRef = ref()
-
-const addOrUpdateHandle = (id: number) => {
-	addOrUpdateRef.value.init(id)
-}
 const projectList = ref([])
 
 const getProjectList = () => {
 	projectEntityListApi({}).then(res => {
 		projectList.value = res.data
 	})
-}
-
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
 }
 
 const importHandle = (id?: number) => {
@@ -201,5 +191,8 @@ const clearSelectionHandler = () => {
 	tableRef.value.clearSelection()
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
+
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

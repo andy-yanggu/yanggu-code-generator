@@ -22,44 +22,28 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { enumItemDetailApi, enumItemSubmitApi } from '@/api/enum-item'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: null,
-	enumId: -1,
-	enumItemName: '',
-	enumItemCode: '',
-	enumItemDesc: '',
-	enumItemOrder: 0
+const state: FormOptions = reactive({
+	// 提交API
+	submitApi: enumItemSubmitApi,
+	// 详情API
+	detailApi: enumItemDetailApi,
+	// 详情数据
+	initFormData: {
+		id: null,
+		enumId: -1,
+		enumItemName: '',
+		enumItemCode: '',
+		enumItemDesc: '',
+		enumItemOrder: 0
+	},
+	emit
 })
-
-const init = (enumId: number, id?: number) => {
-	dataForm.enumId = enumId
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getEnumItem(id)
-	}
-}
-
-const getEnumItem = (id: number) => {
-	enumItemDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	enumItemName: [{ required: true, message: '请输入枚举项名称', trigger: 'blur' }],
@@ -68,27 +52,14 @@ const dataRules = reactive({
 	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
-		enumItemSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
+const initData = (enumId: number, id?: number) => {
+	dataForm.enumId = enumId
+	init(id)
 }
 
 defineExpose({
-	init
+	initData
 })
 </script>

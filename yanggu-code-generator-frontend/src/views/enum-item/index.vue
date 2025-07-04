@@ -9,7 +9,7 @@
 					<el-button type="primary" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryRef()">重置</el-button>
+					<el-button @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
@@ -62,9 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
 
@@ -79,21 +78,15 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const queryRef = ref()
 const dialogVisible = ref(false)
 const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(enumIdRef.value, id)
-}
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
+	addOrUpdateRef.value.initData(enumIdRef.value, id)
 }
 
 const init = (enumId: number) => {
 	dialogVisible.value = true
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 	enumIdRef.value = enumId
 	state.queryForm.enumId = enumId
 	getDataList()
@@ -103,5 +96,6 @@ defineExpose({
 	init
 })
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
 </script>

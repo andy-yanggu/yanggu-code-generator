@@ -21,67 +21,34 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	id: '',
-	groupName: '',
-	type: '',
-	groupDesc: ''
+const state: FormOptions = reactive({
+	// 提交API
+	submitApi: templateGroupSubmitApi,
+	// 详情API
+	detailApi: templateGroupDetailApi,
+	// 初始表单数据
+	initFormData: {
+		id: '',
+		groupName: '',
+		type: '',
+		groupDesc: ''
+	},
+	emit
 })
-
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		getTemplateGroup(id)
-	}
-}
-
-const getTemplateGroup = (id: number) => {
-	templateGroupDetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
 
 const dataRules = reactive({
 	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		templateGroupSubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init
