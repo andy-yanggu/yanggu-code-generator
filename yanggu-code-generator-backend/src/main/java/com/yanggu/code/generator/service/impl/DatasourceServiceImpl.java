@@ -20,11 +20,11 @@ import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.util.DbUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
 
@@ -158,19 +158,16 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     @Override
     public DataSourceBO get(Long datasourceId) throws Exception {
         // 初始化配置信息
-        DataSourceBO dataSourceBO = new DataSourceBO(this.getById(datasourceId));
-        Connection connection = DbUtil.getConnection(dataSourceBO);
-        dataSourceBO.setConnection(connection);
-        return dataSourceBO;
+        return new DataSourceBO(this.getById(datasourceId));
     }
 
     @Override
     public DatasourceTestVO test(Long id) throws Exception {
-        DatasourceEntity entity = getById(id);
         DatasourceTestVO result = new DatasourceTestVO();
-        try (Connection ignored = DbUtil.getConnection(new DataSourceBO(entity))) {
+        try (DataSourceBO dataSource = get(id)) {
+            String databaseName = DbUtil.getDatabaseName(dataSource);
             result.setResult(true);
-            result.setMessage("测试成功");
+            result.setMessage(StrUtil.format("测试成功，数据库为：{}", databaseName));
             return result;
         } catch (Exception e) {
             log.warn("数据源测试失败, 异常信息: {}", e.getMessage(), e);

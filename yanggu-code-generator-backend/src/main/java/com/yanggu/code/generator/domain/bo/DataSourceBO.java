@@ -3,6 +3,7 @@ package com.yanggu.code.generator.domain.bo;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
+import com.yanggu.code.generator.util.DbUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.util.EnumUtil;
@@ -14,7 +15,7 @@ import java.sql.Connection;
  */
 @Data
 @Slf4j
-public class DataSourceBO {
+public class DataSourceBO implements AutoCloseable {
 
     /**
      * 数据源ID
@@ -45,13 +46,21 @@ public class DataSourceBO {
 
     private Connection connection;
 
-    public DataSourceBO(DatasourceEntity entity) {
+    public DataSourceBO(DatasourceEntity entity) throws Exception {
         this.id = entity.getId();
         this.dbType = EnumUtil.getBy(DbType::getCode, entity.getDbType());
         this.connUrl = entity.getConnUrl();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
         this.dbQuery = AbstractQuery.getQuery(this.dbType);
+        this.connection = DbUtil.getConnection(this);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.connection != null) {
+            connection.close();
+        }
     }
 
 }

@@ -195,11 +195,11 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     public void deleteByProjectId(List<Long> idList) {
         LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class).in(TableEntity::getProjectId, idList);
         List<TableEntity> tableList = tableMapper.selectList(queryWrapper);
+        if (CollUtil.isEmpty(tableList)) {
+            return;
+        }
         List<Long> tableIdList = tableList.stream().map(TableEntity::getId).toList();
-        tableMapper.delete(queryWrapper);
-
-        //删除对应的字段
-        tableFieldService.deleteByTableIdList(tableIdList);
+        deleteList(tableIdList);
     }
 
     @Override

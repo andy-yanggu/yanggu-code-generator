@@ -197,9 +197,13 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteByProjectId(List<Long> idList) {
         LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
+        wrapper.select(EnumEntity::getId);
         wrapper.in(EnumEntity::getProjectId, idList);
 
         List<EnumEntity> enumList = enumMapper.selectList(wrapper);
+        if (CollUtil.isEmpty(enumList)) {
+            return;
+        }
 
         List<Long> enumIdList = enumList.stream().map(EnumEntity::getId).toList();
 
