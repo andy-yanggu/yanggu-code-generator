@@ -8,13 +8,13 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="danger" @click="deleteProjectBatchHandle()">删除</el-button>
+				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
@@ -32,7 +32,13 @@
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="generatorType" label="生成方式" :formatter="handlerGeneratorType" header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="generatorType"
+				label="生成方式"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
+				header-align="center"
+				align="center"
+			></el-table-column>
 			<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
@@ -41,7 +47,7 @@
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
 					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
-					<el-button type="primary" link @click="deleteProjectBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -72,58 +78,26 @@ import { nextTick, reactive, ref } from 'vue'
 import AddOrUpdate from './add-or-update.vue'
 import Preview from './preview.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
-
 import Steps from './steps.vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { useInitForm } from '@/hooks/use-init-form'
+import { getLabel } from '@/utils/enum'
 
 const state: IHooksOptions = reactive({
 	dataListApi: projectEntityPageApi,
 	deleteListApi: projectDeleteListApi,
 	queryForm: {
 		projectName: ''
-	}
+	},
+	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'
 })
 
-const queryRef = ref()
-const addOrUpdateRef = ref()
 const previewRef = ref()
 const currentProjectIdTs = ref()
 const stepsRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(id)
-}
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
 
 const previewHandle = (projectItem: any) => {
 	previewRef.value.init(projectItem)
-}
-
-const deleteProjectBatchHandle = (projectId?: number) => {
-	let data: any[] = []
-	if (projectId) {
-		data = [projectId]
-	} else {
-		data = state.dataListSelections ? state.dataListSelections : []
-	}
-	if (data.length === 0) {
-		ElMessage.warning('请选择删除记录')
-		return
-	}
-	ElMessageBox.confirm('删除项目会删除项目下的所有表，是否继续?', '提示', {
-		confirmButtonText: '确定',
-		cancelButtonText: '取消',
-		type: 'warning'
-	})
-		.then(() => {
-			projectDeleteListApi(data).then(() => {
-				ElMessage.success('删除成功')
-				getDataList()
-			})
-		})
-		.catch(() => {})
 }
 
 const generatorCode = item => {
@@ -133,9 +107,8 @@ const generatorCode = item => {
 	})
 }
 
-const handlerGeneratorType = (row: any) => {
-	return PROJECT_GENERATE_TYPES.find(item => item.value === row.generatorType)?.label
-}
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, sortChangeHandle } = useIndexQuery(state)
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

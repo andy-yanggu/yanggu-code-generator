@@ -37,6 +37,8 @@ export interface IHooksOptions {
 	dataListLoading?: boolean
 	// 数据列表，多选项
 	dataListSelections?: any[]
+	// 删除时提示语
+	deleteMessage?: string
 }
 
 export const useIndexQuery = (options: IHooksOptions) => {
@@ -66,7 +68,8 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		total: 0,
 		pageSizes: [10, 20, 50, 100, 200],
 		dataListLoading: false,
-		dataListSelections: []
+		dataListSelections: [],
+		deleteMessage: '确定进行删除操作?'
 	}
 
 	const mergeDefaultOptions = (options: any, props: any): IHooksOptions => {
@@ -165,7 +168,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			}
 		}
 
-		ElMessageBox.confirm('确定进行删除操作?', '提示', {
+		ElMessageBox.confirm(state.deleteMessage, '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
