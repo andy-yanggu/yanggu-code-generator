@@ -61,7 +61,7 @@ public class DatasourceEntity extends BaseEntity implements Serializable {
     /**
      * 描述
      */
-    @TableField(value = "data_source_desc")
-    private String dataSourceDesc;
+    @TableField(value = "datasource_desc")
+    private String datasourceDesc;
 
 }

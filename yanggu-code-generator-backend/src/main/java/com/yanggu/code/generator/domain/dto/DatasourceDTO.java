@@ -68,6 +68,6 @@ public class DatasourceDTO implements Serializable {
      * 描述
      */
     @Schema(description = "描述")
-    private String dataSourceDesc;
+    private String datasourceDesc;
 
 }

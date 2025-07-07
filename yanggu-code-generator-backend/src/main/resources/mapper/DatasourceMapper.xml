@@ -11,7 +11,7 @@
         conn_url,
         username,
         password,
-        data_source_desc,
+        datasource_desc,
         create_time,
         update_time,
         is_delete
@@ -36,7 +36,7 @@
         <result property="connUrl" column="conn_url"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
-        <result property="dataSourceDesc" column="data_source_desc"/>
+        <result property="datasourceDesc" column="datasource_desc"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
