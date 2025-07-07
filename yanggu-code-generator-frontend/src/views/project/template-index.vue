@@ -15,10 +15,10 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="getDataList()">查询</el-button>
+				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryHandle()">重置</el-button>
+				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<el-table
@@ -64,6 +64,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { templateVOPageApi } from '@/api/template'
+import { Refresh, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()

@@ -64,4 +64,7 @@ a:hover {
     height: calc(100vh - 30px - var(--theme-header-height));
     padding: 15px;
   }
+  .layout-table{
+    width: 100%; margin-top: 15px
+  }
 }

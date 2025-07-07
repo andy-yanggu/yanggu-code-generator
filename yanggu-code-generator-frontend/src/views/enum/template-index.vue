@@ -11,10 +11,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="getDataList()">查询</el-button>
+					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryHandle()">重置</el-button>
+					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
@@ -69,6 +69,7 @@ import { generatorEnumDownloadLocalApi, generatorEnumDownloadZipApi } from '@/ap
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
 import { templateEntityPageApi } from '@/api/template'
+import { Refresh, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['clearSelection'])
 

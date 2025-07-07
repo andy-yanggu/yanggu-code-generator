@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" :title="templateGroupDialogTitleRef" width="80%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" title="模板配置" width="80%" @close="dialogVisible = false">
 		<el-card class="layout-query">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="模板名称" prop="templateName">
@@ -11,21 +11,19 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="getDataList()">查询</el-button>
+					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
+					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
 
 		<el-card>
+			<el-space :size="'large'">
+				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+			</el-space>
 			<el-table
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
@@ -76,10 +74,11 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import AddOrUpdate from './add-or-update.vue'
-import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
+import { TEMPLATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { templateDeleteListApi, templateEntityPageApi } from '@/api/template'
 import { useInitForm } from '@/hooks/use-init-form'
+import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
 	dataListApi: templateEntityPageApi,
@@ -92,7 +91,6 @@ const state: IHooksOptions = reactive({
 })
 
 const dialogVisible = ref(false)
-const templateGroupDialogTitleRef = ref('')
 const currentGroupId = ref<number>(-1)
 
 const init = (row: any) => {
@@ -100,7 +98,6 @@ const init = (row: any) => {
 	resetQueryHandle()
 	state.queryForm.templateGroupId = row.id
 	getDataList()
-	templateGroupDialogTitleRef.value = `${row.groupName}（${getLabel(row.type, TEMPLATE_GROUP_TYPES)}）模板配置`
 	currentGroupId.value = row.id
 }
 

@@ -5,21 +5,19 @@
 				<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称"></el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="getDataList()">查询</el-button>
+				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryHandle()">重置</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
+				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
 
 	<el-card>
+		<el-space :size="'large'">
+			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+		</el-space>
 		<el-table
 			v-loading="state.dataListLoading"
 			:data="state.dataList"
@@ -82,6 +80,8 @@ import Steps from './steps.vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
+import { Delete, Download, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import Import from '@/views/template-group/import.vue'
 
 const state: IHooksOptions = reactive({
 	dataListApi: projectEntityPageApi,

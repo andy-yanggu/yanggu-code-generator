@@ -41,21 +41,19 @@
 			</el-form-item>
         </#list>
 			<el-form-item>
-				<el-button type="primary" @click="getDataList()">查询</el-button>
+				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button @click="resetQueryRef()">重置</el-button>
 			</el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
-            </el-form-item>
 		</el-form>
 	</el-card>
 
 	<el-card>
+		<el-space :size="'large'">
+			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+		</el-space>
 		<el-table
 			v-loading="state.dataListLoading"
 			:data="state.dataList"
@@ -96,7 +94,9 @@
 import { useCrud } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
-import AddOrUpdate from './add-or-update.vue'
+import AddOrUpdate from '@/views/functionNameKebabCase/add-or-update.vue'
+import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
+
 <#list gridList as field>
 	<#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>
 import { getLabel } from '@/utils/enum'

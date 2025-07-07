@@ -6,21 +6,19 @@
 					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="getDataList()">查询</el-button>
+					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
+					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
 
 		<el-card>
+			<el-space :size="'large'">
+				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+			</el-space>
 			<el-table
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
@@ -66,6 +64,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/enum-item/add-or-update.vue'
 import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
+import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const enumIdRef = ref()
 const state: IHooksOptions = reactive({

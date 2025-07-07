@@ -10,27 +10,21 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="getDataList()">查询</el-button>
+				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryHandle()">重置</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-			</el-form-item>
-			<el-form-item>
-				<Import ref="templateGroupImportRef" @refresh-data-list="getDataList"></Import>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="exportHandle()">导出</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="danger" @click="deleteBatchHandle()">删除</el-button>
+				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
 
 	<el-card>
+		<el-space :size="'large'">
+			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+			<import ref="templateGroupImportRef" @refresh-data-list="getDataList"></import>
+			<el-button type="primary" :icon="Download" @click="exportHandle()">导出</el-button>
+		</el-space>
 		<el-table
 			ref="tableRef"
 			v-loading="state.dataListLoading"
@@ -94,6 +88,7 @@ import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntity
 import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
+import { Delete, Download, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
 	dataListApi: templateGroupEntityPageApi,

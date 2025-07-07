@@ -1,12 +1,13 @@
 <template>
 	<el-upload class="upload-demo" :limit="1" :show-file-list="false" :http-request="handleManualUpload">
-		<el-button type="success">导入</el-button>
+		<el-button type="success" :icon="Upload">导入</el-button>
 	</el-upload>
 </template>
 
 <script lang="ts" setup>
 import { importTemplateGroupApi } from '@/api/template-group'
 import { ElMessage } from 'element-plus'
+import { Upload } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 

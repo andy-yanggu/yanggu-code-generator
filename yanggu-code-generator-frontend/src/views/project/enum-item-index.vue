@@ -6,10 +6,10 @@
 					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="getDataList()">查询</el-button>
+					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="resetQueryHandle()">重置</el-button>
+					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-card>
@@ -42,6 +42,7 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { enumItemEntityPageApi } from '@/api/enum-item'
+import { Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
 	dataListApi: enumItemEntityPageApi,
