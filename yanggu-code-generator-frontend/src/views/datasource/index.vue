@@ -44,7 +44,7 @@
 				:formatter="(_: any, __: any, value: any) => getLabel(value, DB_TYPES)"
 			></el-table-column>
 			<el-table-column prop="connUrl" label="URL" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="dataSourceDesc" label="描述" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="datasourceDesc" label="描述" header-align="center" align="center"></el-table-column>
 			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">

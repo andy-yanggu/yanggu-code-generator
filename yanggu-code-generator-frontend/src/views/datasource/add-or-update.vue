@@ -18,8 +18,8 @@
 			<el-form-item label="密码" prop="password">
 				<el-input v-model="dataForm.password" type="password" show-password placeholder="请输入密码"></el-input>
 			</el-form-item>
-			<el-form-item label="描述" prop="dataSourceDesc">
-				<el-input v-model="dataForm.dataSourceDesc" placeholder="请输入描述"></el-input>
+			<el-form-item label="描述" prop="datasourceDesc">
+				<el-input v-model="dataForm.datasourceDesc" placeholder="请输入描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -47,7 +47,7 @@ const state: FormOptions = reactive({
 		connUrl: '',
 		username: '',
 		password: '',
-		dataSourceDesc: ''
+		datasourceDesc: ''
 	},
 	emit
 })

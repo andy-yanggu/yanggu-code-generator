@@ -45,7 +45,6 @@ const currentNodeKey = ref()
 const treeRef = ref()
 const preview = reactive({
 	visible: false,
-	title: '代码预览',
 	data: [],
 	enumId: 0,
 	generatorType: null,

@@ -96,9 +96,7 @@ const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []
 	initData.generatorType = generatorType
 
 	//重置查询表单数据
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 
 	//加载列表数据
 	getDataList()

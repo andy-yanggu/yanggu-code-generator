@@ -14,7 +14,7 @@
 				<el-select v-model="dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
 					<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
 						<span style="font-weight: bold">{{ item.connName }}</span>
-						<span v-if="item.dataSourceDesc && item.dataSourceDesc.trim()" style="color: #999; font-size: 12px">（{{ item.dataSourceDesc }}） </span>
+						<span v-if="item.datasourceDesc && item.datasourceDesc.trim()" style="color: #999; font-size: 12px">（{{ item.datasourceDesc }}） </span>
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -78,7 +78,7 @@
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="submitDataHandle()">确定</el-button>
+			<el-button type="primary" @click="submitHandle()">确定</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -114,9 +114,10 @@ const state: FormOptions = reactive({
 		voBaseClassId: '',
 		generatorType: null
 	},
-	emit: emit
+	emit: emit,
+	message: '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看',
+	duration: 2000
 })
-
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectPackage: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -141,23 +142,16 @@ const getList = () => {
 
 	//模板组下拉
 	templateGroupEntityListApi({}).then(res => {
-		projectTemplateGroupList.value = res.data.filter((item: any) => item.type === 0)
-		tableTemplateGroupList.value = res.data.filter((item: any) => item.type === 1)
-		enumTemplateGroupList.value = res.data.filter((item: any) => item.type === 2)
+		const data = res.data
+		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
+		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
+		enumTemplateGroupList.value = data.filter((item: any) => item.type === 2)
 	})
 
 	//基类下拉
 	baseClassEntityListApi({}).then(res => {
 		baseClassList.value = res.data
 	})
-}
-
-const submitDataHandle = () => {
-	if (!dataForm.id) {
-		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
-		state.duration = 2000
-	}
-	submitHandle()
 }
 
 onMounted(() => {

@@ -18,7 +18,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<el-table
@@ -79,22 +79,14 @@ const state: IHooksOptions = reactive({
 })
 let isManualSelection = true
 
-const queryRef = ref()
-
 const init = (templateGroupIdList: Array<number>) => {
 	state.queryForm.templateGroupIdList = templateGroupIdList
 
 	//重置查询表单数据
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 
 	//加载列表数据
 	getDataList()
-}
-
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
 }
 
 const handlerType = (row: any) => {
@@ -119,7 +111,7 @@ const toggleRowSelection = (rowList: any[]) => {
 	isManualSelection = true
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
 
 defineExpose({
 	init,

@@ -33,7 +33,6 @@ export const useSubmitForm = (options: FormOptions) => {
 			dataFormRef.value.resetFields()
 		}
 
-		// 清空ID并返回
 		if (!id) {
 			return
 		}

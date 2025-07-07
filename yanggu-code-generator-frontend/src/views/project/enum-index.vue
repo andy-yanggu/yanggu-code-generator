@@ -8,7 +8,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<el-table
@@ -64,18 +64,12 @@ const state: IHooksOptions = reactive({
 })
 let isManualSelection = true
 
-const queryRef = ref()
 const tableRef = ref()
 const enumItemIndexRef = ref()
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
 const init = (projectId: number) => {
 	state.queryForm.projectId = projectId
 	//重置表单查询
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 	getDataList()
 }
 
@@ -100,7 +94,7 @@ const enumItemIndexShow = (enumId: number) => {
 	enumItemIndexRef.value.init(enumId)
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
 
 defineExpose({
 	init,

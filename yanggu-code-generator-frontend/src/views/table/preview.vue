@@ -1,37 +1,35 @@
 <template>
 	<!-- 预览界面 -->
 	<el-drawer v-model="preview.visible" title="代码预览" :size="1200">
-		<div class="common-layout">
-			<el-container>
-				<el-aside :style="{ width: '300px', overflowX: 'auto' }">
-					<div class="tree-scroll-wrapper">
-						<el-tree
-							ref="treeRef"
-							:data="preview.treeData"
-							node-key="filePath"
-							:current-node-key="currentNodeKey"
-							highlight-current
-							class="custom-tree"
-							@node-click="handleTreeNodeClick"
-						/>
-					</div>
-				</el-aside>
-				<el-main>
-					<el-tabs v-model="preview.activeName" tab-position="top" @tab-click="handleTabNodeClick">
-						<el-tab-pane v-for="(item, key) in preview.data" :key="key" :label="item.fileName" :name="item.fileName">
-							<el-row :gutter="10">
-								<el-col :span="18"></el-col>
-								<el-col :span="6" style="text-align: right">
-									<el-button @click="handleCopy(item.content)">复制</el-button>
-									<el-button @click="generatorCode(item)">生成代码</el-button>
-								</el-col>
-							</el-row>
-							<code-mirror v-model="item.content" :height="680"></code-mirror>
-						</el-tab-pane>
-					</el-tabs>
-				</el-main>
-			</el-container>
-		</div>
+		<el-container>
+			<el-aside :style="{ width: '300px', overflowX: 'auto' }">
+				<div class="tree-scroll-wrapper">
+					<el-tree
+						ref="treeRef"
+						:data="preview.treeData"
+						node-key="filePath"
+						:current-node-key="currentNodeKey"
+						highlight-current
+						class="custom-tree"
+						@node-click="handleTreeNodeClick"
+					/>
+				</div>
+			</el-aside>
+			<el-main>
+				<el-tabs v-model="preview.activeName" tab-position="top" @tab-click="handleTabNodeClick">
+					<el-tab-pane v-for="(item, key) in preview.tabData" :key="key" :label="item.fileName" :name="item.fileName">
+						<el-row :gutter="10">
+							<el-col :span="18"></el-col>
+							<el-col :span="6" style="text-align: right">
+								<el-button @click="handleCopy(item.content)">复制</el-button>
+								<el-button @click="generatorCode(item)">生成代码</el-button>
+							</el-col>
+						</el-row>
+						<code-mirror v-model="item.content" :height="680"></code-mirror>
+					</el-tab-pane>
+				</el-tabs>
+			</el-main>
+		</el-container>
 	</el-drawer>
 </template>
 <script setup lang="ts">
@@ -45,8 +43,7 @@ const currentNodeKey = ref()
 const treeRef = ref()
 const preview = reactive({
 	visible: false,
-	title: '代码预览',
-	data: [],
+	tabData: [],
 	tableId: 0,
 	generatorType: null,
 	treeData: [],
@@ -65,12 +62,12 @@ const handleTreeNodeClick = (data: Tree) => {
 	}
 }
 
-const handleTabNodeClick = (pane: TabsPaneContext, ev: Event) => {
+const handleTabNodeClick = (pane: TabsPaneContext) => {
 	// 1. 获取当前tab的name
 	const currentTabName = pane.props.name
 
 	// 2. 遍历preview.data查找对应项
-	const currentItem = Object.values(preview.data).find(item => {
+	const currentItem = preview.tabData.find(item => {
 		return item.fileName === currentTabName
 	})
 
@@ -83,7 +80,7 @@ const init = (tableItem: any) => {
 	preview.generatorType = tableItem.generatorType
 	generatorTablePreviewApi(tableId).then(rest => {
 		const { templateContentList, treeList } = rest.data
-		preview.data = templateContentList
+		preview.tabData = templateContentList
 		preview.treeData = treeList
 
 		preview.visible = true

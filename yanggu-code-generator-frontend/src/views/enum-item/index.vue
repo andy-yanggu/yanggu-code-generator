@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
+import AddOrUpdate from '@/views/enum-item/add-or-update.vue'
 import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
 
 const enumIdRef = ref()

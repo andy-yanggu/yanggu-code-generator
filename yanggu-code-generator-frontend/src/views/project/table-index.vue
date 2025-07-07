@@ -8,7 +8,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 		<el-table
@@ -58,21 +58,14 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const queryRef = ref()
 const tableRef = ref()
 let isManualSelection = true
-
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
 
 const init = (projectId: number) => {
 	state.queryForm.projectId = projectId
 
 	//重置表单查询
-	if (queryRef.value) {
-		resetQueryRef()
-	}
+	resetQueryHandle()
 	getDataList()
 }
 
@@ -82,7 +75,7 @@ const selectionChangeHandle = (selections: any[]) => {
 		emit('selectChange', selections)
 	}
 }
-const { getDataList, sizeChangeHandle, currentChangeHandle } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
 
 const toggleRowSelection = (rowList: any[]) => {
 	if (rowList.length === 0) {

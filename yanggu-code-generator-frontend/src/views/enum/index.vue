@@ -87,10 +87,10 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
+import AddOrUpdate from '@/views/enum/add-or-update.vue'
 import EnumItemIndex from '@/views/enum-item/index.vue'
 import TemplateIndex from '@/views/enum/template-index.vue'
-import Preview from './preview.vue'
+import Preview from '@/views/enum/preview.vue'
 import { projectEntityListApi } from '@/api/project'
 import { ElMessage } from 'element-plus'
 import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/enum'

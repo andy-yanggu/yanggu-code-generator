@@ -133,8 +133,8 @@ const getProjectList = () => {
 	})
 }
 
-const importHandle = (id?: number) => {
-	importRef.value.init(id)
+const importHandle = () => {
+	importRef.value.init()
 }
 
 const previewHandle = (tableItem: any) => {

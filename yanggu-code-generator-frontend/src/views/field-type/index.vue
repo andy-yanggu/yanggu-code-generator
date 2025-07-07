@@ -13,7 +13,7 @@
 				<el-button type="primary" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
@@ -71,8 +71,8 @@
 
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { reactive, ref } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
+import { reactive } from 'vue'
+import AddOrUpdate from '@/views/field-type/add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/field-type'
@@ -87,12 +87,8 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const queryRef = ref()
-const resetQueryRef = () => {
-	queryRef.value.resetFields()
-}
-
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useIndexQuery(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+	useIndexQuery(state)
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>
