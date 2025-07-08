@@ -11,27 +11,27 @@ import java.util.List;
 public class ProjectDataModel {
 
     /**
-     * 项目名（test1-demo）
+     * 项目名称（test1-demo）
      */
     private String projectName;
 
     /**
-     * 项目名（下划线）（test1_demo）
+     * 项目名称（下划线）（test1_demo）
      */
     private String projectNameUnderline;
 
     /**
-     * 项目名（大驼峰）（Test1Demo）
+     * 项目名称（大驼峰）（Test1Demo）
      */
     private String projectNamePascal;
 
     /**
-     * 项目名（点）（test1.demo）
+     * 项目名称（点）（test1.demo）
      */
     private String projectNameDot;
 
     /**
-     * 项目名（斜杠）（test1/demo）
+     * 项目名称（斜杠）（test1/demo）
      */
     private String projectNameSlash;
 

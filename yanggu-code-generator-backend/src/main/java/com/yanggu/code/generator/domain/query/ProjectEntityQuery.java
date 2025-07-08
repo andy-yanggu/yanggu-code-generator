@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 项目Entity查询实体类
@@ -21,9 +22,21 @@ public class ProjectEntityQuery extends PageQuery<ProjectEntity> implements Seri
     private static final long serialVersionUID = 1L;
 
     /**
-     * 项目名
+     * 项目名称
      */
-    @Schema(description = "项目名")
+    @Schema(description = "项目名称")
     private String projectName;
+
+    /**
+     * 开始时间
+     */
+    @Schema(description = "开始时间")
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    @Schema(description = "结束时间")
+    private Date endTime;
 
 }

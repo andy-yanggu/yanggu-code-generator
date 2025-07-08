@@ -13,7 +13,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.3.1</spring-boot.version>
-        <hutool.version>6.0.0-M21</hutool.version>
+        <hutool.version>6.0.0-M22</hutool.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <knife4j-openapi3-jakarta.version>4.5.0</knife4j-openapi3-jakarta.version>

@@ -8,12 +8,12 @@ import java.util.List;
 public class EnumDataModel {
 
     /**
-     * 项目名（点）（test1.demo）
+     * 项目名称（点）（test1.demo）
      */
     private String projectNameDot;
 
     /**
-     * 项目名（斜杠）（test1/demo）
+     * 项目名称（斜杠）（test1/demo）
      */
     private String projectNameSlash;
 
