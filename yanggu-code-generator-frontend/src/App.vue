@@ -1,10 +1,14 @@
 <template>
-	<el-config-provider :locale="zh_cn">
+	<el-config-provider :locale="zhCn">
 		<router-view></router-view>
 	</el-config-provider>
 </template>
 
 <script setup lang="ts">
-import zh_cn from 'element-plus/es/locale/lang/zh-cn'
 import { RouterView } from 'vue-router'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
+
+dayjs.locale('zh-cn')
 </script>

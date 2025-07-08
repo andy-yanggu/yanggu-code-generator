@@ -1,5 +1,5 @@
 <template>
-	<el-card class="layout-query">
+	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="基类类名" prop="className">
 				<el-input v-model="state.queryForm.className" clearable placeholder="请输入基类类名"></el-input>
@@ -13,7 +13,7 @@
 		</el-form>
 	</el-card>
 
-	<el-card>
+	<el-card shadow="hover">
 		<el-space :size="'large'">
 			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>

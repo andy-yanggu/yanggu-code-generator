@@ -18,3 +18,8 @@
 
   --theme-main-bg-color: #f0f2f5;
 }
+.el-card {
+  &:not(:first-child) {
+    margin-top: 10px;
+  }
+}

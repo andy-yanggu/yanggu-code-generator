@@ -1,8 +1,19 @@
 <template>
-	<el-card class="layout-query">
+	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="项目名称" prop="projectName">
 				<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称"></el-input>
+			</el-form-item>
+			<el-form-item label="创建时间" prop="dateTimeRange" style="width: 350px">
+				<el-date-picker
+					v-model="state.queryForm.dateTimeRange"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					type="datetimerange"
+					range-separator="-"
+					start-placeholder="开始时间"
+					end-placeholder="结束时间"
+					:default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
+				></el-date-picker>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
@@ -13,7 +24,7 @@
 		</el-form>
 	</el-card>
 
-	<el-card>
+	<el-card shadow="hover">
 		<el-space :size="'large'">
 			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
@@ -73,21 +84,21 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, reactive, ref } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
-import Preview from './preview.vue'
+import AddOrUpdate from '@/views/project/add-or-update.vue'
+import Preview from '@/views/project/preview.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
-import Steps from './steps.vue'
+import Steps from '@/views/project/steps.vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
-import { Delete, Download, Plus, Refresh, Search } from '@element-plus/icons-vue'
-import Import from '@/views/template-group/import.vue'
+import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
 	dataListApi: projectEntityPageApi,
 	deleteListApi: projectDeleteListApi,
 	queryForm: {
-		projectName: ''
+		projectName: '',
+		dateTimeRange: []
 	},
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'
 })

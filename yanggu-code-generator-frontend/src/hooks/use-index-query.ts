@@ -95,17 +95,43 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			return
 		}
 
+		//解构查询条件
+		const queryForm = {
+			...state.queryForm
+		}
+		//如果queryForm包含dateRange
+		if (queryForm.hasOwnProperty('dateRange')) {
+			if (queryForm.dateRange && queryForm.dateRange.length === 2) {
+				queryForm.startDate = queryForm.dateRange[0]
+				queryForm.endDate = queryForm.dateRange[1]
+			}
+			delete queryForm.dateRange
+		}
+
+		//如果queryForm包含dateTimeRange
+		if (queryForm.hasOwnProperty('dateTimeRange')) {
+			if (queryForm.dateTimeRange && queryForm.dateTimeRange.length === 2) {
+				queryForm.startTime = queryForm.dateTimeRange[0]
+				queryForm.endTime = queryForm.dateTimeRange[1]
+			}
+			delete queryForm.dateTimeRange
+		}
+
+		//如果是分页，添加分页参数
+		if (state.isPage) {
+			queryForm.pageNum = state.pageNum
+			queryForm.pageSize = state.pageSize
+		}
+
+		//排序字段
+		if (state.order) {
+			queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
+		}
+
 		state.dataListLoading = true
 
-		const pageQueryForm = {
-			...state.queryForm,
-			pageNum: state.pageNum,
-			pageSize: state.pageSize
-		}
-		if (state.order) {
-			pageQueryForm.orderItemList = [{ column: state.order, asc: state.asc }]
-		}
-		state.dataListApi(pageQueryForm).then((res: any) => {
+		//调用接口
+		state.dataListApi(queryForm).then((res: any) => {
 			if (state.isPage) {
 				state.dataList = res.data.records
 				state.total = res.data.total
@@ -177,7 +203,6 @@ export const useIndexQuery = (options: IHooksOptions) => {
 				if (state.deleteListApi) {
 					state.deleteListApi(data).then(() => {
 						ElMessage.success('删除成功')
-
 						query()
 					})
 				}

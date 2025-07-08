@@ -1,11 +1,11 @@
 <template>
 	<el-container class="layout-container">
 		<el-aside class="layout-sidebar">
-			<Sidebar></Sidebar>
+			<sidebar></sidebar>
 		</el-aside>
 		<el-container>
 			<el-header class="layout-header">
-				<Navbar></Navbar>
+				<navbar></navbar>
 			</el-header>
 			<el-main class="layout-main">
 				<el-scrollbar class="layout-scrollbar">
@@ -22,6 +22,6 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Sidebar from '@/layout/components/sidebar/index.vue'
-import Navbar from '@/layout/components/navbar/index.vue'
+import sidebar from '@/layout/components/sidebar/index.vue'
+import navbar from '@/layout/components/navbar/index.vue'
 </script>

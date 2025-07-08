@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="dialogVisible" title="枚举配置" width="80%" @close="dialogVisible = false">
-		<el-card class="layout-query">
+		<el-card class="layout-query" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="枚举项名称" prop="enumItemName">
 					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
@@ -14,7 +14,7 @@
 			</el-form>
 		</el-card>
 
-		<el-card>
+		<el-card shadow="hover">
 			<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @sort-change="sortChangeHandle">
 				<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>

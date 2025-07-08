@@ -1,5 +1,5 @@
 <template>
-	<el-card class="layout-query">
+	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="项目" prop="projectId">
 				<el-select v-model="state.queryForm.projectId" style="width: 140px" clearable placeholder="请选择项目">
@@ -18,11 +18,11 @@
 		</el-form>
 	</el-card>
 
-	<el-card>
+	<el-card shadow="hover">
 		<el-space :size="'large'">
 			<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
-			<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成代码</el-button>
 			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+			<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成代码</el-button>
 		</el-space>
 		<el-table
 			ref="tableRef"

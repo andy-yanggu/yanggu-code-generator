@@ -1,5 +1,5 @@
 <template>
-	<el-card class="layout-query">
+	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="枚举名称" prop="enumName">
 				<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
