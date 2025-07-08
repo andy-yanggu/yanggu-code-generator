@@ -33,15 +33,16 @@
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="columnType" label="字段类型" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="columnType" label="字段类型" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="attrType"
 				label="属性类型"
 				header-align="center"
+				show-overflow-tooltip
 				align="center"
 				:formatter="(_: any, __: any, value: any) => getLabel(value, ATTR_TYPES)"
 			></el-table-column>
-			<el-table-column prop="packageName" label="属性包名" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="packageName" label="属性包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">

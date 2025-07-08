@@ -6,7 +6,8 @@ import { ElMessage } from 'element-plus'
 const service = axios.create({
 	baseURL: import.meta.env.VITE_API_URL as any,
 	timeout: 60000,
-	headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+	withCredentials: true // 允许携带cookie
 })
 
 // 请求拦截器
@@ -33,6 +34,12 @@ service.interceptors.response.use(
 	response => {
 		if (response.status !== 200) {
 			return Promise.reject(new Error(response.statusText || 'Error'))
+		}
+
+		//如果是文件下载请求
+		if (response.config.responseType === 'blob') {
+			//直接返回响应数据
+			return response
 		}
 
 		const res = response.data
