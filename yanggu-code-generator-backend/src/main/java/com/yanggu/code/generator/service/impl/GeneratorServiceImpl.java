@@ -218,7 +218,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectEntity project = projectService.getById(table.getProjectId());
 
         //获取数据模型
-        TableDataModel tableDataModel = buildTableDataModel(table, project);
+        TableModel tableModel = buildTableDataModel(table, project);
 
         Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
 
@@ -234,7 +234,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         //渲染模板并输出
         return templateList.stream()
                 .map(template -> {
-                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, tableDataModel);
+                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, tableModel);
                     templateContentVO.setTableId(tableId);
                     return templateContentVO;
                 })
@@ -410,10 +410,10 @@ public class GeneratorServiceImpl implements GeneratorService {
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
         List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
 
-        ProjectDataModel projectDataModel = buildProjectDataModel(project, dataSource);
+        ProjectModel projectModel = buildProjectDataModel(project, dataSource);
         return projecTemplateList.stream()
                 .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
-                .map(template -> getTemplateContentVO(templateGroup, template, projectDataModel))
+                .map(template -> getTemplateContentVO(templateGroup, template, projectModel))
                 .toList();
     }
 
@@ -444,42 +444,42 @@ public class GeneratorServiceImpl implements GeneratorService {
     /**
      * 构建项目渲染数据
      */
-    private ProjectDataModel buildProjectDataModel(ProjectEntity project, DataSourceBO dataSource) {
+    private ProjectModel buildProjectDataModel(ProjectEntity project, DataSourceBO dataSource) {
         //项目数据
-        ProjectDataModel projectDataModel = new ProjectDataModel();
+        ProjectModel projectModel = new ProjectModel();
         String projectName = project.getProjectName();
-        projectDataModel.setProjectName(projectName);
-        projectDataModel.setProjectNameUnderline(NameUtil.toUnderLine(projectName));
-        projectDataModel.setProjectNamePascal(NameUtil.toPascal(projectName));
-        projectDataModel.setProjectNameDot(NameUtil.toDot(projectName));
-        projectDataModel.setProjectNameSlash(NameUtil.toSlash(projectName));
-        projectDataModel.setProjectPackage(project.getProjectPackage());
-        projectDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
-        projectDataModel.setProjectVersion(project.getProjectVersion());
-        projectDataModel.setBackendPath(project.getBackendPath());
-        projectDataModel.setFrontendPath(project.getFrontendPath());
-        projectDataModel.setProjectDesc(project.getProjectDesc());
+        projectModel.setProjectName(projectName);
+        projectModel.setProjectNameUnderline(NameUtil.toUnderLine(projectName));
+        projectModel.setProjectNamePascal(NameUtil.toPascal(projectName));
+        projectModel.setProjectNameDot(NameUtil.toDot(projectName));
+        projectModel.setProjectNameSlash(NameUtil.toSlash(projectName));
+        projectModel.setProjectPackage(project.getProjectPackage());
+        projectModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
+        projectModel.setProjectVersion(project.getProjectVersion());
+        projectModel.setBackendPath(project.getBackendPath());
+        projectModel.setFrontendPath(project.getFrontendPath());
+        projectModel.setProjectDesc(project.getProjectDesc());
 
         //数据源数据
-        projectDataModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
-        projectDataModel.setDatabaseUrl(dataSource.getConnUrl());
-        projectDataModel.setDatabaseUsername(dataSource.getUsername());
-        projectDataModel.setDatabasePassword(dataSource.getPassword());
+        projectModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
+        projectModel.setDatabaseUrl(dataSource.getConnUrl());
+        projectModel.setDatabaseUsername(dataSource.getUsername());
+        projectModel.setDatabasePassword(dataSource.getPassword());
 
         //表模型数据列表
-        List<TableDataModel> tableDataModelList = new ArrayList<>();
-        projectDataModel.setTableDataModelList(tableDataModelList);
+        List<TableModel> tableModelList = new ArrayList<>();
+        projectModel.setTableModelList(tableModelList);
 
         List<TableEntity> tableList = tableService.getTableListByProjectId(project.getId());
 
         for (TableEntity table : tableList) {
-            TableDataModel tableDataModel = buildTableDataModel(table, project);
-            tableDataModelList.add(tableDataModel);
+            TableModel tableModel = buildTableDataModel(table, project);
+            tableModelList.add(tableModel);
         }
 
         //枚举模型数据列表
         List<EnumDataModel> enumDataModelList = new ArrayList<>();
-        projectDataModel.setEnumDataModelList(enumDataModelList);
+        projectModel.setEnumDataModelList(enumDataModelList);
 
         List<EnumEntity> enumList = enumService.enumList(project.getId());
         for (EnumEntity enumEntity : enumList) {
@@ -487,17 +487,17 @@ public class GeneratorServiceImpl implements GeneratorService {
             enumDataModelList.add(enumDataModel);
         }
 
-        return projectDataModel;
+        return projectModel;
     }
 
     /**
      * 构建表渲染的数据模型
      */
-    private TableDataModel buildTableDataModel(TableEntity table, ProjectEntity project) {
+    private TableModel buildTableDataModel(TableEntity table, ProjectEntity project) {
         List<TableFieldEntity> fieldList = tableFieldService.getByTableId(table.getId());
         List<TableFieldModel> fieldModelList = tableFieldMapstruct.toModel(fieldList);
 
-        TableDataModel tableDataModel = new TableDataModel();
+        TableModel tableModel = new TableModel();
         fieldModelList.sort(Comparator.comparing(TableFieldModel::getFieldSort));
 
         fieldModelList.forEach(fieldModel -> {
@@ -511,57 +511,57 @@ public class GeneratorServiceImpl implements GeneratorService {
                 fieldModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
             }
         });
-        tableDataModel.setFieldList(fieldModelList);
+        tableModel.setFieldList(fieldModelList);
 
         // 获取数据库类型
         String dbType = datasourceService.getDatabaseProductName(project.getDatasourceId());
-        tableDataModel.setDbType(dbType);
+        tableModel.setDbType(dbType);
 
         //项目信息
-        tableDataModel.setProjectId(project.getId());
-        tableDataModel.setProjectName(project.getProjectName());
-        tableDataModel.setProjectNameUnderline(NameUtil.toUnderLine(project.getProjectName()));
-        tableDataModel.setProjectNamePascal(NameUtil.toPascal(project.getProjectName()));
-        tableDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
-        tableDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
-        tableDataModel.setProjectPackage(project.getProjectPackage());
-        tableDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
-        tableDataModel.setVersion(table.getVersion());
+        tableModel.setProjectId(project.getId());
+        tableModel.setProjectName(project.getProjectName());
+        tableModel.setProjectNameUnderline(NameUtil.toUnderLine(project.getProjectName()));
+        tableModel.setProjectNamePascal(NameUtil.toPascal(project.getProjectName()));
+        tableModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
+        tableModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
+        tableModel.setProjectPackage(project.getProjectPackage());
+        tableModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
+        tableModel.setVersion(table.getVersion());
 
-        tableDataModel.setFunctionName(table.getFunctionName());
-        tableDataModel.setFunctionNamePascal(StrUtil.upperFirst(table.getFunctionName()));
-        tableDataModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));
-        tableDataModel.setFormLayout(table.getFormLayout());
+        tableModel.setFunctionName(table.getFunctionName());
+        tableModel.setFunctionNamePascal(StrUtil.upperFirst(table.getFunctionName()));
+        tableModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));
+        tableModel.setFormLayout(table.getFormLayout());
 
         //开发者信息
-        tableDataModel.setAuthor(table.getAuthor());
-        tableDataModel.setDatetime(DateUtil.format(new Date(), DateFormatPool.NORM_DATETIME_PATTERN));
-        tableDataModel.setDate(DateUtil.format(new Date(), DateFormatPool.NORM_DATE_PATTERN));
+        tableModel.setAuthor(table.getAuthor());
+        tableModel.setDatetime(DateUtil.format(new Date(), DateFormatPool.NORM_DATETIME_PATTERN));
+        tableModel.setDate(DateUtil.format(new Date(), DateFormatPool.NORM_DATE_PATTERN));
 
         //设置字段分类
-        setFieldTypeList(tableDataModel);
+        setFieldTypeList(tableModel);
 
         //设置基类信息
-        setBaseClass(tableDataModel);
+        setBaseClass(tableModel);
 
         // 导入的包列表
         Set<String> importList = fieldTypeService.getPackageByTableId(table.getId());
-        tableDataModel.setImportList(importList);
+        tableModel.setImportList(importList);
 
         //表信息
-        tableDataModel.setTableName(table.getTableName());
-        tableDataModel.setDatabaseName(table.getDatabaseName());
-        tableDataModel.setTableComment(table.getTableComment());
-        tableDataModel.setClassName(StrUtil.lowerFirst(table.getClassName()));
-        tableDataModel.setClassNameUpper(table.getClassName());
+        tableModel.setTableName(table.getTableName());
+        tableModel.setDatabaseName(table.getDatabaseName());
+        tableModel.setTableComment(table.getTableComment());
+        tableModel.setClassName(StrUtil.lowerFirst(table.getClassName()));
+        tableModel.setClassNameUpper(table.getClassName());
 
         //前后端生成路径
-        tableDataModel.setBackendPath(project.getBackendPath());
-        tableDataModel.setFrontendPath(project.getFrontendPath());
+        tableModel.setBackendPath(project.getBackendPath());
+        tableModel.setFrontendPath(project.getFrontendPath());
 
         //生成方式
-        tableDataModel.setGeneratorType(project.getGeneratorType());
-        return tableDataModel;
+        tableModel.setGeneratorType(project.getGeneratorType());
+        return tableModel;
     }
 
     private EnumDataModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
@@ -580,14 +580,14 @@ public class GeneratorServiceImpl implements GeneratorService {
         enumDataModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
         enumDataModel.setEnumDesc(enumEntity.getEnumDesc());
         List<EnumItemEntity> enumItemList = enumEntity.getEnumItemList();
-        List<EnumItemDataModel> list = enumItemList.stream()
+        List<EnumItemModel> list = enumItemList.stream()
                 .map(enumItemEntity -> {
-                    EnumItemDataModel enumItemDataModel = new EnumItemDataModel();
-                    enumItemDataModel.setEnumItemName(enumItemEntity.getEnumItemName());
-                    enumItemDataModel.setEnumItemNameAllUpper(NameUtil.toAllUpperCase(enumItemEntity.getEnumItemName()));
-                    enumItemDataModel.setEnumItemCode(enumItemEntity.getEnumItemCode());
-                    enumItemDataModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
-                    return enumItemDataModel;
+                    EnumItemModel enumItemModel = new EnumItemModel();
+                    enumItemModel.setEnumItemName(enumItemEntity.getEnumItemName());
+                    enumItemModel.setEnumItemNameAllUpper(NameUtil.toAllUpperCase(enumItemEntity.getEnumItemName()));
+                    enumItemModel.setEnumItemCode(enumItemEntity.getEnumItemCode());
+                    enumItemModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
+                    return enumItemModel;
                 }).toList();
         enumDataModel.setEnumItemList(list);
         return enumDataModel;
@@ -596,9 +596,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     /**
      * 设置字段分类信息
      *
-     * @param tableDataModel 数据模型
+     * @param tableModel 数据模型
      */
-    private void setFieldTypeList(TableDataModel tableDataModel) {
+    private void setFieldTypeList(TableModel tableModel) {
         // 主键列表 (支持多主键)
         List<TableFieldModel> primaryList = new ArrayList<>();
         // 表单列表
@@ -608,7 +608,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 查询列表
         List<TableFieldModel> queryList = new ArrayList<>();
 
-        for (TableFieldModel field : tableDataModel.getFieldList()) {
+        for (TableFieldModel field : tableModel.getFieldList()) {
             if (field.getPrimaryPk() == 1) {
                 primaryList.add(field);
             }
@@ -622,31 +622,31 @@ public class GeneratorServiceImpl implements GeneratorService {
                 queryList.add(field);
             }
         }
-        tableDataModel.setPrimaryList(primaryList);
+        tableModel.setPrimaryList(primaryList);
         formList.sort(Comparator.comparingInt(TableFieldModel::getFormFieldSort));
-        tableDataModel.setFormList(formList);
+        tableModel.setFormList(formList);
         gridList.sort(Comparator.comparingInt(TableFieldModel::getGridFieldSort));
-        tableDataModel.setGridList(gridList);
+        tableModel.setGridList(gridList);
         queryList.sort(Comparator.comparingInt(TableFieldModel::getQueryFieldSort));
-        tableDataModel.setQueryList(queryList);
+        tableModel.setQueryList(queryList);
     }
 
     /**
      * 设置基类信息
      *
-     * @param tableDataModel 数据模型
+     * @param tableModel 数据模型
      */
-    private void setBaseClass(TableDataModel tableDataModel) {
-        Long projectId = tableDataModel.getProjectId();
+    private void setBaseClass(TableModel tableModel) {
+        Long projectId = tableModel.getProjectId();
         ProjectEntity project = projectService.getById(projectId);
 
         //Entity基类
         BaseClassEntity baseClass = baseClassService.getById(project.getEntityBaseClassId());
-        List<TableFieldModel> fieldList = tableDataModel.getFieldList();
+        List<TableFieldModel> fieldList = tableModel.getFieldList();
         fieldList.forEach(field -> field.setEntityBaseField(0));
         if (baseClass != null) {
             BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
-            tableDataModel.setEntityBaseClass(baseClassModel);
+            tableModel.setEntityBaseClass(baseClassModel);
 
             // 基类字段
             String[] fields = baseClassModel.getFields().split(",");
@@ -662,7 +662,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         fieldList.forEach(field -> field.setVoBaseField(0));
         if (voBaseClass != null) {
             BaseClassModel baseClassModel = baseClassMapstruct.toModel(voBaseClass);
-            tableDataModel.setVoBaseClass(baseClassModel);
+            tableModel.setVoBaseClass(baseClassModel);
             // 基类字段
             String[] fields = baseClassModel.getFields().split(",");
             for (TableFieldModel field : fieldList) {

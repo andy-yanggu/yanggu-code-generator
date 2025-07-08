@@ -9,7 +9,7 @@ import java.util.Set;
  * 表数据模型
  */
 @Data
-public class TableDataModel {
+public class TableModel {
 
     /**
      * 项目ID

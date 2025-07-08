@@ -8,7 +8,7 @@ import java.util.List;
  * 项目数据模型
  */
 @Data
-public class ProjectDataModel {
+public class ProjectModel {
 
     /**
      * 项目名称（test1-demo）
@@ -88,7 +88,7 @@ public class ProjectDataModel {
     /**
      * 表模型数据列表
      */
-    private List<TableDataModel> tableDataModelList;
+    private List<TableModel> tableModelList;
 
     /**
      * 枚举模型数据列表

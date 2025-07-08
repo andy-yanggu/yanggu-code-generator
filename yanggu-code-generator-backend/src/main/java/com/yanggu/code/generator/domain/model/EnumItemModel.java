@@ -3,7 +3,7 @@ package com.yanggu.code.generator.domain.model;
 import lombok.Data;
 
 @Data
-public class EnumItemDataModel {
+public class EnumItemModel {
 
     /**
      * 枚举项名称

@@ -65,6 +65,6 @@ public class EnumDataModel {
     /**
      * 枚举值列表
      */
-    private List<EnumItemDataModel> enumItemList;
+    private List<EnumItemModel> enumItemList;
 
 }
