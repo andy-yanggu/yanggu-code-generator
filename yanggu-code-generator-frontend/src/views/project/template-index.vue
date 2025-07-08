@@ -21,6 +21,8 @@
 				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
+	</el-card>
+	<el-card shadow="hover">
 		<el-table
 			ref="tableRef"
 			v-loading="state.dataListLoading"

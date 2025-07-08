@@ -14,7 +14,7 @@
 	</el-card>
 
 	<el-card shadow="hover">
-		<el-space :size="'large'">
+		<el-space :size="'large'" class="layout-space">
 			<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 			<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 		</el-space>
