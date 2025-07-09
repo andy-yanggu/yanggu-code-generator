@@ -1,8 +1,17 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { appStore } from '@/store'
 
 export const menuRoutes: RouteRecordRaw[] = [
 	{
-		path: '/p/gen',
+		path: '/index',
+		component: () => import('@/views/index.vue'),
+		meta: {
+			title: '首页',
+			icon: 'icon-detail'
+		}
+	},
+	{
+		path: '/gen',
 		meta: {
 			title: '代码生成器',
 			icon: 'icon-appstore'
@@ -105,4 +114,20 @@ export const constantRoutes: RouteRecordRaw[] = [
 export const router = createRouter({
 	history: createWebHashHistory(),
 	routes: constantRoutes
+})
+
+// 路由拦截
+router.beforeEach((to, from, next) => {
+	console.log(to, from)
+
+	const store = appStore()
+
+	const routeMetaData = { name: to.meta.title, fullPath: to.fullPath }
+	// 添加标签
+	store.addTag(routeMetaData)
+
+	// 设置面包屑
+	store.setBreadcrumb(routeMetaData)
+
+	next()
 })

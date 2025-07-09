@@ -1,9 +1,9 @@
 <template>
 	<el-container class="layout-container">
-		<el-aside class="layout-sidebar">
+		<el-aside class="layout-sidebar" :style="{ width: store.isCollapseRef ? '64px' : '200px' }">
 			<sidebar></sidebar>
 		</el-aside>
-		<el-container>
+		<el-container direction="vertical">
 			<el-header class="layout-header">
 				<navbar></navbar>
 			</el-header>
@@ -21,7 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
 import sidebar from '@/layout/components/sidebar/index.vue'
 import navbar from '@/layout/components/navbar/index.vue'
+import { appStore } from '@/store'
+
+const store = appStore()
 </script>
+
+<style scoped></style>

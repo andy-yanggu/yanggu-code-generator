@@ -35,7 +35,7 @@ a:hover {
     background: var(--theme-menu-bg-color);
     border-right: var(--theme-border-color-light) 1px solid;
     height: inherit;
-    width: var(--theme-aside-width) !important;
+    width: var(--theme-aside-width);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -45,6 +45,7 @@ a:hover {
     }
   }
   .layout-header {
+    margin-left: 15px;
     padding: 0 !important;
     display: flex;
     flex-direction: column;

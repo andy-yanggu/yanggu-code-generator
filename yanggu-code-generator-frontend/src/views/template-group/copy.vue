@@ -28,6 +28,10 @@ import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
+const initAfter = () => {
+	dataForm.groupName = dataForm.groupName + '_复制'
+}
+
 const state: FormOptions = reactive({
 	// 提交API
 	submitApi: copyTemplateApi,
@@ -40,6 +44,7 @@ const state: FormOptions = reactive({
 		type: '',
 		groupDesc: ''
 	},
+	initAfter,
 	emit
 })
 

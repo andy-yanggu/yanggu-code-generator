@@ -1,4 +1,4 @@
 import { withInstall } from '@/utils/tool'
-import SvgIcon from './src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 
 export default withInstall(SvgIcon)

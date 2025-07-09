@@ -8,17 +8,16 @@
 	</el-sub-menu>
 	<el-menu-item v-else :key="menu.path" :index="menu.path">
 		<svg-icon :icon="menu.meta.icon"></svg-icon>
-		<template #title>{{ menu.meta.title }}</template>
+		<span>{{ menu.meta.title }}</span>
 	</el-menu-item>
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 
 defineProps({
 	menu: {
-		type: Object as PropType<any>,
+		type: Object,
 		required: true
 	}
 })

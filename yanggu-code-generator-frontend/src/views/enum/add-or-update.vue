@@ -21,21 +21,23 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { enumDetailApi, enumSubmitApi } from '@/api/enum'
 import { projectEntityListApi } from '@/api/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const projectList = ref([])
-
-onMounted(() => {
-	getProjectList()
-})
+const getProjectList = () => {
+	projectEntityListApi({}).then((res: any) => {
+		projectList.value = res.data
+	})
+}
 
 const emit = defineEmits(['refreshDataList'])
 const state: FormOptions = reactive({
 	submitApi: enumSubmitApi,
 	detailApi: enumDetailApi,
+	initBefore: getProjectList,
 	initFormData: {
 		projectId: null,
 		enumName: '',
@@ -43,12 +45,6 @@ const state: FormOptions = reactive({
 	},
 	emit
 })
-
-const getProjectList = () => {
-	projectEntityListApi({}).then((res: any) => {
-		projectList.value = res.data
-	})
-}
 
 const dataRules = reactive({
 	enumName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

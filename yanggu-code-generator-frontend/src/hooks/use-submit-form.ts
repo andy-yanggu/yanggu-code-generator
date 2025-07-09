@@ -7,8 +7,12 @@ export interface FormOptions {
 	submitApi: (data: any) => AxiosPromise
 	// 详情API
 	detailApi: (id: number) => AxiosPromise
+	// 初始化之前调用
+	initBefore?: () => void
 	// 初始表单数据
 	initFormData: any
+	// 初始化之后调用
+	initAfter?: () => void
 	// 触发事件
 	emit: any
 	// 提示信息
@@ -18,7 +22,7 @@ export interface FormOptions {
 }
 
 export const useSubmitForm = (options: FormOptions) => {
-	const { submitApi, detailApi, initFormData, emit, message = '操作成功', duration = 500 } = options
+	const { submitApi, detailApi, initBefore = () => {}, initFormData, initAfter = () => {}, emit, message = '操作成功', duration = 500 } = options
 
 	const visible = ref(false) // 弹窗可见性
 	const dataForm = reactive({ ...initFormData }) // 表单数据
@@ -33,6 +37,9 @@ export const useSubmitForm = (options: FormOptions) => {
 			dataFormRef.value.resetFields()
 		}
 
+		// 初始化之前调用
+		options.initBefore?.()
+
 		if (!id) {
 			return
 		}
@@ -40,6 +47,9 @@ export const useSubmitForm = (options: FormOptions) => {
 		// 获取详情数据
 		detailApi(id).then(res => {
 			Object.assign(dataForm, res.data)
+
+			// 获取详情之后调用
+			options.initAfter?.()
 		})
 	}
 
