@@ -4,8 +4,11 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 枚举模型实体类
+ */
 @Data
-public class EnumDataModel {
+public class EnumModel {
 
     /**
      * 项目名称（点）（test1.demo）

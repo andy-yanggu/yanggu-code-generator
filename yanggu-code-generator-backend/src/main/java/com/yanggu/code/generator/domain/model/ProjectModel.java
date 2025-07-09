@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 项目数据模型
+ * 项目模型实体类
  */
 @Data
 public class ProjectModel {
@@ -93,6 +93,6 @@ public class ProjectModel {
     /**
      * 枚举模型数据列表
      */
-    private List<EnumDataModel> enumDataModelList;
+    private List<EnumModel> enumModelList;
 
 }

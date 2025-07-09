@@ -3,7 +3,7 @@ package com.yanggu.code.generator.domain.model;
 import lombok.Data;
 
 /**
- * 基类Entity实体类
+ * 基类模型实体类
  */
 @Data
 public class BaseClassModel {

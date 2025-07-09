@@ -2,6 +2,9 @@ package com.yanggu.code.generator.domain.model;
 
 import lombok.Data;
 
+/**
+ * 枚举项模型实体类
+ */
 @Data
 public class EnumItemModel {
 

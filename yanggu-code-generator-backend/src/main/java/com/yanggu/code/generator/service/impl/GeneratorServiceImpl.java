@@ -27,6 +27,8 @@ import org.dromara.hutool.core.io.file.FileUtil;
 import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
+import org.dromara.hutool.core.util.CharsetUtil;
+import org.dromara.hutool.http.meta.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -253,8 +255,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateContentVO> list = new ArrayList<>();
         for (TemplateEntity templateEntity : templateList) {
             if (CollUtil.isEmpty(templateIdList) || templateIdList.contains(templateEntity.getId())) {
-                EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
-                TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, templateEntity, enumDataModel);
+                EnumModel enumModel = buildEnumDataModel(enumEntity, project);
+                TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, templateEntity, enumModel);
                 templateContentVO.setEnumId(enumId);
                 list.add(templateContentVO);
             }
@@ -376,14 +378,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enmumIdList, List<Long> enumTemplateIdList) {
-        List<EnumDataModel> enumDataModelList = new ArrayList<>();
+        List<EnumModel> enumModelList = new ArrayList<>();
         List<EnumEntity> enumList = enumService.enumList(project.getId());
         enumList = enumList.stream()
                 .filter(enumEntity -> CollUtil.isEmpty(enmumIdList) || enmumIdList.contains(enumEntity.getId()))
                 .toList();
         for (EnumEntity enumEntity : enumList) {
-            EnumDataModel dataModel = buildEnumDataModel(enumEntity, project);
-            enumDataModelList.add(dataModel);
+            EnumModel dataModel = buildEnumDataModel(enumEntity, project);
+            enumModelList.add(dataModel);
         }
 
         //查询项目对应的枚举模板
@@ -391,11 +393,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateEntity> templateList = templateGroup.getTemplateList().stream()
                 .filter(template -> CollUtil.isEmpty(enumTemplateIdList) || enumTemplateIdList.contains(template.getId()))
                 .toList();
-        return enumDataModelList.stream()
-                .flatMap(enumDataModel -> templateList.stream()
+        return enumModelList.stream()
+                .flatMap(enumModel -> templateList.stream()
                         .map(template -> {
-                            TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumDataModel);
-                            templateContentVO.setEnumId(enumDataModel.getEnumId());
+                            TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumModel);
+                            templateContentVO.setEnumId(enumModel.getEnumId());
                             return templateContentVO;
                         })
                 )
@@ -478,13 +480,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         //枚举模型数据列表
-        List<EnumDataModel> enumDataModelList = new ArrayList<>();
-        projectModel.setEnumDataModelList(enumDataModelList);
+        List<EnumModel> enumModelList = new ArrayList<>();
+        projectModel.setEnumModelList(enumModelList);
 
         List<EnumEntity> enumList = enumService.enumList(project.getId());
         for (EnumEntity enumEntity : enumList) {
-            EnumDataModel enumDataModel = buildEnumDataModel(enumEntity, project);
-            enumDataModelList.add(enumDataModel);
+            EnumModel enumModel = buildEnumDataModel(enumEntity, project);
+            enumModelList.add(enumModel);
         }
 
         return projectModel;
@@ -564,21 +566,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         return tableModel;
     }
 
-    private EnumDataModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
-        EnumDataModel enumDataModel = new EnumDataModel();
+    private EnumModel buildEnumDataModel(EnumEntity enumEntity, ProjectEntity project) {
+        EnumModel enumModel = new EnumModel();
 
-        enumDataModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
-        enumDataModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
-        enumDataModel.setProjectPackage(project.getProjectPackage());
-        enumDataModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
-        enumDataModel.setBackendPath(project.getBackendPath());
-        enumDataModel.setFrontendPath(project.getFrontendPath());
+        enumModel.setProjectNameDot(NameUtil.toDot(project.getProjectName()));
+        enumModel.setProjectNameSlash(NameUtil.toSlash(project.getProjectName()));
+        enumModel.setProjectPackage(project.getProjectPackage());
+        enumModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
+        enumModel.setBackendPath(project.getBackendPath());
+        enumModel.setFrontendPath(project.getFrontendPath());
 
-        enumDataModel.setEnumId(enumEntity.getId());
-        enumDataModel.setEnumName(enumEntity.getEnumName());
-        enumDataModel.setEnumNamePascal(NameUtil.toPascal(enumEntity.getEnumName()));
-        enumDataModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
-        enumDataModel.setEnumDesc(enumEntity.getEnumDesc());
+        enumModel.setEnumId(enumEntity.getId());
+        enumModel.setEnumName(enumEntity.getEnumName());
+        enumModel.setEnumNamePascal(NameUtil.toPascal(enumEntity.getEnumName()));
+        enumModel.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumEntity.getEnumName()));
+        enumModel.setEnumDesc(enumEntity.getEnumDesc());
         List<EnumItemEntity> enumItemList = enumEntity.getEnumItemList();
         List<EnumItemModel> list = enumItemList.stream()
                 .map(enumItemEntity -> {
@@ -589,8 +591,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     enumItemModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
                     return enumItemModel;
                 }).toList();
-        enumDataModel.setEnumItemList(list);
-        return enumDataModel;
+        enumModel.setEnumItemList(list);
+        return enumModel;
     }
 
     /**
@@ -689,7 +691,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     private ResponseEntity<byte[]> buildResponseEntity(String fileName, byte[] data) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .header(HttpHeaders.CONTENT_DISPOSITION, HttpHeaderUtil.createAttachmentDisposition(fileName, CharsetUtil.UTF_8))
                 .body(data);
     }
 

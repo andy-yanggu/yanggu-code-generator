@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 表数据模型
+ * 表模型实体类
  */
 @Data
 public class TableModel {

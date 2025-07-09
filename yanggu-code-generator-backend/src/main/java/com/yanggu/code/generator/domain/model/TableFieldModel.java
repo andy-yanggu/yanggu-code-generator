@@ -2,17 +2,11 @@ package com.yanggu.code.generator.domain.model;
 
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 /**
  * 表字段模型实体类
  */
 @Data
-public class TableFieldModel implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class TableFieldModel {
 
     /**
      * 主键ID
