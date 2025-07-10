@@ -18,9 +18,17 @@ export const downloadFile = (url: string): Promise<void> => {
 				let filename = ''
 
 				if (contentDisposition) {
-					const matches = /filename="?(.+)"?/.exec(contentDisposition)
-					if (matches && matches[1]) {
-						filename = matches[1]
+					// 正则匹配 filename* 或 filename（支持带引号或不带引号的格式）
+					const filenameStarMatch = contentDisposition.match(/filename\*=['"]?(?:UTF-8['"]?)?''?([^;]+)/i)
+					const filenameMatch = contentDisposition.match(/filename=['"]?([^;]+)['"]?/i)
+
+					// 优先使用 filename*
+					if (filenameStarMatch && filenameStarMatch[1]) {
+						filename = decodeURIComponent(filenameStarMatch[1].trim())
+					}
+					// 回退到 filename（需解码 URL 编码）
+					else if (filenameMatch && filenameMatch[1]) {
+						filename = decodeURIComponent(filenameMatch[1].trim().replace(/\+/g, '%20')) // 替换 + 为 %20（兼容 URLEncoder 格式）
 					}
 				}
 
