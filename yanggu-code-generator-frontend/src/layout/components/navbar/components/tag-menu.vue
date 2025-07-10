@@ -1,27 +1,27 @@
 <template>
 	<div class="icon-list">
-		<div class="icon-item" @click="emits('refreshTag')">
-			<el-icon size="10"><Refresh /></el-icon>
+		<div class="icon-item" @click="emits('refreshCurrentTag')">
+			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新页面</span>
 		</div>
-		<div v-if="props.currentTag.fullPath != '/index'" class="icon-item" @click="emits('closeTag')">
-			<el-icon size="10"><CloseBold /></el-icon>
+		<div v-if="props.currentMenuTag.fullPath != '/index'" class="icon-item" @click="emits('closeCurrentTag')">
+			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
 		</div>
 		<div v-if="store.tagLength > 1" class="icon-item" @click="emits('closeOtherTags')">
-			<el-icon size="10"><CircleClose /></el-icon>
+			<el-icon size="10"><CircleClose></CircleClose></el-icon>
 			<span>关闭其他</span>
 		</div>
-		<div v-if="props.currentTagIndex > 0" class="icon-item" @click="emits('closeLeftTag')">
-			<el-icon size="10"><Back /></el-icon>
+		<div v-if="props.currentMenuTagIndex > 0" class="icon-item" @click="emits('closeLeftTag')">
+			<el-icon size="10"><Back></Back></el-icon>
 			<span>关闭左侧</span>
 		</div>
-		<div v-if="props.currentTagIndex < store.tagLength - 1" class="icon-item" @click="emits('closeRightTag')">
-			<el-icon size="10"><Right /></el-icon>
+		<div v-if="props.currentMenuTagIndex < store.tagLength - 1" class="icon-item" @click="emits('closeRightTag')">
+			<el-icon size="10"><Right></Right></el-icon>
 			<span>关闭右侧</span>
 		</div>
 		<div v-if="store.tagLength > 1" class="icon-item" @click="emits('closeAllTags')">
-			<el-icon size="10"><Close /></el-icon>
+			<el-icon size="10"><Close></Close></el-icon>
 			<span>关闭全部</span>
 		</div>
 	</div>
@@ -35,17 +35,17 @@ import { defineEmits, defineProps } from 'vue'
 const store: any = appStore()
 
 const props = defineProps({
-	currentTag: {
+	currentMenuTag: {
 		type: Object,
 		required: true
 	},
-	currentTagIndex: {
+	currentMenuTagIndex: {
 		type: Number,
 		required: true
 	}
 })
 
-const emits = defineEmits(['refreshTag', 'closeTag', 'closeAllTags', 'closeOtherTags', 'closeLeftTag', 'closeRightTag'])
+const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags', 'closeOtherTags', 'closeLeftTag', 'closeRightTag'])
 </script>
 
 <style scoped>

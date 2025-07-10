@@ -1,18 +1,25 @@
-<script lang="ts">
-import { defineComponent, h } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+<template>
+	<div></div>
+</template>
 
-export default defineComponent({
-	created() {
-		const { params, query } = useRoute()
-		const { path } = params
-		const router = useRouter()
-		router.replace({ path: '/' + path, query }).catch(err => {
-			console.warn(err)
-		})
-	},
-	render() {
-		return h('div')
-	}
+<script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+
+const route = useRoute()
+const router = useRouter()
+const { params, query } = route
+const { path } = params
+
+onMounted(() => {
+	// console.log('redirect mounted', route, router)
 })
+
+defineOptions({
+	name: 'Redirect'
+})
+// query删除t字段
+// delete query.t
+// console.log('redirect', path, query)
+router.replace({ path: '/' + path, query })
 </script>

@@ -93,6 +93,10 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenProject'
+})
+
 const state: IHooksOptions = reactive({
 	dataListApi: projectEntityPageApi,
 	deleteListApi: projectDeleteListApi,

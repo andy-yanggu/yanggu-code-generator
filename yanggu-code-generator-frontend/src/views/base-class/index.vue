@@ -65,6 +65,10 @@ import AddOrUpdate from '@/views/base-class/add-or-update.vue'
 import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/base-class'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenBaseClass'
+})
+
 const state: IHooksOptions = reactive({
 	dataListApi: baseClassEntityPageApi,
 	deleteListApi: baseClassDeleteListApi,

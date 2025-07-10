@@ -80,6 +80,10 @@ import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenDatasource'
+})
+
 const state: IHooksOptions = reactive({
 	dataListApi: datasourceEntityPageApi,
 	deleteListApi: datasourceDeleteListApi,

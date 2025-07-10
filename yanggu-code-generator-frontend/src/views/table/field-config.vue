@@ -2,15 +2,7 @@
 	<el-dialog v-model="visible" title="字段配置" width="80%" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性设置" name="field">
-				<el-table
-					ref="fieldTable"
-					border
-					:row-key="id"
-					class="sortable-row-gen"
-					:data="getFieldListData(0)"
-					:row-class-name="tableRowClassName"
-					:show-overflow-tooltip="true"
-				>
+				<el-table ref="fieldTable" border row-key="id" class="sortable-row-gen" :data="getFieldListData(0)" :show-overflow-tooltip="true">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名称" header-align="center" align="center" width="100"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center">
@@ -80,7 +72,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="查询配置" name="query">
-				<el-table ref="queryTable" border :row-key="id" :data="getFieldListData(1)" :row-class-name="tableRowClassName">
+				<el-table ref="queryTable" border row-key="id" :data="getFieldListData(1)">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -111,7 +103,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="表单配置" name="form">
-				<el-table ref="formTable" border :row-key="id" :data="getFieldListData(2)" :row-class-name="tableRowClassName">
+				<el-table ref="formTable" border row-key="id" :data="getFieldListData(2)">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -147,7 +139,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="列表配置" name="grid">
-				<el-table ref="gridTable" border :row-key="id" :data="getFieldListData(3)" :row-class-name="tableRowClassName">
+				<el-table ref="gridTable" border row-key="id" :data="getFieldListData(3)">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -266,7 +258,7 @@ const getTableFieldList = (id: number) => {
 	})
 }
 
-const getFieldListData = (type: number): any[] => {
+const getFieldListData = (type: number) => {
 	const list = [...fieldList.value]
 	if (type === 1) {
 		return list.sort((a, b) => a.fieldSort - b.fieldSort)
@@ -307,14 +299,6 @@ const submitHandle = () => {
 defineExpose({
 	init
 })
-
-// 添加表格行样式
-const tableRowClassName = ({ row, rowIndex }: { row: any; rowIndex: number }) => {
-	if (rowIndex === 0) {
-		return 'sortable-ghost'
-	}
-	return ''
-}
 </script>
 
 <style lang="scss">

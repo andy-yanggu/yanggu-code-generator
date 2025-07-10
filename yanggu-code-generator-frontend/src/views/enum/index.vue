@@ -95,6 +95,10 @@ import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenEnum'
+})
+
 onMounted(() => {
 	getProjectList()
 })

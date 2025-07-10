@@ -103,6 +103,10 @@ import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Refresh, Search, Upload } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenTable'
+})
+
 onMounted(() => {
 	getProjectList()
 })

@@ -90,6 +90,10 @@ import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Download, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenTemplateGroup'
+})
+
 const state: IHooksOptions = reactive({
 	dataListApi: templateGroupEntityPageApi,
 	deleteListApi: templateGroupDeleteListApi,

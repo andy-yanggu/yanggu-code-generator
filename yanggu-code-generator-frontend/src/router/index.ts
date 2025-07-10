@@ -12,72 +12,88 @@ export const menuRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/gen',
+		name: 'Gen',
 		meta: {
+			name: 'Gen',
 			title: '代码生成器',
 			icon: 'icon-appstore'
 		},
 		children: [
 			{
 				path: '/gen/project',
-				name: 'Project',
+				name: 'GenProject',
 				component: () => import('@/views/project/index.vue'),
 				meta: {
+					name: 'GenProject',
 					title: '项目管理',
-					icon: 'icon-edit-square'
+					icon: 'icon-edit-square',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/table',
-				name: 'Table',
+				name: 'GenTable',
 				component: () => import('@/views/table/index.vue'),
 				meta: {
+					name: 'GenTable',
 					title: '表管理',
-					icon: 'icon-detail'
+					icon: 'icon-detail',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/enum',
-				name: 'Enum',
+				name: 'GenEnum',
 				component: () => import('@/views/enum/index.vue'),
 				meta: {
+					name: 'GenEnum',
 					title: '枚举管理',
-					icon: 'icon-merge-cells'
+					icon: 'icon-merge-cells',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/template-group',
-				name: 'TemplateGroup',
+				name: 'GenTemplateGroup',
 				component: () => import('@/views/template-group/index.vue'),
 				meta: {
+					name: 'GenTemplateGroup',
 					title: '模板组管理',
-					icon: 'icon-file-fill'
+					icon: 'icon-file-fill',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/datasource',
-				name: 'DataSource',
+				name: 'GenDatasource',
 				component: () => import('@/views/datasource/index.vue'),
 				meta: {
+					name: 'GenDatasource',
 					title: '数据源管理',
-					icon: 'icon-database-fill'
+					icon: 'icon-database-fill',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/base-class',
-				name: 'BaseClass',
+				name: 'GenBaseClass',
 				component: () => import('@/views/base-class/index.vue'),
 				meta: {
+					name: 'GenBaseClass',
 					title: '基类管理',
-					icon: 'icon-cluster'
+					icon: 'icon-cluster',
+					cache: true
 				}
 			},
 			{
 				path: '/gen/field-type',
-				name: 'FieldType',
+				name: 'GenFieldType',
 				component: () => import('@/views/field-type/index.vue'),
 				meta: {
+					name: 'GenFieldType',
 					title: '字段类型管理',
-					icon: 'icon-menu'
+					icon: 'icon-menu',
+					cache: true
 				}
 			}
 		]
@@ -91,7 +107,11 @@ export const constantRoutes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/redirect/:path(.*)',
-				component: () => import('@/layout/components/router/redirect.vue')
+				component: () => import('@/layout/components/router/redirect.vue'),
+				meta: {
+					title: '重定向',
+					cache: false
+				}
 			}
 		]
 	},
@@ -118,16 +138,23 @@ export const router = createRouter({
 
 // 路由拦截
 router.beforeEach((to, from, next) => {
-	console.log(to, from)
-
 	const store = appStore()
 
-	const routeMetaData = { name: to.meta.title, fullPath: to.fullPath }
+	const meta = to.meta
+
+	console.log(to, from)
+	const routeMetaData = { title: meta.title, fullPath: to.fullPath, name: meta.name }
+	console.log(routeMetaData)
 	// 添加标签
 	store.addTag(routeMetaData)
 
 	// 设置面包屑
 	store.setBreadcrumb(routeMetaData)
+
+	// 添加缓存路由
+	if (meta.cache) {
+		store.addCacheComponent(meta.name as string)
+	}
 
 	next()
 })

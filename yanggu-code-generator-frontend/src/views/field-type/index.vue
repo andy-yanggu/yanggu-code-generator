@@ -78,6 +78,10 @@ import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/field-type
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenFieldType'
+})
+
 const state: IHooksOptions = reactive({
 	dataListApi: fieldTypeEntityPageApi,
 	deleteListApi: fieldTypeDeleteListApi,
