@@ -3,94 +3,103 @@ import { ref, computed } from 'vue'
 import { menuRoutes } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 
-export const appStore = defineStore('app', () => {
-	// 状态
+export const appStore = defineStore(
+	'app',
+	() => {
+		// 状态
 
-	// 折叠状态
-	const isCollapseRef = ref(false)
-	// 标签列表
-	const tagsListRef = ref<{ fullPath: string; name: string; title: string }[]>([])
-	// 面包屑列表
-	const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
-	// 缓存列表
-	const cacheListRef = ref<string[]>([])
+		// 折叠状态
+		const isCollapseRef = ref(false)
+		// 标签列表
+		const tagsListRef = ref<{ fullPath: string; name: string; title: string }[]>([])
+		// 面包屑列表
+		const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
+		// 缓存列表
+		const cacheListRef = ref<string[]>([])
 
-	// 计算属性
-	// 标签数量
-	const tagLength = computed<number>(() => tagsListRef.value.length)
+		// 计算属性
+		// 标签数量
+		const tagLength = computed<number>(() => tagsListRef.value.length)
 
-	// actions
-	// 切换折叠状态
-	const toggleCollapse = () => {
-		isCollapseRef.value = !isCollapseRef.value
-	}
+		// actions
+		// 切换折叠状态
+		const toggleCollapse = () => {
+			isCollapseRef.value = !isCollapseRef.value
+		}
 
-	// 设置面包屑
-	const setBreadcrumb = (routeMetaData: any) => {
-		const matched: { path: string; name: string }[] = []
-		const fullPath = routeMetaData.fullPath
-		const paths = fullPath.split('/').filter((p: any) => p)
+		// 设置面包屑
+		const setBreadcrumb = (routeMetaData: any) => {
+			const matched: { path: string; name: string }[] = []
+			const fullPath = routeMetaData.fullPath
+			const paths = fullPath.split('/').filter((p: any) => p)
 
-		let currentPath = ''
-		for (const path of paths) {
-			currentPath += `/${path}`
-			const routeMeta = findRouteByPath(currentPath)
-			if (routeMeta) {
-				matched.push({
-					path: currentPath,
-					name: routeMeta
-				})
+			let currentPath = ''
+			for (const path of paths) {
+				currentPath += `/${path}`
+				const routeMeta = findRouteByPath(currentPath)
+				if (routeMeta) {
+					matched.push({
+						path: currentPath,
+						name: routeMeta
+					})
+				}
+			}
+			breadcrumbListRef.value = matched
+		}
+
+		//添加标签
+		const addTag = (routeMetaData: any) => {
+			const isExist = tagsListRef.value.find(item => item.fullPath === routeMetaData.fullPath)
+			const includes = routeMetaData.fullPath.includes('redirect')
+			if (!isExist && !includes) {
+				tagsListRef.value.push(routeMetaData)
 			}
 		}
-		breadcrumbListRef.value = matched
-	}
 
-	//添加标签
-	const addTag = (routeMetaData: any) => {
-		const isExist = tagsListRef.value.find(item => item.fullPath === routeMetaData.fullPath)
-		const includes = routeMetaData.fullPath.includes('redirect')
-		if (!isExist && !includes) {
-			tagsListRef.value.push(routeMetaData)
+		//删除标签
+		const removeTag = (tag: any) => {
+			tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
+		}
+
+		//添加所有标签
+		const addAllTags = (tagList: any[]) => {
+			tagsListRef.value = tagList
+		}
+
+		// 添加缓存路由
+		const addCacheComponent = (name: string) => {
+			if (!cacheListRef.value.includes(name)) {
+				cacheListRef.value.push(name)
+			}
+		}
+
+		// 删除缓存路由
+		const removeCacheComponent = (name: string) => {
+			cacheListRef.value = cacheListRef.value.filter(item => item !== name)
+		}
+
+		return {
+			isCollapseRef,
+			breadcrumbListRef,
+			tagsListRef,
+			cacheListRef,
+			tagLength,
+			toggleCollapse,
+			setBreadcrumb,
+			addTag,
+			removeTag,
+			addAllTags,
+			addCacheComponent,
+			removeCacheComponent
+		}
+	},
+	{
+		persist: {
+			storage: localStorage,
+			key: 'appStore'
 		}
 	}
-
-	//删除标签
-	const removeTag = (tag: any) => {
-		tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
-	}
-
-	//添加所有标签
-	const addAllTags = (tagList: any[]) => {
-		tagsListRef.value = tagList
-	}
-
-	// 添加缓存路由
-	const addCacheComponent = (name: string) => {
-		if (!cacheListRef.value.includes(name)) {
-			cacheListRef.value.push(name)
-		}
-	}
-
-	// 删除缓存路由
-	const removeCacheComponent = (name: string) => {
-		cacheListRef.value = cacheListRef.value.filter(item => item !== name)
-	}
-
-	return {
-		isCollapseRef,
-		breadcrumbListRef,
-		tagsListRef,
-		cacheListRef,
-		tagLength,
-		toggleCollapse,
-		setBreadcrumb,
-		addTag,
-		removeTag,
-		addAllTags,
-		addCacheComponent,
-		removeCacheComponent
-	}
-})
+)
 
 /**
  * 递归查找路径对应的 meta.title
