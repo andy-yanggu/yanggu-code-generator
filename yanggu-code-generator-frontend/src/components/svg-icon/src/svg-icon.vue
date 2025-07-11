@@ -25,7 +25,7 @@ const props = defineProps({
 })
 
 // https://www.iconfont.cn 图标库需使用前缀 icon- 才能匹配
-const iconName = computed(() => `#icon-${props.icon.replace('icon-', '')}`)
+const iconName = computed(() => `#${props.icon}`)
 </script>
 
 <style scoped>

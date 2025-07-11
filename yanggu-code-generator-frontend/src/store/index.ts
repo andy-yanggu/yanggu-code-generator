@@ -3,18 +3,29 @@ import { ref, computed } from 'vue'
 import { menuRoutes } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 
+// 标签数据
+export interface Tag {
+	// 完整路径
+	fullPath: string
+	// 组件名称
+	name: string
+	// 标题
+	title: string
+	// 图标
+	icon: string
+}
+
 export const appStore = defineStore(
 	'app',
 	() => {
 		// 状态
-
 		// 折叠状态
 		const isCollapseRef = ref(false)
 		// 标签列表
-		const tagsListRef = ref<{ fullPath: string; name: string; title: string }[]>([])
+		const tagsListRef = ref<Tag[]>([])
 		// 面包屑列表
 		const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
-		// 缓存列表
+		// 缓存组件列表
 		const cacheListRef = ref<string[]>([])
 
 		// 计算属性
@@ -47,8 +58,8 @@ export const appStore = defineStore(
 			breadcrumbListRef.value = matched
 		}
 
-		//添加标签
-		const addTag = (routeMetaData: any) => {
+		// 添加标签
+		const addTag = (routeMetaData: Tag) => {
 			const isExist = tagsListRef.value.find(item => item.fullPath === routeMetaData.fullPath)
 			const includes = routeMetaData.fullPath.includes('redirect')
 			if (!isExist && !includes) {
@@ -56,14 +67,19 @@ export const appStore = defineStore(
 			}
 		}
 
-		//删除标签
-		const removeTag = (tag: any) => {
+		// 删除标签
+		const removeTag = (tag: Tag) => {
 			tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
-		//添加所有标签
-		const addAllTags = (tagList: any[]) => {
+		// 添加所有标签
+		const addAllTags = (tagList: Tag[]) => {
 			tagsListRef.value = tagList
+		}
+
+		// 删除所有标签
+		const removeAllTags = () => {
+			tagsListRef.value = []
 		}
 
 		// 添加缓存路由
@@ -82,13 +98,14 @@ export const appStore = defineStore(
 			isCollapseRef,
 			breadcrumbListRef,
 			tagsListRef,
-			cacheListRef,
 			tagLength,
+			cacheListRef,
 			toggleCollapse,
 			setBreadcrumb,
 			addTag,
 			removeTag,
 			addAllTags,
+			removeAllTags,
 			addCacheComponent,
 			removeCacheComponent
 		}
@@ -125,5 +142,3 @@ const findRouteByPath = (targetPath: string): string | null => {
 
 	return traverse(menuRoutes)
 }
-
-export class appStore2 {}

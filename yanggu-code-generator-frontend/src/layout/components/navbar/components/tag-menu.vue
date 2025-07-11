@@ -4,7 +4,7 @@
 			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新页面</span>
 		</div>
-		<div v-if="props.currentMenuTag.fullPath != '/index'" class="icon-item" @click="emits('closeCurrentTag')">
+		<div class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
 		</div>

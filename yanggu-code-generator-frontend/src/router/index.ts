@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { appStore } from '@/store'
+import { appStore, Tag } from '@/store'
 
 export const menuRoutes: RouteRecordRaw[] = [
 	{
@@ -143,7 +143,12 @@ router.beforeEach((to, from, next) => {
 	const meta = to.meta
 
 	// console.log(to, from)
-	const routeMetaData = { title: meta.title, fullPath: to.fullPath, name: meta.name }
+	const routeMetaData: Tag = {
+		title: meta.title as string,
+		fullPath: to.fullPath,
+		name: meta.name as string,
+		icon: meta.icon as string
+	}
 	// console.log(routeMetaData)
 	// 添加标签
 	if (meta.title) {

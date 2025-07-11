@@ -6,12 +6,17 @@
 			:key="tag.fullPath"
 			size="default"
 			:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-			:closable="tag.fullPath != '/index'"
+			closable
 			@click="handleClick(index, tag)"
 			@close="handleClose(index, tag)"
 			@contextmenu.prevent="showTagMenu($event, tag, index)"
 		>
-			{{ tag.title }}
+			<template #default>
+				<span style="display: inline-flex; align-items: center; gap: 5px">
+					<svg-icon :icon="tag.icon"></svg-icon>
+					{{ tag.title }}
+				</span>
+			</template>
 		</el-tag>
 
 		<!-- 右键菜单 -->
@@ -31,10 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { appStore } from '@/store'
+import { appStore, Tag } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
+import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import Sortable from 'sortablejs'
 
 const route = useRoute()
 const router = useRouter()
@@ -43,7 +50,7 @@ const menuPosition = ref({
 	left: '0px',
 	top: '0px'
 })
-const currentMenuTag = ref({ fullPath: '', name: '', title: '' })
+const currentMenuTag = ref<Tag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
 const store = appStore()
 
@@ -52,32 +59,54 @@ onMounted(() => {
 	document.addEventListener('click', closeTagMenu)
 })
 
+// 实现标签页的拖拽效果
+onMounted(() => {
+	const el = document.querySelector('.tag-wrapper') as HTMLElement
+	if (el) {
+		new Sortable(el, {
+			animation: 150,
+			onEnd: evt => {
+				const { oldIndex, newIndex } = evt
+				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
+					const movedTag = store.tagsListRef.splice(oldIndex!, 1)[0]
+					store.tagsListRef.splice(newIndex!, 0, movedTag)
+				}
+			}
+		})
+	}
+})
+
 // 组件卸载时移除事件监听
 onUnmounted(() => {
 	document.removeEventListener('click', closeTagMenu)
 })
 
-const handleClick = (_: number, tag: { fullPath: string; name: string }) => {
+const handleClick = (_: number, tag: Tag) => {
 	router.push(tag.fullPath)
 }
 
-const handleClose = (index: number, tag: { fullPath: string; name: string }) => {
+const handleClose = (index: number, tag: Tag) => {
 	store.removeTag(tag)
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
-		//跳转到前一个标签页
-		let to
-		if (index - 1 < 0) {
-			to = '/index'
-		} else {
-			to = store.tagsListRef[index - 1].fullPath
+		let to = '/' // 默认跳转首页
+
+		// 关闭后如果还有标签页
+		if (store.tagLength > 0) {
+			// 优先尝试右侧标签
+			if (index < store.tagLength) {
+				to = store.tagsListRef[index].fullPath
+			} else if (index > 0) {
+				// 右侧无标签时选择左侧
+				to = store.tagsListRef[index - 1].fullPath
+			}
 		}
 		router.push(to)
 	}
 }
 
 // 显示标签右键菜单
-const showTagMenu = (e: MouseEvent, tag: any, index: number) => {
+const showTagMenu = (e: MouseEvent, tag: Tag, index: number) => {
 	e.preventDefault()
 	currentMenuTag.value = tag
 	currentMenuTagIndex.value = index
@@ -124,26 +153,23 @@ const closeCurrentTag = () => {
 const closeOtherTags = () => {
 	// 保留当前标签，关闭其他所有标签
 	const currentPath = currentMenuTag.value.fullPath
-	store.addAllTags(store.tagsListRef.filter(tag => tag.fullPath === currentPath || tag.fullPath === '/index'))
-	// 如果当前标签不是首页，则跳转到当前标签
-	if (currentPath !== '/index') {
-		router.push(currentPath)
-	}
+	store.addAllTags(store.tagsListRef.filter(tag => tag.fullPath === currentPath))
+	router.push(currentPath)
 	closeTagMenu()
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
 	// 保留首页，关闭其他所有标签
-	store.addAllTags(store.tagsListRef.filter(tag => tag.fullPath === '/index'))
-	router.push('/index')
+	store.removeAllTags()
+	router.push('/')
 	closeTagMenu()
 }
 
 //关闭左侧标签
 const closeLeftTag = () => {
 	const currentIndex = currentMenuTagIndex.value
-	store.addAllTags(store.tagsListRef.filter((tag, index) => index >= currentIndex || tag.fullPath === '/index'))
+	store.addAllTags(store.tagsListRef.filter((_, index) => index >= currentIndex))
 	router.push(currentMenuTag.value.fullPath)
 	closeTagMenu()
 }
@@ -152,11 +178,7 @@ const closeLeftTag = () => {
 const closeRightTag = () => {
 	// 保留当前标签及其左侧所有标签，以及首页标签
 	const currentIndex = currentMenuTagIndex.value
-	store.addAllTags(store.tagsListRef.filter((tag, index) => index <= currentIndex || tag.fullPath === '/index'))
-	// 如果当前标签不是首页，则跳转到当前标签
-	if (currentMenuTag.value.fullPath !== '/index') {
-		router.push(currentMenuTag.value.fullPath)
-	}
+	store.addAllTags(store.tagsListRef.filter((_, index) => index <= currentIndex))
 	closeTagMenu()
 }
 </script>
