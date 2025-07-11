@@ -1,44 +1,47 @@
 <template>
-	<!-- 标签栏 -->
-	<div class="tag-wrapper">
-		<el-tag
-			v-for="(tag, index) in store.tagsListRef"
-			:key="tag.fullPath"
-			size="default"
-			:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-			closable
-			@click="handleClick(index, tag)"
-			@close="handleClose(index, tag)"
-			@contextmenu.prevent="showTagMenu($event, tag, index)"
-		>
-			<template #default>
-				<span style="display: inline-flex; align-items: center; gap: 5px">
-					<svg-icon :icon="tag.icon"></svg-icon>
-					{{ tag.title }}
-				</span>
-			</template>
-		</el-tag>
+	<!-- 防止tag过多添加滚动条 -->
+	<el-scrollbar ref="scrollbarRef">
+		<div class="tag-wrapper">
+			<!-- 标签栏 -->
+			<el-tag
+				v-for="(tag, index) in store.tagsListRef"
+				:key="tag.fullPath"
+				size="default"
+				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
+				closable
+				@click="handleClick(index, tag)"
+				@close="handleClose(index, tag)"
+				@contextmenu.prevent="showTagMenu($event, tag, index)"
+			>
+				<template #default>
+					<span style="display: inline-flex; align-items: center; gap: 5px">
+						<svg-icon :icon="tag.icon"></svg-icon>
+						{{ tag.title }}
+					</span>
+				</template>
+			</el-tag>
 
-		<!-- 右键菜单 -->
-		<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
-			<tag-menu
-				:current-menu-tag="currentMenuTag"
-				:current-menu-tag-index="currentMenuTagIndex"
-				@close-current-tag="closeCurrentTag()"
-				@refresh-current-tag="refreshCurrentTag()"
-				@close-other-tags="closeOtherTags()"
-				@close-left-tag="closeLeftTag()"
-				@close-right-tag="closeRightTag()"
-				@close-all-tags="closeAllTags()"
-			></tag-menu>
+			<!-- 右键菜单 -->
+			<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
+				<tag-menu
+					:current-menu-tag="currentMenuTag"
+					:current-menu-tag-index="currentMenuTagIndex"
+					@close-current-tag="closeCurrentTag()"
+					@refresh-current-tag="refreshCurrentTag()"
+					@close-other-tags="closeOtherTags()"
+					@close-left-tag="closeLeftTag()"
+					@close-right-tag="closeRightTag()"
+					@close-all-tags="closeAllTags()"
+				></tag-menu>
+			</div>
 		</div>
-	</div>
+	</el-scrollbar>
 </template>
 
 <script setup lang="ts">
 import { appStore, Tag } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref, onUnmounted, Ref } from 'vue'
+import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 import Sortable from 'sortablejs'
@@ -53,6 +56,8 @@ const menuPosition = ref({
 const currentMenuTag = ref<Tag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
 const store = appStore()
+// 添加滚动条容器的引用
+const scrollbarRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
@@ -61,19 +66,52 @@ onMounted(() => {
 
 // 实现标签页的拖拽效果
 onMounted(() => {
-	const el = document.querySelector('.tag-wrapper') as HTMLElement
-	if (el) {
-		new Sortable(el, {
-			animation: 150,
-			onEnd: evt => {
-				const { oldIndex, newIndex } = evt
-				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-					const movedTag = store.tagsListRef.splice(oldIndex!, 1)[0]
-					store.tagsListRef.splice(newIndex!, 0, movedTag)
+	nextTick(() => {
+		const el = document.querySelector('.tag-wrapper') as HTMLElement
+		if (el) {
+			const scrollbar = scrollbarRef.value
+			let lastScrollTime = 0
+			const scrollStep = 50 // 增大步长
+
+			new Sortable(el, {
+				animation: 200,
+				scroll: true, // 保留原生滚动（可选，若自定义scrollFn可设为false）
+				scrollSensitivity: 30,
+				scrollSpeed: 100,
+				scrollFn: function (deltaX, deltaY, elt) {
+					console.log('scrolling...')
+					const now = Date.now()
+					if (now - lastScrollTime < 50) {
+						return
+					} // 放宽触发频率
+					lastScrollTime = now
+
+					if (!scrollbar || !scrollbar.wrap$) {
+						return
+					}
+
+					// 修正方向：deltaX>0（向右拖）时，scrollLeft增加（视觉向右滚动）
+					const direction = Math.sign(deltaX)
+					const currentScroll = scrollbar.wrap$.scrollLeft
+					const maxScroll = scrollbar.wrap$.scrollWidth - scrollbar.wrap$.clientWidth
+					const newScroll = Math.max(0, Math.min(currentScroll + direction * scrollStep, maxScroll))
+
+					if (newScroll !== currentScroll) {
+						scrollbar.setScrollLeft(newScroll) // 确保setScrollLeft存在
+					}
+				},
+				onEnd: evt => {
+					const { oldIndex, newIndex } = evt
+					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
+						const movedTag = store.tagsListRef.splice(oldIndex!, 1)[0]
+						store.tagsListRef.splice(newIndex!, 0, movedTag)
+					}
 				}
-			}
-		})
-	}
+			})
+		} else {
+			console.error('未找到.tag-wrapper元素')
+		}
+	})
 })
 
 // 组件卸载时移除事件监听
@@ -185,13 +223,20 @@ const closeRightTag = () => {
 
 <style scoped>
 .tag-wrapper {
+	/* 保持原有样式不变 */
 	margin-top: 15px;
 	margin-bottom: 15px;
-	display: flex;
-	flex-wrap: wrap; /* 内容超出时自动换行 */
+	display: inline-flex;
 	align-items: center;
-	gap: 8px; /* 标签之间的间距 */
-	position: relative; /* 为右键菜单提供定位上下文 */
+	gap: 8px;
+	position: relative;
+	white-space: nowrap;
+	padding-right: 20px;
+}
+
+/* 使用深度选择器覆盖 el-tag 的默认样式 */
+:deep(.tag-wrapper .el-tag) {
+	cursor: pointer;
 }
 .tag-context-menu {
 	position: fixed;

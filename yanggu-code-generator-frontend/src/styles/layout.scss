@@ -50,7 +50,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: var(--theme-header-height);
+    min-height: var(--theme-header-height);
   }
   .layout-main {
     padding: 0 !important;
