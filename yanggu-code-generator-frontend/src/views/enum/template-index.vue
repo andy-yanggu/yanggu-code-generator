@@ -51,13 +51,13 @@
 				@current-change="currentChangeHandle"
 			>
 			</el-pagination>
-			<template #footer>
-				<div class="footer-buttons">
-					<el-button @click="dialogVisible = false">取消</el-button>
-					<el-button type="primary" @click="generateCode()">生成代码</el-button>
-				</div>
-			</template>
 		</el-card>
+		<template #footer>
+			<div class="footer-buttons">
+				<el-button @click="dialogVisible = false">取消</el-button>
+				<el-button type="primary" @click="generateCode()">生成代码</el-button>
+			</div>
+		</template>
 	</el-dialog>
 </template>
 

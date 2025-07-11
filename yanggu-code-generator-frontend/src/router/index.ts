@@ -107,7 +107,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/redirect/:path(.*)',
-				component: () => import('@/layout/components/router/redirect.vue'),
+				component: () => import('@/views/router/redirect.vue'),
 				meta: {
 					title: '重定向',
 					cache: false
@@ -142,17 +142,19 @@ router.beforeEach((to, from, next) => {
 
 	const meta = to.meta
 
-	console.log(to, from)
+	// console.log(to, from)
 	const routeMetaData = { title: meta.title, fullPath: to.fullPath, name: meta.name }
-	console.log(routeMetaData)
+	// console.log(routeMetaData)
 	// 添加标签
-	store.addTag(routeMetaData)
+	if (meta.title) {
+		store.addTag(routeMetaData)
+	}
 
 	// 设置面包屑
 	store.setBreadcrumb(routeMetaData)
 
 	// 添加缓存路由
-	if (meta.cache) {
+	if (meta.cache && meta.name) {
 		store.addCacheComponent(meta.name as string)
 	}
 

@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 
 // axios实例
 const service = axios.create({
-	baseURL: import.meta.env.VITE_API_URL as any,
+	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 60000,
 	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
 	withCredentials: true // 允许携带cookie
@@ -21,6 +21,8 @@ service.interceptors.request.use(
 		if (Object.values(config.headers).includes('application/x-www-form-urlencoded')) {
 			config.data = qs.stringify(config.data)
 		}
+
+		//添加token
 
 		return config
 	},

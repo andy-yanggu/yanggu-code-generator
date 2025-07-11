@@ -81,6 +81,7 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
+	createdIsNeed: false,
 	dataListApi: templateEntityPageApi,
 	deleteListApi: templateDeleteListApi,
 	queryForm: {

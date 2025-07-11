@@ -10,13 +10,6 @@
 			<el-breadcrumb-item v-for="item in store.breadcrumbListRef" :key="item.path">
 				{{ item.name }}
 			</el-breadcrumb-item>
-			<!--	<el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
-			<template v-for="item in store.breadcrumbListRef" :key="item.path">
-				<el-breadcrumb-item v-if="route.fullPath !== '/index'">
-					{{ item.name }}
-				</el-breadcrumb-item>
-			</template>
-			-->
 		</el-breadcrumb>
 	</div>
 	<!-- 标签栏 -->

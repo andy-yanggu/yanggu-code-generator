@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { projectDetailApi, projectSubmitApi } from '@/api/project'
 import { datasourceEntityListApi } from '@/api/datasource'
 import { templateGroupEntityListApi } from '@/api/template-group'
@@ -94,9 +94,30 @@ import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 
 const emit = defineEmits(['refreshDataList'])
 
+const getList = () => {
+	//数据源下拉
+	datasourceEntityListApi({}).then(res => {
+		datasourceList.value = res.data
+	})
+
+	//模板组下拉
+	templateGroupEntityListApi({}).then(res => {
+		const data = res.data
+		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
+		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
+		enumTemplateGroupList.value = data.filter((item: any) => item.type === 2)
+	})
+
+	//基类下拉
+	baseClassEntityListApi({}).then(res => {
+		baseClassList.value = res.data
+	})
+}
+
 const state: FormOptions = reactive({
 	submitApi: projectSubmitApi,
 	detailApi: projectDetailApi,
+	initBefore: getList,
 	initFormData: {
 		id: null,
 		projectName: '',
@@ -133,30 +154,6 @@ const projectTemplateGroupList = ref([])
 const tableTemplateGroupList = ref([])
 const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
-
-const getList = () => {
-	//数据源下拉
-	datasourceEntityListApi({}).then(res => {
-		datasourceList.value = res.data
-	})
-
-	//模板组下拉
-	templateGroupEntityListApi({}).then(res => {
-		const data = res.data
-		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
-		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
-		enumTemplateGroupList.value = data.filter((item: any) => item.type === 2)
-	})
-
-	//基类下拉
-	baseClassEntityListApi({}).then(res => {
-		baseClassList.value = res.data
-	})
-}
-
-onMounted(() => {
-	getList()
-})
 
 const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
