@@ -136,6 +136,20 @@ export const router = createRouter({
 	routes: constantRoutes
 })
 
+// 路由数据
+export interface RouteMetaData {
+	// 完整路径
+	fullPath: string
+	// 组件名称
+	name: string
+	// 标题
+	title: string
+	// 图标
+	icon: string
+	// 缓存
+	cache: boolean
+}
+
 // 路由拦截
 router.beforeEach((to, from, next) => {
 	const store = appStore()
@@ -143,23 +157,27 @@ router.beforeEach((to, from, next) => {
 	const meta = to.meta
 
 	// console.log(to, from)
-	const routeMetaData: Tag = {
-		title: meta.title as string,
+	const routeMetaData: RouteMetaData = {
+		name: meta?.name as string,
+		title: meta?.title as string,
 		fullPath: to.fullPath,
-		name: meta.name as string,
-		icon: meta.icon as string
+		icon: meta?.icon as string,
+		cache: meta?.cache as boolean
 	}
 	// console.log(routeMetaData)
 	// 添加标签
-	if (meta.title) {
-		store.addTag(routeMetaData)
+	if (routeMetaData.title) {
+		const tag: Tag = {
+			...routeMetaData
+		}
+		store.addTag(tag)
 	}
 
 	// 设置面包屑
 	store.setBreadcrumb(routeMetaData)
 
 	// 添加缓存路由
-	if (meta.cache && meta.name) {
+	if (routeMetaData.cache && routeMetaData.name) {
 		store.addCacheComponent(meta.name as string)
 	}
 

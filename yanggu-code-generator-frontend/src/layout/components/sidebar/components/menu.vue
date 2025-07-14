@@ -1,14 +1,16 @@
 <template>
-	<el-menu
-		:default-active="defaultActive"
-		background-color="transparent"
-		mode="vertical"
-		:collapse-transition="false"
-		router
-		:collapse="store.isCollapseRef"
-	>
-		<menu-item v-for="menu in menuRoutes" :key="menu.path" :menu="menu"></menu-item>
-	</el-menu>
+	<el-scrollbar>
+		<el-menu
+			:default-active="defaultActive"
+			background-color="transparent"
+			mode="vertical"
+			:collapse-transition="false"
+			router
+			:collapse="store.isCollapseRef"
+		>
+			<menu-item v-for="menu in menuRoutes" :key="menu.path" :menu="menu"></menu-item>
+		</el-menu>
+	</el-scrollbar>
 </template>
 
 <script setup lang="ts">

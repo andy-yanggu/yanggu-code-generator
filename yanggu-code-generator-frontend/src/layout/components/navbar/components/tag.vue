@@ -1,6 +1,6 @@
 <template>
 	<!-- 防止tag过多添加滚动条 -->
-	<el-scrollbar ref="scrollbarRef">
+	<el-scrollbar>
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
@@ -56,8 +56,6 @@ const menuPosition = ref({
 const currentMenuTag = ref<Tag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
 const store = appStore()
-// 添加滚动条容器的引用
-const scrollbarRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
@@ -69,37 +67,11 @@ onMounted(() => {
 	nextTick(() => {
 		const el = document.querySelector('.tag-wrapper') as HTMLElement
 		if (el) {
-			const scrollbar = scrollbarRef.value
-			let lastScrollTime = 0
-			const scrollStep = 50 // 增大步长
-
 			new Sortable(el, {
 				animation: 200,
-				scroll: true, // 保留原生滚动（可选，若自定义scrollFn可设为false）
+				scroll: true,
 				scrollSensitivity: 30,
 				scrollSpeed: 100,
-				scrollFn: function (deltaX, deltaY, elt) {
-					console.log('scrolling...')
-					const now = Date.now()
-					if (now - lastScrollTime < 50) {
-						return
-					} // 放宽触发频率
-					lastScrollTime = now
-
-					if (!scrollbar || !scrollbar.wrap$) {
-						return
-					}
-
-					// 修正方向：deltaX>0（向右拖）时，scrollLeft增加（视觉向右滚动）
-					const direction = Math.sign(deltaX)
-					const currentScroll = scrollbar.wrap$.scrollLeft
-					const maxScroll = scrollbar.wrap$.scrollWidth - scrollbar.wrap$.clientWidth
-					const newScroll = Math.max(0, Math.min(currentScroll + direction * scrollStep, maxScroll))
-
-					if (newScroll !== currentScroll) {
-						scrollbar.setScrollLeft(newScroll) // 确保setScrollLeft存在
-					}
-				},
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {

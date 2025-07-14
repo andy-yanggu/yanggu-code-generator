@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { menuRoutes } from '@/router'
+import { menuRoutes, RouteMetaData } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 
 // 标签数据
@@ -39,7 +39,7 @@ export const appStore = defineStore(
 		}
 
 		// 设置面包屑
-		const setBreadcrumb = (routeMetaData: any) => {
+		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
 			const matched: { path: string; name: string }[] = []
 			const fullPath = routeMetaData.fullPath
 			const paths = fullPath.split('/').filter((p: any) => p)
@@ -59,11 +59,11 @@ export const appStore = defineStore(
 		}
 
 		// 添加标签
-		const addTag = (routeMetaData: Tag) => {
-			const isExist = tagsListRef.value.find(item => item.fullPath === routeMetaData.fullPath)
-			const includes = routeMetaData.fullPath.includes('redirect')
+		const addTag = (tag: Tag) => {
+			const isExist = tagsListRef.value.find(item => item.fullPath === tag.fullPath)
+			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
-				tagsListRef.value.push(routeMetaData)
+				tagsListRef.value.push(tag)
 			}
 		}
 
