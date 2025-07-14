@@ -22,7 +22,7 @@ import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableService;
-import com.yanggu.code.generator.util.GenUtil;
+import com.yanggu.code.generator.util.DbUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
         //默认导入项目对应数据库下的所有表
         DataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
-        List<String> tableNameList = GenUtil.getTableNameList(dataSourceBO);
+        List<String> tableNameList = DbUtil.getTableNameList(dataSourceBO);
 
         if (CollUtil.isEmpty(tableNameList)) {
             return;
@@ -188,7 +188,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         // 获取数据源
         DataSourceBO datasource = datasourceService.get(datasourceId);
         // 根据数据源，获取全部数据表
-        List<TableImportVO> tableList = GenUtil.getTableList(datasource, query.getTableName());
+        List<TableImportVO> tableList = DbUtil.getTableList(datasource, query.getTableName());
         tableList.forEach(table -> {
             LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class);
             queryWrapper.eq(TableEntity::getProjectId, projectId);

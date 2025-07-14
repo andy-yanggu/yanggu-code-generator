@@ -95,17 +95,24 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
                 field.setPackageName(fieldTypeMapping.getPackageName());
             }
 
+            //属性设置
             field.setAutoFill(AutoFillEnum.DEFAULT.name());
             field.setUniqueField(0);
-            field.setFormItem(1);
-            field.setGridItem(0);
+            field.setFieldSort(index);
+
+            //查询配置
             field.setQueryItem(0);
             field.setQueryType("=");
             field.setQueryFormType("text");
-            field.setFormType("text");
-            field.setFieldSort(index);
             field.setQueryFieldSort(index);
+
+            //表单配置
+            field.setFormItem(1);
+            field.setFormType("text");
             field.setFormFieldSort(index);
+
+            //列表配置
+            field.setGridItem(1);
             field.setGridFieldSort(index);
             index++;
         }
