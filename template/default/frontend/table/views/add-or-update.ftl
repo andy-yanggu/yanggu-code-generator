@@ -41,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus/es'
+import { reactive } from 'vue'
 import { ${functionName}DetailApi, ${functionName}SubmitApi } from '@/api/${functionNameKebabCase}'
+import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 <#list formList as field>
     <#if field.formType == 'select' || field.formType == 'checkbox' || field.formType == 'radio'>
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
@@ -52,15 +52,20 @@ import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 
 const emit = defineEmits(['refreshDataList'])
 
-const visible = ref(false)
-const dataFormRef = ref()
-
-const dataForm = reactive({
-	<#list fieldList as field>
-	    <#if field.entityBaseField == 0>
-	${field.attrName}: ''<#sep>,
-	    </#if>
-	</#list>
+const state: FormOptions = reactive({
+    // 提交API
+    submitApi: ${functionName}SubmitApi,
+    // 详情API
+    detailApi: ${functionName}DetailApi,
+    // 表单数据
+    initFormData: {
+        <#list fieldList as field>
+            <#if field.entityBaseField == 0>
+        ${field.attrName}: ''<#if field_has_next>,</#if>
+            </#if>
+        </#list>
+    },
+    emit
 })
 
 const dataRules = reactive({
@@ -71,45 +76,7 @@ const dataRules = reactive({
     </#list>
 })
 
-const init = (id?: number) => {
-	visible.value = true
-	dataForm.id = null
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
-
-	if (id) {
-		get${functionNamePascal}(id)
-	}
-}
-
-const get${functionNamePascal} = (id: number) => {
-	${functionName}DetailApi(id).then(res => {
-		Object.assign(dataForm, res.data)
-	})
-}
-
-// 表单提交
-const submitHandle = () => {
-	dataFormRef.value.validate((valid: boolean) => {
-		if (!valid) {
-			return false
-		}
-
-		${functionName}SubmitApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '操作成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-	})
-}
+const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
 
 defineExpose({
 	init

@@ -56,7 +56,7 @@
 				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click="resetQueryRef()">重置</el-button>
+				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 			</el-form-item>
 		</el-form>
 	</el-card>
@@ -77,7 +77,7 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
-			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>:formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if></el-table-column>
+			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>:formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if></el-table-column>
         </#list>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
@@ -103,24 +103,28 @@
 </template>
 
 <script setup lang="ts">
-import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
-import { IHooksOptions } from '@/hooks/interface'
+import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import { useInitForm } from '@/hooks/use-init-form'
+import { reactive } from 'vue'
 import AddOrUpdate from '@/views/functionNameKebabCase/add-or-update.vue'
 import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
-<#list fieldList as field>
+import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionNameKebabCase}'
+<#list queryList as field>
 <#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>
 import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 </#if>
 </#list>
 <#list gridList as field>
-	<#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>
+	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
 import { getLabel } from '@/utils/enum'
 import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
 	</#if>
 </#list>
-import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionNameKebabCase}'
+
+defineOptions({
+	name: '${functionNamePascal}'
+})
 
 const state: IHooksOptions = reactive({
     dataListApi: ${functionName}EntityPageApi,
@@ -128,7 +132,7 @@ const state: IHooksOptions = reactive({
     queryForm: {
         <#list queryList as field>
         	<#if field.queryFormType == 'date'>
-        dateRange: ''<#sep>, </#sep>
+        dateRange: []<#sep>, </#sep>
         	<#elseif field.queryFormType == 'datetime'>
 		dateTimeRange: []<#sep>, </#sep>
         	<#else>
@@ -138,14 +142,8 @@ const state: IHooksOptions = reactive({
     }
 })
 
-const queryRef = ref()
-const addOrUpdateRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.init(id)
-}
-const resetQueryRef = () => {
-  queryRef.value.resetFields()
-}
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
+		useIndexQuery(state)
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle } = useCrud(state)
+const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>
