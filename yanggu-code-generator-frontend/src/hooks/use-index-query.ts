@@ -15,8 +15,6 @@ export interface IHooksOptions {
 	deleteListApi?: DeleteListApi
 	// 主键key，用于删除场景
 	primaryKey?: string
-	// 导出 Url
-	exportUrl?: string
 	// 查询条件
 	queryForm?: any
 	// 数据列表
@@ -58,7 +56,6 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		createdIsNeed: true,
 		isPage: true,
 		primaryKey: 'id',
-		exportUrl: '',
 		queryForm: {},
 		dataList: [],
 		order: '',
@@ -84,6 +81,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 	// 覆盖默认值
 	const state = mergeDefaultOptions(defaultOptions, options)
 
+	// 创建完毕
 	onMounted(() => {
 		if (state.createdIsNeed) {
 			query()
@@ -137,7 +135,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 				state.total = res.data.total
 			} else {
 				state.dataList = res.data
-				state.total = 0
+				state.total = res.data.length
 			}
 			state.dataListLoading = false
 		})
@@ -149,13 +147,13 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		query()
 	}
 
-	//pageNum发生变化
+	// pageNum发生变化
 	const currentChangeHandle = (pageNum: number) => {
 		state.pageNum = pageNum
 		query()
 	}
 
-	//pageSize发生变化
+	// pageSize发生变化
 	const sizeChangeHandle = (pageSize: number) => {
 		state.pageNum = 1
 		state.pageSize = pageSize
@@ -181,6 +179,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		getDataList()
 	}
 
+	// 批量删除
 	const deleteBatchHandle = (key?: number | string) => {
 		let data: any[] = []
 		if (key) {

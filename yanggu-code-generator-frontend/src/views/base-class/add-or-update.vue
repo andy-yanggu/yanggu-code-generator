@@ -32,7 +32,7 @@ const state: FormOptions = reactive({
 	submitApi: baseClassSubmitApi,
 	// 详情API
 	detailApi: baseClassDetailApi,
-	// 详情数据
+	// 表单数据
 	initFormData: {
 		id: null,
 		packageName: '',

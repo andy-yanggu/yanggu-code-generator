@@ -17,6 +17,7 @@ export const downloadFile = (url: string): Promise<void> => {
 				const contentDisposition = response.headers['content-disposition']
 				let filename = ''
 
+				//attachment;filename="GenEnumItemServiceImpl.java";filename*=UTF-8''GenEnumItemServiceImpl.java
 				if (contentDisposition) {
 					// 正则匹配 filename* 或 filename（支持带引号或不带引号的格式）
 					const filenameStarMatch = contentDisposition.match(/filename\*=['"]?(?:UTF-8['"]?)?''?([^;]+)/i)

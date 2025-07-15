@@ -17,12 +17,16 @@
 
 			<!-- 右侧区域：链接 + 全屏按钮 -->
 			<div class="navbar-right">
-				<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
-					<svg-icon icon="icon-gitee-fill-round"></svg-icon>
-				</el-link>
-				<el-link href="https://github.com/andy-yanggu/yanggu-code-generator" target="_blank">
-					<svg-icon icon="icon-github-fill"></svg-icon>
-				</el-link>
+				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
+					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
+						<svg-icon icon="icon-gitee-fill-round"></svg-icon>
+					</el-link>
+				</el-tooltip>
+				<el-tooltip :content="'github地址'" effect="dark" placement="bottom">
+					<el-link href="https://github.com/andy-yanggu/yanggu-code-generator" target="_blank">
+						<svg-icon icon="icon-github-fill"></svg-icon>
+					</el-link>
+				</el-tooltip>
 				<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
 					<el-icon :size="20" @click="toggleFullscreen">
 						<FullScreen v-if="!isFullscreen" />

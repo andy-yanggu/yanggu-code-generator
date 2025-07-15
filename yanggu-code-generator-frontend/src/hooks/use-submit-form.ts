@@ -38,7 +38,7 @@ export const useSubmitForm = (options: FormOptions) => {
 		}
 
 		// 初始化之前调用
-		options.initBefore?.()
+		initBefore()
 
 		if (!id) {
 			return
@@ -49,7 +49,7 @@ export const useSubmitForm = (options: FormOptions) => {
 			Object.assign(dataForm, res.data)
 
 			// 获取详情之后调用
-			options.initAfter?.()
+			initAfter()
 		})
 	}
 
