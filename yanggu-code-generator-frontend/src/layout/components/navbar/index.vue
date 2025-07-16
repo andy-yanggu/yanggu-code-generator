@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import Tag from '@/layout/components/navbar/components/tag.vue'
-import { appStore } from '@/store'
+import { appStore } from '@/store/app-store'
 import { onMounted, onUnmounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 const isFullscreen = ref(false)

@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { appStore, Tag } from '@/store'
+import { appStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
@@ -53,7 +53,7 @@ const menuPosition = ref({
 	left: '0px',
 	top: '0px'
 })
-const currentMenuTag = ref<Tag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
+const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
 const store = appStore()
 
@@ -91,11 +91,11 @@ onUnmounted(() => {
 	document.removeEventListener('click', closeTagMenu)
 })
 
-const handleClick = (_: number, tag: Tag) => {
+const handleClick = (_: number, tag: NavbarTag) => {
 	router.push(tag.fullPath)
 }
 
-const handleClose = (index: number, tag: Tag) => {
+const handleClose = (index: number, tag: NavbarTag) => {
 	store.removeTag(tag)
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
@@ -116,7 +116,7 @@ const handleClose = (index: number, tag: Tag) => {
 }
 
 // 显示标签右键菜单
-const showTagMenu = (e: MouseEvent, tag: Tag, index: number) => {
+const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	e.preventDefault()
 	currentMenuTag.value = tag
 	currentMenuTagIndex.value = index

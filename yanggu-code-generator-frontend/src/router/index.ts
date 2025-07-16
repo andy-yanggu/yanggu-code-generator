@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { appStore, Tag } from '@/store'
+import { appStore, NavbarTag } from '@/store/app-store'
 
 export const menuRoutes: RouteRecordRaw[] = [
 	{
@@ -103,6 +103,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: '/redirect',
+		name: 'Redirect',
 		component: () => import('@/layout/index.vue'),
 		children: [
 			{
@@ -117,12 +118,14 @@ export const constantRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/',
+		name: 'Layout',
 		component: () => import('@/layout/index.vue'),
 		redirect: '/gen/project',
 		children: [...menuRoutes]
 	},
 	{
 		path: '/404',
+		name: '404',
 		component: () => import('@/views/404.vue')
 	},
 	{
@@ -167,7 +170,7 @@ router.beforeEach((to, from, next) => {
 	// console.log(routeMetaData)
 	// 添加标签
 	if (routeMetaData.title) {
-		const tag: Tag = {
+		const tag: NavbarTag = {
 			...routeMetaData
 		}
 		store.addTag(tag)

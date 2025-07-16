@@ -4,7 +4,7 @@ import { menuRoutes, RouteMetaData } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 
 // 标签数据
-export interface Tag {
+export interface NavbarTag {
 	// 完整路径
 	fullPath: string
 	// 组件名称
@@ -22,7 +22,7 @@ export const appStore = defineStore(
 		// 折叠状态
 		const isCollapseRef = ref(false)
 		// 标签列表
-		const tagsListRef = ref<Tag[]>([])
+		const tagsListRef = ref<NavbarTag[]>([])
 		// 面包屑列表
 		const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
 		// 缓存组件列表
@@ -47,7 +47,7 @@ export const appStore = defineStore(
 			let currentPath = ''
 			for (const path of paths) {
 				currentPath += `/${path}`
-				const routeMeta = findRouteByPath(currentPath)
+				const routeMeta = findRouteByPath(currentPath, menuRoutes)
 				if (routeMeta) {
 					matched.push({
 						path: currentPath,
@@ -59,7 +59,7 @@ export const appStore = defineStore(
 		}
 
 		// 添加标签
-		const addTag = (tag: Tag) => {
+		const addTag = (tag: NavbarTag) => {
 			const isExist = tagsListRef.value.find(item => item.fullPath === tag.fullPath)
 			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
@@ -68,12 +68,12 @@ export const appStore = defineStore(
 		}
 
 		// 删除标签
-		const removeTag = (tag: Tag) => {
+		const removeTag = (tag: NavbarTag) => {
 			tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
 		// 添加所有标签
-		const addAllTags = (tagList: Tag[]) => {
+		const addAllTags = (tagList: NavbarTag[]) => {
 			tagsListRef.value = tagList
 		}
 
@@ -112,8 +112,8 @@ export const appStore = defineStore(
 	},
 	{
 		persist: {
-			storage: localStorage,
-			key: 'appStore'
+			key: 'appStore',
+			storage: localStorage
 		}
 	}
 )
@@ -121,7 +121,7 @@ export const appStore = defineStore(
 /**
  * 递归查找路径对应的 meta.title
  */
-const findRouteByPath = (targetPath: string): string | null => {
+const findRouteByPath = (targetPath: string, routes: RouteRecordRaw[]): string | null => {
 	const traverse = (routes: RouteRecordRaw[]): string | null => {
 		for (const route of routes) {
 			// 完全匹配路径
@@ -140,5 +140,5 @@ const findRouteByPath = (targetPath: string): string | null => {
 		return null
 	}
 
-	return traverse(menuRoutes)
+	return traverse(routes)
 }

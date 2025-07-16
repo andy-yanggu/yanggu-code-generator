@@ -6,6 +6,9 @@
 					<el-option v-for="item in projectList" :key="item.id" :label="item.projectName" :value="item.id"></el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="数据库名称" prop="databaseName">
+				<el-input v-model="state.queryForm.databaseName" placeholder="请输入数据库名称" clearable></el-input>
+			</el-form-item>
 			<el-form-item label="表名" prop="tableName">
 				<el-input v-model="state.queryForm.tableName" clearable placeholder="请输入表名"></el-input>
 			</el-form-item>
@@ -36,6 +39,7 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="databaseName" label="数据库名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="generatorType"
@@ -116,7 +120,8 @@ const state: IHooksOptions = reactive({
 	deleteListApi: tableDeleteListApi,
 	queryForm: {
 		tableName: '',
-		projectId: null
+		projectId: null,
+		databaseName: ''
 	}
 })
 

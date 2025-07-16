@@ -32,4 +32,10 @@ public class TableVOQuery extends PageQuery<TableVO> implements Serializable {
     @Schema(description = "项目ID")
     private Long projectId;
 
+    /**
+     * 数据库名称
+     */
+    @Schema(description = "数据库名称")
+    private String databaseName;
+
 }
