@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 import Menu from '@/layout/components/sidebar/components/menu.vue'
-import { appStore } from '@/store/app-store'
+import { useAppStore } from '@/store/use-app-store'
 const appTitle = import.meta.env.VITE_APP_TITLE
 
-const store = appStore()
+const store = useAppStore()
 </script>

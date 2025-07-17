@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
-import { appStore } from '@/store/app-store'
+import { useAppStore } from '@/store/use-app-store'
 import { defineEmits, defineProps } from 'vue'
 
-const store: any = appStore()
+const store: any = useAppStore()
 
 const props = defineProps({
 	currentMenuTag: {

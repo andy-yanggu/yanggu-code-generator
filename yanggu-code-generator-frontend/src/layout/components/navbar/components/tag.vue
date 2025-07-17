@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { appStore, NavbarTag } from '@/store/app-store'
+import { useAppStore, NavbarTag } from '@/store/use-app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
@@ -55,7 +55,7 @@ const menuPosition = ref({
 })
 const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
-const store = appStore()
+const store = useAppStore()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单

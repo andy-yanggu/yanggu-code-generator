@@ -43,11 +43,11 @@
 <script setup lang="ts">
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import Tag from '@/layout/components/navbar/components/tag.vue'
-import { appStore } from '@/store/app-store'
+import { useAppStore } from '@/store/use-app-store'
 import { onMounted, onUnmounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 const isFullscreen = ref(false)
-const store = appStore()
+const store = useAppStore()
 // 全屏切换函数
 const toggleFullscreen = () => {
 	if (!document.fullscreenElement) {

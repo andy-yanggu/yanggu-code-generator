@@ -18,9 +18,9 @@ import MenuItem from '@/layout/components/sidebar/components/menu-item.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { menuRoutes } from '@/router'
-import { appStore } from '@/store/app-store'
+import { useAppStore } from '@/store/use-app-store'
 
-const store = appStore()
+const store = useAppStore()
 
 const route = useRoute()
 const defaultActive = computed(() => {

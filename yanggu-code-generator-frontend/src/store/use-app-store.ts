@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { menuRoutes, RouteMetaData } from '@/router'
+import { RouteMetaData } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
 
 // 标签数据
@@ -15,7 +15,15 @@ export interface NavbarTag {
 	icon: string
 }
 
-export const appStore = defineStore(
+// 面包屑
+export interface Breadcrumb {
+	// 完整路径
+	path: string
+	// 组件名称
+	name: string
+}
+
+export const useAppStore = defineStore(
 	'app',
 	() => {
 		// 状态
@@ -24,7 +32,7 @@ export const appStore = defineStore(
 		// 标签列表
 		const tagsListRef = ref<NavbarTag[]>([])
 		// 面包屑列表
-		const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
+		const breadcrumbListRef = ref<Breadcrumb[]>([])
 		// 缓存组件列表
 		const cacheListRef = ref<string[]>([])
 
@@ -39,15 +47,15 @@ export const appStore = defineStore(
 		}
 
 		// 设置面包屑
-		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
-			const matched: { path: string; name: string }[] = []
+		const setBreadcrumb = (routeMetaData: RouteMetaData, routes: RouteRecordRaw[]) => {
+			const matched: Breadcrumb[] = []
 			const fullPath = routeMetaData.fullPath
 			const paths = fullPath.split('/').filter((p: any) => p)
 
 			let currentPath = ''
 			for (const path of paths) {
 				currentPath += `/${path}`
-				const routeMeta = findRouteByPath(currentPath, menuRoutes)
+				const routeMeta = findRouteByPath(currentPath, routes)
 				if (routeMeta) {
 					matched.push({
 						path: currentPath,
