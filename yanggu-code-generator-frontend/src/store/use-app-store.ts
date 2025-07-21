@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { RouteMetaData } from '@/router'
 import { RouteRecordRaw } from 'vue-router'
+import { RouteMetaData } from '@/utils/router-guard'
+import { router } from '@/router'
 
 // 标签数据
 export interface NavbarTag {
@@ -17,10 +18,10 @@ export interface NavbarTag {
 
 // 面包屑
 export interface Breadcrumb {
-	// 完整路径
-	path: string
-	// 组件名称
-	name: string
+	// 标题
+	title: string
+	// 图标
+	icon: string
 }
 
 export const useAppStore = defineStore(
@@ -49,18 +50,15 @@ export const useAppStore = defineStore(
 		// 设置面包屑
 		const setBreadcrumb = (routeMetaData: RouteMetaData, routes: RouteRecordRaw[]) => {
 			const matched: Breadcrumb[] = []
-			const fullPath = routeMetaData.fullPath
-			const paths = fullPath.split('/').filter((p: any) => p)
+			const path = routeMetaData.path
+			const paths = path.split('/').filter((p: any) => p)
 
 			let currentPath = ''
 			for (const path of paths) {
 				currentPath += `/${path}`
-				const routeMeta = findRouteByPath(currentPath, routes)
-				if (routeMeta) {
-					matched.push({
-						path: currentPath,
-						name: routeMeta
-					})
+				const breadcrumb = findRouteByPath(currentPath, routes)
+				if (breadcrumb && breadcrumb.title) {
+					matched.push(breadcrumb)
 				}
 			}
 			breadcrumbListRef.value = matched
@@ -129,24 +127,26 @@ export const useAppStore = defineStore(
 /**
  * 递归查找路径对应的 meta.title
  */
-const findRouteByPath = (targetPath: string, routes: RouteRecordRaw[]): string | null => {
-	const traverse = (routes: RouteRecordRaw[]): string | null => {
-		for (const route of routes) {
-			// 完全匹配路径
-			if (route.path === targetPath && route.meta?.title) {
-				return route.meta.title as string
-			}
+const findRouteByPath = (targetPath: string, routes: RouteRecordRaw[]): Breadcrumb => {
+	// 使用 Vue Router 的路径匹配算法
+	const matchedRoute = router.resolve(targetPath)
 
-			// 存在子路由则继续递归
-			if (route.children?.length) {
-				const result = traverse(route.children)
-				if (result) {
-					return result
-				}
-			}
+	if (matchedRoute?.meta?.title) {
+		return {
+			title: matchedRoute.meta.title as string,
+			icon: matchedRoute.meta.icon as string
 		}
-		return null
 	}
 
-	return traverse(routes)
+	// 递归检查子路由
+	for (const route of routes) {
+		if (route.children?.length) {
+			const result = findRouteByPath(targetPath, route.children)
+			if (result.title) {
+				return result
+			}
+		}
+	}
+
+	return { title: '', icon: '' }
 }

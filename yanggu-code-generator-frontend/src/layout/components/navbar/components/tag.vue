@@ -8,7 +8,7 @@
 				:key="tag.fullPath"
 				size="default"
 				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-				closable
+				:closable="tag.fullPath != '/index' || store.tagLength > 1"
 				@click="handleClick(index, tag)"
 				@close="handleClose(index, tag)"
 				@contextmenu.prevent="showTagMenu($event, tag, index)"
@@ -96,6 +96,10 @@ const handleClick = (_: number, tag: NavbarTag) => {
 }
 
 const handleClose = (index: number, tag: NavbarTag) => {
+	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
+	if (store.tagLength === 1 && tag.fullPath === '/index') {
+		return // 直接返回，不执行关闭操作
+	}
 	store.removeTag(tag)
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
@@ -111,7 +115,14 @@ const handleClose = (index: number, tag: NavbarTag) => {
 				to = store.tagsListRef[index - 1].fullPath
 			}
 		}
-		router.push(to)
+		if (to === '/') {
+			router.push({
+				path: '/redirect/'
+			})
+		} else {
+			// 跳转当前标签页
+			router.push(to)
+		}
 	}
 }
 
@@ -170,10 +181,11 @@ const closeOtherTags = () => {
 
 // 关闭所有标签
 const closeAllTags = () => {
-	// 保留首页，关闭其他所有标签
 	store.removeAllTags()
-	router.push('/')
 	closeTagMenu()
+	router.push({
+		path: '/redirect/'
+	})
 }
 
 //关闭左侧标签

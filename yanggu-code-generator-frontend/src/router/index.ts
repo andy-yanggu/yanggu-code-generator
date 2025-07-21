@@ -135,19 +135,5 @@ export const router = createRouter({
 	routes: constantRoutes
 })
 
-// 路由数据
-export interface RouteMetaData {
-	// 完整路径
-	fullPath: string
-	// 组件名称
-	name: string
-	// 标题
-	title: string
-	// 图标
-	icon: string
-	// 缓存
-	cache: boolean
-}
-
 // 路由拦截
 routerGuard(router)

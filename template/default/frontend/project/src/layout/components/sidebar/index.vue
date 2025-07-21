@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import Menu from '@/layout/components/sidebar/components/menu.vue'
-import { appStore } from '@/store'
+import { appStore } from '@/store/app-store'
 
 const store = appStore()
 </script>

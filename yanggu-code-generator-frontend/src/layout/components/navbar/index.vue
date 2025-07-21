@@ -9,8 +9,13 @@
 					<Fold v-else></Fold>
 				</el-icon>
 				<el-breadcrumb separator="/">
-					<el-breadcrumb-item v-for="item in store.breadcrumbListRef" :key="item.path">
-						{{ item.name }}
+					<el-breadcrumb-item v-for="item in store.breadcrumbListRef" :key="item.title">
+						<template #default>
+							<span style="display: inline-flex; align-items: center; gap: 5px">
+								<svg-icon :icon="item.icon"></svg-icon>
+								{{ item.title }}
+							</span>
+						</template>
 					</el-breadcrumb-item>
 				</el-breadcrumb>
 			</div>
