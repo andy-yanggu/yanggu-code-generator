@@ -23,7 +23,7 @@
 			@selection-change="selectionChangeHandle"
 		>
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="enumName" label="枚举名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center"></el-table-column>
@@ -97,7 +97,7 @@ const enumItemIndexShow = (enumId: number) => {
 	enumItemIndexRef.value.init(enumId)
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
 
 defineExpose({
 	init,

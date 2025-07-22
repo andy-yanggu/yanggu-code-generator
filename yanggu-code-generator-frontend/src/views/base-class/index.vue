@@ -27,7 +27,7 @@
 			@sort-change="sortChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="packageName" label="基类包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="className" label="基类类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -77,8 +77,17 @@ const state: IHooksOptions = reactive({
 	}
 })
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
-	useIndexQuery(state)
+const {
+	getDataList,
+	selectionChangeHandle,
+	sizeChangeHandle,
+	currentChangeHandle,
+	deleteBatchHandle,
+	sortChangeHandle,
+	queryRef,
+	resetQueryHandle,
+	tableIndex
+} = useIndexQuery(state)
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

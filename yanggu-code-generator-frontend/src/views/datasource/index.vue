@@ -32,7 +32,7 @@
 			@sort-change="sortChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="connName" label="连接名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="dbType"
@@ -104,8 +104,17 @@ const datasourceTestHandle = (id: number) => {
 	})
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
-	useIndexQuery(state)
+const {
+	getDataList,
+	selectionChangeHandle,
+	sizeChangeHandle,
+	currentChangeHandle,
+	deleteBatchHandle,
+	sortChangeHandle,
+	queryRef,
+	resetQueryHandle,
+	tableIndex
+} = useIndexQuery(state)
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

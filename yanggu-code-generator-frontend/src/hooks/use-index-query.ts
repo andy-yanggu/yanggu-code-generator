@@ -209,6 +209,10 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			.catch(() => {})
 	}
 
+	const tableIndex = (index: number) => {
+		return (state.pageNum! - 1) * state.pageSize! + index + 1
+	}
+
 	return {
 		getDataList,
 		sizeChangeHandle,
@@ -217,6 +221,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		sortChangeHandle,
 		deleteBatchHandle,
 		queryRef,
-		resetQueryHandle
+		resetQueryHandle,
+		tableIndex
 	}
 }

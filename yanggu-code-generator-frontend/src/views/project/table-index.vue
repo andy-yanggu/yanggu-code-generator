@@ -23,7 +23,7 @@
 			@selection-change="selectionChangeHandle"
 		>
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="className" label="类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="functionName" label="功能名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -78,7 +78,7 @@ const selectionChangeHandle = (selections: any[]) => {
 		emit('selectChange', selections)
 	}
 }
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
 
 const toggleRowSelection = (rowList: any[]) => {
 	if (rowList.length === 0) {

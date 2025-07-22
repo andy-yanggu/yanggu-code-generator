@@ -75,7 +75,7 @@
 			@sort-change="sortChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 	    <#list gridList as field>
 			<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>:formatter="(_: any, __: any, value: any) => getLabel(value, ${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if></el-table-column>
         </#list>
@@ -142,8 +142,17 @@ const state: IHooksOptions = reactive({
     }
 })
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
-		useIndexQuery(state)
+const {
+	getDataList,
+	selectionChangeHandle,
+	sizeChangeHandle,
+	currentChangeHandle,
+	deleteBatchHandle,
+	sortChangeHandle,
+	queryRef,
+	resetQueryHandle,
+	tableIndex
+} = useIndexQuery(state)
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>

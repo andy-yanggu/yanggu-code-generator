@@ -5,9 +5,9 @@
 				<el-select v-model="queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
 					<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
 						<span style="font-weight: bold">{{ projectItem.projectName }}</span>
-						<span v-if="projectItem.projectDesc && projectItem.projectDesc.trim()" style="color: #999; font-size: 12px"
-							>（{{ projectItem.projectDesc }}）</span
-						>
+						<span v-if="projectItem.projectDesc && projectItem.projectDesc.trim()" style="color: #999; font-size: 12px">
+							（{{ projectItem.projectDesc }}）
+						</span>
 					</el-option>
 				</el-select>
 			</el-form-item>

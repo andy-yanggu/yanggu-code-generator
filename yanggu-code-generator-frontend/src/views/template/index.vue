@@ -33,7 +33,7 @@
 				@sort-change="sortChangeHandle"
 			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-				<el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
@@ -102,8 +102,17 @@ const init = (row: any) => {
 	currentGroupId.value = row.id
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle, sortChangeHandle, queryRef, resetQueryHandle } =
-	useIndexQuery(state)
+const {
+	getDataList,
+	selectionChangeHandle,
+	sizeChangeHandle,
+	currentChangeHandle,
+	deleteBatchHandle,
+	sortChangeHandle,
+	queryRef,
+	resetQueryHandle,
+	tableIndex
+} = useIndexQuery(state)
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 
