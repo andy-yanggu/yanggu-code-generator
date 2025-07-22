@@ -1,6 +1,5 @@
-import { useAppStore, NavbarTag } from '@/store/use-app-store'
+import { useAppStore, NavbarTag } from '@/store/app-store'
 import { Router } from 'vue-router'
-import { constantRoutes } from '@/router'
 
 // 路由数据
 export interface RouteMetaData {
@@ -42,7 +41,7 @@ export const routerGuard = (router: Router) => {
 		}
 
 		// 设置面包屑
-		appStore.setBreadcrumb(routeMetaData, constantRoutes)
+		appStore.setBreadcrumb(routeMetaData)
 
 		// 添加缓存路由
 		if (routeMetaData.cache && routeMetaData.name) {

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { RouteRecordRaw } from 'vue-router'
 import { RouteMetaData } from '@/utils/router-guard'
 import { router } from '@/router'
 
@@ -48,15 +47,14 @@ export const useAppStore = defineStore(
 		}
 
 		// 设置面包屑
-		const setBreadcrumb = (routeMetaData: RouteMetaData, routes: RouteRecordRaw[]) => {
+		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
 			const matched: Breadcrumb[] = []
-			const path = routeMetaData.path
-			const paths = path.split('/').filter((p: any) => p)
+			const paths = routeMetaData.path.split('/').filter((p: any) => p)
 
 			let currentPath = ''
 			for (const path of paths) {
 				currentPath += `/${path}`
-				const breadcrumb = findRouteByPath(currentPath, routes)
+				const breadcrumb = findRouteByPath(currentPath)
 				if (breadcrumb && breadcrumb.title) {
 					matched.push(breadcrumb)
 				}
@@ -125,9 +123,9 @@ export const useAppStore = defineStore(
 )
 
 /**
- * 递归查找路径对应的 meta.title
+ * 查找路径对应的 meta.title
  */
-const findRouteByPath = (targetPath: string, routes: RouteRecordRaw[]): Breadcrumb => {
+const findRouteByPath = (targetPath: string): Breadcrumb => {
 	// 使用 Vue Router 的路径匹配算法
 	const matchedRoute = router.resolve(targetPath)
 
@@ -136,17 +134,7 @@ const findRouteByPath = (targetPath: string, routes: RouteRecordRaw[]): Breadcru
 			title: matchedRoute.meta.title as string,
 			icon: matchedRoute.meta.icon as string
 		}
+	} else {
+		return { title: '', icon: '' }
 	}
-
-	// 递归检查子路由
-	for (const route of routes) {
-		if (route.children?.length) {
-			const result = findRouteByPath(targetPath, route.children)
-			if (result.title) {
-				return result
-			}
-		}
-	}
-
-	return { title: '', icon: '' }
 }

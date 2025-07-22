@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
-import { useAppStore } from '@/store/use-app-store'
+import { useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps } from 'vue'
 
 const store: any = useAppStore()

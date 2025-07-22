@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore, NavbarTag } from '@/store/use-app-store'
+import { useAppStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'

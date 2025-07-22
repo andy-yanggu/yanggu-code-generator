@@ -8,16 +8,7 @@
 					<Expand v-if="store.isCollapseRef"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
-				<el-breadcrumb separator="/">
-					<el-breadcrumb-item v-for="item in store.breadcrumbListRef" :key="item.title">
-						<template #default>
-							<span style="display: inline-flex; align-items: center; gap: 5px">
-								<svg-icon :icon="item.icon"></svg-icon>
-								{{ item.title }}
-							</span>
-						</template>
-					</el-breadcrumb-item>
-				</el-breadcrumb>
+				<breadcrumb></breadcrumb>
 			</div>
 
 			<!-- 右侧区域：链接 + 全屏按钮 -->
@@ -48,9 +39,10 @@
 <script setup lang="ts">
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import Tag from '@/layout/components/navbar/components/tag.vue'
-import { useAppStore } from '@/store/use-app-store'
+import { useAppStore } from '@/store/app-store'
 import { onMounted, onUnmounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
 const isFullscreen = ref(false)
 const store = useAppStore()
 // 全屏切换函数
