@@ -18,13 +18,13 @@ import java.util.List;
 public class CorsConfig {
 
     /**
-     * 跨域过期时间
+     * 跨域过期时间。单位：秒
      */
     @Value("${web.cors.max-age:3600}")
     private Long maxAge;
 
     /**
-     * 跨域传递cookie
+     * 跨域是否传递cookie
      */
     @Value("${web.cors.allow-credentials:true}")
     private Boolean allowCredentials;

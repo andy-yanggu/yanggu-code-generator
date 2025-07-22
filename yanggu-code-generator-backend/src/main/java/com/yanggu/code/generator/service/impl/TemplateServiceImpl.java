@@ -67,8 +67,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     @Transactional(rollbackFor = RuntimeException.class)
     public void delete(Long id) {
         TemplateEntity dbEntity = selectById(id);
-        //删除校验和关联删除
-        templateMapper.deleteById(id);
+        deleteList(List.of(id));
     }
 
     /**

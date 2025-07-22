@@ -49,13 +49,14 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void add(${classNameUpper}DTO dto) {
+    public ${classNameUpper}Entity add(${classNameUpper}DTO dto) {
         <#if isUnique>
         //唯一性校验等
         checkUnique(dto);
         </#if>
         ${classNameUpper}Entity entity = ${className}Mapstruct.dtoToEntity(dto);
         ${className}Mapper.insert(entity);
+        return entity;
     }
 
     /**

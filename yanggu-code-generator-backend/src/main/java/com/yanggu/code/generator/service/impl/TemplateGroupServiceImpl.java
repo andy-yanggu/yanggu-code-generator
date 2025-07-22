@@ -28,6 +28,7 @@ import org.dromara.hutool.core.date.DateUtil;
 import org.dromara.hutool.core.io.IoUtil;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.CharsetUtil;
+import org.dromara.hutool.http.meta.HttpHeaderUtil;
 import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -215,9 +216,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         List<TemplateGroupBO> boList = templateGroupMapstruct.entityToBO(list);
         String jsonStr = JSONUtil.toJsonStr(boList);
 
-        String fileName = "TemplateGroup_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
+        String fileName = "template_group_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
         return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .header(CONTENT_DISPOSITION, HttpHeaderUtil.createAttachmentDisposition(fileName, CharsetUtil.UTF_8))
                 .contentType(APPLICATION_OCTET_STREAM)
                 .body(jsonStr.getBytes());
     }

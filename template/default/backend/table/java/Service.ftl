@@ -18,7 +18,7 @@ public interface ${classNameUpper}Service extends IService<${classNameUpper}Enti
     /**
      * 新增
      */
-    void add(${classNameUpper}DTO dto);
+    ${classNameUpper}Entity add(${classNameUpper}DTO dto);
 
     /**
      * 修改

@@ -330,10 +330,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         ZipOutputStream zip = new ZipOutputStream(outputStream);
         for (TemplateContentVO templateContentVO : list) {
             try {
-                // 添加到zip
-                zip.putNextEntry(new ZipEntry(templateContentVO.getFilePath()));
-                IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
-                zip.flush();
+                // 获取文件路径
+                String filePath = templateContentVO.getFilePath();
+
+                if (FILE.getCode().equals(templateContentVO.getTemplateType())) {
+                    // 文件：添加条目并写入内容
+                    zip.putNextEntry(new ZipEntry(filePath));
+                    IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
+                    zip.flush();
+                } else {
+                    // 文件夹：创建以'/'结尾的目录条目
+                    if (!filePath.endsWith("/")) {
+                        filePath += "/";
+                    }
+                    zip.putNextEntry(new ZipEntry(filePath));
+                }
                 zip.closeEntry();
             } catch (IOException e) {
                 throw new BusinessException("模板写入失败：" + templateContentVO.getFilePath(), e);

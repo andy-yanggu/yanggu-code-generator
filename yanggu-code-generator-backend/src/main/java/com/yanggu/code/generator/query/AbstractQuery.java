@@ -2,9 +2,9 @@ package com.yanggu.code.generator.query;
 
 
 import com.yanggu.code.generator.enums.DbType;
-import dm.jdbc.util.ReflectUtil;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.reflect.ClassUtil;
+import org.dromara.hutool.core.reflect.ConstructorUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public abstract class AbstractQuery {
             throw new RuntimeException("未找到AbstractQuery实现类");
         }
         for (Class<?> clazz : classes) {
-            AbstractQuery query = (AbstractQuery) ReflectUtil.newInstance(clazz);
+            AbstractQuery query = (AbstractQuery) ConstructorUtil.newInstance(clazz);
             AbstractQuery put = MAP.put(query.dbType(), query);
             if (put != null) {
                 throw new RuntimeException("AbstractQuery实现类重复: " + query.dbType());

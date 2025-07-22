@@ -6,7 +6,7 @@ import org.dromara.hutool.core.text.StrUtil;
 /**
  * KingBase查询
  */
-public class KingBaseSqlQuery extends AbstractQuery {
+public class KingBaseQuery extends AbstractQuery {
 
     @Override
     public DbType dbType() {

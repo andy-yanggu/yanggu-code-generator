@@ -175,8 +175,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         //初始化配置信息
         ProjectEntity project = projectService.getById(projectId);
 
-        Long datasourceId = project.getDatasourceId();
-        DataSourceBO dataSource = datasourceService.get(datasourceId);
+        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
 
         //批量导入
         for (String tempTableName : tableNameList) {
@@ -212,11 +211,11 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         if (project == null) {
             throw new BusinessException("项目不存在");
         }
-        Long templateGroupId = project.getTableTemplateGroupId();
-        if (templateGroupId == null) {
+        Long tableTemplateGroupId = project.getTableTemplateGroupId();
+        if (tableTemplateGroupId == null) {
             throw new BusinessException("模板组不存在");
         }
-        return templateGroupId;
+        return tableTemplateGroupId;
     }
 
     @Override
