@@ -34,6 +34,12 @@ public class TemplateVOQuery extends PageQuery<TemplateVO> implements Serializab
     private List<Long> templateGroupIdList;
 
     /**
+     * 模板组名称
+     */
+    @Schema(description = "模板组名称")
+    private String templateGroupName;
+
+    /**
      * 模板名称
      */
     @Schema(description = "模板名称")

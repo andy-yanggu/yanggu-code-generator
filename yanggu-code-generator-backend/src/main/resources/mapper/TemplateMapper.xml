@@ -29,6 +29,9 @@
                 #{item}
             </foreach>
         </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupName')">
+            AND g.group_name LIKE CONCAT('%', #{query.templateGroupName}, '%')
+        </if>
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateName')">
             AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
