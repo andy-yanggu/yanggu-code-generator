@@ -6,12 +6,8 @@
 
     <!-- 排序SQL -->
     <sql id="orderBySQL">
-        <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
-            ORDER BY
-            <foreach collection="query.orderItemList" item="order" separator=",">
-                <#noparse>${@</#noparse>${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
-            </foreach>
-        </if>
+        <bind name="columnPrefix" value="''"/>
+        <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </sql>
 
     <!-- 排序SQL（带前缀） -->
@@ -19,6 +15,9 @@
         <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'orderItemList')">
             ORDER BY
             <foreach collection="query.orderItemList" item="order" separator=",">
+                <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(columnPrefix)">
+                    ${columnPrefix}.
+                </if>
                 <#noparse>${columnPrefix}.${@</#noparse>${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
             </foreach>
         </if>

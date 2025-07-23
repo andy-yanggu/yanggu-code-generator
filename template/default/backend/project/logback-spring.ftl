@@ -4,7 +4,8 @@
     <!-- 服务名称 -->
     <springProperty name="APP_NAME" source="spring.application.name" defaultValue="app" />
     <!-- 日志格式 -->
-    <springProperty name="LOG_PATTERN" source="logging.pattern.console" defaultValue="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n" />
+    <springProperty name="LOG_PATTERN" source="logging.pattern.console"
+                    defaultValue="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}:%line - %msg%n"/>
     <!-- 指定日志输出路径 -->
     <springProperty name="LOG_PATH" source="logging.file.path" defaultValue="./logs" />
     <!-- 日志文件最大大小 -->
