@@ -32,7 +32,13 @@
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="templateType" label="模板类型" header-align="center" align="center" :formatter="handlerType"></el-table-column>
+				<el-table-column
+					prop="templateType"
+					label="模板类型"
+					header-align="center"
+					align="center"
+					:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_TYPES)"
+				></el-table-column>
 				<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			</el-table>
 			<el-pagination
@@ -63,6 +69,7 @@ import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/
 import { ElMessage } from 'element-plus'
 import { templateEntityPageApi } from '@/api/template'
 import { Refresh, Search } from '@element-plus/icons-vue'
+import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['clearSelection'])
 
@@ -90,10 +97,6 @@ const init = (templateGroupId: number, generatorType: number, tableIdList: numbe
 
 	//加载列表数据
 	getDataList()
-}
-
-const handlerType = (row: any) => {
-	return TEMPLATE_TYPES.find(item => item.value === row.templateType)?.label
 }
 
 const generateCode = () => {

@@ -13,6 +13,8 @@ export interface FormOptions {
 	initFormData: any
 	// 初始化之后调用
 	initAfter?: () => void
+	// 提交之前操作
+	submitBefore?: () => void
 	// 触发事件
 	emit: any
 	// 提示信息
@@ -22,7 +24,17 @@ export interface FormOptions {
 }
 
 export const useSubmitForm = (options: FormOptions) => {
-	const { submitApi, detailApi, initBefore = () => {}, initFormData, initAfter = () => {}, emit, message = '操作成功', duration = 500 } = options
+	const {
+		submitApi,
+		detailApi,
+		initBefore = () => {},
+		initFormData,
+		initAfter = () => {},
+		submitBefore = () => {},
+		emit,
+		message = '操作成功',
+		duration = 500
+	} = options
 
 	const visible = ref(false) // 弹窗可见性
 	const dataForm = reactive({ ...initFormData }) // 表单数据
@@ -59,6 +71,9 @@ export const useSubmitForm = (options: FormOptions) => {
 			if (!valid) {
 				return false
 			}
+
+			// 提交之前操作
+			submitBefore()
 
 			submitApi(dataForm).then(() => {
 				ElMessage.success({

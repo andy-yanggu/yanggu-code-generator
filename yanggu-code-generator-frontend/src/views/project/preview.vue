@@ -1,50 +1,54 @@
 <template>
 	<!-- 预览界面 -->
 	<el-drawer v-model="preview.visible" title="代码预览" :size="'80%'">
-		<div class="common-layout">
-			<el-container>
-				<el-aside :style="{ width: '300px', overflowX: 'auto' }">
-					<div class="tree-scroll-wrapper">
-						<el-tree
-							ref="treeRef"
-							:data="preview.treeData"
-							node-key="filePath"
-							:current-node-key="currentNodeKey"
-							highlight-current
-							class="custom-tree"
-							@node-click="handleTreeNodeClick"
-						/>
-					</div>
-				</el-aside>
-				<el-main>
-					<el-container>
-						<el-header style="display: flex; flex-direction: column; gap: 10px">
-							<el-row>
-								<el-col :span="18">
-									路径：<el-text>{{ preview.item.filePath }}</el-text>
-								</el-col>
-								<el-col :span="6" style="text-align: right">
-									<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
-								</el-col>
-							</el-row>
-							<el-row>
-								<el-col :span="12">
-									名称：<el-text>{{ preview.item.fileName }}</el-text>
-								</el-col>
-								<el-col :span="12" style="text-align: right">
-									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
-									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
-									<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
-								</el-col>
-							</el-row>
-						</el-header>
-						<el-main ref="codeContainer" style="margin-top: 10px">
-							<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
-						</el-main>
-					</el-container>
-				</el-main>
-			</el-container>
-		</div>
+		<el-scrollbar>
+			<div class="common-layout">
+				<el-container>
+					<el-aside :style="{ width: '300px', overflowX: 'auto' }">
+						<div class="tree-scroll-wrapper">
+							<el-scrollbar>
+								<el-tree
+									ref="treeRef"
+									:data="preview.treeData"
+									node-key="filePath"
+									:current-node-key="currentNodeKey"
+									highlight-current
+									class="custom-tree"
+									@node-click="handleTreeNodeClick"
+								></el-tree>
+							</el-scrollbar>
+						</div>
+					</el-aside>
+					<el-main>
+						<el-container>
+							<el-header style="display: flex; flex-direction: column; gap: 10px">
+								<el-row>
+									<el-col :span="18">
+										路径：<el-text>{{ preview.item.filePath }}</el-text>
+									</el-col>
+									<el-col :span="6" style="text-align: right">
+										<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
+									</el-col>
+								</el-row>
+								<el-row>
+									<el-col :span="12">
+										名称：<el-text>{{ preview.item.fileName }}</el-text>
+									</el-col>
+									<el-col :span="12" style="text-align: right">
+										<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
+										<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+										<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
+									</el-col>
+								</el-row>
+							</el-header>
+							<el-main ref="codeContainer" style="margin-top: 10px">
+								<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
+							</el-main>
+						</el-container>
+					</el-main>
+				</el-container>
+			</div>
+		</el-scrollbar>
 	</el-drawer>
 </template>
 <script setup lang="ts">
@@ -227,12 +231,6 @@ document.addEventListener('fullscreenchange', () => {
 }
 
 /* 覆盖 Element Plus 默认样式 */
-::v-deep .el-tree-node {
-	min-width: 100% !important; /* 确保节点占满容器宽度 */
-	.el-tree-node__children {
-		overflow: visible !important; /* 防止子节点溢出隐藏 */
-	}
-}
 
 :deep(.full-screen-mode) {
 	position: fixed;

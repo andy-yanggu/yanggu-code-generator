@@ -1,13 +1,16 @@
 <template>
 	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item label="模板名称" prop="templateName">
-				<el-input v-model="state.queryForm.templateName" style="width: 140px" clearable placeholder="请输入模板名称"></el-input>
+			<el-form-item label="模板组名称" prop="templateGroupName">
+				<el-input v-model="state.queryForm.templateGroupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板组类型" prop="templateGroupType">
 				<el-select v-model="state.queryForm.templateGroupType" style="width: 160px" clearable placeholder="请选择模板组类型">
 					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
+			</el-form-item>
+			<el-form-item label="模板名称" prop="templateName">
+				<el-input v-model="state.queryForm.templateName" style="width: 140px" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
 				<el-select v-model="state.queryForm.templateType" style="width: 150px" clearable placeholder="请选择模板类型">
@@ -35,17 +38,23 @@
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="templateGroupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
-			<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="templateGroupType"
 				label="模板组类型"
 				show-overflow-tooltip
 				header-align="center"
 				align="center"
-				:formatter="handlerGroupType"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_GROUP_TYPES)"
 			></el-table-column>
-			<el-table-column prop="templateType" label="模板类型" header-align="center" align="center" :formatter="handlerType"></el-table-column>
+			<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column
+				prop="templateType"
+				label="模板类型"
+				header-align="center"
+				align="center"
+				:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_TYPES)"
+			></el-table-column>
+			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
 		<el-pagination
@@ -67,6 +76,7 @@ import { reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { templateVOPageApi } from '@/api/template'
 import { Refresh, Search } from '@element-plus/icons-vue'
+import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()
@@ -75,6 +85,7 @@ const state: IHooksOptions = reactive({
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupIdList: [],
+		templateGroupName: '',
 		templateName: '',
 		templateGroupType: null,
 		templateType: null
@@ -90,14 +101,6 @@ const init = (templateGroupIdList: Array<number>) => {
 
 	//加载列表数据
 	getDataList()
-}
-
-const handlerType = (row: any) => {
-	return TEMPLATE_TYPES.find(item => item.value === row.templateType)?.label
-}
-
-const handlerGroupType = (row: any) => {
-	return TEMPLATE_GROUP_TYPES.find(item => item.value === row.templateGroupType)?.label
 }
 
 const selectionChangeHandle = (selections: any[]) => {

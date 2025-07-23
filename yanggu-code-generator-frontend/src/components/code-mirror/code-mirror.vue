@@ -1,5 +1,5 @@
 <template>
-	<div style="width: 100%">
+	<el-scrollbar>
 		<codemirror
 			v-model="codes"
 			placeholder="Code goes here..."
@@ -12,8 +12,8 @@
 			@change="change($event)"
 			@focus="log('focus', $event)"
 			@blur="log('blur', $event)"
-		/>
-	</div>
+		></codemirror>
+	</el-scrollbar>
 </template>
 
 <script setup>
