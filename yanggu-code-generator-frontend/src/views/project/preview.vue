@@ -2,58 +2,56 @@
 	<!-- 预览界面 -->
 	<el-drawer v-model="preview.visible" title="代码预览" :size="'100%'">
 		<el-scrollbar>
-			<div class="common-layout">
-				<el-container>
-					<el-aside v-show="!isCollapseRef" :style="{ width: '300px', overflowX: 'auto' }">
-						<div class="tree-scroll-wrapper">
-							<el-scrollbar>
-								<el-tree
-									ref="treeRef"
-									:data="preview.treeData"
-									node-key="filePath"
-									:current-node-key="currentNodeKey"
-									highlight-current
-									class="custom-tree"
-									@node-click="handleTreeNodeClick"
-								></el-tree>
-							</el-scrollbar>
-						</div>
-					</el-aside>
-					<el-main>
-						<el-container>
-							<el-header style="display: flex; flex-direction: column; gap: 10px">
-								<el-row>
-									<el-col :span="1">
-										<el-icon :size="22" @click="toggleCollapse()">
-											<Expand v-if="isCollapseRef"></Expand>
-											<Fold v-else></Fold>
-										</el-icon>
-									</el-col>
-									<el-col :span="18">
-										路径：<el-text>{{ preview.item.filePath }}</el-text>
-									</el-col>
-									<el-col :span="5" style="text-align: right">
-										<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
-									</el-col>
-								</el-row>
-								<el-row>
-									<el-col :span="12">
-										名称：<el-text>{{ preview.item.fileName }}</el-text>
-									</el-col>
-									<el-col :span="12" style="text-align: right">
-										<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
-										<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
-										<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
-									</el-col>
-								</el-row>
-							</el-header>
-							<el-main ref="codeContainer" style="margin-top: 10px">
-								<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
-							</el-main>
-						</el-container>
-					</el-main>
-				</el-container>
-			</div>
+			<el-container>
+				<el-aside v-show="!isCollapseRef" :style="{ width: '300px', overflowX: 'auto' }">
+					<div class="tree-scroll-wrapper">
+						<el-scrollbar>
+							<el-tree
+								ref="treeRef"
+								:data="preview.treeData"
+								node-key="filePath"
+								:current-node-key="currentNodeKey"
+								highlight-current
+								class="custom-tree"
+								@node-click="handleTreeNodeClick"
+							></el-tree>
+						</el-scrollbar>
+					</div>
+				</el-aside>
+				<el-main>
+					<el-container>
+						<el-header style="display: flex; flex-direction: column; gap: 10px">
+							<el-row>
+								<el-col :span="1">
+									<el-icon :size="22" @click="toggleCollapse()">
+										<Expand v-if="isCollapseRef"></Expand>
+										<Fold v-else></Fold>
+									</el-icon>
+								</el-col>
+								<el-col :span="18">
+									路径：<el-text>{{ preview.item.filePath }}</el-text>
+								</el-col>
+								<el-col :span="5" style="text-align: right">
+									<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
+								</el-col>
+							</el-row>
+							<el-row>
+								<el-col :span="12">
+									名称：<el-text>{{ preview.item.fileName }}</el-text>
+								</el-col>
+								<el-col :span="12" style="text-align: right">
+									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
+									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+									<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
+								</el-col>
+							</el-row>
+						</el-header>
+						<el-main ref="codeContainer" style="margin-top: 10px">
+							<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
+						</el-main>
+					</el-container>
+				</el-main>
+			</el-container>
 		</el-scrollbar>
 	</el-drawer>
 </template>
@@ -110,6 +108,7 @@ const init = async (projectItem: any) => {
 	const projectId = projectItem.id
 	preview.projectId = projectId
 	preview.generatorType = projectItem.generatorType
+	isCollapseRef.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		const res = await generatorProjectPreviewApi(projectId)
