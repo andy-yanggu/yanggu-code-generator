@@ -1,10 +1,10 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="preview.visible" title="代码预览" :size="'80%'">
+	<el-drawer v-model="preview.visible" title="代码预览" :size="'100%'">
 		<el-scrollbar>
 			<div class="common-layout">
 				<el-container>
-					<el-aside :style="{ width: '300px', overflowX: 'auto' }">
+					<el-aside v-show="!isCollapseRef" :style="{ width: '300px', overflowX: 'auto' }">
 						<div class="tree-scroll-wrapper">
 							<el-scrollbar>
 								<el-tree
@@ -23,10 +23,16 @@
 						<el-container>
 							<el-header style="display: flex; flex-direction: column; gap: 10px">
 								<el-row>
+									<el-col :span="1">
+										<el-icon :size="22" @click="toggleCollapse()">
+											<Expand v-if="isCollapseRef"></Expand>
+											<Fold v-else></Fold>
+										</el-icon>
+									</el-col>
 									<el-col :span="18">
 										路径：<el-text>{{ preview.item.filePath }}</el-text>
 									</el-col>
-									<el-col :span="6" style="text-align: right">
+									<el-col :span="5" style="text-align: right">
 										<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
 									</el-col>
 								</el-row>
@@ -56,6 +62,7 @@ import { computed, nextTick, reactive, ref } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/code-mirror.vue'
 import { generatorProjectDownloadLocalApi, generatorProjectDownloadSingleApi, generatorProjectPreviewApi } from '@/api/generator'
+import { Expand, Fold } from '@element-plus/icons-vue'
 
 const currentNodeKey = ref()
 const treeRef = ref()
@@ -73,6 +80,12 @@ const preview = reactive({
 		tableId: null
 	}
 })
+
+const isCollapseRef = ref(false)
+
+const toggleCollapse = () => {
+	isCollapseRef.value = !isCollapseRef.value
+}
 
 // 计算内容行数
 const contentHeight = computed(() => {
