@@ -5,6 +5,9 @@
 				<el-form-item label="枚举项名称" prop="enumItemName">
 					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
 				</el-form-item>
+				<el-form-item label="枚举项编码" prop="enumItemCode">
+					<el-input v-model="state.queryForm.enumItemCode" placeholder="请输入枚举项编码" clearable></el-input>
+				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
@@ -32,9 +35,25 @@
 				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemOrder" label="枚举项排序" header-align="center" align="center"></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
-				<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
+				<el-table-column prop="enumItemOrder" label="枚举项排序" width="120" header-align="center" align="center" sortable="custom"></el-table-column>
+				<el-table-column
+					prop="createTime"
+					label="创建时间"
+					show-overflow-tooltip
+					width="110"
+					header-align="center"
+					align="center"
+					sortable="custom"
+				></el-table-column>
+				<el-table-column
+					prop="updateTime"
+					label="修改时间"
+					show-overflow-tooltip
+					width="110"
+					header-align="center"
+					align="center"
+					sortable="custom"
+				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -73,6 +92,7 @@ const state: IHooksOptions = reactive({
 	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',
+		enumItemCode: '',
 		enumId: -1
 	}
 })

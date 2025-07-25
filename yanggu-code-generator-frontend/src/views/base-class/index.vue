@@ -1,6 +1,9 @@
 <template>
 	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
+			<el-form-item label="基类包名" prop="packageName">
+				<el-input v-model="state.queryForm.packageName" clearable placeholder="请输入基类包名"></el-input>
+			</el-form-item>
 			<el-form-item label="基类类名" prop="className">
 				<el-input v-model="state.queryForm.className" clearable placeholder="请输入基类类名"></el-input>
 			</el-form-item>
@@ -32,8 +35,24 @@
 			<el-table-column prop="className" label="基类类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
-			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column
+				prop="createTime"
+				label="创建时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
+			<el-table-column
+				prop="updateTime"
+				label="修改时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -73,6 +92,7 @@ const state: IHooksOptions = reactive({
 	dataListApi: baseClassEntityPageApi,
 	deleteListApi: baseClassDeleteListApi,
 	queryForm: {
+		packageName: '',
 		className: ''
 	}
 })

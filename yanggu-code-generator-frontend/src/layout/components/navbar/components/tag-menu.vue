@@ -1,14 +1,14 @@
 <template>
 	<div class="icon-list">
-		<div class="icon-item" @click="emits('refreshCurrentTag')">
+		<div v-if="props.currentMenuTag.fullPath === route.fullPath" class="icon-item" @click="emits('refreshCurrentTag')">
 			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新页面</span>
 		</div>
-		<div v-if="props.currentMenuTag.fullPath != '/index' || store.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
+		<div v-if="props.currentMenuTag.fullPath != '/index' || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
 		</div>
-		<div v-if="store.tagLength > 1" class="icon-item" @click="emits('closeOtherTags')">
+		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeOtherTags')">
 			<el-icon size="10"><CircleClose></CircleClose></el-icon>
 			<span>关闭其他</span>
 		</div>
@@ -16,11 +16,11 @@
 			<el-icon size="10"><Back></Back></el-icon>
 			<span>关闭左侧</span>
 		</div>
-		<div v-if="props.currentMenuTagIndex < store.tagLength - 1" class="icon-item" @click="emits('closeRightTag')">
+		<div v-if="props.currentMenuTagIndex < appStore.tagLength - 1" class="icon-item" @click="emits('closeRightTag')">
 			<el-icon size="10"><Right></Right></el-icon>
 			<span>关闭右侧</span>
 		</div>
-		<div v-if="store.tagLength > 1" class="icon-item" @click="emits('closeAllTags')">
+		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeAllTags')">
 			<el-icon size="10"><Close></Close></el-icon>
 			<span>关闭全部</span>
 		</div>
@@ -31,8 +31,10 @@
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
 import { useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps } from 'vue'
+import { useRoute } from 'vue-router'
 
-const store: any = useAppStore()
+const route = useRoute()
+const appStore = useAppStore()
 
 const props = defineProps({
 	currentMenuTag: {

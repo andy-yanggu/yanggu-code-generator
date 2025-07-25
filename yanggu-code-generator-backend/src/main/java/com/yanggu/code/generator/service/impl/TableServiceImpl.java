@@ -308,6 +308,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
         wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
         wrapper.like(MybatisUtil.isNotEmpty(query.getTableName()), TableEntity::getTableName, query.getTableName());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getClassName()), TableEntity::getClassName, query.getClassName());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());

@@ -2,7 +2,7 @@
 	<el-card class="layout-query" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<el-form-item label="连接名称" prop="connName">
-				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名"></el-input>
+				<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名称"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">
 				<el-select v-model="state.queryForm.dbType" style="width: 160px" clearable placeholder="请选择数据库类型">
@@ -43,8 +43,24 @@
 			></el-table-column>
 			<el-table-column prop="connUrl" label="URL" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="datasourceDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
-			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column
+				prop="createTime"
+				label="创建时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
+			<el-table-column
+				prop="updateTime"
+				label="修改时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="datasourceTestHandle(scope.row.id)">测试</el-button>

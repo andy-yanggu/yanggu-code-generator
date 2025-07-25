@@ -45,8 +45,24 @@
 				align="center"
 			></el-table-column>
 			<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
-			<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
+			<el-table-column
+				prop="createTime"
+				label="创建时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
+			<el-table-column
+				prop="updateTime"
+				label="修改时间"
+				show-overflow-tooltip
+				width="110"
+				header-align="center"
+				align="center"
+				sortable="custom"
+			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
 					<el-button type="primary" link @click="handlerTemplate(scope.row)">模板配置</el-button>

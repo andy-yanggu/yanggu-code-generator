@@ -4,6 +4,9 @@
 			<el-form-item label="表名" prop="tableName">
 				<el-input v-model="state.queryForm.tableName" clearable placeholder="请输入表名"></el-input>
 			</el-form-item>
+			<el-form-item label="类名" prop="className">
+				<el-input v-model="state.queryForm.className" clearable placeholder="请输入类名"></el-input>
+			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
@@ -57,6 +60,7 @@ const state: IHooksOptions = reactive({
 	createdIsNeed: false,
 	queryForm: {
 		tableName: '',
+		className: '',
 		projectId: null
 	}
 })

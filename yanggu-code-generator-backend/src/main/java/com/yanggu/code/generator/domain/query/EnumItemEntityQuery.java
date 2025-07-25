@@ -35,6 +35,12 @@ public class EnumItemEntityQuery extends PageQuery<EnumItemEntity> implements Se
     private String enumItemName;
 
     /**
+     * 枚举项编码
+     */
+    @Schema(description = "枚举项编码")
+    private String enumItemCode;
+
+    /**
      * 排序字段列表，默认按enumItemOrder升序和updateTime降序和id降序
      */
     @Schema(description = "排序字段列表，默认按enumItemOrder升序和updateTime降序和id降序")

@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" title="请选择模板、表和枚举" width="75%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" title="请选择模板、表和枚举" width="85%" @close="dialogVisible = false">
 		<el-container>
 			<!-- 步骤条 -->
 			<el-header height="60px">

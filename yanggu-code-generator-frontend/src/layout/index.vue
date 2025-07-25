@@ -11,7 +11,7 @@
 				<el-scrollbar class="layout-scrollbar">
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
-							<keep-alive :include="store.cacheListRef">
+							<keep-alive :include="store.cacheList" :exclude="['Redirect']">
 								<component :is="Component" :key="route.fullPath"></component>
 							</keep-alive>
 						</router-view>

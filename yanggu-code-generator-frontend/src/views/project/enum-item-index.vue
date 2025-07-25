@@ -21,8 +21,24 @@
 				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemOrder" label="枚举项排序" header-align="center" align="center"></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" header-align="center" align="center" sortable="custom"></el-table-column>
-				<el-table-column prop="updateTime" label="修改时间" header-align="center" align="center" sortable="custom"></el-table-column>
+				<el-table-column
+					prop="createTime"
+					label="创建时间"
+					show-overflow-tooltip
+					width="110"
+					header-align="center"
+					align="center"
+					sortable="custom"
+				></el-table-column>
+				<el-table-column
+					prop="updateTime"
+					label="修改时间"
+					show-overflow-tooltip
+					width="110"
+					header-align="center"
+					align="center"
+					sortable="custom"
+				></el-table-column>
 			</el-table>
 			<el-pagination
 				:current-page="state.pageNum"

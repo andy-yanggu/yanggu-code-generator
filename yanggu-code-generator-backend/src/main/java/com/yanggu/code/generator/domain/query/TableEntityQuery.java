@@ -32,4 +32,10 @@ public class TableEntityQuery extends PageQuery<TableEntity> implements Serializ
     @Schema(description = "表名")
     private String tableName;
 
+    /**
+     * 类名
+     */
+    @Schema(description = "类名")
+    private String className;
+
 }

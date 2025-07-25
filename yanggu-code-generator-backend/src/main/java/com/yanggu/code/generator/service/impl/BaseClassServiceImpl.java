@@ -189,6 +189,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
 
         //过滤字段
+        wrapper.like(MybatisUtil.isNotEmpty(query.getPackageName()), BaseClassEntity::getPackageName, query.getPackageName());
         wrapper.like(MybatisUtil.isNotEmpty(query.getClassName()), BaseClassEntity::getClassName, query.getClassName());
 
         //排序字段
