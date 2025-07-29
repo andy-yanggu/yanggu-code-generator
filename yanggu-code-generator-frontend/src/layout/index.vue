@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<el-aside class="layout-sidebar" :style="{ width: store.isCollapseRef ? '64px' : '200px' }">
+		<el-aside class="layout-sidebar" :style="{ width: appStore.isCollapseRef ? '64px' : '200px' }">
 			<sidebar></sidebar>
 		</el-aside>
 		<el-container direction="vertical">
@@ -11,7 +11,7 @@
 				<el-scrollbar class="layout-scrollbar">
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
-							<keep-alive :include="store.cacheList" :exclude="['Redirect']">
+							<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
 								<component :is="Component" :key="route.fullPath"></component>
 							</keep-alive>
 						</router-view>
@@ -27,7 +27,7 @@ import sidebar from '@/layout/components/sidebar/index.vue'
 import navbar from '@/layout/components/navbar/index.vue'
 import { useAppStore } from '@/store/app-store'
 
-const store = useAppStore()
+const appStore = useAppStore()
 </script>
 
 <style scoped></style>

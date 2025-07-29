@@ -29,8 +29,8 @@
 
 <script setup lang="ts">
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
-import { useAppStore } from '@/store/app-store'
-import { defineEmits, defineProps } from 'vue'
+import { NavbarTag, useAppStore } from '@/store/app-store'
+import { defineEmits, defineProps, PropType } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -38,7 +38,7 @@ const appStore = useAppStore()
 
 const props = defineProps({
 	currentMenuTag: {
-		type: Object,
+		type: Object as PropType<NavbarTag>,
 		required: true
 	},
 	currentMenuTagIndex: {

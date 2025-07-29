@@ -1,6 +1,6 @@
 <template>
 	<el-breadcrumb separator="/">
-		<el-breadcrumb-item v-for="item in store.breadcrumbListRef" :key="item.title">
+		<el-breadcrumb-item v-for="item in appStore.breadcrumbListRef" :key="item.title">
 			<template #default>
 				<span style="display: inline-flex; align-items: center; gap: 5px">
 					<svg-icon :icon="item.icon"></svg-icon>
@@ -15,5 +15,5 @@
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 import { useAppStore } from '@/store/app-store'
 
-const store = useAppStore()
+const appStore = useAppStore()
 </script>

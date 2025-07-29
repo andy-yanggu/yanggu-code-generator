@@ -75,8 +75,10 @@ onMounted(() => {
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-						const movedTag = store.tagsListRef.splice(oldIndex!, 1)[0]
-						store.tagsListRef.splice(newIndex!, 0, movedTag)
+						const newTags = [...store.tagsListRef]
+						const movedTag = newTags.splice(oldIndex!, 1)[0]
+						newTags.splice(newIndex!, 0, movedTag)
+						store.addAllTags(newTags)
 					}
 				}
 			})
@@ -160,6 +162,7 @@ const refreshCurrentTag = () => {
 		path: '/redirect' + currentMenuTag.value.fullPath,
 		query: route.query
 	})
+	// 删除缓存组件
 	store.removeCacheComponent(currentMenuTag.value.name)
 	closeTagMenu()
 }
