@@ -30,7 +30,7 @@
 			<el-table-column prop="updateTime" label="更新时间" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="enumItemIndexShow(scope.row.id)">查看枚举项</el-button>
+					<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id)">查看枚举项</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -55,7 +55,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { enumEntityPageApi } from '@/api/enum'
 import EnumItemIndex from '@/views/project/enum-item-index.vue'
-import { Refresh, Search } from '@element-plus/icons-vue'
+import { Refresh, Search, View } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
 const state: IHooksOptions = reactive({
