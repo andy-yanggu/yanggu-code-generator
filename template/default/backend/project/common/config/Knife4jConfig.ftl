@@ -16,12 +16,21 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "web.knife4j.enable", havingValue = "true", matchIfMissing = true)
 public class Knife4jConfig {
 
+    /**
+     * 应用名称
+     */    
     @Value("<#noparse>${spring.application.name:}</#noparse>")
     private String applicationName;
 
+    /**
+     * 应用版本
+     */
     @Value("<#noparse>${spring.application.version:}</#noparse>")
     private String version;
 
+    /**
+     * 应用描述
+     */
     @Value("<#noparse>${spring.application.description:}</#noparse>")
     private String description;
 
