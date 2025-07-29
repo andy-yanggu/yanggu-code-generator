@@ -23,8 +23,8 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" @click="submitHandle()">确定</el-button>
+			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -34,6 +34,7 @@ import { reactive } from 'vue'
 import { datasourceDetailApi, datasourceSubmitApi } from '@/api/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { Check, Close } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 

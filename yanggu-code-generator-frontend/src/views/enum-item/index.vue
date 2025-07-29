@@ -40,7 +40,7 @@
 					prop="createTime"
 					label="创建时间"
 					show-overflow-tooltip
-					width="110"
+					width="120"
 					header-align="center"
 					align="center"
 					sortable="custom"
@@ -49,15 +49,15 @@
 					prop="updateTime"
 					label="修改时间"
 					show-overflow-tooltip
-					width="110"
+					width="120"
 					header-align="center"
 					align="center"
 					sortable="custom"
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -83,7 +83,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/enum-item/add-or-update.vue'
 import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/enum-item'
-import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const enumIdRef = ref()
 const state: IHooksOptions = reactive({

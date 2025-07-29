@@ -54,8 +54,8 @@
 		</el-card>
 		<template #footer>
 			<div class="footer-buttons">
-				<el-button @click="dialogVisible = false">取消</el-button>
-				<el-button type="primary" @click="generateCode()">生成代码</el-button>
+				<el-button type="primary" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
+				<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 			</div>
 		</template>
 	</el-dialog>
@@ -68,7 +68,7 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
 import { templateEntityPageApi } from '@/api/template'
-import { Refresh, Search } from '@element-plus/icons-vue'
+import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['clearSelection'])

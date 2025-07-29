@@ -13,7 +13,7 @@ export const menuRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/icon-search',
-		component: () => import('@/components/auto-icon-list.vue'),
+		component: () => import('@/views/auto-icon-list.vue'),
 		name: 'IconSearch',
 		meta: {
 			title: '图标搜索',

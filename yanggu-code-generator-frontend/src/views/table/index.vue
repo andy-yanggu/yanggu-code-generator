@@ -53,7 +53,7 @@
 				prop="createTime"
 				label="创建时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
@@ -62,19 +62,19 @@
 				prop="updateTime"
 				label="修改时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
 			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link @click="generatorCode(scope.row)">生成代码</el-button>
-					<el-button type="primary" link @click="editHandle(scope.row)">字段配置</el-button>
-					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
-					<el-button type="primary" link @click="syncHandle(scope.row)">字段同步</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成代码</el-button>
+					<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">字段配置</el-button>
+					<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
+					<el-button type="primary" link :icon="Refresh" @click="syncHandle(scope.row)">字段同步</el-button>
+					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -121,7 +121,7 @@ import { ElMessageBox } from 'element-plus'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Delete, DocumentAdd, Refresh, Search, Upload } from '@element-plus/icons-vue'
+import { Delete, DocumentAdd, Edit, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTable'

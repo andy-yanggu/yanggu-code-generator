@@ -49,7 +49,7 @@
 				prop="createTime"
 				label="创建时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
@@ -58,17 +58,17 @@
 				prop="updateTime"
 				label="修改时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
 			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="handlerTemplate(scope.row)">模板配置</el-button>
-					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link :icon="Setting" @click="handlerTemplate(scope.row)">模板配置</el-button>
+					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link :icon="CopyDocument" @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
+					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -104,7 +104,7 @@ import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntity
 import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Delete, Download, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'

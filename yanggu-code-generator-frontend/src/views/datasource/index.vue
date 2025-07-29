@@ -47,7 +47,7 @@
 				prop="createTime"
 				label="创建时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
@@ -56,16 +56,16 @@
 				prop="updateTime"
 				label="修改时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
 			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="datasourceTestHandle(scope.row.id)">测试</el-button>
-					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(scope.row.id)">测试</el-button>
+					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -94,7 +94,7 @@ import { ElMessage } from 'element-plus'
 import { datasourceDeleteListApi, datasourceEntityPageApi, datasourceTestApi } from '@/api/datasource'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Connection, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenDatasource'

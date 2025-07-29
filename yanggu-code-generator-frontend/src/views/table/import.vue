@@ -15,7 +15,7 @@
 				<el-input v-model="queryForm.tableName" placeholder="请输入表名" clearable style="width: 100%"></el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" @click="getTableList()">查询</el-button>
+				<el-button type="primary" :icon="Search" @click="getTableList()">查询</el-button>
 			</el-form-item>
 		</el-form>
 		<el-table :data="tableList" border style="width: 100%" :max-height="400" @selection-change="selectionChangeHandle">
@@ -25,8 +25,8 @@
 			<el-table-column prop="tableComment" label="注释" header-align="center" align="center"></el-table-column>
 		</el-table>
 		<template #footer>
-			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" @click="submitHandle()">确定</el-button>
+			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -36,6 +36,7 @@ import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { tableImportApi } from '@/api/table'
 import { projectEntityListApi, projectTableListApi } from '@/api/project'
+import { Check, Close, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 

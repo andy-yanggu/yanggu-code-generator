@@ -50,7 +50,7 @@
 				prop="createTime"
 				label="创建时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
@@ -59,18 +59,18 @@
 				prop="updateTime"
 				label="修改时间"
 				show-overflow-tooltip
-				width="110"
+				width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
 			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
-					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link @click="previewHandle(scope.row)">预览</el-button>
-					<el-button type="primary" link @click="generatorHandler(scope.row)">生成代码</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
+					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
+					<el-button type="primary" link :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-button>
+					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -109,7 +109,7 @@ import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/en
 import { getLabel } from '@/utils/enum'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Delete, DocumentAdd, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Delete, DocumentAdd, Edit, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenEnum'
