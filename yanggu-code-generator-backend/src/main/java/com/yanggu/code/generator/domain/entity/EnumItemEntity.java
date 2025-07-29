@@ -15,7 +15,7 @@ import java.io.Serializable;
  * 枚举项Entity实体类
  */
 @Data
-@TableName(value = "gen_enum_item", schema = "yanggu_code_generator")
+@TableName(value = "gen_enum_item")
 @EqualsAndHashCode(callSuper = true)
 public class EnumItemEntity extends BaseEntity implements Serializable {
 
