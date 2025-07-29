@@ -8,7 +8,16 @@ export const menuRoutes: RouteRecordRaw[] = [
 		name: 'Index',
 		meta: {
 			title: '首页',
-			icon: 'icon-detail'
+			icon: 'icon-dashboard-fill'
+		}
+	},
+	{
+		path: '/icon-search',
+		component: () => import('@/components/auto-icon-list.vue'),
+		name: 'IconSearch',
+		meta: {
+			title: '图标搜索',
+			icon: 'icon-icon-test'
 		}
 	},
 	{

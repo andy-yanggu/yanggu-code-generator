@@ -78,7 +78,7 @@
 		</el-form>
 		<template #footer>
 			<el-button @click="visible = false">取消</el-button>
-			<el-button type="primary" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" @click="submitProjectHandle()">确定</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -136,7 +136,6 @@ const state: FormOptions = reactive({
 		generatorType: null
 	},
 	emit: emit,
-	message: '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看',
 	duration: 2000
 })
 const dataRules = reactive({
@@ -156,6 +155,13 @@ const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
 
 const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
+
+const submitProjectHandle = () => {
+	if (!dataForm.id) {
+		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+	}
+	submitHandle()
+}
 
 defineExpose({
 	init
