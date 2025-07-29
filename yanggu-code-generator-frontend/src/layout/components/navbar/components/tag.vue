@@ -1,6 +1,6 @@
 <template>
 	<!-- 防止tag过多添加滚动条 -->
-	<el-scrollbar>
+	<el-scrollbar class="tag-scrollbar">
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
@@ -209,6 +209,11 @@ const closeRightTag = () => {
 </script>
 
 <style scoped>
+.tag-scrollbar {
+	/* 确保滚动条容器宽度占满父级并限制高度 */
+	width: 100%;
+	max-height: calc(var(--theme-header-height) - 30px);
+}
 .tag-wrapper {
 	/* 保持原有样式不变 */
 	margin-top: 15px;

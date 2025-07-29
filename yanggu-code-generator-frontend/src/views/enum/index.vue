@@ -64,13 +64,22 @@
 				align="center"
 				sortable="custom"
 			></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 				<template #default="scope">
-					<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
-					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
-					<el-button type="primary" link :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-button>
-					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button-group>
+						<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
+						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
+						<el-dropdown>
+							<el-button type="primary" link :icon="More">更多</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-dropdown-item>
+									<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -79,6 +88,7 @@
 			:page-sizes="state.pageSizes"
 			:page-size="state.pageSize"
 			:total="state.total"
+			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
 			@current-change="currentChangeHandle"
@@ -109,7 +119,7 @@ import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/en
 import { getLabel } from '@/utils/enum'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Delete, DocumentAdd, Edit, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
+import { Delete, DocumentAdd, Edit, More, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenEnum'

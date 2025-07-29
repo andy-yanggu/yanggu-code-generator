@@ -63,7 +63,7 @@
 				align="center"
 				sortable="custom"
 			></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="180">
 				<template #default="scope">
 					<el-button type="primary" link :icon="Setting" @click="handlerTemplate(scope.row)">模板配置</el-button>
 					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -77,6 +77,7 @@
 			:page-sizes="state.pageSizes"
 			:page-size="state.pageSize"
 			:total="state.total"
+			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
 			@current-change="currentChangeHandle"

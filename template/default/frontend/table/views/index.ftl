@@ -81,8 +81,8 @@
         </#list>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -91,6 +91,7 @@
 			:page-sizes="state.pageSizes"
 			:page-size="state.pageSize"
 			:total="state.total"
+			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
 			@current-change="currentChangeHandle"
@@ -106,8 +107,8 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
 import { reactive } from 'vue'
-import AddOrUpdate from '@/views/functionNameKebabCase/add-or-update.vue'
-import { Delete, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import AddOrUpdate from '@/views/${functionNameKebabCase}/add-or-update.vue'
+import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionNameKebabCase}'
 <#list queryList as field>
 <#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>

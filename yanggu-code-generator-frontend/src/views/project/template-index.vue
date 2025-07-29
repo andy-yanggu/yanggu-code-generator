@@ -76,6 +76,7 @@
 			:page-sizes="state.pageSizes"
 			:page-size="state.pageSize"
 			:total="state.total"
+			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
 			@current-change="currentChangeHandle"
