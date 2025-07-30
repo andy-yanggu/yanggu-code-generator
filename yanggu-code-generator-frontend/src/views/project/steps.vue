@@ -17,8 +17,8 @@
 			</el-main>
 			<!-- 操作按钮 -->
 			<el-footer height="60px" style="text-align: center">
-				<el-button v-if="activeRef > 0" :icon="ArrowLeft" @click="prevStep()">上一步</el-button>
-				<el-button v-if="activeRef < 2" :icon="ArrowRight" @click="nextStep()">下一步</el-button>
+				<el-button v-if="activeRef > 0" type="primary" :icon="ArrowLeft" @click="prevStep()">上一步</el-button>
+				<el-button v-if="activeRef < 2" type="primary" :icon="ArrowRight" @click="nextStep()">下一步</el-button>
 				<el-button v-if="activeRef === 2" type="success" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
 			</el-footer>
 		</el-container>

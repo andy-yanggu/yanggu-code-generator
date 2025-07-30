@@ -10,7 +10,7 @@
 				<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
 			</el-form-item>
 			<el-form-item>
-				<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
+				<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
 			</el-form-item>
 			<el-form-item>
 				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
@@ -64,22 +64,32 @@
 				align="center"
 				sortable="custom"
 			></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button-group>
-						<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">配置</el-button>
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
-						<el-dropdown>
-							<el-button type="primary" link :icon="More">更多</el-button>
-							<template #dropdown>
-								<el-dropdown-menu>
-									<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-dropdown-item>
-									<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
-								</el-dropdown-menu>
-							</template>
-						</el-dropdown>
-					</el-button-group>
+					<el-row :gutter="5">
+						<el-col :span="12">
+							<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">配置</el-button>
+						</el-col>
+						<el-col :span="12">
+							<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						</el-col>
+					</el-row>
+					<el-row :gutter="5">
+						<el-col :span="12">
+							<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
+						</el-col>
+						<el-col :span="12">
+							<el-dropdown>
+								<el-button type="primary" link class="more-button" :icon="More">更多</el-button>
+								<template #dropdown>
+									<el-dropdown-menu>
+										<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-dropdown-item>
+										<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
+									</el-dropdown-menu>
+								</template>
+							</el-dropdown>
+						</el-col>
+					</el-row>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -204,3 +214,14 @@ const {
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>
+
+<style scoped>
+.more-button {
+	display: inline-flex;
+	align-items: center;
+	height: 24px; /* 强制统一高度 */
+	line-height: 1; /* 统一行高 */
+	padding: 0; /* 去掉内边距 */
+	vertical-align: middle;
+}
+</style>

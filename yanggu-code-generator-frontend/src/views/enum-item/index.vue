@@ -9,7 +9,7 @@
 					<el-input v-model="state.queryForm.enumItemCode" placeholder="请输入枚举项编码" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" :icon="Search" @click="getDataList()">查询</el-button>
+					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
