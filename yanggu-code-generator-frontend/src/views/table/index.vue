@@ -39,7 +39,14 @@
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="databaseName" label="数据库名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
+			<el-table-column
+				prop="databaseName"
+				label="数据库名称"
+				show-overflow-tooltip
+				header-align="center"
+				align="center"
+				width="100"
+			></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="generatorType"

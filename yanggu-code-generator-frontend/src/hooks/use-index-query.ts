@@ -136,6 +136,8 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			} else {
 				state.dataList = res.data
 				state.total = res.data.length
+				state.pageNum = 1
+				state.pageSize = res.data.length
 			}
 			state.dataListLoading = false
 		})

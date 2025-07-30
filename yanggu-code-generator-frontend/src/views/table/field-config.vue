@@ -2,7 +2,15 @@
 	<el-dialog v-model="visible" title="字段配置" width="80%" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性设置" name="field">
-				<el-table ref="fieldTable" border row-key="id" class="sortable-row-gen" :data="getFieldListData(0)" :show-overflow-tooltip="true">
+				<el-table
+					ref="fieldTable"
+					v-loading="queryLoading"
+					border
+					row-key="id"
+					class="sortable-row-gen"
+					:data="getFieldListData(0)"
+					:show-overflow-tooltip="true"
+				>
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名称" header-align="center" align="center" width="100"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center">
@@ -162,7 +170,7 @@
 			</el-tab-pane>
 		</el-tabs>
 		<template #footer>
-			<el-button type="primary" :icon="Check" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -174,12 +182,15 @@ import { ElMessage } from 'element-plus/es'
 import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/table-field'
 import { enumEntityListApi } from '@/api/enum'
 import { fieldTypeListApi } from '@/api/field-type'
+import { Check, Close } from '@element-plus/icons-vue'
 
 const activeName = ref()
 const fieldTable = ref()
 const formTable = ref()
 const gridTable = ref()
 const queryTable = ref()
+const queryLoading = ref(false)
+const submitLoading = ref(false)
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
@@ -226,11 +237,12 @@ const formTypeList = reactive([
 
 const enumList = ref([])
 
-const init = (row: any) => {
+const init = async (row: any) => {
 	visible.value = true
 	const id = row.id
 	projectIdRef.value = row.projectId
 	tableId.value = id
+	queryLoading.value = true
 
 	// 重置表单数据
 	if (dataFormRef.value) {
@@ -239,17 +251,23 @@ const init = (row: any) => {
 
 	activeName.value = 'field'
 
-	getTableFieldList(id)
-	const queryForm = {
-		projectId: projectIdRef.value
+	try {
+		// 并行执行所有异步请求
+		await Promise.all([
+			getTableFieldList(id),
+			enumEntityListApi({ projectId: projectIdRef.value }).then(res => {
+				enumList.value = res.data
+			}),
+			getFieldTypeList()
+		])
+	} catch (error) {
+		ElMessage.error('数据加载失败')
+	} finally {
+		queryLoading.value = false
 	}
-	enumEntityListApi(queryForm).then(res => {
-		enumList.value = res.data
-	})
-	getFieldTypeList()
 }
 
-const getTableFieldList = (id: number) => {
+const getTableFieldList = (id: number): void => {
 	const queryForm = {
 		tableId: id
 	}
@@ -284,12 +302,14 @@ const getFieldTypeList = async () => {
 
 // 表单提交
 const submitHandle = () => {
+	submitLoading.value = true
 	tableFieldSubmitListApi(fieldList.value).then(() => {
 		ElMessage.success({
 			message: '操作成功',
 			duration: 500,
 			onClose: () => {
 				visible.value = false
+				submitLoading.value = false
 				emit('refreshDataList')
 			}
 		})
