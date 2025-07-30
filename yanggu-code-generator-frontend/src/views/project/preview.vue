@@ -154,7 +154,7 @@ const copyPath = (path: string) => {
 }
 
 //下载单个模板代码
-const downloadTemplateData = item => {
+const downloadTemplateData = (item: any) => {
 	if (preview.generatorType === 0) {
 		let id
 		if (item.templateGroupType === 0) {
@@ -165,11 +165,12 @@ const downloadTemplateData = item => {
 			id = item.enumId
 		} else {
 			ElMessage.error('暂不支持该类型模板下载')
+			return
 		}
 		const params = {
-			templateGroupType: item.templateGroupType,
 			id: id,
-			templateId: item.templateId
+			templateId: item.templateId,
+			templateGroupType: item.templateGroupType
 		}
 		generatorProjectDownloadSingleApi(params)
 	} else if (preview.generatorType === 1) {
@@ -181,6 +182,9 @@ const downloadTemplateData = item => {
 		} else if (item.templateGroupType === 1) {
 			dataForm.tableIdList = [item.tableId]
 			dataForm.tableTemplateIdList = [item.templateId]
+		} else if (item.templateGroupType === 2) {
+			dataForm.enumIdList = [item.enumId]
+			dataForm.enumTemplateIdList = [item.templateId]
 		}
 		generatorProjectDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({

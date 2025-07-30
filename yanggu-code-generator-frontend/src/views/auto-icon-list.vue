@@ -1,14 +1,13 @@
 <template>
-	<el-input v-model="searchText" placeholder="请输入图标名称" clearable @input="filterIcons"></el-input>
+	<el-input v-model="searchText" placeholder="请输入图标名称" clearable @input="filterIcons()"></el-input>
 	<div class="icon-grid">
 		<el-row :gutter="20">
 			<el-col v-for="iconName in allIcons" :key="iconName" :span="3" class="icon-col">
 				<div class="icon-item" @click="selectIcon(iconName)">
-					<el-tooltip :content="iconName" placement="bottom" effect="light">
-						<div class="icon-wrapper">
-							<svg-icon :icon="iconName" class="large-icon"></svg-icon>
-						</div>
-					</el-tooltip>
+					<div class="icon-wrapper">
+						<svg-icon :icon="iconName" class="large-icon"></svg-icon>
+						<el-text size="small" truncated>{{ iconName }}</el-text>
+					</div>
 				</div>
 			</el-col>
 		</el-row>
@@ -49,7 +48,6 @@ const loadIcons = async () => {
 		}, 100)
 	} catch (error) {
 		console.error('提取图标失败:', error)
-		// 备用方案：使用预定义的图标列表]
 		loading.value = false
 	}
 }
@@ -77,7 +75,7 @@ const selectIcon = (iconName: string) => {
 			.catch(err => {
 				console.error('复制失败:', err)
 				// 可以添加失败提示
-				// ElMessage.error('复制失败')
+				ElMessage.error('复制失败')
 			})
 	} else {
 		// 不支持时的降级处理
@@ -110,7 +108,7 @@ onMounted(() => {
 	border-radius: 8px;
 	cursor: pointer;
 	transition: all 0.3s;
-	height: 35px;
+	height: 100px; /* 增加高度以容纳图标和文字 */
 	background-color: #fff;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -124,6 +122,7 @@ onMounted(() => {
 
 .icon-wrapper {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
@@ -134,6 +133,7 @@ onMounted(() => {
 	font-size: 36px;
 	color: #606266;
 	transition: all 0.3s;
+	margin-bottom: 10px;
 }
 
 .icon-item:hover .large-icon {

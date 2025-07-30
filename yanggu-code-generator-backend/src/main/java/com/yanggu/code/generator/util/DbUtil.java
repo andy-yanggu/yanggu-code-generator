@@ -65,9 +65,11 @@ public class DbUtil {
 
             //查询数据
             PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, true));
+            String databaseName = getDatabaseName(datasource);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 TableImportVO table = new TableImportVO();
+                table.setDatabaseName(databaseName);
                 table.setTableName(rs.getString(query.tableName()));
                 table.setTableComment(rs.getString(query.tableComment()));
                 tableList.add(table);

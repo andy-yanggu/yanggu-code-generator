@@ -88,60 +88,78 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		}
 	})
 
-	const query = () => {
-		queryRef.value.validate((valid: boolean) => {
-			if (!valid) {
-				return false
+	// 执行实际的查询逻辑
+	const executeQuery = () => {
+		//解构查询条件
+		const queryForm = {
+			...state.queryForm
+		}
+		//如果queryForm包含dateRange
+		if (queryForm.hasOwnProperty('dateRange')) {
+			if (queryForm.dateRange && queryForm.dateRange.length === 2) {
+				queryForm.startDate = queryForm.dateRange[0]
+				queryForm.endDate = queryForm.dateRange[1]
 			}
+			delete queryForm.dateRange
+		}
 
-			//解构查询条件
-			const queryForm = {
-				...state.queryForm
+		//如果queryForm包含dateTimeRange
+		if (queryForm.hasOwnProperty('dateTimeRange')) {
+			if (queryForm.dateTimeRange && queryForm.dateTimeRange.length === 2) {
+				queryForm.startTime = queryForm.dateTimeRange[0]
+				queryForm.endTime = queryForm.dateTimeRange[1]
 			}
-			//如果queryForm包含dateRange
-			if (queryForm.hasOwnProperty('dateRange')) {
-				if (queryForm.dateRange && queryForm.dateRange.length === 2) {
-					queryForm.startDate = queryForm.dateRange[0]
-					queryForm.endDate = queryForm.dateRange[1]
-				}
-				delete queryForm.dateRange
-			}
+			delete queryForm.dateTimeRange
+		}
 
-			//如果queryForm包含dateTimeRange
-			if (queryForm.hasOwnProperty('dateTimeRange')) {
-				if (queryForm.dateTimeRange && queryForm.dateTimeRange.length === 2) {
-					queryForm.startTime = queryForm.dateTimeRange[0]
-					queryForm.endTime = queryForm.dateTimeRange[1]
-				}
-				delete queryForm.dateTimeRange
-			}
+		//如果是分页，添加分页参数
+		if (state.isPage) {
+			queryForm.pageNum = state.pageNum
+			queryForm.pageSize = state.pageSize
+		}
 
-			//如果是分页，添加分页参数
+		//排序字段
+		if (state.order) {
+			queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
+		}
+
+		state.dataListLoading = true
+
+		//调用接口
+		state.dataListApi!(queryForm).then((res: any) => {
 			if (state.isPage) {
-				queryForm.pageNum = state.pageNum
-				queryForm.pageSize = state.pageSize
+				state.dataList = res.data.records
+				state.total = res.data.total
+			} else {
+				state.dataList = res.data
+				state.total = res.data.length
+				state.pageNum = 1
+				state.pageSize = res.data.length
 			}
+			state.dataListLoading = false
+		})
+	}
 
-			//排序字段
-			if (state.order) {
-				queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
+	// 异步验证表单
+	const validateQueryForm = (): Promise<boolean> => {
+		return new Promise(resolve => {
+			if (queryRef.value) {
+				queryRef.value.validate((valid: boolean) => {
+					resolve(valid)
+				})
+			} else {
+				resolve(true)
 			}
+		})
+	}
 
-			state.dataListLoading = true
-
-			//调用接口
-			state.dataListApi!(queryForm).then((res: any) => {
-				if (state.isPage) {
-					state.dataList = res.data.records
-					state.total = res.data.total
-				} else {
-					state.dataList = res.data
-					state.total = res.data.length
-					state.pageNum = 1
-					state.pageSize = res.data.length
-				}
-				state.dataListLoading = false
-			})
+	const query = () => {
+		// 先进行表单验证，验证通过后再执行查询
+		validateQueryForm().then(valid => {
+			if (!valid) {
+				return
+			}
+			executeQuery()
 		})
 	}
 

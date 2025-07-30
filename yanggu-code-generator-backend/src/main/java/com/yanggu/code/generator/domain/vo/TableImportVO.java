@@ -17,6 +17,12 @@ public class TableImportVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 数据库名称
+     */
+    @Schema(description = "数据库名称")
+    private String databaseName;
+
+    /**
      * 表名
      */
     @Schema(description = "表名")

@@ -29,7 +29,7 @@ public class TemplateUtil {
             template.process(dataModel, sw);
             return sw.toString();
         } catch (Exception e) {
-            log.error("模板渲染失败: {}", e.getMessage(), e);
+            log.error("模板渲染失败，模板名称: {}，异常信息: {}", templateName, e.getMessage(), e);
             throw new BusinessException("渲染模板失败，请检查模板语法", e);
         }
     }
