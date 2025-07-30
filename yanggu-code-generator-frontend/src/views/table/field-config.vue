@@ -1,7 +1,7 @@
 <template>
 	<el-dialog v-model="visible" title="字段配置" width="80%" @close="visible = false">
 		<el-tabs v-model="activeName">
-			<el-tab-pane label="属性设置" name="field">
+			<el-tab-pane label="属性配置" name="field">
 				<el-table
 					ref="fieldTable"
 					v-loading="queryLoading"

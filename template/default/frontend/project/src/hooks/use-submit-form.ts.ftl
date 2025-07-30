@@ -38,6 +38,7 @@ export const useSubmitForm = (options: FormOptions) => {
 
 	const visible = ref(false) // 弹窗可见性
 	const dataForm = reactive({ ...initFormData }) // 表单数据
+	const submitLoading = ref(false) // 提交按钮loading状态
 	const dataFormRef = ref() // 表单ref
 
 	// 初始化表单
@@ -75,11 +76,14 @@ export const useSubmitForm = (options: FormOptions) => {
 			// 提交之前操作
 			submitBefore()
 
+			submitLoading.value = true
+
 			submitApi(dataForm).then(() => {
 				ElMessage.success({
 					message: message,
 					duration: duration,
 					onClose: () => {
+						submitLoading.value = false
 						visible.value = false
 						emit('refreshDataList')
 					}
@@ -93,6 +97,7 @@ export const useSubmitForm = (options: FormOptions) => {
 		dataForm,
 		dataFormRef,
 		init,
-		submitHandle
+		submitHandle,
+		submitLoading
 	}
 }

@@ -20,37 +20,37 @@ public class CorsConfig {
     /**
      * 跨域过期时间。单位：秒
      */
-    @Value("${web.cors.max-age:3600}")
+    @Value("<#noparse>${web.cors.max-age:3600}</#noparse>")
     private Long maxAge;
 
     /**
      * 跨域是否传递cookie
      */
-    @Value("${web.cors.allow-credentials:true}")
+    @Value("<#noparse>${web.cors.allow-credentials:true}</#noparse>")
     private Boolean allowCredentials;
 
     /**
      * 允许跨域的请求头
      */
-    @Value("#{'${web.cors.allowed-headers:*}'.split(',')}")
+    @Value("<#noparse>#{'${web.cors.allowed-headers:*}'.split(',')}</#noparse>")
     private List<String> allowedHeaders;
 
     /**
      * 允许跨域的方法
      */
-    @Value("#{'${web.cors.allowed-methods:*}'.split(',')}")
+    @Value("<#noparse>#{'${web.cors.allowed-methods:*}'.split(',')}</#noparse>")
     private List<String> allowedMethods;
 
     /**
      * 允许跨域的源
      */
-    @Value("#{'${web.cors.allowed-origins:*}'.split(',')}")
+    @Value("<#noparse>#{'${web.cors.allowed-origins:*}'.split(',')}</#noparse>")
     private List<String> allowedOrigins;
 
     /**
      * 允许跨域的响应头
      */
-    @Value("#{'${web.cors.expose-headers:Content-Disposition,Authorization,token,Cookie}'.split(',')}")
+    @Value("<#noparse>#{'${web.cors.expose-headers:Content-Disposition,Authorization,token,Cookie}'.split(',')}</#noparse>")
     private List<String> exposedHeaders;
 
     @Bean

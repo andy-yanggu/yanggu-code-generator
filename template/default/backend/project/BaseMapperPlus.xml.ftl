@@ -16,7 +16,7 @@
             ORDER BY
             <foreach collection="query.orderItemList" item="order" separator=",">
                 <if test="@${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@isNotEmpty(columnPrefix)">
-                    ${columnPrefix}.
+                    <#noparse>${columnPrefix}</#noparse>.
                 </if>
                 <#noparse>${columnPrefix}.${@</#noparse>${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil@toUnderlineCase(order.column)} <if test="order.asc">ASC</if><if test="!order.asc">DESC</if>
             </foreach>
