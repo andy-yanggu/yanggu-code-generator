@@ -108,7 +108,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		path: '/',
 		name: 'Layout',
 		component: () => import('@/layout/index.vue'),
-		redirect: '/gen/project',
+		redirect: '/index',
 		children: [...menuRoutes]
 	},
 	{

@@ -77,7 +77,7 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button type="primary" :icon="Check" @click="submitProjectHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitProjectHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -155,7 +155,7 @@ const tableTemplateGroupList = ref([])
 const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
 
-const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
+const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const submitProjectHandle = () => {
 	if (!dataForm.id) {

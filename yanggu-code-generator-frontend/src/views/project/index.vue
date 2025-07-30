@@ -69,10 +69,12 @@
 			></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="180">
 				<template #default="scope">
-					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成代码</el-button>
-					<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
-					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button-group>
+						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成代码</el-button>
+						<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>

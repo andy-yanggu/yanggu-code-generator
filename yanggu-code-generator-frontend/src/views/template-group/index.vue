@@ -63,12 +63,14 @@
 				align="center"
 				sortable="custom"
 			></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="180">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link :icon="Setting" @click="handlerTemplate(scope.row)">模板配置</el-button>
-					<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-					<el-button type="primary" link :icon="CopyDocument" @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
-					<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					<el-button-group>
+						<el-button type="primary" link :icon="Setting" @click="handlerTemplate(scope.row)">配置</el-button>
+						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="CopyDocument" @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>

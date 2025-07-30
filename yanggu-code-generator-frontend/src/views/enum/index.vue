@@ -67,7 +67,7 @@
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 				<template #default="scope">
 					<el-button-group>
-						<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">枚举配置</el-button>
+						<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">配置</el-button>
 						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 						<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
 						<el-dropdown>

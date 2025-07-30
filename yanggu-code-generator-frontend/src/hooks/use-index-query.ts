@@ -199,12 +199,10 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			type: 'warning'
 		})
 			.then(() => {
-				if (state.deleteListApi) {
-					state.deleteListApi(data).then(() => {
-						ElMessage.success('删除成功')
-						query()
-					})
-				}
+				state.deleteListApi!(data).then(() => {
+					ElMessage.success('删除成功')
+					query()
+				})
 			})
 			.catch(() => {})
 	}

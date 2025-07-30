@@ -15,7 +15,7 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button type="primary" :icon="Check" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -53,7 +53,7 @@ const dataRules = reactive({
 	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle } = useSubmitForm(state)
+const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const initData = (enumId: number, id?: number) => {
 	dataForm.enumId = enumId
