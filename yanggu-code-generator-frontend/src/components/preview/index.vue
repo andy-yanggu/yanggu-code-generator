@@ -59,7 +59,7 @@
 import { computed, nextTick, reactive, ref } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/code-mirror.vue'
-import { generatorProjectDownloadLocalApi, generatorProjectDownloadSingleApi, generatorProjectPreviewApi } from '@/api/generator'
+import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
 import { Expand, Fold } from '@element-plus/icons-vue'
 
 const currentNodeKey = ref()
@@ -69,7 +69,8 @@ const preview = reactive({
 	title: '代码预览',
 	dataList: [],
 	projectId: 0,
-	generatorType: null,
+	id: -1,
+	generatorType: -1,
 	treeData: [],
 	item: {
 		filePath: '',
@@ -104,14 +105,18 @@ const handleTreeNodeClick = (data: Tree) => {
 	}
 }
 
-const init = async (projectItem: any) => {
-	const projectId = projectItem.id
+const init = async (id: number, projectId: number, generatorType: number, generatorProductType: number) => {
+	preview.id = id
 	preview.projectId = projectId
-	preview.generatorType = projectItem.generatorType
+	preview.generatorType = generatorType
 	isCollapseRef.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		const res = await generatorProjectPreviewApi(projectId)
+		const previewData = {
+			previewProductId: id,
+			generatorProductType: generatorProductType
+		}
+		const res = await generatorPreviewApi(previewData)
 		const { templateContentList, treeList } = res.data
 		preview.dataList = templateContentList
 		preview.treeData = treeList
@@ -125,9 +130,6 @@ const init = async (projectItem: any) => {
 		loadingInstance.close()
 	}
 }
-defineExpose({
-	init
-})
 
 //复制到剪切板
 const handleCopy = (content: string) => {
@@ -155,38 +157,26 @@ const copyPath = (path: string) => {
 
 //下载单个模板代码
 const downloadTemplateData = (item: any) => {
+	let id
+	if (item.templateGroupType === 0) {
+		id = preview.projectId
+	} else if (item.templateGroupType === 1) {
+		id = item.tableId
+	} else if (item.templateGroupType === 2) {
+		id = item.enumId
+	} else {
+		ElMessage.error('暂不支持该类型模板下载')
+		return
+	}
+	const dataForm = {
+		id: id,
+		templateId: item.templateId,
+		templateGroupType: item.templateGroupType
+	}
 	if (preview.generatorType === 0) {
-		let id
-		if (item.templateGroupType === 0) {
-			id = preview.projectId
-		} else if (item.templateGroupType === 1) {
-			id = item.tableId
-		} else if (item.templateGroupType === 2) {
-			id = item.enumId
-		} else {
-			ElMessage.error('暂不支持该类型模板下载')
-			return
-		}
-		const params = {
-			id: id,
-			templateId: item.templateId,
-			templateGroupType: item.templateGroupType
-		}
-		generatorProjectDownloadSingleApi(params)
+		generatorDownloadSingleApi(dataForm)
 	} else if (preview.generatorType === 1) {
-		const dataForm = {
-			projectId: preview.projectId
-		}
-		if (item.templateGroupType === 0) {
-			dataForm.projectTemplateIdList = [item.templateId]
-		} else if (item.templateGroupType === 1) {
-			dataForm.tableIdList = [item.tableId]
-			dataForm.tableTemplateIdList = [item.templateId]
-		} else if (item.templateGroupType === 2) {
-			dataForm.enumIdList = [item.enumId]
-			dataForm.enumTemplateIdList = [item.templateId]
-		}
-		generatorProjectDownloadLocalApi(dataForm).then(() => {
+		generatorSingleLocalApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地',
 				duration: 1000
@@ -231,6 +221,10 @@ const handleFullScreen = () => {
 // 监听全屏状态变化
 document.addEventListener('fullscreenchange', () => {
 	isFullScreen.value = !!document.fullscreenElement
+})
+
+defineExpose({
+	init
 })
 </script>
 

@@ -122,12 +122,12 @@ import { nextTick, onMounted, reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/enum/add-or-update.vue'
 import EnumItemIndex from '@/views/enum-item/index.vue'
 import TemplateIndex from '@/views/enum/template-index.vue'
-import Preview from '@/views/enum/preview.vue'
+import Preview from '@/components/preview/index.vue'
 import { projectEntityListApi } from '@/api/project'
 import { ElMessage } from 'element-plus'
 import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/enum'
 import { getLabel } from '@/utils/enum'
-import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
 
@@ -166,7 +166,7 @@ const configEnumItemHandle = (id: number) => {
 }
 
 const previewHandle = (row: any) => {
-	previewRef.value.init(row)
+	previewRef.value.init(row.id, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
 }
 
 const generatorBatchHandler = () => {

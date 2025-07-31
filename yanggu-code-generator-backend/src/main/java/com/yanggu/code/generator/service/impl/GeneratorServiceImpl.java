@@ -5,9 +5,7 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
-import com.yanggu.code.generator.domain.query.GeneratorEnumQuery;
-import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
-import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
+import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
@@ -41,6 +39,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.yanggu.code.generator.enums.GeneratorProductTypeEnum.*;
 import static com.yanggu.code.generator.enums.TemplateTypeEnum.FILE;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
@@ -81,12 +80,78 @@ public class GeneratorServiceImpl implements GeneratorService {
     private EnumService enumService;
 
     @Override
-    public PreviewDataVO projectPreview(Long projectId) throws Exception {
-        GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
-        projectQuery.setProjectId(projectId);
-        List<TemplateContentVO> allList = buildProjectPreviewList(projectQuery);
+    public PreviewDataVO preview(CodePreviewQuery codePreviewQuery) throws Exception {
+        Integer generatorProductType = codePreviewQuery.getGeneratorProductType();
+        Long previewProductId = codePreviewQuery.getPreviewProductId();
+        List<TemplateContentVO> templateContentList;
+        if (PROJECT.getProductType().equals(generatorProductType)) {
+            GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
+            projectQuery.setProjectId(previewProductId);
+            templateContentList = buildProjectPreviewList(projectQuery);
+        } else if (TABLE.getProductType().equals(generatorProductType)) {
+            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+            tableQuery.setTableId(previewProductId);
+            templateContentList = tablePreview(tableQuery);
+        } else if (ENUM.getProductType().equals(generatorProductType)) {
+            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+            enumQuery.setEnumId(previewProductId);
+            templateContentList = enumPreview(enumQuery);
+        } else {
+            throw new BusinessException("Invalid generator product type");
+        }
+        return buildPreviewData(templateContentList);
+    }
 
-        return buildPreviewData(allList);
+    @Override
+    public ResponseEntity<byte[]> downloadSingle(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception {
+        Long id = singleGeneratorQuery.getId();
+        Integer templateGroupType = singleGeneratorQuery.getTemplateGroupType();
+        Long templateId = singleGeneratorQuery.getTemplateId();
+        TemplateContentVO preview;
+        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
+            ProjectEntity project = projectService.getById(id);
+            preview = projectPreview(project, List.of(templateId)).getFirst();
+        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
+            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+            tableQuery.setTableId(id);
+            tableQuery.setTemplateIdList(List.of(templateId));
+            List<TemplateContentVO> list = tablePreview(tableQuery);
+            preview = list.getFirst();
+        } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
+            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+            enumQuery.setEnumId(id);
+            enumQuery.setTemplateIdList(List.of(templateId));
+            List<TemplateContentVO> list = enumPreview(enumQuery);
+            preview = list.getFirst();
+        } else {
+            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        }
+        return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
+    }
+
+    @Override
+    public void singleLocal(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception {
+        Long id = singleGeneratorQuery.getId();
+        Integer templateGroupType = singleGeneratorQuery.getTemplateGroupType();
+        List<Long> templateIdList = List.of(singleGeneratorQuery.getTemplateId());
+        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
+            GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
+            projectQuery.setProjectId(id);
+            projectQuery.setProjectTemplateIdList(templateIdList);
+            projectDownloadLocal(projectQuery);
+        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
+            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+            tableQuery.setTableIdList(List.of(id));
+            tableQuery.setTemplateIdList(templateIdList);
+            tableDownloadLocal(tableQuery);
+        } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
+            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+            enumQuery.setEnumIdList(List.of(id));
+            enumQuery.setTemplateIdList(templateIdList);
+            enumDownloadLocal(enumQuery);
+        } else {
+            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        }
     }
 
     @Override
@@ -102,30 +167,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<byte[]> projectDownloadSingle(Integer templateGroupType, Long id, Long templateId) throws Exception {
-        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
-            ProjectEntity project = projectService.getById(id);
-            TemplateContentVO preview = projectPreview(project, List.of(templateId)).getFirst();
-            return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
-        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
-            return tableDownloadSingle(id, templateId);
-        } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
-            return enumDownloadSingle(id, templateId);
-        } else {
-            throw new BusinessException("模板组类型异常: " + templateGroupType);
-        }
-    }
-
-    @Override
-    public PreviewDataVO tablePreview(Long tableId) {
-        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-        tableQuery.setTableId(tableId);
-        List<TemplateContentVO> allList = tablePreview(tableQuery);
-
-        return buildPreviewData(allList);
-    }
-
-    @Override
     public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
         List<TemplateContentVO> list = getTablePreviewData(tableQuery);
         downloadLocal(list);
@@ -138,25 +179,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public ResponseEntity<byte[]> tableDownloadSingle(Long tableId, Long templateId) {
-        GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-        tableQuery.setTableId(tableId);
-        tableQuery.setTemplateIdList(List.of(templateId));
-        List<TemplateContentVO> list = tablePreview(tableQuery);
-        TemplateContentVO preview = list.getFirst();
-
-        return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
-    }
-
-    @Override
-    public PreviewDataVO enumPreview(Long enumId) {
-        GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
-        enumQuery.setEnumId(enumId);
-        List<TemplateContentVO> list = enumPreview(enumQuery);
-        return buildPreviewData(list);
-    }
-
-    @Override
     public void enumDownloadLocal(GeneratorEnumQuery enumQuery) {
         List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
         downloadLocal(enumPreviewData);
@@ -166,16 +188,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
         List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
         return downloadZip(enumPreviewData);
-    }
-
-    @Override
-    public ResponseEntity<byte[]> enumDownloadSingle(Long enumId, Long templateId) {
-        GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
-        enumQuery.setEnumId(enumId);
-        enumQuery.setTemplateIdList(List.of(templateId));
-        List<TemplateContentVO> list = enumPreview(enumQuery);
-        TemplateContentVO preview = list.getFirst();
-        return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
     }
 
     private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {

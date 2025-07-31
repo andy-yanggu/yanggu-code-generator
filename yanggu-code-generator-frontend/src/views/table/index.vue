@@ -54,6 +54,7 @@
 				:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
 				header-align="center"
 				align="center"
+				width="100"
 			></el-table-column>
 			<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
@@ -74,14 +75,14 @@
 				align="center"
 				sortable="custom"
 			></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="190">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 				<template #default="scope">
 					<el-row>
 						<el-col :span="12">
-							<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+							<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">配置</el-button>
 						</el-col>
 						<el-col :span="12">
-							<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">字段配置</el-button>
+							<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 						</el-col>
 					</el-row>
 					<el-row>
@@ -138,14 +139,14 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import Import from './import.vue'
 import Update from './update.vue'
-import Preview from './preview.vue'
+import Preview from '@/components/preview/index.vue'
 import FieldConfig from './field-config.vue'
 import TemplateIndex from './template-index.vue'
 import { projectEntityListApi } from '@/api/project'
 import { tableDeleteListApi, tableGenerateCheckApi, tableSyncApi, tableVOPageApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
-import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
@@ -187,7 +188,7 @@ const importHandle = () => {
 }
 
 const previewHandle = (tableItem: any) => {
-	previewRef.value.init(tableItem)
+	previewRef.value.init(tableItem.id, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
 }
 
 const editHandle = (row: any) => {

@@ -54,7 +54,7 @@
 		</el-card>
 		<template #footer>
 			<div class="footer-buttons">
-				<el-button type="primary" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
+				<el-button type="success" :icon="DocumentAdd" :loading="generatorLoading" @click="generateCode()">生成代码</el-button>
 				<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 			</div>
 		</template>
@@ -85,6 +85,7 @@ const state: IHooksOptions = reactive({
 const generatorTypeRef = ref()
 const tableIdRef = ref()
 const dialogVisible = ref(false)
+const generatorLoading = ref(false)
 
 const init = (templateGroupId: number, generatorType: number, tableIdList: number[]) => {
 	dialogVisible.value = true
@@ -112,23 +113,30 @@ const generateCode = () => {
 	}
 	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
+		generatorLoading.value = true
 		generatorTableDownloadZipApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到浏览器',
 				duration: 1000
 			})
+			generatorLoading.value = false
+			dialogVisible.value = false
 			emit('clearSelection')
 		})
 	} else if (generatorType === 1) {
+		generatorLoading.value = true
 		generatorTableDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到服务器本地',
 				duration: 1000
 			})
+			generatorLoading.value = false
+			dialogVisible.value = false
 			emit('clearSelection')
 		})
+	} else {
+		ElMessage.warning('生成类型异常')
 	}
-	dialogVisible.value = false
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)

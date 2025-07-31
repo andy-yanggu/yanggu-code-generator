@@ -51,3 +51,10 @@ export const ATTR_TYPES: EnumItem[] = [
 	{ label: 'String', value: 'String' },
 	{ label: 'Date', value: 'Date' }
 ]
+
+//生成产物类型枚举
+export enum GeneratorProductTypeEnum {
+	PROJECT = 0,
+	TABLE = 1,
+	ENUM = 2
+}

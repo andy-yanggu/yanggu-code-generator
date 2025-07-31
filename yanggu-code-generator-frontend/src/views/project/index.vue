@@ -114,10 +114,10 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/project/add-or-update.vue'
-import Preview from '@/views/project/preview.vue'
+import Preview from '@/components/preview/index.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
 import Steps from '@/views/project/steps.vue'
-import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
 import { Delete, DocumentAdd, Edit, Plus, Refresh, Search, View } from '@element-plus/icons-vue'
@@ -141,10 +141,10 @@ const currentProjectIdTs = ref()
 const stepsRef = ref()
 
 const previewHandle = (projectItem: any) => {
-	previewRef.value.init(projectItem)
+	previewRef.value.init(projectItem.id, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
 }
 
-const generatorCode = item => {
+const generatorCode = (item: any) => {
 	currentProjectIdTs.value = Date.now()
 	nextTick(() => {
 		stepsRef.value.init(item)

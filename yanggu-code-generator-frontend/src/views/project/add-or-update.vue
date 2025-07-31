@@ -136,8 +136,7 @@ const state: FormOptions = reactive({
 		voBaseClassId: '',
 		generatorType: null
 	},
-	emit: emit,
-	duration: 2000
+	emit: emit
 })
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -160,6 +159,10 @@ const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = us
 const submitProjectHandle = () => {
 	if (!dataForm.id) {
 		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+		state.duration = 2000
+	} else {
+		state.message = '操作成功'
+		state.duration = 500
 	}
 	submitHandle()
 }

@@ -4,7 +4,7 @@
 		<div class="navbar-container">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-left">
-				<el-icon :size="22" @click="store.toggleCollapse()">
+				<el-icon :size="22" class="collapse-icon" @click="store.toggleCollapse()">
 					<Expand v-if="store.isCollapseRef"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
@@ -93,5 +93,8 @@ onUnmounted(() => {
 	gap: 16px;
 	margin-left: auto;
 	margin-right: 40px;
+}
+.collapse-icon {
+	cursor: pointer;
 }
 </style>

@@ -54,7 +54,7 @@
 		</el-card>
 		<template #footer>
 			<div class="footer-buttons">
-				<el-button type="success" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
+				<el-button type="success" :icon="DocumentAdd" :loading="generatorLoading" @click="generateCode()">生成代码</el-button>
 				<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 			</div>
 		</template>
@@ -89,6 +89,7 @@ const initData = reactive({
 })
 
 const dialogVisible = ref(false)
+const generatorLoading = ref(false)
 
 const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []) => {
 	dialogVisible.value = true
@@ -120,19 +121,23 @@ const generateCode = () => {
 	}
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
+		generatorLoading.value = true
 		generatorEnumDownloadZipApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地，请查看',
 				duration: 1000
 			})
+			generatorLoading.value = false
 			emit('clearSelection')
 		})
 	} else if (generatorType === 1) {
+		generatorLoading.value = true
 		generatorEnumDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到服务器本地，请查看',
 				duration: 1000
 			})
+			generatorLoading.value = false
 			emit('clearSelection')
 		})
 	}

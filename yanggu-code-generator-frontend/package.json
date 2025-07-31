@@ -15,7 +15,7 @@
     "axios": "1.8.2",
     "codemirror": "^6.0.1",
     "crypto-js": "^4.1.1",
-    "element-plus": "2.7.7",
+    "element-plus": "2.9.3",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.4.1",
     "qs": "6.10.3",

@@ -19,7 +19,9 @@
 			<el-footer height="60px" style="text-align: center">
 				<el-button v-if="activeRef > 0" type="primary" :icon="ArrowLeft" @click="prevStep()">上一步</el-button>
 				<el-button v-if="activeRef < 2" type="primary" :icon="ArrowRight" @click="nextStep()">下一步</el-button>
-				<el-button v-if="activeRef === 2" type="success" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
+				<el-button v-if="activeRef === 2" :loading="generateCodeLoading" type="success" :icon="DocumentAdd" @click="generateCode()"
+					>生成代码</el-button
+				>
 			</el-footer>
 		</el-container>
 	</el-dialog>
@@ -34,6 +36,7 @@ import { ElMessage } from 'element-plus'
 import { generatorProjectDownloadLocalApi, generatorProjectDownloadZipApi } from '@/api/generator'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
 
+const generateCodeLoading = ref(false)
 const activeRef = ref(0)
 const dialogVisible = ref(false)
 const tableIndexRef = ref()
@@ -63,20 +66,24 @@ const generateCode = () => {
 
 	const generatorType = projectReactive.generatorType
 	if (generatorType === 0) {
+		generateCodeLoading.value = true
 		generatorProjectDownloadZipApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到浏览器',
 				duration: 1000
 			})
+			dialogVisible.value = false
+			generateCodeLoading.value = false
 		})
-		dialogVisible.value = false
 	} else if (generatorType === 1) {
+		generateCodeLoading.value = true
 		generatorProjectDownloadLocalApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地',
 				duration: 1000
 			})
 			dialogVisible.value = false
+			generateCodeLoading.value = false
 		})
 	}
 }
