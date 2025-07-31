@@ -5,8 +5,6 @@ import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.service.GeneratorService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;

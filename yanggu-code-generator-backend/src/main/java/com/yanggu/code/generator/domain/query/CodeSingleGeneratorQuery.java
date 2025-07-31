@@ -25,6 +25,7 @@ public class CodeSingleGeneratorQuery {
     /**
      * 模板ID
      */
+    @Schema(description = "模板ID")
     private Long templateId;
 
 }

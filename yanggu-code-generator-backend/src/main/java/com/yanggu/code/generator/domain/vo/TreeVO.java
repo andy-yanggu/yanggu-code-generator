@@ -16,15 +16,15 @@ import java.util.List;
 @Schema(description = "树形数据VO实体类")
 public class TreeVO implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * 树形数据排序。类型，标签
      */
     public static final Comparator<TreeVO> TREE_COMPARATOR = ComparatorChain.of(
             Comparator.comparing(TreeVO::getType).reversed(), Comparator.comparing(TreeVO::getLabel)
     );
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 文件路径
