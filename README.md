@@ -26,9 +26,9 @@
 
 #### 3.1.1 后端项目
 
-1. 创建数据库yanggu_code_generator
-2. 运行sql文件夹下的yanggu_code_generator.sql文件，创建表和添加一些默认数据
-3. 修改application.yaml，更新数据库驱动、URL、账号和密码。运行主启动类CodeGeneratorApplication，启动项目
+1. 创建数据库code_generator
+2. 运行sql文件夹下的code_generator.sql文件，创建表和添加一些默认数据
+3. 修改resource目录下的application.yaml，更新数据库驱动、URL、账号和密码。运行主启动类CodeGeneratorApplication，启动项目
 4. 访问http://localhost:8888/code-generator/doc.html#/home，说明后端项目正常启动
 #### 3.1.2 前端项目
 1. npm install（下载依赖包）
@@ -47,7 +47,7 @@
 
 - 浏览器访问`http://localhost:8888/#/gen/project`
 
-- 代码预览时，复制功能受限，浏览器仅支持localhost或者https。使用keytool生成自签名证书，同时配置一下springboot的https
+- 代码预览时，复制到剪切板功能受限，浏览器仅支持localhost或者https。使用keytool生成自签名证书，同时配置一下springboot的https
 
   - 运行`keytool -genkeypair -alias mydomain -keyalg RSA -keysize 2048 -validity 365 -storetype PKCS12 -keystore ./keystore.p12 -storepass changeit -dname "CN=你的IP地址, OU=Dev, O=MyOrg, L=City, ST=State, C=CN"`命令，生成keystore.p12文件
 
@@ -78,7 +78,7 @@
 
 ### 4.2 基类管理
 
-基类主要是对Entity和VO进行统一管理。定义包名、类名和基类字段等。多个基类字段使用","拼接
+基类主要是对BaseEntity和BaseVO进行统一管理。定义包名、类名和基类字段等。多个基类字段使用","拼接
 
 ![image-20250616165547306](./images/image-20250616165547306.png)![image-20250616165614721](./images/image-20250616165614721.png)
 
