@@ -13,12 +13,6 @@ import java.util.List;
 public class GeneratorEnumQuery {
 
     /**
-     * 枚举ID
-     */
-    @Schema(description = "枚举ID")
-    private Long enumId;
-
-    /**
      * 枚举D列表
      */
     @Schema(description = "枚举ID列表")

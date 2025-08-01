@@ -112,12 +112,8 @@ const generateCode = () => {
 		return
 	}
 	const dataForm = {
-		templateIdList: state.dataListSelections
-	}
-	if (initData.enumIdList.length == 1) {
-		dataForm.enumId = initData.enumIdList[0]
-	} else {
-		dataForm.enumIdList = initData.enumIdList
+		enumIdList: initData.enumIdList,
+		templateIdList: data
 	}
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {

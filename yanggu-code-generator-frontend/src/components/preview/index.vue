@@ -23,16 +23,18 @@
 						<el-header style="display: flex; flex-direction: column; gap: 10px">
 							<el-row>
 								<el-col :span="1">
-									<el-icon :size="22" @click="toggleCollapse()">
+									<el-icon :size="22" class="collapse-icon" @click="toggleCollapse()">
 										<Expand v-if="isCollapseRef"></Expand>
 										<Fold v-else></Fold>
 									</el-icon>
 								</el-col>
-								<el-col :span="18">
+								<el-col :span="23">
 									路径：<el-text>{{ preview.item.filePath }}</el-text>
-								</el-col>
-								<el-col :span="5" style="text-align: right">
-									<el-button size="small" @click="copyPath(preview.item.filePath)">复制路径</el-button>
+									<el-tooltip content="点击复制路径" placement="top-start" effect="light">
+										<el-icon style="cursor: pointer; margin-left: 10px" title="点击复制路径" @click="copyPath(preview.item.filePath)">
+											<CopyDocument></CopyDocument>
+										</el-icon>
+									</el-tooltip>
 								</el-col>
 							</el-row>
 							<el-row>
@@ -60,7 +62,7 @@ import { computed, nextTick, reactive, ref } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/code-mirror.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
-import { Expand, Fold } from '@element-plus/icons-vue'
+import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 
 const currentNodeKey = ref()
 const treeRef = ref()
@@ -233,6 +235,9 @@ defineExpose({
 	width: 100%;
 	overflow-x: auto;
 	white-space: nowrap; /* 防止节点内容换行 */
+}
+.collapse-icon {
+	cursor: pointer;
 }
 
 .custom-tree {

@@ -9,6 +9,7 @@ import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
@@ -26,6 +27,7 @@ import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 import org.dromara.hutool.core.util.BooleanUtil;
 import org.dromara.hutool.core.util.CharsetUtil;
+import org.dromara.hutool.core.util.EnumUtil;
 import org.dromara.hutool.http.meta.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,10 +38,10 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.yanggu.code.generator.enums.GeneratorProductTypeEnum.*;
 import static com.yanggu.code.generator.enums.TemplateTypeEnum.FILE;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
@@ -83,21 +85,25 @@ public class GeneratorServiceImpl implements GeneratorService {
     public PreviewDataVO preview(CodePreviewQuery codePreviewQuery) throws Exception {
         Integer generatorProductType = codePreviewQuery.getGeneratorProductType();
         Long previewProductId = codePreviewQuery.getPreviewProductId();
+
         List<TemplateContentVO> templateContentList;
-        if (PROJECT.getProductType().equals(generatorProductType)) {
-            GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
-            projectQuery.setProjectId(previewProductId);
-            templateContentList = buildProjectPreviewList(projectQuery);
-        } else if (TABLE.getProductType().equals(generatorProductType)) {
-            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-            tableQuery.setTableId(previewProductId);
-            templateContentList = tablePreview(tableQuery);
-        } else if (ENUM.getProductType().equals(generatorProductType)) {
-            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
-            enumQuery.setEnumId(previewProductId);
-            templateContentList = enumPreview(enumQuery);
-        } else {
-            throw new BusinessException("Invalid generator product type");
+        switch (EnumUtil.getBy(GeneratorProductTypeEnum::getProductType, generatorProductType)) {
+            case PROJECT -> {
+                GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
+                projectQuery.setProjectId(previewProductId);
+                templateContentList = buildProjectPreview(projectQuery);
+            }
+            case TABLE -> {
+                GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+                tableQuery.setTableIdList(List.of(previewProductId));
+                templateContentList = tablePreview(tableQuery);
+            }
+            case ENUM -> {
+                GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+                enumQuery.setEnumIdList(List.of(previewProductId));
+                templateContentList = enumPreview(enumQuery);
+            }
+            default -> throw new BusinessException("Invalid generator product type: " + generatorProductType);
         }
         return buildPreviewData(templateContentList);
     }
@@ -106,25 +112,27 @@ public class GeneratorServiceImpl implements GeneratorService {
     public ResponseEntity<byte[]> downloadSingle(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception {
         Long id = singleGeneratorQuery.getId();
         Integer templateGroupType = singleGeneratorQuery.getTemplateGroupType();
-        Long templateId = singleGeneratorQuery.getTemplateId();
+        List<Long> templateIdList = List.of(singleGeneratorQuery.getTemplateId());
+
         TemplateContentVO preview;
-        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
-            ProjectEntity project = projectService.getById(id);
-            preview = projectPreview(project, List.of(templateId)).getFirst();
-        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
-            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-            tableQuery.setTableId(id);
-            tableQuery.setTemplateIdList(List.of(templateId));
-            List<TemplateContentVO> list = tablePreview(tableQuery);
-            preview = list.getFirst();
-        } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
-            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
-            enumQuery.setEnumId(id);
-            enumQuery.setTemplateIdList(List.of(templateId));
-            List<TemplateContentVO> list = enumPreview(enumQuery);
-            preview = list.getFirst();
-        } else {
-            throw new BusinessException("模板组类型异常: " + templateGroupType);
+        switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroupType)) {
+            case PROJECT -> {
+                ProjectEntity project = projectService.getById(id);
+                preview = projectPreview(project, templateIdList).getFirst();
+            }
+            case TABLE -> {
+                GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+                tableQuery.setTableIdList(List.of(id));
+                tableQuery.setTemplateIdList(templateIdList);
+                preview = tablePreview(tableQuery).getFirst();
+            }
+            case ENUM -> {
+                GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+                enumQuery.setEnumIdList(List.of(id));
+                enumQuery.setTemplateIdList(templateIdList);
+                preview = enumPreview(enumQuery).getFirst();
+            }
+            default -> throw new BusinessException("Invalid template group type: " + templateGroupType);
         }
         return buildResponseEntity(preview.getFileName(), preview.getContent().getBytes());
     }
@@ -134,97 +142,116 @@ public class GeneratorServiceImpl implements GeneratorService {
         Long id = singleGeneratorQuery.getId();
         Integer templateGroupType = singleGeneratorQuery.getTemplateGroupType();
         List<Long> templateIdList = List.of(singleGeneratorQuery.getTemplateId());
-        if (TemplateGroupTypeEnum.PROJECT.getCode().equals(templateGroupType)) {
-            GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
-            projectQuery.setProjectId(id);
-            projectQuery.setProjectTemplateIdList(templateIdList);
-            projectDownloadLocal(projectQuery);
-        } else if (TemplateGroupTypeEnum.TABLE.getCode().equals(templateGroupType)) {
-            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-            tableQuery.setTableIdList(List.of(id));
-            tableQuery.setTemplateIdList(templateIdList);
-            tableDownloadLocal(tableQuery);
-        } else if (TemplateGroupTypeEnum.ENUM.getCode().equals(templateGroupType)) {
-            GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
-            enumQuery.setEnumIdList(List.of(id));
-            enumQuery.setTemplateIdList(templateIdList);
-            enumDownloadLocal(enumQuery);
-        } else {
-            throw new BusinessException("模板组类型异常: " + templateGroupType);
+
+        switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroupType)) {
+            case PROJECT -> {
+                GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
+                projectQuery.setProjectId(id);
+                projectQuery.setProjectTemplateIdList(templateIdList);
+                projectDownloadLocal(projectQuery);
+            }
+            case TABLE -> {
+                GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+                tableQuery.setTableIdList(List.of(id));
+                tableQuery.setTemplateIdList(templateIdList);
+                tableDownloadLocal(tableQuery);
+            }
+            case ENUM -> {
+                GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
+                enumQuery.setEnumIdList(List.of(id));
+                enumQuery.setTemplateIdList(templateIdList);
+                enumDownloadLocal(enumQuery);
+            }
+            default -> throw new BusinessException("模板组类型异常: " + templateGroupType);
         }
     }
 
     @Override
     public void projectDownloadLocal(GeneratorProjectQuery projectQuery) throws Exception {
-        List<TemplateContentVO> list = buildProjectPreviewList(projectQuery);
+        List<TemplateContentVO> list = buildProjectPreview(projectQuery);
         downloadLocal(list);
     }
 
     @Override
     public ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception {
-        List<TemplateContentVO> list = buildProjectPreviewList(projectQuery);
-        return downloadZip(list);
+        List<TemplateContentVO> list = buildProjectPreview(projectQuery);
+
+        //构建zip文件名
+        ProjectEntity project = projectService.getById(projectQuery.getProjectId());
+
+        //生成zip文件
+        return downloadZip(project.getProjectName(), list);
     }
 
     @Override
     public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getTablePreviewData(tableQuery);
+        List<TemplateContentVO> list = tablePreview(tableQuery);
         downloadLocal(list);
     }
 
     @Override
     public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = getTablePreviewData(tableQuery);
-        return downloadZip(list);
+        List<TemplateContentVO> list = tablePreview(tableQuery);
+
+        // 拼接表名
+        String tableNameConcat = tableService.listByIds(tableQuery.getTableIdList()).stream()
+                .map(TableEntity::getTableName)
+                .collect(Collectors.joining("_"));
+
+        return downloadZip(tableNameConcat, list);
     }
 
     @Override
     public void enumDownloadLocal(GeneratorEnumQuery enumQuery) {
-        List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
+        List<TemplateContentVO> enumPreviewData = enumPreview(enumQuery);
         downloadLocal(enumPreviewData);
     }
 
     @Override
     public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
-        List<TemplateContentVO> enumPreviewData = getEnumPreviewData(enumQuery);
-        return downloadZip(enumPreviewData);
+        List<TemplateContentVO> enumPreviewData = enumPreview(enumQuery);
+
+        //拼接枚举名称
+        List<Long> enumIdList = enumQuery.getEnumIdList();
+        String enumNameConcat = enumService.listByIds(enumIdList).stream()
+                .map(EnumEntity::getEnumName)
+                .collect(Collectors.joining("_"));
+
+        return downloadZip(enumNameConcat, enumPreviewData);
     }
 
-    private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
-        PreviewDataVO previewData = new PreviewDataVO();
+    private List<TemplateContentVO> buildProjectPreview(GeneratorProjectQuery projectQuery) throws Exception {
+        Long projectId = projectQuery.getProjectId();
+        //查询项目
+        ProjectEntity project = projectService.getById(projectId);
 
-        //构建模板内容列表
-        List<TemplateContentVO> templateContentList = allList.stream()
-                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
-                .toList();
+        List<TemplateContentVO> allPreviewList = new ArrayList<>();
 
-        previewData.setTemplateContentList(templateContentList);
+        //获取表预览数据
+        //查询该项目下的表
+        List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
+        List<Long> tableIdList = projectQuery.getTableIdList();
+        if (CollUtil.isNotEmpty(tableIdList)) {
+            tableList = tableList.stream()
+                    .filter(table -> tableIdList.contains(table.getId()))
+                    .toList();
+        }
+        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, projectQuery.getTableTemplateIdList());
+        allPreviewList.addAll(tablePreviewList);
 
-        //构建树形列表
-        List<TreeVO> treeList = buildTree(allList);
-        previewData.setTreeList(treeList);
+        //获取枚举预览数据
+        List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
+        allPreviewList.addAll(enumPreviewList);
 
-        //重新排序模板列表
-        sortTemplateContentList(previewData);
-        return previewData;
-    }
+        //获取项目预览数据
+        List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
+        allPreviewList.addAll(projectPreviewList);
 
-    private void sortTemplateContentList(PreviewDataVO previewData) {
-        List<TemplateContentVO> templateContentList = previewData.getTemplateContentList();
-        List<TreeVO> treeList = previewData.getTreeList();
-
-        //生成深度优先遍历的路径顺序
-        List<String> dfsOrder = TreeUtil.getDfsOrder(treeList);
-
-        //根据路径顺序对 templateContentList 排序
-        List<TemplateContentVO> newList = templateContentList.stream()
-                .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
-                .toList();
-        previewData.setTemplateContentList(newList);
+        return allPreviewList;
     }
 
     private List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
-        Long tableId = tableQuery.getTableId();
+        Long tableId = tableQuery.getTableIdList().getFirst();
 
         // 表信息
         TableEntity table = tableService.getById(tableId);
@@ -256,7 +283,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private List<TemplateContentVO> enumPreview(GeneratorEnumQuery enumQuery) {
-        Long enumId = enumQuery.getEnumId();
+        Long enumId = enumQuery.getEnumIdList().getFirst();
         EnumEntity enumEntity = enumService.getById(enumId);
         ProjectEntity project = projectService.getById(enumEntity.getProjectId());
         List<Long> templateIdList = enumQuery.getTemplateIdList();
@@ -276,128 +303,33 @@ public class GeneratorServiceImpl implements GeneratorService {
         return list;
     }
 
-    private List<TemplateContentVO> buildProjectPreviewList(GeneratorProjectQuery projectQuery) throws Exception {
-        Long projectId = projectQuery.getProjectId();
-        //查询项目
-        ProjectEntity project = projectService.getById(projectId);
+    private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
+        //获取数据源信息
+        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
+        //获取项目模板组信息
+        Long projectTemplateGroupId = project.getProjectTemplateGroupId();
+        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
+        List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
 
-        //查询该项目下的表
-        List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
-        List<Long> tableIdList = projectQuery.getTableIdList();
-        if (CollUtil.isNotEmpty(tableIdList)) {
-            tableList = tableList.stream()
-                    .filter(table -> tableIdList.contains(table.getId()))
-                    .toList();
-        }
-
-        List<TemplateContentVO> allPreviewList = new ArrayList<>();
-
-        //获取表预览数据
-        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, projectQuery.getTableTemplateIdList());
-        allPreviewList.addAll(tablePreviewList);
-
-        //获取枚举预览数据
-        List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
-        allPreviewList.addAll(enumPreviewList);
-
-        //获取项目预览数据
-        List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
-        allPreviewList.addAll(projectPreviewList);
-
-        return allPreviewList;
-    }
-
-    private List<TemplateContentVO> getTablePreviewData(GeneratorTableQuery tableQuery) {
-        return tableQuery.getTableIdList().stream()
-                .flatMap(tempTableId -> {
-                    GeneratorTableQuery query = new GeneratorTableQuery();
-                    query.setTableId(tempTableId);
-                    query.setTemplateIdList(tableQuery.getTemplateIdList());
-                    return tablePreview(query).stream();
-                })
+        ProjectModel projectModel = buildProjectDataModel(project, dataSource);
+        return projecTemplateList.stream()
+                .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
+                .map(template -> getTemplateContentVO(templateGroup, template, projectModel))
                 .toList();
     }
 
-    private List<TemplateContentVO> getEnumPreviewData(GeneratorEnumQuery enumQuery) {
-        Long enumId = enumQuery.getEnumId();
-        List<Long> enumIdList = enumQuery.getEnumIdList();
-        List<TemplateContentVO> list = new ArrayList<>();
-        if (enumId != null) {
-            list.addAll(enumPreview(enumQuery));
-        } else {
-            enumIdList.forEach(id -> {
-                GeneratorEnumQuery tempEnumQuery = new GeneratorEnumQuery();
-                tempEnumQuery.setEnumId(id);
-                list.addAll(enumPreview(tempEnumQuery));
-            });
-        }
-        return list;
-    }
-
-    private ResponseEntity<byte[]> downloadZip(List<TemplateContentVO> list) {
-        if (CollUtil.isEmpty(list)) {
-            throw new BusinessException("待写入数据为空");
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ZipOutputStream zip = new ZipOutputStream(outputStream);
-        for (TemplateContentVO templateContentVO : list) {
-            try {
-                // 获取文件路径
-                String filePath = templateContentVO.getFilePath();
-
-                if (FILE.getCode().equals(templateContentVO.getTemplateType())) {
-                    // 文件：添加条目并写入内容
-                    zip.putNextEntry(new ZipEntry(filePath));
-                    IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
-                    zip.flush();
-                } else {
-                    // 文件夹：创建以'/'结尾的目录条目
-                    if (!filePath.endsWith("/")) {
-                        filePath += "/";
-                    }
-                    zip.putNextEntry(new ZipEntry(filePath));
-                }
-                zip.closeEntry();
-            } catch (IOException e) {
-                throw new BusinessException("模板写入失败：" + templateContentVO.getFilePath(), e);
-            }
-        }
-        IoUtil.closeQuietly(zip);
-
-        // zip压缩包数据
-        byte[] data = outputStream.toByteArray();
-
-        String dateTime = DateUtil.format(new Date(), PURE_DATETIME_PATTERN);
-        String fileName = "code_generator_" + dateTime + ".zip";
-        return buildResponseEntity(fileName, data);
-    }
-
-    private void downloadLocal(List<TemplateContentVO> list) {
-        if (CollUtil.isEmpty(list)) {
-            return;
-        }
-        for (TemplateContentVO templateContentVO : list) {
-            Integer templateType = templateContentVO.getTemplateType();
-            //写入到文件
-            if (FILE.getCode().equals(templateType)) {
-                FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
-            } else {
-                //生成文件夹
-                FileUtil.mkdir(templateContentVO.getFilePath());
-            }
-        }
-    }
-
     private List<TemplateContentVO> tableListPreview(List<TableEntity> tableList, List<Long> tableTemplateIdList) {
-        List<TemplateContentVO> tablePreviewList = new ArrayList<>();
-        for (TableEntity tableEntity : tableList) {
-            GeneratorTableQuery query = new GeneratorTableQuery();
-            query.setTableId(tableEntity.getId());
-            query.setTemplateIdList(tableTemplateIdList);
-            List<TemplateContentVO> tempList = tablePreview(query);
-            tablePreviewList.addAll(tempList);
-        }
-        return tablePreviewList;
+        return tableList.stream()
+                .map(
+                        table -> {
+                            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
+                            tableQuery.setTableIdList(List.of(table.getId()));
+                            tableQuery.setTemplateIdList(tableTemplateIdList);
+                            return tablePreview(tableQuery);
+                        }
+                )
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enmumIdList, List<Long> enumTemplateIdList) {
@@ -425,45 +357,6 @@ public class GeneratorServiceImpl implements GeneratorService {
                         })
                 )
                 .toList();
-    }
-
-    private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
-        //获取数据源信息
-        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
-        //获取项目模板组信息
-        Long projectTemplateGroupId = project.getProjectTemplateGroupId();
-        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
-        List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
-
-        ProjectModel projectModel = buildProjectDataModel(project, dataSource);
-        return projecTemplateList.stream()
-                .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
-                .map(template -> getTemplateContentVO(templateGroup, template, projectModel))
-                .toList();
-    }
-
-    private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateEntity template, Object dataModel) {
-        Integer templateType = template.getTemplateType();
-        //内容
-        String fileContent;
-        TemplateContentVO templateContentVO = new TemplateContentVO();
-        String templateName = template.getTemplateName();
-        if (FILE.getCode().equals(templateType)) {
-            fileContent = TemplateUtil.renderTemplate(templateName, template.getTemplateContent(), dataModel);
-        } else {
-            fileContent = "";
-        }
-        //路径
-        String filePath = TemplateUtil.renderTemplate(templateName, template.getGeneratorPath(), dataModel);
-        //文件名
-        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-        templateContentVO.setContent(fileContent);
-        templateContentVO.setFileName(fileName);
-        templateContentVO.setFilePath(filePath);
-        templateContentVO.setTemplateId(template.getId());
-        templateContentVO.setTemplateGroupType(templateGroup.getType());
-        templateContentVO.setTemplateType(templateType);
-        return templateContentVO;
     }
 
     /**
@@ -692,6 +585,117 @@ public class GeneratorServiceImpl implements GeneratorService {
             String[] fields = baseClassModel.getFields().split(",");
             for (TableFieldModel field : fieldList) {
                 field.setVoBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getAttrName())));
+            }
+        }
+    }
+
+    private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateEntity template, Object dataModel) {
+        Integer templateType = template.getTemplateType();
+        //内容
+        String fileContent;
+        TemplateContentVO templateContentVO = new TemplateContentVO();
+        String templateName = template.getTemplateName();
+        if (FILE.getCode().equals(templateType)) {
+            fileContent = TemplateUtil.renderTemplate(templateName, template.getTemplateContent(), dataModel);
+        } else {
+            fileContent = "";
+        }
+        //路径
+        String filePath = TemplateUtil.renderTemplate(templateName, template.getGeneratorPath(), dataModel);
+        //文件名
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        templateContentVO.setContent(fileContent);
+        templateContentVO.setFileName(fileName);
+        templateContentVO.setFilePath(filePath);
+        templateContentVO.setTemplateId(template.getId());
+        templateContentVO.setTemplateGroupType(templateGroup.getType());
+        templateContentVO.setTemplateType(templateType);
+        return templateContentVO;
+    }
+
+    private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
+        PreviewDataVO previewData = new PreviewDataVO();
+
+        //过滤出文件
+        List<TemplateContentVO> templateContentList = allList.stream()
+                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
+                .toList();
+
+        previewData.setTemplateContentList(templateContentList);
+
+        //构建树形列表
+        List<TreeVO> treeList = buildTree(allList);
+        previewData.setTreeList(treeList);
+
+        //重新排序模板列表
+        sortTemplateContentList(previewData);
+        return previewData;
+    }
+
+    private void sortTemplateContentList(PreviewDataVO previewData) {
+        List<TemplateContentVO> templateContentList = previewData.getTemplateContentList();
+        List<TreeVO> treeList = previewData.getTreeList();
+
+        //生成深度优先遍历的路径顺序
+        List<String> dfsOrder = TreeUtil.getDfsOrder(treeList);
+
+        //根据路径顺序对 templateContentList 排序
+        List<TemplateContentVO> newList = templateContentList.stream()
+                .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
+                .toList();
+        previewData.setTemplateContentList(newList);
+    }
+
+    private ResponseEntity<byte[]> downloadZip(String originFileName, List<TemplateContentVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            throw new BusinessException("待写入数据为空");
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(outputStream);
+        for (TemplateContentVO templateContentVO : list) {
+            try {
+                // 获取文件路径
+                String filePath = templateContentVO.getFilePath();
+
+                if (FILE.getCode().equals(templateContentVO.getTemplateType())) {
+                    // 文件：添加条目并写入内容
+                    zip.putNextEntry(new ZipEntry(filePath));
+                    IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
+                    zip.flush();
+                } else {
+                    // 文件夹：创建以'/'结尾的目录条目
+                    if (!filePath.endsWith("/")) {
+                        filePath += "/";
+                    }
+                    zip.putNextEntry(new ZipEntry(filePath));
+                }
+                zip.closeEntry();
+            } catch (IOException e) {
+                throw new BusinessException("模板写入失败：" + templateContentVO.getFilePath(), e);
+            }
+        }
+        IoUtil.closeQuietly(zip);
+
+        // zip压缩包数据
+        byte[] data = outputStream.toByteArray();
+
+        String fileName = originFileName + "_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".zip";
+
+        return buildResponseEntity(fileName, data);
+    }
+
+    private void downloadLocal(List<TemplateContentVO> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+        for (TemplateContentVO templateContentVO : list) {
+            Integer templateType = templateContentVO.getTemplateType();
+            //写入到文件
+            if (FILE.getCode().equals(templateType)) {
+                FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
+            } else {
+                //生成文件夹
+                FileUtil.mkdir(templateContentVO.getFilePath());
             }
         }
     }

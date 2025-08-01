@@ -13,12 +13,6 @@ import java.util.List;
 public class GeneratorTableQuery {
 
     /**
-     * 表ID
-     */
-    @Schema(description = "表ID")
-    private Long tableId;
-
-    /**
      * 表ID列表
      */
     @Schema(description = "表ID列表")
