@@ -24,7 +24,7 @@
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
-					<el-icon :size="20" @click="toggleFullscreen">
+					<el-icon :size="18" @click="toggleFullscreen">
 						<FullScreen v-if="!isFullscreen" />
 						<Aim v-else />
 					</el-icon>

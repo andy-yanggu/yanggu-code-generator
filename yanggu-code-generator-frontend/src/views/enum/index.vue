@@ -50,7 +50,7 @@
 				prop="createTime"
 				label="创建时间"
 				show-overflow-tooltip
-				width="120"
+				min-width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"
@@ -59,7 +59,7 @@
 				prop="updateTime"
 				label="修改时间"
 				show-overflow-tooltip
-				width="120"
+				min-width="120"
 				header-align="center"
 				align="center"
 				sortable="custom"

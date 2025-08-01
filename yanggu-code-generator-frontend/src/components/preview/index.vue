@@ -30,7 +30,7 @@
 								</el-col>
 								<el-col :span="23">
 									路径：<el-text>{{ preview.item.filePath }}</el-text>
-									<el-tooltip content="点击复制路径" placement="top-start" effect="light">
+									<el-tooltip content="复制路径" placement="top" effect="light">
 										<el-icon style="cursor: pointer; margin-left: 10px" title="点击复制路径" @click="copyPath(preview.item.filePath)">
 											<CopyDocument></CopyDocument>
 										</el-icon>
