@@ -130,7 +130,7 @@
 		<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
 
 		<!-- 模板组展示 -->
-		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs" @clear-selection="clearSelectionHandler()"></template-index>
+		<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 	</el-card>
 </template>
 
@@ -172,7 +172,6 @@ const state: IHooksOptions = reactive({
 const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
-const currentTemplateGroupIdTs = ref()
 const templateIndexRef = ref()
 const tableRef = ref()
 const projectList = ref([])
@@ -197,10 +196,7 @@ const editHandle = (row: any) => {
 
 //生成代码
 const generatorCode = (item: any) => {
-	currentTemplateGroupIdTs.value = Date.now()
-	nextTick(() => {
-		templateIndexRef.value.init(item.tableTemplateGroupId, item.generatorType, [item.id])
-	})
+	templateIndexRef.value.init(item.tableTemplateGroupId, item.generatorType, [item.id])
 }
 
 const generatorCodeBatch = () => {
@@ -209,15 +205,12 @@ const generatorCodeBatch = () => {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
-	currentTemplateGroupIdTs.value = Date.now()
 	tableGenerateCheckApi(data).then(res => {
 		const { checkResult, tableTemplateGroupId, generatorType } = res.data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
 		} else {
-			nextTick(() => {
-				templateIndexRef.value.init(tableTemplateGroupId, generatorType, data)
-			})
+			templateIndexRef.value.init(tableTemplateGroupId, generatorType, data)
 		}
 	})
 }

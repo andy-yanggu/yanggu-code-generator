@@ -112,7 +112,7 @@
 
 		<preview ref="previewRef"></preview>
 
-		<template-index ref="templateIndexRef" :key="currentTemplateGroupIdTs" @clear-selection="clearSelectionHandler()"></template-index>
+		<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 	</el-card>
 </template>
 
@@ -152,7 +152,6 @@ const enumItemIndexRef = ref()
 const previewRef = ref()
 const tableRef = ref()
 const templateIndexRef = ref()
-const currentTemplateGroupIdTs = ref()
 const projectList = ref([])
 
 const getProjectList = () => {
@@ -175,15 +174,12 @@ const generatorBatchHandler = () => {
 		ElMessage.warning('请选择要生成代码的枚举')
 		return
 	}
-	currentTemplateGroupIdTs.value = Date.now()
 	enumGenerateCheckApi(data).then(res => {
 		const { checkResult, enumTemplateGroupId, generatorType } = res.data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的枚举不是同一个项目')
 		} else {
-			nextTick(() => {
-				templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)
-			})
+			templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)
 		}
 	})
 }
@@ -194,10 +190,7 @@ const clearSelectionHandler = () => {
 }
 
 const generatorHandler = (row: any) => {
-	currentTemplateGroupIdTs.value = Date.now()
-	nextTick(() => {
-		templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
-	})
+	templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
 }
 
 const {

@@ -28,7 +28,7 @@
 				class="layout-table"
 				@selection-change="selectionChangeHandle"
 			>
-				<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
+				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
