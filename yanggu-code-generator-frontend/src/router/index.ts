@@ -1,107 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { routerGuard } from '@/utils/router-guard'
 
-export const menuRoutes: RouteRecordRaw[] = [
-	{
-		path: '/index',
-		component: () => import('@/views/index.vue'),
-		name: 'Index',
-		meta: {
-			title: '首页',
-			icon: 'icon-dashboard-fill'
-		}
-	},
-	{
-		path: '/icon-search',
-		component: () => import('@/views/auto-icon-list.vue'),
-		name: 'IconSearch',
-		meta: {
-			title: '图标搜索',
-			icon: 'icon-icon-test'
-		}
-	},
-	{
-		path: '/gen',
-		name: 'Gen',
-		meta: {
-			title: '代码生成器',
-			icon: 'icon-appstore'
-		},
-		children: [
-			{
-				path: '/gen/project',
-				name: 'GenProject',
-				component: () => import('@/views/project/index.vue'),
-				meta: {
-					title: '项目管理',
-					icon: 'icon-edit-square',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/table',
-				name: 'GenTable',
-				component: () => import('@/views/table/index.vue'),
-				meta: {
-					title: '表管理',
-					icon: 'icon-detail',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/enum',
-				name: 'GenEnum',
-				component: () => import('@/views/enum/index.vue'),
-				meta: {
-					title: '枚举管理',
-					icon: 'icon-merge-cells',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/template-group',
-				name: 'GenTemplateGroup',
-				component: () => import('@/views/template-group/index.vue'),
-				meta: {
-					title: '模板组管理',
-					icon: 'icon-file-fill',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/datasource',
-				name: 'GenDatasource',
-				component: () => import('@/views/datasource/index.vue'),
-				meta: {
-					title: '数据源管理',
-					icon: 'icon-database-fill',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/base-class',
-				name: 'GenBaseClass',
-				component: () => import('@/views/base-class/index.vue'),
-				meta: {
-					title: '基类管理',
-					icon: 'icon-cluster',
-					cache: true
-				}
-			},
-			{
-				path: '/gen/field-type',
-				name: 'GenFieldType',
-				component: () => import('@/views/field-type/index.vue'),
-				meta: {
-					title: '字段类型管理',
-					icon: 'icon-menu',
-					cache: true
-				}
-			}
-		]
-	}
-]
-
 // 常量路由
 export const constantRoutes: RouteRecordRaw[] = [
 	{
@@ -109,7 +8,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		name: 'Layout',
 		component: () => import('@/layout/index.vue'),
 		redirect: '/index',
-		children: [...menuRoutes]
+		children: []
 	},
 	{
 		path: '/redirect',

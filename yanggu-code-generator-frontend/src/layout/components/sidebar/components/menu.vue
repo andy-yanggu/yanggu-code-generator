@@ -6,9 +6,9 @@
 			mode="vertical"
 			:collapse-transition="false"
 			router
-			:collapse="store.isCollapseRef"
+			:collapse="appStore.isCollapseRef"
 		>
-			<menu-item v-for="menu in menuRoutes" :key="menu.path" :menu="menu"></menu-item>
+			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu"></menu-item>
 		</el-menu>
 	</el-scrollbar>
 </template>
@@ -17,11 +17,11 @@
 import MenuItem from '@/layout/components/sidebar/components/menu-item.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import { menuRoutes } from '@/router'
 import { useAppStore } from '@/store/app-store'
+import { useUserStore } from '@/store/user-store'
 
-const store = useAppStore()
-
+const appStore = useAppStore()
+const userStore = useUserStore()
 const route = useRoute()
 const defaultActive = computed(() => {
 	const { path } = route

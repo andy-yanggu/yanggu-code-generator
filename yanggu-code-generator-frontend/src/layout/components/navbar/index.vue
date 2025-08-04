@@ -3,15 +3,16 @@
 		<div class="navbar-container">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-left">
-				<el-icon :size="22" class="collapse-icon" @click="store.toggleCollapse()">
-					<Expand v-if="store.isCollapseRef"></Expand>
+				<el-icon :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
+					<Expand v-if="appStore.isCollapseRef"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
 				<breadcrumb></breadcrumb>
 			</div>
 
-			<!-- 右侧区域：链接 + 全屏按钮 -->
+			<!-- 右侧区域：搜索 + 链接 + 全屏按钮 -->
 			<div class="navbar-right">
+				<search></search>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 						<svg-icon icon="icon-gitee-fill-round"></svg-icon>
@@ -38,12 +39,15 @@
 <script setup lang="ts">
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import Tag from '@/layout/components/navbar/components/tag.vue'
-import { useAppStore } from '@/store/app-store'
-import { onMounted, onUnmounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
+import Search from '@/layout/components/navbar/components/search.vue'
+import { useAppStore } from '@/store/app-store'
+import { onMounted, onUnmounted, ref } from 'vue'
+
 const isFullscreen = ref(false)
-const store = useAppStore()
+const appStore = useAppStore()
+
 // 全屏切换函数
 const toggleFullscreen = () => {
 	if (!document.fullscreenElement) {
@@ -86,6 +90,7 @@ onUnmounted(() => {
 	align-items: center;
 	gap: 16px;
 }
+
 .navbar-right {
 	display: flex;
 	align-items: center;
@@ -93,6 +98,7 @@ onUnmounted(() => {
 	margin-left: auto;
 	margin-right: 40px;
 }
+
 .collapse-icon {
 	cursor: pointer;
 }
