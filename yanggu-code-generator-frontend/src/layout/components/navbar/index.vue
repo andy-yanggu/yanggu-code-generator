@@ -1,4 +1,3 @@
-:index.vue
 <template>
 	<div>
 		<div class="navbar-container">

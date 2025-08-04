@@ -1,16 +1,8 @@
 <template>
-	<el-dialog v-model="visible" title="字段配置" width="80%" @close="visible = false">
+	<el-dialog v-model="visible" title="字段配置" width="80%" class="field-config-dialog" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性配置" name="field">
-				<el-table
-					ref="fieldTable"
-					v-loading="queryLoading"
-					border
-					row-key="id"
-					class="sortable-row-gen"
-					:data="getFieldListData(0)"
-					:show-overflow-tooltip="true"
-				>
+				<el-table ref="fieldTable" border row-key="id" class="sortable-row-gen" :data="getFieldListData(0)" :show-overflow-tooltip="true">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名称" header-align="center" align="center" width="100"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center">
@@ -177,24 +169,23 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/table-field'
 import { enumEntityListApi } from '@/api/enum'
 import { fieldTypeListApi } from '@/api/field-type'
 import { Check, Close } from '@element-plus/icons-vue'
+import { ElLoading } from 'element-plus'
 
 const activeName = ref()
 const fieldTable = ref()
 const formTable = ref()
 const gridTable = ref()
 const queryTable = ref()
-const queryLoading = ref(false)
 const submitLoading = ref(false)
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
-const dataFormRef = ref()
 const typeList = ref([]) as any
 const tableId = ref()
 const projectIdRef = ref()
@@ -242,38 +233,47 @@ const init = async (row: any) => {
 	const id = row.id
 	projectIdRef.value = row.projectId
 	tableId.value = id
-	queryLoading.value = true
-
-	// 重置表单数据
-	if (dataFormRef.value) {
-		dataFormRef.value.resetFields()
-	}
 
 	activeName.value = 'field'
 
+	// 等待DOM更新后再显示loading
+	await nextTick()
+
+	// 局部加载，指定目标为当前对话框
+	const loadingInstance = ElLoading.service({
+		target: '.field-config-dialog .el-dialog__body',
+		text: '数据加载中...'
+	})
+
 	try {
 		// 并行执行所有异步请求
-		await Promise.all([
+		const [fieldRes, enumRes, fieldTypeRes] = await Promise.all([
 			getTableFieldList(id),
-			enumEntityListApi({ projectId: projectIdRef.value }).then(res => {
-				enumList.value = res.data
-			}),
-			getFieldTypeList()
+			enumEntityListApi({ projectId: projectIdRef.value }),
+			fieldTypeListApi()
 		])
+
+		fieldList.value = fieldRes.data
+		enumList.value = enumRes.data
+
+		// 设置属性类型值
+		fieldTypeRes.data.forEach((item: any) => {
+			typeList.value.push({ label: item, value: item })
+		})
+		// 增加Object类型
+		typeList.value.push({ label: 'Object', value: 'Object' })
 	} catch (error) {
 		ElMessage.error('数据加载失败')
 	} finally {
-		queryLoading.value = false
+		loadingInstance.close()
 	}
 }
 
-const getTableFieldList = (id: number): void => {
+const getTableFieldList = (id: number) => {
 	const queryForm = {
 		tableId: id
 	}
-	tableFieldEntityListApi(queryForm).then(res => {
-		fieldList.value = res.data
-	})
+	return tableFieldEntityListApi(queryForm)
 }
 
 const getFieldListData = (type: number) => {
@@ -287,17 +287,6 @@ const getFieldListData = (type: number) => {
 	} else {
 		return list.sort((a, b) => a.gridFieldSort - b.gridFieldSort)
 	}
-}
-
-const getFieldTypeList = async () => {
-	typeList.value = []
-
-	// 获取数据
-	const { data } = await fieldTypeListApi()
-	// 设置属性类型值
-	data.forEach((item: any) => typeList.value.push({ label: item, value: item }))
-	// 增加Object类型
-	typeList.value.push({ label: 'Object', value: 'Object' })
 }
 
 // 表单提交

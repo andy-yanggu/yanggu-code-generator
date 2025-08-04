@@ -11,9 +11,11 @@
 				<el-scrollbar class="layout-scrollbar">
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
-							<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
-								<component :is="Component" :key="route.fullPath"></component>
-							</keep-alive>
+							<transition name="slide" mode="out-in">
+								<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+									<component :is="Component" :key="route.fullPath"></component>
+								</keep-alive>
+							</transition>
 						</router-view>
 					</div>
 				</el-scrollbar>
