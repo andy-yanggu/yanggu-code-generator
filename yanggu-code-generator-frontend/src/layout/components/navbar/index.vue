@@ -12,7 +12,7 @@
 
 			<!-- 右侧区域：搜索 + 链接 + 全屏按钮 -->
 			<div class="navbar-right">
-				<search></search>
+				<menu-search></menu-search>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 						<svg-icon icon="icon-gitee-fill-round"></svg-icon>
@@ -41,7 +41,7 @@ import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import Tag from '@/layout/components/navbar/components/tag.vue'
 import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
-import Search from '@/layout/components/navbar/components/search.vue'
+import MenuSearch from '@/layout/components/navbar/components/menu-search.vue'
 import { useAppStore } from '@/store/app-store'
 import { onMounted, onUnmounted, ref } from 'vue'
 
