@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/view": "^6.38.1",
     "@element-plus/icons-vue": "2.3.1",
     "@vueuse/core": "^9.1.1",
     "axios": "1.8.2",

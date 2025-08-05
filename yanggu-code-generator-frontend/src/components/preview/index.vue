@@ -1,69 +1,75 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="preview.visible" title="代码预览" :size="'100%'">
-		<el-scrollbar>
-			<el-container>
-				<el-aside v-show="!isCollapseRef" :style="{ width: '300px', overflowX: 'auto' }">
+	<el-drawer v-model="preview.visible" title="代码预览" :size="'100%'" :modal="false">
+		<el-container style="height: 100%">
+			<!-- 左侧：树结构 -->
+			<el-aside v-show="!isCollapseRef" width="300px" style="overflow: hidden">
+				<div style="padding: 15px; border-bottom: 1px solid #eee">
+					<el-input v-model="treeSearchText" placeholder="搜索文件/路径" size="small" clearable prefix-icon="Search"></el-input>
+				</div>
+				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
-						<el-scrollbar>
-							<el-tree
-								ref="treeRef"
-								:data="preview.treeData"
-								node-key="filePath"
-								:current-node-key="currentNodeKey"
-								highlight-current
-								class="custom-tree"
-								@node-click="handleTreeNodeClick"
-							></el-tree>
-						</el-scrollbar>
+						<el-tree
+							ref="treeRef"
+							:data="preview.treeData"
+							node-key="filePath"
+							:current-node-key="currentNodeKey"
+							highlight-current
+							class="custom-tree"
+							:filter-node-method="filterNode"
+							@node-click="handleTreeNodeClick"
+						/>
 					</div>
-				</el-aside>
-				<el-main>
-					<el-container>
-						<el-header style="display: flex; flex-direction: column; gap: 10px">
-							<el-row>
-								<el-col :span="1">
-									<el-icon :size="22" class="collapse-icon" @click="toggleCollapse()">
-										<Expand v-if="isCollapseRef"></Expand>
-										<Fold v-else></Fold>
+				</el-scrollbar>
+			</el-aside>
+
+			<!-- 右侧：代码预览区 -->
+			<el-main ref="codeContainer" style="padding: 0; overflow: hidden" :class="{ 'full-screen-mode': isFullscreen }">
+				<el-container style="height: 100%">
+					<!-- 头部操作区域 -->
+					<el-header style="display: flex; flex-direction: column; gap: 10px; padding: 10px">
+						<el-row>
+							<el-col v-if="!isFullscreen" :span="1">
+								<el-icon :size="22" class="collapse-icon" @click="toggleCollapse()">
+									<Expand v-if="isCollapseRef" />
+									<Fold v-else />
+								</el-icon>
+							</el-col>
+							<el-col :span="23">
+								路径：<el-text>{{ preview.item.filePath }}</el-text>
+								<el-tooltip content="复制路径" placement="top" effect="light">
+									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(preview.item.filePath)">
+										<CopyDocument />
 									</el-icon>
-								</el-col>
-								<el-col :span="23">
-									路径：<el-text>{{ preview.item.filePath }}</el-text>
-									<el-tooltip content="复制路径" placement="top" effect="light">
-										<el-icon style="cursor: pointer; margin-left: 10px" title="点击复制路径" @click="copyPath(preview.item.filePath)">
-											<CopyDocument></CopyDocument>
-										</el-icon>
-									</el-tooltip>
-								</el-col>
-							</el-row>
-							<el-row>
-								<el-col :span="12">
-									名称：<el-text>{{ preview.item.fileName }}</el-text>
-								</el-col>
-								<el-col :span="12" style="text-align: right">
-									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
-									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
-									<el-button size="small" @click="toggle()">全屏展示</el-button>
-								</el-col>
-							</el-row>
-						</el-header>
-						<el-main style="margin-top: 10px">
-							<code-mirror
-								ref="codeContainer"
-								v-model="preview.item.content"
-								:height="contentHeight"
-								:class="{ 'full-screen-mode': isFullscreen }"
-							></code-mirror>
-						</el-main>
-					</el-container>
-				</el-main>
-			</el-container>
-		</el-scrollbar>
+								</el-tooltip>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="12">
+								名称：<el-text>{{ preview.item.fileName }}</el-text>
+							</el-col>
+							<el-col :span="12" style="text-align: right">
+								<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
+								<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
+							</el-col>
+						</el-row>
+					</el-header>
+
+					<!-- 代码区域 -->
+					<el-main style="padding: 10px; overflow: hidden">
+						<el-scrollbar style="height: 100%">
+							<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
+						</el-scrollbar>
+					</el-main>
+				</el-container>
+			</el-main>
+		</el-container>
 	</el-drawer>
 </template>
+
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
@@ -89,6 +95,7 @@ const preview = reactive({
 	}
 })
 
+const treeSearchText = ref('')
 const isCollapseRef = ref(false)
 const codeContainer = ref<HTMLElement>()
 const { isFullscreen, toggle } = useFullscreen(codeContainer)
@@ -101,6 +108,9 @@ const toggleCollapse = () => {
 const contentHeight = computed(() => {
 	const length = preview.item.content.split('\n').length
 	return Math.min(Math.max(20 * length, 800), 1000)
+})
+watch(treeSearchText, val => {
+	treeRef.value!.filter(val)
 })
 
 interface Tree {
@@ -185,6 +195,13 @@ const downloadTemplateData = (item: any) => {
 	}
 }
 
+const filterNode = (value: string, data: Tree) => {
+	if (!value) {
+		return true
+	}
+	return data.label.includes(value)
+}
+
 defineExpose({
 	init
 })
@@ -192,17 +209,18 @@ defineExpose({
 
 <style scoped>
 .tree-scroll-wrapper {
-	width: 100%;
+	min-width: max-content;
+	width: fit-content;
 	overflow-x: auto;
-	white-space: nowrap; /* 防止节点内容换行 */
-}
-.collapse-icon {
-	cursor: pointer;
 }
 
 .custom-tree {
-	display: inline-block; /* 使树形结构横向排列 */
-	min-width: max-content; /* 根据内容自适应宽度 */
+	display: block;
+	width: 100%;
+}
+
+.collapse-icon {
+	cursor: pointer;
 }
 
 /* 覆盖 Element Plus 默认样式 */
@@ -212,9 +230,17 @@ defineExpose({
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 9999;
+	z-index: 3000;
 	background: white;
 	margin: 0 !important;
 	padding: 20px;
+}
+
+.el-message {
+	z-index: 4000 !important;
+}
+
+.el-tooltip__popper {
+	z-index: 4000 !important;
 }
 </style>

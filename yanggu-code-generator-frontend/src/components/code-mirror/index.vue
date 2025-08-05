@@ -20,6 +20,7 @@
 import { ref, shallowRef, watch } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
+import { EditorView } from '@codemirror/view'
 
 const props = defineProps({
 	modelValue: {
@@ -41,7 +42,18 @@ watch(
 		// deep: true
 	}
 )
-const extensions = [javascript()]
+const customStyle = EditorView.theme({
+	'&': {
+		height: 'auto',
+		maxHeight: '100%',
+		overflow: 'visible'
+	},
+	'.cm-scroller': {
+		overflow: 'visible'
+	}
+})
+
+const extensions = [javascript(), customStyle]
 const log = console.log
 
 // Codemirror EditorView instance ref
