@@ -19,14 +19,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { useClipboard } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
+import { copyToClipboard } from '@/utils/tool'
 
 const loading = ref(true)
 const allIcons = ref<string[]>([])
 const allOriginIcons = ref<string[]>([])
 const searchText = ref('')
-const { copy, isSupported } = useClipboard()
 
 // 从iconfont.js文件中提取图标
 const loadIcons = async () => {
@@ -65,26 +64,10 @@ const filterIcons = () => {
 
 // 选择图标时的回调
 const selectIcon = (iconName: string) => {
-	console.log('Selected icon:', iconName)
-	// 检查浏览器是否支持 clipboard API
-	if (isSupported) {
-		copy(iconName)
-			.then(() => {
-				console.log('图标名称已复制到剪切板:', iconName)
-				// 可以添加成功提示
-				ElMessage.success(`已复制图标: ${iconName}`)
-			})
-			.catch(err => {
-				console.error('复制失败:', err)
-				// 可以添加失败提示
-				ElMessage.error('复制失败')
-			})
-	} else {
-		// 不支持时的降级处理
-		console.warn('当前浏览器不支持 Clipboard API')
-		// 可以使用传统的复制方法或提示用户
-		ElMessage.warning('当前浏览器不支持自动复制功能')
-	}
+	copyToClipboard(iconName).then(() => {
+		// 可以添加成功提示
+		ElMessage.success(`图标名称: ${iconName}已经复制到剪切板`)
+	})
 }
 
 onMounted(() => {

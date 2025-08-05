@@ -63,6 +63,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
+import { copyToClipboard } from '@/utils/tool'
 
 const currentNodeKey = ref()
 const treeRef = ref()
@@ -135,24 +136,13 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 
 //复制到剪切板
 const handleCopy = (content: string) => {
-	// 新增环境检测逻辑
-	if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) {
-		ElMessage.error('当前浏览器不支持复制功能，或者使用https域名')
-		return
-	}
-
-	navigator.clipboard
-		.writeText(content)
-		.then(() => {
-			ElMessage.success('代码已复制到剪贴板')
-		})
-		.catch(() => {
-			ElMessage.error('复制失败，请重试')
-		})
+	copyToClipboard(content).then(() => {
+		ElMessage.success('代码已复制到剪贴板')
+	})
 }
 
 const copyPath = (path: string) => {
-	navigator.clipboard.writeText(path).then(() => {
+	copyToClipboard(path).then(() => {
 		ElMessage.success('路径已复制到剪贴板')
 	})
 }
