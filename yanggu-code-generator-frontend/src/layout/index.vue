@@ -12,7 +12,7 @@
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
 							<transition name="slide" mode="out-in">
-								<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+								<keep-alive :include="appStore.cacheListRef" :exclude="['Redirect']">
 									<component :is="Component" :key="route.fullPath"></component>
 								</keep-alive>
 							</transition>

@@ -10,6 +10,7 @@ import '@/icons/iconfont/iconfont'
 import 'element-plus/dist/index.css'
 import '@/styles/index.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import directive from '@/directive'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -18,6 +19,8 @@ pinia.use(piniaPluginPersistedstate)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 	app.component(key, component)
 }
+// 自定义指令
+directive(app)
 
 app.use(router)
 app.use(SvgIcon)

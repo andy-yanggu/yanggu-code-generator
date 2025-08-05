@@ -34,14 +34,13 @@ export const useAppStore = defineStore(
 		// 面包屑列表
 		const breadcrumbListRef = ref<Breadcrumb[]>([])
 		// 缓存组件列表
-		const cacheSetRef = ref<Set<string>>(new Set<string>())
+		const cacheListRef = ref<string[]>([])
 
 		// 计算属性
 		// 标签数量
 		const tagLength = computed(() => tagsListRef.value.length)
 
 		// 缓存组件列表
-		const cacheList = computed(() => [...cacheSetRef.value])
 
 		// actions
 		// 切换折叠状态
@@ -91,20 +90,37 @@ export const useAppStore = defineStore(
 
 		// 添加缓存路由
 		const addCacheComponent = (name: string) => {
-			cacheSetRef.value.add(name)
+			if (!cacheListRef.value.includes(name)) {
+				cacheListRef.value.push(name)
+			}
 		}
 
 		// 删除缓存路由
 		const removeCacheComponent = (name: string) => {
-			cacheSetRef.value.delete(name)
+			cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+		}
+
+		// 批量删除缓存路由
+		const removeCacheComponentList = (nameList: string[]) => {
+			if (!nameList || nameList.length === 0) {
+				return
+			}
+			for (const name of nameList) {
+				cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+			}
+		}
+
+		// 删除所有缓存
+		const removeAllCache = () => {
+			cacheListRef.value = []
 		}
 
 		return {
 			isCollapseRef,
 			breadcrumbListRef,
 			tagsListRef,
+			cacheListRef,
 			tagLength,
-			cacheList,
 			toggleCollapse,
 			setBreadcrumb,
 			addTag,
@@ -112,7 +128,9 @@ export const useAppStore = defineStore(
 			addAllTags,
 			removeAllTags,
 			addCacheComponent,
-			removeCacheComponent
+			removeCacheComponent,
+			removeCacheComponentList,
+			removeAllCache
 		}
 	},
 	{

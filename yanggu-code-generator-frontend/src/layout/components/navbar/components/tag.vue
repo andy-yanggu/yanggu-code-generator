@@ -4,11 +4,11 @@
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
-				v-for="(tag, index) in store.tagsListRef"
+				v-for="(tag, index) in appStore.tagsListRef"
 				:key="tag.fullPath"
 				size="default"
 				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-				:closable="tag.fullPath != '/index' || store.tagLength > 1"
+				:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
 				@click="handleClick(index, tag)"
 				@close="handleClose(index, tag)"
 				@contextmenu.prevent="showTagMenu($event, tag, index)"
@@ -55,7 +55,7 @@ const menuPosition = ref({
 })
 const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
-const store = useAppStore()
+const appStore = useAppStore()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
@@ -75,10 +75,10 @@ onMounted(() => {
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-						const newTags = [...store.tagsListRef]
+						const newTags = [...appStore.tagsListRef]
 						const movedTag = newTags.splice(oldIndex!, 1)[0]
 						newTags.splice(newIndex!, 0, movedTag)
-						store.addAllTags(newTags)
+						appStore.addAllTags(newTags)
 					}
 				}
 			})
@@ -99,22 +99,27 @@ const handleClick = (_: number, tag: NavbarTag) => {
 
 const handleClose = (index: number, tag: NavbarTag) => {
 	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
-	if (store.tagLength === 1 && tag.fullPath === '/index') {
+	if (appStore.tagLength === 1 && tag.fullPath === '/index') {
 		return // 直接返回，不执行关闭操作
 	}
-	store.removeTag(tag)
+
+	// 删除对应的缓存组件
+	appStore.removeCacheComponent(tag.name)
+
+	// 删除标签页
+	appStore.removeTag(tag)
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
 		let to = '/' // 默认跳转首页
 
 		// 关闭后如果还有标签页
-		if (store.tagLength > 0) {
+		if (appStore.tagLength > 0) {
 			// 优先尝试右侧标签
-			if (index < store.tagLength) {
-				to = store.tagsListRef[index].fullPath
+			if (index < appStore.tagLength) {
+				to = appStore.tagsListRef[index].fullPath
 			} else if (index > 0) {
 				// 右侧无标签时选择左侧
-				to = store.tagsListRef[index - 1].fullPath
+				to = appStore.tagsListRef[index - 1].fullPath
 			}
 		}
 		if (to === '/') {
@@ -158,7 +163,7 @@ const closeTagMenu = () => {
 // 刷新当前标签页
 const refreshCurrentTag = () => {
 	// 删除缓存组件
-	store.removeCacheComponent(currentMenuTag.value.name)
+	appStore.removeCacheComponent(currentMenuTag.value.name)
 	// 使用路由跳转实现刷新
 	router.push({
 		path: '/redirect' + currentMenuTag.value.fullPath,
@@ -175,16 +180,19 @@ const closeCurrentTag = () => {
 
 // 关闭其他标签
 const closeOtherTags = () => {
-	// 保留当前标签，关闭其他所有标签
 	const currentPath = currentMenuTag.value.fullPath
-	store.addAllTags(store.tagsListRef.filter(tag => tag.fullPath === currentPath))
+	// 删除其他缓存
+	appStore.removeCacheComponentList(appStore.tagsListRef.filter(tag => tag.fullPath !== currentPath).map(tag => tag.name))
+	// 保留当前标签，关闭其他所有标签
+	appStore.addAllTags(appStore.tagsListRef.filter(tag => tag.fullPath === currentPath))
 	router.push(currentPath)
 	closeTagMenu()
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
-	store.removeAllTags()
+	appStore.removeAllTags()
+	appStore.removeAllCache()
 	closeTagMenu()
 	router.push({
 		path: '/redirect/'
@@ -194,7 +202,8 @@ const closeAllTags = () => {
 //关闭左侧标签
 const closeLeftTag = () => {
 	const currentIndex = currentMenuTagIndex.value
-	store.addAllTags(store.tagsListRef.filter((_, index) => index >= currentIndex))
+	appStore.removeCacheComponentList(appStore.tagsListRef.filter((_, index) => index < currentIndex).map(tag => tag.name))
+	appStore.addAllTags(appStore.tagsListRef.filter((_, index) => index >= currentIndex))
 	router.push(currentMenuTag.value.fullPath)
 	closeTagMenu()
 }
@@ -203,7 +212,8 @@ const closeLeftTag = () => {
 const closeRightTag = () => {
 	// 保留当前标签及其左侧所有标签，以及首页标签
 	const currentIndex = currentMenuTagIndex.value
-	store.addAllTags(store.tagsListRef.filter((_, index) => index <= currentIndex))
+	appStore.removeCacheComponentList(appStore.tagsListRef.filter((_, index) => index > currentIndex).map(tag => tag.name))
+	appStore.addAllTags(appStore.tagsListRef.filter((_, index) => index <= currentIndex))
 	closeTagMenu()
 }
 </script>
