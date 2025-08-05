@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { useClipboard } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 

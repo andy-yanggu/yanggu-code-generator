@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUpdated, nextTick, onUnmounted } from 'vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElText } from 'element-plus'
 
 defineProps({

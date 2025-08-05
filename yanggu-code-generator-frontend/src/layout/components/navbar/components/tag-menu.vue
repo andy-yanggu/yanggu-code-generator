@@ -54,15 +54,15 @@ const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags
 .icon-list {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 10px;
 	padding: 6px;
-	width: 70px; /* 设置列表容器的宽度 */
+	width: 65px; /* 设置列表容器的宽度 */
 }
 
 .icon-item {
 	display: flex;
 	align-items: center;
-	gap: 3px;
+	gap: 5px;
 	font-size: 12px;
 	width: 100%; /* 让项目占满容器宽度 */
 	cursor: pointer; /* 鼠标变成小手 */

@@ -44,7 +44,7 @@ import { useAppStore } from '@/store/app-store'
 import Tag from '@/layout/components/navbar/components/tag.vue'
 import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/components/navbar/components/menu-search.vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import RefreshCurrentPage from '@/layout/components/navbar/components/refresh-current-page.vue'
 
 const isFullscreen = ref(false)
@@ -85,6 +85,7 @@ onUnmounted(() => {
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .navbar-left {

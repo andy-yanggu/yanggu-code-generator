@@ -108,17 +108,17 @@ const loadView = (component: string | undefined) => {
 // 构建路由
 const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 	return menuList.map((item: MenuInfo) => {
-		if (item.children && item.children.length > 0) {
-			return {
-				...item,
-				component: null,
-				children: buildRouteList(item.children)
-			} as RouteRecordRaw
-		} else {
-			return {
-				...item,
-				component: loadView(item.component)
-			} as RouteRecordRaw
+		const menu = {
+			...item
+		} as RouteRecordRaw
+		// 如果是目录，则需要构建子路由
+		if (item.meta.type === 0 && item.children && item.children.length > 0) {
+			menu.children = buildRouteList(item.children)
 		}
+		// 如果是菜单，则需要构建组件
+		if (item.meta.type === 1) {
+			menu.component = loadView(item.component)
+		}
+		return menu
 	})
 }

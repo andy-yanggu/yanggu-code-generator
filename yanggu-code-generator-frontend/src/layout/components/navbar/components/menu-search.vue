@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { nextTick, reactive, ref } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { useRouter } from 'vue-router'

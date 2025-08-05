@@ -43,7 +43,7 @@ import { useAppStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
 import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
 
 const route = useRoute()
@@ -216,7 +216,7 @@ const closeRightTag = () => {
 }
 .tag-wrapper {
 	/* 保持原有样式不变 */
-	margin-top: 15px;
+	margin-top: 5px;
 	margin-bottom: 15px;
 	display: inline-flex;
 	align-items: center;

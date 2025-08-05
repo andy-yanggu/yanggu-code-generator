@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { useAppStore } from '@/store/app-store'
 
 const appStore = useAppStore()

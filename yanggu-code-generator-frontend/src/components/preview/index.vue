@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
-import CodeMirror from '@/components/code-mirror/code-mirror.vue'
+import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 
