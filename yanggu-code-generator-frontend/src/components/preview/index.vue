@@ -24,7 +24,7 @@
 			</el-aside>
 
 			<!-- 右侧：代码预览区 -->
-			<el-main ref="codeContainer" style="padding: 0; overflow: hidden" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-main ref="codeContainer" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; gap: 10px; padding: 10px">
@@ -37,7 +37,7 @@
 							</el-col>
 							<el-col :span="23">
 								路径：<el-text>{{ preview.item.filePath }}</el-text>
-								<el-tooltip content="复制路径" placement="top" effect="light">
+								<el-tooltip content="复制路径" placement="top" effect="dark" :teleported="false">
 									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(preview.item.filePath)">
 										<CopyDocument />
 									</el-icon>
@@ -234,13 +234,5 @@ defineExpose({
 	background: white;
 	margin: 0 !important;
 	padding: 20px;
-}
-
-.el-message {
-	z-index: 4000 !important;
-}
-
-.el-tooltip__popper {
-	z-index: 4000 !important;
 }
 </style>
