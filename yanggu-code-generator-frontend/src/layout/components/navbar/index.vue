@@ -25,7 +25,7 @@
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
-					<el-icon :size="18" class="collapse-icon" @click="toggleFullscreen">
+					<el-icon :size="18" class="collapse-icon" @click="toggle()">
 						<FullScreen v-if="!isFullscreen" />
 						<Aim v-else />
 					</el-icon>
@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import { useAppStore } from '@/store/app-store'
 import Tag from '@/layout/components/navbar/components/tag.vue'
@@ -46,37 +45,10 @@ import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/components/navbar/components/menu-search.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import RefreshCurrentPage from '@/layout/components/navbar/components/refresh-current-page.vue'
+import { useFullscreen } from '@vueuse/core'
 
-const isFullscreen = ref(false)
+const { isFullscreen, toggle } = useFullscreen()
 const appStore = useAppStore()
-
-// 全屏切换函数
-const toggleFullscreen = () => {
-	if (!document.fullscreenElement) {
-		document.documentElement
-			.requestFullscreen()
-			.then(() => (isFullscreen.value = true))
-			.catch(err => console.error('全屏失败:', err))
-	} else {
-		document
-			.exitFullscreen()
-			.then(() => (isFullscreen.value = false))
-			.catch(err => console.error('退出全屏失败:', err))
-	}
-}
-
-// 监听全屏状态变化
-const handleFullscreenChange = () => {
-	isFullscreen.value = !!document.fullscreenElement
-}
-
-onMounted(() => {
-	document.addEventListener('fullscreenchange', handleFullscreenChange)
-})
-
-onUnmounted(() => {
-	document.removeEventListener('fullscreenchange', handleFullscreenChange)
-})
 </script>
 
 <style scoped>

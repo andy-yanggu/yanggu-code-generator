@@ -44,12 +44,17 @@
 								<el-col :span="12" style="text-align: right">
 									<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
 									<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
-									<el-button size="small" @click="handleFullScreen">全屏展示</el-button>
+									<el-button size="small" @click="toggle()">全屏展示</el-button>
 								</el-col>
 							</el-row>
 						</el-header>
-						<el-main ref="codeContainer" style="margin-top: 10px">
-							<code-mirror v-model="preview.item.content" :height="contentHeight" :class="{ 'full-screen-mode': isFullScreen }"></code-mirror>
+						<el-main style="margin-top: 10px">
+							<code-mirror
+								ref="codeContainer"
+								v-model="preview.item.content"
+								:height="contentHeight"
+								:class="{ 'full-screen-mode': isFullscreen }"
+							></code-mirror>
 						</el-main>
 					</el-container>
 				</el-main>
@@ -64,6 +69,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
+import { useFullscreen } from '@vueuse/core'
 
 const currentNodeKey = ref()
 const treeRef = ref()
@@ -84,6 +90,8 @@ const preview = reactive({
 })
 
 const isCollapseRef = ref(false)
+const codeContainer = ref<HTMLElement>()
+const { isFullscreen, toggle } = useFullscreen(codeContainer)
 
 const toggleCollapse = () => {
 	isCollapseRef.value = !isCollapseRef.value
@@ -177,44 +185,6 @@ const downloadTemplateData = (item: any) => {
 	}
 }
 
-const isFullScreen = ref(false)
-const codeContainer = ref<HTMLElement>()
-
-const handleFullScreen = () => {
-	if (!codeContainer.value) {
-		return
-	}
-
-	if (!document.fullscreenElement) {
-		isFullScreen.value = true
-		const container = codeContainer.value.$el || codeContainer.value
-
-		if (container.requestFullscreen) {
-			container.requestFullscreen().catch(err => {
-				ElMessage.error(`全屏请求失败: ${err}`)
-				isFullScreen.value = false
-			})
-		} else {
-			// 处理浏览器前缀
-			const docElm = document.documentElement as any
-			if (docElm.webkitRequestFullScreen) {
-				docElm.webkitRequestFullScreen()
-			}
-			ElMessage.warning('当前浏览器不支持原生全屏功能')
-		}
-	} else {
-		isFullScreen.value = false
-		if (document.exitFullscreen) {
-			document.exitFullscreen()
-		}
-	}
-}
-
-// 监听全屏状态变化
-document.addEventListener('fullscreenchange', () => {
-	isFullScreen.value = !!document.fullscreenElement
-})
-
 defineExpose({
 	init
 })
@@ -236,7 +206,6 @@ defineExpose({
 }
 
 /* 覆盖 Element Plus 默认样式 */
-
 :deep(.full-screen-mode) {
 	position: fixed;
 	top: 0;

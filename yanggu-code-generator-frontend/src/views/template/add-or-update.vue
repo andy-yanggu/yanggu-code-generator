@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="handleDialogClosed">
+	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px">
 			<el-form-item label="模板名称" prop="templateName">
 				<el-input v-model="dataForm.templateName" placeholder="请输入模板名称"></el-input>
@@ -16,15 +16,20 @@
 				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
 			</el-form-item>
 			<el-form-item v-show="dataForm.templateType === 0" label="模板内容" prop="templateContent">
-				<div
-					class="code-editor"
-					:class="{ 'full-screen': isFullScreen }"
-					:style="!dataForm.templateContent && !isFullScreen ? { height: '250px' } : {}"
-				>
-					<codemirror v-model="dataForm.templateContent" :options="cmOptions" class="code-mirror" @ready="handleEditorReady" />
-					<el-button v-if="isFullScreen" class="confirm-btn" type="primary" @click="toggleFullscreen">退出全屏</el-button>
+				<div class="code-editor" :style="!dataForm.templateContent && !isFullscreen ? { height: '250px' } : {}">
+					<codemirror
+						ref="codeMirrorRef"
+						v-model="dataForm.templateContent"
+						:options="cmOptions"
+						class="code-mirror"
+						:class="{ 'full-screen-mode': isFullscreen }"
+					></codemirror>
 				</div>
-				<el-button class="fullscreen-btn" @click="toggleFullscreen">全屏编辑</el-button>
+				<el-tooltip content="全屏编辑" effect="dark" placement="bottom">
+					<el-icon :size="18" class="fullscreen-btn" @click="toggle()">
+						<FullScreen></FullScreen>
+					</el-icon>
+				</el-tooltip>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -35,13 +40,14 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { Codemirror } from 'vue-codemirror'
 import { EditorView, keymap } from '@codemirror/view'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, FullScreen } from '@element-plus/icons-vue'
+import { useFullscreen } from '@vueuse/core'
 
 const props = defineProps({
 	templateGroupId: {
@@ -74,27 +80,8 @@ const dataRules = reactive({
 	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 新增全屏状态
-const isFullScreen = ref(false)
-let editorView: EditorView | null = null
-
-// 新增编辑器准备回调
-const handleEditorReady = (view: EditorView) => {
-	editorView = view
-}
-
-// 新增全屏切换方法
-const toggleFullscreen = () => {
-	isFullScreen.value = !isFullScreen.value
-	if (isFullScreen.value && editorView) {
-		nextTick(() => editorView?.focus())
-	}
-}
-
-// 新增对话框关闭处理
-const handleDialogClosed = () => {
-	isFullScreen.value = false
-}
+const codeMirrorRef = ref(null)
+const { isFullscreen, toggle } = useFullscreen(codeMirrorRef)
 
 // 修改cmOptions配置
 const cmOptions = reactive({
@@ -147,9 +134,10 @@ defineExpose({
 	top: 10px;
 	z-index: 1000;
 	padding: 5px;
+	cursor: pointer;
 }
 
-.code-editor.full-screen {
+:deep(.full-screen-mode) {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -157,14 +145,7 @@ defineExpose({
 	height: 100vh;
 	z-index: 9999;
 	background: white;
-}
-
-/* 新增确认按钮样式 */
-.confirm-btn {
-	position: fixed;
-	right: 120px;
-	top: 20px;
-	z-index: 10000;
-	padding: 12px 24px;
+	margin: 0 !important;
+	padding: 20px;
 }
 </style>
