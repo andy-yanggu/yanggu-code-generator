@@ -1,7 +1,7 @@
 <template>
 	<!-- 搜索框 -->
 	<div class="search-container">
-		<el-tooltip :content="'菜单搜索'" effect="dark" placement="bottom" @click="openSearch">
+		<el-tooltip :content="'菜单搜索'" effect="dark" placement="bottom">
 			<el-icon :size="18" class="search-icon" @click="openSearch">
 				<Search></Search>
 			</el-icon>

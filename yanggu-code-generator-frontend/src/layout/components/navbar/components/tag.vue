@@ -157,13 +157,13 @@ const closeTagMenu = () => {
 
 // 刷新当前标签页
 const refreshCurrentTag = () => {
+	// 删除缓存组件
+	store.removeCacheComponent(currentMenuTag.value.name)
 	// 使用路由跳转实现刷新
 	router.push({
 		path: '/redirect' + currentMenuTag.value.fullPath,
 		query: route.query
 	})
-	// 删除缓存组件
-	store.removeCacheComponent(currentMenuTag.value.name)
 	closeTagMenu()
 }
 

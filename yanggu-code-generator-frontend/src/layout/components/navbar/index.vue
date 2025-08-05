@@ -10,9 +10,10 @@
 				<breadcrumb></breadcrumb>
 			</div>
 
-			<!-- 右侧区域：搜索 + 链接 + 全屏按钮 -->
+			<!-- 右侧区域：搜索 + 刷新 + 链接 + 全屏按钮 -->
 			<div class="navbar-right">
 				<menu-search></menu-search>
+				<refresh-current-page></refresh-current-page>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 						<svg-icon icon="icon-gitee-fill-round"></svg-icon>
@@ -24,7 +25,7 @@
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
-					<el-icon :size="18" @click="toggleFullscreen">
+					<el-icon :size="18" class="collapse-icon" @click="toggleFullscreen">
 						<FullScreen v-if="!isFullscreen" />
 						<Aim v-else />
 					</el-icon>
@@ -37,13 +38,14 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
+import { useAppStore } from '@/store/app-store'
 import Tag from '@/layout/components/navbar/components/tag.vue'
-import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
 import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/components/navbar/components/menu-search.vue'
-import { useAppStore } from '@/store/app-store'
-import { onMounted, onUnmounted, ref } from 'vue'
+import SvgIcon from '@/components/svg-icon/src/svg-icon.vue'
+import RefreshCurrentPage from '@/layout/components/navbar/components/refresh-current-page.vue'
 
 const isFullscreen = ref(false)
 const appStore = useAppStore()
