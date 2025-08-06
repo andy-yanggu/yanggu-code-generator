@@ -24,7 +24,7 @@
 			</el-aside>
 
 			<!-- 右侧：代码预览区 -->
-			<el-main ref="codeContainer" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-main style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; gap: 10px; padding: 10px">
@@ -97,8 +97,7 @@ const preview = reactive({
 
 const treeSearchText = ref('')
 const isCollapseRef = ref(false)
-const codeContainer = ref<HTMLElement>()
-const { isFullscreen, toggle } = useFullscreen(codeContainer)
+const { isFullscreen, toggle } = useFullscreen()
 
 const toggleCollapse = () => {
 	isCollapseRef.value = !isCollapseRef.value
