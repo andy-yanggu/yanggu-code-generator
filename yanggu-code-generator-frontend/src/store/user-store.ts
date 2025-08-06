@@ -63,7 +63,7 @@ const INITIAL_TOKEN_INFO: TokenInfo = {
 export const menuRoutes: MenuInfo[] = [
 	{
 		path: '/index',
-		component: 'index',
+		component: 'index/index',
 		name: 'Index',
 		meta: {
 			title: '首页',
