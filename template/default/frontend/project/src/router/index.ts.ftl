@@ -1,45 +1,47 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { routerGuard } from '@/utils/router-guard'
 
-export const menuRoutes: RouteRecordRaw[] = [
-	{
-		path: '/gen/project',
-		name: 'Project',
-		component: () => import('@/views/project/index.vue'),
-		meta: {
-			title: '项目管理',
-			icon: 'icon-edit-square'
-		}
-	}
-]
-
+// 常量路由
 export const constantRoutes: RouteRecordRaw[] = [
 	{
+		path: '/',
+		name: 'Layout',
+		component: () => import('@/layout/index.vue'),
+		redirect: '/index',
+		children: []
+	},
+	{
 		path: '/redirect',
+		name: 'Redirect',
 		component: () => import('@/layout/index.vue'),
 		children: [
 			{
 				path: '/redirect/:path(.*)',
-				component: () => import('@/layout/components/router/redirect.vue')
+				component: () => import('@/views/router/redirect.vue'),
+				meta: {
+					title: '重定向',
+					cache: false
+				}
 			}
 		]
 	},
 	{
-		path: '/',
-		component: () => import('@/layout/index.vue'),
-		redirect: '/gen/project',
-		children: [...menuRoutes]
-	},
-	{
-		path: '/404',
-		component: () => import('@/views/404.vue')
-	},
-	{
 		path: '/:pathMatch(.*)',
-		redirect: '/404'
+		component: () => import('@/views/404.vue')
 	}
 ]
 
 export const router = createRouter({
 	history: createWebHashHistory(),
+	scrollBehavior(_to, _from, savedPosition) {
+		if (savedPosition) {
+			return savedPosition
+		} else {
+			return { top: 0 }
+		}
+	},
 	routes: constantRoutes
 })
+
+// 路由拦截
+routerGuard(router)

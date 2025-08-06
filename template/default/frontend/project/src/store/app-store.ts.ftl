@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { menuRoutes, RouteMetaData } from '@/router'
-import { RouteRecordRaw } from 'vue-router'
+import { RouteMetaData } from '@/utils/router-guard'
+import { router } from '@/router'
 
 // 标签数据
-export interface Tag {
+export interface NavbarTag {
 	// 完整路径
 	fullPath: string
 	// 组件名称
@@ -15,22 +15,32 @@ export interface Tag {
 	icon: string
 }
 
-export const appStore = defineStore(
+// 面包屑
+export interface Breadcrumb {
+	// 标题
+	title: string
+	// 图标
+	icon: string
+}
+
+export const useAppStore = defineStore(
 	'app',
 	() => {
 		// 状态
 		// 折叠状态
 		const isCollapseRef = ref(false)
 		// 标签列表
-		const tagsListRef = ref<Tag[]>([])
+		const tagsListRef = ref<NavbarTag[]>([])
 		// 面包屑列表
-		const breadcrumbListRef = ref<{ path: string; name: string }[]>([])
+		const breadcrumbListRef = ref<Breadcrumb[]>([])
 		// 缓存组件列表
 		const cacheListRef = ref<string[]>([])
 
 		// 计算属性
 		// 标签数量
-		const tagLength = computed<number>(() => tagsListRef.value.length)
+		const tagLength = computed(() => tagsListRef.value.length)
+
+		// 缓存组件列表
 
 		// actions
 		// 切换折叠状态
@@ -40,26 +50,22 @@ export const appStore = defineStore(
 
 		// 设置面包屑
 		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
-			const matched: { path: string; name: string }[] = []
-			const fullPath = routeMetaData.fullPath
-			const paths = fullPath.split('/').filter((p: any) => p)
+			const matched: Breadcrumb[] = []
+			const paths = routeMetaData.path.split('/').filter((p: any) => p)
 
 			let currentPath = ''
 			for (const path of paths) {
 				currentPath += `/${path}`
-				const routeMeta = findRouteByPath(currentPath)
-				if (routeMeta) {
-					matched.push({
-						path: currentPath,
-						name: routeMeta
-					})
+				const breadcrumb = findRouteByPath(currentPath)
+				if (breadcrumb && breadcrumb.title && breadcrumb.icon) {
+					matched.push(breadcrumb)
 				}
 			}
 			breadcrumbListRef.value = matched
 		}
 
 		// 添加标签
-		const addTag = (tag: Tag) => {
+		const addTag = (tag: NavbarTag) => {
 			const isExist = tagsListRef.value.find(item => item.fullPath === tag.fullPath)
 			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
@@ -68,12 +74,12 @@ export const appStore = defineStore(
 		}
 
 		// 删除标签
-		const removeTag = (tag: Tag) => {
+		const removeTag = (tag: NavbarTag) => {
 			tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
 		// 添加所有标签
-		const addAllTags = (tagList: Tag[]) => {
+		const addAllTags = (tagList: NavbarTag[]) => {
 			tagsListRef.value = tagList
 		}
 
@@ -91,15 +97,30 @@ export const appStore = defineStore(
 
 		// 删除缓存路由
 		const removeCacheComponent = (name: string) => {
-			cacheListRef.value = cacheListRef.value.filter(item => item !== name)
+			cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+		}
+
+		// 批量删除缓存路由
+		const removeCacheComponentList = (nameList: string[]) => {
+			if (!nameList || nameList.length === 0) {
+				return
+			}
+			for (const name of nameList) {
+				cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+			}
+		}
+
+		// 删除所有缓存
+		const removeAllCache = () => {
+			cacheListRef.value = []
 		}
 
 		return {
 			isCollapseRef,
 			breadcrumbListRef,
 			tagsListRef,
-			tagLength,
 			cacheListRef,
+			tagLength,
 			toggleCollapse,
 			setBreadcrumb,
 			addTag,
@@ -107,38 +128,32 @@ export const appStore = defineStore(
 			addAllTags,
 			removeAllTags,
 			addCacheComponent,
-			removeCacheComponent
+			removeCacheComponent,
+			removeCacheComponentList,
+			removeAllCache
 		}
 	},
 	{
 		persist: {
-			storage: localStorage,
-			key: 'appStore'
+			key: 'appStore',
+			storage: localStorage
 		}
 	}
 )
 
 /**
- * 递归查找路径对应的 meta.title
+ * 查找路径对应的 meta.title
  */
-const findRouteByPath = (targetPath: string): string | null => {
-	const traverse = (routes: RouteRecordRaw[]): string | null => {
-		for (const route of routes) {
-			// 完全匹配路径
-			if (route.path === targetPath && route.meta?.title) {
-				return route.meta.title as string
-			}
+const findRouteByPath = (targetPath: string): Breadcrumb => {
+	// 使用 Vue Router 的路径匹配算法
+	const matchedRoute = router.resolve(targetPath)
 
-			// 存在子路由则继续递归
-			if (route.children?.length) {
-				const result = traverse(route.children)
-				if (result) {
-					return result
-				}
-			}
+	if (matchedRoute?.meta?.title) {
+		return {
+			title: matchedRoute.meta.title as string,
+			icon: matchedRoute.meta.icon as string
 		}
-		return null
+	} else {
+		return { title: '', icon: '' }
 	}
-
-	return traverse(menuRoutes)
 }
