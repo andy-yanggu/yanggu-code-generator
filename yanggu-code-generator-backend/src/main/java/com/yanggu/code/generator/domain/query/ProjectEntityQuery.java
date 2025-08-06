@@ -28,6 +28,12 @@ public class ProjectEntityQuery extends PageQuery<ProjectEntity> implements Seri
     private String projectName;
 
     /**
+     * 生成方式
+     */
+    @Schema(description = "生成方式")
+    private Integer generatorType;
+
+    /**
      * 开始时间
      */
     @Schema(description = "开始时间")

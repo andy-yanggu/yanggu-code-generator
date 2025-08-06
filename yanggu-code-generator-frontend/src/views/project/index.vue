@@ -5,6 +5,11 @@
 				<el-form-item label="项目名称" prop="projectName">
 					<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称"></el-input>
 				</el-form-item>
+				<el-form-item label="生成方式" prop="generatorType">
+					<el-select v-model="state.queryForm.generatorType" style="width: 160px" clearable placeholder="请选择生成方式">
+						<el-option v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
 				<el-form-item label="创建时间" prop="dateTimeRange" style="width: 350px">
 					<el-date-picker
 						v-model="state.queryForm.dateTimeRange"
@@ -107,14 +112,14 @@
 			<!-- 预览 -->
 			<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
 
-			<steps ref="stepsRef" :key="currentProjectIdTs"></steps>
+			<steps ref="stepsRef"></steps>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { nextTick, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/project/add-or-update.vue'
 import Preview from '@/components/preview/index.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
@@ -133,6 +138,7 @@ const state: IHooksOptions = reactive({
 	deleteListApi: projectDeleteListApi,
 	queryForm: {
 		projectName: '',
+		generatorType: null,
 		dateTimeRange: []
 	},
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'
@@ -147,10 +153,7 @@ const previewHandle = (projectItem: any) => {
 }
 
 const generatorCode = (item: any) => {
-	currentProjectIdTs.value = Date.now()
-	nextTick(() => {
-		stepsRef.value.init(item)
-	})
+	stepsRef.value.init(item)
 }
 
 const {

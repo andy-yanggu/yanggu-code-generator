@@ -224,6 +224,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
         //过滤字段
         wrapper.like(MybatisUtil.isNotEmpty(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
+        //生成方式
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getGeneratorType()), ProjectEntity::getGeneratorType, query.getGeneratorType());
         //时间过滤
         wrapper.between(MybatisUtil.isNotEmpty(query.getStartTime()) && MybatisUtil.isNotEmpty(query.getEndTime()), ProjectEntity::getCreateTime, query.getStartTime(), query.getEndTime());
 
