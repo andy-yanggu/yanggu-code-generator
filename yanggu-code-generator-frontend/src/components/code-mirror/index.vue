@@ -1,19 +1,17 @@
 <template>
-	<el-scrollbar>
-		<codemirror
-			v-model="codes"
-			placeholder="Code goes here..."
-			:style="{ height: height + 'px' }"
-			:autofocus="true"
-			:indent-with-tab="true"
-			:tab-size="2"
-			:extensions="extensions"
-			@ready="handleReady"
-			@change="change($event)"
-			@focus="log('focus', $event)"
-			@blur="log('blur', $event)"
-		></codemirror>
-	</el-scrollbar>
+	<codemirror
+		v-model="codes"
+		placeholder="Code goes here..."
+		:style="{ height: height + 'px' }"
+		:autofocus="true"
+		:indent-with-tab="true"
+		:tab-size="2"
+		:extensions="extensions"
+		@ready="handleReady"
+		@change="change($event)"
+		@focus="log('focus', $event)"
+		@blur="log('blur', $event)"
+	></codemirror>
 </template>
 
 <script setup>
