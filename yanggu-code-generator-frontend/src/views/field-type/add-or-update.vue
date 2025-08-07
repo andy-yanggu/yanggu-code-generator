@@ -2,7 +2,7 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="字段类型" prop="columnType">
-				<el-input v-model="dataForm.columnType" placeholder="请输入字段类型"></el-input>
+				<el-input v-model="dataForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
 			<el-form-item label="属性类型" prop="attrType">
 				<el-select v-model="dataForm.attrType" clearable placeholder="请选择属性类型">
@@ -10,7 +10,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="属性包名" prop="packageName">
-				<el-input v-model="dataForm.packageName" placeholder="请输入属性包名"></el-input>
+				<el-input v-model="dataForm.packageName" clearable placeholder="请输入属性包名"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>

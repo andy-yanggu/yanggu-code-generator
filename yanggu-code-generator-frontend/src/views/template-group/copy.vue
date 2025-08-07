@@ -45,6 +45,8 @@ const state: FormOptions = reactive({
 		type: '',
 		groupDesc: ''
 	},
+	message: '模板组和下的所有模板已复制',
+	duration: 2000,
 	initAfter,
 	emit
 })
@@ -54,7 +56,6 @@ const dataRules = reactive({
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-// 修改: 添加 submitLoading
 const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({

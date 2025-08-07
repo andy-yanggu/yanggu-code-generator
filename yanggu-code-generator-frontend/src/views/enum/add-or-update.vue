@@ -7,10 +7,10 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="枚举名称" prop="enumName">
-				<el-input v-model="dataForm.enumName" placeholder="请输入枚举名称"></el-input>
+				<el-input v-model="dataForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举描述" prop="enumDesc">
-				<el-input v-model="dataForm.enumDesc" placeholder="请输入枚举描述"></el-input>
+				<el-input v-model="dataForm.enumDesc" clearable placeholder="请输入枚举描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>

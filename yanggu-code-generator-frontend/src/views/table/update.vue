@@ -7,19 +7,19 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="数据库名" prop="databaseName">
-				<el-input v-model="dataForm.databaseName" placeholder="请输入数据库名"></el-input>
+				<el-input v-model="dataForm.databaseName" clearable placeholder="请输入数据库名"></el-input>
 			</el-form-item>
 			<el-form-item label="表名" prop="tableName">
-				<el-input v-model="dataForm.tableName" placeholder="请输入表名" disabled></el-input>
+				<el-input v-model="dataForm.tableName" clearable placeholder="请输入表名" disabled></el-input>
 			</el-form-item>
 			<el-form-item label="类名" prop="className">
-				<el-input v-model="dataForm.className" placeholder="请输入类名"></el-input>
+				<el-input v-model="dataForm.className" clearable placeholder="请输入类名"></el-input>
 			</el-form-item>
 			<el-form-item label="注释" prop="tableComment">
-				<el-input v-model="dataForm.tableComment" placeholder="请输入说明"></el-input>
+				<el-input v-model="dataForm.tableComment" clearable placeholder="请输入说明"></el-input>
 			</el-form-item>
 			<el-form-item label="功能名" prop="functionName">
-				<el-input v-model="dataForm.functionName" placeholder="请输入功能名"></el-input>
+				<el-input v-model="dataForm.functionName" clearable placeholder="请输入功能名"></el-input>
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
 				<el-radio-group v-model="dataForm.formLayout">
@@ -27,10 +27,10 @@
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
-				<el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
+				<el-input v-model="dataForm.author" clearable placeholder="请输入作者"></el-input>
 			</el-form-item>
 			<el-form-item label="版本" prop="version">
-				<el-input v-model="dataForm.version" placeholder="请输入版本"></el-input>
+				<el-input v-model="dataForm.version" clearable placeholder="请输入版本"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>

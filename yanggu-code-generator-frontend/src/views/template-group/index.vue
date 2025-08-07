@@ -131,7 +131,8 @@ const state: IHooksOptions = reactive({
 	queryForm: {
 		groupName: '',
 		type: ''
-	}
+	},
+	deleteMessage: '删除模板组，模板组下面的所有模板都会删除'
 })
 
 const tableRef = ref()

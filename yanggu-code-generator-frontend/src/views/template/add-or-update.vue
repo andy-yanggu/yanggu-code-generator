@@ -2,36 +2,41 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px">
 			<el-form-item label="模板名称" prop="templateName">
-				<el-input v-model="dataForm.templateName" placeholder="请输入模板名称"></el-input>
+				<el-input v-model="dataForm.templateName" clearable placeholder="请输入模板名称" />
 			</el-form-item>
 			<el-form-item label="路径" prop="generatorPath">
-				<el-input v-model="dataForm.generatorPath" placeholder="请输入生成代码的路径"></el-input>
+				<el-input v-model="dataForm.generatorPath" clearable placeholder="请输入生成代码的路径" />
+			</el-form-item>
+			<el-form-item label="模板描述" prop="templateDesc">
+				<el-input v-model="dataForm.templateDesc" clearable placeholder="请输入模板描述" />
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
 				<el-radio-group v-model="dataForm.templateType" :disabled="dataForm.id">
-					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.value">
+						{{ item.label }}
+					</el-radio>
 				</el-radio-group>
 			</el-form-item>
-			<el-form-item label="模板描述" prop="templateDesc">
-				<el-input v-model="dataForm.templateDesc" placeholder="请输入模板描述"></el-input>
-			</el-form-item>
+
+			<!-- 模板内容编辑器 -->
 			<el-form-item v-show="dataForm.templateType === 0" label="模板内容" prop="templateContent">
-				<div class="code-editor" :style="!dataForm.templateContent && !isFullscreen ? { height: '250px' } : {}">
-					<codemirror
-						ref="codeMirrorRef"
-						v-model="dataForm.templateContent"
-						:options="cmOptions"
-						class="code-mirror"
-						:class="{ 'full-screen-mode': isFullscreen }"
-					></codemirror>
+				<div class="code-editor">
+					<!-- 根据是否全屏切换 el-scrollbar 的高度控制方式 -->
+					<el-scrollbar ref="codeMirrorRef" :max-height="!isFullscreen ? '300px' : 'none'" :class="{ 'full-screen-mode': isFullscreen }">
+						<!-- 编辑器高度撑满 scrollbar 容器，触发内部滚动 -->
+						<code-mirror v-model="dataForm.templateContent"></code-mirror>
+					</el-scrollbar>
+
+					<!-- 全屏按钮 -->
+					<el-tooltip content="全屏编辑" effect="dark" placement="bottom">
+						<el-icon :size="18" class="fullscreen-btn" @click="toggle()">
+							<FullScreen />
+						</el-icon>
+					</el-tooltip>
 				</div>
-				<el-tooltip content="全屏编辑" effect="dark" placement="bottom">
-					<el-icon :size="18" class="fullscreen-btn" @click="toggle()">
-						<FullScreen></FullScreen>
-					</el-icon>
-				</el-tooltip>
 			</el-form-item>
 		</el-form>
+
 		<template #footer>
 			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
@@ -43,11 +48,10 @@
 import { reactive, ref, watch } from 'vue'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { Codemirror } from 'vue-codemirror'
-import { EditorView, keymap } from '@codemirror/view'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, FullScreen } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
+import CodeMirror from '@/components/code-mirror/index.vue'
 
 const props = defineProps({
 	templateGroupId: {
@@ -83,14 +87,6 @@ const dataRules = reactive({
 const codeMirrorRef = ref(null)
 const { isFullscreen, toggle } = useFullscreen(codeMirrorRef)
 
-// 修改cmOptions配置
-const cmOptions = reactive({
-	extensions: [keymap.of([]), EditorView.contentAttributes.of({ autocomplete: 'on' })],
-	lineNumbers: true,
-	tabSize: 2,
-	autocompletion: true
-})
-
 const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 watch(
@@ -113,21 +109,13 @@ defineExpose({
 
 <style scoped>
 .code-editor {
-	width: 100%; /* 继承父容器宽度 */
+	width: 100%;
 	position: relative;
-	height: auto; /* 当有内容时保持自适应 */
-	min-height: 40px; /* 保持与常规输入框一致的最小高度 */
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
-	overflow: hidden;
-	overflow-y: auto; /* 新增纵向滚动条 */
 }
 
-.code-mirror {
-	height: 100%;
-	min-height: 100%; /* 确保编辑器高度足够触发滚动 */
-}
-
+/* 全屏按钮 */
 .fullscreen-btn {
 	position: absolute;
 	right: 10px;
@@ -137,15 +125,11 @@ defineExpose({
 	cursor: pointer;
 }
 
+/* 编辑器全屏样式 */
 :deep(.full-screen-mode) {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 9999;
+	width: 100%;
+	height: auto;
 	background: white;
-	margin: 0 !important;
-	padding: 20px;
+	padding: 0;
 }
 </style>

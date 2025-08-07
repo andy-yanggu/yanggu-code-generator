@@ -2,13 +2,13 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目名称" prop="projectName">
-				<el-input v-model="dataForm.projectName" placeholder="使用英文小写字母，单词之间使用'-'拼接"></el-input>
+				<el-input v-model="dataForm.projectName" clearable placeholder="使用英文小写字母，单词之间使用'-'拼接"></el-input>
 			</el-form-item>
 			<el-form-item label="项目包名" prop="projectPackage">
-				<el-input v-model="dataForm.projectPackage" placeholder="请输入项目包名"></el-input>
+				<el-input v-model="dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
 			</el-form-item>
 			<el-form-item label="项目版本" prop="projectVersion">
-				<el-input v-model="dataForm.projectVersion" placeholder="请输入项目版本"></el-input>
+				<el-input v-model="dataForm.projectVersion" clearable placeholder="请输入项目版本"></el-input>
 			</el-form-item>
 			<el-form-item label="数据源" prop="datasourceId">
 				<el-select v-model="dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
@@ -64,16 +64,16 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label="后端路径" prop="backendPath">
-				<el-input v-model="dataForm.backendPath" placeholder="请输入后端路径"></el-input>
+				<el-input v-model="dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
 			</el-form-item>
 			<el-form-item label="前端路径" prop="frontendPath">
-				<el-input v-model="dataForm.frontendPath" placeholder="请输入前端路径"></el-input>
+				<el-input v-model="dataForm.frontendPath" clearable placeholder="请输入前端路径"></el-input>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
-				<el-input v-model="dataForm.author" placeholder="请输入作者"></el-input>
+				<el-input v-model="dataForm.author" clearable placeholder="请输入作者"></el-input>
 			</el-form-item>
 			<el-form-item label="项目描述" prop="projectDesc">
-				<el-input v-model="dataForm.projectDesc" placeholder="请输入项目描述"></el-input>
+				<el-input v-model="dataForm.projectDesc" clearable placeholder="请输入项目描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
