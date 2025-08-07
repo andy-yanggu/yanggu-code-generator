@@ -112,14 +112,14 @@
 			<!-- 预览 -->
 			<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
 
-			<steps ref="stepsRef"></steps>
+			<steps ref="stepsRef" :key="currentProjectIdTs"></steps>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/project/add-or-update.vue'
 import Preview from '@/components/preview/index.vue'
 import { projectDeleteListApi, projectEntityPageApi } from '@/api/project'
@@ -153,7 +153,10 @@ const previewHandle = (projectItem: any) => {
 }
 
 const generatorCode = (item: any) => {
-	stepsRef.value.init(item)
+	currentProjectIdTs.value = Date.now()
+	nextTick(() => {
+		stepsRef.value.init(item)
+	})
 }
 
 const {

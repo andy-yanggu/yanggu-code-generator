@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import sidebar from '@/layout/components/sidebar/index.vue'
-import navbar from '@/layout/components/navbar/index.vue'
+import sidebar from '@/layout/sidebar/index.vue'
+import navbar from '@/layout/navbar/index.vue'
 import { useAppStore } from '@/store/app-store'
 
 const appStore = useAppStore()

@@ -55,42 +55,7 @@ const templateListRef = ref<any[]>([])
 const tableListRef = ref<any[]>([])
 const enumListRef = ref<any[]>([])
 
-// 修改生成代码方法
-const generateCode = () => {
-	const dataForm = {
-		projectId: projectReactive.id,
-		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
-		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
-		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id),
-		tableIdList: tableListRef.value.map(item => item.id),
-		enumIdList: enumListRef.value.map(item => item.id)
-	}
-
-	const generatorType = projectReactive.generatorType
-	if (generatorType === 0) {
-		generateCodeLoading.value = true
-		generatorProjectDownloadZipApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到浏览器',
-				duration: 1000
-			})
-			dialogVisible.value = false
-			generateCodeLoading.value = false
-		})
-	} else if (generatorType === 1) {
-		generateCodeLoading.value = true
-		generatorProjectDownloadLocalApi(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到本地',
-				duration: 1000
-			})
-			dialogVisible.value = false
-			generateCodeLoading.value = false
-		})
-	}
-}
-
-// 修改初始化方法
+// 初始化方法
 const init = (projectItem: any) => {
 	activeRef.value = 0
 	dialogVisible.value = true
@@ -99,13 +64,16 @@ const init = (projectItem: any) => {
 	projectReactive.projectTemplateGroupId = projectItem.projectTemplateGroupId
 	projectReactive.enumTemplateGroupId = projectItem.enumTemplateGroupId
 	projectReactive.generatorType = projectItem.generatorType
+	templateListRef.value = []
+	tableListRef.value = []
+	enumListRef.value = []
 	nextTick(() => {
 		const templateGroupIdList = [projectReactive.projectTemplateGroupId, projectReactive.tableTemplateGroupId, projectReactive.enumTemplateGroupId]
 		templateIndexRef.value.init(templateGroupIdList)
 	})
 }
 
-//上一步
+// 上一步
 const prevStep = () => {
 	if (activeRef.value > 0) {
 		activeRef.value--
@@ -135,7 +103,7 @@ const prevStep = () => {
 	}
 }
 
-//下一步
+// 下一步
 const nextStep = () => {
 	if (activeRef.value < 2) {
 		activeRef.value++
@@ -156,6 +124,47 @@ const nextStep = () => {
 			//恢复枚举选中状态
 			enumIndexRef.value.toggleRowSelection(enumListRef.value)
 		})
+	}
+}
+
+// 生成代码
+const generateCode = () => {
+	const dataForm = {
+		projectId: projectReactive.id,
+		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
+		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
+		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id),
+		tableIdList: tableListRef.value.map(item => item.id),
+		enumIdList: enumListRef.value.map(item => item.id)
+	}
+
+	const generatorType = projectReactive.generatorType
+	if (generatorType === 0) {
+		generateCodeLoading.value = true
+		generatorProjectDownloadZipApi(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到浏览器',
+					duration: 1000
+				})
+				generateCodeLoading.value = false
+			})
+			.finally(() => {
+				dialogVisible.value = false
+			})
+	} else if (generatorType === 1) {
+		generateCodeLoading.value = true
+		generatorProjectDownloadLocalApi(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到本地',
+					duration: 1000
+				})
+				dialogVisible.value = false
+			})
+			.catch(() => {
+				generateCodeLoading.value = false
+			})
 	}
 }
 

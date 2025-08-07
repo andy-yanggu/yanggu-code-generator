@@ -75,7 +75,7 @@ export const menuRoutes: MenuInfo[] = [
 	},
 	{
 		path: '/icon-search',
-		component: 'auto-icon-list',
+		component: 'icon-search/index',
 		name: 'IconSearch',
 		meta: {
 			title: '图标搜索',
