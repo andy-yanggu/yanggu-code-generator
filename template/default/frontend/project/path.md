@@ -196,3 +196,7 @@ ${frontendPath}/src/components/svg-icon/index.ts
 #### 50. svg-icon.vue.ftl
 
 ${frontendPath}/src/components/svg-icon/index.vue
+
+#### 51. favicon.ico
+
+${frontendPath}/public/favicon.ico
