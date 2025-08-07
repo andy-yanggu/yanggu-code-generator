@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 import org.dromara.hutool.core.text.NamingCase;
 import org.dromara.hutool.core.text.StrUtil;
 
+import static org.dromara.hutool.core.text.CharPool.DASHED;
+
 @UtilityClass
 public class NameUtil {
 
@@ -20,6 +22,13 @@ public class NameUtil {
      */
     public static String toPascal(String name) {
         return NamingCase.toPascalCase(toUnderLine(name));
+    }
+
+    /**
+     * 中横线转大写和空格。demo-test => Demo Test
+     */
+    public static String toSpaceUpperCase(String name) {
+        return StrUtil.upperFirst(NamingCase.toSymbolCase(toPascal(name), ' '));
     }
 
     /**

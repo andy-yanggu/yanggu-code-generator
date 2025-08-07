@@ -369,6 +369,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectModel.setProjectName(projectName);
         projectModel.setProjectNameUnderline(NameUtil.toUnderLine(projectName));
         projectModel.setProjectNamePascal(NameUtil.toPascal(projectName));
+        projectModel.setProjectNameUpperSpace(NameUtil.toSpaceUpperCase(projectName));
         projectModel.setProjectNameDot(NameUtil.toDot(projectName));
         projectModel.setProjectNameSlash(NameUtil.toSlash(projectName));
         projectModel.setProjectPackage(project.getProjectPackage());

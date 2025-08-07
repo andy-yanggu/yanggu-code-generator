@@ -26,6 +26,11 @@ public class ProjectModel {
     private String projectNamePascal;
 
     /**
+     * 项目名称（大写空格）（Test1 Demo）
+     */
+    private String projectNameUpperSpace;
+
+    /**
      * 项目名称（点）（test1.demo）
      */
     private String projectNameDot;
