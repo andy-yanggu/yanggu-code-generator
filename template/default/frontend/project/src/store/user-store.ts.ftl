@@ -61,6 +61,44 @@ const INITIAL_TOKEN_INFO: TokenInfo = {
 }
 
 export const menuRoutes: MenuInfo[] = [
+	{
+		path: '/index',
+		component: () => import('@/views/index/index.vue'),
+		name: 'Index',
+		meta: {
+			title: '首页',
+			icon: 'icon-dashboard-fill',
+			cache: true,
+			type: 1,
+			hidden: false
+		}
+	},
+	{
+		path: '/icon-search',
+		component: () => import('@/views/icon-search/index.vue'),
+		name: 'IconSearch',
+		meta: {
+			title: '图标搜索',
+			icon: 'icon-icon-test',
+			cache: true,
+			type: 1,
+			hidden: false
+		}
+	},
+  <#list tableModelList as tableModel>
+    {
+        path: '/${tableModel.functionNameKebabCase}',
+        component: '${tableModel.functionNameKebabCase}/index',
+        name: '${tableModel.functionNamePascal}',
+        meta: {
+            title: '${tableModel.tableComment}管理',
+            icon: 'icon-icon-test',
+            cache: true,
+            type: 1,
+            hidden: false
+        }
+    }<#if tableModel_has_next>,</#if>
+</#list>
 ]
 
 export const useUserStore = defineStore(

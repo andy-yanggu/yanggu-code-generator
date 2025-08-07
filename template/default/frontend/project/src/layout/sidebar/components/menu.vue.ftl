@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import MenuItem from '@/layout/components/sidebar/components/menu-item.vue'
+import MenuItem from '@/layout/sidebar/components/menu-item.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { useAppStore } from '@/store/app-store'

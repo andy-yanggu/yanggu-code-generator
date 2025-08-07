@@ -1,1 +1,1 @@
-VITE_APP_TITLE=${projectName}
+VITE_APP_TITLE=${projectNameUpperSpace}

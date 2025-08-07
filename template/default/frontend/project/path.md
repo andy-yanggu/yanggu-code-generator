@@ -184,3 +184,15 @@ ${frontendPath}/src/directive/index.ts
 #### 47. permisson.ts.ftl
 
 ${frontendPath}/src/directive/permisson.ts
+
+#### 48. icon-search.vue.ftl
+
+${frontendPath}/src/views/icon-search/index.vue
+
+#### 49. svg-icon.ts.ftl
+
+${frontendPath}/src/components/svg-icon/index.ts
+
+#### 50. svg-icon.vue.ftl
+
+${frontendPath}/src/components/svg-icon/index.vue

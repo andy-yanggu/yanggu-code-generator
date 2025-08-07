@@ -42,7 +42,7 @@
 import { useAppStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
-import TagMenu from '@/layout/components/navbar/components/tag-menu.vue'
+import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
 

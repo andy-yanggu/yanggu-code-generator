@@ -10,12 +10,17 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.1",
-    "@vueuse/core": "9.1.1",
-    "axios": "1.6.0",
-    "element-plus": "2.7.6",
+    "@vueuse/core": "^9.1.1",
+    "axios": "1.8.2",
+    "element-plus": "2.9.3",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.4.1",
     "qs": "6.10.3",
-    "vue": "3.4.30",
+    "sortablejs": "^1.15.6",
+    "vue": "^3.5.17",
     "vue-router": "4.2.5",
+    "xe-utils": "^3.5.4",
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@babel/types": "7.24.0",

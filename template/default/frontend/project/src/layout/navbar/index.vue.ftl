@@ -30,11 +30,11 @@
 <script setup lang="ts">
 import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
 import { useAppStore } from '@/store/app-store'
-import Tag from '@/layout/components/navbar/components/tag.vue'
-import Breadcrumb from '@/layout/components/navbar/components/breadcrumb.vue'
-import MenuSearch from '@/layout/components/navbar/components/menu-search.vue'
+import Tag from '@/layout/navbar/components/tag.vue'
+import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
+import MenuSearch from '@/layout/navbar/components/menu-search.vue'
+import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import RefreshCurrentPage from '@/layout/components/navbar/components/refresh-current-page.vue'
 import { useFullscreen } from '@vueuse/core'
 
 const { isFullscreen, toggle } = useFullscreen()
