@@ -4,13 +4,13 @@
 	    <#list formList as field>
             <el-form-item label="${field.fieldComment!}" prop="${field.attrName}">
 			<#if field.formType == 'text'>
-                <el-input v-model="dataForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
+                <el-input v-model="dataForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment!}"></el-input>
 			<#elseif field.formType == 'textarea'>
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
 			<#elseif field.formType == 'editor'>
                 <el-input type="textarea" v-model="dataForm.${field.attrName}"></el-input>
 			<#elseif field.formType == 'select'>
-                <el-select v-model="dataForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment!}">
+                <el-select v-model="dataForm.${field.attrName}" clearable filterable placeholder="请选择${field.fieldComment!}">
                     <el-option v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
 			<#elseif field.formType == 'radio'>
@@ -28,7 +28,7 @@
             <#elseif field.formType == 'number'>
                 <el-input-number v-model="dataForm.${field.attrName}" size="small"></el-input-number>
 			<#else>
-                <el-input v-model="dataForm.${field.attrName}" placeholder="请输入${field.fieldComment!}"></el-input>
+                <el-input v-model="dataForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment!}"></el-input>
 			</#if>
             </el-form-item>
 	    </#list>
