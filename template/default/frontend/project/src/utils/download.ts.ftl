@@ -50,7 +50,7 @@ export const downloadFile = (url: string): Promise<void> => {
 				let errorMessage = '导出失败，请稍后重试或联系管理员'
 
 				if (error.response) {
-					errorMessage = `导出失败，服务器返回状态码：${error.response.status}`
+					errorMessage = `导出失败，服务器返回状态码：<#noparse>${error.response.status}</#noparse>`
 				} else if (error.request) {
 					errorMessage = '导出失败，请检查网络连接或稍后重试'
 				}

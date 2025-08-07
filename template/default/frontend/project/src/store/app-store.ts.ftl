@@ -55,7 +55,7 @@ export const useAppStore = defineStore(
 
 			let currentPath = ''
 			for (const path of paths) {
-				currentPath += `/${path}`
+				currentPath += `/<#noparse>${path}</#noparse>`
 				const breadcrumb = findRouteByPath(currentPath)
 				if (breadcrumb && breadcrumb.title && breadcrumb.icon) {
 					matched.push(breadcrumb)

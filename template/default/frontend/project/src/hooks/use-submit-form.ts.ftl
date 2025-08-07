@@ -24,20 +24,8 @@ export interface FormOptions {
 }
 
 export const useSubmitForm = (options: FormOptions) => {
-	const {
-		submitApi,
-		detailApi,
-		initBefore = () => {},
-		initFormData,
-		initAfter = () => {},
-		submitBefore = () => {},
-		emit,
-		message = '操作成功',
-		duration = 500
-	} = options
-
 	const visible = ref(false) // 弹窗可见性
-	const dataForm = reactive({ ...initFormData }) // 表单数据
+	const dataForm = reactive({ ...options.initFormData }) // 表单数据
 	const submitLoading = ref(false) // 提交按钮loading状态
 	const dataFormRef = ref() // 表单ref
 
@@ -51,18 +39,18 @@ export const useSubmitForm = (options: FormOptions) => {
 		}
 
 		// 初始化之前调用
-		initBefore()
+		options.initBefore?.()
 
 		if (!id) {
 			return
 		}
 
 		// 获取详情数据
-		detailApi(id).then(res => {
+		options.detailApi(id).then(res => {
 			Object.assign(dataForm, res.data)
 
 			// 获取详情之后调用
-			initAfter()
+			options.initAfter?.()
 		})
 	}
 
@@ -74,21 +62,25 @@ export const useSubmitForm = (options: FormOptions) => {
 			}
 
 			// 提交之前操作
-			submitBefore()
+			options.submitBefore?.()
 
 			submitLoading.value = true
 
-			submitApi(dataForm).then(() => {
-				ElMessage.success({
-					message: message,
-					duration: duration,
-					onClose: () => {
-						submitLoading.value = false
-						visible.value = false
-						emit('refreshDataList')
-					}
+			options
+				.submitApi(dataForm)
+				.then(() => {
+					ElMessage.success({
+						message: options.message || '操作成功',
+						duration: options.duration || 500,
+						onClose: () => {
+							visible.value = false
+							options.emit('refreshDataList')
+						}
+					})
 				})
-			})
+				.finally(() => {
+					submitLoading.value = false
+				})
 		})
 	}
 

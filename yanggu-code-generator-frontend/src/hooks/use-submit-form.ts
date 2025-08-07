@@ -66,17 +66,21 @@ export const useSubmitForm = (options: FormOptions) => {
 
 			submitLoading.value = true
 
-			options.submitApi(dataForm).then(() => {
-				ElMessage.success({
-					message: options.message || '操作成功',
-					duration: options.duration || 500,
-					onClose: () => {
-						submitLoading.value = false
-						visible.value = false
-						options.emit('refreshDataList')
-					}
+			options
+				.submitApi(dataForm)
+				.then(() => {
+					ElMessage.success({
+						message: options.message || '操作成功',
+						duration: options.duration || 500,
+						onClose: () => {
+							visible.value = false
+							options.emit('refreshDataList')
+						}
+					})
 				})
-			})
+				.finally(() => {
+					submitLoading.value = false
+				})
 		})
 	}
 

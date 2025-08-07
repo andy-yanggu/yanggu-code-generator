@@ -88,11 +88,8 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		}
 	})
 
-	const query = () => {
-		if (!state.dataListApi) {
-			return
-		}
-
+	// 执行实际的查询逻辑
+	const executeQuery = () => {
 		//解构查询条件
 		const queryForm = {
 			...state.queryForm
@@ -129,15 +126,43 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		state.dataListLoading = true
 
 		//调用接口
-		state.dataListApi(queryForm).then((res: any) => {
-			if (state.isPage) {
-				state.dataList = res.data.records
-				state.total = res.data.total
+		state.dataListApi!(queryForm)
+			.then((res: any) => {
+				if (state.isPage) {
+					state.dataList = res.data.records
+					state.total = res.data.total
+				} else {
+					state.dataList = res.data
+					state.total = res.data.length
+					state.pageNum = 1
+					state.pageSize = res.data.length
+				}
+			})
+			.finally(() => {
+				state.dataListLoading = false
+			})
+	}
+
+	// 异步验证表单
+	const validateQueryForm = (): Promise<boolean> => {
+		return new Promise(resolve => {
+			if (queryRef.value) {
+				queryRef.value.validate((valid: boolean) => {
+					resolve(valid)
+				})
 			} else {
-				state.dataList = res.data
-				state.total = res.data.length
+				resolve(true)
 			}
-			state.dataListLoading = false
+		})
+	}
+
+	const query = () => {
+		// 先进行表单验证，验证通过后再执行查询
+		validateQueryForm().then(valid => {
+			if (!valid) {
+				return
+			}
+			executeQuery()
 		})
 	}
 
@@ -197,16 +222,12 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
-		})
-			.then(() => {
-				if (state.deleteListApi) {
-					state.deleteListApi(data).then(() => {
-						ElMessage.success('删除成功')
-						query()
-					})
-				}
+		}).then(() => {
+			state.deleteListApi!(data).then(() => {
+				ElMessage.success('删除成功')
+				query()
 			})
-			.catch(() => {})
+		})
 	}
 
 	const tableIndex = (index: number) => {

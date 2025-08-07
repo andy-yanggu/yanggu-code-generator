@@ -11,6 +11,30 @@ export const constantRoutes: RouteRecordRaw[] = [
 		children: []
 	},
 	{
+		path: '/index',
+		component: 'index/index',
+		name: 'Index',
+		meta: {
+			title: '首页',
+			icon: 'icon-dashboard-fill',
+			cache: true,
+			type: 1,
+			hidden: false
+		}
+	},
+	{
+		path: '/icon-search',
+		component: 'auto-icon-list',
+		name: 'IconSearch',
+		meta: {
+			title: '图标搜索',
+			icon: 'icon-icon-test',
+			cache: true,
+			type: 1,
+			hidden: false
+		}
+	},
+	{
 		path: '/redirect',
 		name: 'Redirect',
 		component: () => import('@/layout/index.vue'),

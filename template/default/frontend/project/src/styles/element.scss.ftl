@@ -94,4 +94,3 @@
 .el-card.is-always-shadow{
   box-shadow: none !important;
 }
-

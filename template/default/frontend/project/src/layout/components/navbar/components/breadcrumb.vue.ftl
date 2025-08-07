@@ -1,0 +1,19 @@
+<template>
+	<el-breadcrumb separator="/">
+		<el-breadcrumb-item v-for="item in appStore.breadcrumbListRef" :key="item.title">
+			<template #default>
+				<span style="display: inline-flex; align-items: center; gap: 5px">
+					<svg-icon :icon="item.icon"></svg-icon>
+					{{ item.title }}
+				</span>
+			</template>
+		</el-breadcrumb-item>
+	</el-breadcrumb>
+</template>
+
+<script setup lang="ts">
+import SvgIcon from '@/components/svg-icon/index.vue'
+import { useAppStore } from '@/store/app-store'
+
+const appStore = useAppStore()
+</script>

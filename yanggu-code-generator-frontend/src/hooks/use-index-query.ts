@@ -126,18 +126,21 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		state.dataListLoading = true
 
 		//调用接口
-		state.dataListApi!(queryForm).then((res: any) => {
-			if (state.isPage) {
-				state.dataList = res.data.records
-				state.total = res.data.total
-			} else {
-				state.dataList = res.data
-				state.total = res.data.length
-				state.pageNum = 1
-				state.pageSize = res.data.length
-			}
-			state.dataListLoading = false
-		})
+		state.dataListApi!(queryForm)
+			.then((res: any) => {
+				if (state.isPage) {
+					state.dataList = res.data.records
+					state.total = res.data.total
+				} else {
+					state.dataList = res.data
+					state.total = res.data.length
+					state.pageNum = 1
+					state.pageSize = res.data.length
+				}
+			})
+			.finally(() => {
+				state.dataListLoading = false
+			})
 	}
 
 	// 异步验证表单
@@ -219,14 +222,12 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
-		})
-			.then(() => {
-				state.deleteListApi!(data).then(() => {
-					ElMessage.success('删除成功')
-					query()
-				})
+		}).then(() => {
+			state.deleteListApi!(data).then(() => {
+				ElMessage.success('删除成功')
+				query()
 			})
-			.catch(() => {})
+		})
 	}
 
 	const tableIndex = (index: number) => {
