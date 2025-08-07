@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 项目Entity实体类
  */
@@ -67,43 +69,43 @@ public class ProjectEntity extends BaseEntity implements Serializable {
     /**
      * 枚举模板组ID
      */
-    @TableField(value = "enum_template_group_id")
+    @TableField(value = "enum_template_group_id", updateStrategy = ALWAYS)
     private Long enumTemplateGroupId;
 
     /**
      * 后端路径
      */
-    @TableField(value = "backend_path")
+    @TableField(value = "backend_path", updateStrategy = ALWAYS)
     private String backendPath;
 
     /**
      * 前端路径
      */
-    @TableField(value = "frontend_path")
+    @TableField(value = "frontend_path", updateStrategy = ALWAYS)
     private String frontendPath;
 
     /**
      * 项目描述
      */
-    @TableField(value = "project_desc")
+    @TableField(value = "project_desc", updateStrategy = ALWAYS)
     private String projectDesc;
 
     /**
      * 作者
      */
-    @TableField(value = "author")
+    @TableField(value = "author", updateStrategy = ALWAYS)
     private String author;
 
     /**
      * Entity基类ID
      */
-    @TableField(value = "entity_base_class_id")
+    @TableField(value = "entity_base_class_id", updateStrategy = ALWAYS)
     private Long entityBaseClassId;
 
     /**
      * VO基类ID
      */
-    @TableField(value = "vo_base_class_id")
+    @TableField(value = "vo_base_class_id", updateStrategy = ALWAYS)
     private Long voBaseClassId;
 
     /**

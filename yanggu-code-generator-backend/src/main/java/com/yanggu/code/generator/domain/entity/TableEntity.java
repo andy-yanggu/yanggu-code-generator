@@ -12,6 +12,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 表Entity实体类
  */
@@ -62,13 +64,13 @@ public class TableEntity extends BaseEntity implements Serializable {
     /**
      * 作者
      */
-    @TableField(value = "author")
+    @TableField(value = "author", updateStrategy = ALWAYS)
     private String author;
 
     /**
      * 版本
      */
-    @TableField(value = "version")
+    @TableField(value = "version", updateStrategy = ALWAYS)
     private String version;
 
     /**

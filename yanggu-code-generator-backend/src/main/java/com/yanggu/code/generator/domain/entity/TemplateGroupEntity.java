@@ -12,6 +12,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 模板组Entity实体类
  */
@@ -44,7 +46,7 @@ public class TemplateGroupEntity extends BaseEntity implements Serializable {
     /**
      * 模板组描述
      */
-    @TableField(value = "group_desc")
+    @TableField(value = "group_desc", updateStrategy = ALWAYS)
     private String groupDesc;
 
     /**

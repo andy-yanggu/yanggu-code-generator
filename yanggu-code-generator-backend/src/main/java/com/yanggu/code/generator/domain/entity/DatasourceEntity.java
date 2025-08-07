@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 数据源Entity实体类
  */
@@ -61,7 +63,7 @@ public class DatasourceEntity extends BaseEntity implements Serializable {
     /**
      * 描述
      */
-    @TableField(value = "datasource_desc")
+    @TableField(value = "datasource_desc", updateStrategy = ALWAYS)
     private String datasourceDesc;
 
 }

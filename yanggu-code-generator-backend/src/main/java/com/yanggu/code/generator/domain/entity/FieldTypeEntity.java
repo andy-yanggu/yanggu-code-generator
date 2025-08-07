@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 字段类型Entity实体类
  */
@@ -43,7 +45,7 @@ public class FieldTypeEntity extends BaseEntity implements Serializable {
     /**
      * 属性包名
      */
-    @TableField(value = "package_name")
+    @TableField(value = "package_name", updateStrategy = ALWAYS)
     private String packageName;
 
 }

@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 模板Entity实体类
  */
@@ -49,19 +51,19 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     /**
      * 模板描述
      */
-    @TableField(value = "template_desc")
+    @TableField(value = "template_desc", updateStrategy = ALWAYS)
     private String templateDesc;
-
-    /**
-     * 模板内容
-     */
-    @TableField(value = "template_content")
-    private String templateContent;
 
     /**
      * 模板类型（0-文件，1-目录）
      */
     @TableField(value = "template_type")
     private Integer templateType;
+
+    /**
+     * 模板内容
+     */
+    @TableField(value = "template_content", updateStrategy = ALWAYS)
+    private String templateContent;
 
 }

@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+
 /**
  * 基类Entity实体类
  */
@@ -49,7 +51,7 @@ public class BaseClassEntity extends BaseEntity implements Serializable {
     /**
      * 备注
      */
-    @TableField(value = "remark")
+    @TableField(value = "remark", updateStrategy = ALWAYS)
     private String remark;
 
 }
