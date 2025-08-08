@@ -1,10 +1,11 @@
 <template>
 	<!-- 防止tag过多添加滚动条 -->
-	<el-scrollbar class="tag-scrollbar">
+	<el-scrollbar ref="scrollbarRef" class="tag-scrollbar">
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
 				v-for="(tag, index) in appStore.tagsListRef"
+				:ref="el => (tagRefs[tag.fullPath] = el)"
 				:key="tag.fullPath"
 				size="default"
 				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
@@ -41,7 +42,7 @@
 <script setup lang="ts">
 import { useAppStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref, onUnmounted, Ref, nextTick } from 'vue'
+import { onMounted, ref, onUnmounted, Ref, nextTick, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
@@ -56,11 +57,52 @@ const menuPosition = ref({
 const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
 const currentMenuTagIndex: Ref<number> = ref(0)
 const appStore = useAppStore()
+const tagRefs: Record<string, HTMLElement | null> = {}
+const scrollbarRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
 	document.addEventListener('click', closeTagMenu)
+	scrollToTag(route.fullPath)
 })
+
+// 监控路由变化，实现滚动条自动滚动
+watch(
+	() => route.fullPath,
+	(newPath, _) => {
+		nextTick(() => {
+			scrollToTag(newPath)
+		})
+	},
+	{ deep: true }
+)
+
+const scrollToTag = (fullPath: string) => {
+	const tagEl = tagRefs[fullPath]
+	const scrollWrapper = scrollbarRef.value?.wrapRef
+
+	const tagDom = tagEl?.$el || tagEl?.el || tagEl
+	if (!tagDom || !(tagDom instanceof HTMLElement) || !scrollWrapper) {
+		return
+	}
+
+	const tagLeft = tagDom.offsetLeft
+	const tagWidth = tagDom.offsetWidth
+	const scrollLeft = scrollWrapper.scrollLeft
+	const wrapperWidth = scrollWrapper.clientWidth
+
+	if (tagLeft < scrollLeft) {
+		scrollWrapper.scrollTo({
+			left: tagLeft - 20,
+			behavior: 'smooth'
+		})
+	} else if (tagLeft + tagWidth > scrollLeft + wrapperWidth) {
+		scrollWrapper.scrollTo({
+			left: tagLeft - wrapperWidth + tagWidth + 20,
+			behavior: 'smooth'
+		})
+	}
+}
 
 // 实现标签页的拖拽效果
 onMounted(() => {
@@ -220,14 +262,13 @@ const closeRightTag = () => {
 
 <style scoped>
 .tag-scrollbar {
-	/* 确保滚动条容器宽度占满父级并限制高度 */
-	width: 100%;
-	max-height: calc(var(--theme-header-height) - 30px);
+	max-height: 50px; /* 根据需要调整高度 */
+	overflow: hidden;
+	margin-bottom: 5px;
 }
 .tag-wrapper {
 	/* 保持原有样式不变 */
-	margin-top: 5px;
-	margin-bottom: 15px;
+	margin-top: 10px;
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
