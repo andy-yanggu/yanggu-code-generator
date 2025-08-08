@@ -27,28 +27,23 @@
 			<el-main style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; gap: 10px; padding: 10px">
+					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 30px; margin-bottom: 5px">
 						<el-row>
 							<el-col v-if="!isFullscreen" :span="1">
-								<el-icon :size="22" class="collapse-icon" @click="toggleCollapse()">
-									<Expand v-if="isCollapseRef" />
-									<Fold v-else />
+								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
+									<Expand v-if="isCollapseRef"></Expand>
+									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
-							<el-col :span="23">
+							<el-col :span="isFullscreen ? 17 : 16">
 								路径：<el-text>{{ preview.item.filePath }}</el-text>
 								<el-tooltip content="复制路径" placement="top" effect="dark" :teleported="false">
 									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(preview.item.filePath)">
-										<CopyDocument />
+										<CopyDocument></CopyDocument>
 									</el-icon>
 								</el-tooltip>
 							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="12">
-								名称：<el-text>{{ preview.item.fileName }}</el-text>
-							</el-col>
-							<el-col :span="12" style="text-align: right">
+							<el-col :span="7" style="text-align: right">
 								<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
 								<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
 								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
@@ -58,6 +53,16 @@
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
+						<el-tabs v-model="preview.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+							<el-tab-pane
+								v-for="tabItem in preview.tabList"
+								:key="tabItem.filePath"
+								:name="tabItem.filePath"
+								:label="tabItem.fileName"
+								:closable="tabItem.filePath != preview.dataList[0].filePath || preview.tabList.length > 1"
+							>
+							</el-tab-pane>
+						</el-tabs>
 						<el-scrollbar style="height: 100%">
 							<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
 						</el-scrollbar>
@@ -70,47 +75,12 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { ElLoading, ElMessage } from 'element-plus'
+import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
-
-const currentNodeKey = ref()
-const treeRef = ref()
-const preview = reactive({
-	visible: false,
-	title: '代码预览',
-	dataList: [],
-	projectId: 0,
-	id: -1,
-	generatorType: -1,
-	treeData: [],
-	item: {
-		filePath: '',
-		fileName: '',
-		content: '',
-		tableId: null
-	}
-})
-
-const treeSearchText = ref('')
-const isCollapseRef = ref(false)
-const { isFullscreen, toggle } = useFullscreen()
-
-const toggleCollapse = () => {
-	isCollapseRef.value = !isCollapseRef.value
-}
-
-// 计算内容行数
-const contentHeight = computed(() => {
-	const length = preview.item.content.split('\n').length
-	return Math.min(Math.max(20 * length, 800), 1000)
-})
-watch(treeSearchText, val => {
-	treeRef.value!.filter(val)
-})
 
 interface Tree {
 	label: string
@@ -119,12 +89,54 @@ interface Tree {
 	children?: Tree[]
 }
 
-const handleTreeNodeClick = (data: Tree) => {
-	if (data.templateId) {
-		preview.item = preview.dataList.filter(item => item.filePath === data.filePath)[0]
-	}
+interface TemplateContent {
+	// 表ID
+	tableId?: number | null
+	// 枚举ID
+	enumId?: number | null
+	// 模板ID
+	templateId?: number | null
+	// 模板组类型
+	templateGroupType?: number | null
+	// 模板类型
+	templateType?: number | null
+	// 文件路径
+	filePath: string
+	// 文件名称
+	fileName: string
+	// 内容
+	content: string
 }
 
+const currentNodeKey = ref()
+const treeRef = ref()
+const preview = reactive({
+	visible: false,
+	title: '代码预览',
+	dataList: [] as TemplateContent[],
+	projectId: 0,
+	id: -1,
+	generatorType: -1,
+	treeData: [] as Tree[],
+	item: {
+		tableId: null,
+		templateId: null,
+		enumId: null,
+		templateGroupType: null,
+		templateType: null,
+		filePath: '',
+		fileName: '',
+		content: ''
+	} as TemplateContent,
+	tabList: [] as TemplateContent[],
+	tabActiveName: ''
+})
+
+const treeSearchText = ref('')
+const isCollapseRef = ref(false)
+const { isFullscreen, toggle } = useFullscreen()
+
+// 初始化方法
 const init = async (id: number, projectId: number, generatorType: number, generatorProductType: number) => {
 	preview.id = id
 	preview.projectId = projectId
@@ -146,26 +158,108 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 		await nextTick()
 		currentNodeKey.value = templateContentList[0].filePath
 		treeRef.value.setCurrentKey(currentNodeKey.value)
+		preview.tabActiveName = templateContentList[0].filePath
+		preview.tabList.push(templateContentList[0])
 	} finally {
 		loadingInstance.close()
 	}
 }
 
-//复制到剪切板
+const toggleCollapse = () => {
+	isCollapseRef.value = !isCollapseRef.value
+}
+
+// 计算内容行数
+const contentHeight = computed(() => {
+	const length = preview.item.content.split('\n').length
+	return Math.min(Math.max(20 * length, 800), 1000)
+})
+watch(treeSearchText, val => {
+	treeRef.value!.filter(val)
+})
+
+// tab点击
+const handleTabClick = (tab: TabsPaneContext, _: Event) => {
+	const filePath = tab.paneName as string
+	const matchedItem = preview.tabList.find(item => item.filePath === filePath)
+	if (matchedItem) {
+		preview.item = matchedItem
+		currentNodeKey.value = matchedItem.filePath
+		treeRef.value.setCurrentKey(currentNodeKey.value)
+	}
+}
+
+// tab删除
+const handleTabRemove = (filePath: string) => {
+	// 首页保护逻辑（当只有一个标签且是首页时不允许关闭）
+	if (preview.tabList.length === 1 && preview.dataList[0].filePath === filePath) {
+		return
+	}
+	// 找到索引
+	const index = preview.tabList.findIndex(item => item.filePath === filePath)
+	if (index <= -1) {
+		return
+	}
+	// 删除tab
+	preview.tabList.splice(index, 1)
+	let newTabActiveName = preview.tabActiveName
+	// 删除的是否为当前tab
+	if (preview.tabActiveName === filePath && preview.tabList.length > 0) {
+		// 优先尝试右侧标签
+		if (index < preview.tabList.length) {
+			newTabActiveName = preview.tabList[index].filePath
+		} else {
+			// 右侧无标签时选择左侧最后一个
+			newTabActiveName = preview.tabList[preview.tabList.length - 1].filePath
+		}
+	}
+	if (preview.tabList.length === 0) {
+		newTabActiveName = preview.dataList[0].filePath
+		preview.item = preview.dataList[0]
+		if (!preview.tabList.some(tab => tab.filePath === newTabActiveName)) {
+			preview.tabList.push(preview.item)
+		}
+	} else if (preview.tabList.length > 0) {
+		// 设置新的激活项
+		const activeTab = preview.tabList.find(tab => tab.filePath === newTabActiveName)
+		if (activeTab) {
+			preview.item = activeTab
+		}
+	}
+	preview.tabActiveName = newTabActiveName
+	currentNodeKey.value = newTabActiveName
+	treeRef.value?.setCurrentKey(currentNodeKey.value)
+}
+
+// tree点击
+const handleTreeNodeClick = (data: Tree) => {
+	if (data.templateId) {
+		const filterElement = preview.dataList.filter(item => item.filePath === data.filePath)[0]
+		preview.item = filterElement
+		const result = preview.tabList.some(tab => tab.filePath === filterElement.filePath)
+		if (!result) {
+			preview.tabList.push(filterElement)
+			preview.tabActiveName = filterElement.filePath
+		}
+	}
+}
+
+// 代码复制到剪切板
 const handleCopy = (content: string) => {
 	copyToClipboard(content).then(() => {
 		ElMessage.success('代码已复制到剪贴板')
 	})
 }
 
+// 全文件名复制到剪切板
 const copyPath = (path: string) => {
 	copyToClipboard(path).then(() => {
-		ElMessage.success('路径已复制到剪贴板')
+		ElMessage.success('全文件名已复制到剪贴板')
 	})
 }
 
 //下载单个模板代码
-const downloadTemplateData = (item: any) => {
+const downloadTemplateData = (item: TemplateContent) => {
 	let id
 	if (item.templateGroupType === 0) {
 		id = preview.projectId
