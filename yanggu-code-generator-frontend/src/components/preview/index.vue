@@ -5,7 +5,7 @@
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapseRef" width="300px" style="overflow: hidden">
 				<div style="padding: 15px; border-bottom: 1px solid #eee">
-					<el-input v-model="treeSearchText" placeholder="搜索文件/路径" size="small" clearable prefix-icon="Search"></el-input>
+					<el-input v-model="treeSearchText" placeholder="请输入文件/路径" size="small" clearable prefix-icon="Search"></el-input>
 				</div>
 				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
@@ -24,7 +24,7 @@
 			</el-aside>
 
 			<!-- 右侧：代码预览区 -->
-			<el-main style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-main v-if="preview.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 30px; margin-bottom: 5px">
@@ -54,13 +54,7 @@
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
 						<el-tabs v-model="preview.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-							<el-tab-pane
-								v-for="tabItem in preview.tabList"
-								:key="tabItem.filePath"
-								:name="tabItem.filePath"
-								:label="tabItem.fileName"
-								:closable="tabItem.filePath != preview.dataList[0].filePath || preview.tabList.length > 1"
-							>
+							<el-tab-pane v-for="tabItem in preview.tabList" :key="tabItem.filePath" :name="tabItem.filePath" :label="tabItem.fileName" closable>
 							</el-tab-pane>
 						</el-tabs>
 						<el-scrollbar style="height: 100%">
@@ -68,6 +62,22 @@
 						</el-scrollbar>
 					</el-main>
 				</el-container>
+			</el-main>
+			<el-main v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+				<el-row>
+					<el-col v-if="!isFullscreen" :span="1">
+						<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
+							<Expand v-if="isCollapseRef"></Expand>
+							<Fold v-else></Fold>
+						</el-icon>
+					</el-col>
+					<el-col :span="23" style="text-align: right">
+						<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
+					</el-col>
+				</el-row>
+				<div style="flex: 1; display: flex; align-items: center; justify-content: center">
+					<el-text size="large" tag="b">请点击左侧的文件树进行代码预览</el-text>
+				</div>
 			</el-main>
 		</el-container>
 	</el-drawer>
@@ -192,9 +202,6 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 // tab删除
 const handleTabRemove = (filePath: string) => {
 	// 首页保护逻辑（当只有一个标签且是首页时不允许关闭）
-	if (preview.tabList.length === 1 && preview.dataList[0].filePath === filePath) {
-		return
-	}
 	// 找到索引
 	const index = preview.tabList.findIndex(item => item.filePath === filePath)
 	if (index <= -1) {
@@ -213,22 +220,16 @@ const handleTabRemove = (filePath: string) => {
 			newTabActiveName = preview.tabList[preview.tabList.length - 1].filePath
 		}
 	}
-	if (preview.tabList.length === 0) {
-		newTabActiveName = preview.dataList[0].filePath
-		preview.item = preview.dataList[0]
-		if (!preview.tabList.some(tab => tab.filePath === newTabActiveName)) {
-			preview.tabList.push(preview.item)
-		}
-	} else if (preview.tabList.length > 0) {
+	if (preview.tabList.length > 0) {
 		// 设置新的激活项
 		const activeTab = preview.tabList.find(tab => tab.filePath === newTabActiveName)
 		if (activeTab) {
 			preview.item = activeTab
 		}
+		preview.tabActiveName = newTabActiveName
+		currentNodeKey.value = newTabActiveName
+		treeRef.value?.setCurrentKey(currentNodeKey.value)
 	}
-	preview.tabActiveName = newTabActiveName
-	currentNodeKey.value = newTabActiveName
-	treeRef.value?.setCurrentKey(currentNodeKey.value)
 }
 
 // tree点击
