@@ -29,12 +29,16 @@ const iconName = computed(() => `#${props.icon}`)
 </script>
 
 <style scoped>
+.svg-icon {
+	display: inline-block;
+	width: 14px;
+	height: 16px;
+}
+
 .svg-icon svg {
-	width: 1em;
-	height: 1em;
-	vertical-align: -0.15em;
+	display: block;
+	width: 100%;
+	height: 100%;
 	fill: currentColor;
-	overflow: hidden;
-	flex-shrink: 0;
 }
 </style>
