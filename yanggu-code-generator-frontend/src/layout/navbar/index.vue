@@ -57,7 +57,6 @@ const appStore = useAppStore()
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 10px;
-	margin-bottom: 10px;
 }
 
 .navbar-left {
