@@ -12,9 +12,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TemplateTypeEnum {
 
-    FILE(0, "文件"),
+    DIRECTORY(0, "目录"),
 
-    DIRECTORY(1, "目录"),
+    TEMPLATE_FILE(1, "模板文件"),
+
+    BINARY_FILE(2, "二进制文件");
+
     ;
 
     @EnumValue

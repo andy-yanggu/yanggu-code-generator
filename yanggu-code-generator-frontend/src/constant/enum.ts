@@ -20,8 +20,9 @@ export const TEMPLATE_GROUP_TYPES: EnumItem[] = [
 
 //模板类型枚举
 export const TEMPLATE_TYPES: EnumItem[] = [
-	{ label: '文件', value: 0 },
-	{ label: '目录', value: 1 }
+	{ label: '目录', value: 0 },
+	{ label: '模板文件', value: 1 },
+	{ label: '二进制文件', value: 2 }
 ]
 
 //项目生成方式

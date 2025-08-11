@@ -56,9 +56,9 @@ public class TemplateVO extends BaseVO implements Serializable {
     private String templateContent;
 
     /**
-     * 模板类型（0-文件，1-目录）
+     * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
-    @Schema(description = "模板类型（0-文件，1-目录）")
+    @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")
     private Integer templateType;
 
     /**
@@ -72,5 +72,11 @@ public class TemplateVO extends BaseVO implements Serializable {
      */
     @Schema(description = "模板组类型（0-项目，1-表，2-枚举）")
     private Integer templateGroupType;
+
+    /**
+     * 二进制原始文件名
+     */
+    @Schema(description = "二进制原始文件名")
+    private String binaryOriginalFileName;
 
 }

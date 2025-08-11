@@ -7,6 +7,7 @@ import lombok.experimental.UtilityClass;
 import org.dromara.hutool.core.collection.CollUtil;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.yanggu.code.generator.domain.vo.TreeVO.TREE_COMPARATOR;
 
@@ -79,7 +80,10 @@ public class TreeUtil {
                     tempTreeVO.setTemplateType(treeVO.getTemplateType());
                 }
                 //设置树类型
-                if (TemplateTypeEnum.FILE.getCode().equals(tempTreeVO.getTemplateType())) {
+                boolean anyMatch = Stream.of(TemplateTypeEnum.TEMPLATE_FILE, TemplateTypeEnum.BINARY_FILE)
+                        .map(TemplateTypeEnum::getCode)
+                        .anyMatch(code -> code.equals(tempTreeVO.getTemplateType()));
+                if (anyMatch) {
                     tempTreeVO.setType(TreeTypeEnum.FILE.getCode());
                 } else {
                     tempTreeVO.setType(TreeTypeEnum.DIRECTORY.getCode());

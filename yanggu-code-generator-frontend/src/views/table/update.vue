@@ -23,7 +23,7 @@
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
 				<el-radio-group v-model="dataForm.formLayout">
-					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">

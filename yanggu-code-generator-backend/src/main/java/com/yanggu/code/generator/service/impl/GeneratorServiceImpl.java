@@ -11,13 +11,16 @@ import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TreeVO;
 import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
+import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtil;
 import com.yanggu.code.generator.util.TreeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.array.ArrayUtil;
+import org.dromara.hutool.core.codec.binary.Base64;
 import org.dromara.hutool.core.collection.CollUtil;
 import org.dromara.hutool.core.date.DateFormatPool;
 import org.dromara.hutool.core.date.DateUtil;
@@ -42,12 +45,12 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.yanggu.code.generator.enums.TemplateTypeEnum.FILE;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
 /**
  * 代码生成服务实现类
  */
+@Slf4j
 @Service
 public class GeneratorServiceImpl implements GeneratorService {
 
@@ -591,20 +594,25 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateEntity template, Object dataModel) {
-        Integer templateType = template.getTemplateType();
-        //内容
-        String fileContent;
-        TemplateContentVO templateContentVO = new TemplateContentVO();
         String templateName = template.getTemplateName();
-        if (FILE.getCode().equals(templateType)) {
-            fileContent = TemplateUtil.renderTemplate(templateName, template.getTemplateContent(), dataModel);
-        } else {
-            fileContent = "";
+        Integer templateType = template.getTemplateType();
+        String templateContent = template.getTemplateContent();
+        String fileContent;
+        switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
+            case DIRECTORY ->
+                fileContent = "";
+            case TEMPLATE_FILE ->
+                // 渲染成文件内容
+                fileContent = TemplateUtil.renderTemplate(templateName, templateContent, dataModel);
+            case BINARY_FILE ->
+                fileContent = templateContent;
+            default -> throw new RuntimeException("未知模板类型");
         }
         //路径
         String filePath = TemplateUtil.renderTemplate(templateName, template.getGeneratorPath(), dataModel);
         //文件名
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        TemplateContentVO templateContentVO = new TemplateContentVO();
         templateContentVO.setContent(fileContent);
         templateContentVO.setFileName(fileName);
         templateContentVO.setFilePath(filePath);
@@ -619,7 +627,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //过滤出文件
         List<TemplateContentVO> templateContentList = allList.stream()
-                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(FILE.getCode()))
+                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(TemplateTypeEnum.TEMPLATE_FILE.getCode()) || templateContentVO.getTemplateType().equals(TemplateTypeEnum.BINARY_FILE.getCode()))
                 .toList();
 
         previewData.setTemplateContentList(templateContentList);
@@ -658,17 +666,28 @@ public class GeneratorServiceImpl implements GeneratorService {
                 // 获取文件路径
                 String filePath = templateContentVO.getFilePath();
 
-                if (FILE.getCode().equals(templateContentVO.getTemplateType())) {
-                    // 文件：添加条目并写入内容
-                    zip.putNextEntry(new ZipEntry(filePath));
-                    IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
-                    zip.flush();
-                } else {
-                    // 文件夹：创建以'/'结尾的目录条目
-                    if (!filePath.endsWith("/")) {
-                        filePath += "/";
+                Integer templateType = templateContentVO.getTemplateType();
+                switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
+                    case DIRECTORY -> {
+                        // 文件夹：创建以'/'结尾的目录条目
+                        if (!filePath.endsWith("/")) {
+                            filePath += "/";
+                        }
+                        zip.putNextEntry(new ZipEntry(filePath));
                     }
-                    zip.putNextEntry(new ZipEntry(filePath));
+                    case TEMPLATE_FILE -> {
+                        // 文件：添加条目并写入内容
+                        zip.putNextEntry(new ZipEntry(filePath));
+                        IoUtil.writeUtf8(zip, false, templateContentVO.getContent());
+                        zip.flush();
+                    }
+                    case BINARY_FILE -> {
+                        // 二进制文件：添加条目并写入内容
+                        zip.putNextEntry(new ZipEntry(filePath));
+                        IoUtil.write(zip, false, Base64.decode(templateContentVO.getContent().split(",")[1]));
+                        zip.flush();
+                    }
+                    default -> throw new BusinessException("未知模板类型" + templateType);
                 }
                 zip.closeEntry();
             } catch (IOException e) {
@@ -687,16 +706,21 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     private void downloadLocal(List<TemplateContentVO> list) {
         if (CollUtil.isEmpty(list)) {
+            log.warn("待写入数据为空");
             return;
         }
         for (TemplateContentVO templateContentVO : list) {
             Integer templateType = templateContentVO.getTemplateType();
-            //写入到文件
-            if (FILE.getCode().equals(templateType)) {
-                FileUtil.writeUtf8String(templateContentVO.getContent(), templateContentVO.getFilePath());
-            } else {
+            String filePath = templateContentVO.getFilePath();
+            String content = templateContentVO.getContent();
+            switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
                 //生成文件夹
-                FileUtil.mkdir(templateContentVO.getFilePath());
+                case DIRECTORY -> FileUtil.mkdir(filePath);
+                //直接使用覆盖的方式生成文件
+                case TEMPLATE_FILE -> FileUtil.writeUtf8String(content, filePath);
+                //生成二进制文件
+                case BINARY_FILE -> FileUtil.writeBytes(Base64.decode(content.split(",")[1]), filePath);
+                default -> throw new BusinessException("未知模板类型：" + templateType);
             }
         }
     }

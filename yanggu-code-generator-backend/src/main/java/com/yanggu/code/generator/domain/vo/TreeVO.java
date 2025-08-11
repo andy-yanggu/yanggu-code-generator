@@ -69,9 +69,9 @@ public class TreeVO implements Serializable {
     private Long templateId;
 
     /**
-     * 模板类型（0-文件，1-目录）
+     * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
-    @Schema(description = "模板类型（0-文件，1-目录）")
+    @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")
     private Integer templateType;
 
 }

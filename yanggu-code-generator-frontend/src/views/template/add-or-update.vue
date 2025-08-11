@@ -11,15 +11,15 @@
 				<el-input v-model="dataForm.templateDesc" clearable placeholder="请输入模板描述" />
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="dataForm.templateType" :disabled="dataForm.id">
-					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.value">
+				<el-radio-group v-model="dataForm.templateType">
+					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :value="item.value">
 						{{ item.label }}
 					</el-radio>
 				</el-radio-group>
 			</el-form-item>
 
 			<!-- 模板内容编辑器 -->
-			<el-form-item v-show="dataForm.templateType === 0" label="模板内容" prop="templateContent">
+			<el-form-item v-show="dataForm.templateType === 1" label="模板内容" prop="templateContent">
 				<div class="code-editor">
 					<!-- 根据是否全屏切换 el-scrollbar 的高度控制方式 -->
 					<el-scrollbar ref="codeMirrorRef" :max-height="!isFullscreen ? '300px' : 'none'" :class="{ 'full-screen-mode': isFullscreen }">
@@ -35,6 +35,12 @@
 					</el-tooltip>
 				</div>
 			</el-form-item>
+
+			<el-form-item v-if="dataForm.templateType === 2" label="文件上传">
+				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload" :auto-upload="false">
+					<el-button type="primary" :icon="Upload">点击上传</el-button>
+				</el-upload>
+			</el-form-item>
 		</el-form>
 
 		<template #footer>
@@ -49,7 +55,7 @@ import { reactive, ref, watch } from 'vue'
 import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, FullScreen } from '@element-plus/icons-vue'
+import { Check, Close, FullScreen, Upload } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import CodeMirror from '@/components/code-mirror/index.vue'
 
@@ -62,6 +68,15 @@ const props = defineProps({
 
 const emit = defineEmits(['refreshDataList'])
 
+const initAfterHandle = () => {
+	fileList.value = [
+		{
+			name: dataForm.binaryOriginalFileName,
+			url: dataForm.templateContent
+		}
+	]
+}
+
 const state: FormOptions = reactive({
 	visible: false,
 	submitApi: templateSubmitApi,
@@ -73,8 +88,10 @@ const state: FormOptions = reactive({
 		generatorPath: '',
 		templateDesc: '',
 		templateContent: '',
-		templateType: null
+		templateType: null,
+		binaryOriginalFileName: ''
 	},
+	initAfter: initAfterHandle,
 	emit
 })
 
@@ -84,8 +101,9 @@ const dataRules = reactive({
 	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const codeMirrorRef = ref(null)
+const codeMirrorRef = ref()
 const { isFullscreen, toggle } = useFullscreen(codeMirrorRef)
+const fileList = ref<any[]>([])
 
 const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
@@ -101,6 +119,18 @@ watch(
 		}
 	}
 )
+
+const handleManualUpload = (options: any) => {
+	const { file } = options
+	// 直接读取为Base64数据URL
+	const reader = new FileReader()
+	reader.onload = e => {
+		// 更新表单中的 templateContent 字段
+		dataForm.templateContent = e.target?.result as string
+		dataForm.binaryOriginalFileName = file.name
+	}
+	reader.readAsDataURL(file) // 读取为Base64数据URL
+}
 
 defineExpose({
 	init
@@ -119,7 +149,7 @@ defineExpose({
 .fullscreen-btn {
 	position: absolute;
 	right: 10px;
-	top: 10px;
+	top: 0;
 	z-index: 1000;
 	padding: 5px;
 	cursor: pointer;

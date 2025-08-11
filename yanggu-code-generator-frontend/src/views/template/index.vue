@@ -40,6 +40,7 @@
 					prop="templateType"
 					label="模板类型"
 					header-align="center"
+					min-width="120"
 					align="center"
 					:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_TYPES)"
 				></el-table-column>

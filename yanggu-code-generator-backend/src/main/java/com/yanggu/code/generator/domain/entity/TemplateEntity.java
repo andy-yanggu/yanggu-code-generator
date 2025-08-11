@@ -55,7 +55,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     private String templateDesc;
 
     /**
-     * 模板类型（0-文件，1-目录）
+     * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
     @TableField(value = "template_type")
     private Integer templateType;
@@ -65,5 +65,11 @@ public class TemplateEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "template_content", updateStrategy = ALWAYS)
     private String templateContent;
+
+    /**
+     * 二进制原始文件名
+     */
+    @TableField(value = "binary_original_file_name")
+    private String binaryOriginalFileName;
 
 }

@@ -35,8 +35,13 @@ public class TemplateBO implements Serializable {
     private String templateContent;
 
     /**
-     * 模板类型（0-文件，1-目录）
+     * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
     private Integer templateType;
+
+    /**
+     * 二进制原始文件名
+     */
+    private String binaryOriginalFileName;
 
 }

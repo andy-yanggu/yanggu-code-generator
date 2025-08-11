@@ -64,11 +64,17 @@ public class TemplateDTO implements Serializable {
     private String templateContent;
 
     /**
-     * 模板类型（0-文件，1-目录）
+     * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
-    @Schema(description = "模板类型（0-文件，1-目录）")
+    @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")
     @NotNull(message = "模板类型不能为空")
     @EnumCode(TemplateTypeEnum.class)
     private Integer templateType;
+
+    /**
+     * 二进制原始文件名
+     */
+    @Schema(description = "二进制原始文件名")
+    private String binaryOriginalFileName;
 
 }

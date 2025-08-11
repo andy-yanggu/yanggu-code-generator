@@ -15,7 +15,7 @@
                 </el-select>
 			<#elseif field.formType == 'radio'>
                 <el-radio-group v-model="dataForm.${field.attrName}">
-                    <el-radio v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+                    <el-radio v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
                 </el-radio-group>
 			<#elseif field.formType == 'checkbox'>
                 <el-checkbox-group v-model="dataForm.${field.attrName}">

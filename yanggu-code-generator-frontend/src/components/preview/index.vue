@@ -57,9 +57,21 @@
 							<el-tab-pane v-for="tabItem in preview.tabList" :key="tabItem.filePath" :name="tabItem.filePath" :label="tabItem.fileName" closable>
 							</el-tab-pane>
 						</el-tabs>
-						<el-scrollbar style="height: 100%">
-							<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
-						</el-scrollbar>
+						<template v-if="preview.item.templateType === 1">
+							<el-scrollbar style="height: 100%">
+								<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
+							</el-scrollbar>
+						</template>
+						<template v-else-if="preview.item.templateType === 2">
+							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
+								<template v-if="['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'].some(tempType => preview.item.filePath.endsWith(tempType))">
+									<el-image :src="preview.item.content" fit="fill"></el-image>
+								</template>
+								<template v-else>
+									<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
+								</template>
+							</div>
+						</template>
 					</el-main>
 				</el-container>
 			</el-main>
@@ -101,15 +113,15 @@ interface Tree {
 
 interface TemplateContent {
 	// 表ID
-	tableId?: number | null
+	tableId: number
 	// 枚举ID
-	enumId?: number | null
+	enumId: number
 	// 模板ID
-	templateId?: number | null
+	templateId: number
 	// 模板组类型
-	templateGroupType?: number | null
+	templateGroupType: number
 	// 模板类型
-	templateType?: number | null
+	templateType: number
 	// 文件路径
 	filePath: string
 	// 文件名称
@@ -129,11 +141,11 @@ const preview = reactive({
 	generatorType: -1,
 	treeData: [] as Tree[],
 	item: {
-		tableId: null,
-		templateId: null,
-		enumId: null,
-		templateGroupType: null,
-		templateType: null,
+		tableId: -1,
+		templateId: -1,
+		enumId: -1,
+		templateGroupType: -1,
+		templateType: -1,
 		filePath: '',
 		fileName: '',
 		content: ''

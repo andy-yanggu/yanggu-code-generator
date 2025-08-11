@@ -44,7 +44,7 @@
 			</el-form-item>
 			<el-form-item label="生成方式" prop="generatorType">
 				<el-radio-group v-model="dataForm.generatorType">
-					<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.value">{{ item.label }}</el-radio>
+					<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
