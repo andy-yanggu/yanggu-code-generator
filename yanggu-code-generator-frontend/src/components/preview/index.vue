@@ -105,9 +105,15 @@ import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
 
 interface Tree {
+	// 名称
 	label: string
+	// 文件路径
 	filePath: string
+	// 模板ID
 	templateId: number
+	// 树类型（0-文件，1-文件夹）
+	type: number
+	// 子节点
 	children?: Tree[]
 }
 
@@ -246,7 +252,8 @@ const handleTabRemove = (filePath: string) => {
 
 // tree点击
 const handleTreeNodeClick = (data: Tree) => {
-	if (data.templateId) {
+	// 只有是文件才可以预览
+	if (data.templateId && data.type === 0) {
 		const filterElement = preview.dataList.filter(item => item.filePath === data.filePath)[0]
 		preview.item = filterElement
 		const result = preview.tabList.some(tab => tab.filePath === filterElement.filePath)

@@ -11,7 +11,7 @@
 				<el-input v-model="dataForm.templateDesc" clearable placeholder="请输入模板描述" />
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="dataForm.templateType">
+				<el-radio-group v-model="dataForm.templateType" :disabled="dataForm.id !== null">
 					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :value="item.value">
 						{{ item.label }}
 					</el-radio>
@@ -19,7 +19,7 @@
 			</el-form-item>
 
 			<!-- 模板内容编辑器 -->
-			<el-form-item v-show="dataForm.templateType === 1" label="模板内容" prop="templateContent">
+			<el-form-item v-if="dataForm.templateType === 1" label="模板内容" prop="templateContent">
 				<div class="code-editor">
 					<!-- 根据是否全屏切换 el-scrollbar 的高度控制方式 -->
 					<el-scrollbar ref="codeMirrorRef" :max-height="!isFullscreen ? '300px' : 'none'" :class="{ 'full-screen-mode': isFullscreen }">
@@ -36,8 +36,9 @@
 				</div>
 			</el-form-item>
 
-			<el-form-item v-if="dataForm.templateType === 2" label="文件上传">
-				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload" :auto-upload="false">
+			<!-- 文件上传 -->
+			<el-form-item v-else-if="dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
+				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload">
 					<el-button type="primary" :icon="Upload">点击上传</el-button>
 				</el-upload>
 			</el-form-item>
@@ -69,12 +70,14 @@ const props = defineProps({
 const emit = defineEmits(['refreshDataList'])
 
 const initAfterHandle = () => {
-	fileList.value = [
-		{
-			name: dataForm.binaryOriginalFileName,
-			url: dataForm.templateContent
-		}
-	]
+	if (dataForm.templateType === 2) {
+		fileList.value = [
+			{
+				name: dataForm.binaryOriginalFileName,
+				url: dataForm.templateContent
+			}
+		]
+	}
 }
 
 const state: FormOptions = reactive({
@@ -110,12 +113,23 @@ const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = us
 watch(
 	//添加模板类型监听（当类型变化时重新校验内容字段）
 	() => dataForm.templateType,
-	(newValue, _) => {
+	(newValue, oldValue) => {
+		// console.log('newValue', newValue, 'oldValue', oldValue)
 		if (newValue === 0) {
-			dataRules.templateContent = [{ required: dataForm.templateType === 0, message: '必填项不能为空', trigger: 'blur' }]
-		} else if (newValue === 1) {
 			dataRules.templateContent = []
 			dataForm.templateContent = ''
+			dataForm.binaryOriginalFileName = ''
+		} else if (newValue === 1) {
+			dataRules.templateContent = [{ required: dataForm.templateType === 1, message: '必填项不能为空', trigger: 'blur' }]
+			dataForm.binaryOriginalFileName = ''
+		} else if (newValue === 2) {
+			dataRules.templateContent = []
+			dataRules.binaryOriginalFileName = [{ required: dataForm.templateType === 2, message: '必填项不能为空', trigger: 'blur' }]
+			dataForm.templateContent = ''
+			dataForm.binaryOriginalFileName = ''
+			if (oldValue != null) {
+				fileList.value = []
+			}
 		}
 	}
 )

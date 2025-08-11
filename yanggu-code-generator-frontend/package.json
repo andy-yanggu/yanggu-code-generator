@@ -30,7 +30,6 @@
     "@types/node": "20.11.28",
     "@types/nprogress": "0.2.3",
     "@types/qs": "6.9.12",
-    "@types/sm-crypto": "0.3.4",
     "@types/sortablejs": "1.15.8",
     "@vitejs/plugin-vue": "5.0.5",
     "@vue/compiler-sfc": "3.4.30",
