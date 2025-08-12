@@ -50,3 +50,8 @@ export const templateVOPageApi = (queryForm: any) => {
 export const templateVOListApi = (queryForm: any) => {
 	return service.post('/template/voList', queryForm)
 }
+
+//树形数据
+export const templateTreeDataApi = (templateGroupId: number) => {
+	return service.get('/template/tree?templateGroupId=' + templateGroupId)
+}

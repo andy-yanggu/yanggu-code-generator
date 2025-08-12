@@ -82,6 +82,9 @@
 								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 							</el-col>
 						</el-row>
+						<el-row>
+							<el-button type="primary" link :icon="Download" @click="treeData(scope.row)">树形数据</el-button>
+						</el-row>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -104,6 +107,8 @@
 		</el-card>
 
 		<template-index ref="templateIndexRef" :key="currentGroupId"></template-index>
+
+		<tree-update ref="treeUpdateRef"></tree-update>
 	</div>
 </template>
 
@@ -120,6 +125,7 @@ import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting } from '@element-plus/icons-vue'
+import TreeUpdate from '@/views/template/tree-update.vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -140,6 +146,7 @@ const copyTemplateGroupRef = ref()
 const currentGroupId = ref<number>(-1)
 const templateIndexRef = ref()
 const templateGroupImportRef = ref()
+const treeUpdateRef = ref()
 
 const copyTemplateGroupHandle = (id: number) => {
 	copyTemplateGroupRef.value.init(id)
@@ -147,6 +154,11 @@ const copyTemplateGroupHandle = (id: number) => {
 
 const handlerTemplate = (row: any) => {
 	templateIndexRef.value.init(row)
+}
+
+const treeData = (row: any) => {
+	// currentGroupId.value = row.id
+	treeUpdateRef.value.init(row.id)
 }
 
 const exportHandle = () => {

@@ -78,4 +78,6 @@ public interface TemplateService extends IService<TemplateEntity> {
         this.remove(Wrappers.<TemplateEntity>lambdaQuery().in(TemplateEntity::getTemplateGroupId, groupIdList));
     }
 
+    List<TemplateVO> tree(Long templateGroupId);
+
 }

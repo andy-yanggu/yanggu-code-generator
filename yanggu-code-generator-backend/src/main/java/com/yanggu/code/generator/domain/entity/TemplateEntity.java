@@ -37,10 +37,22 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     private Long templateGroupId;
 
     /**
+     * 父级ID
+     */
+    @TableField(value = "parent_id")
+    private Long parentId;
+
+    /**
      * 模板名称
      */
     @TableField(value = "template_name")
     private String templateName;
+
+    /**
+     * 文件或者目录名称
+     */
+    @TableField(value = "file_name")
+    private String fileName;
 
     /**
      * 生成代码的路径
@@ -71,5 +83,11 @@ public class TemplateEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "binary_original_file_name")
     private String binaryOriginalFileName;
+
+    /**
+     * 模板排序
+     */
+    @TableField(value = "template_order")
+    private Integer templateOrder;
 
 }

@@ -2,16 +2,16 @@
 	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px">
 			<el-form-item label="模板名称" prop="templateName">
-				<el-input v-model="dataForm.templateName" clearable placeholder="请输入模板名称" />
+				<el-input v-model="dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
-			<el-form-item label="路径" prop="generatorPath">
-				<el-input v-model="dataForm.generatorPath" clearable placeholder="请输入生成代码的路径" />
+			<el-form-item :label="dataForm.templateType === 0 ? '目录名称' : '文件名称'" prop="fileName">
+				<el-input v-model="dataForm.fileName" clearable :placeholder="dataForm.templateType === 0 ? '请输入目录名称' : '请输入文件名称'"></el-input>
 			</el-form-item>
 			<el-form-item label="模板描述" prop="templateDesc">
-				<el-input v-model="dataForm.templateDesc" clearable placeholder="请输入模板描述" />
+				<el-input v-model="dataForm.templateDesc" clearable placeholder="请输入模板描述"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="dataForm.templateType" :disabled="dataForm.id !== null">
+				<el-radio-group v-model="dataForm.templateType" disabled>
 					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :value="item.value">
 						{{ item.label }}
 					</el-radio>
@@ -19,25 +19,25 @@
 			</el-form-item>
 
 			<!-- 模板内容编辑器 -->
-			<el-form-item v-if="dataForm.templateType === 1" label="模板内容" prop="templateContent">
-				<div class="code-editor">
-					<!-- 根据是否全屏切换 el-scrollbar 的高度控制方式 -->
-					<el-scrollbar ref="codeMirrorRef" :max-height="!isFullscreen ? '300px' : 'none'" :class="{ 'full-screen-mode': isFullscreen }">
-						<!-- 编辑器高度撑满 scrollbar 容器，触发内部滚动 -->
-						<code-mirror v-model="dataForm.templateContent"></code-mirror>
-					</el-scrollbar>
+			<!--			<el-form-item v-if="dataForm.templateType === 1" label="模板内容" prop="templateContent">-->
+			<!--				<div class="code-editor">-->
+			<!--					&lt;!&ndash; 根据是否全屏切换 el-scrollbar 的高度控制方式 &ndash;&gt;-->
+			<!--					<el-scrollbar ref="codeMirrorRef" :max-height="!isFullscreen ? '300px' : 'none'" :class="{ 'full-screen-mode': isFullscreen }">-->
+			<!--						&lt;!&ndash; 编辑器高度撑满 scrollbar 容器，触发内部滚动 &ndash;&gt;-->
+			<!--						<code-mirror v-model="dataForm.templateContent"></code-mirror>-->
+			<!--					</el-scrollbar>-->
 
-					<!-- 全屏按钮 -->
-					<el-tooltip content="全屏编辑" effect="dark" placement="bottom">
-						<el-icon :size="18" class="fullscreen-btn" @click="toggle()">
-							<FullScreen />
-						</el-icon>
-					</el-tooltip>
-				</div>
-			</el-form-item>
+			<!--					&lt;!&ndash; 全屏按钮 &ndash;&gt;-->
+			<!--					<el-tooltip content="全屏编辑" effect="dark" placement="bottom">-->
+			<!--						<el-icon :size="18" class="fullscreen-btn" @click="toggle()">-->
+			<!--							<FullScreen />-->
+			<!--						</el-icon>-->
+			<!--					</el-tooltip>-->
+			<!--				</div>-->
+			<!--			</el-form-item>-->
 
 			<!-- 文件上传 -->
-			<el-form-item v-else-if="dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
+			<el-form-item v-if="dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
 				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload">
 					<el-button type="primary" :icon="Upload">点击上传</el-button>
 				</el-upload>
@@ -64,12 +64,19 @@ const props = defineProps({
 	templateGroupId: {
 		type: Number,
 		required: true
+	},
+	templateType: {
+		type: Number,
+		required: false
 	}
 })
 
 const emit = defineEmits(['refreshDataList'])
 
 const initAfterHandle = () => {
+	if (dataForm.templateType == null) {
+		dataForm.templateType = props.templateType
+	}
 	if (dataForm.templateType === 2) {
 		fileList.value = [
 			{
@@ -88,7 +95,7 @@ const state: FormOptions = reactive({
 		id: null,
 		templateGroupId: props.templateGroupId,
 		templateName: '',
-		generatorPath: '',
+		fileName: '',
 		templateDesc: '',
 		templateContent: '',
 		templateType: null,
@@ -110,29 +117,29 @@ const fileList = ref<any[]>([])
 
 const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
-watch(
-	//添加模板类型监听（当类型变化时重新校验内容字段）
-	() => dataForm.templateType,
-	(newValue, oldValue) => {
-		// console.log('newValue', newValue, 'oldValue', oldValue)
-		if (newValue === 0) {
-			dataRules.templateContent = []
-			dataForm.templateContent = ''
-			dataForm.binaryOriginalFileName = ''
-		} else if (newValue === 1) {
-			dataRules.templateContent = [{ required: dataForm.templateType === 1, message: '必填项不能为空', trigger: 'blur' }]
-			dataForm.binaryOriginalFileName = ''
-		} else if (newValue === 2) {
-			dataRules.templateContent = []
-			dataRules.binaryOriginalFileName = [{ required: dataForm.templateType === 2, message: '必填项不能为空', trigger: 'blur' }]
-			dataForm.templateContent = ''
-			dataForm.binaryOriginalFileName = ''
-			if (oldValue != null) {
-				fileList.value = []
-			}
-		}
-	}
-)
+// watch(
+// 	//添加模板类型监听（当类型变化时重新校验内容字段）
+// 	() => dataForm.templateType,
+// 	(newValue, oldValue) => {
+// 		// console.log('newValue', newValue, 'oldValue', oldValue)
+// 		if (newValue === 0) {
+// 			dataRules.templateContent = []
+// 			dataForm.templateContent = ''
+// 			dataForm.binaryOriginalFileName = ''
+// 		} else if (newValue === 1) {
+// 			dataRules.templateContent = [{ required: dataForm.templateType === 1, message: '必填项不能为空', trigger: 'blur' }]
+// 			dataForm.binaryOriginalFileName = ''
+// 		} else if (newValue === 2) {
+// 			dataRules.templateContent = []
+// 			dataRules.binaryOriginalFileName = [{ required: dataForm.templateType === 2, message: '必填项不能为空', trigger: 'blur' }]
+// 			dataForm.templateContent = ''
+// 			dataForm.binaryOriginalFileName = ''
+// 			if (oldValue != null) {
+// 				fileList.value = []
+// 			}
+// 		}
+// 	}
+// )
 
 const handleManualUpload = (options: any) => {
 	const { file } = options

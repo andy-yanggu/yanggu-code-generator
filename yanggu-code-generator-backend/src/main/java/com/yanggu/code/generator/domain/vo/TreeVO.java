@@ -27,6 +27,18 @@ public class TreeVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * ID
+     */
+    @Schema(description = "ID")
+    private Long id;
+
+    /**
+     * 父级ID
+     */
+    @Schema(description = "父级ID")
+    private Long parentId;
+
+    /**
      * 文件路径
      */
     @Schema(description = "文件路径")

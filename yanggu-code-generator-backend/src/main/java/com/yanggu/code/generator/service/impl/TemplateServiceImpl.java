@@ -11,6 +11,9 @@ import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.enums.TemplateTypeEnum;
+import com.yanggu.code.generator.enums.TreeTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
@@ -18,8 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -148,6 +152,26 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
                 .eq(TemplateEntity::getTemplateGroupId, groupId);
         return templateMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<TemplateVO> tree(Long templateGroupId) {
+        TemplateEntityQuery query = new TemplateEntityQuery();
+        query.setTemplateGroupId(templateGroupId);
+        List<TemplateVO> allList = this.entityList(query);
+        return allList.stream()
+                .filter(templateVO -> templateVO.getParentId() == 0)
+                .peek(templateVO -> templateVO.setChildren(getChildren(allList, templateVO.getId())))
+                .sorted(Comparator.comparingInt(TemplateVO::getTemplateOrder))
+                .toList();
+    }
+
+    private List<TemplateVO> getChildren(List<TemplateVO> allList, Long id) {
+        return allList.stream()
+                .filter(templateVO -> templateVO.getParentId().equals(id))
+                .peek(templateVO -> templateVO.setChildren(getChildren(allList, templateVO.getId())))
+                .sorted(Comparator.comparingInt(TemplateVO::getTemplateOrder))
+                .toList();
     }
 
     private TemplateEntity selectById(Long id) {

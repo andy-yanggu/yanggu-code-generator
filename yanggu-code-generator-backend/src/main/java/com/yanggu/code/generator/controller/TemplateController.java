@@ -142,4 +142,15 @@ public class TemplateController {
         return templateService.voList(query);
     }
 
+    /**
+     * 模板树数据
+     */
+    @GetMapping("/tree")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "模板树数据")
+    @Parameter(name = "templateGroupId", description = "模板组ID", required = true)
+    public List<TemplateVO> tree(@RequestParam("templateGroupId") @NotNull(message = "模板组ID不能为空") Long templateGroupId) {
+        return templateService.tree(templateGroupId);
+    }
+
 }
