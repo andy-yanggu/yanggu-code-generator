@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { AxiosPromise } from 'axios'
 
@@ -9,8 +9,8 @@ export interface FormOptions {
 	detailApi: (id: number) => AxiosPromise
 	// 初始化之前调用
 	initBefore?: () => void
-	// 初始表单数据
-	initFormData: any
+	// 表单数据
+	dataForm: any
 	// 初始化之后调用
 	initAfter?: () => void
 	// 提交之前操作
@@ -25,14 +25,13 @@ export interface FormOptions {
 
 export const useSubmitForm = (options: FormOptions) => {
 	const visible = ref(false) // 弹窗可见性
-	const dataForm = reactive({ ...options.initFormData }) // 表单数据
 	const submitLoading = ref(false) // 提交按钮loading状态
 	const dataFormRef = ref() // 表单ref
 
 	// 初始化表单
 	const init = (id?: number) => {
 		visible.value = true
-		dataForm.id = null
+		options.dataForm.id = null
 		// 重置表单状态
 		if (dataFormRef.value) {
 			dataFormRef.value.resetFields()
@@ -42,12 +41,13 @@ export const useSubmitForm = (options: FormOptions) => {
 		options.initBefore?.()
 
 		if (!id) {
+			options.initAfter?.()
 			return
 		}
 
 		// 获取详情数据
 		options.detailApi(id).then(res => {
-			Object.assign(dataForm, res.data)
+			Object.assign(options.dataForm, res.data)
 
 			// 获取详情之后调用
 			options.initAfter?.()
@@ -67,7 +67,7 @@ export const useSubmitForm = (options: FormOptions) => {
 			submitLoading.value = true
 
 			options
-				.submitApi(dataForm)
+				.submitApi(options.dataForm)
 				.then(() => {
 					ElMessage.success({
 						message: options.message || '操作成功',
@@ -86,7 +86,6 @@ export const useSubmitForm = (options: FormOptions) => {
 
 	return {
 		visible,
-		dataForm,
 		dataFormRef,
 		init,
 		submitHandle,

@@ -47,7 +47,7 @@
 				</div>
 			</el-aside>
 
-			<add-or-update ref="addOrUpdateRef" :template-group-id="templateTreeData.id"></add-or-update>
+			<add-or-update ref="addOrUpdateRef" :template-group-id="templateTreeData.id" :parent-id="contextMenu.nodeData.id"></add-or-update>
 
 			<!-- 右侧：模板编辑 -->
 			<el-main v-if="templateTreeData.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
@@ -166,6 +166,13 @@ const treeSearchText = ref('')
 const isCollapseRef = ref(false)
 const addOrUpdateRef = ref()
 const { isFullscreen, toggle } = useFullscreen()
+// 右键菜单状态
+const contextMenu = reactive({
+	visible: false,
+	x: 0,
+	y: 0,
+	nodeData: { id: 0 } as Tree
+})
 
 const fullFilePath = computed(() => {
 	return getFullPathById(templateTreeData.item.id, templateTreeData.treeList)
@@ -304,14 +311,6 @@ const handleTabRemove = (id: number) => {
 	}
 }
 
-// 右键菜单状态
-const contextMenu = reactive({
-	visible: false,
-	x: 0,
-	y: 0,
-	nodeData: {} as Tree
-})
-
 const hideContextMenu = () => {
 	contextMenu.visible = false
 	document.removeEventListener('click', hideContextMenu)
@@ -340,7 +339,8 @@ document.addEventListener('mousedown', e => {
 // 菜单功能（这里直接打印，你可以接 API）
 const editNode = (node: Tree) => {
 	console.log('编辑', node)
-	addOrUpdateRef.value.init(node.id)
+
+	addOrUpdateRef.value.initHandler({ id: node.id, templateType: node.templateType })
 	hideContextMenu()
 }
 
@@ -351,22 +351,19 @@ const deleteNode = (node: Tree) => {
 
 const newDir = (parent: Tree) => {
 	console.log('新建目录在', parent)
-	addOrUpdateRef.value.templateType = 0
-	addOrUpdateRef.value.init(parent.id)
+	addOrUpdateRef.value.initHandler({ id: null, templateType: 0 })
 	hideContextMenu()
 }
 
 const newTemplateFile = (parent: Tree) => {
 	console.log('新建模板文件在', parent)
-	addOrUpdateRef.value.templateType = 1
-	addOrUpdateRef.value.init(parent.id)
+	addOrUpdateRef.value.initHandler({ id: null, templateType: 1 })
 	hideContextMenu()
 }
 
 const newBinaryFile = (parent: Tree) => {
 	console.log('新建二进制文件在', parent)
-	addOrUpdateRef.value.templateType = 2
-	addOrUpdateRef.value.init(parent.id)
+	addOrUpdateRef.value.initHandler({ id: null, templateType: 2 })
 	hideContextMenu()
 }
 

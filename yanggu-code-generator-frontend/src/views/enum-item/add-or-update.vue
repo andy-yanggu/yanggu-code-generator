@@ -1,17 +1,17 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="枚举项名称" prop="enumItemName">
-				<el-input v-model="dataForm.enumItemName" clearable placeholder="请输入枚举项名称"></el-input>
+				<el-input v-model="state.dataForm.enumItemName" clearable placeholder="请输入枚举项名称"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举项编码" prop="enumItemCode">
-				<el-input v-model="dataForm.enumItemCode" clearable placeholder="请输入枚举项编码"></el-input>
+				<el-input v-model="state.dataForm.enumItemCode" clearable placeholder="请输入枚举项编码"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举项描述" prop="enumItemDesc">
-				<el-input v-model="dataForm.enumItemDesc" clearable placeholder="请输入枚举项描述"></el-input>
+				<el-input v-model="state.dataForm.enumItemDesc" clearable placeholder="请输入枚举项描述"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举项排序" prop="enumItemOrder">
-				<el-input-number v-model="dataForm.enumItemOrder" :min="0" size="small"></el-input-number>
+				<el-input-number v-model="state.dataForm.enumItemOrder" :min="0" size="small"></el-input-number>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -53,7 +53,7 @@ const dataRules = reactive({
 	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const initData = (enumId: number, id?: number) => {
 	dataForm.enumId = enumId

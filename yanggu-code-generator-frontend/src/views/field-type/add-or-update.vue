@@ -1,16 +1,16 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="字段类型" prop="columnType">
-				<el-input v-model="dataForm.columnType" clearable placeholder="请输入字段类型"></el-input>
+				<el-input v-model="state.dataForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
 			<el-form-item label="属性类型" prop="attrType">
-				<el-select v-model="dataForm.attrType" clearable placeholder="请选择属性类型">
+				<el-select v-model="state.dataForm.attrType" clearable placeholder="请选择属性类型">
 					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="属性包名" prop="packageName">
-				<el-input v-model="dataForm.packageName" clearable placeholder="请输入属性包名"></el-input>
+				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入属性包名"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -46,7 +46,7 @@ const dataRules = reactive({
 	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

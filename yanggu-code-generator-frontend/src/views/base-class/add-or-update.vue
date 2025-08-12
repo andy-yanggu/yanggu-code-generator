@@ -1,17 +1,17 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="基类包名" prop="packageName">
-				<el-input v-model="dataForm.packageName" clearable placeholder="请输入基类包名"></el-input>
+				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入基类包名"></el-input>
 			</el-form-item>
 			<el-form-item label="基类类名" prop="className">
-				<el-input v-model="dataForm.className" clearable placeholder="请输入基类类名"></el-input>
+				<el-input v-model="state.dataForm.className" clearable placeholder="请输入基类类名"></el-input>
 			</el-form-item>
 			<el-form-item label="基类字段" prop="fields">
-				<el-input v-model="dataForm.fields" clearable placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
+				<el-input v-model="state.dataForm.fields" clearable placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
-				<el-input v-model="dataForm.remark" clearable placeholder="请输入备注"></el-input>
+				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -50,7 +50,7 @@ const dataRules = reactive({
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

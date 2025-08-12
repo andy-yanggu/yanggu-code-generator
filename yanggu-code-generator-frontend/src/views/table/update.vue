@@ -1,36 +1,36 @@
 <template>
 	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目" prop="projectId">
-				<el-select v-model="dataForm.projectId" clearable placeholder="请选择项目" disabled>
+				<el-select v-model="state.dataForm.projectId" clearable placeholder="请选择项目" disabled>
 					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="数据库名" prop="databaseName">
-				<el-input v-model="dataForm.databaseName" clearable placeholder="请输入数据库名"></el-input>
+				<el-input v-model="state.dataForm.databaseName" clearable placeholder="请输入数据库名"></el-input>
 			</el-form-item>
 			<el-form-item label="表名" prop="tableName">
-				<el-input v-model="dataForm.tableName" clearable placeholder="请输入表名" disabled></el-input>
+				<el-input v-model="state.dataForm.tableName" clearable placeholder="请输入表名" disabled></el-input>
 			</el-form-item>
 			<el-form-item label="类名" prop="className">
-				<el-input v-model="dataForm.className" clearable placeholder="请输入类名"></el-input>
+				<el-input v-model="state.dataForm.className" clearable placeholder="请输入类名"></el-input>
 			</el-form-item>
 			<el-form-item label="注释" prop="tableComment">
-				<el-input v-model="dataForm.tableComment" clearable placeholder="请输入说明"></el-input>
+				<el-input v-model="state.dataForm.tableComment" clearable placeholder="请输入说明"></el-input>
 			</el-form-item>
 			<el-form-item label="功能名" prop="functionName">
-				<el-input v-model="dataForm.functionName" clearable placeholder="请输入功能名"></el-input>
+				<el-input v-model="state.dataForm.functionName" clearable placeholder="请输入功能名"></el-input>
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
-				<el-radio-group v-model="dataForm.formLayout">
+				<el-radio-group v-model="state.dataForm.formLayout">
 					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
-				<el-input v-model="dataForm.author" clearable placeholder="请输入作者"></el-input>
+				<el-input v-model="state.dataForm.author" clearable placeholder="请输入作者"></el-input>
 			</el-form-item>
 			<el-form-item label="版本" prop="version">
-				<el-input v-model="dataForm.version" clearable placeholder="请输入版本"></el-input>
+				<el-input v-model="state.dataForm.version" clearable placeholder="请输入版本"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -60,7 +60,7 @@ const state: FormOptions = {
 			projectList.value = res.data
 		})
 	},
-	initFormData: {
+	dataForm: {
 		id: null,
 		tableName: '',
 		databaseName: '',
@@ -83,7 +83,7 @@ const dataRules = reactive({
 	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

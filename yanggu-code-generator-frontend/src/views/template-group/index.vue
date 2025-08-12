@@ -108,7 +108,7 @@
 
 		<template-index ref="templateIndexRef" :key="currentGroupId"></template-index>
 
-		<tree-update ref="treeUpdateRef"></tree-update>
+		<template-tree ref="treeUpdateRef"></template-tree>
 	</div>
 </template>
 
@@ -125,7 +125,7 @@ import Import from './import.vue'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting } from '@element-plus/icons-vue'
-import TreeUpdate from '@/views/template/tree-update.vue'
+import TemplateTree from '@/views/template/tree.vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'

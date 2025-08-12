@@ -1,25 +1,25 @@
 <template>
-	<el-dialog v-model="visible" :title="!dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="连接名称" prop="connName">
-				<el-input v-model="dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
+				<el-input v-model="state.dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">
-				<el-select v-model="dataForm.dbType" clearable placeholder="请选择数据库类型">
+				<el-select v-model="state.dataForm.dbType" clearable placeholder="请选择数据库类型">
 					<el-option v-for="item in DB_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="URL" prop="connUrl">
-				<el-input v-model="dataForm.connUrl" clearable placeholder="请输入URL"></el-input>
+				<el-input v-model="state.dataForm.connUrl" clearable placeholder="请输入URL"></el-input>
 			</el-form-item>
 			<el-form-item label="用户名" prop="username">
-				<el-input v-model="dataForm.username" clearable placeholder="请输入用户名"></el-input>
+				<el-input v-model="state.dataForm.username" clearable placeholder="请输入用户名"></el-input>
 			</el-form-item>
 			<el-form-item label="密码" prop="password">
-				<el-input v-model="dataForm.password" type="password" show-password clearable placeholder="请输入密码"></el-input>
+				<el-input v-model="state.dataForm.password" type="password" show-password clearable placeholder="请输入密码"></el-input>
 			</el-form-item>
 			<el-form-item label="描述" prop="datasourceDesc">
-				<el-input v-model="dataForm.datasourceDesc" clearable placeholder="请输入描述"></el-input>
+				<el-input v-model="state.dataForm.datasourceDesc" clearable placeholder="请输入描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -61,7 +61,7 @@ const dataRules = reactive({
 	password: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataForm, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init
