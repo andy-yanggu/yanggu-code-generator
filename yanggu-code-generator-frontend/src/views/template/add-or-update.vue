@@ -51,13 +51,18 @@ const props = defineProps({
 	parentId: {
 		type: Number,
 		required: true
+	},
+	templateType: {
+		type: Number,
+		required: true
 	}
 })
 
 const emit = defineEmits(['refreshDataList'])
 
 const initAfterHandle = () => {
-	if (state.dataForm.templateType === 2) {
+	state.dataForm.templateType = props.templateType
+	if (state.dataForm.templateType === 2 && state.dataForm.id) {
 		fileList.value = [
 			{
 				name: state.dataForm.binaryOriginalFileName,
@@ -77,7 +82,7 @@ const state: FormOptions = reactive({
 		parentId: props.parentId,
 		templateName: '',
 		fileName: '',
-		templateType: null,
+		templateType: props.templateType,
 		templateDesc: '',
 		templateContent: '',
 		binaryOriginalFileName: ''
@@ -85,12 +90,6 @@ const state: FormOptions = reactive({
 	initAfter: initAfterHandle,
 	emit
 })
-
-const initHandler = (initParam: any) => {
-	state.dataForm.templateType = initParam.templateType
-	fileList.value = []
-	init(initParam.id)
-}
 
 const dataRules = reactive({
 	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -115,7 +114,7 @@ const handleManualUpload = (options: any) => {
 }
 
 defineExpose({
-	initHandler
+	init
 })
 </script>
 

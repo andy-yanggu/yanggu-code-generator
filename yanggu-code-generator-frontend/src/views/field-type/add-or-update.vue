@@ -32,7 +32,7 @@ const emit = defineEmits(['refreshDataList'])
 const state: FormOptions = reactive({
 	submitApi: fieldTypeSubmitApi,
 	detailApi: fieldTypeDetailApi,
-	initFormData: {
+	dataForm: {
 		id: '',
 		columnType: '',
 		attrType: '',
@@ -46,7 +46,7 @@ const dataRules = reactive({
 	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

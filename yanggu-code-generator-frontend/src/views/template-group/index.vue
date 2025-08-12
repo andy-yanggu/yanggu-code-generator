@@ -68,7 +68,7 @@
 					<template #default="scope">
 						<el-row :gutter="5">
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Setting" @click="handlerTemplate(scope.row)">配置</el-button>
+								<el-button type="primary" link :icon="Setting" @click="treeData(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -81,9 +81,6 @@
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 							</el-col>
-						</el-row>
-						<el-row>
-							<el-button type="primary" link :icon="Download" @click="treeData(scope.row)">树形数据</el-button>
 						</el-row>
 					</template>
 				</el-table-column>

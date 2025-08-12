@@ -119,7 +119,7 @@ const state: FormOptions = reactive({
 	submitApi: projectSubmitApi,
 	detailApi: projectDetailApi,
 	initBefore: getList,
-	initFormData: {
+	dataForm: {
 		id: null,
 		projectName: '',
 		projectPackage: '',
@@ -154,7 +154,7 @@ const tableTemplateGroupList = ref([])
 const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const submitProjectHandle = () => {
 	if (!dataForm.id) {

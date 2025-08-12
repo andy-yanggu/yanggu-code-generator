@@ -35,7 +35,7 @@ const state: FormOptions = reactive({
 	// 详情API
 	detailApi: enumItemDetailApi,
 	// 详情数据
-	initFormData: {
+	dataForm: {
 		id: null,
 		enumId: -1,
 		enumItemName: '',
@@ -53,7 +53,7 @@ const dataRules = reactive({
 	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const initData = (enumId: number, id?: number) => {
 	dataForm.enumId = enumId

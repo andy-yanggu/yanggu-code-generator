@@ -39,7 +39,7 @@ const state: FormOptions = reactive({
 	// 详情API
 	detailApi: templateGroupDetailApi,
 	// 初始表单数据
-	initFormData: {
+	dataForm: {
 		id: '',
 		groupName: '',
 		type: '',

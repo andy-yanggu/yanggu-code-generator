@@ -10,7 +10,7 @@ export interface FormOptions {
 	// 初始化之前调用
 	initBefore?: () => void
 	// 初始表单数据
-	initFormData: any
+	dataForm: any
 	// 初始化之后调用
 	initAfter?: () => void
 	// 提交之前操作
@@ -25,7 +25,7 @@ export interface FormOptions {
 
 export const useSubmitForm = (options: FormOptions) => {
 	const visible = ref(false) // 弹窗可见性
-	const dataForm = reactive({ ...options.initFormData }) // 表单数据
+	const dataForm = reactive({ ...options.dataForm }) // 表单数据
 	const submitLoading = ref(false) // 提交按钮loading状态
 	const dataFormRef = ref() // 表单ref
 

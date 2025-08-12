@@ -59,7 +59,7 @@ const state: FormOptions = reactive({
     // 详情API
     detailApi: ${functionName}DetailApi,
     // 表单数据
-    initFormData: {
+    dataForm: {
         <#list fieldList as field>
             <#if field.entityBaseField == 0>
         ${field.attrName}: ''<#if field_has_next>,</#if>
@@ -77,7 +77,7 @@ const dataRules = reactive({
     </#list>
 })
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

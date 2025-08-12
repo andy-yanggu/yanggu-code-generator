@@ -39,7 +39,7 @@ const state: FormOptions = reactive({
 	submitApi: enumSubmitApi,
 	detailApi: enumDetailApi,
 	initBefore: getProjectList,
-	initFormData: {
+	dataForm: {
 		projectId: null,
 		enumName: '',
 		enumDesc: ''
@@ -53,7 +53,7 @@ const dataRules = reactive({
 	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

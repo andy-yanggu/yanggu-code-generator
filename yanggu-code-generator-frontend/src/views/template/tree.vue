@@ -47,7 +47,13 @@
 				</div>
 			</el-aside>
 
-			<add-or-update ref="addOrUpdateRef" :template-group-id="templateTreeData.id" :parent-id="contextMenu.nodeData.id"></add-or-update>
+			<add-or-update
+				ref="addOrUpdateRef"
+				:template-group-id="templateTreeData.id"
+				:parent-id="contextMenu.nodeData.id"
+				:template-type="contextMenu.templateType"
+				@refresh-data-list="init(templateTreeData.id)"
+			></add-or-update>
 
 			<!-- 右侧：模板编辑 -->
 			<el-main v-if="templateTreeData.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
@@ -61,11 +67,19 @@
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
-							<el-col :span="isFullscreen ? 21 : 20">
+							<el-col :span="isFullscreen ? 18 : 17">
 								<el-text tag="b" truncated>路径：{{ fullFilePath }}</el-text>
 							</el-col>
-							<el-col :span="3" style="text-align: right">
-								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
+							<el-col :span="5" style="text-align: right">
+								<el-button size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">保存模板</el-button>
+							</el-col>
+							<el-col :span="1" style="display: flex; justify-content: center; align-items: center">
+								<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
+									<el-icon :size="18" class="collapse-icon" @click="toggle()">
+										<FullScreen v-if="!isFullscreen"></FullScreen>
+										<Aim v-else></Aim>
+									</el-icon>
+								</el-tooltip>
 							</el-col>
 						</el-row>
 					</el-header>
@@ -124,8 +138,10 @@ import { ElLoading, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
 import { templateTreeDataApi } from '@/api/template'
-import { Delete, DocumentAdd, Edit, Expand, Fold, FolderAdd } from '@element-plus/icons-vue'
+import { Aim, Delete, DocumentAdd, Edit, Expand, Fold, FolderAdd, FullScreen } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
+import { templateSubmitApi } from '@/api/template'
+import { ElMessage } from 'element-plus/es'
 
 interface Tree {
 	// 主键ID
@@ -171,8 +187,10 @@ const contextMenu = reactive({
 	visible: false,
 	x: 0,
 	y: 0,
+	templateType: -1,
 	nodeData: { id: 0 } as Tree
 })
+const submitLoading = ref(false)
 
 const fullFilePath = computed(() => {
 	return getFullPathById(templateTreeData.item.id, templateTreeData.treeList)
@@ -195,7 +213,7 @@ const init = async (id: number) => {
 			currentNodeKey.value = templateContentList[0].id
 			treeRef.value.setCurrentKey(currentNodeKey.value)
 			templateTreeData.tabActiveName = templateContentList[0].id
-			templateTreeData.tabList.push(templateContentList[0])
+			tabPush(templateContentList[0])
 		}
 	} finally {
 		loadingInstance.close()
@@ -260,10 +278,7 @@ const handleTreeNodeClick = (data: Tree) => {
 	if (data.templateType != 0) {
 		const filterElement = templateTreeData.dataList.filter(item => item.id === data.id)[0]
 		templateTreeData.item = filterElement
-		const result = templateTreeData.tabList.some(tab => tab.id === filterElement.id)
-		if (!result) {
-			templateTreeData.tabList.push(filterElement)
-		}
+		tabPush(filterElement)
 		templateTreeData.tabActiveName = filterElement.id
 	}
 }
@@ -311,6 +326,28 @@ const handleTabRemove = (id: number) => {
 	}
 }
 
+// 添加tab（进行去重）
+const tabPush = (tree: Tree) => {
+	if (templateTreeData.tabList.some(tab => tab.id === tree.id)) {
+		return
+	}
+	templateTreeData.tabList.push(tree)
+}
+
+const saveTemplateContent = () => {
+	submitLoading.value = true
+	templateSubmitApi(templateTreeData.item)
+		.then(() => {
+			ElMessage.success({
+				message: '操作成功',
+				duration: 500
+			})
+		})
+		.finally(() => {
+			submitLoading.value = false
+		})
+}
+
 const hideContextMenu = () => {
 	contextMenu.visible = false
 	document.removeEventListener('click', hideContextMenu)
@@ -339,8 +376,10 @@ document.addEventListener('mousedown', e => {
 // 菜单功能（这里直接打印，你可以接 API）
 const editNode = (node: Tree) => {
 	console.log('编辑', node)
-
-	addOrUpdateRef.value.initHandler({ id: node.id, templateType: node.templateType })
+	contextMenu.templateType = node.templateType
+	nextTick(() => {
+		addOrUpdateRef.value.init(node.id)
+	})
 	hideContextMenu()
 }
 
@@ -351,19 +390,28 @@ const deleteNode = (node: Tree) => {
 
 const newDir = (parent: Tree) => {
 	console.log('新建目录在', parent)
-	addOrUpdateRef.value.initHandler({ id: null, templateType: 0 })
+	contextMenu.templateType = 0
+	nextTick(() => {
+		addOrUpdateRef.value.init()
+	})
 	hideContextMenu()
 }
 
 const newTemplateFile = (parent: Tree) => {
 	console.log('新建模板文件在', parent)
-	addOrUpdateRef.value.initHandler({ id: null, templateType: 1 })
+	contextMenu.templateType = 1
+	nextTick(() => {
+		addOrUpdateRef.value.init()
+	})
 	hideContextMenu()
 }
 
 const newBinaryFile = (parent: Tree) => {
 	console.log('新建二进制文件在', parent)
-	addOrUpdateRef.value.initHandler({ id: null, templateType: 2 })
+	contextMenu.templateType = 2
+	nextTick(() => {
+		addOrUpdateRef.value.init()
+	})
 	hideContextMenu()
 }
 

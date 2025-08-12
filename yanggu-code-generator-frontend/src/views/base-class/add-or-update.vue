@@ -34,7 +34,7 @@ const state: FormOptions = reactive({
 	// 详情API
 	detailApi: baseClassDetailApi,
 	// 表单数据
-	initFormData: {
+	dataForm: {
 		id: null,
 		packageName: '',
 		className: '',
@@ -50,7 +50,7 @@ const dataRules = reactive({
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible,, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init
