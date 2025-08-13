@@ -4,8 +4,18 @@
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapseRef" width="400px" style="overflow: hidden">
-				<div style="padding: 15px; border-bottom: 1px solid #eee">
-					<el-input v-model="treeSearchText" placeholder="请输入文件/路径" size="small" clearable prefix-icon="Search"></el-input>
+				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
+					<el-input
+						v-model="treeSearchText"
+						placeholder="请输入目录/文件名称"
+						size="small"
+						clearable
+						prefix-icon="Search"
+						style="width: 240px"
+					></el-input>
+					<div style="display: flex; text-align: right">
+						<el-button size="small" type="danger" :icon="Delete" @click="deleteCheckedNode">删除</el-button>
+					</div>
 				</div>
 				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
@@ -15,34 +25,29 @@
 							node-key="id"
 							:current-node-key="currentNodeKey"
 							highlight-current
+							show-checkbox
 							class="custom-tree"
 							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"
 							@node-click="handleTreeNodeClick"
 							@node-contextmenu="handleNodeRightClick"
-						></el-tree>
+						>
+							<template #default="{ node, data }">
+								<div class="custom-tree-node">
+									<svg-icon :icon="getIcon(node, data)"></svg-icon>
+									<span>{{ node.label }}</span>
+									<el-icon :size="14" @click="updateTemplate(data)"><Edit></Edit></el-icon>
+								</div>
+							</template>
+						</el-tree>
 					</div>
 				</el-scrollbar>
 				<!-- 自定义右键菜单 -->
-				<div v-if="contextMenu.visible">
+				<div v-if="contextMenu.visible && contextMenu.nodeData.templateType === 0">
 					<ul class="context-menu" :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }">
-						<li @click="updateTemplate(contextMenu.nodeData)">
-							<el-icon size="10"><Edit></Edit></el-icon>修改
-						</li>
-						<li @click="deleteTemplate(contextMenu.nodeData)">
-							<el-icon size="10"><Delete></Delete></el-icon>删除
-						</li>
-						<template v-if="contextMenu.nodeData?.templateType === 0">
-							<li @click="newDir(contextMenu.nodeData)">
-								<el-icon size="10"><FolderAdd></FolderAdd></el-icon>新建目录
-							</li>
-							<li @click="newTemplateFile(contextMenu.nodeData)">
-								<el-icon><DocumentAdd></DocumentAdd></el-icon>新建模板文件
-							</li>
-							<li @click="newBinaryFile(contextMenu.nodeData)">
-								<el-icon><DocumentAdd></DocumentAdd></el-icon>新建二进制文件
-							</li>
-						</template>
+						<li @click="newDir(contextMenu.nodeData)"><svg-icon icon="icon-folder-add"></svg-icon>新建目录</li>
+						<li @click="newTemplateFile(contextMenu.nodeData)"><svg-icon icon="icon-file-add"></svg-icon>新建模板文件</li>
+						<li @click="newBinaryFile(contextMenu.nodeData)"><svg-icon icon="icon-file-unknown"></svg-icon>新建二进制文件</li>
 					</ul>
 				</div>
 			</el-aside>
@@ -50,7 +55,7 @@
 			<add-or-update
 				ref="addOrUpdateRef"
 				:template-group-id="templateTreeData.id"
-				:parent-id="contextMenu.nodeData.id"
+				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
 				@refresh-data-list="init(templateTreeData.id)"
 			></add-or-update>
@@ -59,7 +64,7 @@
 			<el-main v-if="templateTreeData.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 30px; margin-bottom: 5px">
+					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 70px; margin-bottom: 5px">
 						<el-row>
 							<el-col v-if="!isFullscreen" :span="1">
 								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
@@ -82,14 +87,14 @@
 								</el-tooltip>
 							</el-col>
 						</el-row>
+						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" :label="tabItem.fileName" closable>
+							</el-tab-pane>
+						</el-tabs>
 					</el-header>
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
-						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" :label="tabItem.templateName" closable>
-							</el-tab-pane>
-						</el-tabs>
 						<template v-if="templateTreeData.item.templateType === 1">
 							<el-scrollbar style="height: 100%">
 								<code-mirror v-model="templateTreeData.item.templateContent" :height="contentHeight"></code-mirror>
@@ -99,7 +104,9 @@
 							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
 								<template
 									v-if="
-										['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'].some(tempType => templateTreeData.item.templateName.endsWith(tempType))
+										['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'].some(tempType =>
+											templateTreeData.item.binaryOriginalFileName?.endsWith(tempType)
+										)
 									"
 								>
 									<el-image :src="templateTreeData.item.templateContent" fit="fill"></el-image>
@@ -137,10 +144,10 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
-import { templateDeleteApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
-import { Aim, Delete, DocumentAdd, Edit, Expand, Fold, FolderAdd, FullScreen } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/svg-icon/index'
+import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
+import { Aim, Delete, Edit, Expand, Fold, FullScreen, Search } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
-import { templateSubmitApi } from '@/api/template'
 import { ElMessage } from 'element-plus/es'
 
 interface Tree {
@@ -164,7 +171,7 @@ interface Tree {
 	children?: Tree[]
 }
 
-const currentNodeKey = ref()
+const currentNodeKey = ref(-1)
 const treeRef = ref()
 const templateTreeData = reactive({
 	visible: false,
@@ -186,9 +193,12 @@ const contextMenu = reactive({
 	x: 0,
 	y: 0,
 	templateType: -1,
-	nodeData: { id: 0 } as Tree
+	parentId: 0,
+	nodeData: {} as Tree
 })
 const submitLoading = ref(false)
+
+const imageTypeList = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico']
 
 const fullFilePath = computed(() => {
 	return getFullPathById(templateTreeData.item.id, templateTreeData.treeList)
@@ -206,14 +216,12 @@ const init = async (id: number) => {
 		templateTreeData.dataList = templateContentList
 		templateTreeData.visible = true
 		await nextTick()
-		if (templateContentList.length > 0) {
-			templateTreeData.item = templateTreeData.dataList[0]
+		if (templateContentList.length > 0 && templateTreeData.tabActiveName === -1) {
+			templateTreeData.item = templateContentList[0]
 			currentNodeKey.value = templateContentList[0].id
 			treeRef.value.setCurrentKey(currentNodeKey.value)
-			if (templateTreeData.tabActiveName === -1) {
-				templateTreeData.tabActiveName = templateContentList[0].id
-				tabPush(templateContentList[0])
-			}
+			templateTreeData.tabActiveName = templateContentList[0].id
+			tabPush(templateContentList[0])
 		}
 	} finally {
 		loadingInstance.close()
@@ -256,6 +264,9 @@ const toggleCollapse = () => {
 
 // 计算内容行数
 const contentHeight = computed(() => {
+	if (!templateTreeData.item.templateContent) {
+		return 800
+	}
 	const length = templateTreeData.item.templateContent!.split('\n').length
 	return Math.min(Math.max(20 * length, 800), 1000)
 })
@@ -281,6 +292,31 @@ const handleTreeNodeClick = (data: Tree) => {
 		tabPush(filterElement)
 		templateTreeData.tabActiveName = filterElement.id
 	}
+}
+
+const deleteCheckedNode = () => {
+	const allCheckedKeys = treeRef.value.getCheckedKeys()
+	if (allCheckedKeys.length === 0) {
+		ElMessage.warning('请勾选目录或者文件')
+		return
+	}
+	ElMessageBox.confirm('此操作将删除该目录或者文件, 是否继续?', '提示', {
+		confirmButtonText: '确定',
+		cancelButtonText: '取消',
+		type: 'warning'
+	}).then(() => {
+		templateDeleteListApi(allCheckedKeys)
+			.then(() => {
+				ElMessage.success('删除成功')
+			})
+			.then(() => {
+				// 删除tab
+				allCheckedKeys.forEach((tempId: number) => handleTabRemove(tempId))
+			})
+			.then(() => {
+				init(templateTreeData.id)
+			})
+	})
 }
 
 // tab点击
@@ -381,26 +417,9 @@ document.addEventListener('mousedown', e => {
 const updateTemplate = (node: Tree) => {
 	console.log('编辑', node)
 	contextMenu.templateType = node.templateType
+	contextMenu.parentId = node.parentId
 	nextTick(() => {
 		addOrUpdateRef.value.init(node.id)
-	})
-	hideContextMenu()
-}
-
-// 删除模板
-const deleteTemplate = (node: Tree) => {
-	console.log('删除', node)
-	const message = node.templateType === 0 ? '确定删除本身及所有子节点吗？' : '确定删除文件吗？'
-	ElMessageBox.confirm(message, '提示', {
-		confirmButtonText: '确定',
-		cancelButtonText: '取消',
-		type: 'warning'
-	}).then(() => {
-		templateDeleteApi(node.id).then(() => {
-			ElMessage.success({
-				message: '删除成功'
-			})
-		})
 	})
 	hideContextMenu()
 }
@@ -409,6 +428,7 @@ const deleteTemplate = (node: Tree) => {
 const newDir = (parent: Tree) => {
 	console.log('新建目录在', parent)
 	contextMenu.templateType = 0
+	contextMenu.parentId = parent.id
 	nextTick(() => {
 		addOrUpdateRef.value.init()
 	})
@@ -419,6 +439,7 @@ const newDir = (parent: Tree) => {
 const newTemplateFile = (parent: Tree) => {
 	console.log('新建模板文件在', parent)
 	contextMenu.templateType = 1
+	contextMenu.parentId = parent.id
 	nextTick(() => {
 		addOrUpdateRef.value.init()
 	})
@@ -429,10 +450,31 @@ const newTemplateFile = (parent: Tree) => {
 const newBinaryFile = (parent: Tree) => {
 	console.log('新建二进制文件在', parent)
 	contextMenu.templateType = 2
+	contextMenu.parentId = parent.id
 	nextTick(() => {
 		addOrUpdateRef.value.init()
 	})
 	hideContextMenu()
+}
+
+// 获取节点的图标
+const getIcon = (node: any, data: Tree): string => {
+	if (node.expanded) {
+		return 'icon-folder-open'
+	} else if (data.templateType === 0) {
+		return 'icon-folder'
+	} else if (data.templateType === 1) {
+		return 'icon-file-text'
+	} else if (data.templateType === 2) {
+		const some = imageTypeList.some(item => data.binaryOriginalFileName?.endsWith(item))
+		if (some) {
+			return 'icon-file-image'
+		} else {
+			return 'icon-file-unknown'
+		}
+	} else {
+		return 'icon-file-unknown'
+	}
 }
 
 defineExpose({
@@ -445,11 +487,18 @@ defineExpose({
 	min-width: max-content;
 	width: fit-content;
 	overflow-x: auto;
+	margin-bottom: 10px;
 }
 
 .custom-tree {
 	display: block;
 	width: 100%;
+}
+
+.custom-tree-node {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 
 .context-menu {

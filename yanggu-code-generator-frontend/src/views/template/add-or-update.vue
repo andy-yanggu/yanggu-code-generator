@@ -74,8 +74,15 @@ const initAfterHandle = () => {
 	}
 }
 
+const submitBeforeHandle = () => {
+	if (state.dataForm.templateType === 0 || state.dataForm.templateType === 1) {
+		state.dataForm.binaryOriginalFileName = ''
+	}
+}
+
 const state: FormOptions = reactive({
 	visible: false,
+	submitBefore: submitBeforeHandle,
 	submitApi: templateSubmitApi,
 	detailApi: templateDetailApi,
 	dataForm: {
@@ -86,7 +93,6 @@ const state: FormOptions = reactive({
 		fileName: '',
 		templateType: -1,
 		templateDesc: '',
-		templateContent: '',
 		binaryOriginalFileName: ''
 	},
 	initAfter: initAfterHandle,

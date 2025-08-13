@@ -1,0 +1,57 @@
+[
+  {
+    "path": "/index",
+    "name": "Index",
+    "component": "index",
+    "meta": {
+      "title": "首页",
+      "icon": "icon-detail",
+      "cache": true,
+      "type": 1
+    }
+  },
+  {
+    "path": "/gen",
+    "name": "Gen",
+    "meta": {
+      "title": "代码生成器",
+      "icon": "icon-appstore",
+      "type": 0
+    },
+    "children": [
+      {
+        "path": "/gen/project",
+        "name": "GenProject",
+        "component": "project/index",
+        "meta": {
+          "title": "项目管理",
+          "icon": "icon-edit-square",
+          "cache": true,
+          "type": 1
+        }
+      },
+      {
+        "path": "/gen/table",
+        "name": "GenTable",
+        "component": "table/index",
+        "meta": {
+          "title": "表管理",
+          "icon": "icon-detail",
+          "cache": true,
+          "type": 1
+        }
+      },
+      {
+        "path": "/gen/enum",
+        "name": "GenEnum",
+        "component": "enum/index",
+        "meta": {
+          "title": "枚举管理",
+          "icon": "icon-merge-cells",
+          "cache": true,
+          "type": 1
+        }
+      }
+    ]
+  }
+]
