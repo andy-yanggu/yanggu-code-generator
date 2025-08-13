@@ -55,3 +55,8 @@ export const templateVOListApi = (queryForm: any) => {
 export const templateTreeDataApi = (templateGroupId: number) => {
 	return service.get('/template/tree?templateGroupId=' + templateGroupId)
 }
+
+//修改模板内容
+export const templateUpdateContentApi = (dataForm: any) => {
+	return service.put('/template/updateContent', dataForm)
+}

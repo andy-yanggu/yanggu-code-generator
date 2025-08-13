@@ -4,6 +4,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
+import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
@@ -12,6 +13,7 @@ import com.yanggu.code.generator.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +153,16 @@ public class TemplateController {
     @Parameter(name = "templateGroupId", description = "模板组ID", required = true)
     public List<TemplateVO> tree(@RequestParam("templateGroupId") @NotNull(message = "模板组ID不能为空") Long templateGroupId) {
         return templateService.tree(templateGroupId);
+    }
+
+    /**
+     * 修改模板内容
+     */
+    @PutMapping("/updateContent")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "修改模板内容")
+    public void updateContent(@RequestBody @Valid TemplateContentDTO contentDTO) {
+        templateService.updateContent(contentDTO);
     }
 
 }

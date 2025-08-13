@@ -103,26 +103,23 @@
 			<copy ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy>
 		</el-card>
 
-		<template-index ref="templateIndexRef" :key="currentGroupId"></template-index>
-
-		<template-tree ref="treeUpdateRef"></template-tree>
+		<template-tree ref="treeUpdateRef" :key="currentGroupId"></template-tree>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { reactive, ref } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
+import { useInitForm } from '@/hooks/use-init-form'
+import { getLabel } from '@/utils/enum'
+import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import Copy from '@/views/template-group/copy.vue'
-import TemplateIndex from '../template/index.vue'
+import AddOrUpdate from '@/views/template-group/add-or-update.vue'
+import Import from '@/views/template-group/import.vue'
+import TemplateTree from '@/views/template/tree.vue'
 import { ElMessage } from 'element-plus'
 import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/template-group'
-import Import from './import.vue'
-import { getLabel } from '@/utils/enum'
-import { useInitForm } from '@/hooks/use-init-form'
 import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting } from '@element-plus/icons-vue'
-import TemplateTree from '@/views/template/tree.vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -140,8 +137,7 @@ const state: IHooksOptions = reactive({
 
 const tableRef = ref()
 const copyTemplateGroupRef = ref()
-const currentGroupId = ref<number>(-1)
-const templateIndexRef = ref()
+const currentGroupId = ref('')
 const templateGroupImportRef = ref()
 const treeUpdateRef = ref()
 
@@ -149,13 +145,11 @@ const copyTemplateGroupHandle = (id: number) => {
 	copyTemplateGroupRef.value.init(id)
 }
 
-const handlerTemplate = (row: any) => {
-	templateIndexRef.value.init(row)
-}
-
 const treeData = (row: any) => {
-	// currentGroupId.value = row.id
-	treeUpdateRef.value.init(row.id)
+	currentGroupId.value = `tree-${row.id}-${Date.now()}`
+	nextTick(() => {
+		treeUpdateRef.value.init(row.id)
+	})
 }
 
 const exportHandle = () => {
@@ -185,12 +179,4 @@ const {
 
 const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
 </script>
-<style scoped>
-.action-buttons {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-wrap: wrap; /* 自动换行防止溢出 */
-	gap: 6px; /* 控制按钮间距 */
-}
-</style>
+<style scoped></style>

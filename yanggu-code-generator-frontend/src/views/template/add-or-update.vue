@@ -61,6 +61,8 @@ const props = defineProps({
 const emit = defineEmits(['refreshDataList'])
 
 const initAfterHandle = () => {
+	state.dataForm.templateGroupId = props.templateGroupId
+	state.dataForm.parentId = props.parentId
 	state.dataForm.templateType = props.templateType
 	if (state.dataForm.templateType === 2 && state.dataForm.id) {
 		fileList.value = [
@@ -78,11 +80,11 @@ const state: FormOptions = reactive({
 	detailApi: templateDetailApi,
 	dataForm: {
 		id: null,
-		templateGroupId: props.templateGroupId,
-		parentId: props.parentId,
+		templateGroupId: -1,
+		parentId: -1,
 		templateName: '',
 		fileName: '',
-		templateType: props.templateType,
+		templateType: -1,
 		templateDesc: '',
 		templateContent: '',
 		binaryOriginalFileName: ''

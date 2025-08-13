@@ -37,6 +37,13 @@ public class TemplateDTO implements Serializable {
     private Long templateGroupId;
 
     /**
+     * 父级ID
+     */
+    @Schema(description = "父级ID")
+    @NotNull(message = "父级ID不能为空")
+    private Long parentId;
+
+    /**
      * 模板名称
      */
     @Schema(description = "模板名称")
@@ -44,12 +51,11 @@ public class TemplateDTO implements Serializable {
     private String templateName;
 
     /**
-     * 生成代码的路径
+     * 文件或者目录名称
      */
-    @Schema(description = "生成代码的路径")
-    @NotBlank(message = "生成代码的路径不能为空")
-    @UnixPath(message = "生成代码的路径格式不正确")
-    private String generatorPath;
+    @Schema(description = "文件或者目录名称")
+    @NotBlank(message = "文件或者目录名称不能为空")
+    private String fileName;
 
     /**
      * 模板描述
@@ -58,18 +64,18 @@ public class TemplateDTO implements Serializable {
     private String templateDesc;
 
     /**
-     * 模板内容
-     */
-    @Schema(description = "模板内容")
-    private String templateContent;
-
-    /**
      * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
     @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")
     @NotNull(message = "模板类型不能为空")
     @EnumCode(TemplateTypeEnum.class)
     private Integer templateType;
+
+    /**
+     * 模板内容
+     */
+    @Schema(description = "模板内容")
+    private String templateContent;
 
     /**
      * 二进制原始文件名

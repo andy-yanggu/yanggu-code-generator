@@ -63,7 +63,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     /**
      * 模板描述
      */
-    @TableField(value = "template_desc", updateStrategy = ALWAYS)
+    @TableField(value = "template_desc")
     private String templateDesc;
 
     /**
@@ -83,11 +83,5 @@ public class TemplateEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "binary_original_file_name")
     private String binaryOriginalFileName;
-
-    /**
-     * 模板排序
-     */
-    @TableField(value = "template_order")
-    private Integer templateOrder;
 
 }

@@ -3,6 +3,7 @@ package com.yanggu.code.generator.service;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
+import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
@@ -79,5 +80,10 @@ public interface TemplateService extends IService<TemplateEntity> {
     }
 
     List<TemplateVO> tree(Long templateGroupId);
+
+    /**
+     * 修改模板内容
+     */
+    void updateContent(TemplateContentDTO contentDTO);
 
 }

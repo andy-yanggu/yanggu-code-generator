@@ -93,12 +93,6 @@ public class TemplateVO extends BaseVO implements Serializable {
     private String binaryOriginalFileName;
 
     /**
-     * 模板排序
-     */
-    @Schema(description = "模板排序")
-    private Integer templateOrder;
-
-    /**
      * 子节点列表
      */
     @Schema(description = "子节点列表")

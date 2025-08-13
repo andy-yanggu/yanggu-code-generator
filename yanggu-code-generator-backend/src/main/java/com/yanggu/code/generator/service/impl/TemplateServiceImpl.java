@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
+import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
@@ -17,6 +18,7 @@ import com.yanggu.code.generator.enums.TreeTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
+import org.dromara.hutool.core.comparator.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,10 @@ import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIS
  */
 @Service
 public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEntity> implements TemplateService {
+
+    public static final Comparator<TemplateVO> TREE_COMPARATOR = ComparatorChain.of(
+            Comparator.comparing(TemplateVO::getTemplateType), Comparator.comparing(TemplateVO::getFileName)
+    );
 
     @Autowired
     private TemplateMapper templateMapper;
@@ -162,15 +168,24 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         return allList.stream()
                 .filter(templateVO -> templateVO.getParentId() == 0)
                 .peek(templateVO -> templateVO.setChildren(getChildren(allList, templateVO.getId())))
-                .sorted(Comparator.comparingInt(TemplateVO::getTemplateOrder))
+                .sorted(TREE_COMPARATOR)
                 .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void updateContent(TemplateContentDTO contentDTO) {
+        TemplateEntity entity = new TemplateEntity();
+        entity.setId(contentDTO.getId());
+        entity.setTemplateContent(contentDTO.getTemplateContent());
+        templateMapper.updateById(entity);
     }
 
     private List<TemplateVO> getChildren(List<TemplateVO> allList, Long id) {
         return allList.stream()
                 .filter(templateVO -> templateVO.getParentId().equals(id))
                 .peek(templateVO -> templateVO.setChildren(getChildren(allList, templateVO.getId())))
-                .sorted(Comparator.comparingInt(TemplateVO::getTemplateOrder))
+                .sorted(TREE_COMPARATOR)
                 .toList();
     }
 
@@ -188,8 +203,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
                 .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
                 .and(wrapper -> wrapper
                         .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
-                        .or()
-                        .eq(TemplateEntity::getGeneratorPath, dto.getGeneratorPath())
+                        /*.or()
+                        .eq(TemplateEntity::getGeneratorPath, dto.getGeneratorPath())*/
                 );
 
         boolean exists = templateMapper.exists(queryWrapper);

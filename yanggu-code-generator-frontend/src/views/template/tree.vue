@@ -26,10 +26,10 @@
 				<!-- 自定义右键菜单 -->
 				<div v-if="contextMenu.visible">
 					<ul class="context-menu" :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }">
-						<li @click="editNode(contextMenu.nodeData)">
+						<li @click="updateTemplate(contextMenu.nodeData)">
 							<el-icon size="10"><Edit></Edit></el-icon>修改
 						</li>
-						<li @click="deleteNode(contextMenu.nodeData)">
+						<li @click="deleteTemplate(contextMenu.nodeData)">
 							<el-icon size="10"><Delete></Delete></el-icon>删除
 						</li>
 						<template v-if="contextMenu.nodeData?.templateType === 0">
@@ -134,10 +134,10 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { ElLoading, TabsPaneContext } from 'element-plus'
+import { ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
-import { templateTreeDataApi } from '@/api/template'
+import { templateDeleteApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
 import { Aim, Delete, DocumentAdd, Edit, Expand, Fold, FolderAdd, FullScreen } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { templateSubmitApi } from '@/api/template'
@@ -153,15 +153,13 @@ interface Tree {
 	// 文件名称
 	fileName: string
 	// 模板描述
-	templateDesc: string
+	templateDesc?: string
 	// 模板类型（0-目录，1-模板文件，2-二进制文件）
 	templateType: number
 	// 模板内容
-	templateContent: string
+	templateContent?: string
 	// 二进制原始文件名
-	binaryOriginalFileName: string
-	// 模板顺序
-	templateOrder: number
+	binaryOriginalFileName?: string
 	// 子节点列表
 	children?: Tree[]
 }
@@ -212,8 +210,10 @@ const init = async (id: number) => {
 			templateTreeData.item = templateTreeData.dataList[0]
 			currentNodeKey.value = templateContentList[0].id
 			treeRef.value.setCurrentKey(currentNodeKey.value)
-			templateTreeData.tabActiveName = templateContentList[0].id
-			tabPush(templateContentList[0])
+			if (templateTreeData.tabActiveName === -1) {
+				templateTreeData.tabActiveName = templateContentList[0].id
+				tabPush(templateContentList[0])
+			}
 		}
 	} finally {
 		loadingInstance.close()
@@ -256,7 +256,7 @@ const toggleCollapse = () => {
 
 // 计算内容行数
 const contentHeight = computed(() => {
-	const length = templateTreeData.item.templateContent.split('\n').length
+	const length = templateTreeData.item.templateContent!.split('\n').length
 	return Math.min(Math.max(20 * length, 800), 1000)
 })
 
@@ -336,7 +336,11 @@ const tabPush = (tree: Tree) => {
 
 const saveTemplateContent = () => {
 	submitLoading.value = true
-	templateSubmitApi(templateTreeData.item)
+	const dataForm = {
+		id: templateTreeData.item.id,
+		templateContent: templateTreeData.item.templateContent
+	}
+	templateUpdateContentApi(dataForm)
 		.then(() => {
 			ElMessage.success({
 				message: '操作成功',
@@ -373,8 +377,8 @@ document.addEventListener('mousedown', e => {
 	}
 })
 
-// 菜单功能（这里直接打印，你可以接 API）
-const editNode = (node: Tree) => {
+// 修改模板
+const updateTemplate = (node: Tree) => {
 	console.log('编辑', node)
 	contextMenu.templateType = node.templateType
 	nextTick(() => {
@@ -383,11 +387,25 @@ const editNode = (node: Tree) => {
 	hideContextMenu()
 }
 
-const deleteNode = (node: Tree) => {
+// 删除模板
+const deleteTemplate = (node: Tree) => {
 	console.log('删除', node)
+	const message = node.templateType === 0 ? '确定删除本身及所有子节点吗？' : '确定删除文件吗？'
+	ElMessageBox.confirm(message, '提示', {
+		confirmButtonText: '确定',
+		cancelButtonText: '取消',
+		type: 'warning'
+	}).then(() => {
+		templateDeleteApi(node.id).then(() => {
+			ElMessage.success({
+				message: '删除成功'
+			})
+		})
+	})
 	hideContextMenu()
 }
 
+// 新建目录
 const newDir = (parent: Tree) => {
 	console.log('新建目录在', parent)
 	contextMenu.templateType = 0
@@ -397,6 +415,7 @@ const newDir = (parent: Tree) => {
 	hideContextMenu()
 }
 
+// 新建模板文件
 const newTemplateFile = (parent: Tree) => {
 	console.log('新建模板文件在', parent)
 	contextMenu.templateType = 1
@@ -406,6 +425,7 @@ const newTemplateFile = (parent: Tree) => {
 	hideContextMenu()
 }
 
+// 新建二进制文件
 const newBinaryFile = (parent: Tree) => {
 	console.log('新建二进制文件在', parent)
 	contextMenu.templateType = 2
