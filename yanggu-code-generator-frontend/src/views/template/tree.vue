@@ -36,18 +36,20 @@
 								<div class="custom-tree-node">
 									<svg-icon :icon="getIcon(node, data)"></svg-icon>
 									<span>{{ node.label }}</span>
-									<el-icon :size="14" @click="updateTemplate(data)"><Edit></Edit></el-icon>
 								</div>
 							</template>
 						</el-tree>
 					</div>
 				</el-scrollbar>
 				<!-- 自定义右键菜单 -->
-				<div v-if="contextMenu.visible && contextMenu.nodeData.templateType === 0">
+				<div v-if="contextMenu.visible">
 					<ul class="context-menu" :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }">
-						<li @click="newDir(contextMenu.nodeData)"><svg-icon icon="icon-folder-add"></svg-icon>新建目录</li>
-						<li @click="newTemplateFile(contextMenu.nodeData)"><svg-icon icon="icon-file-add"></svg-icon>新建模板文件</li>
-						<li @click="newBinaryFile(contextMenu.nodeData)"><svg-icon icon="icon-file-unknown"></svg-icon>新建二进制文件</li>
+						<li @click="updateTemplate(contextMenu.nodeData)"><svg-icon icon="icon-edit"></svg-icon>修改</li>
+						<template v-if="contextMenu.nodeData.templateType === 0">
+							<li @click="newDir(contextMenu.nodeData)"><svg-icon icon="icon-folder-add"></svg-icon>新建目录</li>
+							<li @click="newTemplateFile(contextMenu.nodeData)"><svg-icon icon="icon-file-add"></svg-icon>新建模板文件</li>
+							<li @click="newBinaryFile(contextMenu.nodeData)"><svg-icon icon="icon-file-unknown"></svg-icon>新建二进制文件</li>
+						</template>
 					</ul>
 				</div>
 			</el-aside>
