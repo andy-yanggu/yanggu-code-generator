@@ -77,16 +77,9 @@
 							<el-col :span="isFullscreen ? 18 : 17">
 								<el-text tag="b" truncated>路径：{{ fullFilePath }}</el-text>
 							</el-col>
-							<el-col :span="5" style="text-align: right">
-								<el-button size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">保存模板</el-button>
-							</el-col>
-							<el-col :span="1" style="display: flex; justify-content: center; align-items: center">
-								<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
-									<el-icon :size="18" class="collapse-icon" @click="toggle()">
-										<FullScreen v-if="!isFullscreen"></FullScreen>
-										<Aim v-else></Aim>
-									</el-icon>
-								</el-tooltip>
+							<el-col :span="6" style="text-align: right">
+								<el-button size="small" type="primary" :icon="DocumentChecked" :loading="submitLoading" @click="saveTemplateContent">保存</el-button>
+								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 							</el-col>
 						</el-row>
 						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
@@ -104,13 +97,7 @@
 						</template>
 						<template v-else-if="templateTreeData.item.templateType === 2">
 							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-								<template
-									v-if="
-										['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'].some(tempType =>
-											templateTreeData.item.binaryOriginalFileName?.endsWith(tempType)
-										)
-									"
-								>
+								<template v-if="imageTypeList.some(tempType => templateTreeData.item.binaryOriginalFileName?.endsWith(tempType))">
 									<el-image :src="templateTreeData.item.templateContent" fit="fill"></el-image>
 								</template>
 								<template v-else>
@@ -148,7 +135,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
-import { Aim, Delete, Edit, Expand, Fold, FullScreen, Search } from '@element-plus/icons-vue'
+import { Aim, Delete, DocumentChecked, Edit, Expand, Fold, FullScreen, Search } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 
@@ -200,7 +187,7 @@ const contextMenu = reactive({
 })
 const submitLoading = ref(false)
 
-const imageTypeList = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico']
+const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 const fullFilePath = computed(() => {
 	return getFullPathById(templateTreeData.item.id, templateTreeData.treeList)
@@ -381,7 +368,7 @@ const saveTemplateContent = () => {
 	templateUpdateContentApi(dataForm)
 		.then(() => {
 			ElMessage.success({
-				message: '操作成功',
+				message: '保存成功',
 				duration: 500
 			})
 		})
@@ -468,7 +455,7 @@ const getIcon = (node: any, data: Tree): string => {
 	} else if (data.templateType === 1) {
 		return 'icon-file-text'
 	} else if (data.templateType === 2) {
-		const some = imageTypeList.some(item => data.binaryOriginalFileName?.endsWith(item))
+		const some = imageTypeList.value.some(item => data.binaryOriginalFileName?.endsWith(item))
 		if (some) {
 			return 'icon-file-image'
 		} else {

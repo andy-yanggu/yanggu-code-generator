@@ -18,14 +18,14 @@
 					</el-radio>
 				</el-radio-group>
 			</el-form-item>
-			<el-form-item label="模板描述" prop="templateDesc">
-				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入模板描述"></el-input>
-			</el-form-item>
 			<!-- 文件上传 -->
 			<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
-				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload">
+				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload" :on-remove="handleRemove">
 					<el-button type="primary" :icon="Upload">点击上传</el-button>
 				</el-upload>
+			</el-form-item>
+			<el-form-item label="模板描述" prop="templateDesc">
+				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入模板描述"></el-input>
 			</el-form-item>
 		</el-form>
 
@@ -42,6 +42,7 @@ import { templateDetailApi, templateSubmitApi } from '@/api/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
+import { UploadProps } from 'element-plus'
 
 const props = defineProps({
 	templateGroupId: {
@@ -64,19 +65,28 @@ const initAfterHandle = () => {
 	state.dataForm.templateGroupId = props.templateGroupId
 	state.dataForm.parentId = props.parentId
 	state.dataForm.templateType = props.templateType
-	if (state.dataForm.templateType === 2 && state.dataForm.id) {
-		fileList.value = [
-			{
-				name: state.dataForm.binaryOriginalFileName,
-				url: state.dataForm.templateContent
-			}
-		]
+	if (state.dataForm.templateType === 2) {
+		if (state.dataForm.id) {
+			fileList.value = [
+				{
+					name: state.dataForm.binaryOriginalFileName,
+					url: state.dataForm.templateContent
+				}
+			]
+		} else {
+			fileList.value = []
+		}
 	}
 }
 
 const submitBeforeHandle = () => {
-	if (state.dataForm.templateType === 0 || state.dataForm.templateType === 1) {
+	if (state.dataForm.templateType === 0) {
 		state.dataForm.binaryOriginalFileName = ''
+		state.dataForm.templateContent = ''
+	} else if (state.dataForm.templateType === 1) {
+		state.dataForm.binaryOriginalFileName = ''
+		// 删除模板内容字段
+		delete state.dataForm.templateContent
 	}
 }
 
@@ -93,16 +103,26 @@ const state: FormOptions = reactive({
 		fileName: '',
 		templateType: -1,
 		templateDesc: '',
-		binaryOriginalFileName: ''
+		binaryOriginalFileName: '',
+		templateContent: ''
 	},
 	initAfter: initAfterHandle,
 	emit
 })
 
+const validateBinaryFile = (_: any, value: any, callback: any) => {
+	if (state.dataForm.templateType === 2 && !value) {
+		callback(new Error('必填项不能为空'))
+	} else {
+		callback()
+	}
+}
+
 const dataRules = reactive({
 	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	fileName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, trigger: 'blur' }]
 })
 
 const fileList = ref<any[]>([])
@@ -119,6 +139,15 @@ const handleManualUpload = (options: any) => {
 		state.dataForm.binaryOriginalFileName = file.name
 	}
 	reader.readAsDataURL(file) // 读取为Base64数据URL
+}
+
+const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+	// 1. 清除文件数据
+	state.dataForm.binaryOriginalFileName = ''
+	state.dataForm.templateContent = ''
+
+	// 2. 更新文件列表
+	fileList.value = []
 }
 
 defineExpose({
