@@ -17,7 +17,7 @@
 						<el-button size="small" type="danger" :icon="Delete" @click="deleteCheckedNode">删除</el-button>
 					</div>
 				</div>
-				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
+				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"
@@ -52,8 +52,17 @@
 				<!-- 自定义右键菜单 -->
 				<div v-if="contextMenu.visible">
 					<ul class="context-menu" :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }">
-						<li @click="updateTemplate(contextMenu.nodeData)"><svg-icon icon="icon-edit"></svg-icon>修改</li>
-						<template v-if="contextMenu.nodeData.templateType === 0">
+						<!-- 节点右键 -->
+						<template v-if="contextMenu.isTree">
+							<li v-if="contextMenu.nodeData.id" @click="updateTemplate(contextMenu.nodeData)"><svg-icon icon="icon-edit"></svg-icon>修改</li>
+							<template v-if="contextMenu.nodeData.templateType === 0">
+								<li @click="newDir(contextMenu.nodeData)"><svg-icon icon="icon-folder-add"></svg-icon>新建目录</li>
+								<li @click="newTemplateFile(contextMenu.nodeData)"><svg-icon icon="icon-file-add"></svg-icon>新建模板文件</li>
+								<li @click="newBinaryFile(contextMenu.nodeData)"><svg-icon icon="icon-file-unknown"></svg-icon>新建二进制文件</li>
+							</template>
+						</template>
+						<!-- 空白右键 -->
+						<template v-else>
 							<li @click="newDir(contextMenu.nodeData)"><svg-icon icon="icon-folder-add"></svg-icon>新建目录</li>
 							<li @click="newTemplateFile(contextMenu.nodeData)"><svg-icon icon="icon-file-add"></svg-icon>新建模板文件</li>
 							<li @click="newBinaryFile(contextMenu.nodeData)"><svg-icon icon="icon-file-unknown"></svg-icon>新建二进制文件</li>
@@ -189,6 +198,7 @@ const contextMenu = reactive({
 	visible: false,
 	x: 0,
 	y: 0,
+	isTree: true,
 	templateType: -1,
 	parentId: 0,
 	nodeData: {} as Tree
@@ -390,13 +400,33 @@ const hideContextMenu = () => {
 	document.removeEventListener('click', hideContextMenu)
 }
 
-// 右键事件
+// 节点右键
 const handleNodeRightClick = (event: MouseEvent, data: Tree) => {
+	// console.log('节点右键')
 	event.preventDefault()
 	contextMenu.visible = true
+	contextMenu.isTree = true
 	contextMenu.x = event.clientX
 	contextMenu.y = event.clientY
 	contextMenu.nodeData = data
+	document.addEventListener('click', hideContextMenu)
+}
+
+// 空白右键
+const handleScrollWrapperRightClick = (event: MouseEvent) => {
+	// 判断右键点击目标是不是树节点
+	const target = event.target as HTMLElement
+	if (target.closest('.custom-tree-node')) {
+		// 点击在节点上，忽略空白逻辑
+		return
+	}
+	// console.log('空白右键')
+	contextMenu.visible = true
+	contextMenu.isTree = false
+	contextMenu.x = event.clientX
+	contextMenu.y = event.clientY
+	contextMenu.nodeData = { id: 0 } as Tree // 空对象表示没有选中节点
+	contextMenu.parentId = 0
 	document.addEventListener('click', hideContextMenu)
 }
 
