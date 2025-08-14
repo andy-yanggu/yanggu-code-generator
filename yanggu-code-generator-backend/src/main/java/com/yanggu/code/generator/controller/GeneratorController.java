@@ -3,6 +3,8 @@ package com.yanggu.code.generator.controller;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
+import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
+import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.service.GeneratorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 代码生成管理
@@ -32,7 +35,7 @@ public class GeneratorController {
     @PostMapping("/preview")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "预览数据")
-    public PreviewDataVO preview(@RequestBody CodePreviewQuery codePreviewQuery) throws Exception {
+    public List<PreviewTemplateVO> preview(@RequestBody CodePreviewQuery codePreviewQuery) throws Exception {
         return generatorService.preview(codePreviewQuery);
     }
 

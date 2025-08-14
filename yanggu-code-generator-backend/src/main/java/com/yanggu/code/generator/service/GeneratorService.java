@@ -3,13 +3,15 @@ package com.yanggu.code.generator.service;
 
 import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewDataVO;
+import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface GeneratorService {
 
-    PreviewDataVO preview(CodePreviewQuery codePreviewQuery) throws Exception;
+    List<PreviewTemplateVO> preview(CodePreviewQuery codePreviewQuery) throws Exception;
 
     ResponseEntity<byte[]> downloadSingle(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception;
 

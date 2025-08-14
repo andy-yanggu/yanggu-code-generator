@@ -6,18 +6,18 @@ import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.*;
-import com.yanggu.code.generator.domain.vo.PreviewDataVO;
+import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
-import com.yanggu.code.generator.domain.vo.TreeVO;
+import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
+import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtil;
-import com.yanggu.code.generator.util.TreeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.hutool.core.array.ArrayUtil;
 import org.dromara.hutool.core.codec.binary.Base64;
@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -79,13 +80,16 @@ public class GeneratorServiceImpl implements GeneratorService {
     private TableFieldMapstruct tableFieldMapstruct;
 
     @Autowired
+    private TemplateMapstruct templateMapstruct;
+
+    @Autowired
     private BaseClassMapstruct baseClassMapstruct;
 
     @Autowired
     private EnumService enumService;
 
     @Override
-    public PreviewDataVO preview(CodePreviewQuery codePreviewQuery) throws Exception {
+    public List<PreviewTemplateVO> preview(CodePreviewQuery codePreviewQuery) throws Exception {
         Integer generatorProductType = codePreviewQuery.getGeneratorProductType();
         Long previewProductId = codePreviewQuery.getPreviewProductId();
 
@@ -108,7 +112,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
             default -> throw new BusinessException("Invalid generator product type: " + generatorProductType);
         }
-        return buildPreviewData(templateContentList);
+        return buildTree(templateContentList);
     }
 
     @Override
@@ -267,7 +271,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
 
         TemplateGroupEntity templateGroup = templateGroupService.getById(tableTemplateGroupId);
-        List<TemplateEntity> templateList = templateGroup.getTemplateList();
+        List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
         List<Long> templateIdList = tableQuery.getTemplateIdList();
         if (CollUtil.isNotEmpty(templateIdList)) {
             templateList = templateList.stream()
@@ -293,16 +297,16 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
-        List<TemplateEntity> templateList = templateGroup.getTemplateList();
+        List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
         List<TemplateContentVO> list = new ArrayList<>();
-        for (TemplateEntity templateEntity : templateList) {
-            if (CollUtil.isEmpty(templateIdList) || templateIdList.contains(templateEntity.getId())) {
-                EnumModel enumModel = buildEnumDataModel(enumEntity, project);
-                TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, templateEntity, enumModel);
-                templateContentVO.setEnumId(enumId);
-                list.add(templateContentVO);
-            }
-        }
+        templateList.stream()
+                .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
+                .forEach(template -> {
+                    EnumModel enumModel = buildEnumDataModel(enumEntity, project);
+                    TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumModel);
+                    templateContentVO.setEnumId(enumId);
+                    list.add(templateContentVO);
+                });
         return list;
     }
 
@@ -312,7 +316,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         //获取项目模板组信息
         Long projectTemplateGroupId = project.getProjectTemplateGroupId();
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
-        List<TemplateEntity> projecTemplateList = templateGroup.getTemplateList();
+        List<TemplateVO> projecTemplateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
 
         ProjectModel projectModel = buildProjectDataModel(project, dataSource);
         return projecTemplateList.stream()
@@ -348,7 +352,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
-        List<TemplateEntity> templateList = templateGroup.getTemplateList().stream()
+        List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList()).stream()
                 .filter(template -> CollUtil.isEmpty(enumTemplateIdList) || enumTemplateIdList.contains(template.getId()))
                 .toList();
         return enumModelList.stream()
@@ -593,19 +597,17 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
-    private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateEntity template, Object dataModel) {
+    private TemplateContentVO getTemplateContentVO(TemplateGroupEntity templateGroup, TemplateVO template, Object dataModel) {
         String templateName = template.getTemplateName();
         Integer templateType = template.getTemplateType();
         String templateContent = template.getTemplateContent();
         String fileContent;
         switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
-            case DIRECTORY ->
-                fileContent = "";
-            case TEMPLATE_FILE ->
-                // 渲染成文件内容
-                fileContent = TemplateUtil.renderTemplate(templateName, templateContent, dataModel);
-            case BINARY_FILE ->
-                fileContent = templateContent;
+            case DIRECTORY -> fileContent = "";
+            // 渲染成文件内容
+            case TEMPLATE_FILE -> fileContent = TemplateUtil.renderTemplate(templateName, templateContent, dataModel);
+            // 二进制文件
+            case BINARY_FILE -> fileContent = templateContent;
             default -> throw new RuntimeException("未知模板类型");
         }
         //路径
@@ -620,39 +622,6 @@ public class GeneratorServiceImpl implements GeneratorService {
         templateContentVO.setTemplateGroupType(templateGroup.getType());
         templateContentVO.setTemplateType(templateType);
         return templateContentVO;
-    }
-
-    private PreviewDataVO buildPreviewData(List<TemplateContentVO> allList) {
-        PreviewDataVO previewData = new PreviewDataVO();
-
-        //过滤出文件
-        List<TemplateContentVO> templateContentList = allList.stream()
-                .filter(templateContentVO -> templateContentVO.getTemplateType().equals(TemplateTypeEnum.TEMPLATE_FILE.getCode()) || templateContentVO.getTemplateType().equals(TemplateTypeEnum.BINARY_FILE.getCode()))
-                .toList();
-
-        previewData.setTemplateContentList(templateContentList);
-
-        //构建树形列表
-        List<TreeVO> treeList = buildTree(allList);
-        previewData.setTreeList(treeList);
-
-        //重新排序模板列表
-        sortTemplateContentList(previewData);
-        return previewData;
-    }
-
-    private void sortTemplateContentList(PreviewDataVO previewData) {
-        List<TemplateContentVO> templateContentList = previewData.getTemplateContentList();
-        List<TreeVO> treeList = previewData.getTreeList();
-
-        //生成深度优先遍历的路径顺序
-        List<String> dfsOrder = TreeUtil.getDfsOrder(treeList);
-
-        //根据路径顺序对 templateContentList 排序
-        List<TemplateContentVO> newList = templateContentList.stream()
-                .sorted(Comparator.comparingInt(t -> dfsOrder.indexOf(t.getFilePath())))
-                .toList();
-        previewData.setTemplateContentList(newList);
     }
 
     private ResponseEntity<byte[]> downloadZip(String originFileName, List<TemplateContentVO> list) {
@@ -725,19 +694,120 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
-    private List<TreeVO> buildTree(List<TemplateContentVO> templateContentList) {
-        List<TreeVO> treeList = templateContentList.stream()
-                .map(templateContentVO -> {
-                    TreeVO treeVO = new TreeVO();
-                    treeVO.setFilePath(templateContentVO.getFilePath());
-                    treeVO.setLabel(templateContentVO.getFileName());
-                    treeVO.setTemplateId(templateContentVO.getTemplateId());
-                    treeVO.setTemplateType(templateContentVO.getTemplateType());
-                    return treeVO;
-                })
-                .toList();
+    private List<TemplateVO> buildTemplateTreeWithPaths(List<TemplateEntity> templateList) {
+        // 1. 转换为 VO 并构建 ID 到 VO 的映射
+        List<TemplateVO> allTemplates = templateMapstruct.entityToVO(templateList);
+        Map<Long, TemplateVO> templateMap = allTemplates.stream()
+                .collect(Collectors.toMap(TemplateVO::getId, Function.identity()));
 
-        return TreeUtil.buildTree(treeList);
+        // 2. 构建父节点到子节点的映射关系
+        Map<Long, List<TemplateVO>> parentChildrenMap = new HashMap<>();
+        for (TemplateVO template : allTemplates) {
+            Long parentId = template.getParentId();
+            parentChildrenMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(template);
+        }
+
+        // 3. 使用队列进行层次遍历，设置 generatorPath
+        Queue<TemplateVO> queue = new LinkedList<>();
+        for (TemplateVO template : allTemplates) {
+            if (template.getParentId() == 0) {
+                template.setGeneratorPath(template.getFileName());
+                queue.offer(template);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            TemplateVO current = queue.poll();
+            List<TemplateVO> children = parentChildrenMap.getOrDefault(current.getId(), Collections.emptyList());
+            for (TemplateVO child : children) {
+                child.setGeneratorPath(current.getGeneratorPath() + "/" + child.getFileName());
+                queue.offer(child);
+            }
+        }
+
+        // 4. 筛选叶子节点（无子节点的节点）
+        return allTemplates.stream()
+                .filter(t -> parentChildrenMap.getOrDefault(t.getId(), Collections.emptyList()).isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 构建树形结构
+     */
+    public static List<PreviewTemplateVO> buildTree(List<TemplateContentVO> expandTreeList) {
+        if (CollUtil.isEmpty(expandTreeList)) {
+            return Collections.emptyList();
+        }
+
+        Map<String, PreviewTemplateVO> nodeMap = buildNodeMap(expandTreeList);
+
+        //将平铺的数据，按照树形进行组装
+        List<PreviewTemplateVO> allTreeList = new ArrayList<>(nodeMap.values());
+        return allTreeList.stream()
+                //找到层级为0的节点
+                .filter(treeVO -> treeVO.getLevel() == 0)
+                //添加子节点
+                .peek(treeVO -> treeVO.setChildren(getChildren(treeVO, allTreeList)))
+                //进行排序
+                .sorted(PreviewTemplateVO.TREE_COMPARATOR)
+                .toList();
+    }
+
+    private static Map<String, PreviewTemplateVO> buildNodeMap(List<TemplateContentVO> expandTreeList) {
+        Map<String, PreviewTemplateVO> nodeMap = new HashMap<>();
+
+        //将树形数据，平铺成Map
+        for (TemplateContentVO treeVO : expandTreeList) {
+            String[] pathParts = treeVO.getFilePath().split("/");
+            int pathLength = pathParts.length;
+            for (int level = 0; level < pathLength; level++) {
+                //当前路径
+                String currentPath = String.join("/", Arrays.copyOfRange(pathParts, 0, level + 1));
+                if (nodeMap.containsKey(currentPath)) {
+                    continue;
+                }
+                PreviewTemplateVO tempTreeVO = new PreviewTemplateVO();
+                //节点名称
+                tempTreeVO.setFileName(pathParts[level]);
+                //文件路径
+                tempTreeVO.setFilePath(currentPath);
+                //层级
+                tempTreeVO.setLevel(level);
+                //内容
+                tempTreeVO.setTemplateContent(treeVO.getContent());
+                //是否为模板
+                if (level == pathLength - 1) {
+                    tempTreeVO.setId(treeVO.getTemplateId());
+                    tempTreeVO.setEnumId(treeVO.getEnumId());
+                    tempTreeVO.setTableId(treeVO.getTableId());
+                    tempTreeVO.setTemplateType(treeVO.getTemplateType());
+                    tempTreeVO.setTemplateGroupType(treeVO.getTemplateGroupType());
+                } else {
+                    tempTreeVO.setTemplateType(TemplateTypeEnum.DIRECTORY.getCode());
+                }
+                nodeMap.put(currentPath, tempTreeVO);
+            }
+        }
+        return nodeMap;
+    }
+
+    private static List<PreviewTemplateVO> getChildren(PreviewTemplateVO parent, List<PreviewTemplateVO> treeList) {
+        return treeList.stream()
+                //判断是否是直接子节点
+                .filter(child -> isDirectChild(parent, child))
+                //递归添加子节点
+                .peek(child -> child.setChildren(getChildren(child, treeList)))
+                //进行排序
+                .sorted(PreviewTemplateVO.TREE_COMPARATOR)
+                .toList();
+    }
+
+    /**
+     * 判断是否是直接子节点
+     */
+    private static boolean isDirectChild(PreviewTemplateVO parent, PreviewTemplateVO child) {
+        return child.getLevel() == parent.getLevel() + 1
+                && child.getFilePath().startsWith(parent.getFilePath() + "/");
     }
 
     private ResponseEntity<byte[]> buildResponseEntity(String fileName, byte[] data) {

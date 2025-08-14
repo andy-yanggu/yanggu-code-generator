@@ -11,8 +11,6 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 
-import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
-
 /**
  * 模板Entity实体类
  */
@@ -55,12 +53,6 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     private String fileName;
 
     /**
-     * 生成代码的路径
-     */
-    @TableField(value = "generator_path")
-    private String generatorPath;
-
-    /**
      * 模板描述
      */
     @TableField(value = "template_desc")
@@ -75,7 +67,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     /**
      * 模板内容
      */
-    @TableField(value = "template_content", updateStrategy = ALWAYS)
+    @TableField(value = "template_content")
     private String templateContent;
 
     /**

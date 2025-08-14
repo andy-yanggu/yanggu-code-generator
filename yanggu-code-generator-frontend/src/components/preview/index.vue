@@ -1,33 +1,48 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="preview.visible" title="代码预览" :size="'100%'" :modal="false">
+	<el-drawer v-model="templateTreeData.visible" title="代码预览" :size="'100%'" :modal="false">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapseRef" width="300px" style="overflow: hidden">
-				<div style="padding: 15px; border-bottom: 1px solid #eee">
-					<el-input v-model="treeSearchText" placeholder="请输入文件/路径" size="small" clearable prefix-icon="Search"></el-input>
+			<el-aside v-show="!isCollapseRef" width="400px" style="overflow: hidden">
+				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
+					<el-input
+						v-model="treeSearchText"
+						placeholder="请输入目录/文件名称"
+						size="small"
+						clearable
+						prefix-icon="Search"
+						style="width: 240px"
+					></el-input>
 				</div>
 				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"
-							:data="preview.treeData"
-							node-key="filePath"
+							:data="templateTreeData.treeList"
+							node-key="id"
 							:current-node-key="currentNodeKey"
 							highlight-current
 							class="custom-tree"
+							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"
 							@node-click="handleTreeNodeClick"
-						/>
+						>
+							<template #default="{ node, data }">
+								<div class="custom-tree-node">
+									<svg-icon :icon="getIcon(node, data)"></svg-icon>
+									<span>{{ node.label }}</span>
+								</div>
+							</template>
+						</el-tree>
 					</div>
 				</el-scrollbar>
 			</el-aside>
 
 			<!-- 右侧：代码预览区 -->
-			<el-main v-if="preview.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-main v-if="templateTreeData.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 30px; margin-bottom: 5px">
+					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 70px; margin-bottom: 5px">
 						<el-row>
 							<el-col v-if="!isFullscreen" :span="1">
 								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
@@ -35,37 +50,37 @@
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
-							<el-col :span="isFullscreen ? 17 : 16">
-								路径：<el-text>{{ preview.item.filePath }}</el-text>
+							<el-col :span="isFullscreen ? 16 : 15">
+								<el-text truncated>路径：{{ templateTreeData.item.filePath }}</el-text>
 								<el-tooltip content="复制路径" placement="top" effect="dark" :teleported="false">
-									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(preview.item.filePath)">
+									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(templateTreeData.item.filePath)">
 										<CopyDocument></CopyDocument>
 									</el-icon>
 								</el-tooltip>
 							</el-col>
-							<el-col :span="7" style="text-align: right">
-								<el-button size="small" @click="handleCopy(preview.item.content)">复制代码</el-button>
-								<el-button size="small" @click="downloadTemplateData(preview.item)">生成代码</el-button>
+							<el-col :span="8" style="text-align: right">
+								<el-button size="small" @click="handleCopy(templateTreeData.item.templateContent!)">复制代码</el-button>
+								<el-button size="small" @click="downloadTemplateData(templateTreeData.item)">生成代码</el-button>
 								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 							</el-col>
 						</el-row>
+						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" :label="tabItem.fileName" closable>
+							</el-tab-pane>
+						</el-tabs>
 					</el-header>
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
-						<el-tabs v-model="preview.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-							<el-tab-pane v-for="tabItem in preview.tabList" :key="tabItem.filePath" :name="tabItem.filePath" :label="tabItem.fileName" closable>
-							</el-tab-pane>
-						</el-tabs>
-						<template v-if="preview.item.templateType === 1">
+						<template v-if="templateTreeData.item.templateType === 1">
 							<el-scrollbar style="height: 100%">
-								<code-mirror v-model="preview.item.content" :height="contentHeight"></code-mirror>
+								<code-mirror v-model="templateTreeData.item.templateContent" :height="contentHeight"></code-mirror>
 							</el-scrollbar>
 						</template>
-						<template v-else-if="preview.item.templateType === 2">
+						<template v-else-if="templateTreeData.item.templateType === 2">
 							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-								<template v-if="['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'].some(tempType => preview.item.filePath.endsWith(tempType))">
-									<el-image :src="preview.item.content" fit="fill"></el-image>
+								<template v-if="imageTypeList.some(tempType => templateTreeData.item.binaryOriginalFileName?.endsWith(tempType))">
+									<el-image :src="templateTreeData.item.templateContent" fit="fill"></el-image>
 								</template>
 								<template v-else>
 									<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
@@ -103,72 +118,54 @@ import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewAp
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
+import SvgIcon from '@/components/svg-icon/index'
 
 interface Tree {
-	// 名称
-	label: string
+	// 主键ID
+	id: number
+	// 表ID
+	tableId?: number
+	// 枚举ID
+	enumId?: number
+	// 文件名称
+	fileName: string
 	// 文件路径
 	filePath: string
-	// 模板ID
-	templateId: number
-	// 树类型（0-文件，1-文件夹）
-	type: number
-	// 子节点
+	// 模板类型（0-目录，1-模板文件，2-二进制文件）
+	templateType: number
+	// 模板组类型（0-项目，1-表，2-枚举）
+	templateGroupType: number
+	// 模板内容
+	templateContent?: string
+	// 二进制原始文件名
+	binaryOriginalFileName?: string
+	// 子节点列表
 	children?: Tree[]
 }
 
-interface TemplateContent {
-	// 表ID
-	tableId: number
-	// 枚举ID
-	enumId: number
-	// 模板ID
-	templateId: number
-	// 模板组类型
-	templateGroupType: number
-	// 模板类型
-	templateType: number
-	// 文件路径
-	filePath: string
-	// 文件名称
-	fileName: string
-	// 内容
-	content: string
-}
-
-const currentNodeKey = ref()
+const currentNodeKey = ref(-1)
 const treeRef = ref()
-const preview = reactive({
+const templateTreeData = reactive({
 	visible: false,
-	title: '代码预览',
-	dataList: [] as TemplateContent[],
-	projectId: 0,
 	id: -1,
+	projectId: -1,
 	generatorType: -1,
-	treeData: [] as Tree[],
-	item: {
-		tableId: -1,
-		templateId: -1,
-		enumId: -1,
-		templateGroupType: -1,
-		templateType: -1,
-		filePath: '',
-		fileName: '',
-		content: ''
-	} as TemplateContent,
-	tabList: [] as TemplateContent[],
-	tabActiveName: ''
+	treeList: [] as Tree[],
+	dataList: [] as Tree[],
+	item: {} as Tree,
+	tabList: [] as Tree[],
+	tabActiveName: -1
 })
-
 const treeSearchText = ref('')
 const isCollapseRef = ref(false)
 const { isFullscreen, toggle } = useFullscreen()
+const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 // 初始化方法
 const init = async (id: number, projectId: number, generatorType: number, generatorProductType: number) => {
-	preview.id = id
-	preview.projectId = projectId
-	preview.generatorType = generatorType
+	templateTreeData.id = id
+	templateTreeData.projectId = projectId
+	templateTreeData.generatorType = generatorType
 	isCollapseRef.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
@@ -177,17 +174,18 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 			generatorProductType: generatorProductType
 		}
 		const res = await generatorPreviewApi(previewData)
-		const { templateContentList, treeList } = res.data
-		preview.dataList = templateContentList
-		preview.treeData = treeList
-		preview.item = templateContentList[0]
-
-		preview.visible = true
+		templateTreeData.treeList = res.data
+		const templateContentList = buildFileList(res.data)
+		templateTreeData.dataList = templateContentList
+		templateTreeData.visible = true
 		await nextTick()
-		currentNodeKey.value = templateContentList[0].filePath
-		treeRef.value.setCurrentKey(currentNodeKey.value)
-		preview.tabActiveName = templateContentList[0].filePath
-		preview.tabList.push(templateContentList[0])
+		if (templateContentList.length > 0 && templateTreeData.tabActiveName === -1) {
+			templateTreeData.item = templateContentList[0]
+			currentNodeKey.value = templateContentList[0].id
+			treeRef.value.setCurrentKey(currentNodeKey.value)
+			templateTreeData.tabActiveName = templateContentList[0].id
+			tabPush(templateContentList[0])
+		}
 	} finally {
 		loadingInstance.close()
 	}
@@ -197,71 +195,91 @@ const toggleCollapse = () => {
 	isCollapseRef.value = !isCollapseRef.value
 }
 
+const buildFileList = (treeList: Tree[]) => {
+	const templateContentList: Tree[] = []
+	treeList.forEach(treeItem => {
+		// 找到模板文件和二进制文件
+		if (treeItem.templateType != 0) {
+			templateContentList.push(treeItem)
+		} else if (treeItem.children && treeItem.children.length > 0) {
+			templateContentList.push(...buildFileList(treeItem.children))
+		}
+	})
+	return templateContentList
+}
+
 // 计算内容行数
 const contentHeight = computed(() => {
-	const length = preview.item.content.split('\n').length
+	if (!templateTreeData.item.templateContent) {
+		return 800
+	}
+	const length = templateTreeData.item.templateContent!.split('\n').length
 	return Math.min(Math.max(20 * length, 800), 1000)
 })
 watch(treeSearchText, val => {
 	treeRef.value!.filter(val)
 })
 
+// tree点击
+const handleTreeNodeClick = (data: Tree) => {
+	// 只有是文件才可以预览
+	if (data.templateType != 0) {
+		const filterElement = templateTreeData.dataList.filter(item => item.id === data.id)[0]
+		templateTreeData.item = filterElement
+		tabPush(filterElement)
+		templateTreeData.tabActiveName = filterElement.id
+	}
+}
+
 // tab点击
 const handleTabClick = (tab: TabsPaneContext, _: Event) => {
-	const filePath = tab.paneName as string
-	const matchedItem = preview.tabList.find(item => item.filePath === filePath)
+	const id = tab.paneName as number
+	const matchedItem = templateTreeData.tabList.find(item => item.id === id)
 	if (matchedItem) {
-		preview.item = matchedItem
-		currentNodeKey.value = matchedItem.filePath
+		templateTreeData.item = matchedItem
+		currentNodeKey.value = matchedItem.id
 		treeRef.value.setCurrentKey(currentNodeKey.value)
 	}
 }
 
 // tab删除
-const handleTabRemove = (filePath: string) => {
-	// 首页保护逻辑（当只有一个标签且是首页时不允许关闭）
+const handleTabRemove = (id: number) => {
 	// 找到索引
-	const index = preview.tabList.findIndex(item => item.filePath === filePath)
+	const index = templateTreeData.tabList.findIndex(item => item.id === id)
 	if (index <= -1) {
 		return
 	}
 	// 删除tab
-	preview.tabList.splice(index, 1)
-	let newTabActiveName = preview.tabActiveName
+	templateTreeData.tabList.splice(index, 1)
+	let newTabActiveName = templateTreeData.tabActiveName
 	// 删除的是否为当前tab
-	if (preview.tabActiveName === filePath && preview.tabList.length > 0) {
+	if (templateTreeData.tabActiveName === id && templateTreeData.tabList.length > 0) {
 		// 优先尝试右侧标签
-		if (index < preview.tabList.length) {
-			newTabActiveName = preview.tabList[index].filePath
+		if (index < templateTreeData.tabList.length) {
+			newTabActiveName = templateTreeData.tabList[index].id
 		} else {
 			// 右侧无标签时选择左侧最后一个
-			newTabActiveName = preview.tabList[preview.tabList.length - 1].filePath
+			newTabActiveName = templateTreeData.tabList[templateTreeData.tabList.length - 1].id
 		}
 	}
-	if (preview.tabList.length > 0) {
+	if (templateTreeData.tabList.length > 0) {
 		// 设置新的激活项
-		const activeTab = preview.tabList.find(tab => tab.filePath === newTabActiveName)
+		const activeTab = templateTreeData.tabList.find(tab => tab.id === newTabActiveName)
 		if (activeTab) {
-			preview.item = activeTab
+			templateTreeData.item = activeTab
 		}
-		preview.tabActiveName = newTabActiveName
+		templateTreeData.tabActiveName = newTabActiveName
 		currentNodeKey.value = newTabActiveName
 		treeRef.value?.setCurrentKey(currentNodeKey.value)
 	}
 }
 
-// tree点击
-const handleTreeNodeClick = (data: Tree) => {
-	// 只有是文件才可以预览
-	if (data.templateId && data.type === 0) {
-		const filterElement = preview.dataList.filter(item => item.filePath === data.filePath)[0]
-		preview.item = filterElement
-		const result = preview.tabList.some(tab => tab.filePath === filterElement.filePath)
-		if (!result) {
-			preview.tabList.push(filterElement)
-			preview.tabActiveName = filterElement.filePath
-		}
+// 添加tab（进行去重）
+const tabPush = (tree: Tree) => {
+	if (templateTreeData.tabList.some(tab => tab.id === tree.id)) {
+		return
 	}
+	templateTreeData.tabList.push(tree)
 }
 
 // 代码复制到剪切板
@@ -279,10 +297,10 @@ const copyPath = (path: string) => {
 }
 
 //下载单个模板代码
-const downloadTemplateData = (item: TemplateContent) => {
+const downloadTemplateData = (item: Tree) => {
 	let id
 	if (item.templateGroupType === 0) {
-		id = preview.projectId
+		id = templateTreeData.projectId
 	} else if (item.templateGroupType === 1) {
 		id = item.tableId
 	} else if (item.templateGroupType === 2) {
@@ -293,12 +311,12 @@ const downloadTemplateData = (item: TemplateContent) => {
 	}
 	const dataForm = {
 		id: id,
-		templateId: item.templateId,
+		templateId: item.id,
 		templateGroupType: item.templateGroupType
 	}
-	if (preview.generatorType === 0) {
+	if (templateTreeData.generatorType === 0) {
 		generatorDownloadSingleApi(dataForm)
-	} else if (preview.generatorType === 1) {
+	} else if (templateTreeData.generatorType === 1) {
 		generatorSingleLocalApi(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地',
@@ -312,7 +330,27 @@ const filterNode = (value: string, data: Tree) => {
 	if (!value) {
 		return true
 	}
-	return data.label.includes(value)
+	return data.fileName.includes(value)
+}
+
+// 获取节点的图标
+const getIcon = (node: any, data: Tree): string => {
+	if (node.expanded) {
+		return 'icon-folder-open'
+	} else if (data.templateType === 0) {
+		return 'icon-folder'
+	} else if (data.templateType === 1) {
+		return 'icon-file-text'
+	} else if (data.templateType === 2) {
+		const some = imageTypeList.value.some(item => data.binaryOriginalFileName?.endsWith(item))
+		if (some) {
+			return 'icon-file-image'
+		} else {
+			return 'icon-file-unknown'
+		}
+	} else {
+		return 'icon-file-unknown'
+	}
 }
 
 defineExpose({
@@ -325,11 +363,61 @@ defineExpose({
 	min-width: max-content;
 	width: fit-content;
 	overflow-x: auto;
+	margin-bottom: 10px;
 }
 
 .custom-tree {
 	display: block;
 	width: 100%;
+}
+
+.custom-tree-node {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.edit-icon {
+	margin-left: auto;
+	cursor: pointer;
+	color: #909399;
+	font-size: 14px;
+}
+.edit-icon:hover {
+	color: #409eff;
+}
+
+.context-menu {
+	position: fixed;
+	background: #fff;
+	border: 1px solid #ddd;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	padding: 4px 0;
+	z-index: 9999;
+	list-style: none;
+	min-width: 100px;
+	max-width: 200px; /* 限制最大宽度 */
+	overflow: hidden; /* 防止超出 */
+	white-space: nowrap; /* 如果需要单行显示 */
+	text-overflow: ellipsis; /* 超出部分用省略号 */
+}
+.context-menu li {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
+	width: 100%; /* 让项目占满容器宽度 */
+	cursor: pointer; /* 鼠标变成小手 */
+	padding: 6px 8px;
+	border-radius: 4px;
+	box-sizing: border-box; /* 避免padding让li超宽 */
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease; /* 动画过渡 */
+}
+.context-menu li:hover {
+	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
+	color: #333; /* 可选：加深文字颜色 */
 }
 
 .collapse-icon {

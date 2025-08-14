@@ -92,7 +92,7 @@
 								</el-icon>
 							</el-col>
 							<el-col :span="isFullscreen ? 18 : 17">
-								<el-text tag="b" truncated>路径：{{ fullFilePath }}</el-text>
+								<el-text truncated>路径：{{ fullFilePath }}</el-text>
 							</el-col>
 							<el-col :span="6" style="text-align: right">
 								<el-button size="small" type="primary" :icon="DocumentChecked" :loading="submitLoading" @click="saveTemplateContent">保存</el-button>

@@ -12,18 +12,18 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * 模板VO实体类
+ * 预览模板VO实体类
  */
 @Data
-@Schema(description = "模板VO实体类")
+@Schema(description = "预览模板VO实体类")
 @EqualsAndHashCode(callSuper = true)
-public class TemplateVO extends BaseVO implements Serializable {
+public class PreviewTemplateVO extends BaseVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final Comparator<TemplateVO> TREE_COMPARATOR = ComparatorChain.of(
-            Comparator.comparing(temp -> temp.getTemplateType() == 0 ? 0 : 1), Comparator.comparing(TemplateVO::getFileName)
+    public static final Comparator<PreviewTemplateVO> TREE_COMPARATOR = ComparatorChain.of(
+            Comparator.comparing(PreviewTemplateVO::getTemplateType), Comparator.comparing(PreviewTemplateVO::getFileName)
     );
 
     /**
@@ -33,22 +33,16 @@ public class TemplateVO extends BaseVO implements Serializable {
     private Long id;
 
     /**
-     * 父级ID
+     * 表ID
      */
-    @Schema(description = "父级ID")
-    private Long parentId;
+    @Schema(description = "表ID")
+    private Long tableId;
 
     /**
-     * 模板组ID
+     * 枚举ID
      */
-    @Schema(description = "模板组ID")
-    private Long templateGroupId;
-
-    /**
-     * 模板组名称
-     */
-    @Schema(description = "模板组名称")
-    private String templateGroupName;
+    @Schema(description = "枚举ID")
+    private Long enumId;
 
     /**
      * 模板组类型（0-项目，1-表，2-枚举）
@@ -69,16 +63,10 @@ public class TemplateVO extends BaseVO implements Serializable {
     private String fileName;
 
     /**
-     * 生成代码的路径
+     * 文件路径
      */
-    @Schema(description = "生成代码的路径")
-    private String generatorPath;
-
-    /**
-     * 模板描述
-     */
-    @Schema(description = "模板描述")
-    private String templateDesc;
+    @Schema(description = "文件路径")
+    private String filePath;
 
     /**
      * 模板类型（0-目录，1-模板文件，2-二进制文件）
@@ -99,9 +87,15 @@ public class TemplateVO extends BaseVO implements Serializable {
     private String binaryOriginalFileName;
 
     /**
+     * 树节点层级
+     */
+    @Schema(description = "树节点层级")
+    private Integer level;
+
+    /**
      * 子节点列表
      */
     @Schema(description = "子节点列表")
-    private List<TemplateVO> children;
+    private List<PreviewTemplateVO> children;
 
 }

@@ -110,7 +110,7 @@
 			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
 
 			<!-- 预览 -->
-			<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
+			<preview ref="previewRef" :key="currentProjectIdTs"></preview>
 
 			<steps ref="stepsRef" :key="currentProjectIdTs"></steps>
 		</el-card>
@@ -149,7 +149,10 @@ const currentProjectIdTs = ref()
 const stepsRef = ref()
 
 const previewHandle = (projectItem: any) => {
-	previewRef.value.init(projectItem.id, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
+	currentProjectIdTs.value = Date.now()
+	nextTick(() => {
+		previewRef.value.init(projectItem.id, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
+	})
 }
 
 const generatorCode = (item: any) => {

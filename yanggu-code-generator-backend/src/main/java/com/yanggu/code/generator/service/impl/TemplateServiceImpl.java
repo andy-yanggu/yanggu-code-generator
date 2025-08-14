@@ -12,32 +12,24 @@ import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
-import com.yanggu.code.generator.domain.vo.TreeVO;
-import com.yanggu.code.generator.enums.TemplateTypeEnum;
-import com.yanggu.code.generator.enums.TreeTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
-import org.dromara.hutool.core.comparator.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
+import static com.yanggu.code.generator.domain.vo.TemplateVO.TREE_COMPARATOR;
 
 /**
  * 模板Service实现类
  */
 @Service
 public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEntity> implements TemplateService {
-
-    public static final Comparator<TemplateVO> TREE_COMPARATOR = ComparatorChain.of(
-            Comparator.comparing(TemplateVO::getTemplateType), Comparator.comparing(TemplateVO::getFileName)
-    );
 
     @Autowired
     private TemplateMapper templateMapper;
@@ -202,15 +194,15 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
                 .ne(Objects.nonNull(dto.getId()), TemplateEntity::getId, dto.getId())
                 .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
                 .and(wrapper -> wrapper
-                        .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
+                                .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
                         /*.or()
                         .eq(TemplateEntity::getGeneratorPath, dto.getGeneratorPath())*/
                 );
 
         boolean exists = templateMapper.exists(queryWrapper);
-        if (exists) {
-            throw new BusinessException("模板名称或生成代码的路径已存在");
-        }
+        //if (exists) {
+        //    throw new BusinessException("模板名称或生成代码的路径已存在");
+        //}
     }
 
     private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateEntityQuery query) {

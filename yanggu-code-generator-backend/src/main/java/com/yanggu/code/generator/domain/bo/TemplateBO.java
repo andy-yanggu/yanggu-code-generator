@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.domain.bo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,9 +21,9 @@ public class TemplateBO implements Serializable {
     private String templateName;
 
     /**
-     * 生成代码的路径
+     * 文件或者目录名称
      */
-    private String generatorPath;
+    private String fileName;
 
     /**
      * 模板描述
