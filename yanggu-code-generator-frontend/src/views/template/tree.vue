@@ -33,9 +33,17 @@
 							@node-contextmenu="handleNodeRightClick"
 						>
 							<template #default="{ node, data }">
-								<div class="custom-tree-node">
+								<el-tooltip v-if="data.templateDesc" :content="data.templateDesc" placement="top" effect="light">
+									<div class="custom-tree-node">
+										<svg-icon :icon="getIcon(node, data)"></svg-icon>
+										<span>{{ node.label }}</span>
+										<el-icon class="edit-icon" @click.stop="updateTemplate(data)"><Edit></Edit></el-icon>
+									</div>
+								</el-tooltip>
+								<div v-else class="custom-tree-node">
 									<svg-icon :icon="getIcon(node, data)"></svg-icon>
 									<span>{{ node.label }}</span>
+									<el-icon class="edit-icon" @click.stop="updateTemplate(data)"><Edit></Edit></el-icon>
 								</div>
 							</template>
 						</el-tree>
@@ -488,6 +496,16 @@ defineExpose({
 	display: flex;
 	align-items: center;
 	gap: 5px;
+}
+
+.edit-icon {
+	margin-left: auto;
+	cursor: pointer;
+	color: #909399;
+	font-size: 14px;
+}
+.edit-icon:hover {
+	color: #409eff;
 }
 
 .context-menu {
