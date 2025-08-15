@@ -321,7 +321,12 @@ const downloadTemplateData = (item: Tree) => {
 		templateGroupType: item.templateGroupType
 	}
 	if (templateTreeData.generatorType === 0) {
-		generatorDownloadSingleApi(dataForm)
+		generatorDownloadSingleApi(dataForm).then(() => {
+			ElMessage.success({
+				message: '代码已经下载到浏览器',
+				duration: 1000
+			})
+		})
 	} else if (templateTreeData.generatorType === 1) {
 		generatorSingleLocalApi(dataForm).then(() => {
 			ElMessage.success({

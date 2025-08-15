@@ -7,11 +7,13 @@
     <sql id="allColumns">
         t.id,
         t.template_group_id,
+        t.parent_id,
         t.template_name,
-        t.generator_path,
+        t.file_name,
+        t.template_type,
         t.template_desc,
         t.template_content,
-        t.template_type,
+        t.binary_original_file_name,
         t.create_time,
         t.update_time,
         t.is_delete
@@ -47,11 +49,13 @@
     <resultMap type="com.yanggu.code.generator.domain.entity.TemplateEntity" id="templateMap">
         <id property="id" column="id"/>
         <result property="templateGroupId" column="template_group_id"/>
+        <result property="parentId" column="parent_id"/>
         <result property="templateName" column="template_name"/>
-        <result property="generatorPath" column="generator_path"/>
+        <result property="fileName" column="file_name"/>
+        <result property="templateType" column="template_type"/>
         <result property="templateDesc" column="template_desc"/>
         <result property="templateContent" column="template_content"/>
-        <result property="templateType" column="template_type"/>
+        <result property="binaryOriginalFileName" column="binary_original_file_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
@@ -83,14 +87,95 @@
         <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
+    <!-- 查询出所有的叶子节点和设置了filePath字段的值 -->
+    <sql id="leafNodeTemplate">
+        WITH RECURSIVE cte AS (
+            -- 锚点成员：获取所有未被删除的根节点（parent_id=0），初始化filePath为自身file_name
+            SELECT
+                id,
+                template_group_id,
+                parent_id,
+                template_name,
+                file_name,
+                template_type,
+                template_desc,
+                template_content,
+                binary_original_file_name,
+                create_time,
+                update_time,
+                is_delete,
+                -- 初始路径：根节点的filePath是自身file_name（需确保file_name非空）
+                file_name AS filePath
+            FROM
+                gen_template
+            WHERE
+                parent_id = 0 AND is_delete = 0
+
+            UNION ALL
+
+            -- 递归成员：逐层向下遍历子节点，拼接filePath
+            SELECT
+                t.id,
+                t.template_group_id,
+                t.parent_id,
+                t.template_name,
+                t.file_name,
+                t.template_type,
+                t.template_desc,
+                t.template_content,
+                t.binary_original_file_name,
+                t.create_time,
+                t.update_time,
+                t.is_delete,
+                -- 子节点路径 = 父节点路径 + '/' + 当前节点file_name（避免父路径为空时多余斜杠）
+                CONCAT(
+                        IFNULL(cte.filePath, ''),  -- 父路径（理论上根节点已初始化，不会为NULL）
+                        IF(cte.filePath = '', '', '/'),  -- 根节点无父路径，不加斜杠
+                        IFNULL(t.file_name, '')
+                ) AS filePath
+            FROM
+                gen_template t
+            INNER JOIN cte ON t.parent_id = cte.id  -- 子节点关联父节点
+            WHERE
+                t.is_delete = 0  -- 仅处理未被删除的子节点
+        )
+        -- 最终筛选：未被删除且无任何子节点的叶子节点
+        SELECT
+            cte.id,
+            cte.template_group_id,
+            cte.parent_id,
+            cte.template_name,
+            cte.file_name,
+            cte.filePath AS generator_path,  -- 递归生成的完整路径
+            cte.template_type,
+            cte.template_desc,
+            cte.template_content,
+            cte.binary_original_file_name,
+            cte.create_time,
+            cte.update_time,
+            cte.is_delete
+        FROM cte
+        WHERE
+            cte.is_delete = 0  -- 确保当前节点未被删除
+          -- 不存在未被删除的子节点（叶子节点条件）
+          AND NOT EXISTS (
+            SELECT 1
+            FROM gen_template t
+            WHERE t.parent_id = cte.id
+              AND t.is_delete = 0
+        )
+    </sql>
+
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TemplateVO">
         SELECT
             <include refid="allColumns"/>,
+            t.generator_path,
             g.group_name AS template_group_name,
             g.type AS template_group_type
         FROM
-            gen_template AS t
+        <!-- 叶子节点和设置了filePath字段 -->
+        (<include refid="leafNodeTemplate"/>) AS t
         JOIN gen_template_group AS g ON t.template_group_id = g.id AND g.is_delete = 0
         <where>
             t.is_delete = 0

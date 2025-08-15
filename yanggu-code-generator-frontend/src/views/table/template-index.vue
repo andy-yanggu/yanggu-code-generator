@@ -67,14 +67,14 @@ import { reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/api/generator'
 import { ElMessage } from 'element-plus'
-import { templateEntityPageApi } from '@/api/template'
+import { templateVOPageApi } from '@/api/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['clearSelection'])
 
 const state: IHooksOptions = reactive({
-	dataListApi: templateEntityPageApi,
+	dataListApi: templateVOPageApi,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupId: null,
