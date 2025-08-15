@@ -773,15 +773,20 @@ public class GeneratorServiceImpl implements GeneratorService {
                 tempTreeVO.setFilePath(currentPath);
                 //层级
                 tempTreeVO.setLevel(level);
-                //内容
-                tempTreeVO.setTemplateContent(treeVO.getContent());
                 //是否为模板
                 if (level == pathLength - 1) {
-                    tempTreeVO.setId(treeVO.getTemplateId());
+                    //模板ID
+                    tempTreeVO.setTemplateId(treeVO.getTemplateId());
+                    //枚举ID
                     tempTreeVO.setEnumId(treeVO.getEnumId());
+                    //表ID
                     tempTreeVO.setTableId(treeVO.getTableId());
+                    //模板类型
                     tempTreeVO.setTemplateType(treeVO.getTemplateType());
+                    //模板组类型
                     tempTreeVO.setTemplateGroupType(treeVO.getTemplateGroupType());
+                    //内容
+                    tempTreeVO.setTemplateContent(treeVO.getContent());
                 } else {
                     tempTreeVO.setTemplateType(TemplateTypeEnum.DIRECTORY.getCode());
                 }

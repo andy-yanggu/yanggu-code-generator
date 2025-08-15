@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.yanggu.code.generator.enums.TemplateTypeEnum.DIRECTORY;
+
 /**
  * 预览模板VO实体类
  */
@@ -23,14 +25,14 @@ public class PreviewTemplateVO extends BaseVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final Comparator<PreviewTemplateVO> TREE_COMPARATOR = ComparatorChain.of(
-            Comparator.comparing(PreviewTemplateVO::getTemplateType), Comparator.comparing(PreviewTemplateVO::getFileName)
+            Comparator.comparing(temp -> DIRECTORY.getCode().equals(temp.getTemplateType()) ? 0 : 1), Comparator.comparing(PreviewTemplateVO::getFileName)
     );
 
     /**
-     * 主键ID
+     * 模板ID
      */
-    @Schema(description = "主键ID")
-    private Long id;
+    @Schema(description = "模板ID")
+    private Long templateId;
 
     /**
      * 表ID
@@ -45,18 +47,6 @@ public class PreviewTemplateVO extends BaseVO implements Serializable {
     private Long enumId;
 
     /**
-     * 模板组类型（0-项目，1-表，2-枚举）
-     */
-    @Schema(description = "模板组类型（0-项目，1-表，2-枚举）")
-    private Integer templateGroupType;
-
-    /**
-     * 模板名称
-     */
-    @Schema(description = "模板名称")
-    private String templateName;
-
-    /**
      * 文件或者目录名称
      */
     @Schema(description = "文件或者目录名称")
@@ -69,6 +59,12 @@ public class PreviewTemplateVO extends BaseVO implements Serializable {
     private String filePath;
 
     /**
+     * 模板组类型（0-项目，1-表，2-枚举）
+     */
+    @Schema(description = "模板组类型（0-项目，1-表，2-枚举）")
+    private Integer templateGroupType;
+
+    /**
      * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
     @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")
@@ -79,12 +75,6 @@ public class PreviewTemplateVO extends BaseVO implements Serializable {
      */
     @Schema(description = "模板内容")
     private String templateContent;
-
-    /**
-     * 二进制原始文件名
-     */
-    @Schema(description = "二进制原始文件名")
-    private String binaryOriginalFileName;
 
     /**
      * 树节点层级

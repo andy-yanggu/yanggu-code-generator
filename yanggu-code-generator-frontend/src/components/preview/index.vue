@@ -14,12 +14,12 @@
 						style="width: 240px"
 					></el-input>
 				</div>
-				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto">
+				<el-scrollbar ref="treeScrollbarRef" style="height: calc(100% - 50px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"
 							:data="templateTreeData.treeList"
-							node-key="id"
+							node-key="filePath"
 							:current-node-key="currentNodeKey"
 							highlight-current
 							class="custom-tree"
@@ -51,12 +51,14 @@
 								</el-icon>
 							</el-col>
 							<el-col :span="isFullscreen ? 16 : 15">
-								<el-text truncated>路径：{{ templateTreeData.item.filePath }}</el-text>
-								<el-tooltip content="复制路径" placement="top" effect="dark" :teleported="false">
-									<el-icon style="cursor: pointer; margin-left: 10px" @click="copyPath(templateTreeData.item.filePath)">
-										<CopyDocument></CopyDocument>
-									</el-icon>
-								</el-tooltip>
+								<div class="path-container">
+									<el-text truncated class="path-text">路径：{{ templateTreeData.item.filePath }}</el-text>
+									<el-tooltip content="复制文件路径" placement="top" effect="dark" :teleported="false">
+										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
+											<CopyDocument></CopyDocument>
+										</el-icon>
+									</el-tooltip>
+								</div>
 							</el-col>
 							<el-col :span="8" style="text-align: right">
 								<el-button size="small" @click="handleCopy(templateTreeData.item.templateContent!)">复制代码</el-button>
@@ -65,7 +67,13 @@
 							</el-col>
 						</el-row>
 						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" :label="tabItem.fileName" closable>
+							<el-tab-pane
+								v-for="tabItem in templateTreeData.tabList"
+								:key="tabItem.filePath"
+								:name="tabItem.filePath"
+								:label="tabItem.fileName"
+								closable
+							>
 							</el-tab-pane>
 						</el-tabs>
 					</el-header>
@@ -79,7 +87,7 @@
 						</template>
 						<template v-else-if="templateTreeData.item.templateType === 2">
 							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-								<template v-if="imageTypeList.some(tempType => templateTreeData.item.binaryOriginalFileName?.endsWith(tempType))">
+								<template v-if="imageTypeList.some(tempType => templateTreeData.item.fileName.endsWith(tempType))">
 									<el-image :src="templateTreeData.item.templateContent" fit="fill"></el-image>
 								</template>
 								<template v-else>
@@ -121,8 +129,8 @@ import { useFullscreen } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 
 interface Tree {
-	// 主键ID
-	id: number
+	// 模板ID
+	templateId: number
 	// 表ID
 	tableId?: number
 	// 枚举ID
@@ -131,20 +139,19 @@ interface Tree {
 	fileName: string
 	// 文件路径
 	filePath: string
-	// 模板类型（0-目录，1-模板文件，2-二进制文件）
-	templateType: number
 	// 模板组类型（0-项目，1-表，2-枚举）
 	templateGroupType: number
+	// 模板类型（0-目录，1-模板文件，2-二进制文件）
+	templateType: number
 	// 模板内容
-	templateContent?: string
-	// 二进制原始文件名
-	binaryOriginalFileName?: string
+	templateContent: string
 	// 子节点列表
 	children?: Tree[]
 }
 
-const currentNodeKey = ref(-1)
+const currentNodeKey = ref('')
 const treeRef = ref()
+const treeScrollbarRef = ref()
 const templateTreeData = reactive({
 	visible: false,
 	id: -1,
@@ -154,7 +161,7 @@ const templateTreeData = reactive({
 	dataList: [] as Tree[],
 	item: {} as Tree,
 	tabList: [] as Tree[],
-	tabActiveName: -1
+	tabActiveName: ''
 })
 const treeSearchText = ref('')
 const isCollapseRef = ref(false)
@@ -179,11 +186,11 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 		templateTreeData.dataList = templateContentList
 		templateTreeData.visible = true
 		await nextTick()
-		if (templateContentList.length > 0 && templateTreeData.tabActiveName === -1) {
+		if (templateContentList.length > 0 && templateTreeData.tabActiveName === '') {
 			templateTreeData.item = templateContentList[0]
-			currentNodeKey.value = templateContentList[0].id
+			currentNodeKey.value = templateContentList[0].filePath
 			treeRef.value.setCurrentKey(currentNodeKey.value)
-			templateTreeData.tabActiveName = templateContentList[0].id
+			templateTreeData.tabActiveName = templateContentList[0].filePath
 			tabPush(templateContentList[0])
 		}
 	} finally {
@@ -224,28 +231,27 @@ watch(treeSearchText, val => {
 const handleTreeNodeClick = (data: Tree) => {
 	// 只有是文件才可以预览
 	if (data.templateType != 0) {
-		const filterElement = templateTreeData.dataList.filter(item => item.id === data.id)[0]
-		templateTreeData.item = filterElement
-		tabPush(filterElement)
-		templateTreeData.tabActiveName = filterElement.id
+		templateTreeData.item = data
+		tabPush(data)
+		templateTreeData.tabActiveName = data.filePath
 	}
 }
 
 // tab点击
 const handleTabClick = (tab: TabsPaneContext, _: Event) => {
-	const id = tab.paneName as number
-	const matchedItem = templateTreeData.tabList.find(item => item.id === id)
+	const filePath = tab.paneName as string
+	const matchedItem = templateTreeData.tabList.find(item => item.filePath === filePath)
 	if (matchedItem) {
 		templateTreeData.item = matchedItem
-		currentNodeKey.value = matchedItem.id
+		currentNodeKey.value = matchedItem.filePath
 		treeRef.value.setCurrentKey(currentNodeKey.value)
 	}
 }
 
 // tab删除
-const handleTabRemove = (id: number) => {
+const handleTabRemove = (filePath: string) => {
 	// 找到索引
-	const index = templateTreeData.tabList.findIndex(item => item.id === id)
+	const index = templateTreeData.tabList.findIndex(item => item.filePath === filePath)
 	if (index <= -1) {
 		return
 	}
@@ -253,18 +259,18 @@ const handleTabRemove = (id: number) => {
 	templateTreeData.tabList.splice(index, 1)
 	let newTabActiveName = templateTreeData.tabActiveName
 	// 删除的是否为当前tab
-	if (templateTreeData.tabActiveName === id && templateTreeData.tabList.length > 0) {
+	if (templateTreeData.tabActiveName === filePath && templateTreeData.tabList.length > 0) {
 		// 优先尝试右侧标签
 		if (index < templateTreeData.tabList.length) {
-			newTabActiveName = templateTreeData.tabList[index].id
+			newTabActiveName = templateTreeData.tabList[index].filePath
 		} else {
 			// 右侧无标签时选择左侧最后一个
-			newTabActiveName = templateTreeData.tabList[templateTreeData.tabList.length - 1].id
+			newTabActiveName = templateTreeData.tabList[templateTreeData.tabList.length - 1].filePath
 		}
 	}
 	if (templateTreeData.tabList.length > 0) {
 		// 设置新的激活项
-		const activeTab = templateTreeData.tabList.find(tab => tab.id === newTabActiveName)
+		const activeTab = templateTreeData.tabList.find(tab => tab.filePath === newTabActiveName)
 		if (activeTab) {
 			templateTreeData.item = activeTab
 		}
@@ -276,7 +282,7 @@ const handleTabRemove = (id: number) => {
 
 // 添加tab（进行去重）
 const tabPush = (tree: Tree) => {
-	if (templateTreeData.tabList.some(tab => tab.id === tree.id)) {
+	if (templateTreeData.tabList.some(tab => tab.filePath === tree.filePath)) {
 		return
 	}
 	templateTreeData.tabList.push(tree)
@@ -289,10 +295,10 @@ const handleCopy = (content: string) => {
 	})
 }
 
-// 全文件名复制到剪切板
+// 文件路径复制到剪切板
 const copyPath = (path: string) => {
 	copyToClipboard(path).then(() => {
-		ElMessage.success('全文件名已复制到剪贴板')
+		ElMessage.success('文件路径已复制到剪切板')
 	})
 }
 
@@ -311,7 +317,7 @@ const downloadTemplateData = (item: Tree) => {
 	}
 	const dataForm = {
 		id: id,
-		templateId: item.id,
+		templateId: item.templateId,
 		templateGroupType: item.templateGroupType
 	}
 	if (templateTreeData.generatorType === 0) {
@@ -342,7 +348,7 @@ const getIcon = (node: any, data: Tree): string => {
 	} else if (data.templateType === 1) {
 		return 'icon-file-text'
 	} else if (data.templateType === 2) {
-		const some = imageTypeList.value.some(item => data.binaryOriginalFileName?.endsWith(item))
+		const some = imageTypeList.value.some(item => data.fileName.endsWith(item))
 		if (some) {
 			return 'icon-file-image'
 		} else {
@@ -371,35 +377,28 @@ defineExpose({
 	width: 100%;
 }
 
+.path-container {
+	display: inline-flex; /* 改为 inline-flex 保持内容紧密排列 */
+	align-items: center;
+	max-width: 100%; /* 限制最大宽度，防止超出 */
+}
+
+.path-text {
+	white-space: nowrap; /* 保持文本不换行 */
+	overflow: hidden; /* 超出部分隐藏 */
+	text-overflow: ellipsis; /* 使用省略号 */
+}
+
+.copy-icon {
+	cursor: pointer;
+	margin-left: 5px; /* 紧跟文本 */
+	flex-shrink: 0; /* 防止被压缩 */
+}
+
 .custom-tree-node {
 	display: flex;
 	align-items: center;
 	gap: 5px;
-}
-
-.edit-icon {
-	margin-left: auto;
-	cursor: pointer;
-	color: #909399;
-	font-size: 14px;
-}
-.edit-icon:hover {
-	color: #409eff;
-}
-
-.context-menu {
-	position: fixed;
-	background: #fff;
-	border: 1px solid #ddd;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	padding: 4px 0;
-	z-index: 9999;
-	list-style: none;
-	min-width: 100px;
-	max-width: 200px; /* 限制最大宽度 */
-	overflow: hidden; /* 防止超出 */
-	white-space: nowrap; /* 如果需要单行显示 */
-	text-overflow: ellipsis; /* 超出部分用省略号 */
 }
 .context-menu li {
 	display: flex;
