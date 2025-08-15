@@ -60,7 +60,8 @@ const INITIAL_TOKEN_INFO: TokenInfo = {
 	expire: 0
 }
 
-export const menuRoutes: MenuInfo[] = [
+// 定义需要在侧边栏显示的常量菜单
+const sidebarConstantMenuInfoList: MenuInfo[] = [
 	{
 		path: '/index',
 		component: 'index/index',
@@ -72,7 +73,12 @@ export const menuRoutes: MenuInfo[] = [
 			type: 1,
 			hidden: false
 		}
-	},
+	}
+	// 可以添加其他需要在侧边栏显示的常量菜单
+]
+
+// 业务菜单
+const businessMenuInfoList: MenuInfo[] = [
 	{
 		path: '/icon-search',
 		component: 'icon-search/index',
@@ -193,7 +199,7 @@ export const useUserStore = defineStore(
 		// 是否添加路由
 		const isAddRoutes = ref(false)
 		// 菜单列表
-		const menuList = ref<MenuInfo[]>([...menuRoutes])
+		const menuList = ref<MenuInfo[]>([...sidebarConstantMenuInfoList, ...businessMenuInfoList])
 		// 权限列表
 		const permissionList = ref<string[]>([])
 		// 登录用户信息
@@ -227,7 +233,7 @@ export const useUserStore = defineStore(
 		const setData = (loginVO: any) => {
 			Object.assign(userInfo, loginVO.userInfo)
 			Object.assign(tokenInfo, loginVO.tokenInfo)
-			menuList.value = loginVO.menuList
+			menuList.value = [...sidebarConstantMenuInfoList, ...loginVO.menuList]
 			permissionList.value = loginVO.permissionList
 			isLogin.value = true
 		}
