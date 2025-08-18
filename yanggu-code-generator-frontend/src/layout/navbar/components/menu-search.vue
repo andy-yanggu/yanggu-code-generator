@@ -65,7 +65,7 @@
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, reactive, ref, onMounted, onUnmounted } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { useRouter } from 'vue-router'
 
@@ -88,7 +88,7 @@ const searchState = reactive({
 	searchItemList: [] as SearchItem[],
 	matchItemList: [] as SearchItem[],
 	activeIndex: -1,
-	usingKeyboard: false // 标记是否正在使用键盘控制
+	usingKeyboard: false // 是否在键盘模式
 })
 
 const searchInputRef = ref()
@@ -103,7 +103,7 @@ const openSearch = () => {
 	searchState.activeIndex = -1
 	searchState.usingKeyboard = false
 
-	// 将 userStore.menuList 进行平铺展开
+	// 平铺 menuList
 	searchState.searchItemList = []
 	userStore.menuList.forEach(menuItem => {
 		buildMenuInfo([], menuItem)
@@ -144,14 +144,12 @@ const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) =
 		return
 	}
 
-	if (menuItem.children && menuItem.children.length > 0) {
-		menuItem.children.forEach(child => {
-			buildMenuInfo(currentBreadcrumb, child)
-		})
+	if (menuItem.children?.length) {
+		menuItem.children.forEach(child => buildMenuInfo(currentBreadcrumb, child))
 	}
 }
 
-// 处理搜索建议
+// 处理搜索
 const querySearch = (queryString?: string) => {
 	const raw = queryString !== undefined ? queryString : searchState.keyword
 	if (!raw || !raw.trim()) {
@@ -173,12 +171,13 @@ const querySearch = (queryString?: string) => {
 			results.push(menu)
 		}
 	})
+
 	searchState.matchItemList = results
 	searchState.activeIndex = results.length > 0 ? 0 : -1
-	searchState.usingKeyboard = false // 重新搜索时重置键盘状态
+	searchState.usingKeyboard = false
 }
 
-// 滚动到当前激活项（带平滑滚动）
+// 滚动到当前激活项
 const scrollToActiveItem = () => {
 	nextTick(() => {
 		const container = scrollbarRef.value?.wrapRef as HTMLElement
@@ -191,7 +190,6 @@ const scrollToActiveItem = () => {
 			return
 		}
 
-		// 直接调用 scrollIntoView，带平滑效果
 		activeEl.scrollIntoView({
 			behavior: 'smooth',
 			block: 'nearest'
@@ -199,15 +197,16 @@ const scrollToActiveItem = () => {
 	})
 }
 
-// 鼠标移入
+// 鼠标移入（仅在鼠标模式下生效）
 const handleMouseEnter = (index: number) => {
-	searchState.activeIndex = index
-	searchState.usingKeyboard = false
+	if (!searchState.usingKeyboard) {
+		searchState.activeIndex = index
+	}
 }
 
 // 向上键
 const handleKeyUp = () => {
-	if (searchState.matchItemList.length === 0) {
+	if (!searchState.matchItemList.length) {
 		return
 	}
 	searchState.usingKeyboard = true
@@ -224,7 +223,7 @@ const handleKeyUp = () => {
 
 // 向下键
 const handleKeyDown = () => {
-	if (searchState.matchItemList.length === 0) {
+	if (!searchState.matchItemList.length) {
 		return
 	}
 	searchState.usingKeyboard = true
@@ -254,6 +253,21 @@ const handleSelect = (item: any) => {
 	searchState.usingKeyboard = false
 	router.push(item.path)
 }
+
+// 监听鼠标移动：切回鼠标模式
+const handleGlobalMouseMove = () => {
+	if (searchState.usingKeyboard) {
+		searchState.usingKeyboard = false
+	}
+}
+
+onMounted(() => {
+	window.addEventListener('mousemove', handleGlobalMouseMove)
+})
+
+onUnmounted(() => {
+	window.removeEventListener('mousemove', handleGlobalMouseMove)
+})
 </script>
 
 <style scoped>
@@ -296,8 +310,6 @@ const handleSelect = (item: any) => {
 .menu-item.active {
 	background-color: #409eff;
 	color: white;
-	transform: none;
-	box-shadow: none;
 }
 .menu-item::before {
 	content: '';
@@ -329,7 +341,6 @@ const handleSelect = (item: any) => {
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
 	padding: 4px 6px;
-	box-shadow: none;
 	background: #f5f7fa;
 	display: inline-flex;
 	align-items: center;
