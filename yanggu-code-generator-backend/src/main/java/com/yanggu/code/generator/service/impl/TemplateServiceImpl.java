@@ -193,16 +193,17 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
                 .ne(Objects.nonNull(dto.getId()), TemplateEntity::getId, dto.getId())
                 .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
+                .eq(TemplateEntity::getParentId, dto.getParentId())
                 .and(wrapper -> wrapper
                                 .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
-                        /*.or()
-                        .eq(TemplateEntity::getGeneratorPath, dto.getGeneratorPath())*/
+                        .or()
+                        .eq(TemplateEntity::getFileName, dto.getFileName())
                 );
 
         boolean exists = templateMapper.exists(queryWrapper);
-        //if (exists) {
-        //    throw new BusinessException("模板名称或生成代码的路径已存在");
-        //}
+        if (exists) {
+            throw new BusinessException("模板名称或者文件/目录名称已存在");
+        }
     }
 
     private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateEntityQuery query) {
