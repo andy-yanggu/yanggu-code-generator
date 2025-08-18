@@ -43,7 +43,7 @@
 					align="center"
 					:formatter="getLabel(ATTR_TYPES)"
 				></el-table-column>
-				<el-table-column prop="packageName" label="属性包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="packageName" label="包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"

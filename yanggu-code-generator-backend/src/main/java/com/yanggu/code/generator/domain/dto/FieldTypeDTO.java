@@ -41,9 +41,9 @@ public class FieldTypeDTO implements Serializable {
     private String attrType;
 
     /**
-     * 属性包名
+     * 包名
      */
-    @Schema(description = "属性包名")
+    @Schema(description = "包名")
     private String packageName;
 
 }

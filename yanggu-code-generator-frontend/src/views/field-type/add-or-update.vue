@@ -9,8 +9,8 @@
 					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="属性包名" prop="packageName">
-				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入属性包名"></el-input>
+			<el-form-item label="包名" prop="packageName">
+				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入包名"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>

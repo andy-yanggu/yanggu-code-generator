@@ -43,7 +43,7 @@ public class FieldTypeEntity extends BaseEntity implements Serializable {
     private String attrType;
 
     /**
-     * 属性包名
+     * 包名
      */
     @TableField(value = "package_name", updateStrategy = ALWAYS)
     private String packageName;
