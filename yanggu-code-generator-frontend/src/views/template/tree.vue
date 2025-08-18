@@ -301,6 +301,7 @@ const handleTreeNodeClick = (data: Tree) => {
 	}
 }
 
+// 删除勾选的树节点
 const deleteCheckedNode = () => {
 	const allCheckedKeys = treeRef.value.getCheckedKeys()
 	if (allCheckedKeys.length === 0) {

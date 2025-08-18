@@ -12,15 +12,18 @@ import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
+import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 import static com.yanggu.code.generator.domain.vo.TemplateVO.TREE_COMPARATOR;
@@ -193,16 +196,24 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
                 .ne(Objects.nonNull(dto.getId()), TemplateEntity::getId, dto.getId())
                 .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
-                .eq(TemplateEntity::getParentId, dto.getParentId())
-                .and(wrapper -> wrapper
-                                .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
-                        .or()
-                        .eq(TemplateEntity::getFileName, dto.getFileName())
-                );
+                .eq(TemplateEntity::getParentId, dto.getParentId());
+
+        Supplier<String> supplier;
+        if (Objects.equals(dto.getTemplateType(), TemplateTypeEnum.DIRECTORY.getCode())) {
+            queryWrapper.eq(TemplateEntity::getFileName, dto.getFileName());
+            supplier = () -> StrUtil.format("目录名称: {}已存在", dto.getFileName());
+        } else {
+            queryWrapper.and(wrapper -> wrapper
+                    .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
+                    .or()
+                    .eq(TemplateEntity::getFileName, dto.getFileName())
+            );
+            supplier = () -> "模板名称或者文件/目录名称已存在";
+        }
 
         boolean exists = templateMapper.exists(queryWrapper);
         if (exists) {
-            throw new BusinessException("模板名称或者文件/目录名称已存在");
+            throw new BusinessException(supplier.get());
         }
     }
 

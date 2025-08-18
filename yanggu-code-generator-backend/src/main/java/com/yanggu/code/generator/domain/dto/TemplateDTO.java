@@ -47,7 +47,7 @@ public class TemplateDTO implements Serializable {
      * 模板名称
      */
     @Schema(description = "模板名称")
-    @NotBlank(message = "模板名称不能为空")
+    //@NotBlank(message = "模板名称不能为空")
     private String templateName;
 
     /**

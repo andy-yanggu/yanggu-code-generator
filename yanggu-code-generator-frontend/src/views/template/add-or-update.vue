@@ -1,7 +1,7 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px">
-			<el-form-item label="模板名称" prop="templateName">
+			<el-form-item v-if="state.dataForm.templateType != 0" label="模板名称" prop="templateName">
 				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
 			<el-form-item :label="state.dataForm.templateType === 0 ? '目录名称' : '文件名称'" prop="fileName">
@@ -82,6 +82,7 @@ const initAfterHandle = () => {
 const submitBeforeHandle = () => {
 	if (state.dataForm.templateType === 0) {
 		state.dataForm.binaryOriginalFileName = ''
+		state.dataForm.templateName = ''
 		state.dataForm.templateContent = ''
 	} else if (state.dataForm.templateType === 1) {
 		state.dataForm.binaryOriginalFileName = ''
@@ -110,19 +111,27 @@ const state: FormOptions = reactive({
 	emit
 })
 
+const validateTemplateName = (_: any, value: any, callback: any) => {
+	if (state.dataForm.templateType != 0 && !value) {
+		callback(new Error())
+	} else {
+		callback()
+	}
+}
+
 const validateBinaryFile = (_: any, value: any, callback: any) => {
 	if (state.dataForm.templateType === 2 && !value) {
-		callback(new Error('必填项不能为空'))
+		callback(new Error())
 	} else {
 		callback()
 	}
 }
 
 const dataRules = reactive({
-	templateName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	templateName: [{ required: true, validator: validateTemplateName, message: '必填项不能为空', trigger: 'blur' }],
 	fileName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, trigger: 'blur' }]
+	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '必填项不能为空', trigger: 'blur' }]
 })
 
 const fileList = ref<any[]>([])
