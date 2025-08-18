@@ -21,7 +21,7 @@
 			></el-input>
 
 			<!-- 包裹层用于键盘模式下控制 hover 样式 -->
-			<el-scrollbar max-height="300px" class="search-results" :class="{ 'using-keyboard': searchState.usingKeyboard }">
+			<el-scrollbar ref="scrollbarRef" max-height="300px" class="search-results" :class="{ 'using-keyboard': searchState.usingKeyboard }">
 				<el-row
 					v-for="(item, index) in searchState.matchItemList"
 					:key="item.path"
@@ -92,6 +92,7 @@ const searchState = reactive({
 })
 
 const searchInputRef = ref()
+const scrollbarRef = ref()
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -165,7 +166,7 @@ const querySearch = (queryString?: string) => {
 
 	searchState.searchItemList.forEach(menu => {
 		const breadcrumbText = menu.breadcrumbItemList
-			.flatMap(item => item.title)
+			.map(item => item.title)
 			.join('/')
 			.toLowerCase()
 		if (breadcrumbText.includes(keyword)) {
@@ -177,13 +178,34 @@ const querySearch = (queryString?: string) => {
 	searchState.usingKeyboard = false // 重新搜索时重置键盘状态
 }
 
-// 处理鼠标进入事件
+// 滚动到当前激活项（带平滑滚动）
+const scrollToActiveItem = () => {
+	nextTick(() => {
+		const container = scrollbarRef.value?.wrapRef as HTMLElement
+		if (!container) {
+			return
+		}
+
+		const activeEl = container.querySelector('.menu-item.active') as HTMLElement
+		if (!activeEl) {
+			return
+		}
+
+		// 直接调用 scrollIntoView，带平滑效果
+		activeEl.scrollIntoView({
+			behavior: 'smooth',
+			block: 'nearest'
+		})
+	})
+}
+
+// 鼠标移入
 const handleMouseEnter = (index: number) => {
 	searchState.activeIndex = index
 	searchState.usingKeyboard = false
 }
 
-// 处理向上键
+// 向上键
 const handleKeyUp = () => {
 	if (searchState.matchItemList.length === 0) {
 		return
@@ -197,9 +219,10 @@ const handleKeyUp = () => {
 	} else {
 		searchState.activeIndex--
 	}
+	scrollToActiveItem()
 }
 
-// 处理向下键
+// 向下键
 const handleKeyDown = () => {
 	if (searchState.matchItemList.length === 0) {
 		return
@@ -213,16 +236,17 @@ const handleKeyDown = () => {
 	} else {
 		searchState.activeIndex++
 	}
+	scrollToActiveItem()
 }
 
-// 处理回车键
+// 回车
 const handleKeyEnter = () => {
 	if (searchState.activeIndex >= 0 && searchState.matchItemList.length > 0) {
 		handleSelect(searchState.matchItemList[searchState.activeIndex])
 	}
 }
 
-// 选择搜索结果
+// 选择
 const handleSelect = (item: any) => {
 	searchState.visible = false
 	searchState.keyword = ''
@@ -237,16 +261,13 @@ const handleSelect = (item: any) => {
 	display: flex;
 	align-items: center;
 }
-
 .search-icon {
 	cursor: pointer;
 }
-
 .search-results {
 	margin-top: 8px;
 	overflow-y: auto;
 }
-
 /* 禁用键盘模式下非激活项的 hover 高亮 */
 .search-results.using-keyboard .menu-item:not(.active):hover {
 	background-color: transparent;
@@ -258,7 +279,6 @@ const handleSelect = (item: any) => {
 	left: -100%;
 	transition: none;
 }
-
 .menu-item {
 	display: flex;
 	align-items: center;
@@ -272,8 +292,6 @@ const handleSelect = (item: any) => {
 	overflow: hidden;
 	font-size: 13px;
 }
-
-/* 激活 / hover 的样式保持清爽不过于夸张 */
 .menu-item:hover,
 .menu-item.active {
 	background-color: #409eff;
@@ -281,8 +299,6 @@ const handleSelect = (item: any) => {
 	transform: none;
 	box-shadow: none;
 }
-
-/* 高亮滑动效果保持轻微 */
 .menu-item::before {
 	content: '';
 	position: absolute;
@@ -293,26 +309,22 @@ const handleSelect = (item: any) => {
 	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
 	transition: left 0.4s;
 }
-
 .menu-item:hover::before,
 .menu-item.active::before {
 	left: 100%;
 }
-
 .breadcrumb-item {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
 	font-size: 13px;
 }
-
 .icon-text {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 	font-size: 12px;
 }
-
 .icon-button {
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
@@ -324,13 +336,9 @@ const handleSelect = (item: any) => {
 	font-size: 12px;
 	line-height: 1;
 }
-
-/* 箭头用稍小一点以避免过重 */
 .small-arrow {
 	padding: 2px 5px;
 }
-
-/* ESC 框样式更接近文字按钮 */
 .esc-box {
 	display: inline-block;
 	border: 1px solid #dcdfe6;
@@ -340,8 +348,6 @@ const handleSelect = (item: any) => {
 	font-size: 12px;
 	line-height: 1;
 }
-
-/* 底部快捷提示栏样式，贴合截图的白底、无阴影、紧凑布局 */
 .shortcut-bar {
 	display: flex;
 	gap: 20px;
@@ -352,13 +358,9 @@ const handleSelect = (item: any) => {
 	font-size: 12px;
 	align-items: center;
 }
-
-/* 搜索输入稍微压紧 */
 .search-input {
 	margin-bottom: 6px;
 }
-
-/* 无结果文案居中 */
 .no-results {
 	padding: 16px 0;
 	text-align: center;
