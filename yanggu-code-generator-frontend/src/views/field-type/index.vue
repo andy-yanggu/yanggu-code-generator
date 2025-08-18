@@ -41,7 +41,7 @@
 					header-align="center"
 					show-overflow-tooltip
 					align="center"
-					:formatter="(_: any, __: any, value: any) => getLabel(value, ATTR_TYPES)"
+					:formatter="getLabel(ATTR_TYPES)"
 				></el-table-column>
 				<el-table-column prop="packageName" label="属性包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column

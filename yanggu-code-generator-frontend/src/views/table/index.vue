@@ -52,7 +52,7 @@
 				<el-table-column
 					prop="generatorType"
 					label="生成方式"
-					:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
+					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
 					header-align="center"
 					align="center"
 					width="100"

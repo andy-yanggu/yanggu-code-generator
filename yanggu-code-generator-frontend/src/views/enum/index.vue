@@ -43,7 +43,7 @@
 					label="生成类型"
 					show-overflow-tooltip
 					header-align="center"
-					:formatter="(_: any, __: any, value: any) => getLabel(value, PROJECT_GENERATE_TYPES)"
+					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
 					align="center"
 				></el-table-column>
 				<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>

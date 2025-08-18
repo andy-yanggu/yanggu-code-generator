@@ -41,7 +41,7 @@
 				<el-table-column
 					prop="type"
 					label="模板组类型"
-					:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_GROUP_TYPES)"
+					:formatter="getLabel(TEMPLATE_GROUP_TYPES)"
 					header-align="center"
 					align="center"
 				></el-table-column>

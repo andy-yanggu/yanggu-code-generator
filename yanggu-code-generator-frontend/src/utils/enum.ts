@@ -1,8 +1,10 @@
 /**
  * 获取枚举标签
  */
-export const getLabel = (value: any, enumList: EnumItem[]): string => {
-	return <string>enumList.find(item => item.value === value)?.label
+export const getLabel = (enumList: EnumItem[]) => {
+	return (_: any, __: any, value: any): string => {
+		return <string>enumList.find(item => item.value === value)?.label
+	}
 }
 
 /**

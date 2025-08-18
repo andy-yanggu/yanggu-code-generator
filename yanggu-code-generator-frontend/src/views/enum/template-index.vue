@@ -38,7 +38,7 @@
 						label="模板类型"
 						header-align="center"
 						align="center"
-						:formatter="(_: any, __: any, value: any) => getLabel(value, TEMPLATE_TYPES)"
+						:formatter="getLabel(TEMPLATE_TYPES)"
 					></el-table-column>
 					<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				</el-table>
