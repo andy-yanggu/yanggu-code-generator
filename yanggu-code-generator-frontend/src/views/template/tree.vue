@@ -49,7 +49,7 @@
 						</el-tree>
 					</div>
 				</el-scrollbar>
-				<!-- 自定义右键菜单 -->
+				<!-- 自定义模板右键菜单 -->
 				<div v-if="contextMenu.visible">
 					<ul class="context-menu" :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }">
 						<!-- 节点右键 -->
@@ -100,9 +100,39 @@
 							</el-col>
 						</el-row>
 						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" :label="tabItem.fileName" closable>
+							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
+								<template #label>
+									<span @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
+										{{ tabItem.fileName }}
+									</span>
+								</template>
 							</el-tab-pane>
 						</el-tabs>
+						<!-- tab右键菜单 -->
+						<div v-if="tabContextMenu.visible">
+							<ul class="context-menu" :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }">
+								<li @click="closeCurrentTab">
+									<el-icon size="10"><CloseBold></CloseBold></el-icon>
+									<span>关闭当前</span>
+								</li>
+								<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
+									<el-icon size="10"><CircleClose></CircleClose></el-icon>
+									<span>关闭其他</span>
+								</li>
+								<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
+									<el-icon size="10"><Back></Back></el-icon>
+									<span>关闭左侧</span>
+								</li>
+								<li v-if="tabContextMenu.index < templateTreeData.tabList.length - 1" @click="closeRightTabs">
+									<el-icon size="10"><Right></Right></el-icon>
+									<span>关闭右侧</span>
+								</li>
+								<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
+									<el-icon size="10"><Close></Close></el-icon>
+									<span>关闭全部</span>
+								</li>
+							</ul>
+						</div>
 					</el-header>
 
 					<!-- 代码区域 -->
@@ -152,7 +182,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
-import { Aim, Delete, DocumentChecked, Edit, Expand, Fold, FullScreen, Search } from '@element-plus/icons-vue'
+import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 
@@ -193,7 +223,7 @@ const treeSearchText = ref('')
 const isCollapseRef = ref(false)
 const addOrUpdateRef = ref()
 const { isFullscreen, toggle } = useFullscreen()
-// 右键菜单状态
+// 模板树右键菜单状态
 const contextMenu = reactive({
 	visible: false,
 	x: 0,
@@ -203,6 +233,16 @@ const contextMenu = reactive({
 	parentId: 0,
 	nodeData: {} as Tree
 })
+
+// tab右键菜单状态
+const tabContextMenu = reactive({
+	visible: false,
+	x: 0,
+	y: 0,
+	index: -1,
+	item: {} as Tree
+})
+
 const submitLoading = ref(false)
 
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
@@ -403,32 +443,60 @@ const hideContextMenu = () => {
 
 // 节点右键
 const handleNodeRightClick = (event: MouseEvent, data: Tree) => {
-	// console.log('节点右键')
 	event.preventDefault()
 	contextMenu.visible = true
 	contextMenu.isTree = true
-	contextMenu.x = event.clientX
-	contextMenu.y = event.clientY
 	contextMenu.nodeData = data
+
+	nextTick(() => {
+		calculateTemplateMenu(event)
+	})
+
 	document.addEventListener('click', hideContextMenu)
 }
 
 // 空白右键
 const handleScrollWrapperRightClick = (event: MouseEvent) => {
-	// 判断右键点击目标是不是树节点
 	const target = event.target as HTMLElement
 	if (target.closest('.custom-tree-node')) {
-		// 点击在节点上，忽略空白逻辑
 		return
 	}
-	// console.log('空白右键')
+
 	contextMenu.visible = true
 	contextMenu.isTree = false
-	contextMenu.x = event.clientX
-	contextMenu.y = event.clientY
-	contextMenu.nodeData = { id: 0 } as Tree // 空对象表示没有选中节点
+	contextMenu.nodeData = { id: 0 } as Tree
 	contextMenu.parentId = 0
+	nextTick(() => {
+		calculateTemplateMenu(event)
+	})
+
 	document.addEventListener('click', hideContextMenu)
+}
+
+// 计算模板菜单的位置，考虑在底部，展示不全的情况
+const calculateTemplateMenu = (event: MouseEvent) => {
+	const menuEl = document.querySelector('.context-menu') as HTMLElement
+	if (!menuEl) {
+		return
+	}
+
+	const viewportWidth = window.innerWidth
+	const viewportHeight = window.innerHeight
+	const menuWidth = menuEl.offsetWidth
+	const menuHeight = menuEl.offsetHeight
+
+	let x = event.clientX
+	let y = event.clientY
+
+	if (x + menuWidth > viewportWidth) {
+		x = viewportWidth - menuWidth - 10
+	}
+	if (y + menuHeight > viewportHeight) {
+		y = viewportHeight - menuHeight - 10
+	}
+
+	contextMenu.x = x
+	contextMenu.y = y
 }
 
 document.addEventListener('mousedown', e => {
@@ -443,7 +511,7 @@ document.addEventListener('mousedown', e => {
 
 // 修改模板
 const updateTemplate = (node: Tree) => {
-	console.log('编辑', node)
+	// console.log('编辑', node)
 	contextMenu.templateType = node.templateType
 	contextMenu.parentId = node.parentId
 	nextTick(() => {
@@ -454,7 +522,7 @@ const updateTemplate = (node: Tree) => {
 
 // 新建目录
 const newDir = (parent: Tree) => {
-	console.log('新建目录在', parent)
+	// console.log('新建目录在', parent)
 	contextMenu.templateType = 0
 	contextMenu.parentId = parent.id
 	nextTick(() => {
@@ -465,7 +533,7 @@ const newDir = (parent: Tree) => {
 
 // 新建模板文件
 const newTemplateFile = (parent: Tree) => {
-	console.log('新建模板文件在', parent)
+	// console.log('新建模板文件在', parent)
 	contextMenu.templateType = 1
 	contextMenu.parentId = parent.id
 	nextTick(() => {
@@ -476,7 +544,7 @@ const newTemplateFile = (parent: Tree) => {
 
 // 新建二进制文件
 const newBinaryFile = (parent: Tree) => {
-	console.log('新建二进制文件在', parent)
+	// console.log('新建二进制文件在', parent)
 	contextMenu.templateType = 2
 	contextMenu.parentId = parent.id
 	nextTick(() => {
@@ -503,6 +571,102 @@ const getIcon = (node: any, data: Tree): string => {
 	} else {
 		return 'icon-file-unknown'
 	}
+}
+
+const hideTabContextMenu = () => {
+	tabContextMenu.visible = false
+	document.removeEventListener('click', hideTabContextMenu)
+}
+
+// 点击空白地方关闭 tab 菜单
+document.addEventListener('mousedown', e => {
+	if (tabContextMenu.visible) {
+		const menuEl = document.querySelector('.context-menu') // 如果 tab 菜单和 tree 菜单共用 class
+		if (menuEl && !menuEl.contains(e.target as Node)) {
+			hideTabContextMenu()
+		}
+	}
+})
+
+const showTabMenu = (e: MouseEvent, tab: Tree, index: number) => {
+	e.preventDefault()
+	console.log('tab右键', tab)
+	tabContextMenu.index = index
+	tabContextMenu.item = tab
+	tabContextMenu.visible = true
+
+	nextTick(() => {
+		const menuEl = document.querySelector('.context-menu') as HTMLElement
+		if (menuEl) {
+			const windowWidth = window.innerWidth
+			const windowHeight = window.innerHeight
+			const menuWidth = menuEl.offsetWidth
+			const menuHeight = menuEl.offsetHeight
+
+			tabContextMenu.x = Math.min(e.clientX, windowWidth - menuWidth - 10)
+			tabContextMenu.y = Math.min(e.clientY, windowHeight - menuHeight - 10)
+		}
+	})
+}
+
+// 关闭当前tab
+const closeCurrentTab = () => {
+	// 删除当前tab
+	templateTreeData.tabList = templateTreeData.tabList.filter(tab => tab.id !== tabContextMenu.item.id)
+
+	// 判断激活的是否为当前tab
+	if (templateTreeData.tabActiveName === tabContextMenu.item.id && templateTreeData.tabList.length > 0) {
+		let newActiveTab
+		// 优先尝试右侧标签
+		if (tabContextMenu.index < templateTreeData.tabList.length) {
+			newActiveTab = templateTreeData.tabList[tabContextMenu.index]
+		} else {
+			// 右侧无标签是选择左侧最后一个
+			newActiveTab = templateTreeData.tabList[templateTreeData.tabList.length - 1]
+		}
+		templateTreeData.tabActiveName = newActiveTab.id
+		templateTreeData.item = newActiveTab
+		treeRef.value.setCurrentKey(newActiveTab.id)
+		currentNodeKey.value = newActiveTab.id
+	}
+
+	hideTabContextMenu()
+}
+
+// 关闭其他tab
+const closeOtherTabs = () => {
+	templateTreeData.tabList = templateTreeData.tabList.filter(tab => tab.id === tabContextMenu.item.id)
+	templateTreeData.item = tabContextMenu.item
+	templateTreeData.tabActiveName = tabContextMenu.item.id
+	treeRef.value.setCurrentKey(tabContextMenu.item.id)
+	currentNodeKey.value = tabContextMenu.item.id
+	hideTabContextMenu()
+}
+
+// 关闭左侧tab
+const closeLeftTabs = () => {
+	templateTreeData.tabList = templateTreeData.tabList.filter((_, index) => index >= tabContextMenu.index)
+	templateTreeData.item = tabContextMenu.item
+	templateTreeData.tabActiveName = tabContextMenu.item.id
+	treeRef.value.setCurrentKey(tabContextMenu.item.id)
+	currentNodeKey.value = tabContextMenu.item.id
+	hideTabContextMenu()
+}
+
+// 关闭右侧tab
+const closeRightTabs = () => {
+	templateTreeData.tabList = templateTreeData.tabList.filter((_, index) => index <= tabContextMenu.index)
+	templateTreeData.item = tabContextMenu.item
+	templateTreeData.tabActiveName = tabContextMenu.item.id
+	treeRef.value.setCurrentKey(tabContextMenu.item.id)
+	currentNodeKey.value = tabContextMenu.item.id
+	hideTabContextMenu()
+}
+
+// 关闭全部tab
+const closeAllTabs = () => {
+	templateTreeData.tabList = []
+	hideTabContextMenu()
 }
 
 defineExpose({
