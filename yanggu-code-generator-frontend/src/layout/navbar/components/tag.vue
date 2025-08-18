@@ -108,12 +108,15 @@ const scrollToTag = (fullPath: string) => {
 onMounted(() => {
 	nextTick(() => {
 		const el = document.querySelector('.tag-wrapper') as HTMLElement
-		if (el) {
+		const scrollWrapper = scrollbarRef.value?.wrapRef as HTMLElement
+
+		if (el && scrollWrapper) {
 			new Sortable(el, {
 				animation: 200,
-				scroll: true,
+				scroll: scrollWrapper, // ✅ 指定真正的滚动容器
+				direction: 'horizontal', // ✅ 明确水平拖拽
 				scrollSensitivity: 30,
-				scrollSpeed: 100,
+				scrollSpeed: 30,
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
@@ -125,7 +128,7 @@ onMounted(() => {
 				}
 			})
 		} else {
-			console.error('未找到.tag-wrapper元素')
+			console.error('未找到.tag-wrapper或scrollWrapper元素')
 		}
 	})
 })
@@ -269,6 +272,7 @@ const closeRightTag = () => {
 .tag-wrapper {
 	/* 保持原有样式不变 */
 	margin-top: 10px;
+	margin-right: 5px;
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
