@@ -115,7 +115,7 @@ onMounted(() => {
 }
 
 .large-icon {
-	font-size: 36px;
+	font-size: 40px;
 	color: #606266;
 	transition: all 0.3s;
 	margin-bottom: 10px;

@@ -31,14 +31,12 @@ const iconName = computed(() => `#${props.icon}`)
 <style scoped>
 .svg-icon {
 	display: inline-block;
-	width: 14px;
-	height: 16px;
 }
 
 .svg-icon svg {
 	display: block;
-	width: 100%;
-	height: 100%;
+	width: 1em; /* 使用相对单位 */
+	height: 1em; /* 使用相对单位 */
 	fill: currentColor;
 }
 </style>
