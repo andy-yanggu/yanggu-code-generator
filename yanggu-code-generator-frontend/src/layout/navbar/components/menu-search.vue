@@ -31,11 +31,14 @@
 					@mouseenter="handleMouseEnter(index)"
 				>
 					<!-- 面包屑风格展示路径 -->
-					<span v-for="(breadcrumbItem, breadcrumbIndex) in item.breadcrumbItemList" :key="breadcrumbItem.title" class="breadcrumb-item">
-						<svg-icon :icon="breadcrumbItem.icon"></svg-icon>
-						<el-text>{{ breadcrumbItem.title }}</el-text>
-						<el-text v-if="breadcrumbIndex < item.breadcrumbItemList.length - 1">/</el-text>
-					</span>
+					<el-breadcrumb>
+						<el-breadcrumb-item v-for="breadcrumbItem in item.breadcrumbItemList" :key="breadcrumbItem.title">
+							<span class="breadcrumb-content">
+								<svg-icon :icon="breadcrumbItem.icon"></svg-icon>
+								<el-text>{{ breadcrumbItem.title }}</el-text>
+							</span>
+						</el-breadcrumb-item>
+					</el-breadcrumb>
 				</el-row>
 				<div v-if="searchState.matchItemList.length === 0" class="no-results">
 					<el-text>无匹配结果</el-text>
@@ -325,12 +328,6 @@ onUnmounted(() => {
 .menu-item.active::before {
 	left: 100%;
 }
-.breadcrumb-item {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	font-size: 13px;
-}
 .icon-text {
 	display: flex;
 	align-items: center;
@@ -376,5 +373,10 @@ onUnmounted(() => {
 	padding: 16px 0;
 	text-align: center;
 	color: #8c8c8c;
+}
+.breadcrumb-content {
+	display: inline-flex;
+	align-items: center; /* 垂直居中 */
+	gap: 5px; /* 控制图标和文字间距 */
 }
 </style>

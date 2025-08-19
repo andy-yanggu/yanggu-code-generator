@@ -73,8 +73,7 @@ watch(
 		nextTick(() => {
 			scrollToTag(newPath)
 		})
-	},
-	{ deep: true }
+	}
 )
 
 const scrollToTag = (fullPath: string) => {

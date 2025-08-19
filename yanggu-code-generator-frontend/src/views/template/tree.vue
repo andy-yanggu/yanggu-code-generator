@@ -33,18 +33,15 @@
 							@node-contextmenu="handleNodeRightClick"
 						>
 							<template #default="{ node, data }">
-								<el-tooltip v-if="data.templateDesc" :content="data.templateDesc" placement="top" effect="light">
+								<el-tooltip :content="data.templateDesc" placement="top" effect="light" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
 										<svg-icon :icon="getIcon(node, data)"></svg-icon>
 										<span>{{ node.label }}</span>
-										<el-icon class="edit-icon" @click.stop="updateTemplate(data)"><Edit></Edit></el-icon>
+										<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
+											<Edit></Edit>
+										</el-icon>
 									</div>
 								</el-tooltip>
-								<div v-else class="custom-tree-node">
-									<svg-icon :icon="getIcon(node, data)"></svg-icon>
-									<span>{{ node.label }}</span>
-									<el-icon class="edit-icon" @click.stop="updateTemplate(data)"><Edit></Edit></el-icon>
-								</div>
 							</template>
 						</el-tree>
 					</div>
