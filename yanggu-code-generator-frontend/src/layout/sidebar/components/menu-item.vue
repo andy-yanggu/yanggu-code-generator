@@ -1,5 +1,5 @@
 <template>
-	<el-sub-menu v-if="menu.meta.type === 0" :key="'sub-menu-' + menu.path" :index="menu.path">
+	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menu.path">
 		<template #title>
 			<svg-icon :icon="menu.meta.icon"></svg-icon>
 			<el-tooltip :content="menu.meta.title" :disabled="!isTitleOverflow" placement="top">
@@ -8,10 +8,10 @@
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="menu.children && menu.children.length > 0">
-			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub"></menu-item>
+			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap"></menu-item>
 		</template>
 	</el-sub-menu>
-	<el-menu-item v-else-if="menu.meta.type === 1 && !menu.meta.hidden" :key="'menu-item-' + menu.path" :index="menu.path">
+	<el-menu-item v-else-if="menu.meta.type === 1 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
 		<svg-icon :icon="menu.meta.icon"></svg-icon>
 		<el-tooltip :content="menu.meta.title" :disabled="!isTitleOverflow" placement="top">
 			<el-text ref="titleRef" truncated>{{ menu.meta.title }}</el-text>
@@ -24,16 +24,24 @@ import { ref, onMounted, onUpdated, nextTick, onUnmounted } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElText } from 'element-plus'
 
-defineProps({
+const props = defineProps({
 	menu: {
 		type: Object,
+		required: true
+	},
+	refMap: {
+		type: Map,
 		required: true
 	}
 })
 
 const titleRef = ref<InstanceType<typeof ElText> | null>(null)
 const isTitleOverflow = ref(false)
-
+const rootRef = ref()
+// 添加ref引用到refMap中
+onMounted(() => {
+	props.refMap.set(props.menu.path, rootRef.value)
+})
 // 检查文本是否溢出
 const checkOverflow = () => {
 	nextTick(() => {

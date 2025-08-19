@@ -30,19 +30,18 @@ a:hover {
 
 .layout-container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  display: flex;
   .layout-sidebar {
     background: var(--theme-menu-bg-color);
     border-right: var(--theme-border-color-light) 1px solid;
-    height: inherit;
     width: var(--theme-aside-width);
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden !important;
-    .el-scrollbar__view {
-      overflow: hidden;
-    }
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
   }
   .layout-header {
     margin-left: 15px;
