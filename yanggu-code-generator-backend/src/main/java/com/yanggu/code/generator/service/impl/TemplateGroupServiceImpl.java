@@ -37,9 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
@@ -194,16 +194,17 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
         //查询原有模板组下的所有模板
         List<TemplateEntity> templateList = templateService.selectByGroupId(oldGroupId);
-        if (CollUtil.isNotEmpty(templateList)) {
-            templateList.forEach(template -> {
-                TemplateDTO templateDTO = templateMapstruct.entityToDTO(template);
-                templateDTO.setId(null);
-                templateDTO.setTemplateGroupId(newTemplateGroupId);
-
-                //新增模板
-                templateService.add(templateDTO);
-            });
+        if (CollUtil.isEmpty(templateList)) {
+            return;
         }
+
+        // 先保存所有顶级模板（parentId为null的模板）
+        List<TemplateEntity> rootTemplates = templateList.stream()
+                .filter(template -> template.getParentId().equals(0L))
+                .toList();
+
+        // 递归复制模板树
+        rootTemplates.forEach(rootTemplate -> copyTemplateTree(rootTemplate, 0L, newTemplateGroupId, templateList));
     }
 
     @Override
@@ -214,6 +215,16 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
         //转换成导出对象
         List<TemplateGroupBO> boList = templateGroupMapstruct.entityToBO(list);
+
+        // 构建模板树结构
+        boList.forEach(templateGroupBO -> {
+            List<TemplateBO> templateList = templateGroupBO.getTemplateList();
+            if (CollUtil.isNotEmpty(templateList)) {
+                // 构建模板树
+                buildTemplateTree(templateList);
+            }
+        });
+
         String jsonStr = JSONUtil.toJsonStr(boList);
 
         String fileName = "template_group_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
@@ -234,17 +245,15 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         if (CollUtil.isEmpty(list)) {
             throw new BusinessException("导入数据不能为空");
         }
+
         list.forEach(templateGroup -> {
             TemplateGroupDTO groupDTO = templateGroupMapstruct.boToDTO(templateGroup);
             TemplateGroupEntity groupEntity = add(groupDTO);
 
             List<TemplateBO> templateList = templateGroup.getTemplateList();
             if (CollUtil.isNotEmpty(templateList)) {
-                templateList.forEach(template -> {
-                    TemplateDTO templateDTO = templateMapstruct.boToDTO(template);
-                    templateDTO.setTemplateGroupId(groupEntity.getId());
-                    templateService.add(templateDTO);
-                });
+                // 直接使用树形结构递归导入
+                templateList.forEach(template -> importTemplateTree(template, 0L, groupEntity.getId(), new HashMap<>()));
             }
         });
     }
@@ -255,6 +264,93 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         List<TemplateEntity> templateList = templateService.selectByGroupId(id);
         templateGroup.setTemplateList(templateList);
         return templateGroup;
+    }
+
+    /**
+     * 递归复制模板树
+     *
+     * @param sourceTemplate     源模板
+     * @param newParentId        新的父模板ID
+     * @param newTemplateGroupId 新模板组ID
+     * @param templateList     原模板映射
+     */
+    private void copyTemplateTree(TemplateEntity sourceTemplate, Long newParentId,
+                                  Long newTemplateGroupId, List<TemplateEntity> templateList) {
+        // 创建新模板DTO
+        TemplateDTO templateDTO = templateMapstruct.entityToDTO(sourceTemplate);
+        templateDTO.setId(null);
+        templateDTO.setParentId(newParentId);
+        templateDTO.setTemplateGroupId(newTemplateGroupId);
+
+        // 新增模板
+        TemplateEntity newTemplate = templateService.add(templateDTO);
+
+        // 查找所有子模板
+        List<TemplateEntity> children = templateList.stream()
+                .filter(template -> sourceTemplate.getId().equals(template.getParentId()))
+                .toList();
+
+        if (CollUtil.isEmpty(children)) {
+            return;
+        }
+
+        // 递归处理子模板
+        children.forEach(child -> copyTemplateTree(child, newTemplate.getId(), newTemplateGroupId, templateList));
+    }
+
+    /**
+     * 递归导入模板树
+     * @param templateBO 模板BO
+     * @param parentId 父模板ID
+     * @param templateGroupId 模板组ID
+     * @param oldToNewIdMap 新旧ID映射
+     */
+    private void importTemplateTree(TemplateBO templateBO, Long parentId,
+                                    Long templateGroupId, Map<Long, Long> oldToNewIdMap) {
+        // 创建模板DTO
+        TemplateDTO templateDTO = templateMapstruct.boToDTO(templateBO);
+        Long oldId = templateDTO.getId();
+        templateDTO.setId(null);
+        templateDTO.setParentId(parentId);
+        templateDTO.setTemplateGroupId(templateGroupId);
+
+        // 添加模板
+        TemplateEntity newTemplate = templateService.add(templateDTO);
+
+        // 记录ID映射关系
+        oldToNewIdMap.put(oldId, newTemplate.getId());
+
+        // 递归处理子模板
+        if (CollUtil.isNotEmpty(templateBO.getChildren())) {
+            templateBO.getChildren().forEach(child ->
+                    importTemplateTree(child, newTemplate.getId(), templateGroupId, oldToNewIdMap));
+        }
+    }
+
+    /**
+     * 构建模板树结构
+     * @param templateList 模板列表
+     */
+    private void buildTemplateTree(List<TemplateBO> templateList) {
+        Map<Long, TemplateBO> templateMap = templateList.stream()
+                .collect(Collectors.toMap(TemplateBO::getId, Function.identity()));
+
+        // 清空原有的子模板列表
+        templateList.forEach(template -> template.setChildren(new ArrayList<>()));
+
+        Iterator<TemplateBO> iterator = templateList.iterator();
+        while (iterator.hasNext()) {
+            TemplateBO template = iterator.next();
+            // 如果有父节点，则将当前节点添加到父节点的子节点列表中
+            if (template.getParentId() != null && !template.getParentId().equals(0L)) {
+                TemplateBO parent = templateMap.get(template.getParentId());
+                if (parent != null) {
+                    parent.getChildren().add(template);
+                    // 从顶层列表中移除子节点，只保留根节点
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     private TemplateGroupEntity selectById(Long id) {

@@ -20,7 +20,7 @@ public interface TemplateService extends IService<TemplateEntity> {
     /**
      * 新增
      */
-    void add(TemplateDTO dto);
+    TemplateEntity add(TemplateDTO dto);
 
     /**
      * 修改

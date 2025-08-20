@@ -1,10 +1,10 @@
 package com.yanggu.code.generator.domain.bo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 模板BO实体类
@@ -14,6 +14,16 @@ public class TemplateBO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 模板ID
+     */
+    private Long id;
+
+    /**
+     * 父级ID
+     */
+    private Long parentId;
 
     /**
      * 模板名称
@@ -26,7 +36,7 @@ public class TemplateBO implements Serializable {
     private String fileName;
 
     /**
-     * 模板描述
+     * 描述
      */
     private String templateDesc;
 
@@ -44,5 +54,10 @@ public class TemplateBO implements Serializable {
      * 二进制原始文件名
      */
     private String binaryOriginalFileName;
+
+    /**
+     * 子节点列表
+     */
+    private List<TemplateBO> children;
 
 }

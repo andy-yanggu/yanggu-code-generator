@@ -58,9 +58,9 @@ public class TemplateDTO implements Serializable {
     private String fileName;
 
     /**
-     * 模板描述
+     * 描述
      */
-    @Schema(description = "模板描述")
+    @Schema(description = "描述")
     private String templateDesc;
 
     /**

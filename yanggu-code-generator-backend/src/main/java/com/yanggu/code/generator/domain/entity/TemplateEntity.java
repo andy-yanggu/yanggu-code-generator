@@ -53,7 +53,7 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     private String fileName;
 
     /**
-     * 模板描述
+     * 描述
      */
     @TableField(value = "template_desc")
     private String templateDesc;

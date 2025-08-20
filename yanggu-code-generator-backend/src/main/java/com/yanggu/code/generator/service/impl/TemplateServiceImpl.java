@@ -45,11 +45,12 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void add(TemplateDTO dto) {
+    public TemplateEntity add(TemplateDTO dto) {
         //唯一性校验等
         checkUnique(dto);
         TemplateEntity entity = templateMapstruct.dtoToEntity(dto);
         templateMapper.insert(entity);
+        return entity;
     }
 
     /**
