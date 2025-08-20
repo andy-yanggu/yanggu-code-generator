@@ -2,7 +2,7 @@
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目" prop="projectId">
-				<el-select v-model="state.dataForm.projectId" clearable :disabled="dataForm.id" placeholder="请选择项目">
+				<el-select v-model="state.dataForm.projectId" clearable :disabled="state.dataForm.id != null" placeholder="请选择项目">
 					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
 				</el-select>
 			</el-form-item>

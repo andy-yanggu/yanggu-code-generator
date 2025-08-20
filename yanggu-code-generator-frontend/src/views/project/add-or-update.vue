@@ -157,7 +157,7 @@ const baseClassList = ref([])
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const submitProjectHandle = () => {
-	if (!dataForm.id) {
+	if (!state.dataForm.id) {
 		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
 		state.duration = 2000
 	} else {

@@ -125,7 +125,7 @@
 			<import ref="importRef" @refresh-data-list="getDataList"></import>
 
 			<!-- 预览 -->
-			<preview ref="previewRef" @refresh-data-list="getDataList"></preview>
+			<preview ref="previewRef" :key="previewKey"></preview>
 
 			<!-- 字段配置 -->
 			<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
@@ -139,11 +139,11 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import Import from './import.vue'
-import Update from './update.vue'
+import Import from '@/views/table/import.vue'
+import Update from '@/views/table/update.vue'
 import Preview from '@/components/preview/index.vue'
-import FieldConfig from './field-config.vue'
-import TemplateIndex from './template-index.vue'
+import FieldConfig from '@/views/table/field-config.vue'
+import TemplateIndex from '@/views/table/template-index.vue'
 import { projectEntityListApi } from '@/api/project'
 import { tableDeleteListApi, tableGenerateCheckApi, tableSyncApi, tableVOPageApi } from '@/api/table'
 import { ElMessage } from 'element-plus/es'
@@ -177,6 +177,7 @@ const previewRef = ref()
 const templateIndexRef = ref()
 const tableRef = ref()
 const projectList = ref([])
+const previewKey = ref()
 
 const getProjectList = () => {
 	projectEntityListApi({}).then(res => {
@@ -189,7 +190,10 @@ const importHandle = () => {
 }
 
 const previewHandle = (tableItem: any) => {
-	previewRef.value.init(tableItem.id, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
+	previewKey.value = Date.now()
+	nextTick(() => {
+		previewRef.value.init(tableItem.id, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
+	})
 }
 
 const editHandle = (row: any) => {

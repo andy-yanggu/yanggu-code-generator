@@ -52,7 +52,7 @@ const emit = defineEmits(['refreshDataList'])
 
 const projectList = ref([])
 
-const state: FormOptions = {
+const state: FormOptions = reactive({
 	submitApi: tableSubmitApi,
 	detailApi: tableDetailApi,
 	initBefore: () => {
@@ -73,7 +73,7 @@ const state: FormOptions = {
 		formLayout: ''
 	},
 	emit
-}
+})
 
 const dataRules = reactive({
 	databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

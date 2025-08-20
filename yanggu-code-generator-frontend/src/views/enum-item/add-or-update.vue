@@ -56,7 +56,7 @@ const dataRules = reactive({
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 const initData = (enumId: number, id?: number) => {
-	dataForm.enumId = enumId
+	state.dataForm.enumId = enumId
 	init(id)
 }
 

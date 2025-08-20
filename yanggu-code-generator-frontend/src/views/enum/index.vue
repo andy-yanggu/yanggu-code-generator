@@ -111,7 +111,7 @@
 
 			<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 
-			<preview ref="previewRef"></preview>
+			<preview ref="previewRef" :key="previewKey"></preview>
 
 			<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 		</el-card>
@@ -155,6 +155,7 @@ const previewRef = ref()
 const tableRef = ref()
 const templateIndexRef = ref()
 const projectList = ref([])
+const previewKey = ref('')
 
 const getProjectList = () => {
 	projectEntityListApi({}).then((res: any) => {
@@ -167,7 +168,10 @@ const configEnumItemHandle = (id: number) => {
 }
 
 const previewHandle = (row: any) => {
-	previewRef.value.init(row.id, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
+	previewKey.value = `${Date.now()}`
+	nextTick(() => {
+		previewRef.value.init(row.id, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
+	})
 }
 
 const generatorBatchHandler = () => {
