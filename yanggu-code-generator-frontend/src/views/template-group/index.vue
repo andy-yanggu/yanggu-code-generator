@@ -23,8 +23,10 @@
 			<el-space :size="'large'" class="layout-space">
 				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-				<import ref="templateGroupImportRef" @refresh-data-list="getDataList"></import>
 				<el-button type="primary" :icon="Download" @click="exportHandle()">导出</el-button>
+				<el-upload :limit="1" :show-file-list="false" :http-request="handleManualUpload">
+					<el-button type="success" :icon="Upload">导入</el-button>
+				</el-upload>
 			</el-space>
 			<el-table
 				ref="tableRef"
@@ -115,11 +117,10 @@ import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import Copy from '@/views/template-group/copy.vue'
 import AddOrUpdate from '@/views/template-group/add-or-update.vue'
-import Import from '@/views/template-group/import.vue'
 import TemplateTree from '@/views/template/tree.vue'
 import { ElMessage } from 'element-plus'
-import { exportTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/template-group'
-import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting } from '@element-plus/icons-vue'
+import { exportTemplateGroupApi, importTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/template-group'
+import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting, Upload } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -163,6 +164,21 @@ const exportHandle = () => {
 		tableRef.value.clearSelection()
 		state.dataListSelections = []
 	})
+}
+
+// 自定义上传处理
+const handleManualUpload = (options: any) => {
+	const { file } = options
+	const formData = new FormData()
+	formData.append('file', file)
+
+	importTemplateGroupApi(formData)
+		.then(() => {
+			ElMessage.success('模板组导入成功')
+		})
+		.then(() => {
+			getDataList()
+		})
 }
 
 const {
