@@ -1,8 +1,8 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px">
-			<el-form-item v-if="state.dataForm.templateType === 1" label="模板名称" prop="templateName">
-				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
+			<el-form-item label="路径" prop="templatePath">
+				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
 			</el-form-item>
 			<el-form-item :label="state.dataForm.templateType === 0 ? '目录名称' : '文件名称'" prop="fileName">
 				<el-input
@@ -10,6 +10,9 @@
 					clearable
 					:placeholder="state.dataForm.templateType === 0 ? '请输入目录名称' : '请输入文件名称'"
 				></el-input>
+			</el-form-item>
+			<el-form-item v-if="state.dataForm.templateType === 1" label="模板名称" prop="templateName">
+				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
 				<el-radio-group v-model="state.dataForm.templateType" disabled>
@@ -56,6 +59,10 @@ const props = defineProps({
 	templateType: {
 		type: Number,
 		required: true
+	},
+	templatePath: {
+		type: String,
+		required: true
 	}
 })
 
@@ -65,6 +72,7 @@ const initAfterHandle = () => {
 	state.dataForm.templateGroupId = props.templateGroupId
 	state.dataForm.parentId = props.parentId
 	state.dataForm.templateType = props.templateType
+	state.dataForm.templatePath = props.templatePath
 	if (state.dataForm.templateType === 2) {
 		if (state.dataForm.id) {
 			fileList.value = [
@@ -107,7 +115,8 @@ const state: FormOptions = reactive({
 		templateType: -1,
 		templateDesc: '',
 		binaryOriginalFileName: '',
-		templateContent: ''
+		templateContent: '',
+		templatePath: ''
 	},
 	initAfter: initAfterHandle,
 	emit

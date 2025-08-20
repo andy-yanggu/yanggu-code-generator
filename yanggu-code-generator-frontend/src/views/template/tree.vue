@@ -44,6 +44,11 @@
 									</div>
 								</el-tooltip>
 							</template>
+							<template #empty>
+								<div style="text-align: center; padding: 20px">
+									<div>暂无数据，请右键创建目录、模板文件或者二进制文件</div>
+								</div>
+							</template>
 						</el-tree>
 					</div>
 				</el-scrollbar>
@@ -74,6 +79,7 @@
 				:template-group-id="templateTreeData.id"
 				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
+				:template-path="contextMenu.templatePath"
 				@refresh-data-list="updateAfterRefreshData(contextMenu.nodeData.id)"
 			></add-or-update>
 
@@ -234,6 +240,7 @@ const contextMenu = reactive({
 	y: 0,
 	isTree: true,
 	templateType: -1,
+	templatePath: '',
 	parentId: 0,
 	nodeData: {} as Tree
 })
@@ -479,6 +486,7 @@ const handleNodeRightClick = (event: MouseEvent, data: Tree) => {
 	contextMenu.visible = true
 	contextMenu.isTree = true
 	contextMenu.nodeData = data
+	contextMenu.templatePath = getFullPathById(data.id, templateTreeData.treeList)
 
 	nextTick(() => {
 		calculateTemplateMenu(event)
@@ -498,6 +506,7 @@ const handleScrollWrapperRightClick = (event: MouseEvent) => {
 	contextMenu.isTree = false
 	contextMenu.nodeData = { id: 0 } as Tree
 	contextMenu.parentId = 0
+	contextMenu.templatePath = '/'
 	nextTick(() => {
 		calculateTemplateMenu(event)
 	})
@@ -547,6 +556,8 @@ const updateTemplate = (node: Tree) => {
 	contextMenu.templateType = node.templateType
 	contextMenu.parentId = node.parentId
 	contextMenu.nodeData = node
+	const templatePath = getFullPathById(node.id, templateTreeData.treeList).replace(node.fileName, '').replace(/\/$/, '')
+	contextMenu.templatePath = templatePath ? templatePath : '/'
 	nextTick(() => {
 		addOrUpdateRef.value.init(node.id)
 	})
