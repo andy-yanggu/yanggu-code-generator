@@ -2,8 +2,8 @@
 	<el-breadcrumb separator="/">
 		<el-breadcrumb-item v-for="item in appStore.breadcrumbListRef" :key="item.title">
 			<template #default>
-				<span style="display: inline-flex; align-items: center; gap: 5px">
-					<svg-icon :icon="item.icon"></svg-icon>
+				<span style="display: flex; align-items: center; gap: 5px">
+					<svg-icon v-if="item.icon" :icon="item.icon"></svg-icon>
 					{{ item.title }}
 				</span>
 			</template>

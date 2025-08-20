@@ -1,10 +1,7 @@
 <template>
 	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menu.path">
 		<template #title>
-			<svg-icon :icon="menu.meta.icon"></svg-icon>
-			<el-tooltip :content="menu.meta.title" :disabled="!isTitleOverflow" placement="top">
-				<el-text ref="titleRef" truncated>{{ menu.meta.title }}</el-text>
-			</el-tooltip>
+			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="menu.children && menu.children.length > 0">
@@ -12,17 +9,13 @@
 		</template>
 	</el-sub-menu>
 	<el-menu-item v-else-if="menu.meta.type === 1 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
-		<svg-icon :icon="menu.meta.icon"></svg-icon>
-		<el-tooltip :content="menu.meta.title" :disabled="!isTitleOverflow" placement="top">
-			<el-text ref="titleRef" truncated>{{ menu.meta.title }}</el-text>
-		</el-tooltip>
+		<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 	</el-menu-item>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUpdated, nextTick, onUnmounted } from 'vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
-import { ElText } from 'element-plus'
+import { onMounted, ref } from 'vue'
+import MenuItemContent from '@/layout/sidebar/components/menu-item-content.vue'
 
 const props = defineProps({
 	menu: {
@@ -34,45 +27,9 @@ const props = defineProps({
 		required: true
 	}
 })
-
-const titleRef = ref<InstanceType<typeof ElText> | null>(null)
-const isTitleOverflow = ref(false)
 const rootRef = ref()
 // 添加ref引用到refMap中
 onMounted(() => {
 	props.refMap.set(props.menu.path, rootRef.value)
-})
-// 检查文本是否溢出
-const checkOverflow = () => {
-	nextTick(() => {
-		if (titleRef.value && titleRef.value.$el) {
-			const element = titleRef.value.$el
-			isTitleOverflow.value = element.scrollWidth > element.clientWidth
-		}
-	})
-}
-
-// 在组件挂载和更新时检查溢出
-onMounted(() => {
-	checkOverflow()
-})
-
-onUpdated(() => {
-	checkOverflow()
-})
-
-// 监听窗口大小变化
-let resizeObserver: ResizeObserver | null = null
-onMounted(() => {
-	resizeObserver = new ResizeObserver(checkOverflow)
-	if (titleRef.value && titleRef.value.$el) {
-		resizeObserver.observe(titleRef.value.$el)
-	}
-})
-
-onUnmounted(() => {
-	if (resizeObserver) {
-		resizeObserver.disconnect()
-	}
 })
 </script>

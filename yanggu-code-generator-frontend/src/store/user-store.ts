@@ -36,11 +36,11 @@ export interface MenuInfo {
 		// 图标
 		icon: string
 		// 缓存
-		cache: boolean
+		cache?: boolean
 		// 类型 0-目录、1-菜单、2-按钮
 		type: number
 		// 隐藏
-		hidden: boolean
+		hidden?: boolean
 	}
 	// 子菜单
 	children?: MenuInfo[]

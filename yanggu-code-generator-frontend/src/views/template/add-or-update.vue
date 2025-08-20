@@ -1,7 +1,7 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px">
-			<el-form-item v-if="state.dataForm.templateType != 0" label="模板名称" prop="templateName">
+			<el-form-item v-if="state.dataForm.templateType === 1" label="模板名称" prop="templateName">
 				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
 			<el-form-item :label="state.dataForm.templateType === 0 ? '目录名称' : '文件名称'" prop="fileName">
@@ -24,8 +24,8 @@
 					<el-button type="primary" :icon="Upload">点击上传</el-button>
 				</el-upload>
 			</el-form-item>
-			<el-form-item label="模板描述" prop="templateDesc">
-				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入模板描述"></el-input>
+			<el-form-item label="描述" prop="templateDesc">
+				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入描述"></el-input>
 			</el-form-item>
 		</el-form>
 
@@ -88,6 +88,8 @@ const submitBeforeHandle = () => {
 		state.dataForm.binaryOriginalFileName = ''
 		// 删除模板内容字段
 		delete state.dataForm.templateContent
+	} else if (state.dataForm.templateType === 2) {
+		state.dataForm.templateName = ''
 	}
 }
 

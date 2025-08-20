@@ -1,6 +1,6 @@
 <template>
 	<el-card class="layout-query" shadow="hover">
-		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
+		<el-form ref="queryRef" :inline="true" :model="state.queryForm" label-position="right" label-width="auto" @keyup.enter="getDataList()">
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="模板组名称" prop="templateGroupName">
@@ -69,7 +69,7 @@
 				:formatter="getLabel(TEMPLATE_TYPES)"
 			></el-table-column>
 			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
 		<el-pagination
 			:current-page="state.pageNum"

@@ -40,7 +40,7 @@
 						align="center"
 						:formatter="getLabel(TEMPLATE_TYPES)"
 					></el-table-column>
-					<el-table-column prop="templateDesc" label="模板描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+					<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				</el-table>
 				<el-pagination
 					:current-page="state.pageNum"

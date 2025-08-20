@@ -99,9 +99,11 @@
 						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
-									<span @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
-										{{ tabItem.fileName }}
-									</span>
+									<el-tooltip :content="tabItem.templateDesc" effect="light" :disabled="!tabItem.templateDesc" placement="bottom">
+										<span @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
+											{{ tabItem.fileName }}
+										</span>
+									</el-tooltip>
 								</template>
 							</el-tab-pane>
 						</el-tabs>
@@ -192,7 +194,7 @@ interface Tree {
 	templateName: string
 	// 文件名称
 	fileName: string
-	// 模板描述
+	// 描述
 	templateDesc?: string
 	// 模板类型（0-目录，1-模板文件，2-二进制文件）
 	templateType: number
@@ -587,7 +589,7 @@ document.addEventListener('mousedown', e => {
 
 const showTabMenu = (e: MouseEvent, tab: Tree, index: number) => {
 	e.preventDefault()
-	console.log('tab右键', tab)
+	// console.log('tab右键', tab)
 	tabContextMenu.index = index
 	tabContextMenu.item = tab
 	tabContextMenu.visible = true
@@ -708,7 +710,7 @@ defineExpose({
 	padding: 4px 0;
 	z-index: 9999;
 	list-style: none;
-	min-width: 100px;
+	min-width: 85px;
 	max-width: 200px; /* 限制最大宽度 */
 	overflow: hidden; /* 防止超出 */
 	white-space: nowrap; /* 如果需要单行显示 */

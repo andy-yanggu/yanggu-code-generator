@@ -16,19 +16,16 @@
 				<refresh-current-page></refresh-current-page>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
-						<svg-icon icon="icon-gitee-fill-round"></svg-icon>
+						<svg-icon icon="icon-gitee-fill-round" size="18px"></svg-icon>
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="'github地址'" effect="dark" placement="bottom">
 					<el-link href="https://github.com/andy-yanggu/yanggu-code-generator" target="_blank">
-						<svg-icon icon="icon-github-fill"></svg-icon>
+						<svg-icon icon="icon-github-fill" size="18px"></svg-icon>
 					</el-link>
 				</el-tooltip>
-				<el-tooltip :content="isFullscreen ? '退出全屏' : '全屏'" effect="dark" placement="bottom">
-					<el-icon :size="18" class="collapse-icon" @click="toggle()">
-						<FullScreen v-if="!isFullscreen" />
-						<Aim v-else />
-					</el-icon>
+				<el-tooltip :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
+					<svg-icon :icon="isFullscreen ? 'icon-fullscreen' : 'icon-fullscreen-exit'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>
 			</div>
 		</div>
@@ -62,7 +59,7 @@ const appStore = useAppStore()
 .navbar-left {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 15px;
 }
 
 .navbar-right {

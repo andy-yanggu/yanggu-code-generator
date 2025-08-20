@@ -1,5 +1,5 @@
 /**
- * 获取枚举标签
+ * 获取表格枚举标签
  */
 export const getLabel = (enumList: EnumItem[]) => {
 	return (_: any, __: any, value: any): string => {

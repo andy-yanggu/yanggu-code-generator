@@ -1,15 +1,21 @@
 <template>
 	<div class="svg-icon">
-		<svg :class="`${className}`" :style="`color:${color};`" aria-hidden="true">
-			<use :xlink:href="iconName"></use>
+		<svg
+			:style="{
+				color: color,
+				width: size,
+				height: size
+			}"
+			aria-hidden="true"
+		>
+			<use :xlink:href="`#${props.icon}`"></use>
 		</svg>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
 const props = defineProps({
+	// https://www.iconfont.cn 图标库需使用前缀 icon- 才能匹配
 	icon: {
 		type: String,
 		required: true
@@ -18,25 +24,19 @@ const props = defineProps({
 		type: String,
 		default: ''
 	},
-	className: {
+	size: {
 		type: String,
-		default: ''
+		default: '1em' // 支持传入 px、em、rem
 	}
 })
-
-// https://www.iconfont.cn 图标库需使用前缀 icon- 才能匹配
-const iconName = computed(() => `#${props.icon}`)
 </script>
 
 <style scoped>
 .svg-icon {
 	display: inline-block;
 }
-
 .svg-icon svg {
 	display: block;
-	width: 1em; /* 使用相对单位 */
-	height: 1em; /* 使用相对单位 */
 	fill: currentColor;
 }
 </style>

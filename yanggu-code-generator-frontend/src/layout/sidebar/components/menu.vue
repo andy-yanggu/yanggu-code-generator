@@ -29,7 +29,7 @@ const menuRefs = ref<Map<string, any>>(new Map())
 
 const defaultActive = computed(() => route.path)
 
-// 监听路由变化，自动滚动
+// 监听路由变化，菜单自动滚动
 watch(
 	() => route.path,
 	newPath => {

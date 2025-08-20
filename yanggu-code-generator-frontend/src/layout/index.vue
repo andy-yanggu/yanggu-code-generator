@@ -1,6 +1,6 @@
 <template>
 	<el-container class="layout-container">
-		<el-aside class="layout-sidebar" :style="{ width: appStore.isCollapseRef ? '64px' : '180px' }">
+		<el-aside class="layout-sidebar" :style="{ width: appStore.isCollapseRef ? '60px' : '210px' }">
 			<sidebar></sidebar>
 		</el-aside>
 		<el-container direction="vertical">
