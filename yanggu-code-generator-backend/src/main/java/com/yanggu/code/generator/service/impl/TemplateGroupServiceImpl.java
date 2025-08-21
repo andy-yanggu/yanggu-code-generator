@@ -253,7 +253,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
             List<TemplateBO> templateList = templateGroup.getTemplateList();
             if (CollUtil.isNotEmpty(templateList)) {
                 // 直接使用树形结构递归导入
-                templateList.forEach(template -> importTemplateTree(template, 0L, groupEntity.getId(), new HashMap<>()));
+                templateList.forEach(template -> importTemplateTree(template, 0L, groupEntity.getId()));
             }
         });
     }
@@ -303,10 +303,8 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      * @param templateBO 模板BO
      * @param parentId 父模板ID
      * @param templateGroupId 模板组ID
-     * @param oldToNewIdMap 新旧ID映射
      */
-    private void importTemplateTree(TemplateBO templateBO, Long parentId,
-                                    Long templateGroupId, Map<Long, Long> oldToNewIdMap) {
+    private void importTemplateTree(TemplateBO templateBO, Long parentId, Long templateGroupId) {
         // 创建模板DTO
         TemplateDTO templateDTO = templateMapstruct.boToDTO(templateBO);
         Long oldId = templateDTO.getId();
@@ -317,13 +315,11 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         // 添加模板
         TemplateEntity newTemplate = templateService.add(templateDTO);
 
-        // 记录ID映射关系
-        oldToNewIdMap.put(oldId, newTemplate.getId());
 
         // 递归处理子模板
         if (CollUtil.isNotEmpty(templateBO.getChildren())) {
             templateBO.getChildren().forEach(child ->
-                    importTemplateTree(child, newTemplate.getId(), templateGroupId, oldToNewIdMap));
+                    importTemplateTree(child, newTemplate.getId(), templateGroupId));
         }
     }
 
