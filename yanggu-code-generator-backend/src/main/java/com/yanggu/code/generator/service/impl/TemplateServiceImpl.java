@@ -8,6 +8,7 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
+import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
@@ -175,6 +176,56 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         entity.setId(contentDTO.getId());
         entity.setTemplateContent(contentDTO.getTemplateContent());
         templateMapper.updateById(entity);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void updateParent(TemplateDragDTO dragDTO) {
+        Long dragNodeId = dragDTO.getDragNodeId();
+        Long newParentId = dragDTO.getNewParentId();
+        // 1. 校验拖拽节点是否存在
+        TemplateEntity dragNode = templateMapper.selectById(dragNodeId);
+        if (dragNode == null) {
+            throw new BusinessException("拖拽的节点不存在");
+        }
+
+        // 2. 校验新父节点
+        TemplateEntity parentNode = templateMapper.selectById(newParentId);
+        if (parentNode == null) {
+            throw new BusinessException("目标父节点不存在");
+        }
+        // 文件不能接子节点
+        if (parentNode.getTemplateType() != 0) {
+            throw new BusinessException("文件节点不能作为父级");
+        }
+
+        // 3. 防止循环引用：不能把节点拖到自己或自己的子孙下面
+        if (Objects.equals(dragNodeId, newParentId)) {
+            throw new BusinessException("不能将节点拖到自己下面");
+        }
+        if (newParentId != null && newParentId > 0 && isDescendant(newParentId, dragNodeId)) {
+            throw new BusinessException("不能将节点拖到自己的子节点下面");
+        }
+
+        // 4. 更新 parentId
+        TemplateEntity updateEntity = new TemplateEntity();
+        updateEntity.setId(dragNodeId);
+        updateEntity.setParentId(newParentId);
+        templateMapper.updateById(updateEntity);
+    }
+
+    /**
+     * 判断 nodeId 是否是 targetId 的子孙节点
+     */
+    private boolean isDescendant(Long nodeId, Long targetId) {
+        TemplateEntity node = templateMapper.selectById(nodeId);
+        while (node != null && node.getParentId() != null && node.getParentId() > 0) {
+            if (Objects.equals(node.getParentId(), targetId)) {
+                return true;
+            }
+            node = templateMapper.selectById(node.getParentId());
+        }
+        return false;
     }
 
     private List<TemplateVO> getChildren(List<TemplateVO> allList, Long id) {

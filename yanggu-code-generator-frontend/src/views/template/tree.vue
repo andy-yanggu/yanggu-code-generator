@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" title="配置" :size="'100%'" :modal="false">
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 配置`" :size="'100%'" :modal="false">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapseRef" width="400px" style="overflow: hidden">
@@ -24,23 +24,27 @@
 							ref="treeRef"
 							:data="templateTreeData.treeList"
 							node-key="id"
-							:current-node-key="currentNodeKey"
+							:current-node-key="templateTreeData.activeItem.id"
 							highlight-current
 							show-checkbox
 							class="custom-tree"
 							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"
+							draggable
+							:allow-drag="treeAllowDrag"
+							:allow-drop="treeAllowDrop"
 							@node-click="handleTreeNodeClick"
 							@node-contextmenu="handleNodeRightClick"
+							@node-drop="handleNodeDrop"
 						>
 							<template #default="{ node, data }">
 								<el-tooltip :content="data.templateDesc" placement="top" effect="light" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
 										<svg-icon :icon="getIcon(node, data)"></svg-icon>
 										<span>{{ node.label }}</span>
-										<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
+										<!-- <el-icon class="edit-icon" @click.stop="updateTemplate(data)">
 											<Edit></Edit>
-										</el-icon>
+										</el-icon> -->
 									</div>
 								</el-tooltip>
 							</template>
@@ -76,11 +80,11 @@
 
 			<add-or-update
 				ref="addOrUpdateRef"
-				:template-group-id="templateTreeData.id"
+				:template-group-id="templateGroupId"
 				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
 				:template-path="contextMenu.templatePath"
-				@refresh-data-list="updateAfterRefreshData(contextMenu.nodeData.id)"
+				@refresh-data-list="init()"
 			></add-or-update>
 
 			<!-- 右侧：模板编辑 -->
@@ -107,7 +111,7 @@
 								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 							</el-col>
 						</el-row>
-						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+						<el-tabs v-model="templateTreeData.activeItem.id" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" effect="light" :disabled="!tabItem.templateDesc" placement="bottom">
@@ -191,7 +195,7 @@ import { ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi } from '@/api/template'
+import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi, templateUpdateParentApi } from '@/api/template'
 import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
@@ -217,16 +221,24 @@ interface Tree {
 	children?: Tree[]
 }
 
-const currentNodeKey = ref(-1)
+const props = defineProps({
+	templateGroupId: {
+		type: Number,
+		required: true
+	},
+	templateGroupName: {
+		type: String,
+		required: true
+	}
+})
+
 const treeRef = ref()
 const templateTreeData = reactive({
 	visible: false,
-	id: -1,
 	treeList: [] as Tree[],
 	dataList: [] as Tree[],
-	activeItem: {} as Tree,
-	tabList: [] as Tree[],
-	tabActiveName: -1
+	activeItem: { id: -1 } as Tree,
+	tabList: [] as Tree[]
 })
 
 const treeSearchText = ref('')
@@ -263,24 +275,22 @@ const fullFilePath = computed(() => {
 })
 
 // 初始化方法
-const init = async (id: number) => {
-	templateTreeData.id = id
+const init = async () => {
 	isCollapseRef.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		const res = await templateTreeDataApi(id)
+		const res = await templateTreeDataApi(props.templateGroupId)
 		templateTreeData.treeList = res.data
 		const templateContentList = buildFileList(res.data)
 		templateTreeData.dataList = templateContentList
 		templateTreeData.visible = true
 		await nextTick()
-		if (templateContentList.length > 0 && templateTreeData.tabActiveName === -1) {
-			templateTreeData.activeItem = templateContentList[0]
-			currentNodeKey.value = templateContentList[0].id
-			treeRef.value.setCurrentKey(currentNodeKey.value)
-			templateTreeData.tabActiveName = templateContentList[0].id
+		if (templateContentList.length > 0 && templateTreeData.activeItem.id === -1) {
+			Object.assign(templateTreeData.activeItem, templateContentList[0])
 			tabPush(templateContentList[0])
 		}
+		// 更新一下tab和activeItem中的数据，已新加载数据为准
+		refreshData()
 	} finally {
 		loadingInstance.close()
 	}
@@ -299,15 +309,10 @@ const refreshTree = () => {
 
 			// 清空所有tab
 			templateTreeData.tabList = []
-			templateTreeData.tabActiveName = -1
-			templateTreeData.activeItem = {} as Tree
-
-			// 重置节点选中状态
-			currentNodeKey.value = -1
-			treeRef.value?.setCurrentKey()
+			Object.assign(templateTreeData.activeItem, { id: -1 } as Tree)
 
 			// 重新加载数据
-			init(templateTreeData.id)
+			init()
 		})
 		.catch(() => {
 			ElMessage.info('已取消刷新')
@@ -373,10 +378,9 @@ const filterNode = (value: string, data: Tree) => {
 const handleTreeNodeClick = (data: Tree) => {
 	// 只有是文件才可以预览
 	if (data.templateType != 0) {
-		const filterElement = templateTreeData.dataList.filter(item => item.id === data.id)[0]
-		templateTreeData.activeItem = filterElement
+		const filterElement = getElementFromDataList(data.id)!
+		Object.assign(templateTreeData.activeItem, filterElement)
 		tabPush(filterElement)
-		templateTreeData.tabActiveName = filterElement.id
 	}
 }
 
@@ -401,9 +405,80 @@ const deleteCheckedNode = () => {
 				allCheckedKeys.forEach((tempId: number) => handleTabRemove(tempId))
 			})
 			.then(() => {
-				init(templateTreeData.id)
+				init()
 			})
 	})
+}
+
+// 判断树节点能否被拖拽
+const treeAllowDrag = (draggingNode: any) => {
+	// console.log('节点允许被拖拽:', draggingNode.data)
+	// 可以根据需要设置哪些节点可以拖拽
+	// 这里允许所有节点拖拽
+	return true
+}
+
+// 判断树节点是否允许放置
+const treeAllowDrop = (draggingNode: any, dropNode: any, type: 'prev' | 'next' | 'inner') => {
+	const dragData = draggingNode.data
+	const dropData = dropNode.data
+	// console.log('节点是否允许放置:', dragData, dropData, type)
+
+	// 1. inner 必须是目录（templateType === 0）
+	if (type === 'inner') {
+		// 如果父节点没变，不允许放置。树节点顺序是后端根据类型和名称排序，不是节点自有的顺序
+		if (dragData.parentId === dropData.id) {
+			return false
+		}
+		return dropData.templateType === 0
+	} else if (type === 'prev' || type === 'next') {
+		// 2. prev / next 永远允许同级拖拽，但父节点没变化则禁止
+		return dragData.parentId !== dropData.parentId
+	}
+
+	return false
+}
+
+// 处理节点拖拽完成事件
+const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | 'after' | 'inner', ev: Event) => {
+	const dragData = draggingNode.data
+	const dropData = dropNode.data
+	// console.log('节点拖拽完成:', dragData, dropData, dropType, ev)
+
+	// 计算新的 parentId
+	let newParentId = dragData.parentId
+
+	if (dropType === 'inner') {
+		// 拖入目录内部
+		newParentId = dropData.id
+	} else if (dropType === 'before' || dropType === 'after') {
+		// 和目标节点同级
+		newParentId = dropData.parentId
+	}
+
+	if (newParentId === dragData.parentId) {
+		ElMessage.warning('不能移动到自身')
+		return
+	}
+
+	// 构造请求参数
+	const dataForm = {
+		dragNodeId: dragData.id,
+		newParentId: newParentId
+	}
+
+	// console.log('拖拽完成:', dataForm)
+
+	// 调用 API 更新位置
+	templateUpdateParentApi(dataForm)
+		.then(() => {
+			ElMessage.success('移动成功')
+			init() // 重新加载数据
+		})
+		.catch(() => {
+			ElMessage.error('移动失败')
+			init() // 恢复原状
+		})
 }
 
 // tab点击
@@ -411,9 +486,7 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 	const id = tab.paneName as number
 	const matchedItem = templateTreeData.tabList.find(item => item.id === id)
 	if (matchedItem) {
-		templateTreeData.activeItem = matchedItem
-		currentNodeKey.value = matchedItem.id
-		treeRef.value.setCurrentKey(currentNodeKey.value)
+		Object.assign(templateTreeData.activeItem, matchedItem)
 	}
 }
 
@@ -426,9 +499,9 @@ const handleTabRemove = (id: number) => {
 	}
 	// 删除tab
 	templateTreeData.tabList.splice(index, 1)
-	let newTabActiveName = templateTreeData.tabActiveName
+	let newTabActiveName = templateTreeData.activeItem.id
 	// 删除的是否为当前tab
-	if (templateTreeData.tabActiveName === id && templateTreeData.tabList.length > 0) {
+	if (templateTreeData.activeItem.id === id && templateTreeData.tabList.length > 0) {
 		// 优先尝试右侧标签
 		if (index < templateTreeData.tabList.length) {
 			newTabActiveName = templateTreeData.tabList[index].id
@@ -441,11 +514,8 @@ const handleTabRemove = (id: number) => {
 		// 设置新的激活项
 		const activeTab = templateTreeData.tabList.find(tab => tab.id === newTabActiveName)
 		if (activeTab) {
-			templateTreeData.activeItem = activeTab
+			Object.assign(templateTreeData.activeItem, activeTab)
 		}
-		templateTreeData.tabActiveName = newTabActiveName
-		currentNodeKey.value = newTabActiveName
-		treeRef.value?.setCurrentKey(currentNodeKey.value)
 	}
 }
 
@@ -455,6 +525,22 @@ const tabPush = (tree: Tree) => {
 		return
 	}
 	templateTreeData.tabList.push(tree)
+}
+
+const refreshData = () => {
+	// 更新激活项数据
+	Object.assign(templateTreeData.activeItem, getElementFromDataList(templateTreeData.activeItem.id)!)
+	if (templateTreeData.tabList.length === 0) {
+		return
+	}
+	for (let index = 0; index < templateTreeData.tabList.length; index++) {
+		const tabElementId = templateTreeData.tabList[index].id
+		templateTreeData.tabList[index] = getElementFromDataList(tabElementId)!
+	}
+}
+
+const getElementFromDataList = (id: number): Tree | undefined => {
+	return templateTreeData.dataList.find(item => item.id === id)
 }
 
 const saveTemplateContent = () => {
@@ -564,21 +650,6 @@ const updateTemplate = (node: Tree) => {
 	hideContextMenu()
 }
 
-// 刷新数据
-const updateAfterRefreshData = async (id: number) => {
-	await init(templateTreeData.id)
-	// 更新tabList数据，更新activeItem数据
-	const newItem = templateTreeData.dataList.find(item => item.id === id)!
-	if (id === templateTreeData.activeItem.id) {
-		templateTreeData.activeItem = newItem
-	}
-	// 找到templateTreeData.tabList中newItem的索引
-	const index = templateTreeData.tabList.findIndex(item => item.id === id)
-	if (index >= 0) {
-		templateTreeData.tabList[index] = newItem
-	}
-}
-
 // 新建目录
 const newDir = (parent: Tree) => {
 	// console.log('新建目录在', parent)
@@ -674,7 +745,7 @@ const closeCurrentTab = () => {
 	templateTreeData.tabList = templateTreeData.tabList.filter(tab => tab.id !== tabContextMenu.item.id)
 
 	// 判断激活的是否为当前tab
-	if (templateTreeData.tabActiveName === tabContextMenu.item.id && templateTreeData.tabList.length > 0) {
+	if (templateTreeData.activeItem.id === tabContextMenu.item.id && templateTreeData.tabList.length > 0) {
 		let newActiveTab
 		// 优先尝试右侧标签
 		if (tabContextMenu.index < templateTreeData.tabList.length) {
@@ -683,10 +754,7 @@ const closeCurrentTab = () => {
 			// 右侧无标签是选择左侧最后一个
 			newActiveTab = templateTreeData.tabList[templateTreeData.tabList.length - 1]
 		}
-		templateTreeData.tabActiveName = newActiveTab.id
-		templateTreeData.activeItem = newActiveTab
-		treeRef.value.setCurrentKey(newActiveTab.id)
-		currentNodeKey.value = newActiveTab.id
+		Object.assign(templateTreeData.activeItem, newActiveTab)
 	}
 
 	hideTabContextMenu()
@@ -695,30 +763,21 @@ const closeCurrentTab = () => {
 // 关闭其他tab
 const closeOtherTabs = () => {
 	templateTreeData.tabList = templateTreeData.tabList.filter(tab => tab.id === tabContextMenu.item.id)
-	templateTreeData.activeItem = tabContextMenu.item
-	templateTreeData.tabActiveName = tabContextMenu.item.id
-	treeRef.value.setCurrentKey(tabContextMenu.item.id)
-	currentNodeKey.value = tabContextMenu.item.id
+	Object.assign(templateTreeData.activeItem, tabContextMenu.item)
 	hideTabContextMenu()
 }
 
 // 关闭左侧tab
 const closeLeftTabs = () => {
 	templateTreeData.tabList = templateTreeData.tabList.filter((_, index) => index >= tabContextMenu.index)
-	templateTreeData.activeItem = tabContextMenu.item
-	templateTreeData.tabActiveName = tabContextMenu.item.id
-	treeRef.value.setCurrentKey(tabContextMenu.item.id)
-	currentNodeKey.value = tabContextMenu.item.id
+	Object.assign(templateTreeData.activeItem, tabContextMenu.item)
 	hideTabContextMenu()
 }
 
 // 关闭右侧tab
 const closeRightTabs = () => {
 	templateTreeData.tabList = templateTreeData.tabList.filter((_, index) => index <= tabContextMenu.index)
-	templateTreeData.activeItem = tabContextMenu.item
-	templateTreeData.tabActiveName = tabContextMenu.item.id
-	treeRef.value.setCurrentKey(tabContextMenu.item.id)
-	currentNodeKey.value = tabContextMenu.item.id
+	Object.assign(templateTreeData.activeItem, tabContextMenu.item)
 	hideTabContextMenu()
 }
 

@@ -71,12 +71,10 @@ export const useSubmitForm = (options: FormOptions) => {
 				.then(() => {
 					ElMessage.success({
 						message: options.message || '操作成功',
-						duration: options.duration || 500,
-						onClose: () => {
-							visible.value = false
-							options.emit('refreshDataList')
-						}
+						duration: options.duration || 500
 					})
+					visible.value = false
+					options.emit('refreshDataList')
 				})
 				.finally(() => {
 					submitLoading.value = false

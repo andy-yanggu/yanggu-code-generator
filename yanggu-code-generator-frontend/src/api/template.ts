@@ -60,3 +60,8 @@ export const templateTreeDataApi = (templateGroupId: number) => {
 export const templateUpdateContentApi = (dataForm: any) => {
 	return service.put('/template/updateContent', dataForm)
 }
+
+// 修改模板父级
+export const templateUpdateParentApi = (dataForm: any) => {
+	return service.put('/template/updateParent', dataForm)
+}

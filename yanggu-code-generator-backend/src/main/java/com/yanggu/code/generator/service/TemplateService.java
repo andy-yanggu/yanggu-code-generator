@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
+import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
@@ -79,11 +80,19 @@ public interface TemplateService extends IService<TemplateEntity> {
         this.remove(Wrappers.<TemplateEntity>lambdaQuery().in(TemplateEntity::getTemplateGroupId, groupIdList));
     }
 
+    /**
+     * 获取模板树
+     */
     List<TemplateVO> tree(Long templateGroupId);
 
     /**
      * 修改模板内容
      */
     void updateContent(TemplateContentDTO contentDTO);
+
+    /**
+     * 修改模板父级
+     */
+    void updateParent(TemplateDragDTO dragDTO);
 
 }

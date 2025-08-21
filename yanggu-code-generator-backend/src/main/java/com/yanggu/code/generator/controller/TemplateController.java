@@ -6,6 +6,7 @@ import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
+import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
@@ -163,6 +164,16 @@ public class TemplateController {
     @Operation(summary = "修改模板内容")
     public void updateContent(@RequestBody @Valid TemplateContentDTO contentDTO) {
         templateService.updateContent(contentDTO);
+    }
+
+    /**
+     * 修改模板父级
+     */
+    @PutMapping("/updateParent")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "修改模板父级")
+    public void updateParent(@RequestBody TemplateDragDTO dragDTO) {
+        templateService.updateParent(dragDTO);
     }
 
 }

@@ -105,7 +105,12 @@
 			<copy ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy>
 		</el-card>
 
-		<template-tree ref="treeUpdateRef" :key="currentGroupId"></template-tree>
+		<template-tree
+			ref="treeUpdateRef"
+			:key="key"
+			:template-group-id="currentTemplateGroupId"
+			:template-group-name="currentTemplateGroupName"
+		></template-tree>
 	</div>
 </template>
 
@@ -138,8 +143,9 @@ const state: IHooksOptions = reactive({
 
 const tableRef = ref()
 const copyTemplateGroupRef = ref()
-const currentGroupId = ref('')
-const templateGroupImportRef = ref()
+const key = ref()
+const currentTemplateGroupId = ref(-1)
+const currentTemplateGroupName = ref('')
 const treeUpdateRef = ref()
 
 const copyTemplateGroupHandle = (id: number) => {
@@ -147,7 +153,9 @@ const copyTemplateGroupHandle = (id: number) => {
 }
 
 const treeData = (row: any) => {
-	currentGroupId.value = `tree-${row.id}-${Date.now()}`
+	key.value = Date.now()
+	currentTemplateGroupId.value = row.id
+	currentTemplateGroupName.value = row.groupName
 	nextTick(() => {
 		treeUpdateRef.value.init(row.id)
 	})
