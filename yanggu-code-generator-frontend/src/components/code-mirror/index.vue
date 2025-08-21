@@ -2,44 +2,29 @@
 	<codemirror
 		v-model="codes"
 		placeholder="Code goes here..."
-		:style="{ height: height + 'px' }"
 		:autofocus="true"
 		:indent-with-tab="true"
 		:tab-size="2"
 		:extensions="extensions"
 		@ready="handleReady"
 		@change="change($event)"
-		@focus="log('focus', $event)"
-		@blur="log('blur', $event)"
 	></codemirror>
 </template>
 
-<script setup>
-import { ref, shallowRef, watch } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { EditorView } from '@codemirror/view'
 
 const props = defineProps({
-	modelValue: {
-		type: String
-	},
-	height: {
-		type: Number,
-		default: 400
+	readOnly: {
+		type: Boolean,
+		default: false
 	}
 })
+
 const codes = ref('')
-watch(
-	() => props.modelValue,
-	val => {
-		codes.value = val || ''
-	},
-	{
-		immediate: true
-		// deep: true
-	}
-)
 const customStyle = EditorView.theme({
 	'&': {
 		height: 'auto',
@@ -51,11 +36,16 @@ const customStyle = EditorView.theme({
 	}
 })
 
-const extensions = [javascript(), customStyle]
-const log = console.log
+const extensions = computed(() => {
+	const ext = [javascript()]
+	if (props.readOnly) {
+		ext.push(EditorView.editable.of(false))
+	}
+	return [ext, customStyle]
+})
 
 // Codemirror EditorView instance ref
-const view = shallowRef()
+const view = ref()
 const handleReady = payload => {
 	view.value = payload.view
 }

@@ -82,7 +82,7 @@
 					<el-main style="padding: 10px; overflow: hidden">
 						<template v-if="templateTreeData.item.templateType === 1">
 							<el-scrollbar style="height: 100%">
-								<code-mirror v-model="templateTreeData.item.templateContent" :height="contentHeight"></code-mirror>
+								<code-mirror v-model="templateTreeData.item.templateContent" :read-only="true"></code-mirror>
 							</el-scrollbar>
 						</template>
 						<template v-else-if="templateTreeData.item.templateType === 2">
@@ -119,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
@@ -215,14 +215,6 @@ const buildFileList = (treeList: Tree[]) => {
 	return templateContentList
 }
 
-// 计算内容行数
-const contentHeight = computed(() => {
-	if (!templateTreeData.item.templateContent) {
-		return 800
-	}
-	const length = templateTreeData.item.templateContent!.split('\n').length
-	return Math.min(Math.max(20 * length, 800), 1000)
-})
 watch(treeSearchText, val => {
 	treeRef.value!.filter(val)
 })

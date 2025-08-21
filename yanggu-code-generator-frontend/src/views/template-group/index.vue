@@ -108,8 +108,9 @@
 		<template-tree
 			ref="treeUpdateRef"
 			:key="key"
-			:template-group-id="currentTemplateGroupId"
-			:template-group-name="currentTemplateGroupName"
+			:template-group-id="currentTemplateGroup.id"
+			:template-group-name="currentTemplateGroup.groupName"
+			:template-group-type="currentTemplateGroup.type"
 		></template-tree>
 	</div>
 </template>
@@ -144,8 +145,11 @@ const state: IHooksOptions = reactive({
 const tableRef = ref()
 const copyTemplateGroupRef = ref()
 const key = ref()
-const currentTemplateGroupId = ref(-1)
-const currentTemplateGroupName = ref('')
+const currentTemplateGroup = reactive({
+	id: -1,
+	groupName: '',
+	type: -1
+})
 const treeUpdateRef = ref()
 
 const copyTemplateGroupHandle = (id: number) => {
@@ -154,8 +158,7 @@ const copyTemplateGroupHandle = (id: number) => {
 
 const treeData = (row: any) => {
 	key.value = Date.now()
-	currentTemplateGroupId.value = row.id
-	currentTemplateGroupName.value = row.groupName
+	Object.assign(currentTemplateGroup, row)
 	nextTick(() => {
 		treeUpdateRef.value.init(row.id)
 	})

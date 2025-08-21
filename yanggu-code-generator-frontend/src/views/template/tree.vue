@@ -42,9 +42,9 @@
 									<div class="custom-tree-node">
 										<svg-icon :icon="getIcon(node, data)"></svg-icon>
 										<span>{{ node.label }}</span>
-										<!-- <el-icon class="edit-icon" @click.stop="updateTemplate(data)">
+										<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
 											<Edit></Edit>
-										</el-icon> -->
+										</el-icon>
 									</div>
 								</el-tooltip>
 							</template>
@@ -99,15 +99,23 @@
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
-							<el-col :span="isFullscreen ? 18 : 17">
+							<el-col :span="isFullscreen ? 16 : 15">
 								<el-tooltip :content="fullFilePath" placement="top">
 									<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 										路径：{{ fullFilePath }}
 									</el-text>
 								</el-tooltip>
 							</el-col>
-							<el-col :span="6" style="text-align: right">
-								<el-button size="small" type="primary" :icon="DocumentChecked" :loading="submitLoading" @click="saveTemplateContent">保存</el-button>
+							<el-col :span="8" style="text-align: right">
+								<el-button
+									:disabled="[0, 2].includes(templateTreeData.activeItem.templateType)"
+									size="small"
+									type="warning"
+									:icon="DocumentChecked"
+									@click="testTemplateContent"
+									>测试
+								</el-button>
+								<el-button size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">保存</el-button>
 								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 							</el-col>
 						</el-row>
@@ -147,13 +155,15 @@
 								</li>
 							</ul>
 						</div>
+						<!-- 测试页面 -->
+						<template-test ref="templateTestRef"></template-test>
 					</el-header>
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
 						<template v-if="templateTreeData.activeItem.templateType === 1">
 							<el-scrollbar style="height: 100%">
-								<code-mirror v-model="templateTreeData.activeItem.templateContent" :height="contentHeight"></code-mirror>
+								<code-mirror v-model="templateTreeData.activeItem.templateContent"></code-mirror>
 							</el-scrollbar>
 						</template>
 						<template v-else-if="templateTreeData.activeItem.templateType === 2">
@@ -199,6 +209,7 @@ import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi, t
 import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
+import TemplateTest from '@/views/template/template-test.vue'
 
 interface Tree {
 	// 主键ID
@@ -229,10 +240,15 @@ const props = defineProps({
 	templateGroupName: {
 		type: String,
 		required: true
+	},
+	templateGroupType: {
+		type: Number,
+		required: true
 	}
 })
 
 const treeRef = ref()
+const templateTestRef = ref()
 const templateTreeData = reactive({
 	visible: false,
 	treeList: [] as Tree[],
@@ -352,15 +368,6 @@ const buildFileList = (treeList: Tree[]) => {
 const toggleCollapse = () => {
 	isCollapseRef.value = !isCollapseRef.value
 }
-
-// 计算内容行数
-const contentHeight = computed(() => {
-	if (!templateTreeData.activeItem.templateContent) {
-		return 800
-	}
-	const length = templateTreeData.activeItem.templateContent!.split('\n').length
-	return Math.min(Math.max(20 * length, 800), 1000)
-})
 
 watch(treeSearchText, val => {
 	treeRef.value!.filter(val)
@@ -535,7 +542,7 @@ const refreshData = () => {
 	}
 	for (let index = 0; index < templateTreeData.tabList.length; index++) {
 		const tabElementId = templateTreeData.tabList[index].id
-		templateTreeData.tabList[index] = getElementFromDataList(tabElementId)!
+		templateTreeData.tabList.splice(index, 1, getElementFromDataList(tabElementId)!)
 	}
 }
 
@@ -543,6 +550,12 @@ const getElementFromDataList = (id: number): Tree | undefined => {
 	return templateTreeData.dataList.find(item => item.id === id)
 }
 
+// 测试模板内容
+const testTemplateContent = () => {
+	templateTestRef.value.init(props.templateGroupId, props.templateGroupType, templateTreeData.activeItem.id)
+}
+
+// 保存模板内容
 const saveTemplateContent = () => {
 	submitLoading.value = true
 	const dataForm = {
@@ -555,6 +568,9 @@ const saveTemplateContent = () => {
 				message: '保存成功',
 				duration: 500
 			})
+		})
+		.then(() => {
+			init()
 		})
 		.finally(() => {
 			submitLoading.value = false
