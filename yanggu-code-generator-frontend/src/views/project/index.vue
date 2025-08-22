@@ -73,14 +73,14 @@
 					align="center"
 					sortable="custom"
 				></el-table-column>
-				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="190">
+				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 					<template #default="scope">
 						<el-row>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成代码</el-button>
+								<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-button>
 							</el-col>
 						</el-row>
 						<el-row>

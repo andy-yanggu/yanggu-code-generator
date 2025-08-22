@@ -167,7 +167,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         try (DataSourceBO dataSource = get(id)) {
             String databaseName = DbUtil.getDatabaseName(dataSource);
             result.setResult(true);
-            result.setMessage(StrUtil.format("测试成功，数据库为：{}", databaseName));
+            result.setMessage(StrUtil.format("连接成功，数据库为：{}", databaseName));
             return result;
         } catch (Exception e) {
             log.warn("数据源测试失败, 异常信息: {}", e.getMessage(), e);

@@ -46,6 +46,12 @@ public class TemplateVOQuery extends PageQuery<TemplateVO> implements Serializab
     private String templateName;
 
     /**
+     * 目录/文件名称
+     */
+    @Schema(description = "目录/文件名称")
+    private String fileName;
+
+    /**
      * 模板类型（0-目录，1-模板文件，2-二进制文件）
      */
     @Schema(description = "模板类型（0-目录，1-模板文件，2-二进制文件）")

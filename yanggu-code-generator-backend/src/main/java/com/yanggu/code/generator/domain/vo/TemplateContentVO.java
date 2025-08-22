@@ -35,9 +35,9 @@ public class TemplateContentVO {
     private Integer templateType;
 
     /**
-     * 模板组类型（0-项目模板，1-表模板）
+     * 模板组类型（0-项目模板，1-表模板，2-枚举模板）
      */
-    @Schema(description = "模板组类型（0-项目模板，1-表模板）")
+    @Schema(description = "模板组类型（0-项目模板，1-表模板，2-枚举模板）")
     private Integer templateGroupType;
 
     /**

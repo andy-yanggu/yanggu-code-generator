@@ -69,6 +69,7 @@ public class MybatisUtil {
      * 判断对象不为空
      */
     public static boolean isNotEmpty(Object object) {
+        // 如果是字符串，则去除首尾空格
         if (object instanceof CharSequence) {
             object = StrUtil.trim((CharSequence) object);
         }

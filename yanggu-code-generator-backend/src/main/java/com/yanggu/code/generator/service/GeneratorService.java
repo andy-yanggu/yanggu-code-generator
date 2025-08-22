@@ -2,7 +2,6 @@ package com.yanggu.code.generator.service;
 
 
 import com.yanggu.code.generator.domain.query.*;
-import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import org.springframework.http.ResponseEntity;
 

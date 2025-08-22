@@ -15,8 +15,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
-					<el-form-item label="模板名称" prop="templateName">
-						<el-input v-model="state.queryForm.templateName" style="width: 140px" clearable placeholder="请输入模板名称"></el-input>
+					<el-form-item label="目录/文件名称" prop="fileName">
+						<el-input v-model="state.queryForm.fileName" style="width: 160px" clearable placeholder="请输入目录/文件名称"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -60,7 +60,7 @@
 				align="center"
 				:formatter="getLabel(TEMPLATE_GROUP_TYPES)"
 			></el-table-column>
-			<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+			<el-table-column prop="fileName" label="目录/文件名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="templateType"
 				label="模板类型"
@@ -101,7 +101,7 @@ const state: IHooksOptions = reactive({
 	queryForm: {
 		templateGroupIdList: [],
 		templateGroupName: '',
-		templateName: '',
+		fileName: '',
 		templateGroupType: null,
 		templateType: null
 	}

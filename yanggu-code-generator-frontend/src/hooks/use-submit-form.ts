@@ -70,7 +70,7 @@ export const useSubmitForm = (options: FormOptions) => {
 				.submitApi(options.dataForm)
 				.then(() => {
 					ElMessage.success({
-						message: options.message || '操作成功',
+						message: options.message || (options.dataForm.id ? '修改成功' : '新建成功'),
 						duration: options.duration || 500
 					})
 					visible.value = false

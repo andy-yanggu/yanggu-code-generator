@@ -55,7 +55,7 @@
 			</el-card>
 			<template #footer>
 				<div class="footer-buttons">
-					<el-button type="success" :icon="DocumentAdd" :loading="generatorLoading" @click="generateCode()">生成代码</el-button>
+					<el-button type="success" :icon="DocumentAdd" :loading="generatorLoading" @click="generateCode()">生成</el-button>
 					<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 				</div>
 			</template>

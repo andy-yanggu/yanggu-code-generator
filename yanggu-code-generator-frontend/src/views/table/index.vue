@@ -26,7 +26,7 @@
 			<el-space :size="'large'" class="layout-space">
 				<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-				<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成代码</el-button>
+				<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成</el-button>
 			</el-space>
 			<el-table
 				ref="tableRef"

@@ -62,7 +62,7 @@
 							</el-col>
 							<el-col :span="8" style="text-align: right">
 								<el-button size="small" @click="handleCopy(templateTreeData.item.templateContent!)">复制代码</el-button>
-								<el-button size="small" @click="downloadTemplateData(templateTreeData.item)">生成代码</el-button>
+								<el-button size="small" @click="downloadTemplateData(templateTreeData.item)">生成</el-button>
 								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 							</el-col>
 						</el-row>
