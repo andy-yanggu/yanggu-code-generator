@@ -127,8 +127,20 @@
 									@click="testTemplateContent"
 									>测试
 								</el-button>
-								<el-button size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">保存</el-button>
-								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
+								<el-button
+									:disabled="!activeTabItem.isEdited"
+									size="small"
+									type="primary"
+									:icon="Edit"
+									:loading="submitLoading"
+									@click="saveTemplateContent"
+								>
+									保存
+								</el-button>
+								<el-button size="small" @click="toggle()">
+									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
+									{{ isFullscreen ? '退出' : '全屏' }}
+								</el-button>
 							</el-col>
 						</el-row>
 						<el-tabs
@@ -391,7 +403,7 @@ const init = async () => {
 
 // 全量刷新树数据，回到初始状态
 const refreshTree = () => {
-	ElMessageBox.confirm('刷新会丢失所有编辑状态，确定要刷新吗？', '提示', {
+	ElMessageBox.confirm('刷新将丢失所有未保存的编辑内容及界面状态（包括节点展开状态、搜索条件等），确定要刷新吗？', '提示', {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'
@@ -409,7 +421,7 @@ const refreshTree = () => {
 			init()
 		})
 		.catch(() => {
-			ElMessage.info('已取消刷新')
+			ElMessage.info('刷新已取消')
 		})
 }
 
@@ -613,7 +625,6 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 }
 
 // tab删除
-// tab删除
 const handleTabRemove = (id: number) => {
 	// 找到要删除的 tab
 	const index = templateTreeData.tabList.findIndex(item => item.id === id)
@@ -663,6 +674,10 @@ const refreshData = (dataList: Tree[]) => {
 		templateTreeData.tabList = []
 		return
 	}
+	const tabLength = templateTreeData.tabList.length
+	if (tabLength === 0) {
+		return
+	}
 	// 保存当前的编辑状态
 	const editStatusSet = new Set<number>()
 	templateTreeData.tabList.forEach(tab => {
@@ -670,11 +685,6 @@ const refreshData = (dataList: Tree[]) => {
 			editStatusSet.add(tab.id)
 		}
 	})
-
-	const tabLength = templateTreeData.tabList.length
-	if (tabLength === 0) {
-		return
-	}
 
 	for (let index = 0; index < tabLength; index++) {
 		const oldData = templateTreeData.tabList[index]
@@ -954,38 +964,22 @@ const closeAllTabs = () => {
 	})
 }
 
-// 关闭确认
-const closeTabConfirm = () => {
-	return ElMessageBox.confirm('存在未保存的模板，关闭将丢失这些更改，是否继续？', '提示', {
-		confirmButtonText: '确定',
-		cancelButtonText: '取消',
-		type: 'warning'
-	})
-}
-
 // 通用关闭处理
 const handleCloseTabs = (toCloseTabs: Tree[], afterClose: () => void) => {
 	const editTabs = toCloseTabs.filter(tab => tab.isEdited)
 
 	if (editTabs.length > 0) {
-		closeTabConfirm().then(() => {
-			resetTab(editTabs) // 恢复为初始内容
+		// 关闭确认
+		ElMessageBox.confirm('存在未保存的模板文件，是否继续？', '提示', {
+			confirmButtonText: '确定',
+			cancelButtonText: '取消',
+			type: 'warning'
+		}).then(() => {
 			afterClose()
 		})
 	} else {
 		afterClose()
 	}
-}
-
-// 恢复到未编辑的状态
-const resetTab = (editTabList: Tree[]) => {
-	if (editTabList.length === 0) {
-		return
-	}
-	editTabList.forEach(item => {
-		item.isEdited = false
-		item.templateContent = item.originalTemplateContent
-	})
 }
 
 defineExpose({
@@ -1063,7 +1057,12 @@ defineExpose({
 .tree-node-label {
 	position: relative;
 	display: inline-block;
-	padding-right: 12px; /* 给右边留点空间放红点 */
+}
+
+/* 仅在包含编辑红点时添加右边距 */
+.tab-label:has(.edit-dot),
+.tree-node-label:has(.edit-dot) {
+	padding-right: 10px;
 }
 
 /* 通用红点 */
