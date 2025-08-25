@@ -111,14 +111,14 @@
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
-							<el-col :span="isFullscreen ? 16 : 15">
+							<el-col :span="isFullscreen ? 17 : 16">
 								<el-tooltip :content="fullFilePath" placement="top">
 									<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 										路径：{{ fullFilePath }}
 									</el-text>
 								</el-tooltip>
 							</el-col>
-							<el-col :span="8" style="text-align: right">
+							<el-col :span="7" style="text-align: right">
 								<el-button
 									:disabled="[0, 2].includes(activeTabItem.templateType)"
 									size="small"
