@@ -63,11 +63,12 @@ const customStyle = EditorView.theme({
 
 // 组合扩展
 const extensions = computed(() => {
-	const ext = [javascript()]
+	const ext: any[] = [javascript()]
 	if (props.readOnly) {
 		ext.push(EditorView.editable.of(false))
 	}
-	return [ext, customStyle]
+	// 返回平铺的数组
+	return [...ext, customStyle]
 })
 
 // Codemirror EditorView 实例

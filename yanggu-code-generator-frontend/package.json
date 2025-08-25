@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint --fix --ext .vue,.jsx,.ts,.tsx ."
+    "lint": "eslint src/ --ext .ts,.vue --fix"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.1",
@@ -31,12 +31,15 @@
     "@types/nprogress": "0.2.3",
     "@types/qs": "6.9.12",
     "@types/sortablejs": "1.15.8",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
     "@vitejs/plugin-vue": "5.0.5",
     "@vue/compiler-sfc": "3.4.30",
     "@vue/eslint-config-prettier": "9.0.0",
     "@vue/eslint-config-typescript": "13.0.0",
     "@vue/tsconfig": "0.5.1",
     "eslint": "8.57.0",
+    "eslint-plugin-unused-imports": "^4.2.0",
     "eslint-plugin-vue": "9.23.0",
     "prettier": "3.2.5",
     "sass": "1.72.0",

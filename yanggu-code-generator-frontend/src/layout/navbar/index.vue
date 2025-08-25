@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { Aim, Expand, Fold, FullScreen } from '@element-plus/icons-vue'
+import { Expand, Fold } from '@element-plus/icons-vue'
 import { useAppStore } from '@/store/app-store'
 import Tag from '@/layout/navbar/components/tag.vue'
 import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'

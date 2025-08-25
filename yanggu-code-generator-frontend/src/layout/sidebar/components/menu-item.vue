@@ -1,4 +1,5 @@
 <template>
+	<!-- 渲染目录 -->
 	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menu.path">
 		<template #title>
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
@@ -8,6 +9,7 @@
 			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap"></menu-item>
 		</template>
 	</el-sub-menu>
+	<!-- 渲染菜单 -->
 	<el-menu-item v-else-if="menu.meta.type === 1 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
 		<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 	</el-menu-item>

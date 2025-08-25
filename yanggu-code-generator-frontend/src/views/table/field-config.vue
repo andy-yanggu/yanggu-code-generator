@@ -262,7 +262,7 @@ const init = async (row: any) => {
 		})
 		// 增加Object类型
 		typeList.value.push({ label: 'Object', value: 'Object' })
-	} catch (error) {
+	} catch {
 		ElMessage.error('数据加载失败')
 	} finally {
 		loadingInstance.close()
