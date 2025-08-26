@@ -1,5 +1,5 @@
 <template>
-	<component :is="linkType" v-bind="linkProps">
+	<component :is="linkType" v-bind="linkProps" @click="handleClick">
 		<slot></slot>
 	</component>
 </template>
@@ -7,6 +7,8 @@
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { MenuInfo } from '@/store/user-store'
+
+const emitHandler = defineEmits(['update:activePath'])
 
 const props = defineProps({
 	menu: {
@@ -23,6 +25,14 @@ const linkType = computed(() => {
 	return 'router-link'
 })
 
+const handleClick = (e: Event) => {
+	// 外链点击阻止 el-menu router 跳转
+	if (props.menu.meta.type === 4) {
+		e.stopPropagation() // 阻止事件冒泡
+		emitHandler('update:activePath', props.menu.path)
+	}
+}
+
 // 计算绑定属性
 const linkProps = computed(() => {
 	// 外链方式
@@ -33,7 +43,7 @@ const linkProps = computed(() => {
 		return { to: { path: props.menu.path } }
 	} else {
 		// 普通路由
-		return { to: props.menu.path }
+		return { to: { path: props.menu.path } }
 	}
 })
 </script>

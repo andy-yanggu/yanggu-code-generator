@@ -299,7 +299,7 @@ const businessMenuInfoList: MenuInfo[] = [
 					title: '测试内嵌iframe',
 					icon: 'icon-dashboard-fill',
 					type: 3,
-					externalUrl: 'https://cn.element-plus.org/zh-CN/',
+					externalUrl: 'https://cn.vitejs.dev/',
 					hidden: false
 				}
 			},
