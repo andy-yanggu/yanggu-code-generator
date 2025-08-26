@@ -137,7 +137,7 @@ const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) =
 		} as BreadcrumbItem
 	]
 
-	if (menuItem.meta.type === 1) {
+	if ([1, 3, 4].includes(menuItem.meta.type)) {
 		const newMenuItem = {
 			...menuItem,
 			meta: { ...menuItem.meta },
@@ -249,12 +249,18 @@ const handleKeyEnter = () => {
 }
 
 // 选择
-const handleSelect = (item: any) => {
+const handleSelect = (item: SearchItem) => {
 	searchState.visible = false
 	searchState.keyword = ''
 	searchState.activeIndex = -1
 	searchState.usingKeyboard = false
-	router.push(item.path)
+	// 如果是菜单或者iframe，则路由跳转
+	if ([1, 3].includes(item.meta.type)) {
+		router.push(item.path!)
+	} else {
+		// 如果是外链
+		window.open(item.meta.externalUrl!)
+	}
 }
 
 // 监听鼠标移动：切回鼠标模式

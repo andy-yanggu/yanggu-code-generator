@@ -23,8 +23,8 @@ export interface TokenInfo {
 }
 
 export interface MenuInfo {
-	// 路径
-	path: string
+	// 路由
+	path?: string
 	// 名称
 	name: string
 	// 组件路径
@@ -35,10 +35,12 @@ export interface MenuInfo {
 		title: string
 		// 图标
 		icon: string
+		// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
+		type: number
+		// 外链地址
+		externalUrl?: string
 		// 缓存
 		cache?: boolean
-		// 类型 0-目录、1-菜单、2-按钮
-		type: number
 		// 隐藏
 		hidden?: boolean
 	}
@@ -79,6 +81,272 @@ const sidebarConstantMenuInfoList: MenuInfo[] = [
 
 // 业务菜单
 const businessMenuInfoList: MenuInfo[] = [
+	// {
+	// 	path: '/index2',
+	// 	component: 'index/index',
+	// 	name: 'Index2',
+	// 	meta: {
+	// 		title: '首页2',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index3',
+	// 	component: 'index/index',
+	// 	name: 'Index3',
+	// 	meta: {
+	// 		title: '首页3',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index4',
+	// 	component: 'index/index',
+	// 	name: 'Index4',
+	// 	meta: {
+	// 		title: '首页4',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index5',
+	// 	component: 'index/index',
+	// 	name: 'Index5',
+	// 	meta: {
+	// 		title: '首页5',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index6',
+	// 	component: 'index/index',
+	// 	name: 'Index6',
+	// 	meta: {
+	// 		title: '首页6',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index7',
+	// 	component: 'index/index',
+	// 	name: 'Index7',
+	// 	meta: {
+	// 		title: '首页7',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index8',
+	// 	component: 'index/index',
+	// 	name: 'Index8',
+	// 	meta: {
+	// 		title: '首页8',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index9',
+	// 	component: 'index/index',
+	// 	name: 'Index9',
+	// 	meta: {
+	// 		title: '首页9',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index10',
+	// 	component: 'index/index',
+	// 	name: 'Index10',
+	// 	meta: {
+	// 		title: '首页10',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index11',
+	// 	component: 'index/index',
+	// 	name: 'Index11',
+	// 	meta: {
+	// 		title: '首页11',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index12',
+	// 	component: 'index/index',
+	// 	name: 'Index12',
+	// 	meta: {
+	// 		title: '首页12',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index13',
+	// 	component: 'index/index',
+	// 	name: 'Index13',
+	// 	meta: {
+	// 		title: '首页13',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index14',
+	// 	component: 'index/index',
+	// 	name: 'Index14',
+	// 	meta: {
+	// 		title: '首页14',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/index15',
+	// 	component: 'index/index',
+	// 	name: 'Index15',
+	// 	meta: {
+	// 		title: '首页15',
+	// 		icon: 'icon-dashboard-fill',
+	// 		cache: true,
+	// 		type: 1,
+	// 		hidden: false
+	// 	}
+	// },
+	// {
+	// 	path: '/dir1',
+	// 	name: 'Dir1',
+	// 	meta: {
+	// 		title: '目录1',
+	// 		icon: 'icon-dashboard-fill',
+	// 		type: 0
+	// 	},
+	// 	children: [
+	// 		{
+	// 			path: '/dir1/dir2',
+	// 			name: 'Dir2',
+	// 			meta: {
+	// 				title: '目录2',
+	// 				icon: 'icon-dashboard-fill',
+	// 				type: 0
+	// 			},
+	// 			children: [
+	// 				{
+	// 					path: '/dir1/dir2/index1',
+	// 					component: 'index/index',
+	// 					name: 'Dir1Index1',
+	// 					meta: {
+	// 						title: '目录1-目录2-首页',
+	// 						icon: 'icon-dashboard-fill',
+	// 						cache: true,
+	// 						type: 1,
+	// 						hidden: false
+	// 					}
+	// 				}
+	// 			]
+	// 		}
+	// 	]
+	// },
+	{
+		path: '/test-external',
+		name: 'TestExternal',
+		meta: {
+			title: '外链测试',
+			icon: 'icon-dashboard-fill',
+			type: 0
+		},
+		children: [
+			{
+				path: '/test-external/iframe',
+				name: 'TestExternalIframe',
+				meta: {
+					title: '测试内嵌iframe',
+					icon: 'icon-dashboard-fill',
+					type: 3,
+					externalUrl: 'https://cn.element-plus.org/zh-CN/',
+					hidden: false
+				}
+			},
+			{
+				path: '/test-external/new-window',
+				name: 'TestExternalNewWindow',
+				meta: {
+					title: '测试新窗口',
+					icon: 'icon-dashboard-fill',
+					type: 4,
+					externalUrl: 'https://www.baidu.com',
+					hidden: false
+				}
+			}
+		]
+	},
+	{
+		path: '/project-git',
+		name: 'ProjectGit',
+		meta: {
+			title: '项目git地址',
+			icon: 'icon-code',
+			type: 0
+		},
+		children: [
+			{
+				path: '/project-git/github',
+				name: 'ProjectGitGithub',
+				meta: {
+					title: 'Github地址',
+					icon: 'icon-github-fill',
+					type: 4,
+					externalUrl: 'https://github.com/andy-yanggu/yanggu-code-generator'
+				}
+			},
+			{
+				path: '/project-git/gitee',
+				name: 'ProjectGitGitee',
+				meta: {
+					title: 'Gitee地址',
+					icon: 'icon-gitee-fill-round',
+					type: 4,
+					externalUrl: 'https://gitee.com/andy_yanggu/yanggu-code-generator'
+				}
+			}
+		]
+	},
 	{
 		path: '/icon-search',
 		component: 'icon-search/index',
@@ -97,9 +365,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		meta: {
 			title: '代码生成器',
 			icon: 'icon-appstore',
-			cache: false,
-			type: 0,
-			hidden: false
+			type: 0
 		},
 		children: [
 			{

@@ -27,7 +27,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/:pathMatch(.*)',
-		component: () => import('@/views/404.vue')
+		component: () => import('@/views/error/404.vue')
 	}
 ]
 

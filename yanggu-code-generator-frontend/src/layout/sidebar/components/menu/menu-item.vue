@@ -9,19 +9,24 @@
 			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap"></menu-item>
 		</template>
 	</el-sub-menu>
-	<!-- 渲染菜单 -->
-	<el-menu-item v-else-if="menu.meta.type === 1 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
-		<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
+	<!-- 渲染菜单、iframe、外链 -->
+	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
+		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
+		<menu-link :menu="menu">
+			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
+		</menu-link>
 	</el-menu-item>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import MenuItemContent from '@/layout/sidebar/components/menu-item-content.vue'
+import { onMounted, PropType, ref } from 'vue'
+import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
+import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
+import { MenuInfo } from '@/store/user-store'
 
 const props = defineProps({
 	menu: {
-		type: Object,
+		type: Object as PropType<MenuInfo>,
 		required: true
 	},
 	refMap: {

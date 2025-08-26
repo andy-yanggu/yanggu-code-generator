@@ -1,7 +1,8 @@
-// cover some element-plus styles
+// 覆盖 element-plus 样式
 
 .el-menu {
   border-right: none !important;
+
   &:not(.el-menu--collapse) {
     width: var(--theme-aside-width);
   }
@@ -9,6 +10,8 @@
 
 .el-menu-item,
 .el-sub-menu__title {
+  display: flex;
+  align-items: center; // 图标+文字垂直居中
   color: var(--theme-menu-text-color) !important;
   height: 48px !important;
   overflow: hidden;
@@ -19,8 +22,8 @@
 }
 
 .el-menu-item {
-  height: 45px !important;
-  line-height: 45px !important;
+  height: 48px !important; // 和上面统一，不要 45/48 混用
+  line-height: 48px !important;
 }
 
 .el-menu-item a,
@@ -31,14 +34,23 @@
   text-decoration: none;
 }
 
+// 图标样式（全局统一）
 .el-menu-item .svg-icon,
 .el-sub-menu .svg-icon {
   font-size: 16px !important;
   display: inline-block;
-  vertical-align: middle;
-  margin-right: 5px;
-  width: 24px;
+  width: 20px;         // 固定宽度，保证对齐
+  margin-right: 8px;
+  flex-shrink: 0;
   text-align: center;
+}
+
+// 折叠时隐藏文字，但保留 tooltip
+.el-menu--collapse {
+  .menu-title {
+    width: 0;
+    overflow: hidden;
+  }
 }
 
 .el-sub-menu.is-active > :first-child {
@@ -46,14 +58,15 @@
   color: var(--theme-menu-hover-color) !important;
 }
 
-.el-menu-item.is-active{
+.el-menu-item.is-active {
   border-right: 2px solid var(--theme-menu-border-color);
   position: relative;
-  right:1px;
+  right: 1px;
   overflow: hidden;
   color: var(--theme-menu-hover-color) !important;
   background-color: var(--theme-menu-hover-bg-color) !important;
-  &:hover{
+
+  &:hover {
     background-color: var(--theme-menu-hover-bg-color) !important;
   }
 }
@@ -65,22 +78,25 @@
   }
 }
 
-// 鼠标 hover 时
+// hover 状态
 .el-menu-item:hover,
 .el-sub-menu__title:hover {
   background-color: unset !important;
   color: var(--theme-menu-hover-color) !important;
 }
 
-.el-pagination{
+// 分页
+.el-pagination {
   margin-top: 15px;
   justify-content: flex-end;
 }
 
-.el-form--inline .el-form-item{
+// 表单
+.el-form--inline .el-form-item {
   margin-right: 16px !important;
 }
 
+// 抽屉
 .el-drawer .el-drawer__header {
   display: flex;
   align-items: center;
@@ -91,7 +107,8 @@
   border-bottom: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
 }
-.el-card.is-always-shadow{
+
+// 卡片
+.el-card.is-always-shadow {
   box-shadow: none !important;
 }
-

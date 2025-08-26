@@ -18,8 +18,14 @@ export interface RouteMetaData {
 	cache: boolean
 	// 隐藏
 	hidden: boolean
-	// 类型 0-目录、1-菜单、2-按钮
+	// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
 	type: number
+	// 是否外链
+	isExternal?: boolean
+	// 打开方式（iframe内嵌或新窗口）
+	openType?: 'iframe' | 'blank'
+	// 外链地址
+	externalUrl?: string
 }
 
 // 路由白名单名称列表
@@ -36,7 +42,10 @@ export const routerGuard = (router: Router) => {
 			icon: to.meta?.icon as string,
 			cache: to.meta?.cache as boolean,
 			type: to.meta?.type as number,
-			hidden: to.meta?.hidden as boolean
+			hidden: to.meta?.hidden as boolean,
+			isExternal: to.meta?.isExternal as boolean,
+			openType: to.meta?.openType as 'iframe' | 'blank',
+			externalUrl: to.meta?.externalUrl as string
 		}
 
 		console.log(to, from, routeMetaData)
@@ -72,19 +81,23 @@ export const routerGuard = (router: Router) => {
 
 		// 登录，添加标签
 		const appStore = useAppStore()
+		// 当外链不是新窗口的时候就添加
+		const notBlank = !(routeMetaData.isExternal && routeMetaData.openType === 'blank')
 		// 添加标签
-		if (routeMetaData.title) {
+		if (notBlank) {
 			const tag: NavbarTag = {
 				...routeMetaData
 			}
 			appStore.addTag(tag)
 		}
 
-		// 设置面包屑
-		appStore.setBreadcrumb(routeMetaData)
+		// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
+		if (notBlank) {
+			appStore.setBreadcrumb(routeMetaData)
+		}
 
-		// 添加缓存路由
-		if (routeMetaData.cache && routeMetaData.name) {
+		// 添加缓存路由 - 仅当不是新窗口打开的外链且有名称时才添加缓存
+		if (routeMetaData.cache && routeMetaData.name && notBlank) {
 			appStore.addCacheComponent(routeMetaData.name)
 		}
 
@@ -107,18 +120,37 @@ const loadView = (component: string | undefined) => {
 
 // 构建路由
 const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
-	return menuList.map((item: MenuInfo) => {
-		const menu = {
-			...item
-		} as RouteRecordRaw
-		// 如果是目录，则需要构建子路由
-		if (item.meta.type === 0 && item.children && item.children.length > 0) {
-			menu.children = buildRouteList(item.children)
-		}
-		// 如果是菜单，则需要构建组件
-		if (item.meta.type === 1) {
-			menu.component = loadView(item.component)
-		}
-		return menu
-	})
+	return menuList
+		.map((item: MenuInfo) => {
+			// 处理外链菜单
+			if (item.meta.type === 3) {
+				// iframe内嵌方式
+				return {
+					path: item.path,
+					name: item.name,
+					component: () => import('@/views/router/iframe.vue'), // 创建iframe组件
+					meta: {
+						...item.meta
+					}
+				} as RouteRecordRaw
+			} else if (item.meta.type === 4) {
+				// 新窗口打开方式，创建一个跳转页面
+				return null
+			}
+
+			const menu = {
+				...item
+			} as RouteRecordRaw
+
+			// 如果是目录，则需要构建子路由
+			if (item.meta.type === 0 && item.children && item.children.length > 0) {
+				menu.children = buildRouteList(item.children)
+			}
+			// 如果是菜单，则需要构建组件
+			if (item.meta.type === 1) {
+				menu.component = loadView(item.component)
+			}
+			return menu
+		})
+		.filter(Boolean) as RouteRecordRaw[]
 }

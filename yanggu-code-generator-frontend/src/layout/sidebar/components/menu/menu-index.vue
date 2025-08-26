@@ -5,7 +5,6 @@
 			background-color="transparent"
 			mode="vertical"
 			:collapse-transition="false"
-			router
 			:collapse="appStore.isCollapseRef"
 		>
 			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
@@ -14,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import MenuItem from '@/layout/sidebar/components/menu-item.vue'
+import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useRoute } from 'vue-router'
 import { computed, watch, nextTick, ref } from 'vue'
 import { useAppStore } from '@/store/app-store'

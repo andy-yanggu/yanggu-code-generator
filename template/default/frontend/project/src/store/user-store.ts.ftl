@@ -37,7 +37,7 @@ export interface MenuInfo {
 		icon: string
 		// 缓存
 		cache: boolean
-		// 类型 0-目录、1-菜单、2-按钮
+		// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
 		type: number
 		// 隐藏
 		hidden: boolean

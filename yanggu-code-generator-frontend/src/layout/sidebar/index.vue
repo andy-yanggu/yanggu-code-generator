@@ -1,9 +1,9 @@
 <template>
 	<logo></logo>
-	<Menu></Menu>
+	<menu-index></menu-index>
 </template>
 
 <script setup lang="ts">
-import Menu from '@/layout/sidebar/components/menu.vue'
 import Logo from '@/layout/sidebar/components/logo.vue'
+import MenuIndex from '@/layout/sidebar/components/menu/menu-index.vue'
 </script>

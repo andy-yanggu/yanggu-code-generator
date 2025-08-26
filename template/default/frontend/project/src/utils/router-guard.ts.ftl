@@ -18,7 +18,7 @@ export interface RouteMetaData {
 	cache: boolean
 	// 隐藏
 	hidden: boolean
-	// 类型 0-目录、1-菜单、2-按钮
+	// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
 	type: number
 }
 
