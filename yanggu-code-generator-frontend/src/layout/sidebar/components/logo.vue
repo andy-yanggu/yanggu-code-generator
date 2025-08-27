@@ -13,7 +13,7 @@ const appStore = useAppStore()
 
 <style scoped>
 .logo-container {
-	margin-left: 11px;
+	margin-left: 7px;
 	display: flex;
 	align-items: center;
 	padding: 8px;
@@ -22,7 +22,7 @@ const appStore = useAppStore()
 .logo-avatar {
 	margin-right: 9px;
 	color: #2c3e50;
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: 550;
 }
 </style>

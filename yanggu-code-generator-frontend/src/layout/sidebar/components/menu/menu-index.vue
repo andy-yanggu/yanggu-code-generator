@@ -1,20 +1,14 @@
 <template>
 	<el-scrollbar>
 		<el-menu
-			:default-active="activePath"
+			:default-active="userStore.activeMenuPath"
 			background-color="transparent"
 			mode="vertical"
 			router
 			:collapse-transition="false"
 			:collapse="appStore.isCollapseRef"
 		>
-			<menu-item
-				v-for="menu in userStore.menuList"
-				:key="menu.path"
-				:menu="menu"
-				:ref-map="menuRefs"
-				@update:active-path="path => (activePath = path)"
-			></menu-item>
+			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
 		</el-menu>
 	</el-scrollbar>
 </template>
@@ -33,13 +27,12 @@ const route = useRoute()
 // 存储所有菜单项引用的Map，格式为 <path, ref>
 const menuRefs = ref<Map<string, any>>(new Map())
 
-const activePath = ref(route.path)
-
 // 监听路由变化，菜单自动滚动
 watch(
 	() => route.path,
 	newPath => {
 		nextTick(() => {
+			userStore.setActiveMenuPath(newPath)
 			scrollToMenu(newPath)
 		})
 	},

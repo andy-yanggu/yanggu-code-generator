@@ -14,7 +14,7 @@ export interface EnumItem {
 	/**
 	 * 枚举值
 	 */
-	value: any
+	value: string | number | boolean
 
 	/**
 	 * 枚举标签

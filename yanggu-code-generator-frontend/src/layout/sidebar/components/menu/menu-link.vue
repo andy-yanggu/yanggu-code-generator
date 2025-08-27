@@ -6,9 +6,7 @@
 
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
-import { MenuInfo } from '@/store/user-store'
-
-const emitHandler = defineEmits(['update:activePath'])
+import { MenuInfo, useUserStore } from '@/store/user-store'
 
 const props = defineProps({
 	menu: {
@@ -16,6 +14,8 @@ const props = defineProps({
 		required: true
 	}
 })
+
+const userStore = useUserStore()
 
 // 判断组件类型：<a> 或 <router-link>
 const linkType = computed(() => {
@@ -30,7 +30,7 @@ const handleClick = (e: Event) => {
 	if (props.menu.meta.type === 4) {
 		e.stopPropagation() // 阻止事件冒泡
 	}
-	emitHandler('update:activePath', props.menu.path)
+	userStore.setActiveMenuPath(props.menu.path!)
 }
 
 // 计算绑定属性

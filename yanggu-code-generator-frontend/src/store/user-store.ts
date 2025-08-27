@@ -352,7 +352,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/project',
 				name: 'GenProject',
-				component: 'project/index',
+				component: 'gen/project/index',
 				meta: {
 					title: '项目管理',
 					icon: 'icon-edit-square',
@@ -363,7 +363,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/table',
 				name: 'GenTable',
-				component: 'table/index',
+				component: 'gen/table/index',
 				meta: {
 					title: '表管理',
 					icon: 'icon-detail',
@@ -374,7 +374,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/enum',
 				name: 'GenEnum',
-				component: 'enum/index',
+				component: 'gen/enum/index',
 				meta: {
 					title: '枚举管理',
 					icon: 'icon-merge-cells',
@@ -385,7 +385,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/template-group',
 				name: 'GenTemplateGroup',
-				component: 'template-group/index',
+				component: 'gen/template-group/index',
 				meta: {
 					title: '模板组管理',
 					icon: 'icon-file-fill',
@@ -396,7 +396,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/datasource',
 				name: 'GenDatasource',
-				component: 'datasource/index',
+				component: 'gen/datasource/index',
 				meta: {
 					title: '数据源管理',
 					icon: 'icon-database-fill',
@@ -407,7 +407,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/base-class',
 				name: 'GenBaseClass',
-				component: 'base-class/index',
+				component: 'gen/base-class/index',
 				meta: {
 					title: '基类管理',
 					icon: 'icon-cluster',
@@ -418,7 +418,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			{
 				path: '/gen/field-type',
 				name: 'GenFieldType',
-				component: 'field-type/index',
+				component: 'gen/field-type/index',
 				meta: {
 					title: '字段类型管理',
 					icon: 'icon-menu',
@@ -440,6 +440,8 @@ export const useUserStore = defineStore(
 		const isAddRoutes = ref(false)
 		// 菜单列表
 		const menuList = ref<MenuInfo[]>([...sidebarConstantMenuInfoList, ...businessMenuInfoList])
+		// 激活菜单
+		const activeMenuPath = ref<string>('')
 		// 权限列表
 		const permissionList = ref<string[]>([])
 		// 登录用户信息
@@ -478,16 +480,23 @@ export const useUserStore = defineStore(
 			isLogin.value = true
 		}
 
+		// 设置激活的菜单
+		const setActiveMenuPath = (path: string) => {
+			activeMenuPath.value = path
+		}
+
 		return {
 			isLogin,
 			isAddRoutes,
 			menuList,
+			activeMenuPath,
 			permissionList,
 			userInfo,
 			tokenInfo,
 			clearAll,
 			setData,
-			setAddRouteFlag
+			setAddRouteFlag,
+			setActiveMenuPath
 		}
 	},
 	{
