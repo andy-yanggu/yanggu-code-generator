@@ -72,8 +72,7 @@ const sidebarConstantMenuInfoList: MenuInfo[] = [
 			title: '首页',
 			icon: 'icon-dashboard-fill',
 			cache: true,
-			type: 1,
-			hidden: false
+			type: 1
 		}
 	}
 	// 可以添加其他需要在侧边栏显示的常量菜单
@@ -90,7 +89,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -102,7 +100,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -114,7 +111,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -126,7 +122,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -138,7 +133,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -150,7 +144,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -162,7 +155,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -174,7 +166,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -186,7 +177,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -198,7 +188,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -210,7 +199,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -222,7 +210,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -234,7 +221,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -246,7 +232,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 		icon: 'icon-dashboard-fill',
 	// 		cache: true,
 	// 		type: 1,
-	// 		hidden: false
 	// 	}
 	// },
 	// {
@@ -276,7 +261,6 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 						icon: 'icon-dashboard-fill',
 	// 						cache: true,
 	// 						type: 1,
-	// 						hidden: false
 	// 					}
 	// 				}
 	// 			]
@@ -299,8 +283,7 @@ const businessMenuInfoList: MenuInfo[] = [
 					title: '测试内嵌iframe',
 					icon: 'icon-dashboard-fill',
 					type: 3,
-					externalUrl: 'https://cn.vitejs.dev/',
-					hidden: false
+					externalUrl: 'https://cn.vitejs.dev/'
 				}
 			},
 			{
@@ -310,8 +293,7 @@ const businessMenuInfoList: MenuInfo[] = [
 					title: '测试新窗口',
 					icon: 'icon-dashboard-fill',
 					type: 4,
-					externalUrl: 'https://www.baidu.com',
-					hidden: false
+					externalUrl: 'https://www.baidu.com'
 				}
 			}
 		]
@@ -329,7 +311,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				path: '/project-git/github',
 				name: 'ProjectGitGithub',
 				meta: {
-					title: 'Github地址',
+					title: 'github地址',
 					icon: 'icon-github-fill',
 					type: 4,
 					externalUrl: 'https://github.com/andy-yanggu/yanggu-code-generator'
@@ -339,7 +321,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				path: '/project-git/gitee',
 				name: 'ProjectGitGitee',
 				meta: {
-					title: 'Gitee地址',
+					title: 'gitee地址',
 					icon: 'icon-gitee-fill-round',
 					type: 4,
 					externalUrl: 'https://gitee.com/andy_yanggu/yanggu-code-generator'
@@ -354,9 +336,8 @@ const businessMenuInfoList: MenuInfo[] = [
 		meta: {
 			title: '图标搜索',
 			icon: 'icon-icon-test',
-			cache: true,
 			type: 1,
-			hidden: false
+			cache: true
 		}
 	},
 	{
@@ -375,9 +356,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '项目管理',
 					icon: 'icon-edit-square',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -387,9 +367,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '表管理',
 					icon: 'icon-detail',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -399,9 +378,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '枚举管理',
 					icon: 'icon-merge-cells',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -411,9 +389,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '模板组管理',
 					icon: 'icon-file-fill',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -423,9 +400,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '数据源管理',
 					icon: 'icon-database-fill',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -435,9 +411,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '基类管理',
 					icon: 'icon-cluster',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			},
 			{
@@ -447,9 +422,8 @@ const businessMenuInfoList: MenuInfo[] = [
 				meta: {
 					title: '字段类型管理',
 					icon: 'icon-menu',
-					cache: true,
 					type: 1,
-					hidden: false
+					cache: true
 				}
 			}
 		]

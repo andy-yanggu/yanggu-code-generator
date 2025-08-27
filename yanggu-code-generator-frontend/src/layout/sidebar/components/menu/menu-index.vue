@@ -8,7 +8,13 @@
 			:collapse-transition="false"
 			:collapse="appStore.isCollapseRef"
 		>
-			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs" @update:active-path="setActivePath"></menu-item>
+			<menu-item
+				v-for="menu in userStore.menuList"
+				:key="menu.path"
+				:menu="menu"
+				:ref-map="menuRefs"
+				@update:active-path="path => (activePath = path)"
+			></menu-item>
 		</el-menu>
 	</el-scrollbar>
 </template>
@@ -34,7 +40,6 @@ watch(
 	() => route.path,
 	newPath => {
 		nextTick(() => {
-			activePath.value = newPath
 			scrollToMenu(newPath)
 		})
 	},
@@ -54,9 +59,5 @@ const scrollToMenu = (path: string) => {
 		behavior: 'smooth',
 		block: 'nearest'
 	})
-}
-
-const setActivePath = (path: string) => {
-	activePath.value = path
 }
 </script>

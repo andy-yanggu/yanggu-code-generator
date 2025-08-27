@@ -29,8 +29,8 @@ const handleClick = (e: Event) => {
 	// 外链点击阻止 el-menu router 跳转
 	if (props.menu.meta.type === 4) {
 		e.stopPropagation() // 阻止事件冒泡
-		emitHandler('update:activePath', props.menu.path)
 	}
+	emitHandler('update:activePath', props.menu.path)
 }
 
 // 计算绑定属性
