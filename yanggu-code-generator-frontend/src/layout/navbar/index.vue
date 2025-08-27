@@ -25,7 +25,7 @@
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
-					<svg-icon :icon="isFullscreen ? 'icon-fullscreen' : 'icon-fullscreen-exit'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
+					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>
 			</div>
 		</div>

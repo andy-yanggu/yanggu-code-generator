@@ -261,6 +261,7 @@ const handleSelect = (item: SearchItem) => {
 		// 如果是外链
 		window.open(item.meta.externalUrl!)
 	}
+	userStore.setActiveMenuPath(item.path!)
 }
 
 // 监听鼠标移动：切回鼠标模式

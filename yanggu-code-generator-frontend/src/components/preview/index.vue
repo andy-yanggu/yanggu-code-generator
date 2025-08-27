@@ -122,7 +122,7 @@
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/generator'
+import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/gen/generator'
 import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
