@@ -17,7 +17,7 @@
 				<layout-size></layout-size>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
-						<svg-icon icon="icon-gitee-fill-round" size="18px"></svg-icon>
+						<svg-icon icon="icon-gitee-fill" size="18px"></svg-icon>
 					</el-link>
 				</el-tooltip>
 				<el-tooltip :content="'github地址'" effect="dark" placement="bottom">

@@ -268,6 +268,17 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 	]
 	// },
 	{
+		path: '/icon-search',
+		component: 'icon-search/index',
+		name: 'IconSearch',
+		meta: {
+			title: '图标搜索',
+			icon: 'icon-icon-test',
+			type: 1,
+			cache: true
+		}
+	},
+	{
 		path: '/test-external',
 		name: 'TestExternal',
 		meta: {
@@ -322,23 +333,12 @@ const businessMenuInfoList: MenuInfo[] = [
 				name: 'ProjectGitGitee',
 				meta: {
 					title: 'gitee地址',
-					icon: 'icon-gitee-fill-round',
+					icon: 'icon-gitee-fill',
 					type: 4,
 					externalUrl: 'https://gitee.com/andy_yanggu/yanggu-code-generator'
 				}
 			}
 		]
-	},
-	{
-		path: '/icon-search',
-		component: 'icon-search/index',
-		name: 'IconSearch',
-		meta: {
-			title: '图标搜索',
-			icon: 'icon-icon-test',
-			type: 1,
-			cache: true
-		}
 	},
 	{
 		path: '/gen',

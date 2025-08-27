@@ -19,6 +19,11 @@ import java.util.List;
 public interface TemplateService extends IService<TemplateEntity> {
 
     /**
+     * 新增数据
+     */
+    TemplateVO addData(TemplateDTO dto);
+
+    /**
      * 新增
      */
     TemplateEntity add(TemplateDTO dto);
@@ -26,7 +31,7 @@ public interface TemplateService extends IService<TemplateEntity> {
     /**
      * 修改
      */
-    void update(TemplateDTO dto);
+    TemplateVO update(TemplateDTO dto);
 
     /**
      * 删除

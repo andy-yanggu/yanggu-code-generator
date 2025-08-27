@@ -68,13 +68,13 @@ export const useSubmitForm = (options: FormOptions) => {
 
 			options
 				.submitApi(options.dataForm)
-				.then(() => {
+				.then(resp => {
 					ElMessage.success({
 						message: options.message || (options.dataForm.id ? '修改成功' : '新建成功'),
 						duration: options.duration || 500
 					})
 					visible.value = false
-					options.emit('refreshDataList')
+					options.emit('refreshDataList', resp.data)
 				})
 				.finally(() => {
 					submitLoading.value = false

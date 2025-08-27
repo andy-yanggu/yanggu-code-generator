@@ -3,7 +3,7 @@
 	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" :size="'100%'" :modal="false">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapseRef" width="400px" style="overflow: hidden">
+			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
 				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
 					<el-input
 						v-model="treeSearchText"
@@ -33,9 +33,12 @@
 							draggable
 							:allow-drag="treeAllowDrag"
 							:allow-drop="treeAllowDrop"
+							:default-expanded-keys="expandedKeys"
 							@node-click="handleTreeNodeClick"
 							@node-contextmenu="handleNodeRightClick"
 							@node-drop="handleNodeDrop"
+							@node-expand="handleNodeExpand"
+							@node-collapse="handleNodeCollapse"
 						>
 							<template #default="{ node, data }">
 								<el-tooltip :content="data.templateDesc" placement="top" effect="light" :disabled="!data.templateDesc">
@@ -96,7 +99,7 @@
 				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
 				:template-path="contextMenu.templatePath"
-				@refresh-data-list="init()"
+				@refresh-data-list="initAfterHandler"
 			></add-or-update>
 
 			<!-- 右侧：模板编辑 -->
@@ -107,7 +110,7 @@
 						<el-row>
 							<el-col v-if="!isFullscreen" :span="1">
 								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-									<Expand v-if="isCollapseRef"></Expand>
+									<Expand v-if="isCollapse"></Expand>
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
@@ -214,7 +217,7 @@
 				<el-row>
 					<el-col v-if="!isFullscreen" :span="1">
 						<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-							<Expand v-if="isCollapseRef"></Expand>
+							<Expand v-if="isCollapse"></Expand>
 							<Fold v-else></Fold>
 						</el-icon>
 					</el-col>
@@ -343,11 +346,16 @@ const getElementFromTabList = (id: number): Tree | undefined => {
 }
 
 const activeTabItem = computed(() => {
-	return getElementFromTabList(templateTreeData.activeItemId)!
+	const treeData = findByIdFromTree(templateTreeData.activeItemId, templateTreeData.treeList)
+	if (!treeData) {
+		return { id: -1, templateContent: '', templateType: -1 } as Tree
+	} else {
+		return treeData
+	}
 })
 
 const treeSearchText = ref('')
-const isCollapseRef = ref(false)
+const isCollapse = ref(false)
 const addOrUpdateRef = ref()
 const { isFullscreen, toggle } = useFullscreen()
 // 模板树右键菜单状态
@@ -379,9 +387,21 @@ const fullFilePath = computed(() => {
 	return getFullPathById(templateTreeData.activeItemId, templateTreeData.treeList)
 })
 
+const expandedKeys = ref<number[]>([])
+
+const handleNodeExpand = (data: Tree) => {
+	if (!expandedKeys.value.includes(data.id)) {
+		expandedKeys.value.push(data.id)
+	}
+}
+
+const handleNodeCollapse = (data: Tree) => {
+	expandedKeys.value = expandedKeys.value.filter(id => id !== data.id)
+}
+
 // 初始化方法
 const init = async () => {
-	isCollapseRef.value = false
+	isCollapse.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		const res = await templateTreeDataApi(props.templateGroupId)
@@ -390,6 +410,15 @@ const init = async () => {
 		const templateContentList = buildFileList(res.data)
 		templateTreeData.visible = true
 		await nextTick()
+
+		// 恢复展开状态
+		expandedKeys.value.forEach(key => {
+			const node = treeRef.value.getNode(key)
+			if (node) {
+				node.expanded = true
+			}
+		})
+
 		if (templateContentList.length > 0 && templateTreeData.activeItemId === -1) {
 			templateTreeData.activeItemId = templateContentList[0].id
 			tabPush(templateContentList[0])
@@ -399,6 +428,21 @@ const init = async () => {
 	} finally {
 		loadingInstance.close()
 	}
+}
+
+const findByIdFromTree = (id: number, treeList: Tree[]): Tree | undefined => {
+	for (const tree of treeList) {
+		if (tree.id === id) {
+			return tree
+		}
+		if (tree.children && tree.children.length > 0) {
+			const tempTree = findByIdFromTree(id, tree.children!)
+			if (tempTree) {
+				return tempTree
+			}
+		}
+	}
+	return undefined
 }
 
 // 全量刷新树数据，回到初始状态
@@ -427,7 +471,7 @@ const refreshTree = () => {
 
 // 监听：激活 id + 内容 + 类型
 watch(
-	() => [templateTreeData.activeItemId, activeTabItem.value.templateContent, activeTabItem.value.templateType],
+	() => [activeTabItem.value.id, activeTabItem.value.templateContent, activeTabItem.value.templateType],
 	([id, content, type], [prevId, prevContent]) => {
 		// 1) 只处理可编辑的文本模板
 		if (type !== 1) {
@@ -498,7 +542,7 @@ const buildFileList = (treeList: Tree[]) => {
 }
 
 const toggleCollapse = () => {
-	isCollapseRef.value = !isCollapseRef.value
+	isCollapse.value = !isCollapse.value
 }
 
 watch(treeSearchText, val => {
@@ -540,7 +584,10 @@ const deleteCheckedNode = () => {
 			})
 			.then(() => {
 				// 删除tab
-				allCheckedKeys.forEach((tempId: number) => handleTabRemove(tempId))
+				allCheckedKeys.forEach((tempId: number) => {
+					handleTabRemove(tempId)
+					expandedKeys.value = expandedKeys.value.filter(id => id !== tempId)
+				})
 			})
 			.then(() => {
 				init()
@@ -663,7 +710,11 @@ const handleTabRemove = (id: number) => {
 
 // 添加tab（进行去重）
 const tabPush = (tree: Tree) => {
-	if (templateTreeData.tabList.some(tab => tab.id === tree.id)) {
+	if (tree.templateType === 0) {
+		return
+	}
+	const find = templateTreeData.tabList.find(tab => tab.id === tree.id)
+	if (find) {
 		return
 	}
 	templateTreeData.tabList.push(tree)
@@ -851,6 +902,14 @@ const newBinaryFile = (parent: Tree) => {
 	hideContextMenu()
 }
 
+const initAfterHandler = (tree: Tree) => {
+	tabPush(tree)
+	nextTick(() => {
+		init()
+	})
+	templateTreeData.activeItemId = tree.id
+}
+
 // 获取节点的图标
 const getIcon = (node: any, data: Tree): string => {
 	if (node.expanded) {
@@ -921,7 +980,6 @@ const closeCurrentTab = () => {
 			}
 			templateTreeData.activeItemId = newActiveTab.id
 		}
-		hideTabContextMenu()
 	})
 }
 
@@ -931,7 +989,6 @@ const closeOtherTabs = () => {
 	handleCloseTabs(otherTabs, () => {
 		templateTreeData.tabList = [tabContextMenu.item]
 		templateTreeData.activeItemId = tabContextMenu.item.id
-		hideTabContextMenu()
 	})
 }
 
@@ -941,7 +998,6 @@ const closeLeftTabs = () => {
 	handleCloseTabs(leftTabs, () => {
 		templateTreeData.tabList = templateTreeData.tabList.slice(tabContextMenu.index)
 		templateTreeData.activeItemId = tabContextMenu.item.id
-		hideTabContextMenu()
 	})
 }
 
@@ -951,7 +1007,6 @@ const closeRightTabs = () => {
 	handleCloseTabs(rightTabs, () => {
 		templateTreeData.tabList = templateTreeData.tabList.slice(0, tabContextMenu.index + 1)
 		templateTreeData.activeItemId = tabContextMenu.item.id
-		hideTabContextMenu()
 	})
 }
 
@@ -960,7 +1015,6 @@ const closeAllTabs = () => {
 	handleCloseTabs(templateTreeData.tabList, () => {
 		templateTreeData.tabList = []
 		templateTreeData.activeItemId = -1
-		hideTabContextMenu()
 	})
 }
 
@@ -970,16 +1024,21 @@ const handleCloseTabs = (toCloseTabs: Tree[], afterClose: () => void) => {
 
 	if (editTabs.length > 0) {
 		// 关闭确认
-		ElMessageBox.confirm('存在未保存的模板文件，是否继续？', '提示', {
+		ElMessageBox.confirm('存在未保存的模板文件，关闭将丢失修改是否继续？', '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
 		}).then(() => {
+			editTabs.forEach(tab => {
+				tab.isEdited = false
+				tab.templateContent = tab.originalTemplateContent
+			})
 			afterClose()
 		})
 	} else {
 		afterClose()
 	}
+	hideTabContextMenu()
 }
 
 defineExpose({

@@ -84,6 +84,7 @@ const initAfterHandle = () => {
 		} else {
 			fileList.value = []
 		}
+		state.dataForm.templateName = ''
 	}
 }
 
@@ -94,8 +95,7 @@ const submitBeforeHandle = () => {
 		state.dataForm.templateContent = ''
 	} else if (state.dataForm.templateType === 1) {
 		state.dataForm.binaryOriginalFileName = ''
-		// 删除模板内容字段
-		delete state.dataForm.templateContent
+		state.dataForm.templateContent = ''
 	} else if (state.dataForm.templateType === 2) {
 		state.dataForm.templateName = ''
 	}

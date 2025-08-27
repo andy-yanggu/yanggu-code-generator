@@ -41,6 +41,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     @Autowired
     private TemplateMapstruct templateMapstruct;
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public TemplateVO addData(TemplateDTO dto) {
+        TemplateEntity templateEntity = add(dto);
+        return templateMapstruct.entityToVO(templateEntity);
+    }
+
     /**
      * 新增
      */
@@ -59,12 +66,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void update(TemplateDTO dto) {
+    public TemplateVO update(TemplateDTO dto) {
         //唯一性校验等
         checkUnique(dto);
         TemplateEntity formEntity = templateMapstruct.dtoToEntity(dto);
         TemplateEntity dbEntity = selectById(dto.getId());
         templateMapper.updateById(formEntity);
+        return templateMapstruct.entityToVO(formEntity);
     }
 
     /**

@@ -41,8 +41,8 @@ public class TemplateController {
     @PostMapping("/add")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "新增模板")
-    public void add(@RequestBody @Validated(InsertGroup.class) TemplateDTO dto) {
-        templateService.add(dto);
+    public TemplateVO add(@RequestBody @Validated(InsertGroup.class) TemplateDTO dto) {
+        return templateService.addData(dto);
     }
 
     /**
@@ -51,8 +51,8 @@ public class TemplateController {
     @PutMapping("/update")
     @ApiOperationSupport(order = 2)
     @Operation(summary = "修改模板")
-    public void update(@RequestBody @Validated(UpdateGroup.class) TemplateDTO dto) {
-        templateService.update(dto);
+    public TemplateVO update(@RequestBody @Validated(UpdateGroup.class) TemplateDTO dto) {
+        return templateService.update(dto);
     }
 
     /**
