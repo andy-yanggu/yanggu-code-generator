@@ -4,7 +4,7 @@
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
-				v-for="(tag, index) in appStore.tagsListRef"
+				v-for="(tag, index) in appStore.tagsList"
 				:ref="el => (tagRefs[tag.fullPath] = el)"
 				:key="tag.fullPath"
 				size="default"
@@ -119,7 +119,7 @@ onMounted(() => {
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-						const newTags = [...appStore.tagsListRef]
+						const newTags = [...appStore.tagsList]
 						const movedTag = newTags.splice(oldIndex!, 1)[0]
 						newTags.splice(newIndex!, 0, movedTag)
 						appStore.addAllTags(newTags)
@@ -160,10 +160,10 @@ const handleClose = (index: number, tag: NavbarTag) => {
 		if (appStore.tagLength > 0) {
 			// 优先尝试右侧标签
 			if (index < appStore.tagLength) {
-				to = appStore.tagsListRef[index].fullPath
+				to = appStore.tagsList[index].fullPath
 			} else if (index > 0) {
 				// 右侧无标签时选择左侧
-				to = appStore.tagsListRef[index - 1].fullPath
+				to = appStore.tagsList[index - 1].fullPath
 			}
 		}
 		if (to === '/') {
@@ -226,9 +226,9 @@ const closeCurrentTag = () => {
 const closeOtherTags = () => {
 	const currentPath = currentMenuTag.value.fullPath
 	// 删除其他缓存
-	appStore.removeCacheComponentList(appStore.tagsListRef.filter(tag => tag.fullPath !== currentPath).map(tag => tag.name))
+	appStore.removeCacheComponentList(appStore.tagsList.filter(tag => tag.fullPath !== currentPath).map(tag => tag.name))
 	// 保留当前标签，关闭其他所有标签
-	appStore.addAllTags(appStore.tagsListRef.filter(tag => tag.fullPath === currentPath))
+	appStore.addAllTags(appStore.tagsList.filter(tag => tag.fullPath === currentPath))
 	router.push(currentPath)
 	closeTagMenu()
 }
@@ -246,8 +246,8 @@ const closeAllTags = () => {
 //关闭左侧标签
 const closeLeftTag = () => {
 	const currentIndex = currentMenuTagIndex.value
-	appStore.removeCacheComponentList(appStore.tagsListRef.filter((_, index) => index < currentIndex).map(tag => tag.name))
-	appStore.addAllTags(appStore.tagsListRef.filter((_, index) => index >= currentIndex))
+	appStore.removeCacheComponentList(appStore.tagsList.filter((_, index) => index < currentIndex).map(tag => tag.name))
+	appStore.addAllTags(appStore.tagsList.filter((_, index) => index >= currentIndex))
 	router.push(currentMenuTag.value.fullPath)
 	closeTagMenu()
 }
@@ -256,8 +256,8 @@ const closeLeftTag = () => {
 const closeRightTag = () => {
 	// 保留当前标签及其左侧所有标签，以及首页标签
 	const currentIndex = currentMenuTagIndex.value
-	appStore.removeCacheComponentList(appStore.tagsListRef.filter((_, index) => index > currentIndex).map(tag => tag.name))
-	appStore.addAllTags(appStore.tagsListRef.filter((_, index) => index <= currentIndex))
+	appStore.removeCacheComponentList(appStore.tagsList.filter((_, index) => index > currentIndex).map(tag => tag.name))
+	appStore.addAllTags(appStore.tagsList.filter((_, index) => index <= currentIndex))
 	closeTagMenu()
 }
 </script>

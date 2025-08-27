@@ -6,7 +6,7 @@
 			mode="vertical"
 			router
 			:collapse-transition="false"
-			:collapse="appStore.isCollapseRef"
+			:collapse="appStore.isCollapse"
 		>
 			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
 		</el-menu>

@@ -4,7 +4,7 @@
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-left">
 				<el-icon :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
-					<Expand v-if="appStore.isCollapseRef"></Expand>
+					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
 				<breadcrumb></breadcrumb>
@@ -14,6 +14,7 @@
 			<div class="navbar-right">
 				<menu-search></menu-search>
 				<refresh-current-page></refresh-current-page>
+				<layout-size></layout-size>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
 						<svg-icon icon="icon-gitee-fill-round" size="18px"></svg-icon>
@@ -42,6 +43,7 @@ import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/navbar/components/menu-search.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.vue'
+import LayoutSize from '@/layout/navbar/components/layout-size.vue'
 import { useFullscreen } from '@vueuse/core'
 
 const { isFullscreen, toggle } = useFullscreen()

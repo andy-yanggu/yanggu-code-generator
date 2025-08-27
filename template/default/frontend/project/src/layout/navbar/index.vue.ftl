@@ -4,7 +4,7 @@
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-left">
 				<el-icon :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
-					<Expand v-if="appStore.isCollapseRef"></Expand>
+					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
 				<breadcrumb></breadcrumb>

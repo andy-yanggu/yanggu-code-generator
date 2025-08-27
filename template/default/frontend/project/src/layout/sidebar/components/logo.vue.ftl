@@ -1,7 +1,7 @@
 <template>
 	<div class="logo-container">
 		<el-avatar src="./favicon.ico" size="small" class="logo-avatar"></el-avatar>
-		<el-text v-if="!appStore.isCollapseRef" tag="b">{{ appTitle }}</el-text>
+		<el-text v-if="!appStore.isCollapse" tag="b">{{ appTitle }}</el-text>
 	</div>
 </template>
 <script setup lang="ts">

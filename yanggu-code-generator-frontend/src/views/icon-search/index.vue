@@ -7,7 +7,7 @@
 					<div class="icon-item" @click="selectIcon(iconName)">
 						<div class="icon-wrapper">
 							<svg-icon :icon="iconName" class="large-icon"></svg-icon>
-							<el-text size="small" truncated>{{ iconName }}</el-text>
+							<el-text size="small" truncated>{{ iconName.substring(iconName.indexOf('-') + 1) }}</el-text>
 						</div>
 					</div>
 				</el-col>

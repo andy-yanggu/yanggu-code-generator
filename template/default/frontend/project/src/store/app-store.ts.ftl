@@ -28,24 +28,24 @@ export const useAppStore = defineStore(
 	() => {
 		// 状态
 		// 折叠状态
-		const isCollapseRef = ref(false)
+		const isCollapse = ref(false)
 		// 标签列表
-		const tagsListRef = ref<NavbarTag[]>([])
+		const tagsList = ref<NavbarTag[]>([])
 		// 面包屑列表
-		const breadcrumbListRef = ref<Breadcrumb[]>([])
+		const breadcrumbList = ref<Breadcrumb[]>([])
 		// 缓存组件列表
-		const cacheListRef = ref<string[]>([])
+		const cacheList = ref<string[]>([])
 
 		// 计算属性
 		// 标签数量
-		const tagLength = computed(() => tagsListRef.value.length)
+		const tagLength = computed(() => tagsList.value.length)
 
 		// 缓存组件列表
 
 		// actions
 		// 切换折叠状态
 		const toggleCollapse = () => {
-			isCollapseRef.value = !isCollapseRef.value
+			isCollapse.value = !isCollapse.value
 		}
 
 		// 设置面包屑
@@ -61,43 +61,43 @@ export const useAppStore = defineStore(
 					matched.push(breadcrumb)
 				}
 			}
-			breadcrumbListRef.value = matched
+			breadcrumbList.value = matched
 		}
 
 		// 添加标签
 		const addTag = (tag: NavbarTag) => {
-			const isExist = tagsListRef.value.find(item => item.fullPath === tag.fullPath)
+			const isExist = tagsList.value.find(item => item.fullPath === tag.fullPath)
 			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
-				tagsListRef.value.push(tag)
+				tagsList.value.push(tag)
 			}
 		}
 
 		// 删除标签
 		const removeTag = (tag: NavbarTag) => {
-			tagsListRef.value = tagsListRef.value.filter(item => item.fullPath !== tag.fullPath)
+			tagsList.value = tagsList.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
 		// 添加所有标签
 		const addAllTags = (tagList: NavbarTag[]) => {
-			tagsListRef.value = tagList
+			tagsList.value = tagList
 		}
 
 		// 删除所有标签
 		const removeAllTags = () => {
-			tagsListRef.value = []
+			tagsList.value = []
 		}
 
 		// 添加缓存路由
 		const addCacheComponent = (name: string) => {
-			if (!cacheListRef.value.includes(name)) {
-				cacheListRef.value.push(name)
+			if (!cacheList.value.includes(name)) {
+				cacheList.value.push(name)
 			}
 		}
 
 		// 删除缓存路由
 		const removeCacheComponent = (name: string) => {
-			cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+			cacheList.value.splice(cacheList.value.indexOf(name), 1)
 		}
 
 		// 批量删除缓存路由
@@ -106,20 +106,20 @@ export const useAppStore = defineStore(
 				return
 			}
 			for (const name of nameList) {
-				cacheListRef.value.splice(cacheListRef.value.indexOf(name), 1)
+				cacheList.value.splice(cacheList.value.indexOf(name), 1)
 			}
 		}
 
 		// 删除所有缓存
 		const removeAllCache = () => {
-			cacheListRef.value = []
+			cacheList.value = []
 		}
 
 		return {
-			isCollapseRef,
-			breadcrumbListRef,
-			tagsListRef,
-			cacheListRef,
+			isCollapse,
+			breadcrumbList,
+			tagsList,
+			cacheList,
 			tagLength,
 			toggleCollapse,
 			setBreadcrumb,

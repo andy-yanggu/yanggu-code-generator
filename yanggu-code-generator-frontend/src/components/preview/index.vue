@@ -3,7 +3,7 @@
 	<el-drawer v-model="templateTreeData.visible" title="代码预览" :size="'100%'" :modal="false">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapseRef" width="400px" style="overflow: hidden">
+			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
 				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
 					<el-input
 						v-model="treeSearchText"
@@ -46,7 +46,7 @@
 						<el-row>
 							<el-col v-if="!isFullscreen" :span="1">
 								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-									<Expand v-if="isCollapseRef"></Expand>
+									<Expand v-if="isCollapse"></Expand>
 									<Fold v-else></Fold>
 								</el-icon>
 							</el-col>
@@ -102,7 +102,7 @@
 				<el-row>
 					<el-col v-if="!isFullscreen" :span="1">
 						<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-							<Expand v-if="isCollapseRef"></Expand>
+							<Expand v-if="isCollapse"></Expand>
 							<Fold v-else></Fold>
 						</el-icon>
 					</el-col>
@@ -164,7 +164,7 @@ const templateTreeData = reactive({
 	tabActiveName: ''
 })
 const treeSearchText = ref('')
-const isCollapseRef = ref(false)
+const isCollapse = ref(false)
 const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
@@ -173,7 +173,7 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 	templateTreeData.id = id
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
-	isCollapseRef.value = false
+	isCollapse.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		const previewData = {
@@ -199,7 +199,7 @@ const init = async (id: number, projectId: number, generatorType: number, genera
 }
 
 const toggleCollapse = () => {
-	isCollapseRef.value = !isCollapseRef.value
+	isCollapse.value = !isCollapse.value
 }
 
 const buildFileList = (treeList: Tree[]) => {
