@@ -70,7 +70,7 @@ const sidebarConstantMenuInfoList: MenuInfo[] = [
 		name: 'Index',
 		meta: {
 			title: '首页',
-			icon: 'icon-dashboard-fill',
+			icon: 'icon-dashboard',
 			cache: true,
 			type: 1
 		}
@@ -283,7 +283,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		name: 'TestExternal',
 		meta: {
 			title: '外链测试',
-			icon: 'icon-dashboard-fill',
+			icon: 'icon-dashboard',
 			type: 0
 		},
 		children: [
@@ -292,7 +292,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				name: 'TestExternalIframe',
 				meta: {
 					title: '测试内嵌iframe',
-					icon: 'icon-dashboard-fill',
+					icon: 'icon-laptop',
 					type: 3,
 					externalUrl: 'https://cn.vitejs.dev/'
 				}
@@ -302,7 +302,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				name: 'TestExternalNewWindow',
 				meta: {
 					title: '测试新窗口',
-					icon: 'icon-dashboard-fill',
+					icon: 'icon-camera',
 					type: 4,
 					externalUrl: 'https://www.baidu.com'
 				}
@@ -355,7 +355,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				component: 'gen/project/index',
 				meta: {
 					title: '项目管理',
-					icon: 'icon-edit-square',
+					icon: 'icon-project',
 					type: 1,
 					cache: true
 				}
@@ -366,7 +366,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				component: 'gen/table/index',
 				meta: {
 					title: '表管理',
-					icon: 'icon-detail',
+					icon: 'icon-table',
 					type: 1,
 					cache: true
 				}
@@ -388,7 +388,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				component: 'gen/template-group/index',
 				meta: {
 					title: '模板组管理',
-					icon: 'icon-file-fill',
+					icon: 'icon-file',
 					type: 1,
 					cache: true
 				}
@@ -399,7 +399,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				component: 'gen/datasource/index',
 				meta: {
 					title: '数据源管理',
-					icon: 'icon-database-fill',
+					icon: 'icon-database',
 					type: 1,
 					cache: true
 				}
