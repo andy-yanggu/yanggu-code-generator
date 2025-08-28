@@ -23,7 +23,7 @@
 			</el-form-item>
 			<!-- 文件上传 -->
 			<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
-				<el-upload :limit="1" :file-list="fileList" :http-request="handleManualUpload" :on-remove="handleRemove">
+				<el-upload :limit="1" :file-list="fileList" :on-exceed="handleExceed" :http-request="handleManualUpload" :on-remove="handleRemove">
 					<el-button type="primary" :icon="Upload">点击上传</el-button>
 				</el-upload>
 			</el-form-item>
@@ -77,9 +77,8 @@ const initAfterHandle = () => {
 		if (state.dataForm.id) {
 			fileList.value = [
 				{
-					name: state.dataForm.binaryOriginalFileName,
-					url: state.dataForm.templateContent
-				}
+					name: state.dataForm.binaryOriginalFileName
+				} as File
 			]
 		} else {
 			fileList.value = []
@@ -95,7 +94,9 @@ const submitBeforeHandle = () => {
 		state.dataForm.templateContent = ''
 	} else if (state.dataForm.templateType === 1) {
 		state.dataForm.binaryOriginalFileName = ''
-		state.dataForm.templateContent = ''
+		if (!state.dataForm.id) {
+			state.dataForm.templateContent = ''
+		}
 	} else if (state.dataForm.templateType === 2) {
 		state.dataForm.templateName = ''
 	}
@@ -145,28 +146,62 @@ const dataRules = reactive({
 	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const fileList = ref<any[]>([])
+const fileList = ref<File[]>([])
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 
-const handleManualUpload = (options: any) => {
-	const { file } = options
-	// 直接读取为Base64数据URL
-	const reader = new FileReader()
-	reader.onload = e => {
-		// 更新表单中的 templateContent 字段
-		state.dataForm.templateContent = e.target?.result as string
-		state.dataForm.binaryOriginalFileName = file.name
-	}
-	reader.readAsDataURL(file) // 读取为Base64数据URL
+// 统一的文件处理方法
+const processFile = (file: File) => {
+	return new Promise<void>(resolve => {
+		const reader = new FileReader()
+		reader.onload = e => {
+			// 更新表单中的 templateContent 字段
+			state.dataForm.templateContent = e.target?.result as string
+			state.dataForm.binaryOriginalFileName = file.name
+
+			// 更新文件列表用于显示（添加状态以便显示成功图标）
+			fileList.value = [file]
+			resolve()
+		}
+		reader.readAsDataURL(file)
+	})
 }
 
+// 处理文件上传
+const handleManualUpload = async (options: any) => {
+	const { file, onSuccess } = options
+
+	try {
+		await processFile(file)
+
+		// 通知上传成功，这会触发绿色小勾的显示
+		if (onSuccess) {
+			onSuccess({}, file)
+		}
+	} catch (error) {
+		console.error('文件处理失败:', error)
+	}
+}
+
+// 处理超出限制的情况（自动替换文件）
+const handleExceed: UploadProps['onExceed'] = files => {
+	// 清除之前文件的数据
+	state.dataForm.binaryOriginalFileName = ''
+	state.dataForm.templateContent = ''
+	fileList.value = []
+
+	// 处理新文件
+	const file = files[0] as File
+	processFile(file)
+}
+
+// 处理文件移除
 const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-	// 1. 清除文件数据
+	// 清除文件数据
 	state.dataForm.binaryOriginalFileName = ''
 	state.dataForm.templateContent = ''
 
-	// 2. 更新文件列表
+	// 清空文件列表
 	fileList.value = []
 }
 

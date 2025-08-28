@@ -112,3 +112,18 @@
 .el-card.is-always-shadow {
   box-shadow: none !important;
 }
+
+// 消息弹出框，确定在前，取消在后
+.el-message-box__btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.el-message-box__btns .el-button--primary {
+  order: -1; /* 让“是(Y)”排到最前 */
+}
+
+.el-message-box__btns .el-button + .el-button {
+  margin-left: 0 !important;
+}

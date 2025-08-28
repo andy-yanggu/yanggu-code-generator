@@ -93,6 +93,7 @@
 				</div>
 			</el-aside>
 
+			<!-- 新增和修改页面	-->
 			<add-or-update
 				ref="addOrUpdateRef"
 				:template-group-id="templateGroupId"
@@ -235,7 +236,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
+import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
@@ -461,6 +462,9 @@ const refreshTree = () => {
 			// 清空所有tab
 			templateTreeData.tabList = []
 
+			// 清空所有展开状态
+			expandedKeys.value = []
+
 			// 重新加载数据
 			init()
 		})
@@ -658,6 +662,10 @@ const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | '
 	templateUpdateParentApi(dataForm)
 		.then(() => {
 			ElMessage.success('移动成功')
+			// 激活被拖拽的树节点
+			templateTreeData.activeItemId = dragData.id
+			// 加入到tab中
+			tabPush(dragData)
 			init() // 重新加载数据
 		})
 		.catch(() => {
@@ -1018,25 +1026,59 @@ const closeAllTabs = () => {
 	})
 }
 
+const joinFileName = (editTabs: Tree[]): string => {
+	if (editTabs.length > 3) {
+		return (
+			editTabs
+				.slice(0, 3)
+				.map(tab => tab.fileName)
+				.join('、') + `等${editTabs.length}个模板文件`
+		)
+	} else {
+		return editTabs.map(tab => tab.fileName).join('、') + '模板文件'
+	}
+}
+
 // 通用关闭处理
-const handleCloseTabs = (toCloseTabs: Tree[], afterClose: () => void) => {
+const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 	const editTabs = toCloseTabs.filter(tab => tab.isEdited)
 
-	if (editTabs.length > 0) {
+	if (editTabs.length === 0) {
+		closeTab()
+	} else {
+		const fileNameJoin = joinFileName(editTabs)
 		// 关闭确认
-		ElMessageBox.confirm('存在未保存的模板文件，关闭将丢失修改是否继续？', '提示', {
-			confirmButtonText: '确定',
+		ElMessageBox.confirm(`${fileNameJoin}修改未保存，是否保存？`, '提示', {
+			distinguishCancelAndClose: true,
+			confirmButtonText: '保存',
 			cancelButtonText: '取消',
 			type: 'warning'
-		}).then(() => {
-			editTabs.forEach(tab => {
-				tab.isEdited = false
-				tab.templateContent = tab.originalTemplateContent
-			})
-			afterClose()
 		})
-	} else {
-		afterClose()
+			.then(() => {
+				editTabs.forEach(tab => {
+					tab.isEdited = false
+					tab.originalTemplateContent = tab.templateContent
+
+					const dataForm = {
+						id: tab.id,
+						templateContent: tab.templateContent
+					}
+					templateUpdateContentApi(dataForm)
+				})
+				closeTab()
+			})
+			.catch((action: Action) => {
+				if (action === 'cancel') {
+					editTabs.forEach(tab => {
+						tab.isEdited = false
+						tab.templateContent = tab.originalTemplateContent
+					})
+					nextTick(() => {
+						// 等待视图更新完成
+						closeTab()
+					})
+				}
+			})
 	}
 	hideTabContextMenu()
 }
