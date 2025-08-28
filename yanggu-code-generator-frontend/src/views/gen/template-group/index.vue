@@ -20,13 +20,13 @@
 		</el-card>
 
 		<el-card shadow="hover">
-			<el-space :size="'large'" class="layout-space">
+			<el-space class="layout-space">
 				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-				<el-button type="primary" :icon="Download" @click="exportHandle()">导出</el-button>
 				<el-upload :limit="1" :show-file-list="false" :http-request="handleManualUpload">
 					<el-button type="success" :icon="Upload">导入</el-button>
 				</el-upload>
+				<el-button type="info" :icon="Download" @click="exportHandle()">导出</el-button>
 			</el-space>
 			<el-table
 				ref="tableRef"

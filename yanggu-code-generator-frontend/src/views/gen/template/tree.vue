@@ -156,12 +156,13 @@
 						>
 							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
-									<span class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
-										<el-tooltip :content="tabItem.templateDesc" effect="light" :disabled="!tabItem.templateDesc" placement="bottom">
+									<el-tooltip :content="tabItem.templateDesc" effect="light" :disabled="!tabItem.templateDesc" placement="bottom">
+										<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
+											<svg-icon :icon="getIcon({ expanded: false }, tabItem)" style="margin-right: 5px"></svg-icon>
 											<span>{{ tabItem.fileName }}</span>
-										</el-tooltip>
-										<span v-if="tabItem.isEdited" class="edit-dot"></span>
-									</span>
+											<span v-if="tabItem.isEdited" class="edit-dot"></span>
+										</div>
+									</el-tooltip>
 								</template>
 							</el-tab-pane>
 						</el-tabs>
@@ -1048,10 +1049,11 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 	} else {
 		const fileNameJoin = joinFileName(editTabs)
 		// 关闭确认
-		ElMessageBox.confirm(`${fileNameJoin}修改未保存，是否保存？`, '提示', {
+		const message = `${fileNameJoin}有未保存的修改，是否保存后再关闭？`
+		ElMessageBox.confirm(message, '提示', {
 			distinguishCancelAndClose: true,
 			confirmButtonText: '保存',
-			cancelButtonText: '取消',
+			cancelButtonText: '不保存',
 			type: 'warning'
 		})
 			.then(() => {

@@ -283,7 +283,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		name: 'TestExternal',
 		meta: {
 			title: '外链测试',
-			icon: 'icon-dashboard',
+			icon: 'icon-rocket',
 			type: 0
 		},
 		children: [
@@ -333,7 +333,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				name: 'ProjectGitGitee',
 				meta: {
 					title: 'gitee地址',
-					icon: 'icon-gitee-fill',
+					icon: 'icon-gitee-fill-round',
 					type: 4,
 					externalUrl: 'https://gitee.com/andy_yanggu/yanggu-code-generator'
 				}

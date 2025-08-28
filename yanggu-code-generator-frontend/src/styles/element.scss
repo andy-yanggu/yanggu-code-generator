@@ -127,3 +127,8 @@
 .el-message-box__btns .el-button + .el-button {
   margin-left: 0 !important;
 }
+
+/* el-space 默认改成 default (12px) */
+.el-space {
+  gap: 12px !important;  /* default 对应 12px */
+}
