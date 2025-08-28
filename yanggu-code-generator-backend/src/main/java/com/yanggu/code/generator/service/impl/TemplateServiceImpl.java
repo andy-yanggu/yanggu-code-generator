@@ -18,6 +18,7 @@ import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
 import org.dromara.hutool.core.text.StrUtil;
+import org.dromara.hutool.core.util.EnumUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -256,24 +257,21 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         LambdaQueryWrapper<TemplateEntity> queryWrapper = Wrappers.lambdaQuery(TemplateEntity.class)
                 .ne(Objects.nonNull(dto.getId()), TemplateEntity::getId, dto.getId())
                 .eq(TemplateEntity::getTemplateGroupId, dto.getTemplateGroupId())
-                .eq(TemplateEntity::getParentId, dto.getParentId());
+                .eq(TemplateEntity::getParentId, dto.getParentId())
+                .eq(TemplateEntity::getFileName, dto.getFileName())
+                .eq(TemplateEntity::getTemplateType, dto.getTemplateType());
 
         Supplier<String> supplier;
-        if (Objects.equals(dto.getTemplateType(), TemplateTypeEnum.DIRECTORY.getCode())) {
-            queryWrapper.eq(TemplateEntity::getFileName, dto.getFileName());
-            supplier = () -> StrUtil.format("目录名称: {}已存在", dto.getFileName());
-        } else {
-            queryWrapper.and(wrapper -> wrapper
-                    .eq(TemplateEntity::getTemplateName, dto.getTemplateName())
-                    .or()
-                    .eq(TemplateEntity::getFileName, dto.getFileName())
-            );
-            supplier = () -> "模板名称或者文件/目录名称已存在";
+        switch (EnumUtil.getBy(TemplateTypeEnum::getCode, dto.getTemplateType())) {
+            case DIRECTORY -> supplier = () -> "目录名称：{}已存在";
+            case TEMPLATE_FILE -> supplier = () -> "文件名称：{}已存在";
+            case BINARY_FILE -> supplier = () -> "二进制文件名称：{}已存在";
+            default -> throw new BusinessException("未知模板类型：" + dto.getTemplateType());
         }
 
         boolean exists = templateMapper.exists(queryWrapper);
         if (exists) {
-            throw new BusinessException(supplier.get());
+            throw new BusinessException(StrUtil.format(supplier.get(), dto.getFileName()));
         }
     }
 
