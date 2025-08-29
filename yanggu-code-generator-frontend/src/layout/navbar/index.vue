@@ -10,10 +10,13 @@
 				<breadcrumb></breadcrumb>
 			</div>
 
-			<!-- 右侧区域：搜索 + 刷新 + 链接 + 全屏按钮 -->
+			<!-- 右侧区域：菜单搜索 + 刷新 + 切换布局大小 + 链接 + 全屏按钮 -->
 			<div class="navbar-right">
+				<!-- 菜单搜索 -->
 				<menu-search></menu-search>
+				<!-- 刷新当前页 -->
 				<refresh-current-page></refresh-current-page>
+				<!-- 切换布局大小	-->
 				<layout-size></layout-size>
 				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
 					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
@@ -25,6 +28,7 @@
 						<svg-icon icon="icon-github-fill" size="18px"></svg-icon>
 					</el-link>
 				</el-tooltip>
+				<!-- 全屏按钮 -->
 				<el-tooltip :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
 					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>

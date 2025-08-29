@@ -95,7 +95,7 @@
 									<el-button type="primary" link class="more-button" :icon="More">更多</el-button>
 									<template #dropdown>
 										<el-dropdown-menu>
-											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成代码</el-dropdown-item>
+											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
 											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">字段同步</el-dropdown-item>
 											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
 										</el-dropdown-menu>

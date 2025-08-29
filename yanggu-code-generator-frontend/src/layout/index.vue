@@ -12,7 +12,7 @@
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
 							<transition name="slide" mode="out-in">
-								<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+								<keep-alive :include="cacheIncludeList" :exclude="['Redirect']">
 									<component :is="Component" :key="route.fullPath"></component>
 								</keep-alive>
 							</transition>
@@ -28,8 +28,11 @@
 import sidebar from '@/layout/sidebar/index.vue'
 import navbar from '@/layout/navbar/index.vue'
 import { useAppStore } from '@/store/app-store'
+import { computed } from 'vue'
 
 const appStore = useAppStore()
+
+const cacheIncludeList = computed(() => ['IframeComponent', ...appStore.cacheList])
 </script>
 
 <style scoped></style>

@@ -70,7 +70,7 @@ const sidebarConstantMenuInfoList: MenuInfo[] = [
 		name: 'Index',
 		meta: {
 			title: '首页',
-			icon: 'icon-dashboard',
+			icon: 'icon-home',
 			cache: true,
 			type: 1
 		}
@@ -273,7 +273,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		name: 'IconSearch',
 		meta: {
 			title: '图标搜索',
-			icon: 'icon-icon-test',
+			icon: 'icon-search',
 			type: 1,
 			cache: true
 		}
@@ -283,7 +283,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		name: 'TestExternal',
 		meta: {
 			title: '外链测试',
-			icon: 'icon-rocket',
+			icon: 'icon-link',
 			type: 0
 		},
 		children: [
@@ -291,20 +291,32 @@ const businessMenuInfoList: MenuInfo[] = [
 				path: '/test-external/iframe',
 				name: 'TestExternalIframe',
 				meta: {
-					title: '测试内嵌iframe',
-					icon: 'icon-laptop',
+					title: 'java官网（iframe）',
+					icon: 'icon-java',
 					type: 3,
-					externalUrl: 'https://cn.vitejs.dev/'
+					externalUrl: 'http://localhost:8888/code-generator/project/detail?id=14',
+					cache: true
+				}
+			},
+			{
+				path: '/test-external/iframe2',
+				name: 'TestExternalIframe2',
+				meta: {
+					title: 'doc网站（iframe）',
+					icon: 'icon-Batchfolding',
+					type: 3,
+					externalUrl: 'http://localhost:8888/code-generator/project/detail?id=19',
+					cache: true
 				}
 			},
 			{
 				path: '/test-external/new-window',
 				name: 'TestExternalNewWindow',
 				meta: {
-					title: '测试新窗口',
-					icon: 'icon-camera',
+					title: '阿里巴巴（新窗口）',
+					icon: 'icon-alibaba',
 					type: 4,
-					externalUrl: 'https://www.baidu.com'
+					externalUrl: 'https://www.alibaba.com'
 				}
 			}
 		]

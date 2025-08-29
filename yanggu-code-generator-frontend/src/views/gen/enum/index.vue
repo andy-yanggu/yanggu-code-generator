@@ -84,7 +84,7 @@
 									<el-button type="primary" link class="more-button" :icon="More">更多</el-button>
 									<template #dropdown>
 										<el-dropdown-menu>
-											<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成代码</el-dropdown-item>
+											<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成</el-dropdown-item>
 											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>

@@ -176,4 +176,14 @@ public class TemplateController {
         templateService.updateParent(dragDTO);
     }
 
+    /**
+     * 批量更新模板内容
+     */
+    @PutMapping("/updateContentBatch")
+    @ApiOperationSupport(order = 14)
+    @Operation(summary = "批量更新模板内容")
+    public void updateContentBatch(@RequestBody @Validated(UpdateGroup.class) List<TemplateContentDTO> contentDTOList) {
+        templateService.updateContentBatch(contentDTOList);
+    }
+
 }

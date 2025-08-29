@@ -20,10 +20,6 @@ export interface RouteMetaData {
 	hidden: boolean
 	// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
 	type: number
-	// 是否外链
-	isExternal?: boolean
-	// 打开方式（iframe内嵌或新窗口）
-	openType?: 'iframe' | 'blank'
 	// 外链地址
 	externalUrl?: string
 }
@@ -43,8 +39,6 @@ export const routerGuard = (router: Router) => {
 			cache: to.meta?.cache as boolean,
 			type: to.meta?.type as number,
 			hidden: to.meta?.hidden as boolean,
-			isExternal: to.meta?.isExternal as boolean,
-			openType: to.meta?.openType as 'iframe' | 'blank',
 			externalUrl: to.meta?.externalUrl as string
 		}
 
@@ -79,25 +73,21 @@ export const routerGuard = (router: Router) => {
 			return
 		}
 
-		// 登录，添加标签
 		const appStore = useAppStore()
-		// 当外链不是新窗口的时候就添加
-		const notBlank = !(routeMetaData.isExternal && routeMetaData.openType === 'blank')
-		// 添加标签
-		if (notBlank) {
+
+		// 不是外链（新窗口）
+		if (routeMetaData.type != 4) {
 			const tag: NavbarTag = {
 				...routeMetaData
 			}
+			// 添加标签
 			appStore.addTag(tag)
-		}
-
-		// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
-		if (notBlank) {
+			// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
 			appStore.setBreadcrumb(routeMetaData)
 		}
 
-		// 添加缓存路由 - 仅当不是新窗口打开的外链且有名称时才添加缓存
-		if (routeMetaData.cache && routeMetaData.name && notBlank) {
+		// 添加缓存路由 - 有名称和是菜单时才添加缓存
+		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1) {
 			appStore.addCacheComponent(routeMetaData.name)
 		}
 

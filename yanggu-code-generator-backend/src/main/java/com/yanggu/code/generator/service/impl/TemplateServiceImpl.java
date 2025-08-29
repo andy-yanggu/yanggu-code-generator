@@ -223,6 +223,20 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         templateMapper.updateById(updateEntity);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void updateContentBatch(List<TemplateContentDTO> contentDTOList) {
+        List<TemplateEntity> list = contentDTOList.stream()
+                .map(dto -> {
+                    TemplateEntity entity = new TemplateEntity();
+                    entity.setId(dto.getId());
+                    entity.setTemplateContent(dto.getTemplateContent());
+                    return entity;
+                })
+                .toList();
+        this.updateBatchById(list);
+    }
+
     /**
      * 判断 nodeId 是否是 targetId 的子孙节点
      */

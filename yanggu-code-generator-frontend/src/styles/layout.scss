@@ -32,6 +32,7 @@ a:hover {
   width: 100%;
   height: 100vh;
   display: flex;
+
   .layout-sidebar {
     background: var(--theme-menu-bg-color);
     border-right: var(--theme-border-color-light) 1px solid;
@@ -43,6 +44,7 @@ a:hover {
     overflow-x: auto;
     overflow-y: auto;
   }
+
   .layout-header {
     margin-left: 15px;
     padding: 0 !important;
@@ -51,21 +53,33 @@ a:hover {
     width: 100%;
     min-height: var(--theme-header-height);
   }
+
   .layout-main {
     padding: 0 !important;
     overflow: hidden;
     width: 100%;
     background-color: var(--theme-main-bg-color);
-    .layout-card{
-      min-height: calc(100vh - 30px - var(--theme-header-height));
+
+    .layout-scrollbar {
+      height: calc(100vh - 30px - var(--theme-header-height));
+      padding: 15px;
+
+      .layout-card {
+        min-height: calc(100vh - 30px - var(--theme-header-height));
+        width: 100%;
+
+        .layout-query {
+        }
+
+        .layout-space {
+          margin-bottom: 15px
+        }
+
+        .layout-table {
+          width: 100%;
+        }
+      }
     }
-  }
-  .layout-scrollbar {
-    height: calc(100vh - 30px - var(--theme-header-height));
-    padding: 15px;
-  }
-  .layout-space {
-    margin-bottom: 15px
   }
 }
 

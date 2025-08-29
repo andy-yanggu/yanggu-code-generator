@@ -241,7 +241,13 @@ import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import { templateDeleteListApi, templateTreeDataApi, templateUpdateContentApi, templateUpdateParentApi } from '@/api/gen/template'
+import {
+	templateDeleteListApi,
+	templateTreeDataApi,
+	templateUpdateContentApi,
+	templateUpdateContentListApi,
+	templateUpdateParentApi
+} from '@/api/gen/template'
 import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
@@ -578,7 +584,7 @@ const deleteCheckedNode = () => {
 		ElMessage.warning('请勾选目录或者文件')
 		return
 	}
-	ElMessageBox.confirm('此操作将删除该目录或者文件, 是否继续?', '提示', {
+	ElMessageBox.confirm('此操作将删除目录或者文件, 是否继续?', '提示', {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'
@@ -1049,7 +1055,7 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 	} else {
 		const fileNameJoin = joinFileName(editTabs)
 		// 关闭确认
-		const message = `${fileNameJoin}有未保存的修改，是否保存后再关闭？`
+		const message = `${fileNameJoin}已修改未保存，是否保存后再关闭？`
 		ElMessageBox.confirm(message, '提示', {
 			distinguishCancelAndClose: true,
 			confirmButtonText: '保存',
@@ -1057,17 +1063,23 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 			type: 'warning'
 		})
 			.then(() => {
-				editTabs.forEach(tab => {
-					tab.isEdited = false
-					tab.originalTemplateContent = tab.templateContent
-
-					const dataForm = {
+				const dataFormList = editTabs.map(tab => {
+					return {
 						id: tab.id,
 						templateContent: tab.templateContent
 					}
-					templateUpdateContentApi(dataForm)
 				})
-				closeTab()
+				templateUpdateContentListApi(dataFormList).then(() => {
+					ElMessage.success('保存成功')
+					editTabs.forEach(tab => {
+						tab.isEdited = false
+						tab.originalTemplateContent = tab.templateContent
+					})
+					nextTick(() => {
+						// 等待视图更新完成
+						closeTab()
+					})
+				})
 			})
 			.catch((action: Action) => {
 				if (action === 'cancel') {

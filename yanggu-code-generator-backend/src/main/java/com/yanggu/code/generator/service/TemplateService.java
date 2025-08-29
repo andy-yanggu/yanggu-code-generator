@@ -100,4 +100,9 @@ public interface TemplateService extends IService<TemplateEntity> {
      */
     void updateParent(TemplateDragDTO dragDTO);
 
+    /**
+     * 批量更新模板内容
+     */
+    void updateContentBatch(List<TemplateContentDTO> contentDTOList);
+
 }

@@ -3,7 +3,7 @@
 		<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable @input="filterIcons()"></el-input>
 		<div class="icon-grid">
 			<el-row :gutter="20">
-				<el-col v-for="iconName in allIcons" :key="iconName" :span="3" class="icon-col">
+				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
 					<div class="icon-item" @click="selectIcon(iconName)">
 						<div class="icon-wrapper">
 							<svg-icon :icon="iconName" class="large-icon"></svg-icon>

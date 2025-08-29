@@ -65,3 +65,8 @@ export const templateUpdateContentApi = (dataForm: any) => {
 export const templateUpdateParentApi = (dataForm: any) => {
 	return service.put('/template/updateParent', dataForm)
 }
+
+// 批量修改模板内容
+export const templateUpdateContentListApi = (dataFormList: any[]) => {
+	return service.put('/template/updateContentBatch', dataFormList)
+}

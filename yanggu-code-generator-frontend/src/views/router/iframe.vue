@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -16,14 +16,23 @@ defineOptions({
 	name: 'IframeComponent'
 })
 
-watch(
-	() => route.meta.externalUrl,
-	val => {
-		iframeSrc.value = (val as string) || ''
-		loading.value = true // 每次切换 URL 时重新显示 loading
-	},
-	{ immediate: true }
-)
+onMounted(() => {
+	iframeSrc.value = route.meta.externalUrl as string
+})
+
+import { getCurrentInstance, onMounted, onActivated, onDeactivated, onUnmounted } from 'vue'
+
+const inst = getCurrentInstance()
+console.log('uid:', inst?.uid) // 不同 key 会看到不同 uid
+
+onMounted(() => console.log('mounted uid=', inst?.uid))
+onActivated(() => {
+	console.log('activated uid=', inst?.uid)
+	const currentUrl = route.meta.externalUrl as string
+	console.log('currentUrl:', currentUrl)
+})
+onDeactivated(() => console.log('deactivated uid=', inst?.uid))
+onUnmounted(() => console.log('unmounted uid=', inst?.uid))
 
 const handleLoad = () => {
 	loading.value = false // iframe 加载完成后关闭 loading
