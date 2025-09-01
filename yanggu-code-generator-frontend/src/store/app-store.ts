@@ -28,6 +28,8 @@ export interface IframeInfo {
 	name: string
 	// 路由地址
 	src: string
+	// 路径
+	path: string
 }
 
 export const useAppStore = defineStore(

@@ -35,7 +35,7 @@ watch(
 		const externalUrl = route.meta.externalUrl as string
 		appStore.setActiveIframe(newRouteName)
 		// 缓存模式：加入池子
-		appStore.addIframeCache({ name: newRouteName, src: externalUrl })
+		appStore.addIframeCache({ name: newRouteName, src: externalUrl, path: route.path })
 	},
 	{ immediate: true }
 )

@@ -12,11 +12,12 @@
 					<div class="layout-card">
 						<router-view v-slot="{ Component, route }">
 							<transition name="slide" mode="out-in">
-								<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+								<keep-alive v-if="route.meta.type === 1" :include="appStore.cacheList" :exclude="['Redirect']">
 									<component :is="Component" :key="route.fullPath"></component>
 								</keep-alive>
 							</transition>
 						</router-view>
+						<iframe-container></iframe-container>
 					</div>
 				</el-scrollbar>
 			</el-main>
@@ -28,6 +29,7 @@
 import sidebar from '@/layout/sidebar/index.vue'
 import navbar from '@/layout/navbar/index.vue'
 import { useAppStore } from '@/store/app-store'
+import IframeContainer from '@/layout/components/iframe-container.vue'
 
 const appStore = useAppStore()
 </script>
