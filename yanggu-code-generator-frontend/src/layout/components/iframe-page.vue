@@ -9,15 +9,17 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const iframeSrc = ref('')
 const loading = ref(true) // 初始 loading 状态
+
+defineProps({
+	iframeSrc: {
+		type: String,
+		required: true
+	}
+})
 
 defineOptions({
 	name: 'IframeComponent'
-})
-
-onMounted(() => {
-	iframeSrc.value = route.meta.externalUrl as string
 })
 
 import { getCurrentInstance, onMounted, onActivated, onDeactivated, onUnmounted } from 'vue'

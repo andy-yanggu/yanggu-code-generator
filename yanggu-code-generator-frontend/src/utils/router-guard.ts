@@ -42,7 +42,7 @@ export const routerGuard = (router: Router) => {
 			externalUrl: to.meta?.externalUrl as string
 		}
 
-		console.log(to, from, routeMetaData)
+		// console.log(to, from, routeMetaData)
 
 		// 如果包含白名单，直接放行
 		if (whiteLists.includes(routeMetaData.name)) {
@@ -61,7 +61,7 @@ export const routerGuard = (router: Router) => {
 		if (!userStore.isAddRoutes) {
 			// 1. 添加路由
 			const routeList = buildRouteList(userStore.menuList)
-			routeList.forEach((item: any) => {
+			routeList.forEach((item: RouteRecordRaw) => {
 				// console.log('item', item)
 				router.addRoute('Layout', item)
 			})
@@ -118,7 +118,8 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 				return {
 					path: item.path,
 					name: item.name,
-					component: () => import('@/views/router/iframe.vue'), // 创建iframe组件
+					component: loadIframeComponent(item),
+					props: { iframeSrc: item.meta.externalUrl },
 					meta: {
 						...item.meta
 					}
@@ -143,4 +144,18 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 			return menu
 		})
 		.filter(Boolean) as RouteRecordRaw[]
+}
+
+// 处理iframe菜单对应的组件
+const loadIframeComponent = (item: MenuInfo) => {
+	if (item.component) {
+		return loadView(item.component)
+	} else {
+		return () =>
+			import('@/layout/components/iframe-page.vue').then(comp => {
+				// 给组件动态设置 name
+				comp.default.name = item.name
+				return comp
+			})
+	}
 }

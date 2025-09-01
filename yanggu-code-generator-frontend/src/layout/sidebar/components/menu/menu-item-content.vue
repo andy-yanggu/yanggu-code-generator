@@ -1,6 +1,6 @@
 <template>
 	<div class="menu-item">
-		<svg-icon v-if="icon" :icon="icon" class="svg-icon" />
+		<svg-icon v-if="icon" :icon="icon" class="svg-icon"></svg-icon>
 		<el-tooltip :content="title" :disabled="!isTooltipEnabled" placement="top">
 			<el-text ref="titleRef" truncated class="menu-title">
 				{{ title }}
@@ -27,7 +27,6 @@ defineProps({
 
 const titleRef = ref<InstanceType<typeof ElText> | null>(null)
 const isTitleOverflow = ref(false)
-const isCollapsed = ref(false) // 用于检测菜单折叠状态
 
 // 检查文本是否溢出
 const checkOverflow = () => {
@@ -41,7 +40,7 @@ const checkOverflow = () => {
 
 // 折叠时 tooltip 始终可用
 const isTooltipEnabled = computed(() => {
-	return isCollapsed.value || isTitleOverflow.value
+	return isTitleOverflow.value
 })
 
 // 监听窗口大小变化

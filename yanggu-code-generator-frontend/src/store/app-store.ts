@@ -23,6 +23,13 @@ export interface Breadcrumb {
 	icon: string
 }
 
+export interface IframeInfo {
+	// 路由名称
+	name: string
+	// 路由地址
+	src: string
+}
+
 export const useAppStore = defineStore(
 	'app',
 	() => {
@@ -37,6 +44,9 @@ export const useAppStore = defineStore(
 		const cacheList = ref<string[]>([])
 		// 布局大小
 		const layoutSize = ref<'large' | 'default' | 'small'>('default')
+		const activeIframe = ref('')
+		// iframe缓存列表
+		const iframeCacheList = ref<IframeInfo[]>([])
 
 		// 计算属性
 		// 标签数量
@@ -99,7 +109,10 @@ export const useAppStore = defineStore(
 
 		// 删除缓存路由
 		const removeCacheComponent = (name: string) => {
-			cacheList.value.splice(cacheList.value.indexOf(name), 1)
+			const indexOf = cacheList.value.indexOf(name)
+			if (indexOf > -1) {
+				cacheList.value.splice(indexOf, 1)
+			}
 		}
 
 		// 批量删除缓存路由
@@ -108,13 +121,30 @@ export const useAppStore = defineStore(
 				return
 			}
 			for (const name of nameList) {
-				cacheList.value.splice(cacheList.value.indexOf(name), 1)
+				removeCacheComponent(name)
 			}
 		}
 
 		// 删除所有缓存
 		const removeAllCache = () => {
 			cacheList.value = []
+		}
+
+		const setActiveIframe = (name: string) => {
+			activeIframe.value = name
+		}
+
+		// 添加iframe路由
+		const addIframeCache = (iframeInfo: IframeInfo) => {
+			if (iframeCacheList.value.some(item => item.name === iframeInfo.name)) {
+				return
+			}
+			iframeCacheList.value.push(iframeInfo)
+		}
+
+		// 删除iframe路由
+		const removeIframeCache = (name: string) => {
+			iframeCacheList.value = iframeCacheList.value.filter(item => item.name !== name)
 		}
 
 		// 设置布局大小
@@ -128,7 +158,9 @@ export const useAppStore = defineStore(
 			tagsList,
 			layoutSize,
 			cacheList,
+			iframeCacheList,
 			tagLength,
+			activeIframe,
 			toggleCollapse,
 			setBreadcrumb,
 			addTag,
@@ -138,6 +170,9 @@ export const useAppStore = defineStore(
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
+			setActiveIframe,
+			addIframeCache,
+			removeIframeCache,
 			removeAllCache,
 			setLayoutSize
 		}

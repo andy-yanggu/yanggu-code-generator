@@ -294,7 +294,7 @@ const businessMenuInfoList: MenuInfo[] = [
 					title: 'java官网（iframe）',
 					icon: 'icon-java',
 					type: 3,
-					externalUrl: 'http://localhost:8888/code-generator/project/detail?id=14',
+					externalUrl: 'https://www.java.com',
 					cache: true
 				}
 			},
@@ -302,10 +302,21 @@ const businessMenuInfoList: MenuInfo[] = [
 				path: '/test-external/iframe2',
 				name: 'TestExternalIframe2',
 				meta: {
-					title: 'doc网站（iframe）',
+					title: 'vite官网（iframe）（不缓存）',
 					icon: 'icon-Batchfolding',
 					type: 3,
-					externalUrl: 'http://localhost:8888/code-generator/project/detail?id=19',
+					externalUrl: 'https://cn.vitejs.dev/',
+					cache: false
+				}
+			},
+			{
+				path: '/test-external/iframe3',
+				name: 'TestExternalIframe3',
+				meta: {
+					title: 'element-plus',
+					icon: 'icon-java',
+					type: 3,
+					externalUrl: 'https://cn.element-plus.org/zh-CN/guide/design.html',
 					cache: true
 				}
 			},
