@@ -10,13 +10,19 @@
 			<el-main class="layout-main">
 				<el-scrollbar class="layout-scrollbar">
 					<div class="layout-card">
-						<router-view v-slot="{ Component, route }">
+						<router-view v-slot="{ Component }">
 							<transition name="slide" mode="out-in">
-								<keep-alive v-if="route.meta.type === 1" :include="appStore.cacheList" :exclude="['Redirect']">
-									<component :is="Component" :key="route.fullPath"></component>
+								<!-- 内置|业务菜单和非缓存的iframe页面	-->
+								<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+									<component
+										:is="Component"
+										v-if="route.meta.type === 1 || (route.meta.type === 3 && !route.meta.cache)"
+										:key="route.fullPath"
+									></component>
 								</keep-alive>
 							</transition>
 						</router-view>
+						<!-- 缓存的iframe页面 -->
 						<iframe-container></iframe-container>
 					</div>
 				</el-scrollbar>
@@ -30,8 +36,10 @@ import sidebar from '@/layout/sidebar/index.vue'
 import navbar from '@/layout/navbar/index.vue'
 import { useAppStore } from '@/store/app-store'
 import IframeContainer from '@/layout/components/iframe-container.vue'
+import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()
+const route = useRoute()
 </script>
 
 <style scoped></style>

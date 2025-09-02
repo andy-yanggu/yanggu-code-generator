@@ -28,8 +28,10 @@ export interface IframeInfo {
 	name: string
 	// 路由地址
 	src: string
-	// 路径
-	path: string
+	// 全路径
+	fullPath: string
+	// 加载
+	loading: boolean
 }
 
 export const useAppStore = defineStore(
@@ -46,7 +48,6 @@ export const useAppStore = defineStore(
 		const cacheList = ref<string[]>([])
 		// 布局大小
 		const layoutSize = ref<'large' | 'default' | 'small'>('default')
-		const activeIframe = ref('')
 		// iframe缓存列表
 		const iframeCacheList = ref<IframeInfo[]>([])
 
@@ -132,13 +133,9 @@ export const useAppStore = defineStore(
 			cacheList.value = []
 		}
 
-		const setActiveIframe = (name: string) => {
-			activeIframe.value = name
-		}
-
 		// 添加iframe路由
 		const addIframeCache = (iframeInfo: IframeInfo) => {
-			if (iframeCacheList.value.some(item => item.name === iframeInfo.name)) {
+			if (iframeCacheList.value.some(item => item.fullPath === iframeInfo.fullPath)) {
 				return
 			}
 			iframeCacheList.value.push(iframeInfo)
@@ -162,7 +159,6 @@ export const useAppStore = defineStore(
 			cacheList,
 			iframeCacheList,
 			tagLength,
-			activeIframe,
 			toggleCollapse,
 			setBreadcrumb,
 			addTag,
@@ -172,7 +168,6 @@ export const useAppStore = defineStore(
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
-			setActiveIframe,
 			addIframeCache,
 			removeIframeCache,
 			removeAllCache,

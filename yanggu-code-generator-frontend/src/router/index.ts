@@ -20,14 +20,20 @@ export const constantRoutes: RouteRecordRaw[] = [
 				component: () => import('@/views/router/redirect.vue'),
 				meta: {
 					title: '重定向',
-					cache: false
+					cache: false,
+					type: 1
 				}
 			}
 		]
 	},
 	{
 		path: '/:pathMatch(.*)',
-		component: () => import('@/views/error/404.vue')
+		component: () => import('@/views/error/404.vue'),
+		meta: {
+			title: '404',
+			cache: false,
+			type: 1
+		}
 	}
 ]
 

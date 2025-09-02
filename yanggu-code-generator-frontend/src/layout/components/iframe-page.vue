@@ -1,43 +1,40 @@
 <template>
-	<div v-loading="loading" class="iframe-container">
+	<div v-loading="currentLoading" class="iframe-container">
 		<iframe :src="iframeSrc" width="100%" height="100%" style="min-height: calc(100vh - 84px)" allow="accelerometer" @load="handleLoad"></iframe>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed } from 'vue'
 
-const route = useRoute()
-const loading = ref(true) // 初始 loading 状态
+const props = defineProps({
+	iframeSrc: { type: String, required: true },
+	loading: { type: Boolean, default: true }, // 仅缓存模式可绑定
+	cache: { type: Boolean, default: false } // 是否缓存
+})
 
-defineProps({
-	iframeSrc: {
-		type: String,
-		required: true
+const emit = defineEmits(['update:loading'])
+
+// 区分缓存和非缓存模式
+// 缓存 iframe：currentLoading 由父组件 v-model 控制
+// 非缓存 iframe：currentLoading 内部 ref 自己控制
+const internalLoading = ref(true)
+
+const currentLoading = computed({
+	get() {
+		return props.cache ? props.loading : internalLoading.value
+	},
+	set(val: boolean) {
+		if (props.cache) {
+			emit('update:loading', val)
+		} else {
+			internalLoading.value = val
+		}
 	}
 })
 
-defineOptions({
-	name: 'IframeComponent'
-})
-
-import { getCurrentInstance, onMounted, onActivated, onDeactivated, onUnmounted } from 'vue'
-
-const inst = getCurrentInstance()
-console.log('uid:', inst?.uid) // 不同 key 会看到不同 uid
-
-onMounted(() => console.log('mounted uid=', inst?.uid))
-onActivated(() => {
-	console.log('activated uid=', inst?.uid)
-	const currentUrl = route.meta.externalUrl as string
-	console.log('currentUrl:', currentUrl)
-})
-onDeactivated(() => console.log('deactivated uid=', inst?.uid))
-onUnmounted(() => console.log('unmounted uid=', inst?.uid))
-
 const handleLoad = () => {
-	loading.value = false // iframe 加载完成后关闭 loading
+	currentLoading.value = false
 }
 </script>
 

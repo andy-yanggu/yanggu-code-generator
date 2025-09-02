@@ -446,7 +446,7 @@ const businessMenuInfoList: MenuInfo[] = [
 					title: '字段类型管理',
 					icon: 'icon-menu',
 					type: 1,
-					cache: true
+					cache: false
 				}
 			}
 		]

@@ -46,6 +46,7 @@ import { onMounted, ref, onUnmounted, Ref, nextTick, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
+import { usePageRefresher } from '@/hooks/use-refuresh-current-page'
 
 const route = useRoute()
 const router = useRouter()
@@ -206,13 +207,7 @@ const closeTagMenu = () => {
 
 // 刷新当前标签页
 const refreshCurrentTag = () => {
-	// 删除缓存组件
-	appStore.removeCacheComponent(currentMenuTag.value.name)
-	// 使用路由跳转实现刷新
-	router.push({
-		path: '/redirect' + currentMenuTag.value.fullPath,
-		query: route.query
-	})
+	refreshPage()
 	closeTagMenu()
 }
 
@@ -260,6 +255,8 @@ const closeRightTag = () => {
 	appStore.addAllTags(appStore.tagsList.filter((_, index) => index <= currentIndex))
 	closeTagMenu()
 }
+
+const { refreshPage } = usePageRefresher()
 </script>
 
 <style scoped>
