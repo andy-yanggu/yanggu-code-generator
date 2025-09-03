@@ -13,12 +13,9 @@ export const usePageRefresher = () => {
 
 		// 业务菜单
 		if (type === 1) {
-			// 如果是缓存菜单
+			// 如果是缓存，删除缓存
 			if (cache) {
-				const idx = appStore.cacheList.indexOf(name)
-				if (idx !== -1) {
-					appStore.cacheList.splice(idx, 1)
-				}
+				appStore.removeCacheComponent(name)
 			}
 
 			// 使用路由跳转实现刷新
@@ -40,8 +37,6 @@ export const usePageRefresher = () => {
 				const old = appStore.iframeCacheList[idx]
 				// 修改src的值，会触发刷新
 				old.src = `${old.src.split('?')[0]}?t=${Date.now()}`
-				// 修改loading状态，进行加载
-				old.loading = true
 			}
 		}
 	}

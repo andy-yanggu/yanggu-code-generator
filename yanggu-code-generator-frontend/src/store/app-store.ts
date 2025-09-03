@@ -30,8 +30,6 @@ export interface IframeInfo {
 	src: string
 	// 全路径
 	fullPath: string
-	// 加载
-	loading: boolean
 }
 
 export const useAppStore = defineStore(
@@ -93,6 +91,11 @@ export const useAppStore = defineStore(
 			tagsList.value = tagsList.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
+		// 批量删除标签
+		const removeTagList = (tagList: NavbarTag[]) => {
+			tagsList.value = tagsList.value.filter(item => !tagList.some(tag => tag.fullPath === item.fullPath))
+		}
+
 		// 添加所有标签
 		const addAllTags = (tagList: NavbarTag[]) => {
 			tagsList.value = tagList
@@ -146,6 +149,16 @@ export const useAppStore = defineStore(
 			iframeCacheList.value = iframeCacheList.value.filter(item => item.name !== name)
 		}
 
+		// 批量删除iframe路由
+		const removeIframeCacheList = (nameList: string[]) => {
+			if (!nameList || nameList.length === 0) {
+				return
+			}
+			for (const name of nameList) {
+				removeIframeCache(name)
+			}
+		}
+
 		// 设置布局大小
 		const setLayoutSize = (size: 'large' | 'default' | 'small') => {
 			layoutSize.value = size
@@ -165,12 +178,14 @@ export const useAppStore = defineStore(
 			removeTag,
 			addAllTags,
 			removeAllTags,
+			removeTagList,
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
+			removeAllCache,
 			addIframeCache,
 			removeIframeCache,
-			removeAllCache,
+			removeIframeCacheList,
 			setLayoutSize
 		}
 	},

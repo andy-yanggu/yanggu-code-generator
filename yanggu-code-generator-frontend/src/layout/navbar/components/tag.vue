@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import { useAppStore, NavbarTag } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref, onUnmounted, Ref, nextTick, watch } from 'vue'
+import { onMounted, ref, onUnmounted, nextTick, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
@@ -55,8 +55,8 @@ const menuPosition = ref({
 	left: '0px',
 	top: '0px'
 })
-const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index' })
-const currentMenuTagIndex: Ref<number> = ref(0)
+const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index', type: 1 })
+const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const tagRefs: Record<string, HTMLElement | null> = {}
 const scrollbarRef = ref()
@@ -138,21 +138,21 @@ onUnmounted(() => {
 	document.removeEventListener('click', closeTagMenu)
 })
 
+// 处理点击标签
 const handleClick = (_: number, tag: NavbarTag) => {
 	router.push(tag.fullPath)
 }
 
+// 处理关闭标签
 const handleClose = (index: number, tag: NavbarTag) => {
 	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
 	if (appStore.tagLength === 1 && tag.fullPath === '/index') {
 		return // 直接返回，不执行关闭操作
 	}
 
-	// 删除对应的缓存组件
-	appStore.removeCacheComponent(tag.name)
+	// 删除对应的缓存组件和标签
+	deleteCacheAndTag([tag])
 
-	// 删除标签页
-	appStore.removeTag(tag)
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
 		let to = '/' // 默认跳转首页
@@ -220,40 +220,50 @@ const closeCurrentTag = () => {
 // 关闭其他标签
 const closeOtherTags = () => {
 	const currentPath = currentMenuTag.value.fullPath
-	// 删除其他缓存
-	appStore.removeCacheComponentList(appStore.tagsList.filter(tag => tag.fullPath !== currentPath).map(tag => tag.name))
 	// 保留当前标签，关闭其他所有标签
-	appStore.addAllTags(appStore.tagsList.filter(tag => tag.fullPath === currentPath))
+	const deleteTagList = appStore.tagsList.filter(tag => tag.fullPath !== currentPath)
+	deleteCacheAndTag(deleteTagList)
 	router.push(currentPath)
 	closeTagMenu()
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
-	appStore.removeAllTags()
-	appStore.removeAllCache()
+	deleteCacheAndTag(appStore.tagsList.filter(item => item.fullPath !== '/index'))
 	closeTagMenu()
-	router.push({
-		path: '/redirect/'
-	})
+	// 回到首页
+	router.push('/index')
 }
 
-//关闭左侧标签
+// 关闭左侧标签
 const closeLeftTag = () => {
-	const currentIndex = currentMenuTagIndex.value
-	appStore.removeCacheComponentList(appStore.tagsList.filter((_, index) => index < currentIndex).map(tag => tag.name))
-	appStore.addAllTags(appStore.tagsList.filter((_, index) => index >= currentIndex))
+	const deleteTagList = appStore.tagsList.filter((_, index) => index < currentMenuTagIndex.value)
+	deleteCacheAndTag(deleteTagList)
 	router.push(currentMenuTag.value.fullPath)
 	closeTagMenu()
 }
 
-//关闭右侧标签
+// 关闭右侧标签
 const closeRightTag = () => {
-	// 保留当前标签及其左侧所有标签，以及首页标签
-	const currentIndex = currentMenuTagIndex.value
-	appStore.removeCacheComponentList(appStore.tagsList.filter((_, index) => index > currentIndex).map(tag => tag.name))
-	appStore.addAllTags(appStore.tagsList.filter((_, index) => index <= currentIndex))
+	// 保留当前标签及其左侧所有标签
+	const deleteTagList = appStore.tagsList.filter((_, index) => index > currentMenuTagIndex.value)
+	deleteCacheAndTag(deleteTagList)
 	closeTagMenu()
+}
+
+// 删除缓存和标签
+const deleteCacheAndTag = (tagList: NavbarTag[]) => {
+	if (!tagList || tagList.length === 0) {
+		return
+	}
+	const nameList = tagList.map(item => item.name)
+
+	// 删除缓存
+	appStore.removeCacheComponentList(nameList)
+	appStore.removeIframeCacheList(nameList)
+
+	// 删除标签
+	appStore.removeTagList(tagList)
 }
 
 const { refreshPage } = usePageRefresher()

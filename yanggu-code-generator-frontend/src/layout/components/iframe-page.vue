@@ -5,33 +5,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
-	iframeSrc: { type: String, required: true },
-	loading: { type: Boolean, default: true }, // 仅缓存模式可绑定
-	cache: { type: Boolean, default: false } // 是否缓存
-})
-
-const emit = defineEmits(['update:loading'])
-
-// 区分缓存和非缓存模式
-// 缓存 iframe：currentLoading 由父组件 v-model 控制
-// 非缓存 iframe：currentLoading 内部 ref 自己控制
-const internalLoading = ref(true)
-
-const currentLoading = computed({
-	get() {
-		return props.cache ? props.loading : internalLoading.value
+	// iframe地址
+	iframeSrc: {
+		type: String,
+		required: true
 	},
-	set(val: boolean) {
-		if (props.cache) {
-			emit('update:loading', val)
-		} else {
-			internalLoading.value = val
-		}
+	// 是否缓存
+	cache: {
+		type: Boolean,
+		required: false,
+		default: false
 	}
 })
+
+const currentLoading = ref(true) // 是否在加载中
+
+// 只有在缓存模式下进行监控
+if (props.cache) {
+	// 如果src路径发生变化，进行loading加载，表示刷新
+	watch(
+		() => props.iframeSrc,
+		() => {
+			currentLoading.value = true
+		}
+	)
+}
 
 const handleLoad = () => {
 	currentLoading.value = false
