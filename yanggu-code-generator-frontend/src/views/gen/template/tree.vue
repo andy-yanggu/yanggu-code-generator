@@ -185,6 +185,10 @@
 									<el-icon size="10"><Right></Right></el-icon>
 									<span>关闭右侧</span>
 								</li>
+								<li v-if="templateTreeData.tabList.some(item => !item.isEdited)" @click="closeUneditedTabs">
+									<el-icon size="10"><Remove></Remove></el-icon>
+									<span>关闭未改</span>
+								</li>
 								<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
 									<el-icon size="10"><Close></Close></el-icon>
 									<span>关闭全部</span>
@@ -248,7 +252,7 @@ import {
 	templateUpdateContentListApi,
 	templateUpdateParentApi
 } from '@/api/gen/template'
-import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Right } from '@element-plus/icons-vue'
+import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/template-test.vue'
@@ -1023,6 +1027,32 @@ const closeRightTabs = () => {
 		templateTreeData.tabList = templateTreeData.tabList.slice(0, tabContextMenu.index + 1)
 		templateTreeData.activeItemId = tabContextMenu.item.id
 	})
+}
+
+// 关闭未修改的tab
+const closeUneditedTabs = () => {
+	// 过滤掉未修改的标签页，只保留已修改的标签页
+	templateTreeData.tabList = templateTreeData.tabList.filter(tab => tab.isEdited)
+	hideTabContextMenu()
+
+	// 如果当前激活的标签页仍然存在，不需要处理
+	if (templateTreeData.tabList.some(tab => tab.id === templateTreeData.activeItemId)) {
+		return
+	}
+
+	// 如果当前激活标签页被关闭了，需要选择新的激活标签页
+	if (templateTreeData.tabList.length > 0) {
+		// 优先选择当前位置或之前的标签页
+		if (tabContextMenu.index < templateTreeData.tabList.length) {
+			templateTreeData.activeItemId = templateTreeData.tabList[tabContextMenu.index].id
+		} else {
+			// 如果索引超出范围，选择最后一个标签页
+			templateTreeData.activeItemId = templateTreeData.tabList[templateTreeData.tabList.length - 1].id
+		}
+	} else {
+		// 如果没有剩余标签页，将激活项设为-1
+		templateTreeData.activeItemId = -1
+	}
 }
 
 // 关闭全部tab
