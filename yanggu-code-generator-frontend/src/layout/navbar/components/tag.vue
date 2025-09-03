@@ -207,7 +207,12 @@ const closeTagMenu = () => {
 
 // 刷新当前标签页
 const refreshCurrentTag = () => {
-	refreshPage()
+	if (route.fullPath != currentMenuTag.value.fullPath) {
+		router.push(currentMenuTag.value.fullPath)
+		setTimeout(() => refreshPage(), 10)
+	} else {
+		refreshPage()
+	}
 	closeTagMenu()
 }
 
@@ -232,7 +237,9 @@ const closeAllTags = () => {
 	deleteCacheAndTag(appStore.tagsList.filter(item => item.fullPath !== '/index'))
 	closeTagMenu()
 	// 回到首页
-	router.push('/index')
+	if (route.fullPath !== '/index') {
+		router.push('/index')
+	}
 }
 
 // 关闭左侧标签

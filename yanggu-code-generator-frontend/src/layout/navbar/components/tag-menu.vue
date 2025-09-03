@@ -1,6 +1,6 @@
 <template>
 	<div class="icon-list">
-		<div v-if="props.currentMenuTag.fullPath === route.fullPath" class="icon-item" @click="emits('refreshCurrentTag')">
+		<div class="icon-item" @click="emits('refreshCurrentTag')">
 			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新页面</span>
 		</div>
@@ -31,9 +31,7 @@
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps, PropType } from 'vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
 const appStore = useAppStore()
 
 const props = defineProps({
@@ -55,27 +53,28 @@ const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	padding: 6px;
-	width: 65px; /* 设置列表容器的宽度 */
+	padding: 5px;
+	width: 70px;
 }
 
 .icon-item {
 	display: flex;
 	align-items: center;
+	justify-content: center; /* 关键：水平居中 */
 	gap: 5px;
 	font-size: 12px;
-	width: 100%; /* 让项目占满容器宽度 */
-	cursor: pointer; /* 鼠标变成小手 */
-	padding: 6px 8px;
-	border-radius: 4px;
+	width: 100%;
+	cursor: pointer;
+	padding: 5px 10px; /* 调整内边距 */
+	text-align: center; /* 文字居中 */
 	transition:
 		background-color 0.2s ease,
-		color 0.2s ease; /* 动画过渡 */
+		color 0.2s ease;
 }
 
 /* 悬停效果 */
 .icon-item:hover {
-	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
-	color: #333; /* 可选：加深文字颜色 */
+	background-color: #f0f0f0;
+	color: #333;
 }
 </style>
