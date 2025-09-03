@@ -6,7 +6,7 @@
 				<Search></Search>
 			</el-icon>
 		</el-tooltip>
-		<el-dialog v-model="searchState.visible" placement="bottom" trigger="click" title="菜单搜索" class="menu-search-dialog" @opened="onDialogOpened">
+		<el-dialog v-model="searchState.visible" placement="bottom" trigger="click" title="菜单搜索" width="40%" @opened="onDialogOpened">
 			<el-input
 				ref="searchInputRef"
 				v-model="searchState.keyword"
@@ -70,7 +70,7 @@ import { Search } from '@element-plus/icons-vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { nextTick, reactive, ref, onMounted, onUnmounted } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
 	name: 'MenuSearch'
@@ -97,6 +97,7 @@ const searchState = reactive({
 const searchInputRef = ref()
 const scrollbarRef = ref()
 const userStore = useUserStore()
+const route = useRoute()
 const router = useRouter()
 
 // 打开搜索框
@@ -137,6 +138,7 @@ const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) =
 		} as BreadcrumbItem
 	]
 
+	// 菜单、iframe和外链
 	if ([1, 3, 4].includes(menuItem.meta.type)) {
 		const newMenuItem = {
 			...menuItem,
@@ -145,10 +147,11 @@ const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) =
 		}
 		searchState.searchItemList.push(newMenuItem)
 		return
-	}
-
-	if (menuItem.children?.length) {
-		menuItem.children.forEach(child => buildMenuInfo(currentBreadcrumb, child))
+	} else {
+		// 目录
+		if (menuItem.children?.length) {
+			menuItem.children.forEach(child => buildMenuInfo(currentBreadcrumb, child))
+		}
 	}
 }
 
@@ -159,6 +162,7 @@ const querySearch = (queryString?: string) => {
 		searchState.matchItemList = searchState.searchItemList
 		searchState.activeIndex = -1
 		searchState.usingKeyboard = false
+		nextTick(() => scrollbarRef.value?.setScrollTop(0))
 		return
 	}
 
@@ -178,6 +182,7 @@ const querySearch = (queryString?: string) => {
 	searchState.matchItemList = results
 	searchState.activeIndex = results.length > 0 ? 0 : -1
 	searchState.usingKeyboard = false
+	nextTick(() => scrollbarRef.value?.setScrollTop(0))
 }
 
 // 滚动到当前激活项
@@ -256,12 +261,16 @@ const handleSelect = (item: SearchItem) => {
 	searchState.usingKeyboard = false
 	// 如果是菜单或者iframe，则路由跳转
 	if ([1, 3].includes(item.meta.type)) {
-		router.push(item.path!)
+		if (item.path != route.path) {
+			router.push(item.path!)
+		}
 	} else {
 		// 如果是外链
 		window.open(item.meta.externalUrl!)
 	}
-	userStore.setActiveMenuPath(item.path!)
+	if (item.path != userStore.activeMenuPath) {
+		userStore.setActiveMenuPath(item.path!)
+	}
 }
 
 // 监听鼠标移动：切回鼠标模式
