@@ -55,7 +55,7 @@ const menuPosition = ref({
 	left: '0px',
 	top: '0px'
 })
-const currentMenuTag = ref<NavbarTag>({ fullPath: '/index', title: '首页', icon: 'icon-home', name: 'Index', type: 1 })
+const currentMenuTag = ref<NavbarTag>({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const tagRefs: Record<string, HTMLElement | null> = {}
@@ -143,7 +143,7 @@ const handleClick = (_: number, tag: NavbarTag) => {
 	router.push(tag.fullPath)
 }
 
-// 处理关闭标签
+// 处理关闭单个标签
 const handleClose = (index: number, tag: NavbarTag) => {
 	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
 	if (appStore.tagLength === 1 && tag.fullPath === '/index') {
@@ -155,7 +155,7 @@ const handleClose = (index: number, tag: NavbarTag) => {
 
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
-		let to = '/' // 默认跳转首页
+		let to = '/index' // 默认跳转首页
 
 		// 关闭后如果还有标签页
 		if (appStore.tagLength > 0) {
@@ -167,14 +167,8 @@ const handleClose = (index: number, tag: NavbarTag) => {
 				to = appStore.tagsList[index - 1].fullPath
 			}
 		}
-		if (to === '/') {
-			router.push({
-				path: '/redirect/'
-			})
-		} else {
-			// 跳转当前标签页
-			router.push(to)
-		}
+		// 跳转到对应路由
+		router.push(to)
 	}
 }
 
@@ -244,17 +238,30 @@ const closeAllTags = () => {
 
 // 关闭左侧标签
 const closeLeftTag = () => {
+	// 激活的标签索引
+	const activeTagIndex = appStore.tagsList.findIndex(tag => tag.fullPath === route.fullPath)
 	const deleteTagList = appStore.tagsList.filter((_, index) => index < currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
-	router.push(currentMenuTag.value.fullPath)
+	// 检查当前激活的标签是否在被关闭的标签中
+	if (activeTagIndex >= 0 && activeTagIndex < currentMenuTagIndex.value) {
+		// 当前激活标签在被关闭范围内，切换到右键点击的标签
+		router.push(currentMenuTag.value.fullPath)
+	}
 	closeTagMenu()
 }
 
 // 关闭右侧标签
 const closeRightTag = () => {
+	// 激活的标签索引
+	const activeTagIndex = appStore.tagsList.findIndex(tag => tag.fullPath === route.fullPath)
 	// 保留当前标签及其左侧所有标签
 	const deleteTagList = appStore.tagsList.filter((_, index) => index > currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
+	// 检查当前激活的标签是否在被关闭的标签中
+	if (activeTagIndex >= 0 && activeTagIndex > currentMenuTagIndex.value) {
+		// 当前激活标签在被关闭范围内，切换到右键点击的标签
+		router.push(currentMenuTag.value.fullPath)
+	}
 	closeTagMenu()
 }
 
