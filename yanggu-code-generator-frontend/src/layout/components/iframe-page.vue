@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import NProgress from 'nprogress'
 
 const props = defineProps({
 	// iframe地址
@@ -29,12 +30,14 @@ if (props.cache) {
 	watch(
 		() => props.iframeSrc,
 		() => {
+			NProgress.start()
 			currentLoading.value = true
 		}
 	)
 }
 
 const handleLoad = () => {
+	NProgress.done()
 	currentLoading.value = false
 }
 </script>

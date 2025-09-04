@@ -1,6 +1,8 @@
-import { useAppStore, NavbarTag } from '@/store/app-store'
+import { NavbarTag, useAppStore } from '@/store/app-store'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { Router, RouteRecordRaw } from 'vue-router'
+import 'nprogress/nprogress.css'
+import NProgress from 'nprogress'
 
 // 路由数据
 export interface RouteMetaData {
@@ -24,12 +26,15 @@ export interface RouteMetaData {
 	externalUrl?: string
 }
 
+NProgress.configure({ showSpinner: false })
+
 // 路由白名单名称列表
 const whiteLists = ['Login']
 
 export const routerGuard = (router: Router) => {
 	// 路由拦截
 	router.beforeEach((to, from, next) => {
+		NProgress.start()
 		const routeMetaData: RouteMetaData = {
 			name: to.name as string,
 			path: to.path,
@@ -55,6 +60,7 @@ export const routerGuard = (router: Router) => {
 		// if (!userStore.isLogin) {
 		// 	// 未登录，跳转登录页面
 		// 	next({ name: 'Login' })
+		//  NProgress.done()
 		// 	return
 		// }
 		// 是否添加路由
@@ -92,6 +98,11 @@ export const routerGuard = (router: Router) => {
 		}
 
 		next()
+	})
+
+	// 路由结束
+	router.afterEach(() => {
+		NProgress.done()
 	})
 }
 
