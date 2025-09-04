@@ -243,7 +243,7 @@ const closeLeftTag = () => {
 	const deleteTagList = appStore.tagsList.filter((_, index) => index < currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
 	// 检查当前激活的标签是否在被关闭的标签中
-	if (activeTagIndex >= 0 && activeTagIndex < currentMenuTagIndex.value) {
+	if (activeTagIndex < currentMenuTagIndex.value) {
 		// 当前激活标签在被关闭范围内，切换到右键点击的标签
 		router.push(currentMenuTag.value.fullPath)
 	}
@@ -258,7 +258,7 @@ const closeRightTag = () => {
 	const deleteTagList = appStore.tagsList.filter((_, index) => index > currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
 	// 检查当前激活的标签是否在被关闭的标签中
-	if (activeTagIndex >= 0 && activeTagIndex > currentMenuTagIndex.value) {
+	if (activeTagIndex > currentMenuTagIndex.value) {
 		// 当前激活标签在被关闭范围内，切换到右键点击的标签
 		router.push(currentMenuTag.value.fullPath)
 	}
