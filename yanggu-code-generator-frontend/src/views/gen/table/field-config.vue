@@ -2,7 +2,15 @@
 	<el-dialog v-model="visible" title="字段配置" width="80%" class="field-config-dialog" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性配置" name="field">
-				<el-table ref="fieldTable" border row-key="id" class="sortable-row-gen" :data="getFieldListData(0)" :show-overflow-tooltip="true">
+				<el-table
+					ref="fieldTable"
+					border
+					row-key="id"
+					max-height="450px"
+					class="sortable-row-gen"
+					:data="getFieldListData(0)"
+					:show-overflow-tooltip="true"
+				>
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldName" show-overflow-tooltip label="字段名称" header-align="center" align="center" width="100"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center">

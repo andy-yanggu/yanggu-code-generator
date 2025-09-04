@@ -26,7 +26,7 @@
 			:data="state.dataList"
 			border
 			style="width: 100%"
-			:max-height="400"
+			:max-height="450"
 			@selection-change="selectionChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="(row: any) => !row.exist"></el-table-column>

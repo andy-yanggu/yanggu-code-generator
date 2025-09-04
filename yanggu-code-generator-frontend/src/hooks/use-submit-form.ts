@@ -66,11 +66,13 @@ export const useSubmitForm = (options: FormOptions) => {
 
 			submitLoading.value = true
 
+			// 提示消息
+			const message = options.message || (options.dataForm.id ? '修改成功' : '新增成功')
 			options
 				.submitApi(options.dataForm)
 				.then(resp => {
 					ElMessage.success({
-						message: options.message || (options.dataForm.id ? '修改成功' : '新建成功'),
+						message: message,
 						duration: options.duration || 500
 					})
 					visible.value = false

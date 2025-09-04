@@ -30,6 +30,7 @@
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
+				max-height="450px"
 				class="layout-table"
 				@selection-change="selectionChangeHandle"
 				@sort-change="sortChangeHandle"

@@ -21,9 +21,7 @@
 				<el-button v-if="activeRef < 2" type="primary" @click="nextStep()">
 					下一步<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
 				</el-button>
-				<el-button v-if="activeRef === 2" :loading="generateCodeLoading" type="success" :icon="DocumentAdd" @click="generateCode()">
-					生成代码
-				</el-button>
+				<el-button v-if="activeRef === 2" :loading="generateCodeLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成 </el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>

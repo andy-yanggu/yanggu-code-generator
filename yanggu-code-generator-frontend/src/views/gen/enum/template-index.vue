@@ -26,6 +26,7 @@
 					:data="state.dataList"
 					row-key="id"
 					border
+					max-height="450px"
 					class="layout-table"
 					@selection-change="selectionChangeHandle"
 				>

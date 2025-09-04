@@ -15,7 +15,14 @@
 		</el-card>
 
 		<el-card shadow="hover">
-			<el-table v-loading="state.dataListLoading" :data="state.dataList" border class="layout-table" @sort-change="sortChangeHandle">
+			<el-table
+				v-loading="state.dataListLoading"
+				:data="state.dataList"
+				border
+				max-height="450px"
+				class="layout-table"
+				@sort-change="sortChangeHandle"
+			>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>

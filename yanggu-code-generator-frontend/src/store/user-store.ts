@@ -23,10 +23,10 @@ export interface TokenInfo {
 }
 
 export interface MenuInfo {
-	// 路由
-	path?: string
 	// 名称
 	name: string
+	// 路由
+	path: string
 	// 组件路径
 	component?: string
 	// 元数据
@@ -356,7 +356,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				name: 'ProjectGitGitee',
 				meta: {
 					title: 'gitee地址',
-					icon: 'icon-gitee-fill-round',
+					icon: 'icon-gitee-fill',
 					type: 4,
 					externalUrl: 'https://gitee.com/andy_yanggu/yanggu-code-generator'
 				}

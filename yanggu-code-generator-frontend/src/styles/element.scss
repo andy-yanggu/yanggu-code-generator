@@ -1,20 +1,17 @@
 // 覆盖 element-plus 样式
-
+/* 基础菜单样式 */
 .el-menu {
   border-right: none !important;
-
-  &:not(.el-menu--collapse) {
-    width: var(--theme-aside-width);
-  }
 }
 
 .el-menu-item,
 .el-sub-menu__title {
   display: flex;
-  align-items: center; // 图标+文字垂直居中
+  align-items: center; /* 图标+文字垂直居中 */
   color: var(--theme-menu-text-color) !important;
   height: 48px !important;
   overflow: hidden;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 .el-menu.el-menu--horizontal {
@@ -22,67 +19,83 @@
 }
 
 .el-menu-item {
-  height: 48px !important; // 和上面统一，不要 45/48 混用
+  height: 48px !important;
   line-height: 48px !important;
 }
 
-.el-menu-item a,
-.el-menu-item a:hover,
-.el-menu-item i,
-.el-sub-menu__title i {
-  color: inherit;
-  text-decoration: none;
-}
-
-// 图标样式（全局统一）
+/* 图标样式 */
 .el-menu-item .svg-icon,
-.el-sub-menu .svg-icon {
+.el-sub-menu__title .svg-icon {
   font-size: 16px !important;
   display: inline-block;
-  width: 20px;         // 固定宽度，保证对齐
+  width: 20px; /* 固定宽度，保证对齐 */
   margin-right: 8px;
   flex-shrink: 0;
   text-align: center;
+  color: var(--theme-menu-text-color) !important;
+  transition: color 0.3s; /* 添加过渡效果 */
 }
 
-// 折叠时隐藏文字，但保留 tooltip
-.el-menu--collapse {
-  .menu-title {
-    width: 0;
-    overflow: hidden;
-  }
-}
-
-.el-sub-menu.is-active > :first-child {
+/* 折叠时隐藏文字 */
+.el-menu--collapse .menu-title {
+  width: 0;
   overflow: hidden;
-  color: var(--theme-menu-hover-color) !important;
 }
 
+/* 选中状态：文字和图标都高亮 */
 .el-menu-item.is-active {
   border-right: 2px solid var(--theme-menu-border-color);
-  position: relative;
-  right: 1px;
-  overflow: hidden;
-  color: var(--theme-menu-hover-color) !important;
   background-color: var(--theme-menu-hover-bg-color) !important;
-
-  &:hover {
-    background-color: var(--theme-menu-hover-bg-color) !important;
-  }
 }
 
-.el-sub-menu.is-active.is-opened {
-  .el-sub-menu__title {
-    background-color: unset !important;
-    color: var(--theme-menu-hover-color);
-  }
+.el-menu-item.is-active .menu-title {
+  color: var(--theme-menu-hover-color) !important; /* 文字高亮 */
 }
 
-// hover 状态
-.el-menu-item:hover,
-.el-sub-menu__title:hover {
-  background-color: unset !important;
+.el-menu-item.is-active .svg-icon {
+  color: var(--theme-menu-hover-color) !important; /* 图标高亮 */
+}
+
+/* 子菜单选中状态：只高亮文字和图标，不添加背景色 */
+.el-sub-menu.is-active > .el-sub-menu__title .menu-title {
   color: var(--theme-menu-hover-color) !important;
+}
+
+.el-sub-menu.is-active > .el-sub-menu__title .svg-icon {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+/* 悬浮状态：文字和图标都高亮，并使用选中时的背景样式 */
+.el-menu-item:hover {
+  background-color: var(--theme-menu-hover-bg-color) !important;
+}
+
+.el-menu-item:hover .menu-title,
+.el-sub-menu__title:hover .menu-title {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+.el-menu-item:hover .svg-icon,
+.el-sub-menu__title:hover .svg-icon {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+/* 子菜单悬浮状态：添加背景色 */
+.el-sub-menu__title:hover {
+  background-color: var(--theme-menu-hover-bg-color) !important;
+}
+
+/* 表头整体背景色 */
+.el-table {
+  .el-table__header-wrapper,
+  .el-table__fixed-header-wrapper {
+    th {
+      word-break: break-word;
+      background-color: #f5f7fa !important; // 浅灰色背景
+      color: #515a6e !important; // 深蓝色文字
+      border-bottom: 1px solid #ebeef5; // 底部边框
+    }
+  }
 }
 
 // 分页
