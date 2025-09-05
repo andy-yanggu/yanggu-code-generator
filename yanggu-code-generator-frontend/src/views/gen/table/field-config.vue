@@ -6,7 +6,7 @@
 					ref="fieldTable"
 					border
 					row-key="id"
-					max-height="450px"
+					max-height="60vh"
 					class="sortable-row-gen"
 					:data="getFieldListData(0)"
 					:show-overflow-tooltip="true"

@@ -32,7 +32,7 @@
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
-				max-height="450px"
+				max-height="60vh"
 				class="layout-table"
 				@selection-change="selectionChangeHandle"
 				@sort-change="sortChangeHandle"
