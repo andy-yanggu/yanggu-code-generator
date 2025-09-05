@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable @input="filterIcons()"></el-input>
-		<div class="icon-grid">
+		<div v-loading="loading" class="icon-grid">
 			<el-row :gutter="20">
 				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
 					<div class="icon-item" @click="selectIcon(iconName)">
@@ -57,10 +57,10 @@ const loadIcons = async () => {
 
 // 使用防抖优化搜索过滤
 const debouncedFilterIcons = useDebounceFn(() => {
-	if (!searchText.value) {
-		allIcons.value = allOriginIcons.value
-	} else {
+	if (searchText.value && searchText.value.trim()) {
 		allIcons.value = allOriginIcons.value.filter(icon => icon.toLowerCase().includes(searchText.value.toLowerCase()))
+	} else {
+		allIcons.value = allOriginIcons.value
 	}
 }, 300) // 300ms 防抖延迟
 

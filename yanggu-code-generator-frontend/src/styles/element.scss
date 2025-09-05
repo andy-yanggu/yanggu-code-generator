@@ -44,16 +44,18 @@
 
 /* 选中状态：文字和图标都高亮 */
 .el-menu-item.is-active {
-  border-right: 2px solid var(--theme-menu-border-color);
+  box-shadow: inset 3px 0 0 var(--theme-menu-border-color), inset -3px 0 0 var(--theme-menu-border-color);
   background-color: var(--theme-menu-hover-bg-color) !important;
 }
 
+/* 文字高亮 */
 .el-menu-item.is-active .menu-title {
-  color: var(--theme-menu-hover-color) !important; /* 文字高亮 */
+  color: var(--theme-menu-hover-color) !important;
 }
 
+/* 图标高亮 */
 .el-menu-item.is-active .svg-icon {
-  color: var(--theme-menu-hover-color) !important; /* 图标高亮 */
+  color: var(--theme-menu-hover-color) !important;
 }
 
 /* 子菜单选中状态：只高亮文字和图标，不添加背景色 */
@@ -65,9 +67,9 @@
   color: var(--theme-menu-hover-color) !important;
 }
 
-/* 悬浮状态：文字和图标都高亮，并使用选中时的背景样式 */
+/* 悬浮状态：只高亮文字和图标，不更改背景颜色 */
 .el-menu-item:hover {
-  background-color: var(--theme-menu-hover-bg-color) !important;
+  background-color: transparent !important; /* 移除背景色 */
 }
 
 .el-menu-item:hover .menu-title,
@@ -80,9 +82,9 @@
   color: var(--theme-menu-hover-color) !important;
 }
 
-/* 子菜单悬浮状态：添加背景色 */
+/* 子菜单悬浮状态：不添加背景色 */
 .el-sub-menu__title:hover {
-  background-color: var(--theme-menu-hover-bg-color) !important;
+  background-color: transparent !important; /* 移除背景色 */
 }
 
 /* 表头整体背景色 */
@@ -143,5 +145,5 @@
 
 /* el-space 默认改成 default (12px) */
 .el-space {
-  gap: 12px !important;  /* default 对应 12px */
+  gap: 12px !important; /* default 对应 12px */
 }

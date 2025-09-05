@@ -36,8 +36,14 @@ if (props.cache) {
 	)
 }
 
+// iframe加载完成，关闭loading
 const handleLoad = () => {
-	NProgress.done()
+	// 只有在启用缓存模式下才处理 NProgress
+	if (props.cache) {
+		if (NProgress.isStarted()) {
+			NProgress.done()
+		}
+	}
 	currentLoading.value = false
 }
 </script>
