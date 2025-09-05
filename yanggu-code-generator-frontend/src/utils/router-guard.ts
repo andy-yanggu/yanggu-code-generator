@@ -3,6 +3,7 @@ import { MenuInfo, useUserStore } from '@/store/user-store'
 import { Router, RouteRecordRaw } from 'vue-router'
 import 'nprogress/nprogress.css'
 import NProgress from 'nprogress'
+import { setTitle } from '@/utils/tool'
 
 // 路由数据
 export interface RouteMetaData {
@@ -101,8 +102,9 @@ export const routerGuard = (router: Router) => {
 	})
 
 	// 路由结束
-	router.afterEach(() => {
+	router.afterEach(to => {
 		NProgress.done()
+		setTitle(to.meta.title as string)
 	})
 }
 

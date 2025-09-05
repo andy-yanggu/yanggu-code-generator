@@ -1,5 +1,6 @@
 import type { App, Component, Plugin } from 'vue' // 添加 Component 类型
 import { useClipboard } from '@vueuse/core'
+import { useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 
 const { copy, isSupported } = useClipboard()
@@ -24,6 +25,17 @@ export const copyToClipboard = (text: string): Promise<void> => {
 			reject()
 		}
 	})
+}
+
+const title = useTitle()
+
+// 默认标题
+const originalTitle = import.meta.env.VITE_APP_TITLE
+title.value = originalTitle
+
+// 设置标题
+export const setTitle = (newTitle: string) => {
+	title.value = newTitle + ' - ' + originalTitle
 }
 
 // 修改泛型约束为 Component
