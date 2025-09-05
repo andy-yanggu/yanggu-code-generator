@@ -22,6 +22,7 @@ import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElMessage } from 'element-plus'
 import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
+import { useDebounceFn } from '@vueuse/core'
 
 const loading = ref(true)
 const allIcons = ref<string[]>([])
@@ -54,13 +55,18 @@ const loadIcons = async () => {
 	}
 }
 
-// 根据搜索文本过滤图标
-const filterIcons = () => {
+// 使用防抖优化搜索过滤
+const debouncedFilterIcons = useDebounceFn(() => {
 	if (!searchText.value) {
 		allIcons.value = allOriginIcons.value
 	} else {
 		allIcons.value = allOriginIcons.value.filter(icon => icon.toLowerCase().includes(searchText.value.toLowerCase()))
 	}
+}, 300) // 300ms 防抖延迟
+
+// 根据搜索文本过滤图标
+const filterIcons = () => {
+	debouncedFilterIcons()
 }
 
 // 选择图标时的回调

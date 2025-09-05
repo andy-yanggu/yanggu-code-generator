@@ -71,6 +71,7 @@ import SvgIcon from '@/components/svg-icon/index.vue'
 import { nextTick, reactive, ref, onMounted, onUnmounted } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { useRoute, useRouter } from 'vue-router'
+import { useDebounceFn } from '@vueuse/core'
 
 defineOptions({
 	name: 'MenuSearch'
@@ -155,8 +156,8 @@ const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) =
 	}
 }
 
-// 处理搜索
-const querySearch = (queryString?: string) => {
+// 创建防抖版本的搜索函数
+const debouncedQuerySearch = useDebounceFn((queryString?: string) => {
 	const raw = queryString !== undefined ? queryString : searchState.keyword
 	if (!raw || !raw.trim()) {
 		searchState.matchItemList = searchState.searchItemList
@@ -183,6 +184,11 @@ const querySearch = (queryString?: string) => {
 	searchState.activeIndex = results.length > 0 ? 0 : -1
 	searchState.usingKeyboard = false
 	nextTick(() => scrollbarRef.value?.setScrollTop(0))
+}, 300) // 300ms 防抖延迟
+
+// 修改原来的 querySearch 函数来使用防抖
+const querySearch = (queryString?: string) => {
+	debouncedQuerySearch(queryString)
 }
 
 // 滚动到当前激活项
