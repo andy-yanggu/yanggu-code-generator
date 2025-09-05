@@ -33,6 +33,7 @@
 					@close-left-tag="closeLeftTag()"
 					@close-right-tag="closeRightTag()"
 					@close-all-tags="closeAllTags()"
+					@open-new-window="openNewWindow()"
 				></tag-menu>
 			</div>
 		</div>
@@ -40,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore, NavbarTag } from '@/store/app-store'
+import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref, onUnmounted, nextTick, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
@@ -278,6 +279,14 @@ const deleteCacheAndTag = (tagList: NavbarTag[]) => {
 
 	// 删除标签
 	appStore.removeTagList(tagList)
+}
+
+// 打开新窗口
+const openNewWindow = () => {
+	const resolve = router.resolve(currentMenuTag.value.fullPath)
+	// 构造完整 URL
+	const fullUrl = window.location.origin + resolve.href
+	window.open(fullUrl, '_blank')
 }
 
 const { refreshPage } = usePageRefresher()

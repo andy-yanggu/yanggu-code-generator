@@ -24,6 +24,10 @@
 			<el-icon size="10"><Close></Close></el-icon>
 			<span>关闭全部</span>
 		</div>
+		<div class="icon-item" @click="emits('openNewWindow')">
+			<svg-icon icon="icon-new-window"></svg-icon>
+			<span>打开新窗口</span>
+		</div>
 	</div>
 </template>
 
@@ -31,6 +35,7 @@
 import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps, PropType } from 'vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 
 const appStore = useAppStore()
 
@@ -45,7 +50,15 @@ const props = defineProps({
 	}
 })
 
-const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags', 'closeOtherTags', 'closeLeftTag', 'closeRightTag'])
+const emits = defineEmits([
+	'refreshCurrentTag',
+	'closeCurrentTag',
+	'closeAllTags',
+	'closeOtherTags',
+	'closeLeftTag',
+	'closeRightTag',
+	'openNewWindow'
+])
 </script>
 
 <style scoped>
@@ -54,19 +67,18 @@ const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags
 	flex-direction: column;
 	gap: 10px;
 	padding: 5px;
-	width: 70px;
+	width: 75px;
 }
 
 .icon-item {
 	display: flex;
 	align-items: center;
-	justify-content: center; /* 关键：水平居中 */
 	gap: 5px;
 	font-size: 12px;
 	width: 100%;
 	cursor: pointer;
-	padding: 5px 10px; /* 调整内边距 */
-	text-align: center; /* 文字居中 */
+	padding: 5px 10px;
+	text-align: left; /* 改为左对齐 */
 	transition:
 		background-color 0.2s ease,
 		color 0.2s ease;
