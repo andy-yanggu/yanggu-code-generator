@@ -6,6 +6,10 @@
 		<div>
 			<el-divider>菜单</el-divider>
 			<el-row>
+				<el-text>是否展示logo</el-text>
+				<el-switch v-model="systemSettingStore.isOpenLogo"></el-switch>
+			</el-row>
+			<el-row>
 				<el-text>是否开启折叠动画</el-text>
 				<el-switch v-model="systemSettingStore.isOpenMenuCollapseAnimation"></el-switch>
 			</el-row>

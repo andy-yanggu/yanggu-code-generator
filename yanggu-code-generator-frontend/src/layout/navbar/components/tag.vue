@@ -285,16 +285,14 @@ const { refreshPage } = usePageRefresher()
 
 <style scoped>
 .tag-scrollbar {
-	max-height: 50px; /* 根据需要调整高度 */
-	overflow: hidden;
-	margin-bottom: 5px;
+	max-height: 35px; /* 根据需要调整高度 */
+	margin-bottom: 10px;
 }
 .tag-wrapper {
 	/* 保持原有样式不变 */
-	margin-right: 5px;
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	position: relative;
 	white-space: nowrap;
 	padding-right: 20px;
