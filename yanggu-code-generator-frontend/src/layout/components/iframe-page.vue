@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import NProgress from 'nprogress'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 const props = defineProps({
 	// iframe地址
@@ -23,6 +24,7 @@ const props = defineProps({
 })
 
 const currentLoading = ref(true) // 是否在加载中
+const systemSettingStore = useSystemSettingStore()
 
 // 只有在缓存模式下进行监控
 if (props.cache) {
@@ -30,7 +32,9 @@ if (props.cache) {
 	watch(
 		() => props.iframeSrc,
 		() => {
-			NProgress.start()
+			if (systemSettingStore.isOpenProgress) {
+				NProgress.start()
+			}
 			currentLoading.value = true
 		}
 	)
@@ -39,10 +43,8 @@ if (props.cache) {
 // iframe加载完成，关闭loading
 const handleLoad = () => {
 	// 只有在启用缓存模式下才处理 NProgress
-	if (props.cache) {
-		if (NProgress.isStarted()) {
-			NProgress.done()
-		}
+	if (props.cache && NProgress.isStarted() && systemSettingStore.isOpenProgress) {
+		NProgress.done()
 	}
 	currentLoading.value = false
 }

@@ -1,41 +1,34 @@
 <template>
 	<div>
-		<div class="navbar-container">
+		<!-- 工具栏 -->
+		<div class="navbar-toolbar">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
-			<div class="navbar-left">
+			<div class="navbar-toolbar-left">
 				<el-icon :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
 					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
-				<breadcrumb></breadcrumb>
+				<breadcrumb v-if="systemSettingStore.isOpenBreadcrumb"></breadcrumb>
 			</div>
 
 			<!-- 右侧区域：菜单搜索 + 刷新 + 切换布局大小 + 链接 + 全屏按钮 -->
-			<div class="navbar-right">
+			<div class="navbar-toolbar-right">
 				<!-- 菜单搜索 -->
-				<menu-search></menu-search>
+				<menu-search v-if="systemSettingStore.isOpenMenuSearch"></menu-search>
 				<!-- 刷新当前页 -->
-				<refresh-current-page></refresh-current-page>
+				<refresh-current-page v-if="systemSettingStore.isOpenRefreshPage"></refresh-current-page>
 				<!-- 切换布局大小	-->
-				<layout-size></layout-size>
-				<el-tooltip :content="'gitee地址'" effect="dark" placement="bottom">
-					<el-link href="https://gitee.com/andy_yanggu/yanggu-code-generator" target="_blank">
-						<svg-icon icon="icon-gitee-fill" size="18px"></svg-icon>
-					</el-link>
-				</el-tooltip>
-				<el-tooltip :content="'github地址'" effect="dark" placement="bottom">
-					<el-link href="https://github.com/andy-yanggu/yanggu-code-generator" target="_blank">
-						<svg-icon icon="icon-github-fill" size="18px"></svg-icon>
-					</el-link>
-				</el-tooltip>
+				<layout-size v-if="systemSettingStore.isOpenLayoutSetting"></layout-size>
 				<!-- 全屏按钮 -->
-				<el-tooltip :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
+				<el-tooltip v-if="systemSettingStore.isOpenFullscreen" :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
 					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>
+				<!-- 系统设置 -->
+				<system-setting></system-setting>
 			</div>
 		</div>
 		<!-- 标签栏 -->
-		<tag></tag>
+		<tag v-if="systemSettingStore.isOpenTag"></tag>
 	</div>
 </template>
 
@@ -46,34 +39,38 @@ import Tag from '@/layout/navbar/components/tag.vue'
 import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/navbar/components/menu-search.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
+import SystemSetting from '@/layout/navbar/components/system-setting.vue'
 import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.vue'
 import LayoutSize from '@/layout/navbar/components/layout-size.vue'
 import { useFullscreen } from '@vueuse/core'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 const { isFullscreen, toggle } = useFullscreen()
 const appStore = useAppStore()
+const systemSettingStore = useSystemSettingStore()
 </script>
 
 <style scoped>
-.navbar-container {
+.navbar-toolbar {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
-.navbar-left {
+.navbar-toolbar-left {
 	display: flex;
 	align-items: center;
 	gap: 15px;
 }
 
-.navbar-right {
+.navbar-toolbar-right {
 	display: flex;
 	align-items: center;
 	gap: 16px;
 	margin-left: auto;
-	margin-right: 40px;
+	margin-right: 30px;
 }
 
 .collapse-icon {

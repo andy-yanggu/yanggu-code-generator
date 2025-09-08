@@ -4,6 +4,7 @@ import { Router, RouteRecordRaw } from 'vue-router'
 import 'nprogress/nprogress.css'
 import NProgress from 'nprogress'
 import { setTitle } from '@/utils/tool'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 // 路由数据
 export interface RouteMetaData {
@@ -35,7 +36,11 @@ const whiteLists = ['Login']
 export const routerGuard = (router: Router) => {
 	// 路由拦截
 	router.beforeEach((to, from, next) => {
-		NProgress.start()
+		const systemSettingStore = useSystemSettingStore()
+
+		if (systemSettingStore.isOpenProgress) {
+			NProgress.start()
+		}
 		const routeMetaData: RouteMetaData = {
 			name: to.name as string,
 			path: to.path,
@@ -88,13 +93,17 @@ export const routerGuard = (router: Router) => {
 				...routeMetaData
 			}
 			// 添加标签
-			appStore.addTag(tag)
+			if (systemSettingStore.isOpenTag) {
+				appStore.addTag(tag)
+			}
 			// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
-			appStore.setBreadcrumb(routeMetaData)
+			if (systemSettingStore.isOpenBreadcrumb) {
+				appStore.setBreadcrumb(routeMetaData)
+			}
 		}
 
 		// 添加缓存路由 - 有名称和是菜单时才添加缓存
-		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1) {
+		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1 && systemSettingStore.isOpenCache) {
 			appStore.addCacheComponent(routeMetaData.name)
 		}
 
@@ -103,8 +112,16 @@ export const routerGuard = (router: Router) => {
 
 	// 路由结束
 	router.afterEach(to => {
-		NProgress.done()
-		setTitle(to.meta.title as string)
+		const systemSettingStore = useSystemSettingStore()
+		// 设置动态标题
+		if (systemSettingStore.isOpenDynamicTitle) {
+			setTitle(to.meta.title as string)
+		}
+
+		// 关闭进度条
+		if (systemSettingStore.isOpenProgress && NProgress.isStarted()) {
+			NProgress.done()
+		}
 	})
 }
 

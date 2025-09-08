@@ -16,7 +16,7 @@
 			>
 				<template #default>
 					<span style="display: inline-flex; align-items: center; gap: 5px">
-						<svg-icon :icon="tag.icon"></svg-icon>
+						<svg-icon v-if="tag.icon && systemSettingStore.isOpenTagIcon" :icon="tag.icon"></svg-icon>
 						{{ tag.title }}
 					</span>
 				</template>
@@ -48,6 +48,7 @@ import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refuresh-current-page'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,6 +60,7 @@ const menuPosition = ref({
 const currentMenuTag = ref<NavbarTag>({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
+const systemSettingStore = useSystemSettingStore()
 const tagRefs: Record<string, HTMLElement | null> = {}
 const scrollbarRef = ref()
 
@@ -87,22 +89,11 @@ const scrollToTag = (fullPath: string) => {
 		return
 	}
 
-	const tagLeft = tagDom.offsetLeft
-	const tagWidth = tagDom.offsetWidth
-	const scrollLeft = scrollWrapper.scrollLeft
-	const wrapperWidth = scrollWrapper.clientWidth
-
-	if (tagLeft < scrollLeft) {
-		scrollWrapper.scrollTo({
-			left: tagLeft - 20,
-			behavior: 'smooth'
-		})
-	} else if (tagLeft + tagWidth > scrollLeft + wrapperWidth) {
-		scrollWrapper.scrollTo({
-			left: tagLeft - wrapperWidth + tagWidth + 20,
-			behavior: 'smooth'
-		})
-	}
+	tagDom.scrollIntoView({
+		behavior: 'smooth',
+		inline: 'center',
+		block: 'nearest'
+	})
 }
 
 // 实现标签页的拖拽效果
@@ -300,7 +291,6 @@ const { refreshPage } = usePageRefresher()
 }
 .tag-wrapper {
 	/* 保持原有样式不变 */
-	margin-top: 10px;
 	margin-right: 5px;
 	display: inline-flex;
 	align-items: center;

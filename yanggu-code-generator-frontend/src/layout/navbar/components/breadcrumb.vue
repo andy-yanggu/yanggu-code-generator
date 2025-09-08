@@ -3,7 +3,7 @@
 		<el-breadcrumb-item v-for="item in appStore.breadcrumbList" :key="item.title">
 			<template #default>
 				<span style="display: flex; align-items: center; gap: 5px">
-					<svg-icon v-if="item.icon" :icon="item.icon"></svg-icon>
+					<svg-icon v-if="item.icon && systemSettingStore.isOpenBreadcrumbIcon" :icon="item.icon"></svg-icon>
 					{{ item.title }}
 				</span>
 			</template>
@@ -14,6 +14,8 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { useAppStore } from '@/store/app-store'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 const appStore = useAppStore()
+const systemSettingStore = useSystemSettingStore()
 </script>

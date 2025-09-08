@@ -5,7 +5,8 @@
 			background-color="transparent"
 			mode="vertical"
 			router
-			:collapse-transition="false"
+			:unique-opened="systemSettingStore.isOpenMenuUniqueOpened"
+			:collapse-transition="systemSettingStore.isOpenMenuCollapseAnimation"
 			:collapse="appStore.isCollapse"
 		>
 			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
@@ -16,12 +17,14 @@
 <script setup lang="ts">
 import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useRoute } from 'vue-router'
-import { watch, nextTick, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { useAppStore } from '@/store/app-store'
 import { useUserStore } from '@/store/user-store'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
+const systemSettingStore = useSystemSettingStore()
 const route = useRoute()
 
 // 存储所有菜单项引用的Map，格式为 <path, ref>
