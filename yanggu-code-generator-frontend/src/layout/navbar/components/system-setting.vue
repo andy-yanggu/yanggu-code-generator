@@ -8,114 +8,97 @@
 		<el-scrollbar>
 			<div class="drawer-content">
 				<div>
-					<el-divider>菜单</el-divider>
+					<el-divider>菜单设置</el-divider>
+					<setting-item v-model="systemSettingStore.isOpenLogo" label="展示logo"></setting-item>
 					<el-row class="setting-row">
-						<el-text>展示logo</el-text>
-						<el-switch v-model="systemSettingStore.isOpenLogo" inline-prompt active-text="开" inactive-text="关"></el-switch>
+						<el-text style="margin-right: 5px">菜单宽度</el-text>
+						<div style="display: flex; align-items: center">
+							<!-- 下拉推荐值 -->
+							<el-select v-model="systemSettingStore.menuWidth" size="small" clearable style="width: 90px">
+								<el-option
+									v-for="value in menuWidthList"
+									:key="value"
+									:label="`${value}px`"
+									:value="value"
+									:disabled="systemSettingStore.menuWidth === value"
+								></el-option>
+							</el-select>
+						</div>
 					</el-row>
-					<el-row class="setting-row">
-						<el-text>折叠动画</el-text>
-						<el-switch v-model="systemSettingStore.isOpenMenuCollapseAnimation" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>只保持一个子菜单的展开</el-text>
-						<el-switch v-model="systemSettingStore.isOpenMenuUniqueOpened" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
+					<setting-item
+						v-model="systemSettingStore.isOpenMenuCollapseAnimation"
+						label="展开收起动画"
+						tooltip="开启后菜单展开和收起时会有平滑过渡动画效果"
+					></setting-item>
+					<setting-item
+						v-model="systemSettingStore.isOpenMenuUniqueOpened"
+						label="手风琴模式"
+						tooltip="开启后同一时间只允许一个子菜单展开，打开新子菜单时其他子菜单自动收起"
+					></setting-item>
 				</div>
 				<div>
-					<el-divider>工具栏</el-divider>
-					<el-row class="setting-row">
-						<el-text>菜单展开/折叠按钮</el-text>
-						<el-switch v-model="systemSettingStore.isOpenMenuCollapseButton" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>面包屑</el-text>
-						<el-switch v-model="systemSettingStore.isOpenBreadcrumb" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>面包屑图标</el-text>
-						<el-switch v-model="systemSettingStore.isOpenBreadcrumbIcon" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>菜单搜索</el-text>
-						<el-switch v-model="systemSettingStore.isOpenMenuSearch" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>刷新页面</el-text>
-						<el-switch v-model="systemSettingStore.isOpenRefreshPage" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>布局大小</el-text>
-						<el-switch v-model="systemSettingStore.isOpenLayoutSetting" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>开启/退出全屏</el-text>
-						<el-switch v-model="systemSettingStore.isOpenFullscreen" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
+					<el-divider>工具栏设置</el-divider>
+					<setting-item v-model="systemSettingStore.isOpenMenuCollapseButton" label="菜单展开/折叠按钮"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenBreadcrumb" label="面包屑"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenBreadcrumbIcon" label="面包屑图标"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenMenuSearch" label="菜单搜索"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenRefreshPage" label="刷新页面"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenLayoutSetting" label="布局大小"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenFullscreen" label="开启/退出全屏"></setting-item>
 				</div>
 				<div>
-					<el-divider>标签栏</el-divider>
-					<el-row class="setting-row">
-						<el-text>启用</el-text>
-						<el-switch v-model="systemSettingStore.isOpenTag" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>图标</el-text>
-						<el-switch v-model="systemSettingStore.isOpenTagIcon" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<el-text>持久化</el-text>
-						<el-switch v-model="systemSettingStore.isOpenTagCache" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
+					<el-divider>标签设置</el-divider>
+					<setting-item v-model="systemSettingStore.isOpenTag" label="启用"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenTagIcon" label="图标"></setting-item>
+					<setting-item
+						v-model="systemSettingStore.isOpenTagCache"
+						label="持久化"
+						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"
+					></setting-item>
 				</div>
 				<div>
-					<el-divider>其他</el-divider>
-					<el-row class="setting-row">
-						<div>
-							<el-text style="margin-right: 5px">页面缓存</el-text>
-							<el-tooltip content="该功能开启时，切换菜单时页面数据保留" effect="dark" placement="top">
-								<el-icon class="setting-icon"><InfoFilled></InfoFilled></el-icon>
-							</el-tooltip>
-						</div>
-						<el-switch v-model="systemSettingStore.isOpenPageCache" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<div>
-							<el-text style="margin-right: 5px">动态标题</el-text>
-							<el-tooltip content="该功能开启时，页面标题会根据当前菜单动态显示" effect="dark" placement="top">
-								<el-icon class="setting-icon"><InfoFilled></InfoFilled></el-icon>
-							</el-tooltip>
-						</div>
-						<el-switch v-model="systemSettingStore.isOpenDynamicTitle" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
-					<el-row class="setting-row">
-						<div>
-							<el-text style="margin-right: 5px">载入进度条</el-text>
-							<el-tooltip content="该功能开启时，菜单切换会看到页面顶部有进度条" effect="dark" placement="top">
-								<el-icon class="setting-icon"><InfoFilled></InfoFilled></el-icon>
-							</el-tooltip>
-						</div>
-						<el-switch v-model="systemSettingStore.isOpenProgress" inline-prompt active-text="开" inactive-text="关"></el-switch>
-					</el-row>
+					<el-divider>其他设置</el-divider>
+					<setting-item
+						v-model="systemSettingStore.isOpenPageCache"
+						label="页面缓存"
+						tooltip="开启后切换菜单时页面数据保留，避免重复加载"
+					></setting-item>
+					<setting-item
+						v-model="systemSettingStore.isOpenDynamicTitle"
+						label="动态标题"
+						tooltip="开启后页面标题会根据当前菜单动态显示"
+					></setting-item>
+					<setting-item
+						v-model="systemSettingStore.isOpenProgress"
+						label="载入进度条"
+						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"
+					></setting-item>
 				</div>
 			</div>
 		</el-scrollbar>
+		<template #footer>
+			<el-button :icon="Refresh" @click="handlerResetSystemSetting()">重置配置</el-button>
+		</template>
 	</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { InfoFilled, Setting } from '@element-plus/icons-vue'
+import { Refresh, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
 import { useSystemSettingStore } from '@/store/system-setting-store'
-import { useAppStore } from '@/store/app-store'
+import { NavbarTag, useAppStore } from '@/store/app-store'
+import { ElMessage } from 'element-plus'
+import SettingItem from '@/components/setting-item/index.vue'
 
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 
 const visible = ref(false)
 const route = useRoute()
+
+const menuWidthList = ref([180, 210, 240])
 
 // 标签是否开启
 watch(
@@ -124,6 +107,14 @@ watch(
 		// 为false的情况
 		if (!newValue) {
 			appStore.removeAllTags()
+		} else {
+			const tag = {
+				fullPath: route.fullPath,
+				name: route.name as string,
+				title: route.meta.title as string,
+				icon: route.meta.icon as string
+			} as NavbarTag
+			appStore.addTag(tag)
 		}
 	}
 )
@@ -152,6 +143,12 @@ watch(
 		}
 	}
 )
+
+// 重置系统设置
+const handlerResetSystemSetting = () => {
+	systemSettingStore.resetSettings()
+	ElMessage.success('重置成功')
+}
 </script>
 
 <style scoped>

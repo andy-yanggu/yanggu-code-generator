@@ -13,7 +13,7 @@ export const dynamicPersistPlugin = ({ store, options }: PiniaPluginContext) => 
 	const key = persist.key || store.$id
 
 	// 解析 state 并根据 pick/omit 过滤
-	const resolvePaths = (state: any) => {
+	const resolvePaths = (state: Record<string, any>) => {
 		let pick: string[] | undefined
 		let omit: string[] | undefined
 

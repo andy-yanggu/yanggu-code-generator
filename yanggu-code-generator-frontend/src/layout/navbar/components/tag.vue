@@ -318,6 +318,6 @@ const { refreshPage } = usePageRefresher()
 	background: white;
 	border: 1px solid #ddd;
 	z-index: 1000;
-	min-width: 110px;
+	min-width: 100px;
 }
 </style>

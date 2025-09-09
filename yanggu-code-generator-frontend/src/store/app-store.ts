@@ -1,8 +1,6 @@
-import {defineStore} from 'pinia'
-import {computed, ref} from 'vue'
-import {RouteMetaData} from '@/utils/router-guard'
-import {router} from '@/router'
-import {useSystemSettingStore} from '@/store/system-setting-store'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 // 标签数据
 export interface NavbarTag {
@@ -10,14 +8,6 @@ export interface NavbarTag {
 	fullPath: string
 	// 组件名称
 	name: string
-	// 标题
-	title: string
-	// 图标
-	icon: string
-}
-
-// 面包屑
-export interface Breadcrumb {
 	// 标题
 	title: string
 	// 图标
@@ -43,8 +33,6 @@ export const useAppStore = defineStore(
 		const isCollapse = ref(false)
 		// 标签列表
 		const tagsList = ref<NavbarTag[]>([])
-		// 面包屑列表
-		const breadcrumbList = ref<Breadcrumb[]>([])
 		// 缓存组件列表
 		const cacheList = ref<string[]>([])
 		// 布局大小
@@ -60,22 +48,6 @@ export const useAppStore = defineStore(
 		// 切换折叠状态
 		const toggleCollapse = () => {
 			isCollapse.value = !isCollapse.value
-		}
-
-		// 设置面包屑
-		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
-			const matched: Breadcrumb[] = []
-			const paths = routeMetaData.path.split('/').filter(p => p)
-
-			let currentPath = ''
-			for (const path of paths) {
-				currentPath += `/${path}`
-				const breadcrumb = findRouteByPath(currentPath)
-				if (breadcrumb && breadcrumb.title && breadcrumb.icon) {
-					matched.push(breadcrumb)
-				}
-			}
-			breadcrumbList.value = matched
 		}
 
 		// 添加标签
@@ -172,14 +144,12 @@ export const useAppStore = defineStore(
 
 		return {
 			isCollapse,
-			breadcrumbList,
 			tagsList,
 			layoutSize,
 			cacheList,
 			iframeCacheList,
 			tagLength,
 			toggleCollapse,
-			setBreadcrumb,
 			addTag,
 			removeTag,
 			addAllTags,
@@ -204,7 +174,7 @@ export const useAppStore = defineStore(
 			// @ts-expect-error - 忽略下一行的类型检查
 			// 支持动态配置忽略字段
 			omit: _ => {
-				const originOmitList = ['breadcrumbList']
+				const originOmitList = []
 				const systemSettingStore = useSystemSettingStore()
 				if (!systemSettingStore.isOpenTagCache) {
 					originOmitList.push('tagsList')
@@ -214,20 +184,3 @@ export const useAppStore = defineStore(
 		}
 	}
 )
-
-/**
- * 查找路径对应的 meta.title
- */
-const findRouteByPath = (targetPath: string): Breadcrumb => {
-	// 使用 Vue Router 的路径匹配算法
-	const matchedRoute = router.resolve(targetPath)
-
-	if (matchedRoute?.meta?.title) {
-		return {
-			title: matchedRoute.meta.title as string,
-			icon: matchedRoute.meta.icon as string
-		}
-	} else {
-		return { title: '', icon: '' }
-	}
-}

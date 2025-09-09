@@ -87,18 +87,12 @@ export const routerGuard = (router: Router) => {
 
 		const appStore = useAppStore()
 
-		// 不是新窗口
-		if (routeMetaData.type != 4) {
+		// 不是新窗口，添加tag标签
+		if (routeMetaData.type != 4 && systemSettingStore.isOpenTag) {
 			// 添加标签
-			if (systemSettingStore.isOpenTag) {
-				appStore.addTag({
-					...routeMetaData
-				})
-			}
-			// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
-			if (systemSettingStore.isOpenBreadcrumb) {
-				appStore.setBreadcrumb(routeMetaData)
-			}
+			appStore.addTag({
+				...routeMetaData
+			})
 		}
 
 		// 添加缓存路由 - 有名称和是菜单时才添加缓存

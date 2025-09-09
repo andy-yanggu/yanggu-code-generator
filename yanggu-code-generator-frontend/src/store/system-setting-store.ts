@@ -1,26 +1,7 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, toRefs } from 'vue'
 
-const defaultSystemSetting: SystemSetting = {
-	isOpenBreadcrumb: true,
-	isOpenBreadcrumbIcon: true,
-	isOpenTag: true,
-	isOpenTagIcon: true,
-	isOpenTagCache: true,
-	isOpenDynamicTitle: true,
-	isOpenLogo: true,
-	isOpenProgress: true,
-	isOpenPageCache: true,
-	isOpenMenuSearch: true,
-	isOpenRefreshPage: true,
-	isOpenLayoutSetting: true,
-	isOpenFullscreen: true,
-	isOpenMenuCollapseAnimation: true,
-	isOpenMenuUniqueOpened: true,
-	isOpenMenuCollapseButton: true
-} as SystemSetting
-
-export interface SystemSetting {
+interface SystemSetting {
 	// 是否开启面包屑
 	isOpenBreadcrumb: boolean
 	// 面包屑是否设置图标
@@ -53,46 +34,45 @@ export interface SystemSetting {
 	isOpenMenuUniqueOpened: boolean
 	// 菜单展开/折叠按钮
 	isOpenMenuCollapseButton: boolean
+	// 菜单宽度
+	menuWidth: number
+}
+
+// 默认配置
+const defaultSystemSetting: SystemSetting = {
+	isOpenBreadcrumb: true,
+	isOpenBreadcrumbIcon: true,
+	isOpenTag: true,
+	isOpenTagIcon: true,
+	isOpenTagCache: true,
+	isOpenDynamicTitle: true,
+	isOpenLogo: true,
+	isOpenProgress: true,
+	isOpenPageCache: true,
+	isOpenMenuSearch: true,
+	isOpenRefreshPage: true,
+	isOpenLayoutSetting: true,
+	isOpenFullscreen: true,
+	isOpenMenuCollapseAnimation: true,
+	isOpenMenuUniqueOpened: true,
+	isOpenMenuCollapseButton: true,
+	menuWidth: 210
 }
 
 export const useSystemSettingStore = defineStore(
 	'system-setting',
 	() => {
-		// 状态
-		const isOpenBreadcrumb = ref(defaultSystemSetting.isOpenBreadcrumb)
-		const isOpenBreadcrumbIcon = ref(defaultSystemSetting.isOpenBreadcrumbIcon)
-		const isOpenTag = ref(defaultSystemSetting.isOpenTag)
-		const isOpenTagIcon = ref(defaultSystemSetting.isOpenTagIcon)
-		const isOpenTagCache = ref(defaultSystemSetting.isOpenTagCache)
-		const isOpenDynamicTitle = ref(defaultSystemSetting.isOpenDynamicTitle)
-		const isOpenLogo = ref(defaultSystemSetting.isOpenLogo)
-		const isOpenProgress = ref(defaultSystemSetting.isOpenProgress)
-		const isOpenPageCache = ref(defaultSystemSetting.isOpenPageCache)
-		const isOpenMenuSearch = ref(defaultSystemSetting.isOpenMenuSearch)
-		const isOpenRefreshPage = ref(defaultSystemSetting.isOpenRefreshPage)
-		const isOpenLayoutSetting = ref(defaultSystemSetting.isOpenLayoutSetting)
-		const isOpenFullscreen = ref(defaultSystemSetting.isOpenFullscreen)
-		const isOpenMenuCollapseAnimation = ref(defaultSystemSetting.isOpenMenuCollapseAnimation)
-		const isOpenMenuUniqueOpened = ref(defaultSystemSetting.isOpenMenuUniqueOpened)
-		const isOpenMenuCollapseButton = ref(defaultSystemSetting.isOpenMenuCollapseButton)
+		const state = reactive<SystemSetting>({ ...defaultSystemSetting })
 
+		// 恢复默认配置
+		const resetSettings = () => {
+			Object.assign(state, defaultSystemSetting)
+		}
+
+		// 注意这里要用 toRefs 保持响应式
 		return {
-			isOpenBreadcrumb,
-			isOpenBreadcrumbIcon,
-			isOpenTag,
-			isOpenTagIcon,
-			isOpenTagCache,
-			isOpenDynamicTitle,
-			isOpenLogo,
-			isOpenProgress,
-			isOpenPageCache,
-			isOpenMenuSearch,
-			isOpenRefreshPage,
-			isOpenLayoutSetting,
-			isOpenFullscreen,
-			isOpenMenuCollapseAnimation,
-			isOpenMenuUniqueOpened,
-			isOpenMenuCollapseButton
+			...toRefs(state),
+			resetSettings
 		}
 	},
 	{

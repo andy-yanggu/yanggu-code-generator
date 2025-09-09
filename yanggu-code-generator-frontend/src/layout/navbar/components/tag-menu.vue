@@ -26,7 +26,7 @@
 		</div>
 		<div class="icon-item" @click="emits('openNewWindow')">
 			<svg-icon icon="icon-new-window"></svg-icon>
-			<span>打开新窗口</span>
+			<span>打开窗口</span>
 		</div>
 	</div>
 </template>
@@ -67,7 +67,7 @@ const emits = defineEmits([
 	flex-direction: column;
 	gap: 10px;
 	padding: 5px;
-	width: 80px;
+	width: 70px;
 }
 
 .icon-item {
