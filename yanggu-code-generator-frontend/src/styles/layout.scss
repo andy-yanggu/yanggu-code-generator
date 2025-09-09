@@ -46,8 +46,7 @@ a:hover {
   }
 
   .layout-header {
-    margin-left: 15px;
-    padding: 0 !important;
+    padding: 0 15px;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -57,16 +56,16 @@ a:hover {
   .layout-main {
     padding: 0 !important;
     overflow: hidden;
-    height: auto !important;
+    flex: 1;
     width: 100%;
     background-color: var(--theme-main-bg-color);
 
     .layout-scrollbar {
-      height: calc(100vh - 30px - var(--theme-header-height));
+      flex: 1;
       padding: 15px;
 
       .layout-card {
-        min-height: calc(100vh - 30px - var(--theme-header-height));
+        height: auto !important;
         width: 100%;
 
         .layout-query {

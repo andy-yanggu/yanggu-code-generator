@@ -1,7 +1,7 @@
 <template>
 	<div class="layout-size">
-		<el-tooltip content="布局大小" effect="dark" placement="bottom" style="">
-			<el-dropdown trigger="click" @command="(size: 'large' | 'default' | 'small') => appStore.setLayoutSize(size)">
+		<el-tooltip content="布局大小" effect="dark" placement="bottom">
+			<el-dropdown trigger="click" @command="(size: LayOutSize) => appStore.setLayoutSize(size)">
 				<svg-icon icon="icon-font-size" size="18px"></svg-icon>
 				<template #dropdown>
 					<el-dropdown-menu>
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/index'
 import { ref } from 'vue'
-import { useAppStore } from '@/store/app-store'
+import { LayOutSize, useAppStore } from '@/store/app-store'
 
 const appStore = useAppStore()
 

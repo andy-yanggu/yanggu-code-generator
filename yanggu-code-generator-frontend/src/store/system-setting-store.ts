@@ -10,13 +10,14 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenDynamicTitle: true,
 	isOpenLogo: true,
 	isOpenProgress: true,
-	isOpenCache: true,
+	isOpenPageCache: true,
 	isOpenMenuSearch: true,
 	isOpenRefreshPage: true,
 	isOpenLayoutSetting: true,
 	isOpenFullscreen: true,
 	isOpenMenuCollapseAnimation: true,
-	isOpenMenuUniqueOpened: true
+	isOpenMenuUniqueOpened: true,
+	isOpenMenuCollapseButton: true
 } as SystemSetting
 
 export interface SystemSetting {
@@ -36,8 +37,8 @@ export interface SystemSetting {
 	isOpenLogo: boolean
 	// 是否开启载入进度条
 	isOpenProgress: boolean
-	// 是否开启缓存
-	isOpenCache: boolean
+	// 是否开启页面缓存
+	isOpenPageCache: boolean
 	// 是否开启菜单搜索
 	isOpenMenuSearch: boolean
 	// 是否开启刷新页面
@@ -50,41 +51,54 @@ export interface SystemSetting {
 	isOpenMenuCollapseAnimation: boolean
 	// 是否开启菜单只打开一个菜单
 	isOpenMenuUniqueOpened: boolean
+	// 菜单展开/折叠按钮
+	isOpenMenuCollapseButton: boolean
 }
 
-export const useSystemSettingStore = defineStore('system-setting', () => {
-	// 状态
-	const isOpenBreadcrumb = ref(defaultSystemSetting.isOpenBreadcrumb)
-	const isOpenBreadcrumbIcon = ref(defaultSystemSetting.isOpenBreadcrumbIcon)
-	const isOpenTag = ref(defaultSystemSetting.isOpenTag)
-	const isOpenTagIcon = ref(defaultSystemSetting.isOpenTagIcon)
-	const isOpenTagCache = ref(defaultSystemSetting.isOpenTagCache)
-	const isOpenDynamicTitle = ref(defaultSystemSetting.isOpenDynamicTitle)
-	const isOpenLogo = ref(defaultSystemSetting.isOpenLogo)
-	const isOpenProgress = ref(defaultSystemSetting.isOpenProgress)
-	const isOpenCache = ref(defaultSystemSetting.isOpenCache)
-	const isOpenMenuSearch = ref(defaultSystemSetting.isOpenMenuSearch)
-	const isOpenRefreshPage = ref(defaultSystemSetting.isOpenRefreshPage)
-	const isOpenLayoutSetting = ref(defaultSystemSetting.isOpenLayoutSetting)
-	const isOpenFullscreen = ref(defaultSystemSetting.isOpenFullscreen)
-	const isOpenMenuCollapseAnimation = ref(defaultSystemSetting.isOpenMenuCollapseAnimation)
-	const isOpenMenuUniqueOpened = ref(defaultSystemSetting.isOpenMenuUniqueOpened)
+export const useSystemSettingStore = defineStore(
+	'system-setting',
+	() => {
+		// 状态
+		const isOpenBreadcrumb = ref(defaultSystemSetting.isOpenBreadcrumb)
+		const isOpenBreadcrumbIcon = ref(defaultSystemSetting.isOpenBreadcrumbIcon)
+		const isOpenTag = ref(defaultSystemSetting.isOpenTag)
+		const isOpenTagIcon = ref(defaultSystemSetting.isOpenTagIcon)
+		const isOpenTagCache = ref(defaultSystemSetting.isOpenTagCache)
+		const isOpenDynamicTitle = ref(defaultSystemSetting.isOpenDynamicTitle)
+		const isOpenLogo = ref(defaultSystemSetting.isOpenLogo)
+		const isOpenProgress = ref(defaultSystemSetting.isOpenProgress)
+		const isOpenPageCache = ref(defaultSystemSetting.isOpenPageCache)
+		const isOpenMenuSearch = ref(defaultSystemSetting.isOpenMenuSearch)
+		const isOpenRefreshPage = ref(defaultSystemSetting.isOpenRefreshPage)
+		const isOpenLayoutSetting = ref(defaultSystemSetting.isOpenLayoutSetting)
+		const isOpenFullscreen = ref(defaultSystemSetting.isOpenFullscreen)
+		const isOpenMenuCollapseAnimation = ref(defaultSystemSetting.isOpenMenuCollapseAnimation)
+		const isOpenMenuUniqueOpened = ref(defaultSystemSetting.isOpenMenuUniqueOpened)
+		const isOpenMenuCollapseButton = ref(defaultSystemSetting.isOpenMenuCollapseButton)
 
-	return {
-		isOpenBreadcrumb,
-		isOpenBreadcrumbIcon,
-		isOpenTag,
-		isOpenTagIcon,
-		isOpenTagCache,
-		isOpenDynamicTitle,
-		isOpenLogo,
-		isOpenProgress,
-		isOpenCache,
-		isOpenMenuSearch,
-		isOpenRefreshPage,
-		isOpenLayoutSetting,
-		isOpenFullscreen,
-		isOpenMenuCollapseAnimation,
-		isOpenMenuUniqueOpened
+		return {
+			isOpenBreadcrumb,
+			isOpenBreadcrumbIcon,
+			isOpenTag,
+			isOpenTagIcon,
+			isOpenTagCache,
+			isOpenDynamicTitle,
+			isOpenLogo,
+			isOpenProgress,
+			isOpenPageCache,
+			isOpenMenuSearch,
+			isOpenRefreshPage,
+			isOpenLayoutSetting,
+			isOpenFullscreen,
+			isOpenMenuCollapseAnimation,
+			isOpenMenuUniqueOpened,
+			isOpenMenuCollapseButton
+		}
+	},
+	{
+		persist: {
+			key: 'systemSettingStore',
+			storage: localStorage
+		}
 	}
-})
+)

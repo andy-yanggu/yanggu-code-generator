@@ -4,7 +4,7 @@
 		<div class="navbar-toolbar">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-toolbar-left">
-				<el-icon :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
+				<el-icon v-if="systemSettingStore.isOpenMenuCollapseButton" :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
 					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
@@ -20,7 +20,7 @@
 				<!-- 切换布局大小	-->
 				<layout-size v-if="systemSettingStore.isOpenLayoutSetting"></layout-size>
 				<!-- 全屏按钮 -->
-				<el-tooltip v-if="systemSettingStore.isOpenFullscreen" :content="isFullscreen ? '还原' : '全屏'" effect="dark" placement="bottom">
+				<el-tooltip v-if="systemSettingStore.isOpenFullscreen" :content="isFullscreen ? '退出全屏' : '开启全屏'" effect="dark" placement="bottom">
 					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>
 				<!-- 系统设置 -->
@@ -55,8 +55,8 @@ const systemSettingStore = useSystemSettingStore()
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
 .navbar-toolbar-left {
@@ -68,9 +68,8 @@ const systemSettingStore = useSystemSettingStore()
 .navbar-toolbar-right {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 15px;
 	margin-left: auto;
-	margin-right: 30px;
 }
 
 .collapse-icon {

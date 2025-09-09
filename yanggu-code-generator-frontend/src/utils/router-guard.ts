@@ -1,4 +1,4 @@
-import { NavbarTag, useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store/app-store'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { Router, RouteRecordRaw } from 'vue-router'
 import 'nprogress/nprogress.css'
@@ -87,14 +87,13 @@ export const routerGuard = (router: Router) => {
 
 		const appStore = useAppStore()
 
-		// 不是外链（新窗口）
+		// 不是新窗口
 		if (routeMetaData.type != 4) {
-			const tag: NavbarTag = {
-				...routeMetaData
-			}
 			// 添加标签
 			if (systemSettingStore.isOpenTag) {
-				appStore.addTag(tag)
+				appStore.addTag({
+					...routeMetaData
+				})
 			}
 			// 设置面包屑 - 仅当不是新窗口打开的外链时才设置面包屑
 			if (systemSettingStore.isOpenBreadcrumb) {
@@ -103,7 +102,7 @@ export const routerGuard = (router: Router) => {
 		}
 
 		// 添加缓存路由 - 有名称和是菜单时才添加缓存
-		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1 && systemSettingStore.isOpenCache) {
+		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1 && systemSettingStore.isOpenPageCache) {
 			appStore.addCacheComponent(routeMetaData.name)
 		}
 

@@ -80,6 +80,7 @@ watch(
 	}
 )
 
+// 滚动到指定标签
 const scrollToTag = (fullPath: string) => {
 	const tagEl = tagRefs[fullPath]
 	const scrollWrapper = scrollbarRef.value?.wrapRef
@@ -285,17 +286,26 @@ const { refreshPage } = usePageRefresher()
 
 <style scoped>
 .tag-scrollbar {
-	max-height: 35px; /* 根据需要调整高度 */
+	max-height: 35px;
 	margin-bottom: 10px;
+	overflow-x: auto;
 }
+
+/* 使用 flex 而不是 inline-flex，设置 nowrap，宽度自适应内容 */
 .tag-wrapper {
-	/* 保持原有样式不变 */
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	gap: 10px;
-	position: relative;
-	white-space: nowrap;
-	padding-right: 20px;
+	flex-wrap: nowrap;
+	width: max-content;
+	padding-right: 5px;
+	box-sizing: content-box;
+}
+
+/* 覆盖 el-scrollbar 内部 wrap 的 overflow（scoped 下用 :deep） */
+:deep(.el-scrollbar__wrap) {
+	overflow-x: auto !important;
+	overflow-y: hidden !important;
 }
 
 /* 使用深度选择器覆盖 el-tag 的默认样式 */
@@ -308,6 +318,6 @@ const { refreshPage } = usePageRefresher()
 	background: white;
 	border: 1px solid #ddd;
 	z-index: 1000;
-	min-width: 100px;
+	min-width: 110px;
 }
 </style>

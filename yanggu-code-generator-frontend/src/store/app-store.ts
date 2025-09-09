@@ -1,7 +1,8 @@
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-import { RouteMetaData } from '@/utils/router-guard'
-import { router } from '@/router'
+import {defineStore} from 'pinia'
+import {computed, ref} from 'vue'
+import {RouteMetaData} from '@/utils/router-guard'
+import {router} from '@/router'
+import {useSystemSettingStore} from '@/store/system-setting-store'
 
 // 标签数据
 export interface NavbarTag {
@@ -32,6 +33,8 @@ export interface IframeInfo {
 	fullPath: string
 }
 
+export type LayOutSize = 'large' | 'default' | 'small'
+
 export const useAppStore = defineStore(
 	'app',
 	() => {
@@ -45,15 +48,13 @@ export const useAppStore = defineStore(
 		// 缓存组件列表
 		const cacheList = ref<string[]>([])
 		// 布局大小
-		const layoutSize = ref<'large' | 'default' | 'small'>('default')
+		const layoutSize = ref<LayOutSize>('default')
 		// iframe缓存列表
 		const iframeCacheList = ref<IframeInfo[]>([])
 
 		// 计算属性
 		// 标签数量
 		const tagLength = computed(() => tagsList.value.length)
-
-		// 缓存组件列表
 
 		// actions
 		// 切换折叠状态
@@ -64,7 +65,7 @@ export const useAppStore = defineStore(
 		// 设置面包屑
 		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
 			const matched: Breadcrumb[] = []
-			const paths = routeMetaData.path.split('/').filter((p: any) => p)
+			const paths = routeMetaData.path.split('/').filter(p => p)
 
 			let currentPath = ''
 			for (const path of paths) {
@@ -159,8 +160,13 @@ export const useAppStore = defineStore(
 			}
 		}
 
+		// 删除全部iframe路由
+		const removeAllIframeCache = () => {
+			iframeCacheList.value = []
+		}
+
 		// 设置布局大小
-		const setLayoutSize = (size: 'large' | 'default' | 'small') => {
+		const setLayoutSize = (size: LayOutSize) => {
 			layoutSize.value = size
 		}
 
@@ -186,13 +192,25 @@ export const useAppStore = defineStore(
 			addIframeCache,
 			removeIframeCache,
 			removeIframeCacheList,
+			removeAllIframeCache,
 			setLayoutSize
 		}
 	},
 	{
+		// @ts-expect-error - 忽略下一行的类型检查
 		persist: {
 			key: 'appStore',
-			storage: localStorage
+			storage: localStorage,
+			// @ts-expect-error - 忽略下一行的类型检查
+			// 支持动态配置忽略字段
+			omit: _ => {
+				const originOmitList = ['breadcrumbList']
+				const systemSettingStore = useSystemSettingStore()
+				if (!systemSettingStore.isOpenTagCache) {
+					originOmitList.push('tagsList')
+				}
+				return originOmitList
+			}
 		}
 	}
 )

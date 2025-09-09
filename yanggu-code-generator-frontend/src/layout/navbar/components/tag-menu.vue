@@ -2,7 +2,7 @@
 	<div class="icon-list">
 		<div class="icon-item" @click="emits('refreshCurrentTag')">
 			<el-icon size="10"><Refresh></Refresh></el-icon>
-			<span>刷新页面</span>
+			<span>刷新当前</span>
 		</div>
 		<div v-if="props.currentMenuTag.fullPath != '/index' || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
@@ -67,7 +67,7 @@ const emits = defineEmits([
 	flex-direction: column;
 	gap: 10px;
 	padding: 5px;
-	width: 75px;
+	width: 80px;
 }
 
 .icon-item {
