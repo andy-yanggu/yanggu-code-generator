@@ -92,6 +92,10 @@ import { NavbarTag, useAppStore } from '@/store/app-store'
 import { ElMessage } from 'element-plus'
 import SettingItem from '@/components/setting-item/index.vue'
 
+defineOptions({
+	name: 'SystemSetting'
+})
+
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 

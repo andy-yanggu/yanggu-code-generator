@@ -20,6 +20,10 @@ import SvgIcon from '@/components/svg-icon/index'
 import { ref } from 'vue'
 import { LayOutSize, useAppStore } from '@/store/app-store'
 
+defineOptions({
+	name: 'LayoutSize'
+})
+
 const appStore = useAppStore()
 
 const sizeOptions = ref([

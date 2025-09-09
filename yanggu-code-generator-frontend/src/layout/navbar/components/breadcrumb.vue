@@ -17,6 +17,10 @@ import { useSystemSettingStore } from '@/store/system-setting-store'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+defineOptions({
+	name: 'Breadcrumb'
+})
+
 // 面包屑
 interface Breadcrumb {
 	// 标题

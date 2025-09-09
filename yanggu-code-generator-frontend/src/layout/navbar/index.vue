@@ -23,6 +23,8 @@
 				<el-tooltip v-if="systemSettingStore.isOpenFullscreen" :content="isFullscreen ? '退出全屏' : '开启全屏'" effect="dark" placement="bottom">
 					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" class="collapse-icon" @click="toggle()"></svg-icon>
 				</el-tooltip>
+				<!-- 日间/夜间模式切换  -->
+				<theme-switch></theme-switch>
 				<!-- 系统设置 -->
 				<system-setting></system-setting>
 			</div>
@@ -44,6 +46,7 @@ import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.
 import LayoutSize from '@/layout/navbar/components/layout-size.vue'
 import { useFullscreen } from '@vueuse/core'
 import { useSystemSettingStore } from '@/store/system-setting-store'
+import ThemeSwitch from '@/layout/navbar/components/theme-switch.vue'
 
 const { isFullscreen, toggle } = useFullscreen()
 const appStore = useAppStore()
