@@ -37,6 +37,10 @@ import { NavbarTag, useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps, PropType } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
+defineOptions({
+	name: 'TagMenu'
+})
+
 const appStore = useAppStore()
 
 const props = defineProps({

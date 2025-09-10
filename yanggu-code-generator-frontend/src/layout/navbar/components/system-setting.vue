@@ -45,7 +45,7 @@
 					<setting-item v-model="systemSettingStore.isOpenRefreshPage" label="刷新页面"></setting-item>
 					<setting-item v-model="systemSettingStore.isOpenLayoutSetting" label="布局大小"></setting-item>
 					<setting-item v-model="systemSettingStore.isOpenFullscreen" label="开启/退出全屏"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenThemeSwitch" label="主题切换"></setting-item>
+					<setting-item v-model="systemSettingStore.isOpenThemeSwitch" label="日间/夜间主题切换"></setting-item>
 				</div>
 				<div>
 					<el-divider>标签设置</el-divider>

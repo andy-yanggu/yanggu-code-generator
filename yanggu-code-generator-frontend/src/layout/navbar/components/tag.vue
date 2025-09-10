@@ -50,6 +50,10 @@ import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refuresh-current-page'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'Tag'
+})
+
 const route = useRoute()
 const router = useRouter()
 const tagMenuVisible = ref(false)

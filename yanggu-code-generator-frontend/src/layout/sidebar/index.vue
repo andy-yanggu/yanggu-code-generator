@@ -10,5 +10,9 @@ import Logo from '@/layout/sidebar/components/logo.vue'
 import MenuIndex from '@/layout/sidebar/components/menu/menu-index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'Sidebar'
+})
+
 const systemSettingStore = useSystemSettingStore()
 </script>

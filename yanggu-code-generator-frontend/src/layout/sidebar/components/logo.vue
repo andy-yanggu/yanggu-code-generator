@@ -7,6 +7,10 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store/app-store'
 
+defineOptions({
+	name: 'Logo'
+})
+
 const appTitle = import.meta.env.VITE_APP_TITLE
 const appStore = useAppStore()
 </script>

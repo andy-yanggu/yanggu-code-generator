@@ -50,6 +50,10 @@ import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/app-store'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'Layout'
+})
+
 const route = useRoute()
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()

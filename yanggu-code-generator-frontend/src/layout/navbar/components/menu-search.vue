@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { nextTick, reactive, ref, onMounted, onUnmounted } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
@@ -333,7 +333,7 @@ onUnmounted(() => {
 }
 .menu-item:hover,
 .menu-item.active {
-	background-color: #409eff;
+	background-color: var(--el-color-primary);
 	color: white;
 }
 .menu-item::before {
@@ -360,7 +360,6 @@ onUnmounted(() => {
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
 	padding: 4px 6px;
-	background: #f5f7fa;
 	display: inline-flex;
 	align-items: center;
 	font-size: 12px;
@@ -374,7 +373,6 @@ onUnmounted(() => {
 	border: 1px solid #dcdfe6;
 	border-radius: 4px;
 	padding: 4px 8px;
-	background: #f5f7fa;
 	font-size: 12px;
 	line-height: 1;
 }
@@ -383,7 +381,6 @@ onUnmounted(() => {
 	gap: 20px;
 	margin: 10px 0 0;
 	padding: 8px 12px;
-	background: #ffffff;
 	border-top: 1px solid #e6e6e6;
 	font-size: 12px;
 	align-items: center;

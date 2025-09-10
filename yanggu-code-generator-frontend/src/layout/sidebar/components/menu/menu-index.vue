@@ -22,6 +22,10 @@ import { useAppStore } from '@/store/app-store'
 import { useUserStore } from '@/store/user-store'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'MenuIndex'
+})
+
 const appStore = useAppStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
