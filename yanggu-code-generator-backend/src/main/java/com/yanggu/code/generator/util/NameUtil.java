@@ -1,11 +1,9 @@
 package com.yanggu.code.generator.util;
 
 
+import cn.hutool.v7.core.text.NamingCase;
+import cn.hutool.v7.core.text.StrUtil;
 import lombok.experimental.UtilityClass;
-import org.dromara.hutool.core.text.NamingCase;
-import org.dromara.hutool.core.text.StrUtil;
-
-import static org.dromara.hutool.core.text.CharPool.DASHED;
 
 @UtilityClass
 public class NameUtil {

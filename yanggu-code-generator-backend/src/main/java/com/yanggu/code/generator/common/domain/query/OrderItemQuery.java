@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.common.domain.query;
 
+import cn.hutool.v7.core.text.StrUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.io.Serial;
 import java.io.Serializable;

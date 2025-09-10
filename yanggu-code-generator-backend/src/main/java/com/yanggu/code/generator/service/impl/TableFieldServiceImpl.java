@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -16,7 +17,6 @@ import com.yanggu.code.generator.mapper.TableFieldMapper;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.FieldTypeService;
 import com.yanggu.code.generator.service.TableFieldService;
-import org.dromara.hutool.core.text.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

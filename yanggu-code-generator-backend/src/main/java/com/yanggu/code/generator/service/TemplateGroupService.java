@@ -88,4 +88,9 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     TemplateGroupEntity getById(Long id);
 
+    /**
+     * 获取项目ID列表（通过模板组ID和类型获取）
+     */
+    List<Long> getProjectIdListByTemplateGroup(Integer templateGroupType, Long templateGroupId);
+
 }

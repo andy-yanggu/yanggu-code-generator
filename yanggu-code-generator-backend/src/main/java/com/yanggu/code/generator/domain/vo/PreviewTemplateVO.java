@@ -1,10 +1,10 @@
 package com.yanggu.code.generator.domain.vo;
 
+import cn.hutool.v7.core.comparator.ComparatorChain;
 import com.yanggu.code.generator.common.domain.vo.BaseVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.dromara.hutool.core.comparator.ComparatorChain;
 
 import java.io.Serial;
 import java.io.Serializable;

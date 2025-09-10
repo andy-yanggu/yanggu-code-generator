@@ -1,10 +1,10 @@
 package com.yanggu.code.generator.query;
 
 
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.reflect.ClassUtil;
+import cn.hutool.v7.core.reflect.ConstructorUtil;
 import com.yanggu.code.generator.enums.DbType;
-import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.reflect.ClassUtil;
-import org.dromara.hutool.core.reflect.ConstructorUtil;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,8 @@
 package com.yanggu.code.generator.util;
 
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.BooleanUtil;
+import cn.hutool.v7.extra.spring.SpringUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.config.GeneratorConfig;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
@@ -11,9 +14,6 @@ import com.yanggu.code.generator.query.AbstractQuery;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.OracleConnection;
-import org.dromara.hutool.core.text.StrUtil;
-import org.dromara.hutool.core.util.BooleanUtil;
-import org.dromara.hutool.extra.spring.SpringUtil;
 
 import java.sql.*;
 import java.util.ArrayList;

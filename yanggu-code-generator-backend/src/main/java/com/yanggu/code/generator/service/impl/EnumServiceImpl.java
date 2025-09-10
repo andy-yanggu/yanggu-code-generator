@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,7 +22,6 @@ import com.yanggu.code.generator.service.EnumItemService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableFieldService;
-import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

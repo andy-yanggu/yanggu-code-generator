@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.common.validation.code;
 
 
-import org.dromara.hutool.core.collection.CollUtil;
+import cn.hutool.v7.core.collection.CollUtil;
 
 import java.util.Collection;
 

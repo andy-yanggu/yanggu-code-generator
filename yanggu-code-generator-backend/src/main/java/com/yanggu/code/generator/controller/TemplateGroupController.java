@@ -183,4 +183,15 @@ public class TemplateGroupController {
         templateGroupService.importTemplateGroup(file);
     }
 
+    /**
+     * 获取项目ID列表（通过模板组ID和类型获取）
+     */
+    @GetMapping("/getProjectIdListByTemplateGroup")
+    @ApiOperationSupport(order = 14)
+    @Operation(summary = "获取项目ID列表（通过模板组ID和类型获取）")
+    public void getProjectIdListByTemplateGroup(@RequestParam("templateGroupType") Integer templateGroupType,
+                                                @RequestParam("templateGroupId") Long templateGroupId) {
+        templateGroupService.getProjectIdListByTemplateGroup(templateGroupType, templateGroupId);
+    }
+
 }

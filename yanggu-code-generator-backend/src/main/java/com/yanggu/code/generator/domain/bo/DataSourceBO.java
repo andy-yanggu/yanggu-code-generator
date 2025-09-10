@@ -1,12 +1,12 @@
 package com.yanggu.code.generator.domain.bo;
 
+import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.query.AbstractQuery;
 import com.yanggu.code.generator.util.DbUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.util.EnumUtil;
 
 import java.sql.Connection;
 

@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.query;
 
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.yanggu.code.generator.enums.DbType;
-import org.dromara.hutool.core.text.StrUtil;
 
 /**
  * Oracle查询

@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.common.validation.path;
 
+import cn.hutool.v7.core.text.StrUtil;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.dromara.hutool.core.text.StrUtil;
 
 public class UnixPathValidator implements ConstraintValidator<UnixPath, String> {
 

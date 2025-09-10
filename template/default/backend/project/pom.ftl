@@ -41,7 +41,7 @@
                 <version><#noparse>${lombok.version}</#noparse></version>
             </dependency>
             <dependency>
-                <groupId>org.dromara.hutool</groupId>
+                <groupId>cn.hutool.v7</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version><#noparse>${hutool.version}</#noparse></version>
             </dependency>
@@ -80,7 +80,7 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.dromara.hutool</groupId>
+            <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
         <dependency>

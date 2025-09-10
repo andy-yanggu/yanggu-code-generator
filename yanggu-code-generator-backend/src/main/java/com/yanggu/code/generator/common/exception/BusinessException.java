@@ -1,9 +1,9 @@
 package com.yanggu.code.generator.common.exception;
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.yanggu.code.generator.common.response.IResultError;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.dromara.hutool.core.text.StrUtil;
 
 import java.io.Serial;
 

@@ -1,18 +1,18 @@
 package com.yanggu.code.generator.common.mybatis.util;
 
+import cn.hutool.v7.core.bean.BeanUtil;
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.func.LambdaFactory;
+import cn.hutool.v7.core.reflect.FieldUtil;
+import cn.hutool.v7.core.reflect.method.MethodInvoker;
+import cn.hutool.v7.core.text.NamingCase;
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.ObjUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.yanggu.code.generator.common.domain.query.OrderItemQuery;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.bean.BeanUtil;
-import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.func.LambdaFactory;
-import org.dromara.hutool.core.reflect.FieldUtil;
-import org.dromara.hutool.core.reflect.method.MethodInvoker;
-import org.dromara.hutool.core.text.NamingCase;
-import org.dromara.hutool.core.text.StrUtil;
-import org.dromara.hutool.core.util.ObjUtil;
 
 import java.util.List;
 

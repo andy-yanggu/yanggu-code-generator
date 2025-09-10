@@ -1,12 +1,12 @@
 package com.yanggu.code.generator.common.validation.code;
 
+import cn.hutool.v7.core.array.ArrayUtil;
+import cn.hutool.v7.core.convert.ConvertUtil;
+import cn.hutool.v7.core.reflect.FieldUtil;
+import cn.hutool.v7.core.util.EnumUtil;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.SneakyThrows;
-import org.dromara.hutool.core.array.ArrayUtil;
-import org.dromara.hutool.core.convert.ConvertUtil;
-import org.dromara.hutool.core.reflect.FieldUtil;
-import org.dromara.hutool.core.util.EnumUtil;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

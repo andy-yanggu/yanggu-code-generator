@@ -1,6 +1,14 @@
 package com.yanggu.code.generator.service.impl;
 
 
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.date.DateUtil;
+import cn.hutool.v7.core.io.IoUtil;
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.CharsetUtil;
+import cn.hutool.v7.core.util.EnumUtil;
+import cn.hutool.v7.http.meta.HttpHeaderUtil;
+import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,19 +25,13 @@ import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
+import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
-import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.date.DateUtil;
-import org.dromara.hutool.core.io.IoUtil;
-import org.dromara.hutool.core.text.StrUtil;
-import org.dromara.hutool.core.util.CharsetUtil;
-import org.dromara.hutool.http.meta.HttpHeaderUtil;
-import org.dromara.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,8 +43,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static cn.hutool.v7.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
-import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
@@ -266,13 +268,39 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         return templateGroup;
     }
 
+    @Override
+    public List<Long> getProjectIdListByTemplateGroup(Integer templateGroupType, Long templateGroupId) {
+        LambdaQueryWrapper<ProjectEntity> projectQueryWrapper = Wrappers.lambdaQuery(ProjectEntity.class);
+        switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroupType)) {
+            case PROJECT -> {
+                projectQueryWrapper.eq(ProjectEntity::getProjectTemplateGroupId, templateGroupId);
+            }
+            case TABLE -> {
+                projectQueryWrapper.eq(ProjectEntity::getTableTemplateGroupId, templateGroupId);
+            }
+            case ENUM -> {
+                projectQueryWrapper.eq(ProjectEntity::getEnumTemplateGroupId, templateGroupId);
+            }
+            default -> {
+                throw new BusinessException("模板组类型错误");
+            }
+        }
+        List<ProjectEntity> projectList = projectService.list(projectQueryWrapper);
+        if (CollUtil.isEmpty(projectList)) {
+            return List.of();
+        }
+        return projectList.stream()
+                .map(ProjectEntity::getId)
+                .toList();
+    }
+
     /**
      * 递归复制模板树
      *
      * @param sourceTemplate     源模板
      * @param newParentId        新的父模板ID
      * @param newTemplateGroupId 新模板组ID
-     * @param templateList     原模板映射
+     * @param templateList       原模板映射
      */
     private void copyTemplateTree(TemplateEntity sourceTemplate, Long newParentId,
                                   Long newTemplateGroupId, List<TemplateEntity> templateList) {
@@ -300,8 +328,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     /**
      * 递归导入模板树
-     * @param templateBO 模板BO
-     * @param parentId 父模板ID
+     *
+     * @param templateBO      模板BO
+     * @param parentId        父模板ID
      * @param templateGroupId 模板组ID
      */
     private void importTemplateTree(TemplateBO templateBO, Long parentId, Long templateGroupId) {
@@ -325,6 +354,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     /**
      * 构建模板树结构
+     *
      * @param templateList 模板列表
      */
     private void buildTemplateTree(List<TemplateBO> templateList) {

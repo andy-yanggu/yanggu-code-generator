@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.domain.vo;
 
+import cn.hutool.v7.core.comparator.ComparatorChain;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.dromara.hutool.core.comparator.ComparatorChain;
 
 import java.io.Serial;
 import java.io.Serializable;

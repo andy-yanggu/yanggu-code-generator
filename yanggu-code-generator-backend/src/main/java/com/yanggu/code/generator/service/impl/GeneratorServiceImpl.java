@@ -1,5 +1,18 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.v7.core.array.ArrayUtil;
+import cn.hutool.v7.core.codec.binary.Base64;
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.date.DateFormatPool;
+import cn.hutool.v7.core.date.DateUtil;
+import cn.hutool.v7.core.io.IoUtil;
+import cn.hutool.v7.core.io.file.FileUtil;
+import cn.hutool.v7.core.text.NamingCase;
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.BooleanUtil;
+import cn.hutool.v7.core.util.CharsetUtil;
+import cn.hutool.v7.core.util.EnumUtil;
+import cn.hutool.v7.http.meta.HttpHeaderUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
@@ -19,19 +32,6 @@ import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.hutool.core.array.ArrayUtil;
-import org.dromara.hutool.core.codec.binary.Base64;
-import org.dromara.hutool.core.collection.CollUtil;
-import org.dromara.hutool.core.date.DateFormatPool;
-import org.dromara.hutool.core.date.DateUtil;
-import org.dromara.hutool.core.io.IoUtil;
-import org.dromara.hutool.core.io.file.FileUtil;
-import org.dromara.hutool.core.text.NamingCase;
-import org.dromara.hutool.core.text.StrUtil;
-import org.dromara.hutool.core.util.BooleanUtil;
-import org.dromara.hutool.core.util.CharsetUtil;
-import org.dromara.hutool.core.util.EnumUtil;
-import org.dromara.hutool.http.meta.HttpHeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.dromara.hutool.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
+import static cn.hutool.v7.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
 /**
  * 代码生成服务实现类

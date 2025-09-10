@@ -1,8 +1,8 @@
 package com.yanggu.code.generator.common.response;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.dromara.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
