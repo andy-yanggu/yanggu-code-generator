@@ -36,7 +36,6 @@ a:hover {
   .layout-sidebar {
     background: var(--theme-menu-bg-color);
     border-right: var(--theme-border-color-light) 1px solid;
-    width: var(--theme-aside-width);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -46,6 +45,8 @@ a:hover {
   }
 
   .layout-header {
+    background-color: var(--theme-header-bg-color) !important;
+    color: var(--theme-header-text-color) !important;
     display: flex;
     flex-direction: column;
     width: 100%;

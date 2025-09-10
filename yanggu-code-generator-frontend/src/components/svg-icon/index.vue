@@ -1,18 +1,17 @@
 <template>
 	<svg
 		class="svg-icon"
-		:class="customClass"
 		:style="{
 			color,
 			width: size,
-			height: size
+			height: size,
+			...(isPointer !== undefined ? { cursor: isPointer ? 'pointer' : 'default' } : {})
 		}"
 		aria-hidden="true"
 	>
 		<use :xlink:href="`#${icon}`"></use>
 	</svg>
 </template>
-
 <script setup lang="ts">
 defineProps({
 	// 图标名称（传入时需要带上前缀 icon-）
@@ -30,10 +29,10 @@ defineProps({
 		type: String,
 		default: '1em'
 	},
-	// 额外 class
-	customClass: {
-		type: String,
-		default: ''
+	// 是否为pointer
+	isPointer: {
+		type: Boolean,
+		required: false
 	}
 })
 </script>

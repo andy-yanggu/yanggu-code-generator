@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useDark, useToggle } from '@vueuse/core'
 
 // 标签数据
 export interface NavbarTag {
@@ -39,6 +40,13 @@ export const useAppStore = defineStore(
 		const layoutSize = ref<LayOutSize>('default')
 		// iframe缓存列表
 		const iframeCacheList = ref<IframeInfo[]>([])
+		// 主题模式
+		const isDark = useDark({
+			selector: 'html',
+			attribute: 'class',
+			valueDark: 'dark',
+			valueLight: 'light'
+		})
 
 		// 计算属性
 		// 标签数量
@@ -142,12 +150,16 @@ export const useAppStore = defineStore(
 			layoutSize.value = size
 		}
 
+		// 切换主题模式
+		const toggleDark = useToggle(isDark)
+
 		return {
 			isCollapse,
 			tagsList,
 			layoutSize,
 			cacheList,
 			iframeCacheList,
+			isDark,
 			tagLength,
 			toggleCollapse,
 			addTag,
@@ -163,7 +175,8 @@ export const useAppStore = defineStore(
 			removeIframeCache,
 			removeIframeCacheList,
 			removeAllIframeCache,
-			setLayoutSize
+			setLayoutSize,
+			toggleDark
 		}
 	},
 	{

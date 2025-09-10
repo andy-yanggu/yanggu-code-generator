@@ -2,7 +2,7 @@
 	<div class="layout-size">
 		<el-tooltip content="布局大小" effect="dark" placement="bottom">
 			<el-dropdown trigger="click" @command="(size: LayOutSize) => appStore.setLayoutSize(size)">
-				<svg-icon icon="icon-font-size" size="18px"></svg-icon>
+				<svg-icon icon="icon-font-size" size="18px" is-pointer></svg-icon>
 				<template #dropdown>
 					<el-dropdown-menu>
 						<el-dropdown-item v-for="item of sizeOptions" :key="item.value" :disabled="appStore.layoutSize === item.value" :command="item.value">

@@ -1,0 +1,41 @@
+html.light {
+  --el-color-primary: #409eff;
+  --el-color-success: #67c23a;
+  --el-color-warning: #e6a23c;
+  --el-color-danger: #f56c6c;
+  --el-color-info: #909399;
+
+  --el-tag-bg-color: #f0f2f5;
+  --el-tag-text-color: #606266;
+  --el-tag-border-color: #dcdfe6;
+
+  --theme-menu-bg-color: #ffffff;
+  --theme-menu-text-color: #303133;
+  --theme-main-bg-color: #f5f5f5;
+
+  /* Header 专用 */
+  --theme-header-bg-color: #ffffff;
+  --theme-header-text-color: #303133;
+  --theme-header-hover-color: rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+  --el-color-primary: #4d8acc;
+  --el-color-success: #5daf3f;
+  --el-color-warning: #d49a45;
+  --el-color-danger: #e06262;
+  --el-color-info: #8a8c91;
+
+  --el-tag-bg-color: #2a2a2a;
+  --el-tag-text-color: #e0e0e0;
+  --el-tag-border-color: #3a3a3a;
+
+  --theme-menu-bg-color: #1e1e1e;
+  --theme-menu-text-color: #e0e0e0;
+  --theme-main-bg-color: #121212;
+
+  /* Header 专用 */
+  --theme-header-bg-color: #1a1a1a;
+  --theme-header-text-color: #e0e0e0;
+  --theme-header-hover-color: rgba(255, 255, 255, 0.05);
+}

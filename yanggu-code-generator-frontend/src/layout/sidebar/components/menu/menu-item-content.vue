@@ -1,6 +1,6 @@
 <template>
 	<div class="menu-item">
-		<svg-icon v-if="icon" :icon="icon" class="svg-icon"></svg-icon>
+		<svg-icon v-if="icon" :icon="icon" is-pointer></svg-icon>
 		<el-tooltip :content="title" :disabled="!isTooltipEnabled" placement="top">
 			<el-text ref="titleRef" truncated class="menu-title">
 				{{ title }}
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, onUpdated, ref, computed } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, onUpdated, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElText } from 'element-plus'
 

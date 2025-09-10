@@ -12,14 +12,11 @@
   --theme-menu-hover-color: var(--el-color-primary);
   --theme-menu-hover-bg-color: var(--el-color-primary-light-9);
 
+  /* 默认 header 配置，会被 theme.scss 覆盖 */
   --theme-header-bg-color: var(--el-color-primary);
   --theme-header-text-color: #ffffff;
   --theme-header-hover-color: rgba(0, 0, 0, 0.1);
 
   --theme-main-bg-color: #f0f2f5;
 }
-.el-card {
-  &:not(:first-child) {
-    margin-top: 10px;
-  }
-}
+

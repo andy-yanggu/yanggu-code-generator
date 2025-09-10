@@ -28,6 +28,8 @@ interface SystemSetting {
 	isOpenLayoutSetting: boolean
 	// 切换全屏
 	isOpenFullscreen: boolean
+	// 主题切换
+	isOpenThemeSwitch: boolean
 	// 是否开启菜单折叠动画
 	isOpenMenuCollapseAnimation: boolean
 	// 是否开启菜单只打开一个菜单
@@ -53,6 +55,7 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenRefreshPage: true,
 	isOpenLayoutSetting: true,
 	isOpenFullscreen: true,
+	isOpenThemeSwitch: true,
 	isOpenMenuCollapseAnimation: true,
 	isOpenMenuUniqueOpened: true,
 	isOpenMenuCollapseButton: true,

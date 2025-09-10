@@ -93,12 +93,13 @@
   .el-table__fixed-header-wrapper {
     th {
       word-break: break-word;
-      background-color: #f5f7fa !important; // 浅灰色背景
-      color: #515a6e !important; // 深蓝色文字
-      border-bottom: 1px solid #ebeef5; // 底部边框
+      background-color: var(--el-table-header-bg-color);
+      color: var(--el-text-color-primary);
+      border-bottom: 1px solid var(--el-border-color-light);
     }
   }
 }
+
 
 // 分页
 .el-pagination {
@@ -124,6 +125,12 @@
 }
 
 // 卡片
+.el-card {
+  &:not(:first-child) {
+    margin-top: 10px;
+  }
+}
+
 .el-card.is-always-shadow {
   box-shadow: none !important;
 }
