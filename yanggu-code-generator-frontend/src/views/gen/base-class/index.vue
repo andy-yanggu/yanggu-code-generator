@@ -33,6 +33,7 @@
 			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
+				<el-table-column prop="baseClassName" label="基类名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="packageName" label="基类包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="className" label="基类类名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="fields" label="基类字段" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -58,6 +59,7 @@
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="CopyDocument" @click="copyBaseClassHandle(scope.row.id)">复制</el-button>
 						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -75,7 +77,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<add-or-update ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></add-or-update>
 		</el-card>
 	</div>
 </template>
@@ -83,10 +85,10 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/gen/base-class/add-or-update.vue'
 import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/gen/base-class'
-import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenBaseClass'
@@ -113,5 +115,24 @@ const {
 	tableIndex
 } = useIndexQuery(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+// 添加一个响应式变量来控制对话框模式
+const dialogMode = ref<'add' | 'update' | 'copy'>('add')
+
+// 修改添加/更新处理函数
+const addOrUpdateHandle = (id?: number) => {
+	// 设置模式为添加或更新
+	dialogMode.value = id ? 'update' : 'add'
+	// 调用原始函数
+	addOrUpdateRef.value?.init(id)
+}
+
+// 修改复制处理函数
+const copyBaseClassHandle = (id: number) => {
+	// 设置模式为复制
+	dialogMode.value = 'copy'
+	// 调用初始化函数
+	addOrUpdateRef.value.init(id)
+}
+
+const { addOrUpdateRef } = useInitForm()
 </script>

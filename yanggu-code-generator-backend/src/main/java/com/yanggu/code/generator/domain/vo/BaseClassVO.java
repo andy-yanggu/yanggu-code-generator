@@ -26,6 +26,12 @@ public class BaseClassVO extends BaseVO implements Serializable {
     private Long id;
 
     /**
+     * 基类名称
+     */
+    @Schema(description = "基类名称")
+    private String baseClassName;
+
+    /**
      * 基类包名
      */
     @Schema(description = "基类包名")

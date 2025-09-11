@@ -31,6 +31,12 @@ public class BaseClassEntity extends BaseEntity implements Serializable {
     private Long id;
 
     /**
+     * 基类名称
+     */
+    @TableField(value = "base_class_name")
+    private String baseClassName;
+
+    /**
      * 基类包名
      */
     @TableField(value = "package_name")

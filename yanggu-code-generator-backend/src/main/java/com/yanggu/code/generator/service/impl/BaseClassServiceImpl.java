@@ -163,8 +163,13 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     private void checkUnique(BaseClassDTO dto) {
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
         wrapper.ne(Objects.nonNull(dto.getId()), BaseClassEntity::getId, dto.getId());
-        wrapper.eq(BaseClassEntity::getPackageName, dto.getPackageName());
-        wrapper.eq(BaseClassEntity::getClassName, dto.getClassName());
+        wrapper.and(temp -> temp
+                .and(inner -> inner
+                        .eq(BaseClassEntity::getPackageName, dto.getPackageName())
+                        .eq(BaseClassEntity::getClassName, dto.getClassName()))
+                .or()
+                .eq(BaseClassEntity::getBaseClassName, dto.getBaseClassName())
+        );
 
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {

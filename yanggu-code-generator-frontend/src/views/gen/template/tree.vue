@@ -14,8 +14,10 @@
 						style="width: 200px"
 					></el-input>
 					<div style="display: flex; text-align: right">
-						<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree">刷新</el-button>
-						<el-button size="small" type="danger" :icon="Delete" @click="deleteCheckedNode">删除</el-button>
+						<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
+						<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()">
+							删除
+						</el-button>
 					</div>
 				</div>
 				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
@@ -318,6 +320,8 @@ watch(
 	}
 )
 
+const checkedNodeListLength = computed(() => treeRef.value?.getCheckedKeys().length)
+
 // 实现tab的拖拽排序
 const initTabSortable = () => {
 	if (!tabsRef.value) {
@@ -592,22 +596,26 @@ const deleteCheckedNode = () => {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'
-	}).then(() => {
-		templateDeleteListApi(allCheckedKeys)
-			.then(() => {
-				ElMessage.success('删除成功')
-			})
-			.then(() => {
-				// 删除tab
-				allCheckedKeys.forEach((tempId: number) => {
-					handleTabRemove(tempId)
-					expandedKeys.value = expandedKeys.value.filter(id => id !== tempId)
-				})
-			})
-			.then(() => {
-				init()
-			})
 	})
+		.then(() => {
+			templateDeleteListApi(allCheckedKeys)
+				.then(() => {
+					ElMessage.success('删除成功')
+				})
+				.then(() => {
+					// 删除tab
+					allCheckedKeys.forEach((tempId: number) => {
+						handleTabRemove(tempId)
+						expandedKeys.value = expandedKeys.value.filter(id => id !== tempId)
+					})
+				})
+				.then(() => {
+					init()
+				})
+		})
+		.catch(() => {
+			ElMessage.info('已取消删除')
+		})
 }
 
 // 判断树节点能否被拖拽

@@ -27,6 +27,13 @@ public class BaseClassDTO implements Serializable {
     private Long id;
 
     /**
+     * 基类名称
+     */
+    @Schema(description = "基类名称")
+    @NotBlank(message = "基类名称不能为空")
+    private String baseClassName;
+
+    /**
      * 基类包名
      */
     @Schema(description = "基类包名")

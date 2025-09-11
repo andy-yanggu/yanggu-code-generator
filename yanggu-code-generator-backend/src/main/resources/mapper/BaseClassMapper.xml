@@ -6,6 +6,7 @@
     <!-- 所有字段 -->
     <sql id="allColumns">
         id,
+        base_class_name,
         package_name,
         class_name,
         fields,
@@ -26,6 +27,7 @@
     <!-- Entity类字段映射 -->
     <resultMap type="com.yanggu.code.generator.domain.entity.BaseClassEntity" id="baseClassMap">
         <id property="id" column="id"/>
+        <result property="baseClassName" column="base_class_name"/>
         <result property="packageName" column="package_name"/>
         <result property="className" column="class_name"/>
         <result property="fields" column="fields"/>
@@ -38,9 +40,9 @@
     <!-- Entity分页 -->
     <select id="entityPage" resultMap="baseClassMap">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_base_class
+        gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -51,9 +53,9 @@
     <!-- Entity列表 -->
     <select id="entityList" resultMap="baseClassMap">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_base_class
+        gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -64,9 +66,9 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.BaseClassVO">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_base_class
+        gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -77,9 +79,9 @@
     <!-- VO列表 -->
     <select id="voList" resultType="com.yanggu.code.generator.domain.vo.BaseClassVO">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_base_class
+        gen_base_class
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

@@ -1,6 +1,9 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+			<el-form-item label="基类名称" prop="baseClassName">
+				<el-input v-model="state.dataForm.baseClassName" clearable placeholder="请输入基类名称"></el-input>
+			</el-form-item>
 			<el-form-item label="基类包名" prop="packageName">
 				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入基类包名"></el-input>
 			</el-form-item>
@@ -22,10 +25,29 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { baseClassDetailApi, baseClassSubmitApi } from '@/api/gen/base-class'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
+
+// 定义组件props
+const props = defineProps<{
+	mode: 'add' | 'update' | 'copy'
+}>()
+
+// 计算对话框标题
+const dialogTitle = computed(() => {
+	switch (props.mode) {
+		case 'add':
+			return '新增'
+		case 'update':
+			return '修改'
+		case 'copy':
+			return '复制'
+		default:
+			return '操作'
+	}
+})
 
 const emit = defineEmits(['refreshDataList'])
 const state: FormOptions = reactive({
@@ -36,15 +58,23 @@ const state: FormOptions = reactive({
 	// 表单数据
 	dataForm: {
 		id: null,
+		baseClassName: '',
 		packageName: '',
 		className: '',
 		fields: '',
 		remark: ''
 	},
+	initAfter: () => {
+		if (props.mode === 'copy') {
+			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
+			state.dataForm.id = null
+		}
+	},
 	emit
 })
 
 const dataRules = reactive({
+	baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
