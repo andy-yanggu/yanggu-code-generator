@@ -78,15 +78,16 @@
 			</div>
 		</el-scrollbar>
 		<template #footer>
-			<el-button :icon="Refresh" @click="handlerResetSystemSetting()">重置配置</el-button>
+			<el-button icon="CopyDocument" type="primary" size="small" @click="copySystemSetting()">复制设置</el-button>
+			<el-button icon="Refresh" size="small" @click="handlerResetSystemSetting()">重置设置</el-button>
 		</template>
 	</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { Refresh, Setting } from '@element-plus/icons-vue'
+import { Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
-import { setDefaultTitle, setTitle } from '@/utils/tool'
+import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import { NavbarTag, useAppStore } from '@/store/app-store'
@@ -149,10 +150,18 @@ watch(
 	}
 )
 
+// 复制系统设置到剪切板
+const copySystemSetting = () => {
+	const stateData = { ...systemSettingStore.$state }
+	copyToClipboard(JSON.stringify(stateData, null, 2)).then(() => {
+		ElMessage.success('系统设置已复制到剪贴板')
+	})
+}
+
 // 重置系统设置
 const handlerResetSystemSetting = () => {
 	systemSettingStore.resetSettings()
-	ElMessage.success('重置成功')
+	ElMessage.success('系统设置重置成功')
 }
 </script>
 

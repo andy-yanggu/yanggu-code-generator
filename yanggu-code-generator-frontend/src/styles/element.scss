@@ -10,17 +10,13 @@
   align-items: center; /* 图标+文字垂直居中 */
   color: var(--theme-menu-text-color) !important;
   height: 48px !important;
+  line-height: 48px !important;
   overflow: hidden;
   transition: color 0.3s, background-color 0.3s;
 }
 
 .el-menu.el-menu--horizontal {
   border-bottom: none !important;
-}
-
-.el-menu-item {
-  height: 48px !important;
-  line-height: 48px !important;
 }
 
 /* 图标样式 */
