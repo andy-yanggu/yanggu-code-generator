@@ -1,12 +1,17 @@
 <template>
-	<el-tooltip :content="appStore.isDark ? '切换日间' : '切换夜间'" effect="dark" placement="bottom">
-		<svg-icon :icon="appStore.isDark ? 'icon-sun' : 'icon-moon'" size="18px" is-pointer @click="appStore.toggleDark()"></svg-icon>
-	</el-tooltip>
+	<el-switch
+		v-model="appStore.isDark"
+		size="default"
+		:active-action-icon="Moon"
+		:inactive-action-icon="Sunny"
+		inline-prompt
+		@change="appStore.toggleDark"
+	/>
 </template>
 
 <script setup lang="ts">
 import { useAppStore } from '@/store/app-store'
-import SvgIcon from '@/components/svg-icon/index.vue'
+import { Moon, Sunny } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'ThemeSwitch'

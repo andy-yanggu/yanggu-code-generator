@@ -313,7 +313,7 @@ const templateTreeData = reactive({
 
 // 初始化tab拖拽效果
 watch(
-	() => templateTreeData.tabList.length,
+	() => templateTreeData.tabList.length > 0,
 	_ => {
 		nextTick(() => {
 			initTabSortable()
@@ -367,7 +367,9 @@ const initTabSortable = () => {
 			// 插入到新位置
 			templateTreeData.tabList.splice(newIndex, 0, movedTab)
 			// 设置当前激活的tab
-			templateTreeData.activeItemId = movedTab.id
+			if (movedTab.id != templateTreeData.activeItemId) {
+				templateTreeData.activeItemId = movedTab.id
+			}
 		}
 	})
 }
