@@ -312,7 +312,11 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
         //获取数据源信息
-        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
+        Long datasourceId = project.getDatasourceId();
+        DataSourceBO dataSource = null;
+        if (datasourceId != null) {
+            dataSource = datasourceService.get(datasourceId);
+        }
         //获取项目模板组信息
         Long projectTemplateGroupId = project.getProjectTemplateGroupId();
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
@@ -387,11 +391,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectModel.setProjectDesc(project.getProjectDesc());
 
         //数据源数据
-        projectModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
-        projectModel.setDatabaseUrl(dataSource.getConnUrl());
-        projectModel.setDatabaseUsername(dataSource.getUsername());
-        projectModel.setDatabasePassword(dataSource.getPassword());
+        if (dataSource != null) {
+            projectModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
+            projectModel.setDatabaseUrl(dataSource.getConnUrl());
+            projectModel.setDatabaseUsername(dataSource.getUsername());
+            projectModel.setDatabasePassword(dataSource.getPassword());
 
+        }
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
         projectModel.setTableModelList(tableModelList);
@@ -438,10 +444,6 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         });
         tableModel.setFieldList(fieldModelList);
-
-        // 获取数据库类型
-        String dbType = datasourceService.getDatabaseProductName(project.getDatasourceId());
-        tableModel.setDbType(dbType);
 
         //项目信息
         tableModel.setProjectId(project.getId());

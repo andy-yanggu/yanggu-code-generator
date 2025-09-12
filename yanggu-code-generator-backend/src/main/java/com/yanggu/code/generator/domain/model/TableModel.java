@@ -149,11 +149,6 @@ public class TableModel {
     private Integer generatorType;
 
     /**
-     * 数据库类型
-     */
-    private String dbType;
-
-    /**
      * 主键列表 (支持多主键)
      */
     private List<TableFieldModel> primaryList;
