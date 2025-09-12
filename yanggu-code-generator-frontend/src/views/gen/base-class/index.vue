@@ -77,7 +77,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></add-or-update>
+			<base-class-form ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></base-class-form>
 		</el-card>
 	</div>
 </template>
@@ -85,8 +85,8 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
-import { reactive, ref } from 'vue'
-import AddOrUpdate from '@/views/gen/base-class/add-or-update.vue'
+import { nextTick, reactive, ref } from 'vue'
+import BaseClassForm from '@/views/gen/base-class/form.vue'
 import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/gen/base-class'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
@@ -123,7 +123,9 @@ const addOrUpdateHandle = (id?: number) => {
 	// 设置模式为添加或更新
 	dialogMode.value = id ? 'update' : 'add'
 	// 调用原始函数
-	addOrUpdateRef.value?.init(id)
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
+	})
 }
 
 // 修改复制处理函数
@@ -131,7 +133,9 @@ const copyBaseClassHandle = (id: number) => {
 	// 设置模式为复制
 	dialogMode.value = 'copy'
 	// 调用初始化函数
-	addOrUpdateRef.value.init(id)
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
+	})
 }
 
 const { addOrUpdateRef } = useInitForm()

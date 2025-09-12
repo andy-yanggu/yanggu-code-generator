@@ -25,15 +25,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, PropType, reactive } from 'vue'
 import { baseClassDetailApi, baseClassSubmitApi } from '@/api/gen/base-class'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenBaseClassForm'
+})
+
 // 定义组件props
-const props = defineProps<{
-	mode: 'add' | 'update' | 'copy'
-}>()
+const props = defineProps({
+	mode: {
+		type: String as PropType<'add' | 'update' | 'copy'>,
+		required: true
+	}
+})
 
 // 计算对话框标题
 const dialogTitle = computed(() => {
@@ -68,6 +75,9 @@ const state: FormOptions = reactive({
 		if (props.mode === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
 			state.dataForm.id = null
+			state.message = '复制成功'
+		} else {
+			state.message = ''
 		}
 	},
 	emit

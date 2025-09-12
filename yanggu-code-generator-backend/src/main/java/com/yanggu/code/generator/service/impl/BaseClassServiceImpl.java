@@ -173,7 +173,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
 
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {
-            throw new BusinessException("基类已存在");
+            throw new BusinessException("基类名称或者（包名+类名）已存在");
         }
     }
 

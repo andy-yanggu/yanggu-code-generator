@@ -100,9 +100,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
-			<!-- 弹窗，复制模板组 -->
-			<copy ref="copyTemplateGroupRef" @refresh-data-list="getDataList"></copy>
+			<template-group-form ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></template-group-form>
 		</el-card>
 
 		<template-tree
@@ -121,8 +119,7 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
 import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
-import Copy from '@/views/gen/template-group/copy.vue'
-import AddOrUpdate from '@/views/gen/template-group/add-or-update.vue'
+import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import { ElMessage } from 'element-plus'
 import { exportTemplateGroupApi, importTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/gen/template-group'
@@ -143,7 +140,7 @@ const state: IHooksOptions = reactive({
 })
 
 const tableRef = ref()
-const copyTemplateGroupRef = ref()
+const dialogMode = ref<'add' | 'update' | 'copy'>('add')
 const key = ref()
 const currentTemplateGroup = reactive({
 	id: -1,
@@ -152,8 +149,24 @@ const currentTemplateGroup = reactive({
 })
 const treeUpdateRef = ref()
 
+// 修改添加/更新处理函数
+const addOrUpdateHandle = (id?: number) => {
+	// 设置模式为添加或更新
+	dialogMode.value = id ? 'update' : 'add'
+	// 调用原始函数
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
+	})
+}
+
+// 修改复制处理函数
 const copyTemplateGroupHandle = (id: number) => {
-	copyTemplateGroupRef.value.init(id)
+	// 设置模式为复制
+	dialogMode.value = 'copy'
+	// 调用初始化函数
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
+	})
 }
 
 const treeData = (row: any) => {
@@ -204,6 +217,6 @@ const {
 	tableIndex
 } = useIndexQuery(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { addOrUpdateRef } = useInitForm()
 </script>
 <style scoped></style>

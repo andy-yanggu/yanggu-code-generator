@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="模板组名称" prop="groupName">
 				<el-input v-model="state.dataForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
@@ -21,17 +21,39 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, PropType, reactive } from 'vue'
 import { copyTemplateApi, templateGroupDetailApi, templateGroupSubmitApi } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenTemplateGroupForm'
+})
+
 const emit = defineEmits(['refreshDataList'])
 
-const props = defineProps<{
-	mode: 'add' | 'update' | 'copy'
-}>()
+// 定义组件props
+const props = defineProps({
+	mode: {
+		type: String as PropType<'add' | 'update' | 'copy'>,
+		required: true
+	}
+})
+
+// 计算对话框标题
+const dialogTitle = computed(() => {
+	switch (props.mode) {
+		case 'add':
+			return '新增'
+		case 'update':
+			return '修改'
+		case 'copy':
+			return '复制'
+		default:
+			return '操作'
+	}
+})
 
 const state: FormOptions = reactive({
 	// 提交API
@@ -46,12 +68,15 @@ const state: FormOptions = reactive({
 		groupDesc: ''
 	},
 	initAfter: () => {
-		state.dataForm.groupName = state.dataForm.groupName + '_复制'
-		state.dataForm.id = null
-		if ((props.mode = 'copy')) {
+		if (props.mode == 'copy') {
 			state.submitApi = copyTemplateApi
+			state.message = '模板组和下的所有模板已复制'
+			state.duration = 2000
+			state.dataForm.groupName = state.dataForm.groupName + '_复制'
 		} else {
 			state.submitApi = templateGroupSubmitApi
+			state.message = ''
+			state.duration = 500
 		}
 	},
 	emit

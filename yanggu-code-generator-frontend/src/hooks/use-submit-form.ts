@@ -40,18 +40,17 @@ export const useSubmitForm = (options: FormOptions) => {
 		// 初始化之前调用
 		options.initBefore?.()
 
-		if (!id) {
+		if (id) {
+			// 获取详情数据
+			options.detailApi(id).then(res => {
+				Object.assign(options.dataForm, res.data)
+
+				// 获取详情之后调用
+				options.initAfter?.()
+			})
+		} else {
 			options.initAfter?.()
-			return
 		}
-
-		// 获取详情数据
-		options.detailApi(id).then(res => {
-			Object.assign(options.dataForm, res.data)
-
-			// 获取详情之后调用
-			options.initAfter?.()
-		})
 	}
 
 	// 表单验证并提交
