@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { tableDetailApi, tableSubmitApi } from '@/api/gen/table'
 import { FORM_LAYOUT_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
@@ -56,7 +56,7 @@ const state: FormOptions = reactive({
 	submitApi: tableSubmitApi,
 	detailApi: tableDetailApi,
 	initBefore: () => {
-		projectEntityListApi({}).then(res => {
+		projectEntityListApi().then(res => {
 			projectList.value = res.data
 		})
 	},

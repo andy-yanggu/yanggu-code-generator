@@ -29,10 +29,6 @@ import { Check, Close } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 
-const initAfter = () => {
-	state.dataForm.groupName = state.dataForm.groupName + '_复制'
-}
-
 const state: FormOptions = reactive({
 	// 提交API
 	submitApi: copyTemplateApi,
@@ -47,7 +43,10 @@ const state: FormOptions = reactive({
 	},
 	message: '模板组和下的所有模板已复制',
 	duration: 2000,
-	initAfter,
+	initAfter: () => {
+		state.dataForm.groupName = state.dataForm.groupName + '_复制'
+		state.dataForm.id = null
+	},
 	emit
 })
 

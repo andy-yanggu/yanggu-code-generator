@@ -14,6 +14,10 @@
 import { InfoFilled } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 
+defineOptions({
+	name: 'SystemSettingItem'
+})
+
 const props = defineProps<{
 	label: string
 	tooltip?: string

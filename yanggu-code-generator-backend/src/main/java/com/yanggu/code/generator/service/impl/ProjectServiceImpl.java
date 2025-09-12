@@ -66,19 +66,22 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         projectMapper.insert(entity);
 
-        //默认导入项目对应数据库下的所有表
-        DataSourceBO dataSourceBO = datasourceService.get(entity.getDatasourceId());
-        List<String> tableNameList = DbUtil.getTableNameList(dataSourceBO);
+        Long datasourceId = entity.getDatasourceId();
+        if (datasourceId != null) {
+            //默认导入项目对应数据库下的所有表
+            DataSourceBO dataSourceBO = datasourceService.get(datasourceId);
+            List<String> tableNameList = DbUtil.getTableNameList(dataSourceBO);
 
-        if (CollUtil.isEmpty(tableNameList)) {
-            return;
+            if (CollUtil.isEmpty(tableNameList)) {
+                return;
+            }
+
+            TableImportDTO tableImportDTO = new TableImportDTO();
+            tableImportDTO.setProjectId(entity.getId());
+
+            tableImportDTO.setTableNameList(tableNameList);
+            tableService.importTable(tableImportDTO);
         }
-
-        TableImportDTO tableImportDTO = new TableImportDTO();
-        tableImportDTO.setProjectId(entity.getId());
-
-        tableImportDTO.setTableNameList(tableNameList);
-        tableService.importTable(tableImportDTO);
     }
 
     /**
@@ -183,8 +186,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Override
     public List<TableImportVO> tableList(ProjectTableQuery query) throws Exception {
         Long projectId = query.getProjectId();
-        ProjectEntity project = baseMapper.selectById(projectId);
+        ProjectEntity project = selectById(projectId);
         Long datasourceId = project.getDatasourceId();
+        if (datasourceId == null) {
+            throw new BusinessException("该项目没有配置数据源，请先配置数据源");
+        }
         // 获取数据源
         DataSourceBO datasource = datasourceService.get(datasourceId);
         // 根据数据源，获取全部数据表

@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store/app-store'
 import { useRoute } from 'vue-router'
-import iframePage from '@/layout/components/iframe-page.vue'
+import iframePage from '@/layout/main/components/iframe-page.vue'
 import { watch } from 'vue'
 
 const appStore = useAppStore()

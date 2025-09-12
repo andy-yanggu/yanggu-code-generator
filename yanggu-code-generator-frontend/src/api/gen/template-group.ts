@@ -2,7 +2,7 @@ import service from '@/utils/request'
 import { downloadFile } from '@/utils/download'
 import qs from 'qs'
 
-//提交表单
+// 提交表单
 export const templateGroupSubmitApi = (dataForm: any) => {
 	if (dataForm.id) {
 		//修改接口
@@ -13,44 +13,44 @@ export const templateGroupSubmitApi = (dataForm: any) => {
 	}
 }
 
-//删除接口
+// 删除接口
 export const templateGroupDeleteApi = (id: number) => {
 	return service.delete('/templateGroup/delete?id=' + id)
 }
 
-//批量删除
-export const templateGroupDeleteListApi = (idList: Array<number>) => {
+// 批量删除
+export const templateGroupDeleteListApi = (idList: number[]) => {
 	return service.delete('/templateGroup/deleteList', { data: idList })
 }
 
-//查询详情
+// 查询详情
 export const templateGroupDetailApi = (id: number) => {
 	return service.get('/templateGroup/detail?id=' + id)
 }
 
-//批量查询
-export const templateGroupDetailListApi = (idList: Array<number>) => {
+// 批量查询
+export const templateGroupDetailListApi = (idList: number[]) => {
 	return service.post('/templateGroup/detailList', idList)
 }
 
-//简单分页
-export const templateGroupEntityPageApi = (queryForm: any) => {
-	return service.post('/templateGroup/entityPage', queryForm)
+// 简单分页
+export const templateGroupEntityPageApi = (queryForm?: any) => {
+	return service.post('/templateGroup/entityPage', queryForm ? queryForm : {})
 }
 
-//简单列表
-export const templateGroupEntityListApi = (queryForm: any) => {
-	return service.post('/templateGroup/entityList', queryForm)
+// 简单列表
+export const templateGroupEntityListApi = (queryForm?: any) => {
+	return service.post('/templateGroup/entityList', queryForm ? queryForm : {})
 }
 
-//复杂分页
-export const templateGroupVOPageApi = (queryForm: any) => {
-	return service.post('/templateGroup/voPage', queryForm)
+// 复杂分页
+export const templateGroupVOPageApi = (queryForm?: any) => {
+	return service.post('/templateGroup/voPage', queryForm ? queryForm : {})
 }
 
-//复杂列表
-export const templateGroupVOListApi = (queryForm: any) => {
-	return service.post('/templateGroup/voList', queryForm)
+// 复杂列表
+export const templateGroupVOListApi = (queryForm?: any) => {
+	return service.post('/templateGroup/voList', queryForm ? queryForm : {})
 }
 
 //复制模板组
@@ -74,6 +74,6 @@ export const importTemplateGroupApi = (dataForm: any) => {
 }
 
 //获取项目ID列表（通过模板组ID和类型获取）
-export const getProjectIdListByTemplateGroup = (queryForm: any) => {
+export const getProjectIdListByTemplateGroup = (queryForm?: any) => {
 	return service.get('/templateGroup/getProjectIdListByTemplateGroup?' + qs.stringify(queryForm))
 }

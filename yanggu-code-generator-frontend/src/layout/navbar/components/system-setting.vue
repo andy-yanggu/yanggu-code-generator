@@ -92,7 +92,7 @@ import { useRoute } from 'vue-router'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { ElMessage } from 'element-plus'
-import SettingItem from '@/components/setting-item/index.vue'
+import SettingItem from '@/layout/navbar/components/index.vue'
 
 defineOptions({
 	name: 'SystemSetting'

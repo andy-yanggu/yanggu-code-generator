@@ -80,7 +80,7 @@ const init = () => {
 	// 重置表单数据
 	resetQueryHandle()
 
-	projectEntityListApi({}).then(res => {
+	projectEntityListApi().then(res => {
 		projectList.value = res.data
 	})
 }

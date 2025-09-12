@@ -22,12 +22,16 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { templateGroupDetailApi, templateGroupSubmitApi } from '@/api/gen/template-group'
+import { copyTemplateApi, templateGroupDetailApi, templateGroupSubmitApi } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
+
+const props = defineProps<{
+	mode: 'add' | 'update' | 'copy'
+}>()
 
 const state: FormOptions = reactive({
 	// 提交API
@@ -40,6 +44,15 @@ const state: FormOptions = reactive({
 		groupName: '',
 		type: '',
 		groupDesc: ''
+	},
+	initAfter: () => {
+		state.dataForm.groupName = state.dataForm.groupName + '_复制'
+		state.dataForm.id = null
+		if ((props.mode = 'copy')) {
+			state.submitApi = copyTemplateApi
+		} else {
+			state.submitApi = templateGroupSubmitApi
+		}
 	},
 	emit
 })

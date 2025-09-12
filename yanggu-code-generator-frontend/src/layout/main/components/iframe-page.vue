@@ -9,6 +9,10 @@ import { ref, watch } from 'vue'
 import NProgress from 'nprogress'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'IframePage'
+})
+
 const props = defineProps({
 	// iframe地址
 	iframeSrc: {

@@ -109,7 +109,7 @@ const state: IHooksOptions = reactive({
 })
 let isManualSelection = true
 
-const init = (templateGroupIdList: Array<number>) => {
+const init = (templateGroupIdList: number[]) => {
 	state.queryForm.templateGroupIdList = templateGroupIdList
 
 	//重置查询表单数据

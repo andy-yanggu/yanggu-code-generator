@@ -77,7 +77,7 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitProjectHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -97,12 +97,12 @@ const emit = defineEmits(['refreshDataList'])
 
 const getList = () => {
 	//数据源下拉
-	datasourceEntityListApi({}).then(res => {
+	datasourceEntityListApi().then(res => {
 		datasourceList.value = res.data
 	})
 
 	//模板组下拉
-	templateGroupEntityListApi({}).then(res => {
+	templateGroupEntityListApi().then(res => {
 		const data = res.data
 		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
 		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
@@ -110,7 +110,7 @@ const getList = () => {
 	})
 
 	//基类下拉
-	baseClassEntityListApi({}).then(res => {
+	baseClassEntityListApi().then(res => {
 		baseClassList.value = res.data
 	})
 }
@@ -136,13 +136,26 @@ const state: FormOptions = reactive({
 		voBaseClassId: '',
 		generatorType: null
 	},
+	submitBefore: () => {
+		if (!state.dataForm.id) {
+			if (state.dataForm.datasourceId) {
+				state.message = '新增成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+				state.duration = 2000
+			} else {
+				state.message = '新增成功'
+				state.duration = 1000
+			}
+		} else {
+			state.message = '修改成功'
+			state.duration = 500
+		}
+	},
 	emit: emit
 })
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectPackage: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	datasourceId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	generatorType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
@@ -155,18 +168,6 @@ const enumTemplateGroupList = ref([])
 const baseClassList = ref([])
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
-
-const submitProjectHandle = () => {
-	if (!state.dataForm.id) {
-		state.message = '操作成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
-		state.duration = 2000
-	} else {
-		state.message = '操作成功'
-		state.duration = 500
-	}
-	submitHandle()
-}
-
 defineExpose({
 	init
 })

@@ -175,7 +175,7 @@ const loadIframeComponent = (item: MenuInfo) => {
 		return loadView(item.component)
 	} else {
 		return () =>
-			import('@/layout/components/iframe-page.vue').then(comp => {
+			import('@/layout/main/components/iframe-page.vue').then(comp => {
 				// 给组件动态设置 name
 				comp.default.name = item.name
 				return comp

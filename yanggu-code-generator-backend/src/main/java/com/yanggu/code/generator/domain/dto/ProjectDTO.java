@@ -54,7 +54,6 @@ public class ProjectDTO implements Serializable {
      * 数据源ID
      */
     @Schema(description = "数据源ID")
-    @NotNull(message = "数据源ID不能为空")
     private Long datasourceId;
 
     /**

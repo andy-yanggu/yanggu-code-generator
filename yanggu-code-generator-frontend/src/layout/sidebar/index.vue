@@ -11,7 +11,7 @@ import MenuIndex from '@/layout/sidebar/components/menu/menu-index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
 defineOptions({
-	name: 'Sidebar'
+	name: 'LayoutSidebar'
 })
 
 const systemSettingStore = useSystemSettingStore()

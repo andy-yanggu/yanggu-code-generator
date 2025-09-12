@@ -51,7 +51,7 @@ public class ProjectEntity extends BaseEntity implements Serializable {
     /**
      * 数据源ID
      */
-    @TableField(value = "datasource_id")
+    @TableField(value = "datasource_id", updateStrategy = ALWAYS)
     private Long datasourceId;
 
     /**

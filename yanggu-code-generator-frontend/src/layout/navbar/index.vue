@@ -49,7 +49,7 @@ import { useSystemSettingStore } from '@/store/system-setting-store'
 import ThemeSwitch from '@/layout/navbar/components/theme-switch.vue'
 
 defineOptions({
-	name: 'Navbar'
+	name: 'LayoutNavbar'
 })
 
 const { isFullscreen, toggle } = useFullscreen()
