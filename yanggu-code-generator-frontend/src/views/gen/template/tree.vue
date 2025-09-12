@@ -311,11 +311,30 @@ const templateTreeData = reactive({
 	tabList: [] as Tree[]
 })
 
+// 初始化tab拖拽效果
 watch(
 	() => templateTreeData.tabList.length,
 	_ => {
 		nextTick(() => {
 			initTabSortable()
+		})
+	}
+)
+
+// 监听树节点变化，实现节点自动滚动到可视区域内
+watch(
+	() => templateTreeData.activeItemId,
+	id => {
+		// 等待 el-tree 渲染完成
+		nextTick(() => {
+			const dom = treeRef.value.$el.querySelector(`[data-key="${id}"]`)
+			if (dom) {
+				dom.scrollIntoView({
+					behavior: 'smooth',
+					inline: 'center',
+					block: 'nearest'
+				})
+			}
 		})
 	}
 )

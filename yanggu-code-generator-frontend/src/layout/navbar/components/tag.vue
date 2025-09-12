@@ -87,10 +87,9 @@ watch(
 // 滚动到指定标签
 const scrollToTag = (fullPath: string) => {
 	const tagEl = tagRefs[fullPath]
-	const scrollWrapper = scrollbarRef.value?.wrapRef
 
 	const tagDom = tagEl?.$el || tagEl?.el || tagEl
-	if (!tagDom || !(tagDom instanceof HTMLElement) || !scrollWrapper) {
+	if (!tagDom || !(tagDom instanceof HTMLElement)) {
 		return
 	}
 

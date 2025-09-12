@@ -247,8 +247,10 @@ public class GeneratorServiceImpl implements GeneratorService {
         allPreviewList.addAll(tablePreviewList);
 
         //获取枚举预览数据
-        List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
-        allPreviewList.addAll(enumPreviewList);
+        if (project.getEnumTemplateGroupId() != null) {
+            List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
+            allPreviewList.addAll(enumPreviewList);
+        }
 
         //获取项目预览数据
         List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
