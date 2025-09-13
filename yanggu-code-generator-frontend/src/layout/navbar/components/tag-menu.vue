@@ -82,15 +82,21 @@ const emits = defineEmits([
 	width: 100%;
 	cursor: pointer;
 	padding: 5px 10px;
-	text-align: left; /* 改为左对齐 */
+	text-align: left;
 	transition:
 		background-color 0.2s ease,
 		color 0.2s ease;
 }
 
-/* 悬停效果 */
+/* 悬停效果 - 亮色模式 */
 .icon-item:hover {
 	background-color: #f0f0f0;
 	color: #333;
+}
+
+/* 暗黑模式样式 */
+html.dark .icon-item:hover {
+	background-color: #3a3a3a;
+	color: #e0e0e0;
 }
 </style>

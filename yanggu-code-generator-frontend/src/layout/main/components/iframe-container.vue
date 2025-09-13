@@ -1,7 +1,7 @@
 <template>
 	<!-- 缓存池化（v-show控制展示和隐藏） -->
 	<transition-group name="slide" tag="div">
-		<div v-for="item in appStore.iframeCacheList" v-show="route.fullPath === item.fullPath" :key="item.fullPath">
+		<div v-for="item in appStore.iframeCacheList" v-show="route.fullPath === item.fullPath" :key="`iframe-${item.fullPath}`">
 			<iframe-page :iframe-src="item.src" :cache="true"></iframe-page>
 		</div>
 	</transition-group>

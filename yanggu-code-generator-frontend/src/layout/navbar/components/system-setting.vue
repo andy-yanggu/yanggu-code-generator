@@ -48,7 +48,7 @@
 					<setting-item v-model="systemSettingStore.isOpenThemeSwitch" label="日间/夜间主题切换"></setting-item>
 				</div>
 				<div>
-					<el-divider>标签设置</el-divider>
+					<el-divider>标签页设置</el-divider>
 					<setting-item v-model="systemSettingStore.isOpenTag" label="启用"></setting-item>
 					<setting-item v-model="systemSettingStore.isOpenTagIcon" label="图标"></setting-item>
 					<setting-item

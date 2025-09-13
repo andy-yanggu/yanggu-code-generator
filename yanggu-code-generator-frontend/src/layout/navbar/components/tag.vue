@@ -120,6 +120,10 @@ onMounted(() => {
 						const movedTag = newTags.splice(oldIndex!, 1)[0]
 						newTags.splice(newIndex!, 0, movedTag)
 						appStore.addAllTags(newTags)
+						// 激活被移动的标签
+						if (route.fullPath != movedTag.fullPath) {
+							router.push(movedTag.fullPath)
+						}
 					}
 				}
 			})
@@ -294,7 +298,6 @@ const { refreshPage } = usePageRefresher()
 	overflow-x: auto;
 }
 
-/* 使用 flex 而不是 inline-flex，设置 nowrap，宽度自适应内容 */
 .tag-wrapper {
 	display: flex;
 	align-items: center;
@@ -305,16 +308,15 @@ const { refreshPage } = usePageRefresher()
 	box-sizing: content-box;
 }
 
-/* 覆盖 el-scrollbar 内部 wrap 的 overflow（scoped 下用 :deep） */
 :deep(.el-scrollbar__wrap) {
 	overflow-x: auto !important;
 	overflow-y: hidden !important;
 }
 
-/* 使用深度选择器覆盖 el-tag 的默认样式 */
 :deep(.tag-wrapper .el-tag) {
 	cursor: pointer;
 }
+
 .tag-context-menu {
 	position: fixed;
 	align-items: center;
@@ -322,5 +324,11 @@ const { refreshPage } = usePageRefresher()
 	border: 1px solid #ddd;
 	z-index: 1000;
 	min-width: 100px;
+}
+
+/* 暗黑模式下的右键菜单样式 */
+html.dark .tag-context-menu {
+	background: #1e1e1e;
+	border: 1px solid #3a3a3a;
 }
 </style>
