@@ -11,10 +11,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { EditorView } from '@codemirror/view'
+import { oneDarkTheme } from '@codemirror/theme-one-dark'
+import { useAppStore } from '@/store/app-store'
 
 const props = defineProps({
 	modelValue: {
@@ -28,6 +30,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const appStore = useAppStore()
 
 // 内部值，和外部 v-model 双向绑定
 const innerValue = ref(props.modelValue)
@@ -66,6 +70,10 @@ const extensions = computed(() => {
 	const ext: any[] = [javascript()]
 	if (props.readOnly) {
 		ext.push(EditorView.editable.of(false))
+	}
+	// 如果是暗色模式，添加暗夜主题
+	if (appStore.isDark) {
+		ext.push(oneDarkTheme)
 	}
 	// 返回平铺的数组
 	return [...ext, customStyle]

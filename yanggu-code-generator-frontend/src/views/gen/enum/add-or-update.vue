@@ -6,7 +6,15 @@
 					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="枚举名称" prop="enumName">
+			<el-form-item prop="enumName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>枚举名称</span>
+						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举描述" prop="enumDesc">
@@ -25,7 +33,7 @@ import { reactive, ref } from 'vue'
 import { enumDetailApi, enumSubmitApi } from '@/api/gen/enum'
 import { projectEntityListApi } from '@/api/gen/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const projectList = ref([])
 const getProjectList = () => {

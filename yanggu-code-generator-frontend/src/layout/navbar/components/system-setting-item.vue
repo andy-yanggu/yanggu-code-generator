@@ -42,11 +42,11 @@ const localValue = computed({
 	align-items: center;
 	margin-bottom: 10px;
 }
-.setting-icon {
-	cursor: pointer;
-}
 .setting-label {
 	display: flex;
 	align-items: center;
+}
+.setting-icon {
+	cursor: pointer;
 }
 </style>

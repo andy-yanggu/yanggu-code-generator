@@ -1,8 +1,16 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="项目名称" prop="projectName">
-				<el-input v-model="state.dataForm.projectName" clearable placeholder="使用英文小写字母，单词之间使用'-'拼接"></el-input>
+			<el-form-item prop="projectName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>项目名称</span>
+						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
+				<el-input v-model="state.dataForm.projectName" clearable placeholder="请输入项目名称"></el-input>
 			</el-form-item>
 			<el-form-item label="项目包名" prop="projectPackage">
 				<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
@@ -91,7 +99,7 @@ import { templateGroupEntityListApi } from '@/api/gen/template-group'
 import { baseClassEntityListApi } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 
