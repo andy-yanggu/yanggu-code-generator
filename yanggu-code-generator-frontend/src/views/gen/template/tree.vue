@@ -1201,6 +1201,7 @@ defineExpose({
 
 .context-menu {
 	position: fixed;
+	align-items: center;
 	background: #fff;
 	border: 1px solid #ddd;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -1218,18 +1219,34 @@ defineExpose({
 	align-items: center;
 	gap: 5px;
 	font-size: 12px;
-	width: 100%; /* 让项目占满容器宽度 */
-	cursor: pointer; /* 鼠标变成小手 */
-	padding: 6px 8px;
-	border-radius: 4px;
-	box-sizing: border-box; /* 避免padding让li超宽 */
+	width: 100%;
+	cursor: pointer;
+	padding: 5px 10px;
+	text-align: left;
 	transition:
 		background-color 0.2s ease,
-		color 0.2s ease; /* 动画过渡 */
+		color 0.2s ease;
 }
 .context-menu li:hover {
 	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
 	color: #333; /* 可选：加深文字颜色 */
+}
+
+/* 添加暗黑模式下的右键菜单样式 */
+html.dark .context-menu {
+	background: #1e1e1e;
+	border: 1px solid #3a3a3a;
+	color: #e0e0e0;
+}
+
+html.dark .context-menu li:hover {
+	background-color: #3a3a3a;
+	color: #e0e0e0;
+}
+
+/* 为图标添加暗黑模式适配 */
+html.dark .context-menu svg {
+	color: #e0e0e0;
 }
 
 .collapse-icon {
@@ -1268,7 +1285,7 @@ defineExpose({
 	width: 100vw;
 	height: 100vh;
 	z-index: 3000;
-	background: white;
+	background: var(--theme-main-bg-color);
 	margin: 0 !important;
 	padding: 20px;
 }
