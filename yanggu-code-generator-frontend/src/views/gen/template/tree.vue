@@ -426,14 +426,23 @@ const fullFilePath = computed(() => {
 
 const expandedKeys = ref<number[]>([])
 
+// 节点展开时，把 id 加进 expandedKeys
 const handleNodeExpand = (data: Tree) => {
 	if (!expandedKeys.value.includes(data.id)) {
 		expandedKeys.value.push(data.id)
 	}
 }
 
+// 节点折叠时，递归移除自己和所有后代 id
 const handleNodeCollapse = (data: Tree) => {
-	expandedKeys.value = expandedKeys.value.filter(id => id !== data.id)
+	const node = treeRef.value.getNode(data.id)
+	node.expanded = false
+	data.children?.forEach(child => {
+		handleNodeCollapse(child)
+	})
+	const collectIds = (node: Tree): number[] => [node.id, ...(node.children?.flatMap(collectIds) || [])]
+	const removeIds = collectIds(data)
+	expandedKeys.value = expandedKeys.value.filter(id => !removeIds.includes(id))
 }
 
 // 初始化方法

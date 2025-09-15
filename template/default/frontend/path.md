@@ -1,3 +1,5 @@
+### 项目模板
+
 #### 1. index.html.ftl
 ${frontendPath}/index.html
 
@@ -200,3 +202,21 @@ ${frontendPath}/src/components/svg-icon/index.vue
 #### 51. favicon.ico
 
 ${frontendPath}/public/favicon.ico
+
+#### 52. enum.ts
+${frontendPath}/src/constant/enum.ts
+
+
+
+### 表模板
+#### 1. api.ftl
+
+${frontendPath}/src/api/${functionNameKebabCase}.ts
+
+#### 2. add-or-update.ftl
+
+${frontendPath}/src/views/${functionNameKebabCase}/add-or-update.vue
+
+#### 3. index.ftl
+
+${frontendPath}/src/views/${functionNameKebabCase}/index.vue
