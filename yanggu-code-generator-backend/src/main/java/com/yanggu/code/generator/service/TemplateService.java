@@ -46,7 +46,7 @@ public interface TemplateService extends IService<TemplateEntity> {
     /**
      * 详情
      */
-    TemplateVO detail(Long id);
+    TemplateVO detail(Long id, Boolean setPath);
 
     /**
      * 批量查询

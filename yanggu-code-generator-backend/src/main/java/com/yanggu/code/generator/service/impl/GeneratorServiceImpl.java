@@ -41,7 +41,6 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -458,9 +457,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         tableModel.setVersion(table.getVersion());
 
+        tableModel.setModuleName(table.getModuleName());
+        tableModel.setModuleNameCase(NameUtil.toCamel(table.getModuleName()));
+        tableModel.setModuleNamePascal(NameUtil.toPascal(table.getModuleName()));
         tableModel.setFunctionName(table.getFunctionName());
         tableModel.setFunctionNamePascal(StrUtil.upperFirst(table.getFunctionName()));
         tableModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));
+        tableModel.setPermissionFlag(table.getPermissionFlag());
         tableModel.setFormLayout(table.getFormLayout());
 
         //开发者信息
@@ -701,8 +704,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     private List<TemplateVO> buildTemplateTreeWithPaths(List<TemplateEntity> templateList) {
         // 1. 转换为 VO 并构建 ID 到 VO 的映射
         List<TemplateVO> allTemplates = templateMapstruct.entityToVO(templateList);
-        Map<Long, TemplateVO> templateMap = allTemplates.stream()
-                .collect(Collectors.toMap(TemplateVO::getId, Function.identity()));
 
         // 2. 构建父节点到子节点的映射关系
         Map<Long, List<TemplateVO>> parentChildrenMap = new HashMap<>();

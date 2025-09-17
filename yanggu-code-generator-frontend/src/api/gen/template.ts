@@ -1,4 +1,5 @@
 import service from '@/utils/request'
+import qs from 'qs'
 
 // 提交表单
 export const templateSubmitApi = (dataForm: any) => {
@@ -22,8 +23,8 @@ export const templateDeleteListApi = (idList: number[]) => {
 }
 
 // 查询详情
-export const templateDetailApi = (id: number) => {
-	return service.get('/template/detail?id=' + id)
+export const templateDetailApi = (queryForm: any) => {
+	return service.get('/template/detail?' + qs.stringify(queryForm))
 }
 
 // 批量查询

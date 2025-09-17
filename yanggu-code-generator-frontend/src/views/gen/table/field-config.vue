@@ -286,13 +286,13 @@ const getTableFieldList = (id: number) => {
 
 const getFieldListData = (type: number) => {
 	const list = [...fieldList.value]
-	if (type === 1) {
+	if (type === 0) {
 		return list.sort((a, b) => a.fieldSort - b.fieldSort)
-	} else if (type === 2) {
+	} else if (type === 1) {
 		return list.sort((a, b) => a.queryFieldSort - b.queryFieldSort)
-	} else if (type === 3) {
+	} else if (type === 2) {
 		return list.sort((a, b) => a.formFieldSort - b.formFieldSort)
-	} else {
+	} else if (type === 3) {
 		return list.sort((a, b) => a.gridFieldSort - b.gridFieldSort)
 	}
 }

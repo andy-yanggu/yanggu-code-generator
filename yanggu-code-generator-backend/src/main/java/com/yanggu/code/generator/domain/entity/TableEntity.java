@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
 
@@ -80,15 +79,21 @@ public class TableEntity extends BaseEntity implements Serializable {
     private String functionName;
 
     /**
+     * 模块名
+     */
+    @TableField(value = "module_name")
+    private String moduleName;
+
+    /**
+     * 权限标识
+     */
+    @TableField(value = "permission_flag")
+    private String permissionFlag;
+
+    /**
      * 表单布局  1：一列   2：两列
      */
     @TableField(value = "form_layout")
     private Integer formLayout;
-
-    /**
-     * 表字段列表
-     */
-    @TableField(exist = false)
-    private List<TableFieldEntity> tableFieldList;
 
 }

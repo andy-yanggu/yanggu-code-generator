@@ -80,6 +80,18 @@ public class TableVO extends BaseVO implements Serializable {
     private String functionName;
 
     /**
+     * 模块名
+     */
+    @Schema(description = "模块名")
+    private String moduleName;
+
+    /**
+     * 权限标识
+     */
+    @Schema(description = "权限标识")
+    private String permissionFlag;
+
+    /**
      * 表单布局  1：一列   2：两列
      */
     @Schema(description = "表单布局  1：一列   2：两列")

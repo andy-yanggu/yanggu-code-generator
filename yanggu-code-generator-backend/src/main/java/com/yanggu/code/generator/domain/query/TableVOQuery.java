@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 表VO查询实体类
@@ -31,6 +32,12 @@ public class TableVOQuery extends PageQuery<TableVO> implements Serializable {
      */
     @Schema(description = "项目ID")
     private Long projectId;
+
+    /**
+     * 项目ID列表
+     */
+    @Schema(description = "项目ID列表")
+    private List<Long> projectIdList;
 
     /**
      * 数据库名称

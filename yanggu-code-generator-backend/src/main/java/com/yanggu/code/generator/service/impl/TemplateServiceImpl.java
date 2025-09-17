@@ -19,6 +19,7 @@ import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.TemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ import static com.yanggu.code.generator.domain.vo.TemplateVO.TREE_COMPARATOR;
 /**
  * 模板Service实现类
  */
+@Slf4j
 @Service
 public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEntity> implements TemplateService {
 
@@ -100,9 +102,14 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 详情
      */
     @Override
-    public TemplateVO detail(Long id) {
+    public TemplateVO detail(Long id, Boolean setPath) {
         TemplateEntity dbEntity = selectById(id);
-        return templateMapstruct.entityToVO(dbEntity);
+        TemplateVO templateVO = templateMapstruct.entityToVO(dbEntity);
+        if (setPath) {
+            String generatorPath = buildGeneratorPath(templateVO);
+            templateVO.setGeneratorPath(generatorPath);
+        }
+        return templateVO;
     }
 
     /**
@@ -235,6 +242,30 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
                 })
                 .toList();
         this.updateBatchById(list);
+    }
+
+    /**
+     * 递归构建生成路径（从根节点到当前节点的完整路径）
+     */
+    private String buildGeneratorPath(TemplateVO templateVO) {
+        // 终止条件：父ID为0时，当前节点是根节点，路径为自身文件名
+        if (Objects.equals(templateVO.getParentId(), 0L)) {
+            return templateVO.getFileName();
+        }
+
+        TemplateEntity entity = templateMapper.selectById(templateVO.getParentId());
+        if (entity == null) {
+            // 父节点不存在时的处理（根据业务需求调整，此处返回当前节点文件名）
+            log.warn("父节点不存在，ID: {}", templateVO.getParentId());
+            return templateVO.getFileName();
+        }
+
+        // 将父实体转换为VO（根据实际映射工具调整，如MapStruct）
+        TemplateVO parentVO = templateMapstruct.entityToVO(entity);
+
+        // 递归获取父节点的路径，并拼接当前节点文件名
+        String parentPath = buildGeneratorPath(parentVO);
+        return parentPath + "/" + templateVO.getFileName();
     }
 
     /**

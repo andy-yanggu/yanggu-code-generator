@@ -335,6 +335,8 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setFormLayout(FormLayoutEnum.ONE.getCode());
         table.setClassName(NamingCase.toPascalCase(tableName));
         table.setFunctionName(StrUtil.toCamelCase(tableName));
+        table.setModuleName(table.getFunctionName());
+        table.setPermissionFlag(table.getModuleName() + ":" + table.getFunctionName());
         this.save(table);
 
         // 获取原生字段数据

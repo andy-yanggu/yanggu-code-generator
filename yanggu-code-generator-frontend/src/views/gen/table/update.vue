@@ -18,8 +18,14 @@
 			<el-form-item label="注释" prop="tableComment">
 				<el-input v-model="state.dataForm.tableComment" clearable placeholder="请输入说明"></el-input>
 			</el-form-item>
+			<el-form-item label="模块名" prop="moduleName">
+				<el-input v-model="state.dataForm.moduleName" clearable placeholder="请输入模块名"></el-input>
+			</el-form-item>
 			<el-form-item label="功能名" prop="functionName">
 				<el-input v-model="state.dataForm.functionName" clearable placeholder="请输入功能名"></el-input>
+			</el-form-item>
+			<el-form-item label="权限标识" prop="permissionFlag">
+				<el-input v-model="state.dataForm.permissionFlag" clearable placeholder="请输入权限标识"></el-input>
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
 				<el-radio-group v-model="state.dataForm.formLayout">
@@ -69,7 +75,9 @@ const state: FormOptions = reactive({
 		projectId: '',
 		author: '',
 		version: '',
+		moduleName: '',
 		functionName: '',
+		permissionFlag: '',
 		formLayout: ''
 	},
 	emit
@@ -79,7 +87,9 @@ const dataRules = reactive({
 	databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	moduleName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	permissionFlag: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 

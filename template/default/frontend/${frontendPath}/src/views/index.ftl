@@ -14,15 +14,15 @@
 					<el-input v-model="state.queryForm.${field.attrName}" clearable placeholder="请输入${field.fieldComment}"></el-input>
 				<#elseif field.queryFormType == 'select'>
 					<el-select v-model="state.queryForm.${field.attrName}" clearable placeholder="请选择${field.fieldComment}">
-						<el-option v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						<el-option v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				<#elseif field.queryFormType == 'radio'>
 					<el-radio-group v-model="state.queryForm.${field.attrName}">
-						<el-radio v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
+						<el-radio v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
 					</el-radio-group>
 				<#elseif field.queryFormType == 'checkbox'>
 					<el-checkbox-group v-model="state.queryForm.${field.attrName}">
-						<el-checkbox v-for="item in ${enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
+						<el-checkbox v-for="item in ${field.enumNameAllUpper}_ENUM" :key="item.value" :label="item.label" :value="item.value">{{ item.label }}</el-checkbox>
 					</el-checkbox-group>
 				<#elseif field.queryFormType == 'date'>
 					<el-date-picker
@@ -107,23 +107,29 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { useInitForm } from '@/hooks/use-init-form'
-import { reactive } from 'vue'
-import AddOrUpdate from '@/views/${functionNameKebabCase}/add-or-update.vue'
-import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
-import { ${functionName}EntityPageApi, ${functionName}DeleteListApi } from '@/api/${functionNameKebabCase}'
-<#list queryList as field>
+    import {IHooksOptions, useIndexQuery} from '@/hooks/use-index-query'
+    import {useInitForm} from '@/hooks/use-init-form'
+    import {reactive} from 'vue'
+    import {$
+
+    {
+        functionName
+    }
+    DeleteListApi, $
+    {
+        functionName
+    }
+    EntityPageApi
+    }
+    from
+    '@/api/'
+    <#list queryList as field>
 <#if field.queryFormType == 'select' || field.queryFormType == 'radio' || field.queryFormType == 'checkbox'>
-import { getLabel } from '@/utils/enum'
-import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
-</#if>
+    </#if>
 </#list>
 <#list gridList as field>
 	<#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>
-import { getLabel } from '@/utils/enum'
-import { ${field.enumNameAllUpper}_ENUM } from '@/enums/${field.enumName}-enum'
-	</#if>
+    </#if>
 </#list>
 
 defineOptions({

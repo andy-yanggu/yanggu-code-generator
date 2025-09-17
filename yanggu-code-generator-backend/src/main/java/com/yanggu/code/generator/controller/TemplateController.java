@@ -89,8 +89,9 @@ public class TemplateController {
     @ApiOperationSupport(order = 5)
     @Operation(summary = "模板详情")
     @Parameter(name = "id", description = "模板ID", required = true)
-    public TemplateVO detail(@RequestParam("id") @NotNull(message = "模板ID不能为空") Long id) {
-        return templateService.detail(id);
+    public TemplateVO detail(@RequestParam("id") @NotNull(message = "模板ID不能为空") Long id,
+                             @RequestParam(value = "setPath", defaultValue = "false", required = false) Boolean setPath) {
+        return templateService.detail(id, setPath);
     }
 
     /**

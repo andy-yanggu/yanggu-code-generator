@@ -32,6 +32,12 @@
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'databaseName')">
             AND t.database_name LIKE CONCAT('%', #{query.databaseName}, '%')
         </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'projectIdList')">
+            AND t.project_id IN
+            <foreach collection="query.projectIdList" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+        </if>
     </sql>
 
     <!-- Entity类字段映射 -->

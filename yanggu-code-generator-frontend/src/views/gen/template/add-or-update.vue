@@ -106,7 +106,9 @@ const state: FormOptions = reactive({
 	visible: false,
 	submitBefore: submitBeforeHandle,
 	submitApi: templateSubmitApi,
-	detailApi: templateDetailApi,
+	detailApi: (id: number) => {
+		return templateDetailApi({ id })
+	},
 	dataForm: {
 		id: null,
 		templateGroupId: -1,

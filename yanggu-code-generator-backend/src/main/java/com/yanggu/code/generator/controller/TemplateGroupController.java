@@ -189,9 +189,9 @@ public class TemplateGroupController {
     @GetMapping("/getProjectIdListByTemplateGroup")
     @ApiOperationSupport(order = 14)
     @Operation(summary = "获取项目ID列表（通过模板组ID和类型获取）")
-    public void getProjectIdListByTemplateGroup(@RequestParam("templateGroupType") Integer templateGroupType,
-                                                @RequestParam("templateGroupId") Long templateGroupId) {
-        templateGroupService.getProjectIdListByTemplateGroup(templateGroupType, templateGroupId);
+    public List<Long> getProjectIdListByTemplateGroup(@RequestParam("templateGroupType") Integer templateGroupType,
+                                                      @RequestParam("templateGroupId") Long templateGroupId) {
+        return templateGroupService.getProjectIdListByTemplateGroup(templateGroupType, templateGroupId);
     }
 
 }

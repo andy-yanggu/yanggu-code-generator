@@ -230,7 +230,7 @@ const syncHandle = (row: any) => {
 	})
 		.then(() => {
 			tableSyncApi(row.id).then(() => {
-				ElMessage.success('同步成功')
+				ElMessage.success('字段同步成功')
 			})
 		})
 		.catch(() => {})

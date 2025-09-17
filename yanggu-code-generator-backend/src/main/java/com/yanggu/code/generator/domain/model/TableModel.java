@@ -71,6 +71,29 @@ public class TableModel {
      */
     private String functionNameKebabCase;
 
+    /**
+     * 模块名（中横线）
+     */
+    private String moduleName;
+
+    /**
+     * 模块名（小驼峰）
+     */
+    private String moduleNameCase;
+
+    /**
+     * 模块名（大驼峰）
+     */
+    private String moduleNamePascal;
+
+    /**
+     * 权限标识
+     */
+    private String permissionFlag;
+
+    /**
+     * 表单布局  1：一列   2：两列
+     */
     private int formLayout;
 
     /**

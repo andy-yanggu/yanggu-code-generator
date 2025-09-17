@@ -16,6 +16,13 @@ public class NameUtil {
     }
 
     /**
+     * 中横线转小驼峰。demo-test => demoTest
+     */
+    public static String toCamel(String name) {
+        return NamingCase.toCamelCase(toUnderLine(name));
+    }
+
+    /**
      * 中横线转大驼峰。demo-test => DemoTest
      */
     public static String toPascal(String name) {
