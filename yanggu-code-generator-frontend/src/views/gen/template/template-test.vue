@@ -1,14 +1,16 @@
 <template>
-	<el-drawer v-model="testData.visible" title="模板测试" size="100%" :modal="false" class="drawer-wrapper">
+	<el-drawer v-model="testData.visible" title="模板测试" size="100%" :modal="false" class="template-test-drawer">
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside class="aside-scroll">
-				<el-text>请选择项目、表或者枚举进行测试</el-text>
+				<h3 style="margin-bottom: 20px">请选择项目、表或者枚举进行测试</h3>
 				<el-cascader
 					v-model="testData.cascaderValue"
 					:options="testData.cascaderData"
 					filterable
-					placeholder="请选择项目、表或者枚举进行测试"
+					clearable
+					placeholder="请选择项目、表或者枚举"
+					@change="handleCascaderChange"
 				></el-cascader>
 			</el-aside>
 
@@ -18,15 +20,15 @@
 				<el-header class="header-fixed">
 					<el-row>
 						<el-col :span="22">
-							<el-tooltip :content="testData.fullFilePath" placement="top">
+							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
 								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
-									路径：{{ testData.fullFilePath }}
+									路径：{{ fullFilePath }}
 								</el-text>
 							</el-tooltip>
 						</el-col>
 						<el-col :span="2" style="text-align: right">
 							<el-button
-								v-if="testData.activeName === 'original'"
+								v-if="testData.activeName === 'template'"
 								size="small"
 								type="primary"
 								:icon="Edit"
@@ -36,12 +38,12 @@
 							>
 								保存
 							</el-button>
-							<el-button v-else size="small" :icon="Refresh">刷新</el-button>
+							<el-button v-else size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">刷新</el-button>
 						</el-col>
 					</el-row>
 
 					<el-tabs v-model="testData.activeName">
-						<el-tab-pane name="original">
+						<el-tab-pane name="template">
 							<template #label>
 								<div class="tab-label">
 									<span>原始模板</span>
@@ -55,10 +57,10 @@
 
 				<!-- 主体内容（独立滚动） -->
 				<el-main class="main-scroll">
-					<el-scrollbar v-if="testData.activeName === 'original'">
+					<el-scrollbar v-show="testData.activeName === 'template'">
 						<code-mirror v-model="testData.editTemplateContent"></code-mirror>
 					</el-scrollbar>
-					<el-scrollbar v-else>
+					<el-scrollbar v-show="testData.activeName === 'render'">
 						<code-mirror v-model="testData.renderedTemplateContent" :read-only="true"></code-mirror>
 					</el-scrollbar>
 				</el-main>
@@ -68,22 +70,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { templateDetailApi, templateUpdateContentApi } from '@/api/gen/template'
-import { getProjectIdListByTemplateGroup } from '@/api/gen/template-group'
-import { ElMessage } from 'element-plus'
+import { cascaderDataApi } from '@/api/gen/template-group'
+import { ElLoading, ElMessage } from 'element-plus'
 import { Edit, Refresh } from '@element-plus/icons-vue'
+import { generatorTemplateTestApi } from '@/api/gen/generator'
 
 interface CascaderData {
 	value: string
 	label: string
+	type: 'project' | 'table' | 'enum'
+	id: number
 	children?: CascaderData[]
 }
 
 const testData = reactive({
 	visible: false,
-	activeName: 'original',
+	activeName: 'template',
 	templateGroupId: 0,
 	templateGroupType: 0,
 	templateId: 0,
@@ -91,9 +96,8 @@ const testData = reactive({
 	originalTemplateContent: '',
 	editTemplateContent: '',
 	fullFilePath: '',
-	resultFileName: '',
+	renderedFileName: '',
 	renderedTemplateContent: '',
-	projectIdList: [],
 	cascaderValue: '',
 	cascaderData: [] as CascaderData[]
 })
@@ -103,15 +107,15 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
-	testData.activeName = 'original'
+	testData.activeName = 'template'
 
 	// 获取项目ID列表
-	const res = await getProjectIdListByTemplateGroup({ templateGroupType, templateGroupId })
+	const res = await cascaderDataApi({ templateGroupType, templateGroupId })
 	if (!res.data.length) {
 		ElMessage.warning('请先关联项目，若未创建项目，请先创建项目后与当前模板组关联')
 		return
 	}
-	testData.projectIdList = res.data
+	testData.cascaderData = res.data
 
 	// 获取模板详情
 	const detailQueryForm = { id: templateId, setPath: true }
@@ -124,6 +128,10 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 }
 
 const submitLoading = ref(false)
+
+const fullFilePath = computed(() => {
+	return testData.activeName === 'template' ? testData.fullFilePath : testData.renderedFileName
+})
 
 // 保存模板内容
 const saveTemplateContent = () => {
@@ -145,6 +153,47 @@ const saveTemplateContent = () => {
 		})
 }
 
+// 处理选中值变化
+const handleCascaderChange = async val => {
+	// val 是选中节点的值数组
+	console.log(val)
+	console.log(testData.cascaderValue)
+	const queryForm = {
+		projectId: val[0].split('_')[1],
+		templateGroupId: testData.templateGroupId,
+		templateGroupType: testData.templateGroupType
+	}
+	if (testData.templateGroupType === 0) {
+		queryForm.projectTemplateIdList = [testData.templateId]
+	} else if (testData.templateGroupType === 1) {
+		queryForm.tableTemplateIdList = [testData.templateId]
+		queryForm.tableIdList = [val[1].split('_')[1]]
+	} else if (testData.templateGroupType === 2) {
+		queryForm.enumTemplateIdList = [testData.templateId]
+		queryForm.enumIdList = [val[1].split('_')[1]]
+	}
+	console.log(queryForm)
+	const loadingInstance = ElLoading.service({
+		target: '.template-test-drawer',
+		text: '模板渲染中...'
+	})
+	try {
+		const res = await generatorTemplateTestApi(queryForm)
+		testData.renderedFileName = res.data.filePath
+		testData.renderedTemplateContent = res.data.content
+		nextTick(() => {
+			testData.activeName = 'render'
+		})
+	} finally {
+		loadingInstance.close()
+	}
+}
+
+const refreshHandler = () => {
+	testData.activeName = 'render'
+	handleCascaderChange(testData.cascaderValue)
+}
+
 defineExpose({ init })
 </script>
 
@@ -163,6 +212,9 @@ defineExpose({ init })
 	border-right: 1px solid #e5e5e5;
 	padding: 16px;
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .right-container {

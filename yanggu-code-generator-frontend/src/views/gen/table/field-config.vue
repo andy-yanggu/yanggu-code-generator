@@ -219,7 +219,8 @@ const queryList = reactive([
 	{ label: '<=', value: '<=' },
 	{ label: 'like', value: 'like' },
 	{ label: 'left like', value: 'left like' },
-	{ label: 'right like', value: 'right like' }
+	{ label: 'right like', value: 'right like' },
+	{ label: 'between', value: 'between' }
 ])
 
 const formTypeList = reactive([

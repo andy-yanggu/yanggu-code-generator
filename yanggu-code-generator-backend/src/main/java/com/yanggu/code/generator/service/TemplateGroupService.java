@@ -6,6 +6,7 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
+import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,9 +89,6 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     TemplateGroupEntity getById(Long id);
 
-    /**
-     * 获取项目ID列表（通过模板组ID和类型获取）
-     */
-    List<Long> getProjectIdListByTemplateGroup(Integer templateGroupType, Long templateGroupId);
+    List<CascaderDataVO> cascaderData(Integer templateGroupType, Long templateGroupId);
 
 }

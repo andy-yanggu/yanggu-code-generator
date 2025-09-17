@@ -71,6 +71,7 @@
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
+				row-key="id"
 				max-height="60vh"
 				class="layout-table"
 				@selection-change="selectionChangeHandle"
@@ -79,7 +80,7 @@
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<#list gridList as field>
-				<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>:formatter="getLabel(${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if></el-table-column>
+				<el-table-column prop="${field.attrName}" label="${field.fieldComment!}" show-overflow-tooltip header-align="center" align="center" <#if field.formType == 'select' || field.formType == 'radio' || field.formType == 'checkbox'>:formatter="getLabel(${field.enumNameAllUpper}_ENUM)"</#if> <#if field.gridSort == 1>sortable="custom"</#if>></el-table-column>
 			</#list>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
@@ -133,7 +134,7 @@
 </#list>
 
 defineOptions({
-	name: '${functionNamePascal}'
+	name: '${moduleNamePascal}${functionNamePascal}'
 })
 
 const state: IHooksOptions = reactive({

@@ -7,6 +7,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
+import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -184,14 +185,14 @@ public class TemplateGroupController {
     }
 
     /**
-     * 获取项目ID列表（通过模板组ID和类型获取）
+     * 获取级联数据
      */
-    @GetMapping("/getProjectIdListByTemplateGroup")
-    @ApiOperationSupport(order = 14)
-    @Operation(summary = "获取项目ID列表（通过模板组ID和类型获取）")
-    public List<Long> getProjectIdListByTemplateGroup(@RequestParam("templateGroupType") Integer templateGroupType,
-                                                      @RequestParam("templateGroupId") Long templateGroupId) {
-        return templateGroupService.getProjectIdListByTemplateGroup(templateGroupType, templateGroupId);
+    @GetMapping("/cascaderData")
+    @ApiOperationSupport(order = 15)
+    @Operation(summary = "获取级联数据")
+    public List<CascaderDataVO> cascaderData(@RequestParam("templateGroupType") Integer templateGroupType,
+                                             @RequestParam("templateGroupId") Long templateGroupId) {
+        return templateGroupService.cascaderData(templateGroupType, templateGroupId);
     }
 
 }

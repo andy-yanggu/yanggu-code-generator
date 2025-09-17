@@ -2,9 +2,8 @@ package com.yanggu.code.generator.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.domain.query.*;
-import com.yanggu.code.generator.domain.vo.PreviewDataVO;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
-import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.service.GeneratorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -117,6 +116,16 @@ public class GeneratorController {
     @Operation(summary = "枚举生成代码（zip压缩包）")
     public ResponseEntity<byte[]> enumDownloadZip(@ParameterObject GeneratorEnumQuery enumQuery) {
         return generatorService.enumDownloadZip(enumQuery);
+    }
+
+    /**
+     * 模板测试
+     */
+    @PostMapping("/template/test")
+    @ApiOperationSupport(order = 10)
+    @Operation(summary = "模板测试")
+    public TemplateContentVO templateTest(@RequestBody GeneratorProjectQuery projectQuery) throws Exception {
+        return generatorService.templateTest(projectQuery);
     }
 
 }

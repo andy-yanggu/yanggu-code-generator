@@ -233,6 +233,10 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         wrapper.likeLeft(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
             <#elseif field.queryType == 'right like'>
         wrapper.likeRight(MybatisUtil.isNotEmpty(query.get${field.attrName?cap_first}()), ${classNameUpper}Entity::get${field.attrName?cap_first}, query.get${field.attrName?cap_first}());
+            <#elseif field.queryType == 'between' && field.fieldType == 'dateTime'>
+        wrapper.between(MybatisUtil.isNotEmpty(query.getStartTime()), ${classNameUpper}Entity::getCreateTime, query.getStartTime(), query.getEndTime());
+            <#elseif field.queryType == 'between' && field.fieldType == 'date'>
+        wrapper.between(MybatisUtil.isNotEmpty(query.getStartDate()), ${classNameUpper}Entity::getCreateTime, query.getStartDate(), query.getEndDate());
             <#else>
             </#if>
         </#list>

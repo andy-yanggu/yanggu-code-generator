@@ -73,7 +73,7 @@ export const importTemplateGroupApi = (dataForm: any) => {
 	})
 }
 
-//获取项目ID列表（通过模板组ID和类型获取）
-export const getProjectIdListByTemplateGroup = (queryForm: any) => {
-	return service.get('/templateGroup/getProjectIdListByTemplateGroup?' + qs.stringify(queryForm))
+// 获取级联数据
+export const cascaderDataApi = (queryForm: any) => {
+	return service.get('/templateGroup/cascaderData?' + qs.stringify(queryForm))
 }

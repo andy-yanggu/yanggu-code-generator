@@ -50,3 +50,8 @@ export const generatorEnumDownloadZipApi = (dataForm: any) => {
 export const generatorEnumDownloadLocalApi = (dataForm: any) => {
 	return service.post('/generator/enum/downloadLocal', dataForm)
 }
+
+// 模板测试
+export const generatorTemplateTestApi = (queryForm: any) => {
+	return service.post('/generator/template/test', queryForm)
+}

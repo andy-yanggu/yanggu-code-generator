@@ -226,6 +226,25 @@ public class GeneratorServiceImpl implements GeneratorService {
         return downloadZip(enumNameConcat, enumPreviewData);
     }
 
+    @Override
+    public TemplateContentVO templateTest(GeneratorProjectQuery projectQuery) throws Exception {
+        List<TemplateContentVO> list = buildProjectPreview(projectQuery);
+        Long templateId;
+        if (CollUtil.isNotEmpty(projectQuery.getProjectTemplateIdList())) {
+            templateId = projectQuery.getProjectTemplateIdList().getFirst();
+        } else if (CollUtil.isNotEmpty(projectQuery.getTableTemplateIdList())) {
+            templateId = projectQuery.getTableTemplateIdList().getFirst();
+        } else if (CollUtil.isNotEmpty(projectQuery.getEnumTemplateIdList())) {
+            templateId = projectQuery.getEnumTemplateIdList().getFirst();
+        } else {
+            templateId = 0L;
+        }
+        return list.stream()
+                .filter(templateContentVO -> templateContentVO.getTemplateId().equals(templateId))
+                .findFirst()
+                .orElse(null);
+    }
+
     private List<TemplateContentVO> buildProjectPreview(GeneratorProjectQuery projectQuery) throws Exception {
         Long projectId = projectQuery.getProjectId();
         //查询项目

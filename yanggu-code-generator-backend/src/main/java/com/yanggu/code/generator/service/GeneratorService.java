@@ -3,6 +3,7 @@ package com.yanggu.code.generator.service;
 
 import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
+import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -27,5 +28,7 @@ public interface GeneratorService {
     void enumDownloadLocal(GeneratorEnumQuery enumQuery);
 
     ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery);
+
+    TemplateContentVO templateTest(GeneratorProjectQuery projectQuery) throws Exception;
 
 }

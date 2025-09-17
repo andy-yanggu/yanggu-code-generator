@@ -19,19 +19,16 @@ import com.yanggu.code.generator.domain.bo.TemplateBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupBO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
-import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.entity.TemplateEntity;
-import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
+import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
+import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
-import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.service.TemplateGroupService;
-import com.yanggu.code.generator.service.TemplateService;
+import com.yanggu.code.generator.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -68,6 +65,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private EnumService enumService;
 
     /**
      * 新增
@@ -269,17 +272,71 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    public List<Long> getProjectIdListByTemplateGroup(Integer templateGroupType, Long templateGroupId) {
+    public List<CascaderDataVO> cascaderData(Integer templateGroupType, Long templateGroupId) {
         LambdaQueryWrapper<ProjectEntity> projectQueryWrapper = Wrappers.lambdaQuery(ProjectEntity.class);
+        Function<List<ProjectEntity>, List<CascaderDataVO>> function;
         switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroupType)) {
             case PROJECT -> {
                 projectQueryWrapper.eq(ProjectEntity::getProjectTemplateGroupId, templateGroupId);
+                function = projectList -> projectList.stream()
+                        .map(project -> {
+                            CascaderDataVO cascaderDataVO = new CascaderDataVO();
+                            cascaderDataVO.setId(project.getId());
+                            cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setType("project");
+                            cascaderDataVO.setValue("project_" + project.getId());
+                            return cascaderDataVO;
+                        })
+                        .toList();
             }
             case TABLE -> {
                 projectQueryWrapper.eq(ProjectEntity::getTableTemplateGroupId, templateGroupId);
+                function = projectList -> projectList.stream()
+                        .map(project -> {
+                            CascaderDataVO cascaderDataVO = new CascaderDataVO();
+                            cascaderDataVO.setId(project.getId());
+                            cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setType("project");
+                            cascaderDataVO.setValue("project_" + project.getId());
+                            LambdaQueryWrapper<TableEntity> eq = Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, project.getId());
+                            List<CascaderDataVO> children =  tableService.list(eq).stream()
+                                    .map(table -> {
+                                        CascaderDataVO tableCascaderDataVO = new CascaderDataVO();
+                                        tableCascaderDataVO.setId(table.getId());
+                                        tableCascaderDataVO.setLabel(table.getTableName());
+                                        tableCascaderDataVO.setType("table");
+                                        tableCascaderDataVO.setValue("table_" + table.getId());
+                                        return tableCascaderDataVO;
+                                    })
+                                    .toList();
+                            cascaderDataVO.setChildren(children);
+                            return cascaderDataVO;
+                        })
+                        .toList();
             }
             case ENUM -> {
                 projectQueryWrapper.eq(ProjectEntity::getEnumTemplateGroupId, templateGroupId);
+                function = projectList -> projectList.stream()
+                        .map(project -> {
+                            CascaderDataVO cascaderDataVO = new CascaderDataVO();
+                            cascaderDataVO.setId(project.getId());
+                            cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setValue("project_" + project.getId());
+                            LambdaQueryWrapper<EnumEntity> eq = Wrappers.<EnumEntity>lambdaQuery().eq(EnumEntity::getProjectId, project.getId());
+                            List<CascaderDataVO> children = enumService.list(eq).stream()
+                                    .map(enumEntity -> {
+                                        CascaderDataVO enumCascaderDataVO = new CascaderDataVO();
+                                        enumCascaderDataVO.setId(enumEntity.getId());
+                                        enumCascaderDataVO.setLabel(enumEntity.getEnumName());
+                                        enumCascaderDataVO.setType("enum");
+                                        enumCascaderDataVO.setValue("enum_" + enumEntity.getId());
+                                        return enumCascaderDataVO;
+                                    })
+                                    .toList();
+                            cascaderDataVO.setChildren(children);
+                            return cascaderDataVO;
+                        })
+                        .toList();
             }
             default -> {
                 throw new BusinessException("模板组类型错误");
@@ -289,9 +346,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         if (CollUtil.isEmpty(projectList)) {
             return List.of();
         }
-        return projectList.stream()
-                .map(ProjectEntity::getId)
-                .toList();
+        return function.apply(projectList);
     }
 
     /**
