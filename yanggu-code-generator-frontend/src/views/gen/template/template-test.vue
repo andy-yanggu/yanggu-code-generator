@@ -1,8 +1,8 @@
 <template>
-	<el-drawer v-model="testData.visible" title="模板测试" size="100%" :modal="false" class="template-test-drawer">
+	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" :modal="false" class="template-test-drawer">
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
-			<el-aside class="aside-scroll">
+			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
 				<h3 style="margin-bottom: 20px">请选择项目、表或者枚举进行测试</h3>
 				<el-cascader
 					v-model="testData.cascaderValue"
@@ -19,7 +19,15 @@
 				<!-- 顶部工具栏（固定） -->
 				<el-header class="header-fixed">
 					<el-row>
-						<el-col :span="22">
+						<!-- 展开折叠按钮 -->
+						<el-col :span="1">
+							<el-icon :size="20" class="collapse-icon" @click="testData.asideCollapsed = !testData.asideCollapsed">
+								<Expand v-if="testData.asideCollapsed"></Expand>
+								<Fold v-else></Fold>
+							</el-icon>
+						</el-col>
+						<!-- 文件路径	-->
+						<el-col :span="21">
 							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
 								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 									路径：{{ fullFilePath }}
@@ -75,7 +83,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import { templateDetailApi, templateUpdateContentApi } from '@/api/gen/template'
 import { cascaderDataApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
-import { Edit, Refresh } from '@element-plus/icons-vue'
+import { Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { generatorTemplateTestApi } from '@/api/gen/generator'
 
 interface CascaderData {
@@ -88,10 +96,12 @@ interface CascaderData {
 
 const testData = reactive({
 	visible: false,
+	asideCollapsed: false,
 	activeName: 'template',
 	templateGroupId: 0,
 	templateGroupType: 0,
 	templateId: 0,
+	templateName: '',
 	originalFileName: '',
 	originalTemplateContent: '',
 	editTemplateContent: '',
@@ -120,6 +130,7 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	// 获取模板详情
 	const detailQueryForm = { id: templateId, setPath: true }
 	templateDetailApi(detailQueryForm).then(res => {
+		testData.templateName = res.data.templateName
 		testData.originalFileName = res.data.fileName
 		testData.originalTemplateContent = res.data.templateContent
 		testData.editTemplateContent = res.data.templateContent
@@ -202,10 +213,6 @@ defineExpose({ init })
 	height: 100%;
 }
 
-.drawer-wrapper {
-	--el-drawer-padding-primary: 0; /* 去除默认padding */
-}
-
 .aside-scroll {
 	height: 100%;
 	overflow: auto;
@@ -215,6 +222,10 @@ defineExpose({ init })
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+}
+
+.collapse-icon {
+	cursor: pointer;
 }
 
 .right-container {

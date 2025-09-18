@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="连接名称" prop="connName">
 				<el-input v-model="state.dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
@@ -30,11 +30,37 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, PropType, reactive } from 'vue'
 import { datasourceDetailApi, datasourceSubmitApi } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
+
+defineOptions({
+	name: 'GenDatasourceForm'
+})
+
+// 定义组件props
+const props = defineProps({
+	mode: {
+		type: String as PropType<'add' | 'update' | 'copy'>,
+		required: true
+	}
+})
+
+// 计算对话框标题
+const dialogTitle = computed(() => {
+	switch (props.mode) {
+		case 'add':
+			return '新增'
+		case 'update':
+			return '修改'
+		case 'copy':
+			return '复制'
+		default:
+			return '操作'
+	}
+})
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -49,6 +75,15 @@ const state: FormOptions = reactive({
 		username: '',
 		password: '',
 		datasourceDesc: ''
+	},
+	initAfter: () => {
+		if (props.mode === 'copy') {
+			state.dataForm.connName = state.dataForm.connName + '_复制'
+			state.dataForm.id = null
+			state.message = '复制成功'
+		} else {
+			state.message = ''
+		}
 	},
 	emit
 })

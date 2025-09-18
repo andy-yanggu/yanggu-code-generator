@@ -89,7 +89,6 @@ const dataRules = reactive({
 	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	moduleName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	permissionFlag: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 

@@ -59,9 +59,22 @@
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(scope.row.id)">测试</el-button>
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(scope.row.id)">测试</el-button>
+							</el-col>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="CopyDocument" @click="copyHandle(scope.row.id)">复制</el-button>
+							</el-col>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+							</el-col>
+						</el-row>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -78,21 +91,21 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<gen-datasource-form ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></gen-datasource-form>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { reactive } from 'vue'
-import AddOrUpdate from './add-or-update.vue'
+import { nextTick, reactive, ref } from 'vue'
+import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { datasourceDeleteListApi, datasourceEntityPageApi, datasourceTestApi } from '@/api/gen/datasource'
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { Connection, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenDatasource'
@@ -107,6 +120,8 @@ const state: IHooksOptions = reactive({
 	}
 })
 
+const dialogMode = ref<'add' | 'update' | 'copy'>('add')
+
 const datasourceTestHandle = (id: number) => {
 	datasourceTestApi(id).then((res: any) => {
 		const { result, message } = res.data
@@ -115,6 +130,22 @@ const datasourceTestHandle = (id: number) => {
 		} else {
 			ElMessage.error(message)
 		}
+	})
+}
+
+const addOrUpdateHandle = (id?: number) => {
+	// 设置模式为添加或更新
+	dialogMode.value = id ? 'update' : 'add'
+	// 调用原始函数
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
+	})
+}
+
+const copyHandle = (id: number) => {
+	dialogMode.value = 'copy'
+	nextTick(() => {
+		addOrUpdateRef.value.init(id)
 	})
 }
 
@@ -130,5 +161,5 @@ const {
 	tableIndex
 } = useIndexQuery(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { addOrUpdateRef } = useInitForm()
 </script>
