@@ -38,9 +38,14 @@ interface SystemSetting {
 	isOpenMenuUniqueOpened: boolean
 	// 菜单展开/折叠按钮
 	isOpenMenuCollapseButton: boolean
-	// 菜单宽度
-	menuWidth: number
+	// 菜单展开宽度
+	menuExpandWidth: number
+	// 菜单折叠宽度
+	menuFoldWidth: number
 }
+
+export const menuExpandWidthList = [180, 210, 240]
+export const menuFoldWidthList = [50, 60, 70]
 
 // 默认配置
 const defaultSystemSetting: SystemSetting = {
@@ -62,7 +67,8 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenMenuCollapseAnimation: true,
 	isOpenMenuUniqueOpened: true,
 	isOpenMenuCollapseButton: true,
-	menuWidth: 210
+	menuExpandWidth: menuExpandWidthList.length >= 3 ? menuExpandWidthList[1] : menuExpandWidthList[0],
+	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0]
 }
 
 export const useSystemSettingStore = defineStore(

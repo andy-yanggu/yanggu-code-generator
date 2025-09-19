@@ -1,7 +1,10 @@
 <template>
 	<el-container class="layout-container">
 		<!-- 侧边栏 -->
-		<el-aside class="layout-sidebar" :style="{ width: appStore.isCollapse ? '60px' : systemSettingStore.menuWidth + 'px' }">
+		<el-aside
+			class="layout-sidebar"
+			:style="{ width: (appStore.isCollapse ? systemSettingStore.menuFoldWidth : systemSettingStore.menuExpandWidth) + 'px' }"
+		>
 			<layout-sidebar></layout-sidebar>
 		</el-aside>
 		<el-container direction="vertical">

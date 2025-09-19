@@ -11,16 +11,31 @@
 					<el-divider>菜单设置</el-divider>
 					<setting-item v-model="systemSettingStore.isOpenLogo" label="展示logo"></setting-item>
 					<el-row class="setting-row">
-						<el-text style="margin-right: 5px">菜单宽度</el-text>
+						<el-text style="margin-right: 5px">折叠宽度</el-text>
 						<div style="display: flex; align-items: center">
 							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menuWidth" size="small" clearable style="width: 90px">
+							<el-select v-model="systemSettingStore.menuFoldWidth" size="small" clearable style="width: 90px">
 								<el-option
-									v-for="value in menuWidthList"
+									v-for="value in menuFoldWidthList"
 									:key="value"
 									:label="`${value}px`"
 									:value="value"
-									:disabled="systemSettingStore.menuWidth === value"
+									:disabled="systemSettingStore.menuFoldWidth === value"
+								></el-option>
+							</el-select>
+						</div>
+					</el-row>
+					<el-row class="setting-row">
+						<el-text style="margin-right: 5px">展开宽度</el-text>
+						<div style="display: flex; align-items: center">
+							<!-- 下拉推荐值 -->
+							<el-select v-model="systemSettingStore.menuExpandWidth" size="small" clearable style="width: 90px">
+								<el-option
+									v-for="value in menuExpandWidthList"
+									:key="value"
+									:label="`${value}px`"
+									:value="value"
+									:disabled="systemSettingStore.menuExpandWidth === value"
 								></el-option>
 							</el-select>
 						</div>
@@ -96,7 +111,7 @@ import { Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { menuExpandWidthList, menuFoldWidthList, useSystemSettingStore } from '@/store/system-setting-store'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { ElMessage } from 'element-plus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
@@ -110,8 +125,6 @@ const systemSettingStore = useSystemSettingStore()
 
 const visible = ref(false)
 const route = useRoute()
-
-const menuWidthList = ref([180, 210, 240])
 
 // 标签是否开启
 watch(
