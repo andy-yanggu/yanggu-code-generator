@@ -52,6 +52,13 @@
 					<setting-item v-model="systemSettingStore.isOpenTag" label="启用"></setting-item>
 					<setting-item v-model="systemSettingStore.isOpenTagIcon" label="图标"></setting-item>
 					<setting-item
+						v-model="systemSettingStore.isOpenTagDragActivated"
+						label="拖拽后激活标签"
+						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
+					>
+					</setting-item>
+
+					<setting-item
 						v-model="systemSettingStore.isOpenTagCache"
 						label="持久化"
 						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"

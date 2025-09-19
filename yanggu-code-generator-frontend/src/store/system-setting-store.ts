@@ -12,6 +12,8 @@ interface SystemSetting {
 	isOpenTagIcon: boolean
 	// 是否开启tag持久化
 	isOpenTagCache: boolean
+	// 是否开启被激活拖拽标签
+	isOpenTagDragActivated: boolean
 	// 是否设置动态标题
 	isOpenDynamicTitle: boolean
 	// 是否开启logo
@@ -47,6 +49,7 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenTag: true,
 	isOpenTagIcon: true,
 	isOpenTagCache: true,
+	isOpenTagDragActivated: false,
 	isOpenDynamicTitle: true,
 	isOpenLogo: true,
 	isOpenProgress: true,

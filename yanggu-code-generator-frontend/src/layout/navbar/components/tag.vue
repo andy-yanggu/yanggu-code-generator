@@ -121,8 +121,10 @@ onMounted(() => {
 						newTags.splice(newIndex!, 0, movedTag)
 						appStore.addAllTags(newTags)
 						// 激活被移动的标签
-						if (route.fullPath != movedTag.fullPath) {
-							router.push(movedTag.fullPath)
+						if (systemSettingStore.isOpenTagDragActivated) {
+							if (route.fullPath != movedTag.fullPath) {
+								router.push(movedTag.fullPath)
+							}
 						}
 					}
 				}

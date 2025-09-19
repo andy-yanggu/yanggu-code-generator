@@ -61,9 +61,14 @@
 								</div>
 							</el-col>
 							<el-col :span="8" style="text-align: right">
-								<el-button size="small" @click="handleCopy(templateTreeData.item.templateContent!)">复制代码</el-button>
-								<el-button size="small" @click="downloadTemplateData(templateTreeData.item)">生成</el-button>
-								<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
+								<el-button type="primary" size="small" :icon="CopyDocument" @click="handleCopy(templateTreeData.item.templateContent!)"
+									>复制</el-button
+								>
+								<el-button type="success" size="small" :icon="DocumentAdd" @click="downloadTemplateData(templateTreeData.item)">生成</el-button>
+								<el-button size="small" @click="toggle()">
+									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
+									{{ isFullscreen ? '退出' : '全屏' }}
+								</el-button>
 							</el-col>
 						</el-row>
 						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
@@ -122,8 +127,8 @@
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorPreviewApi } from '@/api/gen/generator'
-import { CopyDocument, Expand, Fold } from '@element-plus/icons-vue'
+import { generatorDownloadSingleApi, generatorPreviewApi, generatorSingleLocalApi } from '@/api/gen/generator'
+import { CopyDocument, DocumentAdd, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
