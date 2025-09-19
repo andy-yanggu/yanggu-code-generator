@@ -5,14 +5,22 @@
 				<template #label>
 					<div style="display: flex; align-items: center">
 						<span>枚举项名称</span>
-						<el-tooltip content="使用英文大写字母，单词之间使用'_'拼接" effect="dark" placement="top">
+						<el-tooltip content="使用英文大写字母，单词之间使用'_'拼接；该字段具有唯一性" effect="dark" placement="top">
 							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
 						</el-tooltip>
 					</div>
 				</template>
 				<el-input v-model="state.dataForm.enumItemName" clearable placeholder="请输入枚举项名称"></el-input>
 			</el-form-item>
-			<el-form-item label="枚举项编码" prop="enumItemCode">
+			<el-form-item prop="enumItemCode">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>枚举项编码</span>
+						<el-tooltip content="枚举项编码具有唯一性" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.enumItemCode" clearable placeholder="请输入枚举项编码"></el-input>
 			</el-form-item>
 			<el-form-item label="枚举项描述" prop="enumItemDesc">

@@ -1,7 +1,15 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="连接名称" prop="connName">
+			<el-form-item prop="connName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>连接名称</span>
+						<el-tooltip content="连接名称具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">
@@ -34,7 +42,7 @@ import { computed, PropType, reactive } from 'vue'
 import { datasourceDetailApi, datasourceSubmitApi } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenDatasourceForm'

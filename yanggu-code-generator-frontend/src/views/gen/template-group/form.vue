@@ -1,7 +1,15 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="模板组名称" prop="groupName">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
+			<el-form-item prop="groupName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>模板组名称</span>
+						<el-tooltip content="模板组名称具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板组类型" prop="type">
@@ -25,7 +33,7 @@ import { computed, PropType, reactive } from 'vue'
 import { copyTemplateApi, templateGroupDetailApi, templateGroupSubmitApi } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'

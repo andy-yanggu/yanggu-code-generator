@@ -5,7 +5,7 @@
 				<template #label>
 					<div style="display: flex; align-items: center">
 						<span>项目名称</span>
-						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接" effect="dark" placement="top">
+						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性" effect="dark" placement="top">
 							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
 						</el-tooltip>
 					</div>

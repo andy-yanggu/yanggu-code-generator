@@ -1,14 +1,31 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="基类名称" prop="baseClassName">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
+			<el-form-item prop="baseClassName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>基类名称</span>
+						<el-tooltip content="基类名称具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.baseClassName" clearable placeholder="请输入基类名称"></el-input>
 			</el-form-item>
-			<el-form-item label="基类包名" prop="packageName">
-				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入基类包名"></el-input>
-			</el-form-item>
-			<el-form-item label="基类类名" prop="className">
-				<el-input v-model="state.dataForm.className" clearable placeholder="请输入基类类名"></el-input>
+			<el-form-item prop="fullClassName">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>基类全类名</span>
+						<el-tooltip content="基类全类名具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
+				<div style="display: flex; align-items: center; gap: 10px; width: 100%">
+					<el-input v-model="state.dataForm.packageName" style="flex: 1" placeholder="请输入基类包名"></el-input>
+					<span>.</span>
+					<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名"></el-input>
+				</div>
 			</el-form-item>
 			<el-form-item label="基类字段" prop="fields">
 				<el-input v-model="state.dataForm.fields" clearable placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
@@ -28,7 +45,7 @@
 import { computed, PropType, reactive } from 'vue'
 import { baseClassDetailApi, baseClassSubmitApi } from '@/api/gen/base-class'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenBaseClassForm'
@@ -71,6 +88,10 @@ const state: FormOptions = reactive({
 		fields: '',
 		remark: ''
 	},
+	initBefore: () => {
+		state.dataForm.packageName = ''
+		state.dataForm.className = ''
+	},
 	initAfter: () => {
 		if (props.mode === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
@@ -85,6 +106,7 @@ const state: FormOptions = reactive({
 
 const dataRules = reactive({
 	baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
 	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
