@@ -21,7 +21,7 @@ public class EnumItemModel {
     /**
      * 枚举项编码
      */
-    private String enumItemCode;
+    private Object enumItemCode;
 
     /**
      * 枚举项描述

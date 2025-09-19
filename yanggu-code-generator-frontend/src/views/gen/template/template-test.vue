@@ -27,14 +27,14 @@
 							</el-icon>
 						</el-col>
 						<!-- 文件路径	-->
-						<el-col :span="21">
+						<el-col :span="19">
 							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
 								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 									路径：{{ fullFilePath }}
 								</el-text>
 							</el-tooltip>
 						</el-col>
-						<el-col :span="2" style="text-align: right">
+						<el-col :span="4" style="text-align: right">
 							<el-button
 								v-if="testData.activeName === 'template'"
 								size="small"
@@ -46,7 +46,19 @@
 							>
 								保存
 							</el-button>
-							<el-button v-else size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">刷新</el-button>
+							<div v-else>
+								<el-button
+									size="small"
+									:icon="DocumentAdd"
+									:disabled="!testData.cascaderValue"
+									type="success"
+									:loading="submitLoading"
+									@click="generatorHandler()"
+								>
+									生成
+								</el-button>
+								<el-button size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">刷新</el-button>
+							</div>
 						</el-col>
 					</el-row>
 
@@ -83,14 +95,15 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import { templateDetailApi, templateUpdateContentApi } from '@/api/gen/template'
 import { cascaderDataApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
-import { Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { generatorTemplateTestApi } from '@/api/gen/generator'
+import { DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
+import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorTemplateTestApi } from '@/api/gen/generator'
 
 interface CascaderData {
 	value: string
 	label: string
 	type: 'project' | 'table' | 'enum'
 	id: number
+	generatorType: number
 	children?: CascaderData[]
 }
 
@@ -122,7 +135,13 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	// 获取项目ID列表
 	const res = await cascaderDataApi({ templateGroupType, templateGroupId })
 	if (!res.data.length) {
-		ElMessage.warning('请先关联项目，若未创建项目，请先创建项目后与当前模板组关联')
+		if (templateGroupType === 0) {
+			ElMessage.warning('请先关联项目')
+		} else if (templateGroupType === 1) {
+			ElMessage.warning('请先关联表')
+		} else if (templateGroupType === 2) {
+			ElMessage.warning('请先关联枚举')
+		}
 		return
 	}
 	testData.cascaderData = res.data
@@ -167,8 +186,7 @@ const saveTemplateContent = () => {
 // 处理选中值变化
 const handleCascaderChange = async val => {
 	// val 是选中节点的值数组
-	console.log(val)
-	console.log(testData.cascaderValue)
+	console.log(val, testData.cascaderValue)
 	const queryForm = {
 		projectId: val[0].split('_')[1],
 		templateGroupId: testData.templateGroupId,
@@ -183,7 +201,6 @@ const handleCascaderChange = async val => {
 		queryForm.enumTemplateIdList = [testData.templateId]
 		queryForm.enumIdList = [val[1].split('_')[1]]
 	}
-	console.log(queryForm)
 	const loadingInstance = ElLoading.service({
 		target: '.template-test-drawer',
 		text: '模板渲染中...'
@@ -203,6 +220,47 @@ const handleCascaderChange = async val => {
 const refreshHandler = () => {
 	testData.activeName = 'render'
 	handleCascaderChange(testData.cascaderValue)
+}
+
+const generatorHandler = () => {
+	let id
+	const projectId = Number(testData.cascaderValue[0].split('_')[1])
+	if (testData.cascaderValue.length > 1) {
+		id = testData.cascaderValue[1].split('_')[1]
+	} else {
+		id = testData.cascaderValue[0].split('_')[1]
+	}
+	const dataForm = {
+		id: id,
+		templateId: testData.templateId,
+		templateGroupType: testData.templateGroupType
+	}
+	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
+	if (generatorType === 0) {
+		submitLoading.value = true
+		generatorDownloadSingleApi(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到浏览器',
+					duration: 1000
+				})
+			})
+			.finally(() => {
+				submitLoading.value = false
+			})
+	} else if (generatorType === 1) {
+		submitLoading.value = true
+		generatorSingleLocalApi(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到本地',
+					duration: 1000
+				})
+			})
+			.finally(() => {
+				submitLoading.value = false
+			})
+	}
 }
 
 defineExpose({ init })

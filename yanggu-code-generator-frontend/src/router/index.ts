@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { routerGuard } from '@/utils/router-guard'
+import { routeGuard } from '@/router/guard'
 
 // 常量路由
 export const constantRoutes: RouteRecordRaw[] = [
@@ -50,4 +50,4 @@ export const router = createRouter({
 })
 
 // 路由拦截
-routerGuard(router)
+routeGuard(router)

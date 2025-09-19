@@ -125,7 +125,7 @@
 						</el-col>
 						<el-col :span="7" style="text-align: right">
 							<el-button
-								:disabled="[0, 2].includes(activeTabItem.templateType)"
+								v-if="![0, 2].includes(activeTabItem.templateType)"
 								size="small"
 								type="warning"
 								:icon="DocumentChecked"

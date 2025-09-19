@@ -15,6 +15,8 @@ public class CascaderDataVO {
 
     private String type;
 
+    private Integer generatorType;
+
     private List<CascaderDataVO> children;
 
 }

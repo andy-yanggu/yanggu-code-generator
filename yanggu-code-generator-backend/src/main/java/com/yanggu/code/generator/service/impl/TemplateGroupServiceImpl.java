@@ -283,6 +283,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                             CascaderDataVO cascaderDataVO = new CascaderDataVO();
                             cascaderDataVO.setId(project.getId());
                             cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setGeneratorType(project.getGeneratorType());
                             cascaderDataVO.setType("project");
                             cascaderDataVO.setValue("project_" + project.getId());
                             return cascaderDataVO;
@@ -295,7 +296,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                         .map(project -> {
                             CascaderDataVO cascaderDataVO = new CascaderDataVO();
                             cascaderDataVO.setId(project.getId());
-                            cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setGeneratorType(project.getGeneratorType());
                             cascaderDataVO.setType("project");
                             cascaderDataVO.setValue("project_" + project.getId());
                             LambdaQueryWrapper<TableEntity> eq = Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, project.getId());
@@ -304,6 +305,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                                         CascaderDataVO tableCascaderDataVO = new CascaderDataVO();
                                         tableCascaderDataVO.setId(table.getId());
                                         tableCascaderDataVO.setLabel(table.getTableName());
+                                        tableCascaderDataVO.setGeneratorType(project.getGeneratorType());
                                         tableCascaderDataVO.setType("table");
                                         tableCascaderDataVO.setValue("table_" + table.getId());
                                         return tableCascaderDataVO;
@@ -321,6 +323,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                             CascaderDataVO cascaderDataVO = new CascaderDataVO();
                             cascaderDataVO.setId(project.getId());
                             cascaderDataVO.setLabel(project.getProjectName());
+                            cascaderDataVO.setGeneratorType(project.getGeneratorType());
                             cascaderDataVO.setValue("project_" + project.getId());
                             LambdaQueryWrapper<EnumEntity> eq = Wrappers.<EnumEntity>lambdaQuery().eq(EnumEntity::getProjectId, project.getId());
                             List<CascaderDataVO> children = enumService.list(eq).stream()
@@ -328,6 +331,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                                         CascaderDataVO enumCascaderDataVO = new CascaderDataVO();
                                         enumCascaderDataVO.setId(enumEntity.getId());
                                         enumCascaderDataVO.setLabel(enumEntity.getEnumName());
+                                        enumCascaderDataVO.setGeneratorType(project.getGeneratorType());
                                         enumCascaderDataVO.setType("enum");
                                         enumCascaderDataVO.setValue("enum_" + enumEntity.getId());
                                         return enumCascaderDataVO;

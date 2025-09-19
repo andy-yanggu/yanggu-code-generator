@@ -33,7 +33,7 @@ NProgress.configure({ showSpinner: false })
 // 路由白名单名称列表
 const whiteLists = ['Login']
 
-export const routerGuard = (router: Router) => {
+export const routeGuard = (router: Router) => {
 	// 路由拦截
 	router.beforeEach((to, from, next) => {
 		const systemSettingStore = useSystemSettingStore()
