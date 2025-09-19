@@ -296,11 +296,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                         .map(project -> {
                             CascaderDataVO cascaderDataVO = new CascaderDataVO();
                             cascaderDataVO.setId(project.getId());
+                            cascaderDataVO.setLabel(project.getProjectName());
                             cascaderDataVO.setGeneratorType(project.getGeneratorType());
                             cascaderDataVO.setType("project");
                             cascaderDataVO.setValue("project_" + project.getId());
                             LambdaQueryWrapper<TableEntity> eq = Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, project.getId());
-                            List<CascaderDataVO> children =  tableService.list(eq).stream()
+                            List<CascaderDataVO> children = tableService.list(eq).stream()
                                     .map(table -> {
                                         CascaderDataVO tableCascaderDataVO = new CascaderDataVO();
                                         tableCascaderDataVO.setId(table.getId());
