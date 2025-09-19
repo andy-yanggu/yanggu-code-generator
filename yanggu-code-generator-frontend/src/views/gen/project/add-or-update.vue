@@ -162,7 +162,6 @@ const state: FormOptions = reactive({
 })
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	projectPackage: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

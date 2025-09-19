@@ -97,7 +97,7 @@
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
-											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">字段同步</el-dropdown-item>
+											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">同步</el-dropdown-item>
 											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>
@@ -223,7 +223,7 @@ const generatorCodeBatch = () => {
 }
 
 const syncHandle = (row: any) => {
-	ElMessageBox.confirm(`确定同步表${row.tableName}的字段吗?`, '提示', {
+	ElMessageBox.confirm(`确定同步项目${row.projectName}下表${row.tableName}的字段吗?`, '提示', {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'

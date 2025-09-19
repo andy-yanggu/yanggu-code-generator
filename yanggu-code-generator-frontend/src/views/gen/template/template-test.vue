@@ -186,7 +186,6 @@ const saveTemplateContent = () => {
 // 处理选中值变化
 const handleCascaderChange = async val => {
 	// val 是选中节点的值数组
-	console.log(val, testData.cascaderValue)
 	const queryForm = {
 		projectId: val[0].split('_')[1],
 		templateGroupId: testData.templateGroupId,

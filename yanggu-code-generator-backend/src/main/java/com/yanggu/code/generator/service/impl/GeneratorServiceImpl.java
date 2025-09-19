@@ -124,7 +124,10 @@ public class GeneratorServiceImpl implements GeneratorService {
         switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroupType)) {
             case PROJECT -> {
                 ProjectEntity project = projectService.getById(id);
-                preview = projectPreview(project, templateIdList).getFirst();
+                // 过滤出唯一一个模板
+                preview = projectPreview(project, templateIdList).stream()
+                        .filter(item -> item.getTemplateId().equals(singleGeneratorQuery.getTemplateId()))
+                        .findFirst().orElseThrow();
             }
             case TABLE -> {
                 GeneratorTableQuery tableQuery = new GeneratorTableQuery();
@@ -154,7 +157,10 @@ public class GeneratorServiceImpl implements GeneratorService {
                 GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
                 projectQuery.setProjectId(id);
                 projectQuery.setProjectTemplateIdList(templateIdList);
-                projectDownloadLocal(projectQuery);
+                List<TemplateContentVO> list = buildProjectPreview(projectQuery).stream()
+                        .filter(item -> item.getTemplateId().equals(singleGeneratorQuery.getTemplateId())).toList();
+
+                downloadLocal(list);
             }
             case TABLE -> {
                 GeneratorTableQuery tableQuery = new GeneratorTableQuery();

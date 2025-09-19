@@ -40,7 +40,6 @@ public class ProjectDTO implements Serializable {
      * 项目包名
      */
     @Schema(description = "项目包名")
-    @NotBlank(message = "项目包名不能为空")
     private String projectPackage;
 
     /**
