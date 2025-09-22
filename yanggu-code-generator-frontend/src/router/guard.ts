@@ -142,6 +142,7 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 					path: item.path,
 					name: item.name,
 					component: loadIframeComponent(item),
+					props: { iframeSrc: item.meta.externalUrl, cache: item.meta.cache },
 					meta: {
 						...item.meta
 					}
