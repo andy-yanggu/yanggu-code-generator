@@ -32,6 +32,7 @@
 				border
 				max-height="60vh"
 				class="layout-table"
+				header-cell-class-name="layout-table-header"
 				@selection-change="selectionChangeHandle"
 				@sort-change="sortChangeHandle"
 			>

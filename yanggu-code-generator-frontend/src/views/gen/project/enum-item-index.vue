@@ -21,6 +21,7 @@
 				border
 				max-height="60vh"
 				class="layout-table"
+				header-cell-class-name="layout-table-header"
 				@sort-change="sortChangeHandle"
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>

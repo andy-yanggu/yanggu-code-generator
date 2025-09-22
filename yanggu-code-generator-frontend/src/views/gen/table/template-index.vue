@@ -27,6 +27,7 @@
 				border
 				max-height="60vh"
 				class="layout-table"
+				header-cell-class-name="layout-table-header"
 				@selection-change="selectionChangeHandle"
 			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>

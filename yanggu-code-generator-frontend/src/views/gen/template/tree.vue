@@ -20,7 +20,7 @@
 						</el-button>
 					</div>
 				</div>
-				<el-scrollbar style="height: calc(100% - 50px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
+				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"

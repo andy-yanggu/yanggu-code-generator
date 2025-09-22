@@ -11,7 +11,7 @@ public enum GeneratorTypeEnum {
 
     ZIP(0, "zip压缩包"),
 
-    LOCAL(1, "本地"),
+    LOCAL(1, "服务器本地"),
     ;
 
     @EnumValue

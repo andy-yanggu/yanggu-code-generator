@@ -14,7 +14,7 @@
 						style="width: 240px"
 					></el-input>
 				</div>
-				<el-scrollbar ref="treeScrollbarRef" style="height: calc(100% - 50px); overflow-x: auto">
+				<el-scrollbar ref="treeScrollbarRef" style="height: calc(100% - 30px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"

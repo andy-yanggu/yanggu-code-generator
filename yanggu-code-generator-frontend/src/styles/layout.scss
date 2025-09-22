@@ -76,6 +76,10 @@ a:hover {
 
         .layout-table {
           width: 100%;
+          .layout-table-header {
+            background: var(--el-fill-color-light);
+            color: var(--el-text-color-primary);
+          }
         }
       }
     }
