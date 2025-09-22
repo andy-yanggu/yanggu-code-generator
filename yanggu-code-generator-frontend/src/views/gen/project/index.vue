@@ -152,7 +152,7 @@ const stepsRef = ref()
 const previewHandle = (projectItem: any) => {
 	currentProjectIdTs.value = Date.now()
 	nextTick(() => {
-		previewRef.value.init(projectItem.id, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
+		previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
 	})
 }
 

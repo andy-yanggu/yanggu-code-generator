@@ -70,7 +70,7 @@
 					<template #default="scope">
 						<el-row :gutter="5">
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row.id)">配置</el-button>
+								<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
@@ -164,14 +164,14 @@ const getProjectList = () => {
 	})
 }
 
-const configEnumItemHandle = (id: number) => {
-	enumItemIndexRef.value.init(id)
+const configEnumItemHandle = ({ id, enumName }) => {
+	enumItemIndexRef.value.init(id, enumName)
 }
 
 const previewHandle = (row: any) => {
 	previewKey.value = `${Date.now()}`
 	nextTick(() => {
-		previewRef.value.init(row.id, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
+		previewRef.value.init(row.id, row.enumName, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
 	})
 }
 

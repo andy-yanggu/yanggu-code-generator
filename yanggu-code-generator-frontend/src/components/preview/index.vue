@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" title="代码预览" :size="'100%'" :modal="false">
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" :size="'100%'" :modal="false">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
@@ -61,7 +61,13 @@
 								</div>
 							</el-col>
 							<el-col :span="8" style="text-align: right">
-								<el-button type="primary" size="small" :icon="CopyDocument" @click="handleCopy(templateTreeData.item.templateContent!)">
+								<el-button
+									v-if="templateTreeData.item.templateType === 1"
+									type="primary"
+									size="small"
+									:icon="CopyDocument"
+									@click="handleCopy(templateTreeData.item.templateContent!)"
+								>
 									复制
 								</el-button>
 								<el-button type="success" size="small" :icon="DocumentAdd" @click="downloadTemplateData(templateTreeData.item)">生成</el-button>
@@ -163,6 +169,7 @@ const treeScrollbarRef = ref()
 const templateTreeData = reactive({
 	visible: false,
 	id: -1,
+	name: '',
 	projectId: -1,
 	generatorType: -1,
 	treeList: [] as Tree[],
@@ -177,8 +184,9 @@ const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 // 初始化方法
-const init = async (id: number, projectId: number, generatorType: number, generatorProductType: number) => {
+const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
 	templateTreeData.id = id
+	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
 	isCollapse.value = false

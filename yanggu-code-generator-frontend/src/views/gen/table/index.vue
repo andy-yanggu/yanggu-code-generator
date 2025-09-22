@@ -193,7 +193,7 @@ const importHandle = () => {
 const previewHandle = (tableItem: any) => {
 	previewKey.value = Date.now()
 	nextTick(() => {
-		previewRef.value.init(tableItem.id, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
+		previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
 	})
 }
 

@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" title="枚举配置" width="80%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" :title="`${enumNameRef} - 枚举配置`" width="80%" @close="dialogVisible = false">
 		<el-card class="layout-query" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="枚举项名称" prop="enumItemName">
@@ -98,16 +98,19 @@ const state: IHooksOptions = reactive({
 	}
 })
 
+const enumNameRef = ref('')
+
 const dialogVisible = ref(false)
 const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: number) => {
 	addOrUpdateRef.value.initData(enumIdRef.value, id)
 }
 
-const init = (enumId: number) => {
+const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
 	resetQueryHandle()
 	enumIdRef.value = enumId
+	enumNameRef.value = enumName
 	state.queryForm.enumId = enumId
 	getDataList()
 }
