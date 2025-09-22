@@ -170,7 +170,7 @@
 								<span>关闭当前</span>
 							</li>
 							<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
-								<el-icon size="10"><CircleClose></CircleClose></el-icon>
+								<svg-icon icon="icon-close-others" size="10px"></svg-icon>
 								<span>关闭其他</span>
 							</li>
 							<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
@@ -186,7 +186,7 @@
 								<span>关闭未改</span>
 							</li>
 							<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
-								<el-icon size="10"><Close></Close></el-icon>
+								<svg-icon icon="icon-close-all" size="10px"></svg-icon>
 								<span>关闭全部</span>
 							</li>
 						</ul>
@@ -247,7 +247,7 @@ import {
 	templateUpdateContentListApi,
 	templateUpdateParentApi
 } from '@/api/gen/template'
-import { Back, CircleClose, Close, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
+import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/template-test.vue'
@@ -1202,7 +1202,7 @@ defineExpose({
 	background: #fff;
 	border: 1px solid #ddd;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	padding: 4px 0;
+	padding: 5px 5px;
 	z-index: 9999;
 	list-style: none;
 	min-width: 85px;
@@ -1216,7 +1216,7 @@ defineExpose({
 	align-items: center;
 	gap: 5px;
 	font-size: 12px;
-	width: 100%;
+	box-sizing: border-box;
 	cursor: pointer;
 	padding: 5px 10px;
 	text-align: left;
@@ -1224,6 +1224,7 @@ defineExpose({
 		background-color 0.2s ease,
 		color 0.2s ease;
 }
+
 .context-menu li:hover {
 	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
 	color: #333; /* 可选：加深文字颜色 */

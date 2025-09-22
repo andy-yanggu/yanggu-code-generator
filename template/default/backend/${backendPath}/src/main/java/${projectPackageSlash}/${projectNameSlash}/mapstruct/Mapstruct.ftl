@@ -13,6 +13,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
  * ${tableComment}Mapstruct
  */
 @Named("${className}Mapstruct")
-@Mapper(componentModel = SPRING, implementationName = "${projectNamePascal}${classNameUpper}MapstructImpl")
+@Mapper(componentModel = SPRING, implementationName = "${projectNamePascal}${moduleNamePascal}${classNameUpper}MapstructImpl")
 public interface ${classNameUpper}Mapstruct extends BaseMapstruct<${classNameUpper}Entity, ${classNameUpper}VO, ${classNameUpper}DTO> {
 }

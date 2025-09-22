@@ -68,12 +68,12 @@ public enum ResultEnum implements IResultError {
     /**
      * 数据不存在
      */
-    DATA_NOT_EXIST(1000, "{}数据ID: {}不存在"),
+    DATA_NOT_EXIST(1000, "{}数据{}字段的值已存在"),
 
     /**
      * 数据已经存在
      */
-    DATA_ALREADY_EXIST(1001, "{}数据ID: {}已存在"),
+    DATA_ALREADY_EXIST(1001, "{}数据{}字段的值已存在"),
 
     /**
      * 数据不能为空

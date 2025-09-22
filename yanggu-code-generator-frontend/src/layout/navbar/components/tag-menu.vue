@@ -8,10 +8,6 @@
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
 		</div>
-		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeOtherTags')">
-			<el-icon size="10"><CircleClose></CircleClose></el-icon>
-			<span>关闭其他</span>
-		</div>
 		<div v-if="props.currentMenuTagIndex > 0" class="icon-item" @click="emits('closeLeftTag')">
 			<el-icon size="10"><Back></Back></el-icon>
 			<span>关闭左侧</span>
@@ -20,19 +16,23 @@
 			<el-icon size="10"><Right></Right></el-icon>
 			<span>关闭右侧</span>
 		</div>
+		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeOtherTags')">
+			<svg-icon icon="icon-close-others" size="10px"></svg-icon>
+			<span>关闭其他</span>
+		</div>
 		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeAllTags')">
-			<el-icon size="10"><Close></Close></el-icon>
+			<svg-icon icon="icon-close-all" size="10px"></svg-icon>
 			<span>关闭全部</span>
 		</div>
 		<div class="icon-item" @click="emits('openNewWindow')">
-			<svg-icon icon="icon-new-window"></svg-icon>
+			<svg-icon icon="icon-new-window" size="10px"></svg-icon>
 			<span>打开窗口</span>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { Back, CircleClose, Close, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
+import { Back, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { defineEmits, defineProps, PropType } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'

@@ -33,6 +33,10 @@
             AND ${field.fieldName} LIKE CONCAT('%', <#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>)
             <#elseif field.queryType == 'right like'>
             AND ${field.fieldName} LIKE CONCAT(<#noparse>#{query.</#noparse>${field.attrName}<#noparse>}</#noparse>, '%')
+            <#elseif field.queryType == 'between' && field.queryFormType == 'datetime'>
+            AND ${field.fieldName} >= <#noparse>#</#noparse>{query.startTime} AND ${field.fieldName} &lt;= <#noparse>#</#noparse>{query.endTime}
+            <#elseif field.queryType == 'between' && field.queryFormType == 'date'>
+            AND ${field.fieldName} >= <#noparse>#</#noparse>{query.startDate} AND ${field.fieldName} &lt;= <#noparse>#</#noparse>{query.endDate}
             <#else>
             </#if>
         </if>
