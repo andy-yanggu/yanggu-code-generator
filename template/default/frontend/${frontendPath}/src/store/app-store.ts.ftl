@@ -30,7 +30,7 @@ export const useAppStore = defineStore(
 		// 折叠状态
 		const isCollapse = ref(false)
 		// 标签列表
-		const tagsList = ref<NavbarTag[]>([])
+		const tagList = ref<NavbarTag[]>([])
 		// 面包屑列表
 		const breadcrumbList = ref<Breadcrumb[]>([])
 		// 缓存组件列表
@@ -38,7 +38,7 @@ export const useAppStore = defineStore(
 
 		// 计算属性
 		// 标签数量
-		const tagLength = computed(() => tagsList.value.length)
+		const tagLength = computed(() => tagList.value.length)
 
 		// 缓存组件列表
 
@@ -66,26 +66,26 @@ export const useAppStore = defineStore(
 
 		// 添加标签
 		const addTag = (tag: NavbarTag) => {
-			const isExist = tagsList.value.find(item => item.fullPath === tag.fullPath)
+			const isExist = tagList.value.find(item => item.fullPath === tag.fullPath)
 			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
-				tagsList.value.push(tag)
+				tagList.value.push(tag)
 			}
 		}
 
 		// 删除标签
 		const removeTag = (tag: NavbarTag) => {
-			tagsList.value = tagsList.value.filter(item => item.fullPath !== tag.fullPath)
+			tagList.value = tagList.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
 		// 添加所有标签
 		const addAllTags = (tagList: NavbarTag[]) => {
-			tagsList.value = tagList
+			tagList.value = tagList
 		}
 
 		// 删除所有标签
 		const removeAllTags = () => {
-			tagsList.value = []
+			tagList.value = []
 		}
 
 		// 添加缓存路由
@@ -118,7 +118,7 @@ export const useAppStore = defineStore(
 		return {
 			isCollapse,
 			breadcrumbList,
-			tagsList,
+			tagList,
 			cacheList,
 			tagLength,
 			toggleCollapse,

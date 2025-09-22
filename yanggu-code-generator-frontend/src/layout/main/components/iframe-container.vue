@@ -2,7 +2,9 @@
 	<!-- 缓存池化（v-show控制展示和隐藏） -->
 	<transition-group name="slide" tag="div">
 		<div v-for="item in appStore.iframeCacheList" v-show="route.fullPath === item.fullPath" :key="`iframe-${item.fullPath}`">
-			<iframe-page :iframe-src="item.src" :cache="true"></iframe-page>
+			<router-view v-slot="{ Component }">
+				<component :is="Component" :iframe-src="item.src" :cache="true"></component>
+			</router-view>
 		</div>
 	</transition-group>
 </template>
@@ -10,7 +12,6 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store/app-store'
 import { useRoute } from 'vue-router'
-import iframePage from '@/layout/main/components/iframe-page.vue'
 import { watch } from 'vue'
 
 const appStore = useAppStore()
@@ -38,5 +39,3 @@ watch(
 	{ immediate: true }
 )
 </script>
-
-<style scoped></style>

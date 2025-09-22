@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 export interface UserInfo {
 	username: string
@@ -289,7 +289,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		children: [
 			{
 				path: '/test-external/iframe',
-				name: 'TestExternalIframe',
+				name: 'TestExternalIframeJava',
 				meta: {
 					title: 'java官网（iframe）',
 					icon: 'icon-java',
@@ -300,7 +300,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			},
 			{
 				path: '/test-external/iframe2',
-				name: 'TestExternalIframe2',
+				name: 'TestExternalIframeVite',
 				meta: {
 					title: 'vite官网（iframe）（不缓存）',
 					icon: 'icon-Batchfolding',
@@ -311,7 +311,7 @@ const businessMenuInfoList: MenuInfo[] = [
 			},
 			{
 				path: '/test-external/iframe3',
-				name: 'TestExternalIframe3',
+				name: 'TestExternalIframeElementPlus',
 				meta: {
 					title: 'element-plus',
 					icon: 'icon-java',
@@ -457,8 +457,6 @@ export const useUserStore = defineStore(
 	'user',
 	() => {
 		// 状态
-		// 是否登录
-		const isLogin = ref(false)
 		// 是否添加路由
 		const isAddRoutes = ref(false)
 		// 菜单列表
@@ -475,6 +473,9 @@ export const useUserStore = defineStore(
 		const tokenInfo = reactive<TokenInfo>({ ...INITIAL_TOKEN_INFO })
 
 		// 计算属性
+		const isLogin = computed(() => {
+			return tokenInfo.accessToken !== ''
+		})
 
 		// actions
 		// 设置添加路由的标志
@@ -491,16 +492,14 @@ export const useUserStore = defineStore(
 
 			// 完全清空 tokenInfo
 			Object.assign(tokenInfo, INITIAL_TOKEN_INFO)
-			isLogin.value = false
 		}
 
 		// 设置登录后的数据
 		const setData = (loginVO: any) => {
 			Object.assign(userInfo, loginVO.userInfo)
 			Object.assign(tokenInfo, loginVO.tokenInfo)
-			menuList.value = [...sidebarConstantMenuInfoList, ...loginVO.menuList]
+			menuList.value = [...loginVO.menuList]
 			permissionList.value = loginVO.permissionList
-			isLogin.value = true
 		}
 
 		// 设置激活的菜单

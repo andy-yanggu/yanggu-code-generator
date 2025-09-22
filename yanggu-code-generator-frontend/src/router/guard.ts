@@ -142,7 +142,6 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 					path: item.path,
 					name: item.name,
 					component: loadIframeComponent(item),
-					props: { iframeSrc: item.meta.externalUrl },
 					meta: {
 						...item.meta
 					}
@@ -171,11 +170,13 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 
 // 处理iframe菜单对应的组件
 const loadIframeComponent = (item: MenuInfo) => {
+	// 如果有组件，则直接加载组件
 	if (item.component) {
 		return loadView(item.component)
 	} else {
+		// 否则使用公共的组件，并且重新设置组件名称
 		return () =>
-			import('@/layout/main/components/iframe-page.vue').then(comp => {
+			import('@/views/router/iframe-page.vue').then(comp => {
 				// 给组件动态设置 name
 				comp.default.name = item.name
 				return comp

@@ -33,7 +33,7 @@ export const useAppStore = defineStore(
 		// 折叠状态
 		const isCollapse = ref(false)
 		// 标签列表
-		const tagsList = ref<NavbarTag[]>([])
+		const tagList = ref<NavbarTag[]>([])
 		// 缓存组件列表
 		const cacheList = ref<string[]>([])
 		// 布局大小
@@ -50,7 +50,7 @@ export const useAppStore = defineStore(
 
 		// 计算属性
 		// 标签数量
-		const tagLength = computed(() => tagsList.value.length)
+		const tagLength = computed(() => tagList.value.length)
 
 		// actions
 		// 切换折叠状态
@@ -60,31 +60,31 @@ export const useAppStore = defineStore(
 
 		// 添加标签
 		const addTag = (tag: NavbarTag) => {
-			const isExist = tagsList.value.find(item => item.fullPath === tag.fullPath)
+			const isExist = tagList.value.find(item => item.fullPath === tag.fullPath)
 			const includes = tag.fullPath.includes('redirect')
 			if (!isExist && !includes) {
-				tagsList.value.push(tag)
+				tagList.value.push(tag)
 			}
 		}
 
 		// 删除标签
 		const removeTag = (tag: NavbarTag) => {
-			tagsList.value = tagsList.value.filter(item => item.fullPath !== tag.fullPath)
+			tagList.value = tagList.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
 		// 批量删除标签
-		const removeTagList = (tagList: NavbarTag[]) => {
-			tagsList.value = tagsList.value.filter(item => !tagList.some(tag => tag.fullPath === item.fullPath))
+		const removeTags = (removeTagList: NavbarTag[]) => {
+			tagList.value = tagList.value.filter(item => !removeTagList.some(tag => tag.fullPath === item.fullPath))
 		}
 
 		// 添加所有标签
-		const addAllTags = (tagList: NavbarTag[]) => {
-			tagsList.value = tagList
+		const addAllTags = (addTagList: NavbarTag[]) => {
+			tagList.value = addTagList
 		}
 
 		// 删除所有标签
 		const removeAllTags = () => {
-			tagsList.value = []
+			tagList.value = []
 		}
 
 		// 添加缓存路由
@@ -155,7 +155,7 @@ export const useAppStore = defineStore(
 
 		return {
 			isCollapse,
-			tagsList,
+			tagList,
 			layoutSize,
 			cacheList,
 			iframeCacheList,
@@ -166,7 +166,7 @@ export const useAppStore = defineStore(
 			removeTag,
 			addAllTags,
 			removeAllTags,
-			removeTagList,
+			removeTags,
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
@@ -190,7 +190,7 @@ export const useAppStore = defineStore(
 				const originOmitList = []
 				const systemSettingStore = useSystemSettingStore()
 				if (!systemSettingStore.isOpenTagCache) {
-					originOmitList.push('tagsList')
+					originOmitList.push('tagList')
 				}
 				return originOmitList
 			}

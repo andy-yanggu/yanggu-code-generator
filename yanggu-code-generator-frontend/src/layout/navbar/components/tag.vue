@@ -4,7 +4,7 @@
 		<div class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
-				v-for="(tag, index) in appStore.tagsList"
+				v-for="(tag, index) in appStore.tagList"
 				:ref="el => (tagRefs[tag.fullPath] = el)"
 				:key="tag.fullPath"
 				size="default"
@@ -116,7 +116,7 @@ onMounted(() => {
 				onEnd: evt => {
 					const { oldIndex, newIndex } = evt
 					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-						const newTags = [...appStore.tagsList]
+						const newTags = [...appStore.tagList]
 						const movedTag = newTags.splice(oldIndex!, 1)[0]
 						newTags.splice(newIndex!, 0, movedTag)
 						appStore.addAllTags(newTags)
@@ -163,10 +163,10 @@ const handleClose = (index: number, tag: NavbarTag) => {
 		if (appStore.tagLength > 0) {
 			// 优先尝试右侧标签
 			if (index < appStore.tagLength) {
-				to = appStore.tagsList[index].fullPath
+				to = appStore.tagList[index].fullPath
 			} else if (index > 0) {
 				// 右侧无标签时选择左侧
-				to = appStore.tagsList[index - 1].fullPath
+				to = appStore.tagList[index - 1].fullPath
 			}
 		}
 		// 跳转到对应路由
@@ -222,7 +222,7 @@ const closeCurrentTag = () => {
 const closeOtherTags = () => {
 	const currentPath = currentMenuTag.value.fullPath
 	// 保留当前标签，关闭其他所有标签
-	const deleteTagList = appStore.tagsList.filter(tag => tag.fullPath !== currentPath)
+	const deleteTagList = appStore.tagList.filter(tag => tag.fullPath !== currentPath)
 	deleteCacheAndTag(deleteTagList)
 	router.push(currentPath)
 	closeTagMenu()
@@ -230,7 +230,7 @@ const closeOtherTags = () => {
 
 // 关闭所有标签
 const closeAllTags = () => {
-	deleteCacheAndTag(appStore.tagsList.filter(item => item.fullPath !== '/index'))
+	deleteCacheAndTag(appStore.tagList.filter(item => item.fullPath !== '/index'))
 	closeTagMenu()
 	// 回到首页
 	if (route.fullPath !== '/index') {
@@ -241,8 +241,8 @@ const closeAllTags = () => {
 // 关闭左侧标签
 const closeLeftTag = () => {
 	// 激活的标签索引
-	const activeTagIndex = appStore.tagsList.findIndex(tag => tag.fullPath === route.fullPath)
-	const deleteTagList = appStore.tagsList.filter((_, index) => index < currentMenuTagIndex.value)
+	const activeTagIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
+	const deleteTagList = appStore.tagList.filter((_, index) => index < currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
 	// 检查当前激活的标签是否在被关闭的标签中
 	if (activeTagIndex < currentMenuTagIndex.value) {
@@ -255,9 +255,9 @@ const closeLeftTag = () => {
 // 关闭右侧标签
 const closeRightTag = () => {
 	// 激活的标签索引
-	const activeTagIndex = appStore.tagsList.findIndex(tag => tag.fullPath === route.fullPath)
+	const activeTagIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
 	// 保留当前标签及其左侧所有标签
-	const deleteTagList = appStore.tagsList.filter((_, index) => index > currentMenuTagIndex.value)
+	const deleteTagList = appStore.tagList.filter((_, index) => index > currentMenuTagIndex.value)
 	deleteCacheAndTag(deleteTagList)
 	// 检查当前激活的标签是否在被关闭的标签中
 	if (activeTagIndex > currentMenuTagIndex.value) {
@@ -279,7 +279,7 @@ const deleteCacheAndTag = (tagList: NavbarTag[]) => {
 	appStore.removeIframeCacheList(nameList)
 
 	// 删除标签
-	appStore.removeTagList(tagList)
+	appStore.removeTags(tagList)
 }
 
 // 打开新窗口

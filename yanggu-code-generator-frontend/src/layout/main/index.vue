@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import IframeContainer from './components/iframe-container.vue'
+import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/app-store'
 import { useSystemSettingStore } from '@/store/system-setting-store'
