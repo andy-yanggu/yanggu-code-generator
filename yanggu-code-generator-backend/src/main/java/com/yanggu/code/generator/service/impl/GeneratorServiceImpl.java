@@ -76,6 +76,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     private TemplateGroupService templateGroupService;
 
     @Autowired
+    private TemplateService templateService;
+
+    @Autowired
     private TableFieldMapstruct tableFieldMapstruct;
 
     @Autowired
@@ -233,22 +236,29 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public TemplateContentVO templateTest(GeneratorProjectQuery projectQuery) throws Exception {
-        List<TemplateContentVO> list = buildProjectPreview(projectQuery);
-        Long templateId;
-        if (CollUtil.isNotEmpty(projectQuery.getProjectTemplateIdList())) {
-            templateId = projectQuery.getProjectTemplateIdList().getFirst();
-        } else if (CollUtil.isNotEmpty(projectQuery.getTableTemplateIdList())) {
-            templateId = projectQuery.getTableTemplateIdList().getFirst();
-        } else if (CollUtil.isNotEmpty(projectQuery.getEnumTemplateIdList())) {
-            templateId = projectQuery.getEnumTemplateIdList().getFirst();
-        } else {
-            templateId = 0L;
+    public TemplateContentVO templateTest(TemplateTestQuery templateTestQuery) throws Exception {
+        TemplateGroupEntity templateGroup = templateGroupService.getById(templateTestQuery.getTemplateGroupId(), false);
+        TemplateVO templateVO = templateService.detail(templateTestQuery.getTemplateId(), true);
+        templateVO.setTemplateContent(templateTestQuery.getTemplateContent());
+        ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
+        switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
+            case PROJECT -> {
+                ProjectModel projectModel = buildProjectDataModel(project, datasourceService.get(project.getDatasourceId()));
+                return getTemplateContentVO(templateGroup, templateVO, projectModel);
+            }
+            case TABLE -> {
+                TableEntity table = tableService.getById(templateTestQuery.getTestId());
+                TableModel tableModel = buildTableDataModel(table, project);
+                return getTemplateContentVO(templateGroup, templateVO, tableModel);
+            }
+            case ENUM -> {
+                EnumEntity enumEntity = enumService.getById(templateTestQuery.getTestId());
+                EnumModel enumModel = buildEnumDataModel(enumEntity, project);
+                return getTemplateContentVO(templateGroup, templateVO, enumModel);
+            }
+            default ->
+                    throw new IllegalArgumentException("Invalid template group type: " + templateTestQuery.getTemplateGroupType());
         }
-        return list.stream()
-                .filter(templateContentVO -> templateContentVO.getTemplateId().equals(templateId))
-                .findFirst()
-                .orElse(null);
     }
 
     private List<TemplateContentVO> buildProjectPreview(GeneratorProjectQuery projectQuery) throws Exception {
@@ -548,7 +558,17 @@ public class GeneratorServiceImpl implements GeneratorService {
                     return enumItemModel;
                 }).toList();
         enumModel.setEnumItemList(list);
+        enumModel.setEnumCodeType(getEnumCodeType(list));
         return enumModel;
+    }
+
+    private String getEnumCodeType(List<EnumItemModel> enumItemList) {
+        for (EnumItemModel enumItemModel : enumItemList) {
+            if (enumItemModel.getEnumItemCode() instanceof String) {
+                return "String";
+            }
+        }
+        return "Integer";
     }
 
     /**

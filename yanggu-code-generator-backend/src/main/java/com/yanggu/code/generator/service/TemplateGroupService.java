@@ -87,7 +87,7 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     /**
      * 根据ID查询（包含所有模板）
      */
-    TemplateGroupEntity getById(Long id);
+    TemplateGroupEntity getById(Long id, Boolean isIncludeTemplateList);
 
     List<CascaderDataVO> cascaderData(Integer templateGroupType, Long templateGroupId);
 

@@ -250,7 +250,7 @@ import {
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import TemplateTest from '@/views/gen/template/template-test.vue'
+import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 
 interface Tree {

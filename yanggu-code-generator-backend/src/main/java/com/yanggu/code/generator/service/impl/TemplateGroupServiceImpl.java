@@ -264,8 +264,11 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    public TemplateGroupEntity getById(Long id) {
+    public TemplateGroupEntity getById(Long id, Boolean isIncludeTemplateList) {
         TemplateGroupEntity templateGroup = selectById(id);
+        if (!isIncludeTemplateList) {
+            return templateGroup;
+        }
         List<TemplateEntity> templateList = templateService.selectByGroupId(id);
         templateGroup.setTemplateList(templateList);
         return templateGroup;

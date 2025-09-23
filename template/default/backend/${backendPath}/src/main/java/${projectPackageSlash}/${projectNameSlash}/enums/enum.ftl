@@ -17,7 +17,7 @@ public enum ${enumNamePascal}Enum {
     /**
      * ${item.enumItemDesc}
      */
-    ${item.enumItemNameAllUpper}(${item.enumItemCode}, "${item.enumItemDesc}"),
+    ${item.enumItemNameAllUpper}(<#if item.enumItemCode?is_string>"${item.enumItemCode}"<#else>${item.enumItemCode}</#if>, "${item.enumItemDesc}"),
     <#if item_has_next>
 
     </#if>
@@ -29,7 +29,7 @@ public enum ${enumNamePascal}Enum {
      */
     @JsonValue
     @EnumValue
-    private final Integer code;
+    private final ${enumCodeType} code;
 
     /**
      * 描述

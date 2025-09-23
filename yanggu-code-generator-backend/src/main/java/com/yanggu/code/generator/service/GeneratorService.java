@@ -29,6 +29,6 @@ public interface GeneratorService {
 
     ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery);
 
-    TemplateContentVO templateTest(GeneratorProjectQuery projectQuery) throws Exception;
+    TemplateContentVO templateTest(TemplateTestQuery templateTestQuery) throws Exception;
 
 }

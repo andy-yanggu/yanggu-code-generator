@@ -66,6 +66,11 @@ public class EnumModel {
     private String enumDesc;
 
     /**
+     * 枚举CODE值类型
+     */
+    private String enumCodeType;
+
+    /**
      * 枚举值列表
      */
     private List<EnumItemModel> enumItemList;

@@ -189,16 +189,16 @@ const handleCascaderChange = async val => {
 	const queryForm = {
 		projectId: val[0].split('_')[1],
 		templateGroupId: testData.templateGroupId,
-		templateGroupType: testData.templateGroupType
+		templateGroupType: testData.templateGroupType,
+		templateId: testData.templateId,
+		templateContent: testData.editTemplateContent
 	}
 	if (testData.templateGroupType === 0) {
-		queryForm.projectTemplateIdList = [testData.templateId]
+		queryForm.testId = testData.templateId
 	} else if (testData.templateGroupType === 1) {
-		queryForm.tableTemplateIdList = [testData.templateId]
-		queryForm.tableIdList = [val[1].split('_')[1]]
+		queryForm.testId = val[1].split('_')[1]
 	} else if (testData.templateGroupType === 2) {
-		queryForm.enumTemplateIdList = [testData.templateId]
-		queryForm.enumIdList = [val[1].split('_')[1]]
+		queryForm.testId = val[1].split('_')[1]
 	}
 	const loadingInstance = ElLoading.service({
 		target: '.template-test-drawer',

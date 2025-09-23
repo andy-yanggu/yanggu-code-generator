@@ -124,8 +124,8 @@ public class GeneratorController {
     @PostMapping("/template/test")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "模板测试")
-    public TemplateContentVO templateTest(@RequestBody GeneratorProjectQuery projectQuery) throws Exception {
-        return generatorService.templateTest(projectQuery);
+    public TemplateContentVO templateTest(@RequestBody TemplateTestQuery templateTestQuery) throws Exception {
+        return generatorService.templateTest(templateTestQuery);
     }
 
 }
