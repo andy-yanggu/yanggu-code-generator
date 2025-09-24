@@ -33,7 +33,7 @@ import TemplateIndex from './template-index.vue'
 import TableIndex from './table-index.vue'
 import EnumIndex from './enum-index.vue'
 import { ElMessage } from 'element-plus'
-import { genGeneraorApi } from '@/api/gen/generator'
+import { genGeneratorApi } from '@/api/gen/generator'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
 
 const generateCodeLoading = ref(false)
@@ -139,7 +139,7 @@ const generateCode = () => {
 	const generatorType = projectReactive.generatorType
 	if (generatorType === 0) {
 		generateCodeLoading.value = true
-		genGeneraorApi
+		genGeneratorApi
 			.projectDownloadZip(dataForm)
 			.then(() => {
 				ElMessage.success({
@@ -153,7 +153,7 @@ const generateCode = () => {
 			})
 	} else if (generatorType === 1) {
 		generateCodeLoading.value = true
-		genGeneraorApi
+		genGeneratorApi
 			.projectDownloadLocal(dataForm)
 			.then(() => {
 				ElMessage.success({

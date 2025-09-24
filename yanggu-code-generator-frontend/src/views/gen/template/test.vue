@@ -108,7 +108,7 @@ import { genTemplateApi } from '@/api/gen/template'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
 import { CopyDocument, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { genGeneraorApi } from '@/api/gen/generator'
+import { genGeneratorApi } from '@/api/gen/generator'
 import { copyToClipboard } from '@/utils/tool'
 
 interface CascaderData {
@@ -197,7 +197,7 @@ const handleCascaderChange = async val => {
 		text: '模板渲染中...'
 	})
 	try {
-		const res = await genGeneraorApi.templateTest(queryForm)
+		const res = await genGeneratorApi.templateTest(queryForm)
 		testData.renderedFileName = res.data.filePath
 		testData.renderedTemplateContent = res.data.content
 		nextTick(() => {
@@ -265,7 +265,7 @@ const generatorHandler = () => {
 	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 	if (generatorType === 0) {
 		submitLoading.value = true
-		genGeneraorApi
+		genGeneratorApi
 			.downloadSingle(dataForm)
 			.then(() => {
 				ElMessage.success({
@@ -278,7 +278,7 @@ const generatorHandler = () => {
 			})
 	} else if (generatorType === 1) {
 		submitLoading.value = true
-		genGeneraorApi
+		genGeneratorApi
 			.singleLocal(dataForm)
 			.then(() => {
 				ElMessage.success({

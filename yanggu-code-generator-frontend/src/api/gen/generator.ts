@@ -1,18 +1,16 @@
 import service from '@/utils/request'
-import qs from 'qs'
 import { downloadFile } from '@/utils/download'
 
 const baseUrl: string = '/gen/generator'
 
-export const genGeneraorApi = {
+export const genGeneratorApi = {
 	// 预览代码
 	preview: (dataForm: any) => {
 		return service.post(baseUrl + '/preview', dataForm)
 	},
 	// 下载单文件
 	downloadSingle: (dataForm: any) => {
-		const url = baseUrl + '/downloadSingle?' + qs.stringify(dataForm)
-		return downloadFile(url)
+		return downloadFile(baseUrl + '/downloadSingle', dataForm)
 	},
 	// 生成单文件到本地
 	singleLocal: (dataForm: any) => {
@@ -20,8 +18,7 @@ export const genGeneraorApi = {
 	},
 	// 项目下载zip压缩包
 	projectDownloadZip: (dataForm: any) => {
-		const url = baseUrl + '/project/downloadZip?' + qs.stringify(dataForm)
-		return downloadFile(url)
+		return downloadFile(baseUrl + '/project/downloadZip', dataForm)
 	},
 	// 项目下载到本地
 	projectDownloadLocal: (dataForm: any) => {
@@ -29,8 +26,7 @@ export const genGeneraorApi = {
 	},
 	// 表生成代码（zip压缩包）
 	tableDownloadZip: (dataForm: any) => {
-		const url = baseUrl + '/table/downloadZip?' + qs.stringify(dataForm)
-		return downloadFile(url)
+		return downloadFile(baseUrl + '/table/downloadZip', dataForm)
 	},
 	// 表下载到本地
 	tableDownloadLocal: (dataForm: any) => {
@@ -38,8 +34,7 @@ export const genGeneraorApi = {
 	},
 	// 枚举生成代码（zip压缩包）
 	enumDownloadZip: (dataForm: any) => {
-		const url = baseUrl + '/enum/downloadZip?' + qs.stringify(dataForm)
-		return downloadFile(url)
+		return downloadFile(baseUrl + '/enum/downloadZip', dataForm)
 	},
 	// 枚举下载到本地
 	enumDownloadLocal: (dataForm: any) => {

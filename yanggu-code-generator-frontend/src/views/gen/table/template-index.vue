@@ -67,7 +67,7 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { genGeneraorApi } from '@/api/gen/generator'
+import { genGeneratorApi } from '@/api/gen/generator'
 import { ElMessage } from 'element-plus'
 import { genTemplateApi } from '@/api/gen/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
@@ -116,7 +116,7 @@ const generateCode = () => {
 	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
 		generatorLoading.value = true
-		genGeneraorApi.tableDownloadZip(dataForm).then(() => {
+		genGeneratorApi.tableDownloadZip(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到浏览器',
 				duration: 1000
@@ -127,7 +127,7 @@ const generateCode = () => {
 		})
 	} else if (generatorType === 1) {
 		generatorLoading.value = true
-		genGeneraorApi.tableDownloadLocal(dataForm).then(() => {
+		genGeneratorApi.tableDownloadLocal(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到服务器本地',
 				duration: 1000

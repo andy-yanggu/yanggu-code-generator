@@ -29,6 +29,7 @@
 				<el-button type="info" :icon="Download" @click="exportHandle()">导出</el-button>
 			</el-space>
 			<el-table
+				ref="tableRef"
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border

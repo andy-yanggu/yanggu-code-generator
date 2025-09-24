@@ -1,6 +1,5 @@
 import service from '@/utils/request'
 import { downloadFile } from '@/utils/download'
-import qs from 'qs'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/templateGroup'
@@ -13,9 +12,8 @@ export const genTemplateGroupApi = {
 		return service.post(baseUrl + '/copy', dataForm)
 	},
 	// 导出模板组
-	export: (tableIdList: number[]): Promise<void> => {
-		const url = `${baseUrl}/export?idList=${tableIdList.join(',')}`
-		return downloadFile(url)
+	export: (idList: number[]): Promise<void> => {
+		return downloadFile(`${baseUrl}/export`, { idList })
 	},
 	// 导入模板组
 	import: (dataForm: any) => {
@@ -27,6 +25,6 @@ export const genTemplateGroupApi = {
 	},
 	// 获取级联数据
 	cascaderData: (queryForm: any) => {
-		return service.get(baseUrl + '/cascaderData?' + qs.stringify(queryForm))
+		return service.get(baseUrl + '/cascaderData', { params: queryForm })
 	}
 }

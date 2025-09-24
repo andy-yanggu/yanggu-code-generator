@@ -136,7 +136,7 @@
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { genGeneraorApi } from '@/api/gen/generator'
+import { genGeneratorApi } from '@/api/gen/generator'
 import { CopyDocument, DocumentAdd, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
@@ -196,7 +196,7 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 			previewProductId: id,
 			generatorProductType: generatorProductType
 		}
-		const res = await genGeneraorApi.preview(previewData)
+		const res = await genGeneratorApi.preview(previewData)
 		templateTreeData.treeList = res.data
 		const templateContentList = buildFileList(res.data)
 		templateTreeData.dataList = templateContentList
@@ -329,14 +329,14 @@ const downloadTemplateData = (item: Tree) => {
 		templateGroupType: item.templateGroupType
 	}
 	if (templateTreeData.generatorType === 0) {
-		genGeneraorApi.downloadSingle(dataForm).then(() => {
+		genGeneratorApi.downloadSingle(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到浏览器',
 				duration: 1000
 			})
 		})
 	} else if (templateTreeData.generatorType === 1) {
-		genGeneraorApi.singleLocal(dataForm).then(() => {
+		genGeneratorApi.singleLocal(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地',
 				duration: 1000

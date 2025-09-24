@@ -5,12 +5,14 @@ import service from '@/utils/request'
  * 统一文件下载工具
  *
  * @param url 请求地址
+ * @param params 请求参数
  */
-export const downloadFile = (url: string): Promise<void> => {
+export const downloadFile = (url: string, params?: any): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		service
 			.get(url, {
-				responseType: 'blob'
+				responseType: 'blob',
+				params
 			})
 			.then((response: any) => {
 				// 提取文件名
