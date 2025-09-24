@@ -3,7 +3,10 @@
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
-				<h3 style="margin-bottom: 20px">请选择项目、表或者枚举进行测试</h3>
+				<div class="aside-header">
+					<el-text tag="b">请选择项目、表或者枚举</el-text>
+					<el-button :icon="Refresh" size="small" type="primary" @click="refreshCascaderData()">刷新</el-button>
+				</div>
 				<el-cascader
 					v-model="testData.cascaderValue"
 					:options="testData.cascaderData"
@@ -27,14 +30,14 @@
 							</el-icon>
 						</el-col>
 						<!-- 文件路径	-->
-						<el-col :span="19">
+						<el-col :span="testData.activeName === 'template' ? 19 : 17">
 							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
 								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 									路径：{{ fullFilePath }}
 								</el-text>
 							</el-tooltip>
 						</el-col>
-						<el-col :span="4" style="text-align: right">
+						<el-col :span="testData.activeName === 'template' ? 4 : 6" style="text-align: right">
 							<el-button
 								v-if="testData.activeName === 'template'"
 								size="small"
@@ -49,6 +52,15 @@
 							<div v-else>
 								<el-button
 									size="small"
+									type="primary"
+									:icon="CopyDocument"
+									:disabled="!testData.renderedTemplateContent"
+									@click="copyTemplateContent()"
+								>
+									复制
+								</el-button>
+								<el-button
+									size="small"
 									:icon="DocumentAdd"
 									:disabled="!testData.cascaderValue"
 									type="success"
@@ -57,7 +69,7 @@
 								>
 									生成
 								</el-button>
-								<el-button size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">刷新</el-button>
+								<el-button size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
 							</div>
 						</el-col>
 					</el-row>
@@ -95,8 +107,9 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import { templateDetailApi, templateUpdateContentApi } from '@/api/gen/template'
 import { cascaderDataApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
-import { DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
+import { CopyDocument, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorTemplateTestApi } from '@/api/gen/generator'
+import { copyToClipboard } from '@/utils/tool'
 
 interface CascaderData {
 	value: string
@@ -130,31 +143,9 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
-	testData.activeName = 'template'
 
-	// 获取项目ID列表
-	const res = await cascaderDataApi({ templateGroupType, templateGroupId })
-	if (!res.data.length) {
-		if (templateGroupType === 0) {
-			ElMessage.warning('请先关联项目')
-		} else if (templateGroupType === 1) {
-			ElMessage.warning('请先关联表')
-		} else if (templateGroupType === 2) {
-			ElMessage.warning('请先关联枚举')
-		}
-		return
-	}
-	testData.cascaderData = res.data
-
-	// 获取模板详情
-	const detailQueryForm = { id: templateId, setPath: true }
-	templateDetailApi(detailQueryForm).then(res => {
-		testData.templateName = res.data.templateName
-		testData.originalFileName = res.data.fileName
-		testData.originalTemplateContent = res.data.templateContent
-		testData.editTemplateContent = res.data.templateContent
-		testData.fullFilePath = res.data.generatorPath
-	})
+	// 获取级联数据
+	await refreshCascaderData()
 }
 
 const submitLoading = ref(false)
@@ -216,6 +207,42 @@ const handleCascaderChange = async val => {
 	}
 }
 
+const refreshCascaderData = async () => {
+	testData.activeName = 'template'
+	// 获取级联数据
+	const templateGroupType = testData.templateGroupType
+	const queryForm = {
+		templateGroupType,
+		templateGroupId: testData.templateGroupId
+	}
+	const res = await cascaderDataApi(queryForm)
+	if (!res.data.length) {
+		if (templateGroupType === 0) {
+			ElMessage.warning('请先关联项目')
+		} else if (templateGroupType === 1) {
+			ElMessage.warning('请先关联表')
+		} else if (templateGroupType === 2) {
+			ElMessage.warning('请先关联枚举')
+		}
+		return
+	}
+	testData.cascaderData = res.data
+
+	// 获取模板详情
+	const detailQueryForm = {
+		id: testData.templateId,
+		setPath: true
+	}
+	templateDetailApi(detailQueryForm).then(res => {
+		testData.templateName = res.data.templateName
+		testData.originalFileName = res.data.fileName
+		testData.originalTemplateContent = res.data.templateContent
+		testData.editTemplateContent = res.data.templateContent
+		testData.fullFilePath = res.data.generatorPath
+	})
+}
+
+// 刷新渲染数据
 const refreshHandler = () => {
 	testData.activeName = 'render'
 	handleCascaderChange(testData.cascaderValue)
@@ -262,12 +289,26 @@ const generatorHandler = () => {
 	}
 }
 
+const copyTemplateContent = () => {
+	copyToClipboard(testData.renderedTemplateContent).then(() => {
+		ElMessage.success('代码已复制到剪贴板')
+	})
+}
+
 defineExpose({ init })
 </script>
 
 <style scoped>
 .full-height {
 	height: 100%;
+}
+
+.aside-header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
 }
 
 .aside-scroll {
