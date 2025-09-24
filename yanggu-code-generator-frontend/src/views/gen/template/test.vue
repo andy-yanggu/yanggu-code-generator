@@ -104,11 +104,11 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { templateDetailApi, templateUpdateContentApi } from '@/api/gen/template'
-import { cascaderDataApi } from '@/api/gen/template-group'
+import { genTemplateApi } from '@/api/gen/template'
+import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
 import { CopyDocument, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { generatorDownloadSingleApi, generatorSingleLocalApi, generatorTemplateTestApi } from '@/api/gen/generator'
+import { genGeneraorApi } from '@/api/gen/generator'
 import { copyToClipboard } from '@/utils/tool'
 
 interface CascaderData {
@@ -161,7 +161,8 @@ const saveTemplateContent = () => {
 		id: testData.templateId,
 		templateContent: testData.editTemplateContent
 	}
-	templateUpdateContentApi(dataForm)
+	genTemplateApi
+		.updateContent(dataForm)
 		.then(() => {
 			ElMessage.success({
 				message: '保存成功',
@@ -196,7 +197,7 @@ const handleCascaderChange = async val => {
 		text: '模板渲染中...'
 	})
 	try {
-		const res = await generatorTemplateTestApi(queryForm)
+		const res = await genGeneraorApi.templateTest(queryForm)
 		testData.renderedFileName = res.data.filePath
 		testData.renderedTemplateContent = res.data.content
 		nextTick(() => {
@@ -215,7 +216,7 @@ const refreshCascaderData = async () => {
 		templateGroupType,
 		templateGroupId: testData.templateGroupId
 	}
-	const res = await cascaderDataApi(queryForm)
+	const res = await genTemplateGroupApi.cascaderData(queryForm)
 	if (!res.data.length) {
 		if (templateGroupType === 0) {
 			ElMessage.warning('请先关联项目')
@@ -233,7 +234,7 @@ const refreshCascaderData = async () => {
 		id: testData.templateId,
 		setPath: true
 	}
-	templateDetailApi(detailQueryForm).then(res => {
+	genTemplateApi.detail(detailQueryForm).then(res => {
 		testData.templateName = res.data.templateName
 		testData.originalFileName = res.data.fileName
 		testData.originalTemplateContent = res.data.templateContent
@@ -264,7 +265,8 @@ const generatorHandler = () => {
 	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 	if (generatorType === 0) {
 		submitLoading.value = true
-		generatorDownloadSingleApi(dataForm)
+		genGeneraorApi
+			.downloadSingle(dataForm)
 			.then(() => {
 				ElMessage.success({
 					message: '代码已经下载到浏览器',
@@ -276,7 +278,8 @@ const generatorHandler = () => {
 			})
 	} else if (generatorType === 1) {
 		submitLoading.value = true
-		generatorSingleLocalApi(dataForm)
+		genGeneraorApi
+			.singleLocal(dataForm)
 			.then(() => {
 				ElMessage.success({
 					message: '代码已经下载到本地',

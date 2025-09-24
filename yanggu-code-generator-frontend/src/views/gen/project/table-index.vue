@@ -52,13 +52,13 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { tableEntityPageApi } from '@/api/gen/table'
+import { genTableApi } from '@/api/gen/table'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
 
 const state: IHooksOptions = reactive({
-	dataListApi: tableEntityPageApi,
+	dataListApi: genTableApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		tableName: '',

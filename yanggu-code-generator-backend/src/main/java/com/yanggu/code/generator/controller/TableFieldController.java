@@ -23,7 +23,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "表字段管理")
-@RequestMapping("/tableField")
+@RequestMapping("/gen/tableField")
 public class TableFieldController {
 
     @Autowired

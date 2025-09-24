@@ -146,8 +146,8 @@ import Update from '@/views/gen/table/update.vue'
 import Preview from '@/components/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
-import { projectEntityListApi } from '@/api/gen/project'
-import { tableDeleteListApi, tableGenerateCheckApi, tableSyncApi, tableVOPageApi } from '@/api/gen/table'
+import { genProjectApi } from '@/api/gen/project'
+import { genTableApi } from '@/api/gen/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
@@ -164,8 +164,8 @@ onMounted(() => {
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: tableVOPageApi,
-	deleteListApi: tableDeleteListApi,
+	dataListApi: genTableApi.voPage,
+	deleteListApi: genTableApi.deleteList,
 	queryForm: {
 		tableName: '',
 		projectId: null,
@@ -182,7 +182,7 @@ const projectList = ref([])
 const previewKey = ref()
 
 const getProjectList = () => {
-	projectEntityListApi().then(res => {
+	genProjectApi.entityList().then(res => {
 		projectList.value = res.data
 	})
 }
@@ -213,7 +213,7 @@ const generatorCodeBatch = () => {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
-	tableGenerateCheckApi(data).then(res => {
+	genTableApi.generateCheck(data).then(res => {
 		const { checkResult, tableTemplateGroupId, generatorType } = res.data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
@@ -230,7 +230,7 @@ const syncHandle = (row: any) => {
 		type: 'warning'
 	})
 		.then(() => {
-			tableSyncApi(row.id).then(() => {
+			genTableApi.sync(row.id).then(() => {
 				ElMessage.success('字段同步成功')
 			})
 		})

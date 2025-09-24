@@ -29,7 +29,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "模板管理")
-@RequestMapping("/template")
+@RequestMapping("/gen/template")
 public class TemplateController {
 
     @Autowired

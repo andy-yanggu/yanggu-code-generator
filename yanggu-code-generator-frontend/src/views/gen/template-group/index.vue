@@ -123,7 +123,7 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import { ElMessage } from 'element-plus'
-import { exportTemplateGroupApi, importTemplateGroupApi, templateGroupDeleteListApi, templateGroupEntityPageApi } from '@/api/gen/template-group'
+import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting, Upload } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -131,8 +131,8 @@ defineOptions({
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: templateGroupEntityPageApi,
-	deleteListApi: templateGroupDeleteListApi,
+	dataListApi: genTemplateGroupApi.entityPage,
+	deleteListApi: genTemplateGroupApi.deleteList,
 	queryForm: {
 		groupName: '',
 		type: ''
@@ -184,7 +184,7 @@ const exportHandle = () => {
 		ElMessage.warning('请选择导出的模板组')
 		return
 	}
-	exportTemplateGroupApi(idList).then(() => {
+	genTemplateGroupApi.export(idList).then(() => {
 		ElMessage.success('导出成功，请查看已下载的文件')
 		tableRef.value.clearSelection()
 		state.dataListSelections = []
@@ -197,7 +197,8 @@ const handleManualUpload = (options: any) => {
 	const formData = new FormData()
 	formData.append('file', file)
 
-	importTemplateGroupApi(formData)
+	genTemplateGroupApi
+		.import(formData)
 		.then(() => {
 			ElMessage.success('模板组导入成功')
 		})

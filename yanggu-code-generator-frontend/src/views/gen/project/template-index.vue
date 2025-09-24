@@ -90,14 +90,14 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
-import { templateVOPageApi } from '@/api/gen/template'
+import { genTemplateApi } from '@/api/gen/template'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()
 const state: IHooksOptions = reactive({
-	dataListApi: templateVOPageApi,
+	dataListApi: genTemplateApi.voPage,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupIdList: [],

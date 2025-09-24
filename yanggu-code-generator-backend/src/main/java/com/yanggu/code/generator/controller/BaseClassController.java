@@ -26,7 +26,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "基类管理")
-@RequestMapping("/baseClass")
+@RequestMapping("/gen/baseClass")
 public class BaseClassController {
 
     @Autowired

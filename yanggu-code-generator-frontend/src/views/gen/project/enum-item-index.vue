@@ -65,11 +65,11 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { enumItemEntityPageApi } from '@/api/gen/enum-item'
+import { genEnumItemApi } from '@/api/gen/enum-item'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
 const state: IHooksOptions = reactive({
-	dataListApi: enumItemEntityPageApi,
+	dataListApi: genEnumItemApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',

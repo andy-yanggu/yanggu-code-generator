@@ -127,9 +127,9 @@ import AddOrUpdate from '@/views/gen/enum/add-or-update.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/components/preview/index.vue'
-import { projectEntityListApi } from '@/api/gen/project'
+import { genProjectApi } from '@/api/gen/project'
 import { ElMessage } from 'element-plus'
-import { enumDeleteListApi, enumGenerateCheckApi, enumVOPageApi } from '@/api/gen/enum'
+import { genEnumApi } from '@/api/gen/enum'
 import { getLabel } from '@/utils/enum'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
@@ -144,8 +144,8 @@ onMounted(() => {
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: enumVOPageApi,
-	deleteListApi: enumDeleteListApi,
+	dataListApi: genEnumApi.voPage,
+	deleteListApi: genEnumApi.deleteList,
 	queryForm: {
 		enumName: '',
 		projectId: ''
@@ -160,7 +160,7 @@ const projectList = ref([])
 const previewKey = ref('')
 
 const getProjectList = () => {
-	projectEntityListApi().then((res: any) => {
+	genProjectApi.entityList().then((res: any) => {
 		projectList.value = res.data
 	})
 }
@@ -182,7 +182,7 @@ const generatorBatchHandler = () => {
 		ElMessage.warning('请选择要生成代码的枚举')
 		return
 	}
-	enumGenerateCheckApi(data).then(res => {
+	genEnumApi.generateCheck(data).then(res => {
 		const { checkResult, enumTemplateGroupId, generatorType } = res.data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的枚举不是同一个项目')

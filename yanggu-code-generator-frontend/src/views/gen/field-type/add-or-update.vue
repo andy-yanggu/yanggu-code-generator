@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { fieldTypeDetailApi, fieldTypeSubmitApi } from '@/api/gen/field-type'
+import { genFieldTypeApi } from '@/api/gen/field-type'
 import { ATTR_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -38,8 +38,8 @@ import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 const emit = defineEmits(['refreshDataList'])
 
 const state: FormOptions = reactive({
-	submitApi: fieldTypeSubmitApi,
-	detailApi: fieldTypeDetailApi,
+	submitApi: genFieldTypeApi.submit,
+	detailApi: genFieldTypeApi.detail,
 	dataForm: {
 		id: '',
 		columnType: '',

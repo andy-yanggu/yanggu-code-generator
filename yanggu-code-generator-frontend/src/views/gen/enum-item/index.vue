@@ -84,13 +84,13 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/gen/enum-item/add-or-update.vue'
-import { enumItemDeleteListApi, enumItemEntityPageApi } from '@/api/gen/enum-item'
+import { genEnumItemApi } from '@/api/gen/enum-item'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 const enumIdRef = ref()
 const state: IHooksOptions = reactive({
-	dataListApi: enumItemEntityPageApi,
-	deleteListApi: enumItemDeleteListApi,
+	dataListApi: genEnumItemApi.entityPage,
+	deleteListApi: genEnumItemApi.deleteList,
 	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',

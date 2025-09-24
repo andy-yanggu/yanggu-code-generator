@@ -27,7 +27,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "枚举管理")
-@RequestMapping("/enum")
+@RequestMapping("/gen/enum")
 public class EnumController {
 
     @Autowired

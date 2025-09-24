@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { templateDetailApi, templateSubmitApi } from '@/api/gen/template'
+import { genTemplateApi } from '@/api/gen/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
@@ -105,9 +105,9 @@ const submitBeforeHandle = () => {
 const state: FormOptions = reactive({
 	visible: false,
 	submitBefore: submitBeforeHandle,
-	submitApi: templateSubmitApi,
+	submitApi: genTemplateApi.submit,
 	detailApi: (id: number) => {
-		return templateDetailApi({ id })
+		return genTemplateApi.detail({ id })
 	},
 	dataForm: {
 		id: null,

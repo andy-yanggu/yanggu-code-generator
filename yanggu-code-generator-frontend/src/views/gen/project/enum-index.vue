@@ -54,13 +54,13 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import { enumEntityPageApi } from '@/api/gen/enum'
+import { genEnumApi } from '@/api/gen/enum'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
 import { Refresh, Search, View } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
 const state: IHooksOptions = reactive({
-	dataListApi: enumEntityPageApi,
+	dataListApi: genEnumApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		enumName: '',

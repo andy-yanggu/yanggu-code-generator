@@ -179,9 +179,9 @@
 <script setup lang="ts">
 import { nextTick, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { tableFieldEntityListApi, tableFieldSubmitListApi } from '@/api/gen/table-field'
-import { enumEntityListApi } from '@/api/gen/enum'
-import { fieldTypeListApi } from '@/api/gen/field-type'
+import { genTableFieldApi } from '@/api/gen/table-field'
+import { genEnumApi } from '@/api/gen/enum'
+import { genFieldTypeApi } from '@/api/gen/field-type'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 
@@ -258,8 +258,8 @@ const init = async (row: any) => {
 		// 并行执行所有异步请求
 		const [fieldRes, enumRes, fieldTypeRes] = await Promise.all([
 			getTableFieldList(id),
-			enumEntityListApi({ projectId: projectIdRef.value }),
-			fieldTypeListApi()
+			genEnumApi.entityList({ projectId: projectIdRef.value }),
+			genFieldTypeApi.list()
 		])
 
 		fieldList.value = fieldRes.data
@@ -282,7 +282,7 @@ const getTableFieldList = (id: number) => {
 	const queryForm = {
 		tableId: id
 	}
-	return tableFieldEntityListApi(queryForm)
+	return genTableFieldApi.entityList(queryForm)
 }
 
 const getFieldListData = (type: number) => {
@@ -301,17 +301,21 @@ const getFieldListData = (type: number) => {
 // 表单提交
 const submitHandle = () => {
 	submitLoading.value = true
-	tableFieldSubmitListApi(fieldList.value).then(() => {
-		ElMessage.success({
-			message: '操作成功',
-			duration: 500,
-			onClose: () => {
-				visible.value = false
-				submitLoading.value = false
-				emit('refreshDataList')
-			}
+	genTableFieldApi
+		.submitList(fieldList.value)
+		.then(() => {
+			ElMessage.success({
+				message: '字段配置成功',
+				duration: 500,
+				onClose: () => {
+					visible.value = false
+					emit('refreshDataList')
+				}
+			})
 		})
-	})
+		.finally(() => {
+			submitLoading.value = false
+		})
 }
 
 defineExpose({

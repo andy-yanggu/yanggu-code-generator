@@ -22,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "代码生成管理")
-@RequestMapping("/generator")
+@RequestMapping("/gen/generator")
 public class GeneratorController {
 
     @Autowired

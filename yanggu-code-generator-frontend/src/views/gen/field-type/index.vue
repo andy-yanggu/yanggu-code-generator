@@ -95,7 +95,7 @@ import { reactive } from 'vue'
 import AddOrUpdate from '@/views/gen/field-type/add-or-update.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import { fieldTypeDeleteListApi, fieldTypeEntityPageApi } from '@/api/gen/field-type'
+import { genFieldTypeApi } from '@/api/gen/field-type'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
@@ -104,8 +104,8 @@ defineOptions({
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: fieldTypeEntityPageApi,
-	deleteListApi: fieldTypeDeleteListApi,
+	dataListApi: genFieldTypeApi.entityPage,
+	deleteListApi: genFieldTypeApi.deleteList,
 	queryForm: {
 		columnType: '',
 		attrType: ''

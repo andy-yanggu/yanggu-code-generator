@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, reactive } from 'vue'
-import { datasourceDetailApi, datasourceSubmitApi } from '@/api/gen/datasource'
+import { genDataSourceApi } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -73,8 +73,8 @@ const dialogTitle = computed(() => {
 const emit = defineEmits(['refreshDataList'])
 
 const state: FormOptions = reactive({
-	submitApi: datasourceSubmitApi,
-	detailApi: datasourceDetailApi,
+	submitApi: genDataSourceApi.submit,
+	detailApi: genDataSourceApi.detail,
 	dataForm: {
 		id: '',
 		dbType: '',

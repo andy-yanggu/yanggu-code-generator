@@ -88,7 +88,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
 import { nextTick, reactive, ref } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
-import { baseClassDeleteListApi, baseClassEntityPageApi } from '@/api/gen/base-class'
+import { genBaseClassApi } from '@/api/gen/base-class'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -96,8 +96,8 @@ defineOptions({
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: baseClassEntityPageApi,
-	deleteListApi: baseClassDeleteListApi,
+	dataListApi: genBaseClassApi.entityPage,
+	deleteListApi: genBaseClassApi.deleteList,
 	queryForm: {
 		packageName: '',
 		className: ''

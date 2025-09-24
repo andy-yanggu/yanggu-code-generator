@@ -93,10 +93,10 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { projectDetailApi, projectSubmitApi } from '@/api/gen/project'
-import { datasourceEntityListApi } from '@/api/gen/datasource'
-import { templateGroupEntityListApi } from '@/api/gen/template-group'
-import { baseClassEntityListApi } from '@/api/gen/base-class'
+import { genProjectApi } from '@/api/gen/project'
+import { genDataSourceApi } from '@/api/gen/datasource'
+import { genTemplateGroupApi } from '@/api/gen/template-group'
+import { genBaseClassApi } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -105,12 +105,12 @@ const emit = defineEmits(['refreshDataList'])
 
 const getList = () => {
 	//数据源下拉
-	datasourceEntityListApi().then(res => {
+	genDataSourceApi.entityList().then(res => {
 		datasourceList.value = res.data
 	})
 
 	//模板组下拉
-	templateGroupEntityListApi().then(res => {
+	genTemplateGroupApi.entityList().then(res => {
 		const data = res.data
 		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
 		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
@@ -118,14 +118,14 @@ const getList = () => {
 	})
 
 	//基类下拉
-	baseClassEntityListApi().then(res => {
+	genBaseClassApi.entityList().then(res => {
 		baseClassList.value = res.data
 	})
 }
 
 const state: FormOptions = reactive({
-	submitApi: projectSubmitApi,
-	detailApi: projectDetailApi,
+	submitApi: genProjectApi.submit,
+	detailApi: genProjectApi.detail,
 	initBefore: getList,
 	dataForm: {
 		id: null,

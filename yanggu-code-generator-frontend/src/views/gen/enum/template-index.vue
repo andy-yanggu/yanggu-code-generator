@@ -69,16 +69,16 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { generatorEnumDownloadLocalApi, generatorEnumDownloadZipApi } from '@/api/gen/generator'
+import { genGeneraorApi } from '@/api/gen/generator'
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
-import { templateVOPageApi } from '@/api/gen/template'
+import { genTemplateApi } from '@/api/gen/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['clearSelection'])
 
 const state: IHooksOptions = reactive({
-	dataListApi: templateVOPageApi,
+	dataListApi: genTemplateApi.voPage,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupId: null,
@@ -122,7 +122,7 @@ const generateCode = () => {
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
 		generatorLoading.value = true
-		generatorEnumDownloadZipApi(dataForm).then(() => {
+		genGeneraorApi.enumDownloadZip(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到本地，请查看',
 				duration: 1000
@@ -132,7 +132,7 @@ const generateCode = () => {
 		})
 	} else if (generatorType === 1) {
 		generatorLoading.value = true
-		generatorEnumDownloadLocalApi(dataForm).then(() => {
+		genGeneraorApi.enumDownloadLocal(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到服务器本地，请查看',
 				duration: 1000

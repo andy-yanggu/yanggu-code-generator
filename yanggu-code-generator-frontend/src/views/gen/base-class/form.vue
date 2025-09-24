@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, reactive } from 'vue'
-import { baseClassDetailApi, baseClassSubmitApi } from '@/api/gen/base-class'
+import { genBaseClassApi } from '@/api/gen/base-class'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
@@ -76,9 +76,9 @@ const dialogTitle = computed(() => {
 const emit = defineEmits(['refreshDataList'])
 const state: FormOptions = reactive({
 	// 提交API
-	submitApi: baseClassSubmitApi,
+	submitApi: genBaseClassApi.submit,
 	// 详情API
-	detailApi: baseClassDetailApi,
+	detailApi: genBaseClassApi.detail,
 	// 表单数据
 	dataForm: {
 		id: null,

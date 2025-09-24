@@ -13,7 +13,7 @@
 				<el-input v-model="state.dataForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板组类型" prop="type">
-				<el-select v-model="state.dataForm.type" :disabled="state.dataForm.id" clearable filterable placeholder="请选择模板组类型">
+				<el-select v-model="state.dataForm.type" :disabled="state.dataForm.id != null" clearable filterable placeholder="请选择模板组类型">
 					<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 				</el-select>
 			</el-form-item>
@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { computed, PropType, reactive } from 'vue'
-import { copyTemplateApi, templateGroupDetailApi, templateGroupSubmitApi } from '@/api/gen/template-group'
+import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -65,9 +65,9 @@ const dialogTitle = computed(() => {
 
 const state: FormOptions = reactive({
 	// 提交API
-	submitApi: templateGroupSubmitApi,
+	submitApi: genTemplateGroupApi.submit,
 	// 详情API
-	detailApi: templateGroupDetailApi,
+	detailApi: genTemplateGroupApi.detail,
 	// 表单数据
 	dataForm: {
 		id: '',
@@ -77,12 +77,12 @@ const state: FormOptions = reactive({
 	},
 	initAfter: () => {
 		if (props.mode == 'copy') {
-			state.submitApi = copyTemplateApi
+			state.submitApi = genTemplateGroupApi.copy
 			state.message = '模板组和下的所有模板已复制'
 			state.duration = 2000
 			state.dataForm.groupName = state.dataForm.groupName + '_复制'
 		} else {
-			state.submitApi = templateGroupSubmitApi
+			state.submitApi = genTemplateGroupApi.submit
 			state.message = ''
 			state.duration = 500
 		}

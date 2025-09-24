@@ -318,6 +318,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                             cascaderDataVO.setChildren(children);
                             return cascaderDataVO;
                         })
+                        .filter(cascaderDataVO -> CollUtil.isNotEmpty(cascaderDataVO.getChildren()))
                         .toList();
             }
             case ENUM -> {
@@ -344,6 +345,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                             cascaderDataVO.setChildren(children);
                             return cascaderDataVO;
                         })
+                        .filter(cascaderDataVO -> CollUtil.isNotEmpty(cascaderDataVO.getChildren()))
                         .toList();
             }
             default -> {

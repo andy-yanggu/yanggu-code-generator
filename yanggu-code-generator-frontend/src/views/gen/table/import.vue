@@ -45,8 +45,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { tableImportApi } from '@/api/gen/table'
-import { projectEntityListApi, projectTableListApi } from '@/api/gen/project'
+import { genTableApi } from '@/api/gen/table'
+import { genProjectApi } from '@/api/gen/project'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 
@@ -56,7 +56,7 @@ const state: IHooksOptions = reactive({
 	primaryKey: 'tableName',
 	createdIsNeed: false,
 	isPage: false,
-	dataListApi: projectTableListApi,
+	dataListApi: genProjectApi.tableList,
 	queryForm: {
 		projectId: null,
 		tableName: ''
@@ -80,7 +80,7 @@ const init = () => {
 	// 重置表单数据
 	resetQueryHandle()
 
-	projectEntityListApi().then(res => {
+	genProjectApi.entityList().then(res => {
 		projectList.value = res.data
 	})
 }
@@ -97,7 +97,7 @@ const submitHandle = () => {
 	}
 	submitLoading.value = true
 
-	tableImportApi(dataForm).then(() => {
+	genTableApi.import(dataForm).then(() => {
 		ElMessage.success({
 			message: '导入成功',
 			duration: 500,

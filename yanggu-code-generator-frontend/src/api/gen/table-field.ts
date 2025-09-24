@@ -1,57 +1,13 @@
 import service from '@/utils/request'
+import { createCrudApi } from '@/api/common'
 
-// 提交表单
-export const tableFieldSubmitApi = (dataForm: any) => {
-	if (dataForm.id) {
-		//修改接口
-		return service.put('/tableField/update', dataForm)
-	} else {
-		//新增接口
-		return service.post('/tableField/add', dataForm)
+const baseUrl: string = '/gen/tableField'
+
+export const genTableFieldApi = {
+	// 通用CRUD接口
+	...createCrudApi(baseUrl),
+	// 提交列表
+	submitList: (dataFormList: any[]) => {
+		return service.post(baseUrl + '/submitList', dataFormList)
 	}
-}
-
-// 删除接口
-export const tableFieldDeleteApi = (id: number) => {
-	return service.delete('/tableField/delete?id=' + id)
-}
-
-// 批量删除
-export const tableFieldDeleteListApi = (idList: number[]) => {
-	return service.delete('/tableField/deleteList', { data: idList })
-}
-
-// 查询详情
-export const tableFieldDetailApi = (id: number) => {
-	return service.get('/tableField/detail?id=' + id)
-}
-
-// 批量查询
-export const tableFieldDetailListApi = (idList: number[]) => {
-	return service.post('/tableField/detailList', idList)
-}
-
-// 简单分页
-export const tableFieldEntityPageApi = (queryForm?: any) => {
-	return service.post('/tableField/entityPage', queryForm ? queryForm : {})
-}
-
-// 简单列表
-export const tableFieldEntityListApi = (queryForm?: any) => {
-	return service.post('/tableField/entityList', queryForm ? queryForm : {})
-}
-
-// 复杂分页
-export const tableFieldVOPageApi = (queryForm?: any) => {
-	return service.post('/tableField/voPage', queryForm ? queryForm : {})
-}
-
-// 复杂列表
-export const tableFieldVOListApi = (queryForm?: any) => {
-	return service.post('/tableField/voList', queryForm ? queryForm : {})
-}
-
-//提交字段
-export const tableFieldSubmitListApi = (dataFormList: Array<any>) => {
-	return service.post('/tableField/submitList', dataFormList)
 }

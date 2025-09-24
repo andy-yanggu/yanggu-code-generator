@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { enumItemDetailApi, enumItemSubmitApi } from '@/api/gen/enum-item'
+import { genEnumItemApi } from '@/api/gen/enum-item'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
@@ -47,9 +47,9 @@ const emit = defineEmits(['refreshDataList'])
 
 const state: FormOptions = reactive({
 	// 提交API
-	submitApi: enumItemSubmitApi,
+	submitApi: genEnumItemApi.submit,
 	// 详情API
-	detailApi: enumItemDetailApi,
+	detailApi: genEnumItemApi.detail,
 	// 详情数据
 	dataForm: {
 		id: null,

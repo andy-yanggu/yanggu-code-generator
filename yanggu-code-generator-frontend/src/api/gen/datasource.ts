@@ -1,57 +1,13 @@
 import service from '@/utils/request'
+import { createCrudApi } from '@/api/common'
 
-// 提交表单
-export const datasourceSubmitApi = (dataForm: any) => {
-	if (dataForm.id) {
-		//修改接口
-		return service.put('/datasource/update', dataForm)
-	} else {
-		//新增接口
-		return service.post('/datasource/add', dataForm)
+const baseUrl: string = '/gen/datasource'
+
+export const genDataSourceApi = {
+	// 通用CRUD接口
+	...createCrudApi(baseUrl),
+	// 测试数据源接口
+	test: (id: number) => {
+		return service.get(baseUrl + '/test?id=' + id)
 	}
-}
-
-// 删除接口
-export const datasourceDeleteApi = (id: number) => {
-	return service.delete('/datasource/delete?id=' + id)
-}
-
-// 批量删除
-export const datasourceDeleteListApi = (idList: number[]) => {
-	return service.delete('/datasource/deleteList', { data: idList })
-}
-
-// 查询详情
-export const datasourceDetailApi = (id: number) => {
-	return service.get('/datasource/detail?id=' + id)
-}
-
-// 批量查询
-export const datasourceDetailListApi = (idList: number[]) => {
-	return service.post('/datasource/detailList', idList)
-}
-
-// 简单分页
-export const datasourceEntityPageApi = (queryForm?: any) => {
-	return service.post('/datasource/entityPage', queryForm ? queryForm : {})
-}
-
-// 简单列表
-export const datasourceEntityListApi = (queryForm?: any) => {
-	return service.post('/datasource/entityList', queryForm ? queryForm : {})
-}
-
-// 复杂分页
-export const datasourceVOPageApi = (queryForm?: any) => {
-	return service.post('/datasource/voPage', queryForm ? queryForm : {})
-}
-
-// 复杂列表
-export const datasourceVOListApi = (queryForm?: any) => {
-	return service.post('/datasource/voList', queryForm ? queryForm : {})
-}
-
-// 测试数据源接口
-export const datasourceTestApi = (id: number) => {
-	return service.get('/datasource/test?id=' + id)
 }

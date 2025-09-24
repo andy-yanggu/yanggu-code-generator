@@ -67,16 +67,16 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { generatorTableDownloadLocalApi, generatorTableDownloadZipApi } from '@/api/gen/generator'
+import { genGeneraorApi } from '@/api/gen/generator'
 import { ElMessage } from 'element-plus'
-import { templateVOPageApi } from '@/api/gen/template'
+import { genTemplateApi } from '@/api/gen/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 
 const emit = defineEmits(['clearSelection'])
 
 const state: IHooksOptions = reactive({
-	dataListApi: templateVOPageApi,
+	dataListApi: genTemplateApi.voPage,
 	createdIsNeed: false,
 	queryForm: {
 		templateGroupId: null,
@@ -116,7 +116,7 @@ const generateCode = () => {
 	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
 		generatorLoading.value = true
-		generatorTableDownloadZipApi(dataForm).then(() => {
+		genGeneraorApi.tableDownloadZip(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到浏览器',
 				duration: 1000
@@ -127,7 +127,7 @@ const generateCode = () => {
 		})
 	} else if (generatorType === 1) {
 		generatorLoading.value = true
-		generatorTableDownloadLocalApi(dataForm).then(() => {
+		genGeneraorApi.tableDownloadLocal(dataForm).then(() => {
 			ElMessage.success({
 				message: '代码已经下载到服务器本地',
 				duration: 1000

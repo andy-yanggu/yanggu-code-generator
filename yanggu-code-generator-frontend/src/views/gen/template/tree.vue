@@ -240,13 +240,7 @@ import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import {
-	templateDeleteListApi,
-	templateTreeDataApi,
-	templateUpdateContentApi,
-	templateUpdateContentListApi,
-	templateUpdateParentApi
-} from '@/api/gen/template'
+import { genTemplateApi } from '@/api/gen/template'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
@@ -444,7 +438,7 @@ const init = async () => {
 	isCollapse.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		const res = await templateTreeDataApi(props.templateGroupId)
+		const res = await genTemplateApi.treeData(props.templateGroupId)
 		templateTreeData.treeList = res.data
 		buildTree(templateTreeData.treeList)
 		const templateContentList = buildFileList(res.data)
@@ -622,7 +616,8 @@ const deleteCheckedNode = () => {
 		type: 'warning'
 	})
 		.then(() => {
-			templateDeleteListApi(allCheckedKeys)
+			genTemplateApi
+				.deleteList(allCheckedKeys)
 				.then(() => {
 					ElMessage.success('删除成功')
 				})
@@ -702,7 +697,8 @@ const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | '
 	// console.log('拖拽完成:', dataForm)
 
 	// 调用 API 更新位置
-	templateUpdateParentApi(dataForm)
+	genTemplateApi
+		.updateParent(dataForm)
 		.then(() => {
 			ElMessage.success('移动成功')
 			// 激活被拖拽的树节点
@@ -817,7 +813,8 @@ const saveTemplateContent = () => {
 		id: templateTreeData.activeItemId,
 		templateContent: activeTabItem.value.templateContent
 	}
-	templateUpdateContentApi(dataForm)
+	genTemplateApi
+		.updateContent(dataForm)
 		.then(() => {
 			ElMessage.success({
 				message: '保存成功',
@@ -1134,7 +1131,7 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 						templateContent: tab.templateContent
 					}
 				})
-				templateUpdateContentListApi(dataFormList).then(() => {
+				genTemplateApi.updateContentList(dataFormList).then(() => {
 					ElMessage.success('保存成功')
 					editTabs.forEach(tab => {
 						tab.isEdited = false

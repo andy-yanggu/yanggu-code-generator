@@ -1,57 +1,13 @@
 import service from '@/utils/request'
+import { createCrudApi } from '@/api/common'
 
-// 提交表单
-export const enumSubmitApi = (dataForm: any) => {
-	if (dataForm.id) {
-		//修改接口
-		return service.put('/enum/update', dataForm)
-	} else {
-		//新增接口
-		return service.post('/enum/add', dataForm)
+const baseUrl: string = '/gen/enum'
+
+export const genEnumApi = {
+	// 通用CRUD接口
+	...createCrudApi(baseUrl),
+	// 枚举批量生成代码检测
+	generateCheck: (idList: number[]) => {
+		return service.post(baseUrl + '/generateCheck', idList)
 	}
-}
-
-// 删除接口
-export const enumDeleteApi = (id: number) => {
-	return service.delete('/enum/delete?id=' + id)
-}
-
-// 批量删除
-export const enumDeleteListApi = (idList: number[]) => {
-	return service.delete('/enum/deleteList', { data: idList })
-}
-
-// 查询详情
-export const enumDetailApi = (id: number) => {
-	return service.get('/enum/detail?id=' + id)
-}
-
-// 批量查询
-export const enumDetailListApi = (idList: number[]) => {
-	return service.post('/enum/detailList', idList)
-}
-
-// 简单分页
-export const enumEntityPageApi = (queryForm?: any) => {
-	return service.post('/enum/entityPage', queryForm ? queryForm : {})
-}
-
-// 简单列表
-export const enumEntityListApi = (queryForm?: any) => {
-	return service.post('/enum/entityList', queryForm ? queryForm : {})
-}
-
-// 复杂分页
-export const enumVOPageApi = (queryForm?: any) => {
-	return service.post('/enum/voPage', queryForm ? queryForm : {})
-}
-
-// 复杂列表
-export const enumVOListApi = (queryForm?: any) => {
-	return service.post('/enum/voList', queryForm ? queryForm : {})
-}
-
-//枚举批量生成代码检测
-export const enumGenerateCheckApi = (idList: number[]) => {
-	return service.post('/enum/generateCheck', idList)
 }

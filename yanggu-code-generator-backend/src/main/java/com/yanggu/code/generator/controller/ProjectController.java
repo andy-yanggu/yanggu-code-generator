@@ -28,7 +28,7 @@ import java.util.List;
 @Validated
 @RestController
 @Tag(name = "项目管理")
-@RequestMapping("/project")
+@RequestMapping("/gen/project")
 public class ProjectController {
 
     @Autowired

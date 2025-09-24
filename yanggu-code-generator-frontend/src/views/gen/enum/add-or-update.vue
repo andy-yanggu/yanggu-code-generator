@@ -30,22 +30,22 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { enumDetailApi, enumSubmitApi } from '@/api/gen/enum'
-import { projectEntityListApi } from '@/api/gen/project'
+import { genEnumApi } from '@/api/gen/enum'
+import { genProjectApi } from '@/api/gen/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const projectList = ref([])
 const getProjectList = () => {
-	projectEntityListApi().then((res: any) => {
+	genProjectApi.entityList().then((res: any) => {
 		projectList.value = res.data
 	})
 }
 
 const emit = defineEmits(['refreshDataList'])
 const state: FormOptions = reactive({
-	submitApi: enumSubmitApi,
-	detailApi: enumDetailApi,
+	submitApi: genEnumApi.submit,
+	detailApi: genEnumApi.detail,
 	initBefore: getProjectList,
 	dataForm: {
 		projectId: null,

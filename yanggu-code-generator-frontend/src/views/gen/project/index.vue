@@ -124,7 +124,7 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/gen/project/add-or-update.vue'
 import Preview from '@/components/preview/index.vue'
-import { projectDeleteListApi, projectEntityPageApi } from '@/api/gen/project'
+import { genProjectApi } from '@/api/gen/project'
 import Steps from '@/views/gen/project/steps.vue'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
@@ -136,8 +136,8 @@ defineOptions({
 })
 
 const state: IHooksOptions = reactive({
-	dataListApi: projectEntityPageApi,
-	deleteListApi: projectDeleteListApi,
+	dataListApi: genProjectApi.entityPage,
+	deleteListApi: genProjectApi.deleteList,
 	queryForm: {
 		projectName: '',
 		generatorType: null,

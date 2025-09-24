@@ -48,10 +48,10 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { tableDetailApi, tableSubmitApi } from '@/api/gen/table'
+import { genTableApi } from '@/api/gen/table'
 import { FORM_LAYOUT_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { projectEntityListApi } from '@/api/gen/project'
+import { genProjectApi } from '@/api/gen/project'
 import { Check, Close } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
@@ -59,10 +59,10 @@ const emit = defineEmits(['refreshDataList'])
 const projectList = ref([])
 
 const state: FormOptions = reactive({
-	submitApi: tableSubmitApi,
-	detailApi: tableDetailApi,
+	submitApi: genTableApi.submit,
+	detailApi: genTableApi.detail,
 	initBefore: () => {
-		projectEntityListApi().then(res => {
+		genProjectApi.entityList().then(res => {
 			projectList.value = res.data
 		})
 	},

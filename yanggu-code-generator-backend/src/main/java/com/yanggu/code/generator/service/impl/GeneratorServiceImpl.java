@@ -306,7 +306,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
 
-        TemplateGroupEntity templateGroup = templateGroupService.getById(tableTemplateGroupId);
+        TemplateGroupEntity templateGroup = templateGroupService.getById(tableTemplateGroupId, true);
         List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
         List<Long> templateIdList = tableQuery.getTemplateIdList();
         if (CollUtil.isNotEmpty(templateIdList)) {
@@ -332,7 +332,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<Long> templateIdList = enumQuery.getTemplateIdList();
 
         //查询项目对应的枚举模板
-        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
+        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId(), true);
         List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
         List<TemplateContentVO> list = new ArrayList<>();
         templateList.stream()
@@ -355,7 +355,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
         //获取项目模板组信息
         Long projectTemplateGroupId = project.getProjectTemplateGroupId();
-        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId);
+        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId, true);
         List<TemplateVO> projecTemplateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
 
         ProjectModel projectModel = buildProjectDataModel(project, dataSource);
@@ -391,7 +391,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         //查询项目对应的枚举模板
-        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId());
+        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId(), true);
         List<TemplateVO> templateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList()).stream()
                 .filter(template -> CollUtil.isEmpty(enumTemplateIdList) || enumTemplateIdList.contains(template.getId()))
                 .toList();
