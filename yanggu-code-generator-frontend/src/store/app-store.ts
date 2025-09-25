@@ -15,6 +15,7 @@ export interface NavbarTag {
 	icon: string
 }
 
+// iframe数据
 export interface IframeInfo {
 	// 路由名称
 	name: string
@@ -24,6 +25,7 @@ export interface IframeInfo {
 	fullPath: string
 }
 
+// 布局大小
 export type LayOutSize = 'large' | 'default' | 'small'
 
 export const useAppStore = defineStore(

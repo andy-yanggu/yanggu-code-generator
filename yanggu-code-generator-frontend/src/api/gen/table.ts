@@ -12,7 +12,7 @@ export const genTableApi = {
 	},
 	// 同步表
 	sync: (id: number) => {
-		return service.put(baseUrl + '/sync?id=' + id)
+		return service.put(baseUrl + '/sync', { params: { id } })
 	},
 	// 表批量生成代码检测
 	generateCheck: (idList: number[]) => {

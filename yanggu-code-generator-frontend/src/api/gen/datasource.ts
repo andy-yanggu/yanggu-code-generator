@@ -8,6 +8,6 @@ export const genDataSourceApi = {
 	...createCrudApi(baseUrl),
 	// 测试数据源接口
 	test: (id: number) => {
-		return service.get(baseUrl + '/test?id=' + id)
+		return service.get(baseUrl + '/test', { params: { id } })
 	}
 }

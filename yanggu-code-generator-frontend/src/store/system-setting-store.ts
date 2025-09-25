@@ -44,7 +44,10 @@ interface SystemSetting {
 	menuFoldWidth: number
 }
 
+// 菜单展开宽度
 export const menuExpandWidthList = [180, 210, 240]
+
+// 菜单折叠宽度
 export const menuFoldWidthList = [50, 60, 70]
 
 // 默认配置
@@ -65,7 +68,7 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenFullscreen: true,
 	isOpenThemeSwitch: true,
 	isOpenMenuCollapseAnimation: true,
-	isOpenMenuUniqueOpened: true,
+	isOpenMenuUniqueOpened: false,
 	isOpenMenuCollapseButton: true,
 	menuExpandWidth: menuExpandWidthList.length >= 3 ? menuExpandWidthList[1] : menuExpandWidthList[0],
 	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0]
@@ -81,8 +84,8 @@ export const useSystemSettingStore = defineStore(
 			Object.assign(state, defaultSystemSetting)
 		}
 
-		// 注意这里要用 toRefs 保持响应式
 		return {
+			// 注意这里要用 toRefs 保持响应式
 			...toRefs(state),
 			resetSettings
 		}

@@ -235,15 +235,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
+import {computed, nextTick, reactive, ref, watch} from 'vue'
+import {Action, ElLoading, ElMessageBox, TabsPaneContext} from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import { genTemplateApi } from '@/api/gen/template'
-import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
-import { useFullscreen } from '@vueuse/core'
-import { ElMessage } from 'element-plus/es'
+import {genTemplateApi} from '@/api/gen/template'
+import {
+  Back,
+  CloseBold,
+  Delete,
+  DocumentChecked,
+  Edit,
+  Expand,
+  Fold,
+  Refresh,
+  Remove,
+  Right
+} from '@element-plus/icons-vue'
+import {useFullscreen} from '@vueuse/core'
+import {ElMessage} from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 
@@ -1120,8 +1131,8 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 		const message = `${fileNameJoin}已修改未保存，是否保存后再关闭？`
 		ElMessageBox.confirm(message, '提示', {
 			distinguishCancelAndClose: true,
-			confirmButtonText: '保存',
-			cancelButtonText: '不保存',
+			confirmButtonText: '是(Y)',
+			cancelButtonText: '否(N)',
 			type: 'warning'
 		})
 			.then(() => {

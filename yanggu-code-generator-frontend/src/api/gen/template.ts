@@ -1,6 +1,5 @@
 import service from '@/utils/request'
 import { createCrudApi } from '@/api/common'
-import qs from 'qs'
 
 const baseUrl: string = '/gen/template'
 
@@ -9,11 +8,11 @@ export const genTemplateApi = {
 	...createCrudApi(baseUrl),
 	// 查询详情
 	detail: (queryForm: any) => {
-		return service.get(baseUrl + '/detail?' + qs.stringify(queryForm))
+		return service.get(baseUrl + '/detail', { params: queryForm })
 	},
 	// 树形数据
 	treeData: (templateGroupId: number) => {
-		return service.get(baseUrl + '/tree?templateGroupId=' + templateGroupId)
+		return service.get(baseUrl + '/tree', { params: { templateGroupId } })
 	},
 	// 修改模板内容
 	updateContent: (dataForm: any) => {

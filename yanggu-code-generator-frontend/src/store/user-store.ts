@@ -498,7 +498,7 @@ export const useUserStore = defineStore(
 		const setData = (loginVO: any) => {
 			Object.assign(userInfo, loginVO.userInfo)
 			Object.assign(tokenInfo, loginVO.tokenInfo)
-			menuList.value = [...loginVO.menuList]
+			menuList.value = loginVO.menuList
 			permissionList.value = loginVO.permissionList
 		}
 
