@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { Refresh } from '@element-plus/icons-vue'
-import { usePageRefresher } from '@/hooks/use-refuresh-current-page'
+import { usePageRefresher } from '@/hooks/use-refresh-current-page'
 
 defineOptions({
 	name: 'RefreshCurrentPage'

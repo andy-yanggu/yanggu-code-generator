@@ -215,7 +215,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     public ResponseEntity<byte[]> export(List<Long> idList) {
         List<TemplateGroupEntity> list = idList.stream()
-                .map(this::getById)
+                .map(temp -> getById(temp, true))
                 .toList();
 
         //转换成导出对象

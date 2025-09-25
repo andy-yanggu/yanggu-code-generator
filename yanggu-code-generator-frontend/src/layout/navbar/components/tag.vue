@@ -47,7 +47,7 @@ import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
-import { usePageRefresher } from '@/hooks/use-refuresh-current-page'
+import { usePageRefresher } from '@/hooks/use-refresh-current-page'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
 defineOptions({

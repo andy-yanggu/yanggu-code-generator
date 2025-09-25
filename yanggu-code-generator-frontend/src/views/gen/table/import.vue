@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" title="导入数据库表" :close-on-click-modal="false" width="70%">
-		<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules">
+		<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules" @keyup.enter="getDataList()">
 			<el-form-item label="项目" prop="projectId">
 				<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
 					<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">

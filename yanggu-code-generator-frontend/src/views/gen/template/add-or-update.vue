@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="路径" prop="templatePath">
 				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
 			</el-form-item>

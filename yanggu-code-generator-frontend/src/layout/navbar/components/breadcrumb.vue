@@ -58,7 +58,7 @@ const setBreadcrumb = (fullPath: string) => {
 	for (const path of paths) {
 		currentPath += `/${path}`
 		const breadcrumb = findRouteByPath(currentPath)
-		if (breadcrumb && breadcrumb.title && breadcrumb.icon) {
+		if (breadcrumb.title) {
 			matched.push(breadcrumb)
 		}
 	}
