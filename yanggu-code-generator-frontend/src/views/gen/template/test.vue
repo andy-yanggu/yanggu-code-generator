@@ -4,8 +4,12 @@
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
 				<div class="aside-header">
-					<el-text tag="b">请选择项目、表或者枚举</el-text>
-					<el-button :icon="Refresh" size="small" type="primary" @click="refreshCascaderData()">刷新</el-button>
+					<el-tooltip content="刷新级联数据" placement="top">
+						<el-button :icon="Refresh" size="small" type="primary" :loading="loading" @click="refreshCascaderData()">刷新</el-button>
+					</el-tooltip>
+					<el-tooltip content="根据当前选择重新渲染模板" placement="top">
+						<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
+					</el-tooltip>
 				</div>
 				<el-cascader
 					v-model="testData.cascaderValue"
@@ -30,20 +34,20 @@
 							</el-icon>
 						</el-col>
 						<!-- 文件路径	-->
-						<el-col :span="testData.activeName === 'template' ? 19 : 17">
+						<el-col :span="testData.activeName === 'template' ? 21 : 19">
 							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
 								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
 									路径：{{ fullFilePath }}
 								</el-text>
 							</el-tooltip>
 						</el-col>
-						<el-col :span="testData.activeName === 'template' ? 4 : 6" style="text-align: right">
+						<el-col :span="testData.activeName === 'template' ? 2 : 4" style="text-align: right">
 							<el-button
 								v-if="testData.activeName === 'template'"
 								size="small"
 								type="primary"
 								:icon="Edit"
-								:loading="submitLoading"
+								:loading="loading"
 								:disabled="testData.editTemplateContent === testData.originalTemplateContent"
 								@click="saveTemplateContent()"
 							>
@@ -64,12 +68,11 @@
 									:icon="DocumentAdd"
 									:disabled="!testData.cascaderValue"
 									type="success"
-									:loading="submitLoading"
+									:loading="loading"
 									@click="generatorHandler()"
 								>
 									生成
 								</el-button>
-								<el-button size="small" :icon="Refresh" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
 							</div>
 						</el-col>
 					</el-row>
@@ -107,7 +110,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import { genTemplateApi } from '@/api/gen/template'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
-import { CopyDocument, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
+import { CopyDocument, Document, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { copyToClipboard } from '@/utils/tool'
 
@@ -148,7 +151,7 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	await refreshCascaderData()
 }
 
-const submitLoading = ref(false)
+const loading = ref(false)
 
 const fullFilePath = computed(() => {
 	return testData.activeName === 'template' ? testData.fullFilePath : testData.renderedFileName
@@ -156,7 +159,7 @@ const fullFilePath = computed(() => {
 
 // 保存模板内容
 const saveTemplateContent = () => {
-	submitLoading.value = true
+	loading.value = true
 	const dataForm = {
 		id: testData.templateId,
 		templateContent: testData.editTemplateContent
@@ -171,7 +174,7 @@ const saveTemplateContent = () => {
 			testData.originalTemplateContent = testData.editTemplateContent
 		})
 		.finally(() => {
-			submitLoading.value = false
+			loading.value = false
 		})
 }
 
@@ -216,7 +219,9 @@ const refreshCascaderData = async () => {
 		templateGroupType,
 		templateGroupId: testData.templateGroupId
 	}
+	loading.value = true
 	const res = await genTemplateGroupApi.cascaderData(queryForm)
+	loading.value = false
 	if (!res.data.length) {
 		if (templateGroupType === 0) {
 			ElMessage.warning('请先关联项目')
@@ -250,12 +255,12 @@ const refreshHandler = () => {
 }
 
 const generatorHandler = () => {
-	let id
+	let id: number
 	const projectId = Number(testData.cascaderValue[0].split('_')[1])
 	if (testData.cascaderValue.length > 1) {
-		id = testData.cascaderValue[1].split('_')[1]
+		id = Number.parseInt(testData.cascaderValue[1].split('_')[1])
 	} else {
-		id = testData.cascaderValue[0].split('_')[1]
+		id = Number.parseInt(testData.cascaderValue[0].split('_')[1])
 	}
 	const dataForm = {
 		id: id,
@@ -264,7 +269,7 @@ const generatorHandler = () => {
 	}
 	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 	if (generatorType === 0) {
-		submitLoading.value = true
+		loading.value = true
 		genGeneratorApi
 			.downloadSingle(dataForm)
 			.then(() => {
@@ -274,10 +279,10 @@ const generatorHandler = () => {
 				})
 			})
 			.finally(() => {
-				submitLoading.value = false
+				loading.value = false
 			})
 	} else if (generatorType === 1) {
-		submitLoading.value = true
+		loading.value = true
 		genGeneratorApi
 			.singleLocal(dataForm)
 			.then(() => {
@@ -287,7 +292,7 @@ const generatorHandler = () => {
 				})
 			})
 			.finally(() => {
-				submitLoading.value = false
+				loading.value = false
 			})
 	}
 }
@@ -309,9 +314,9 @@ defineExpose({ init })
 .aside-header {
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 20px;
+	justify-content: center; /* 水平居中 */
+	align-items: center; /* 垂直居中 */
+	margin: 0 0 20px 0; /* 去掉左外边距，只保留下边距 */
 }
 
 .aside-scroll {
