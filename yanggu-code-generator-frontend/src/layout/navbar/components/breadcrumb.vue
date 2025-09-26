@@ -45,6 +45,9 @@ onMounted(() => {
 watch(
 	() => route.fullPath,
 	newPath => {
+		if (newPath.startsWith('/redirect')) {
+			return
+		}
 		setBreadcrumb(newPath)
 	}
 )

@@ -186,7 +186,8 @@ const handleCascaderChange = async val => {
 		templateGroupId: testData.templateGroupId,
 		templateGroupType: testData.templateGroupType,
 		templateId: testData.templateId,
-		templateContent: testData.editTemplateContent
+		templateContent: testData.editTemplateContent,
+		testId: 0
 	}
 	if (testData.templateGroupType === 0) {
 		queryForm.testId = testData.templateId
@@ -200,9 +201,9 @@ const handleCascaderChange = async val => {
 		text: '模板渲染中...'
 	})
 	try {
-		const res = await genGeneratorApi.templateTest(queryForm)
-		testData.renderedFileName = res.data.filePath
-		testData.renderedTemplateContent = res.data.content
+		const data = await genGeneratorApi.templateTest(queryForm)
+		testData.renderedFileName = data.filePath
+		testData.renderedTemplateContent = data.content
 		nextTick(() => {
 			testData.activeName = 'render'
 		})
@@ -220,9 +221,9 @@ const refreshCascaderData = async () => {
 		templateGroupId: testData.templateGroupId
 	}
 	loading.value = true
-	const res = await genTemplateGroupApi.cascaderData(queryForm)
+	const data = await genTemplateGroupApi.cascaderData(queryForm)
 	loading.value = false
-	if (!res.data.length) {
+	if (!data.length) {
 		if (templateGroupType === 0) {
 			ElMessage.warning('请先关联项目')
 		} else if (templateGroupType === 1) {
@@ -232,19 +233,19 @@ const refreshCascaderData = async () => {
 		}
 		return
 	}
-	testData.cascaderData = res.data
+	testData.cascaderData = data
 
 	// 获取模板详情
 	const detailQueryForm = {
 		id: testData.templateId,
 		setPath: true
 	}
-	genTemplateApi.detail(detailQueryForm).then(res => {
-		testData.templateName = res.data.templateName
-		testData.originalFileName = res.data.fileName
-		testData.originalTemplateContent = res.data.templateContent
-		testData.editTemplateContent = res.data.templateContent
-		testData.fullFilePath = res.data.generatorPath
+	genTemplateApi.detail(detailQueryForm).then(data => {
+		testData.templateName = data.templateName
+		testData.originalFileName = data.fileName
+		testData.originalTemplateContent = data.templateContent
+		testData.editTemplateContent = data.templateContent
+		testData.fullFilePath = data.generatorPath
 	})
 }
 

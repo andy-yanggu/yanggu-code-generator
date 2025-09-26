@@ -262,11 +262,11 @@ const init = async (row: any) => {
 			genFieldTypeApi.list()
 		])
 
-		fieldList.value = fieldRes.data
-		enumList.value = enumRes.data
+		fieldList.value = fieldRes
+		enumList.value = enumRes
 
 		// 设置属性类型值
-		fieldTypeRes.data.forEach((item: any) => {
+		fieldTypeRes.forEach((item: any) => {
 			typeList.value.push({ label: item, value: item })
 		})
 		// 增加Object类型

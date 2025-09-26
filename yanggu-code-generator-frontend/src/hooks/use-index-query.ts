@@ -127,15 +127,15 @@ export const useIndexQuery = (options: IHooksOptions) => {
 
 		//调用接口
 		state.dataListApi!(queryForm)
-			.then((res: any) => {
+			.then(data => {
 				if (state.isPage) {
-					state.dataList = res.data.records
-					state.total = res.data.total
+					state.dataList = data.records
+					state.total = data.total
 				} else {
-					state.dataList = res.data
-					state.total = res.data.length
+					state.dataList = data
+					state.total = data.length
 					state.pageNum = 1
-					state.pageSize = res.data.length
+					state.pageSize = data.length
 				}
 			})
 			.finally(() => {

@@ -160,8 +160,8 @@ const projectList = ref([])
 const previewKey = ref('')
 
 const getProjectList = () => {
-	genProjectApi.entityList().then((res: any) => {
-		projectList.value = res.data
+	genProjectApi.entityList().then(data => {
+		projectList.value = data
 	})
 }
 

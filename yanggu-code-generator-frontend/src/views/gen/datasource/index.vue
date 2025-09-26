@@ -124,8 +124,8 @@ const state: IHooksOptions = reactive({
 const dialogMode = ref<'add' | 'update' | 'copy'>('add')
 
 const datasourceTestHandle = (id: number) => {
-	genDataSourceApi.test(id).then((res: any) => {
-		const { result, message } = res.data
+	genDataSourceApi.test(id).then(data => {
+		const { result, message } = data
 		if (result === true) {
 			ElMessage.success(message)
 		} else {

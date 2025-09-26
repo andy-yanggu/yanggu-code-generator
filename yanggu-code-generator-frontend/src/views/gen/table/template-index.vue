@@ -116,26 +116,34 @@ const generateCode = () => {
 	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
 		generatorLoading.value = true
-		genGeneratorApi.tableDownloadZip(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到浏览器',
-				duration: 1000
+		genGeneratorApi
+			.tableDownloadZip(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到浏览器',
+					duration: 1000
+				})
+				dialogVisible.value = false
+				emit('clearSelection')
 			})
-			generatorLoading.value = false
-			dialogVisible.value = false
-			emit('clearSelection')
-		})
+			.finally(() => {
+				generatorLoading.value = false
+			})
 	} else if (generatorType === 1) {
 		generatorLoading.value = true
-		genGeneratorApi.tableDownloadLocal(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到服务器本地',
-				duration: 1000
+		genGeneratorApi
+			.tableDownloadLocal(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到服务器本地',
+					duration: 1000
+				})
+				dialogVisible.value = false
+				emit('clearSelection')
 			})
-			generatorLoading.value = false
-			dialogVisible.value = false
-			emit('clearSelection')
-		})
+			.finally(() => {
+				generatorLoading.value = false
+			})
 	} else {
 		ElMessage.warning('生成类型异常')
 	}

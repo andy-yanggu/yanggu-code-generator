@@ -182,8 +182,8 @@ const projectList = ref([])
 const previewKey = ref()
 
 const getProjectList = () => {
-	genProjectApi.entityList().then(res => {
-		projectList.value = res.data
+	genProjectApi.entityList().then(data => {
+		projectList.value = data
 	})
 }
 
@@ -213,8 +213,8 @@ const generatorCodeBatch = () => {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
-	genTableApi.generateCheck(data).then(res => {
-		const { checkResult, tableTemplateGroupId, generatorType } = res.data
+	genTableApi.generateCheck(data).then(data => {
+		const { checkResult, tableTemplateGroupId, generatorType } = data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
 		} else {
@@ -228,13 +228,11 @@ const syncHandle = (row: any) => {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'
-	})
-		.then(() => {
-			genTableApi.sync(row.id).then(() => {
-				ElMessage.success('字段同步成功')
-			})
+	}).then(() => {
+		genTableApi.sync(row.id).then(() => {
+			ElMessage.success('字段同步成功')
 		})
-		.catch(() => {})
+	})
 }
 
 const clearSelectionHandler = () => {

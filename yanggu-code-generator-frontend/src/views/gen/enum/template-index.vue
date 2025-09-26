@@ -122,26 +122,35 @@ const generateCode = () => {
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
 		generatorLoading.value = true
-		genGeneratorApi.enumDownloadZip(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到本地，请查看',
-				duration: 1000
+		genGeneratorApi
+			.enumDownloadZip(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到本地，请查看',
+					duration: 1000
+				})
+				dialogVisible.value = false
+				emit('clearSelection')
 			})
-			generatorLoading.value = false
-			emit('clearSelection')
-		})
+			.finally(() => {
+				generatorLoading.value = false
+			})
 	} else if (generatorType === 1) {
 		generatorLoading.value = true
-		genGeneratorApi.enumDownloadLocal(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到服务器本地，请查看',
-				duration: 1000
+		genGeneratorApi
+			.enumDownloadLocal(dataForm)
+			.then(() => {
+				ElMessage.success({
+					message: '代码已经下载到服务器本地，请查看',
+					duration: 1000
+				})
+				dialogVisible.value = false
+				emit('clearSelection')
 			})
-			generatorLoading.value = false
-			emit('clearSelection')
-		})
+			.finally(() => {
+				generatorLoading.value = false
+			})
 	}
-	dialogVisible.value = false
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)

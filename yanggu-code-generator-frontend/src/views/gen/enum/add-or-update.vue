@@ -37,8 +37,8 @@ import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const projectList = ref([])
 const getProjectList = () => {
-	genProjectApi.entityList().then((res: any) => {
-		projectList.value = res.data
+	genProjectApi.entityList().then(data => {
+		projectList.value = data
 	})
 }
 

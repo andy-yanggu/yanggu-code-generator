@@ -1,29 +1,36 @@
 import axios from 'axios'
 import qs from 'qs'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store/user-store'
+import { useRouter } from 'vue-router'
 
 // axios实例
 const service = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 60000,
 	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-	paramsSerializer: params => qs.stringify(params, { indices: false }),
+	paramsSerializer: params => qs.stringify(params, { indices: false }), // 使用qs.stringify进行序列化
 	withCredentials: true // 允许携带cookie
 })
 
 // 请求拦截器
 service.interceptors.request.use(
-	(config: any) => {
+	config => {
 		// 追加时间戳，防止GET请求缓存
 		if (config.method?.toUpperCase() === 'GET') {
 			config.params = { ...config.params, t: new Date().getTime() }
 		}
 
-		if (Object.values(config.headers).includes('application/x-www-form-urlencoded')) {
+		// 处理表单数据
+		if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
 			config.data = qs.stringify(config.data)
 		}
 
-		//添加token
+		// 处理token
+		const userStore = useUserStore()
+		if (userStore.tokenInfo) {
+			config.headers.Authorization = 'Bearer ' + userStore.tokenInfo.accessToken
+		}
 
 		return config
 	},
@@ -35,32 +42,121 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
 	response => {
-		if (response.status !== 200) {
-			return Promise.reject(new Error(response.statusText || 'Error'))
+		const { config, status, statusText, data } = response
+
+		// 处理 HTTP 状态码错误
+		if (status !== 200) {
+			if (!config.noErrorMessage) {
+				ElMessage.error(statusText || '网络错误')
+			}
+			return Promise.reject(new Error(statusText || '网络错误'))
 		}
 
-		//如果是文件下载请求
-		if (response.config.responseType === 'blob') {
-			//直接返回响应数据
+		// 文件下载直接返回
+		if (config.responseType === 'blob') {
 			return response
 		}
 
-		const res = response.data
+		const res = data
+
 		// 响应成功
 		if (res.code === 200) {
-			return res
+			return config.rawResponse === false ? res : res.data
 		}
 
-		// 错误提示
-		ElMessage.error(res.message)
+		// 重定向到登录页面
+		if (res.code === 401) {
+			ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+				confirmButtonText: '重新登录',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				const userStore = useUserStore()
+				userStore.clearAll()
+				const router = useRouter()
+				router.replace({
+					path: '/login',
+					query: {
+						redirect: encodeURIComponent(router.currentRoute.value.fullPath || '/')
+					}
+				})
+			})
+			return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+		}
 
-		return Promise.reject(new Error(res.message || 'Error'))
+		// 业务错误提示：只有没有设置 noErrorMessage 才提示
+		if (!config.noErrorMessage) {
+			ElMessage.error(res.message || '请求错误')
+		}
+
+		return Promise.reject(new Error(res.message || '请求错误'))
 	},
 	error => {
-		ElMessage.error(error.message)
+		const config = error.config || {}
+
+		// 网络或请求错误提示
+		if (!config.noErrorMessage) {
+			ElMessage.error(error.message || '请求失败')
+		}
+
 		return Promise.reject(error)
 	}
 )
 
 // 导出 axios 实例
 export default service
+
+/**
+ * 统一文件下载工具
+ *
+ * @param url 请求地址
+ * @param params 请求参数
+ * @param noErrorMessage
+ */
+export const downloadFile = (url: string, params?: any, noErrorMessage = false): Promise<void> => {
+	return new Promise((resolve, reject) => {
+		service
+			.get(url, {
+				responseType: 'blob',
+				params,
+				noErrorMessage
+			})
+			.then(response => {
+				const contentDisposition = response.headers['content-disposition']
+				let filename = 'download'
+
+				if (contentDisposition) {
+					const filenameStarMatch = contentDisposition.match(/filename\*=['"]?(?:UTF-8['"]?)?''?([^;]+)/i)
+					const filenameMatch = contentDisposition.match(/filename=['"]?([^;]+)['"]?/i)
+					filename = filenameStarMatch?.[1]
+						? decodeURIComponent(filenameStarMatch[1])
+						: filenameMatch?.[1]
+							? decodeURIComponent(filenameMatch[1].replace(/\+/g, '%20'))
+							: filename
+				}
+
+				const downloadUrl = window.URL.createObjectURL(new Blob([response.data]))
+				const a = document.createElement('a')
+				a.href = downloadUrl
+				a.download = filename
+				document.body.appendChild(a)
+				a.click()
+				window.URL.revokeObjectURL(downloadUrl)
+				document.body.removeChild(a)
+
+				resolve()
+			})
+			.catch(error => {
+				if (!noErrorMessage) {
+					let errorMessage = '导出失败，请稍后重试或联系管理员'
+					if (error.response) {
+						errorMessage = `导出失败，服务器返回状态码：${error.response.status}`
+					} else if (error.request) {
+						errorMessage = '导出失败，请检查网络连接或稍后重试'
+					}
+					ElMessage.error(errorMessage)
+				}
+				reject(error)
+			})
+	})
+}

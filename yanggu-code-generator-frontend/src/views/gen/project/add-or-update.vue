@@ -104,22 +104,21 @@ import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 const emit = defineEmits(['refreshDataList'])
 
 const getList = () => {
-	//数据源下拉
-	genDataSourceApi.entityList().then(res => {
-		datasourceList.value = res.data
+	// 数据源下拉
+	genDataSourceApi.entityList().then(data => {
+		datasourceList.value = data
 	})
 
-	//模板组下拉
-	genTemplateGroupApi.entityList().then(res => {
-		const data = res.data
+	// 模板组下拉
+	genTemplateGroupApi.entityList().then(data => {
 		projectTemplateGroupList.value = data.filter((item: any) => item.type === 0)
 		tableTemplateGroupList.value = data.filter((item: any) => item.type === 1)
 		enumTemplateGroupList.value = data.filter((item: any) => item.type === 2)
 	})
 
-	//基类下拉
-	genBaseClassApi.entityList().then(res => {
-		baseClassList.value = res.data
+	// 基类下拉
+	genBaseClassApi.entityList().then(data => {
+		baseClassList.value = data
 	})
 }
 

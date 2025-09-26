@@ -196,9 +196,9 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 			previewProductId: id,
 			generatorProductType: generatorProductType
 		}
-		const res = await genGeneratorApi.preview(previewData)
-		templateTreeData.treeList = res.data
-		const templateContentList = buildFileList(res.data)
+		const data: Tree[] = await genGeneratorApi.preview(previewData)
+		templateTreeData.treeList = data
+		const templateContentList = buildFileList(data)
 		templateTreeData.dataList = templateContentList
 		templateTreeData.visible = true
 		await nextTick()

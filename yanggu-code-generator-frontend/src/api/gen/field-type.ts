@@ -7,7 +7,7 @@ export const genFieldTypeApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 获取字段类型列表
-	list: () => {
+	list: (): Promise<any[]> => {
 		return service.get(baseUrl + '/distinctList')
 	}
 }

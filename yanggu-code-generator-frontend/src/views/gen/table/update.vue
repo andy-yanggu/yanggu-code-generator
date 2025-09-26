@@ -62,8 +62,8 @@ const state: FormOptions = reactive({
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
 	initBefore: () => {
-		genProjectApi.entityList().then(res => {
-			projectList.value = res.data
+		genProjectApi.entityList().then(data => {
+			projectList.value = data
 		})
 	},
 	dataForm: {

@@ -1,5 +1,4 @@
-import service from '@/utils/request'
-import { downloadFile } from '@/utils/download'
+import service, { downloadFile } from '@/utils/request'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/templateGroup'
@@ -24,7 +23,7 @@ export const genTemplateGroupApi = {
 		})
 	},
 	// 获取级联数据
-	cascaderData: (queryForm: any) => {
+	cascaderData: (queryForm: any): Promise<any> => {
 		return service.get(baseUrl + '/cascaderData', { params: queryForm })
 	}
 }

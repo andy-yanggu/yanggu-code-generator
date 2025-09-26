@@ -235,26 +235,15 @@
 </template>
 
 <script setup lang="ts">
-import {computed, nextTick, reactive, ref, watch} from 'vue'
-import {Action, ElLoading, ElMessageBox, TabsPaneContext} from 'element-plus'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import {genTemplateApi} from '@/api/gen/template'
-import {
-  Back,
-  CloseBold,
-  Delete,
-  DocumentChecked,
-  Edit,
-  Expand,
-  Fold,
-  Refresh,
-  Remove,
-  Right
-} from '@element-plus/icons-vue'
-import {useFullscreen} from '@vueuse/core'
-import {ElMessage} from 'element-plus/es'
+import { genTemplateApi } from '@/api/gen/template'
+import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
+import { useFullscreen } from '@vueuse/core'
+import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 
@@ -449,10 +438,10 @@ const init = async () => {
 	isCollapse.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
-		const res = await genTemplateApi.treeData(props.templateGroupId)
-		templateTreeData.treeList = res.data
+		const data = await genTemplateApi.treeData(props.templateGroupId)
+		templateTreeData.treeList = data
 		buildTree(templateTreeData.treeList)
-		const templateContentList = buildFileList(res.data)
+		const templateContentList = buildFileList(data)
 		templateTreeData.visible = true
 		await nextTick()
 

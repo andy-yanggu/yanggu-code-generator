@@ -7,7 +7,7 @@ export const genProjectApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 项目下的表
-	tableList: (queryForm: any) => {
+	tableList: (queryForm: any): Promise<any> => {
 		return service.post(baseUrl + '/tableList', queryForm)
 	}
 }

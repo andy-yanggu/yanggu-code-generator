@@ -146,10 +146,10 @@ const generateCode = () => {
 					message: '代码已经下载到浏览器',
 					duration: 1000
 				})
-				generateCodeLoading.value = false
+				dialogVisible.value = false
 			})
 			.finally(() => {
-				dialogVisible.value = false
+				generateCodeLoading.value = false
 			})
 	} else if (generatorType === 1) {
 		generateCodeLoading.value = true
@@ -162,7 +162,7 @@ const generateCode = () => {
 				})
 				dialogVisible.value = false
 			})
-			.catch(() => {
+			.finally(() => {
 				generateCodeLoading.value = false
 			})
 	}

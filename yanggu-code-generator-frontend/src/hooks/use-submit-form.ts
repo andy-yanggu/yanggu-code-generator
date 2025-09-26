@@ -42,8 +42,8 @@ export const useSubmitForm = (options: FormOptions) => {
 
 		if (id) {
 			// 获取详情数据
-			options.detailApi(id).then(res => {
-				Object.assign(options.dataForm, res.data)
+			options.detailApi(id).then(data => {
+				Object.assign(options.dataForm, data)
 
 				// 获取详情之后调用
 				options.initAfter?.()
@@ -69,13 +69,13 @@ export const useSubmitForm = (options: FormOptions) => {
 			const message = options.message || (options.dataForm.id ? '修改成功' : '新增成功')
 			options
 				.submitApi(options.dataForm)
-				.then(resp => {
+				.then(data => {
 					ElMessage.success({
 						message: message,
 						duration: options.duration || 500
 					})
 					visible.value = false
-					options.emit('refreshDataList', resp.data)
+					options.emit('refreshDataList', data)
 				})
 				.finally(() => {
 					submitLoading.value = false

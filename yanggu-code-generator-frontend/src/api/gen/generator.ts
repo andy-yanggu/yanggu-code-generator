@@ -1,5 +1,4 @@
-import service from '@/utils/request'
-import { downloadFile } from '@/utils/download'
+import service, { downloadFile } from '@/utils/request'
 
 const baseUrl: string = '/gen/generator'
 
@@ -41,7 +40,7 @@ export const genGeneratorApi = {
 		return service.post(baseUrl + '/enum/downloadLocal', dataForm)
 	},
 	// 模板测试
-	templateTest: (queryForm: any) => {
+	templateTest: (queryForm: any): Promise<any> => {
 		return service.post(baseUrl + '/template/test', queryForm)
 	}
 }

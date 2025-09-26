@@ -36,7 +36,9 @@
 			<el-table-column prop="tableComment" label="注释" header-align="center" align="center"></el-table-column>
 		</el-table>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :disabled="state.dataListSelections!.length === 0" :loading="submitLoading" @click="submitHandle()">
+				确定
+			</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -80,8 +82,8 @@ const init = () => {
 	// 重置表单数据
 	resetQueryHandle()
 
-	genProjectApi.entityList().then(res => {
-		projectList.value = res.data
+	genProjectApi.entityList().then(data => {
+		projectList.value = data
 	})
 }
 
@@ -97,17 +99,21 @@ const submitHandle = () => {
 	}
 	submitLoading.value = true
 
-	genTableApi.import(dataForm).then(() => {
-		ElMessage.success({
-			message: '导入成功',
-			duration: 500,
-			onClose: () => {
-				submitLoading.value = false
-				visible.value = false
-				emit('refreshDataList')
-			}
+	genTableApi
+		.import(dataForm)
+		.then(() => {
+			ElMessage.success({
+				message: '导入成功',
+				duration: 500,
+				onClose: () => {
+					visible.value = false
+					emit('refreshDataList')
+				}
+			})
 		})
-	})
+		.finally(() => {
+			submitLoading.value = false
+		})
 }
 
 const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
