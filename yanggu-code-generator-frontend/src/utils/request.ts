@@ -5,7 +5,7 @@ import { useUserStore } from '@/store/user-store'
 import { useRouter } from 'vue-router'
 
 // axios实例
-const service = axios.create({
+export const service = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	timeout: 60000,
 	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -102,9 +102,6 @@ service.interceptors.response.use(
 		return Promise.reject(error)
 	}
 )
-
-// 导出 axios 实例
-export default service
 
 /**
  * 统一文件下载工具

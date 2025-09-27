@@ -1,8 +1,9 @@
-import service, { downloadFile } from '@/utils/request'
+import { downloadFile, service } from '@/utils/request'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/templateGroup'
 
+// 模板组API
 export const genTemplateGroupApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),

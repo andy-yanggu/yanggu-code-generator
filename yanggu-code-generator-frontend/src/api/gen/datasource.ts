@@ -1,8 +1,9 @@
-import service from '@/utils/request'
+import { service } from '@/utils/request'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/datasource'
 
+// 数据源API
 export const genDataSourceApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),

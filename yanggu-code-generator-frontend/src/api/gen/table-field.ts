@@ -1,8 +1,9 @@
-import service from '@/utils/request'
+import { service } from '@/utils/request'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/tableField'
 
+// 表字段API
 export const genTableFieldApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),

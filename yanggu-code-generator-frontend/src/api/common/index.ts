@@ -1,4 +1,4 @@
-import service from '@/utils/request'
+import { service } from '@/utils/request'
 
 // 所有可能的CRUD方法签名
 interface CrudApi {

@@ -34,8 +34,8 @@
 					<el-breadcrumb>
 						<el-breadcrumb-item v-for="breadcrumbItem in item.breadcrumbItemList" :key="breadcrumbItem.title">
 							<span class="breadcrumb-content">
-								<svg-icon :icon="breadcrumbItem.icon"></svg-icon>
-								<el-text>{{ breadcrumbItem.title }}</el-text>
+								<svg-icon :icon="breadcrumbItem.icon" is-pointer class="breadcrumb-icon"></svg-icon>
+								<el-text class="breadcrumb-title">{{ breadcrumbItem.title }}</el-text>
 							</span>
 						</el-breadcrumb-item>
 					</el-breadcrumb>
@@ -326,15 +326,28 @@ onUnmounted(() => {
 	padding: 8px 12px;
 	cursor: pointer;
 	border-radius: 4px;
-	transition: all 0.2s ease;
 	position: relative;
 	overflow: hidden;
 	font-size: 13px;
+	transition:
+		color 0.3s,
+		background-color 0.3s;
 }
 .menu-item:hover,
 .menu-item.active {
-	background-color: var(--el-color-primary);
-	color: white;
+	box-shadow:
+		inset 3px 0 0 var(--theme-menu-border-color),
+		inset -3px 0 0 var(--theme-menu-border-color);
+	background-color: var(--theme-menu-hover-bg-color);
+	color: var(--theme-menu-hover-color);
+}
+.menu-item:hover,
+.menu-item.active .breadcrumb-content .breadcrumb-title {
+	color: var(--theme-menu-hover-color);
+}
+.menu-item:hover,
+.menu-item.active .breadcrumb-content .breadcrumb-icon {
+	color: var(--theme-menu-hover-color);
 }
 .menu-item::before {
 	content: '';
@@ -343,7 +356,6 @@ onUnmounted(() => {
 	left: -100%;
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
 	transition: left 0.4s;
 }
 .menu-item:hover::before,
@@ -394,6 +406,7 @@ onUnmounted(() => {
 	color: #8c8c8c;
 }
 .breadcrumb-content {
+	cursor: pointer;
 	display: inline-flex;
 	align-items: center; /* 垂直居中 */
 	gap: 5px; /* 控制图标和文字间距 */

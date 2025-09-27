@@ -1,7 +1,8 @@
-import service, { downloadFile } from '@/utils/request'
+import { downloadFile, service } from '@/utils/request'
 
 const baseUrl: string = '/gen/generator'
 
+// 生成代码API
 export const genGeneratorApi = {
 	// 预览代码
 	preview: (dataForm: any) => {

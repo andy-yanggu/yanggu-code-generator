@@ -1,8 +1,9 @@
-import service from '@/utils/request'
+import { service } from '@/utils/request'
 import { createCrudApi } from '@/api/common'
 
 const baseUrl: string = '/gen/enum'
 
+// 枚举API
 export const genEnumApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),

@@ -444,7 +444,7 @@ defineExpose({
 	width: 100vw;
 	height: 100vh;
 	z-index: 3000;
-	background: white;
+	background: var(--theme-main-bg-color);
 	margin: 0 !important;
 	padding: 20px;
 }
