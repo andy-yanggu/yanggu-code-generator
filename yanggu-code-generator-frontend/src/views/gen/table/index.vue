@@ -208,17 +208,17 @@ const generatorCode = (item: any) => {
 }
 
 const generatorCodeBatch = () => {
-	const data = state.dataListSelections ? state.dataListSelections : []
-	if (data.length === 0) {
+	const dataList = state.dataListSelections ? state.dataListSelections : []
+	if (dataList.length === 0) {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
-	genTableApi.generateCheck(data).then(data => {
+	genTableApi.generateCheck(dataList).then(data => {
 		const { checkResult, tableTemplateGroupId, generatorType } = data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
 		} else {
-			templateIndexRef.value.init(tableTemplateGroupId, generatorType, data)
+			templateIndexRef.value.init(tableTemplateGroupId, generatorType, dataList)
 		}
 	})
 }
