@@ -334,8 +334,8 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setAuthor(project.getAuthor());
         table.setFormLayout(FormLayoutEnum.ONE.getCode());
         table.setClassName(NamingCase.toPascalCase(tableName));
+        table.setModuleName(getModuleName(tableName));
         table.setFunctionName(StrUtil.toCamelCase(tableName));
-        table.setModuleName(table.getFunctionName());
         table.setPermissionFlag(table.getModuleName() + ":" + table.getFunctionName());
         this.save(table);
 
@@ -346,6 +346,14 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
         // 保存列数据
         tableFieldService.saveBatch(tableFieldList);
+    }
+
+    private String getModuleName(String tableName) {
+        String[] split = tableName.split("_");
+        if (split.length > 1) {
+            return split[0];
+        }
+        return tableName;
     }
 
     private TableEntity getByTableName(Long projectId, String tableName) {

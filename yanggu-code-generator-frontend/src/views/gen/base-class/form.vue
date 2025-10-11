@@ -27,7 +27,15 @@
 					<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名"></el-input>
 				</div>
 			</el-form-item>
-			<el-form-item label="基类字段" prop="fields">
+			<el-form-item prop="fields">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>基类字段</span>
+						<el-tooltip content="多个字段使用','拼接" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.fields" clearable placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">

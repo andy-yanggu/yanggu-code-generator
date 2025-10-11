@@ -1,5 +1,5 @@
 // 枚举值类型
-export type EnumValueType = string | number | boolean
+export type EnumValueType = string | number | boolean | null
 
 // 枚举标签类型
 export type EnumTagTypeValue = 'primary' | 'success' | 'warning' | 'danger' | 'info'
@@ -10,6 +10,18 @@ export type EnumTagTypeValue = 'primary' | 'success' | 'warning' | 'danger' | 'i
 export const getLabel = (enumList: EnumItem[]) => {
 	return (_: any, __: any, value: EnumValueType): string => {
 		return <string>getByValue(value, enumList)?.label
+	}
+}
+
+/**
+ * 获取枚举标签label
+ */
+export const getLabelData = (value: EnumValueType, enumList: EnumItem[], defaultValue = '') => {
+	const byValue = getByValue(value, enumList)
+	if (!byValue) {
+		return defaultValue
+	} else {
+		return <string>byValue.label
 	}
 }
 

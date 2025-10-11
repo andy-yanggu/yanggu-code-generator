@@ -20,7 +20,7 @@
 						</el-button>
 					</div>
 				</div>
-				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
+				<el-scrollbar style="height: calc(100% - 40px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"
@@ -198,7 +198,7 @@
 				<!-- 代码区域 -->
 				<el-main style="padding: 10px; overflow: hidden">
 					<template v-if="activeTabItem.templateType === 1">
-						<el-scrollbar style="height: 100%">
+						<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
 							<code-mirror v-model="activeTabItem.templateContent"></code-mirror>
 						</el-scrollbar>
 					</template>
@@ -291,6 +291,7 @@ const treeRef = ref()
 const templateTestRef = ref()
 const templateTestKey = ref()
 const tabsRef = ref()
+const codeScrollbarRef = ref()
 const templateTreeData = reactive({
 	visible: false,
 	treeList: [] as Tree[],
@@ -323,6 +324,11 @@ watch(
 					block: 'nearest'
 				})
 			}
+
+			codeScrollbarRef.value?.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			})
 		})
 	}
 )
