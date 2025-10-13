@@ -62,8 +62,9 @@ const systemSettingStore = useSystemSettingStore()
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 10px;
-	margin-bottom: 5px;
+	padding: 0 10px;
+	margin-top: 6px;
+	border-bottom: 1px solid #e6e6e6;
 }
 
 .navbar-toolbar-left {

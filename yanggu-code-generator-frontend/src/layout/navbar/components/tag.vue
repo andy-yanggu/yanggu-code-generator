@@ -295,7 +295,7 @@ const { refreshPage } = usePageRefresher()
 
 <style scoped>
 .tag-scrollbar {
-	max-height: 35px;
+	max-height: 41px;
 	margin-bottom: 10px;
 	overflow-x: auto;
 }
@@ -303,6 +303,9 @@ const { refreshPage } = usePageRefresher()
 .tag-wrapper {
 	display: flex;
 	align-items: center;
+	margin-top: 7px;
+	margin-left: 10px;
+	margin-right: 10px;
 	gap: 10px;
 	flex-wrap: nowrap;
 	width: max-content;
