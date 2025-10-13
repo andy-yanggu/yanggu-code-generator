@@ -53,6 +53,14 @@ export const ATTR_TYPES: EnumItem[] = [
 	{ label: 'Date', value: 'Date' }
 ]
 
+// 组件类型枚举
+export const COMPONENT_TYPES: EnumItem[] = [
+	{ label: '输入框', value: 0 },
+	{ label: '数字输入框', value: 1 },
+	{ label: '选择器', value: 2 },
+	{ label: '单选框', value: 3 }
+]
+
 // 生成产物类型枚举
 export enum GeneratorProductTypeEnum {
 	PROJECT = 0,

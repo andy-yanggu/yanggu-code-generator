@@ -465,6 +465,8 @@ export const useUserStore = defineStore(
 		const activeMenuPath = ref<string>('')
 		// 权限列表
 		const permissionList = ref<string[]>([])
+		// 角色列表
+		const roleList = ref<string[]>([])
 		// 登录用户信息
 		// 这里必须使用解构的方式，不然一直使用一个对象
 		// reactive每次初始化，必须传入一个全新的对象
@@ -500,6 +502,7 @@ export const useUserStore = defineStore(
 			Object.assign(tokenInfo, loginVO.tokenInfo)
 			menuList.value = loginVO.menuList
 			permissionList.value = loginVO.permissionList
+			roleList.value = loginVO.roleList
 		}
 
 		// 设置激活的菜单

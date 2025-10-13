@@ -86,6 +86,11 @@
 								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 							</el-col>
 						</el-row>
+						<el-row :gutter="5">
+							<el-col :span="12">
+								<el-button type="primary" link :icon="List" @click="propertyHandler(scope.row)">属性</el-button>
+							</el-col>
+						</el-row>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -112,6 +117,8 @@
 			:template-group-name="currentTemplateGroup.groupName"
 			:template-group-type="currentTemplateGroup.type"
 		></template-tree>
+
+		<template-group-property ref="propertyRef"></template-group-property>
 	</div>
 </template>
 
@@ -123,9 +130,10 @@ import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
+import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
-import { CopyDocument, Delete, Download, Edit, Plus, Refresh, Search, Setting, Upload } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Download, Edit, List, Plus, Refresh, Search, Setting, Upload } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -142,6 +150,7 @@ const state: IHooksOptions = reactive({
 })
 
 const tableRef = ref()
+const propertyRef = ref()
 const dialogMode = ref<'add' | 'update' | 'copy'>('add')
 const key = ref()
 const currentTemplateGroup = reactive({
@@ -206,6 +215,12 @@ const handleManualUpload = (options: any) => {
 		.then(() => {
 			getDataList()
 		})
+}
+
+const propertyHandler = (row: any) => {
+	nextTick(() => {
+		propertyRef.value.init(row.id)
+	})
 }
 
 const {
