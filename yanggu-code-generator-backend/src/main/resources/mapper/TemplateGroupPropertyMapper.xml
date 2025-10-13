@@ -5,7 +5,8 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id,
+        id
+        ,
         template_group_id,
         prop_title,
         prop_key,
@@ -23,6 +24,12 @@
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'propTitle')">
+            AND prop_title LIKE CONCAT('%', #{query.propTitle}, '%')
+        </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'propKey')">
+            AND prop_key LIKE CONCAT('%', #{query.propKey}, '%')
+        </if>
     </sql>
 
     <!-- Entity类字段映射 -->
@@ -33,7 +40,8 @@
         <result property="propKey" column="prop_key"/>
         <result property="propDefaultValue" column="prop_default_value"/>
         <result property="componentType" column="component_type"/>
-        <result property="componentOptions" column="component_options" typeHandler="com.yanggu.code.generator.config.LabelValueDataTypeHandler"/>
+        <result property="componentOptions" column="component_options"
+                typeHandler="com.yanggu.code.generator.config.LabelValueDataTypeHandler"/>
         <result property="required" column="required"/>
         <result property="propOrder" column="prop_order"/>
         <result property="remark" column="remark"/>
@@ -45,9 +53,9 @@
     <!-- Entity分页 -->
     <select id="entityPage" resultMap="templateGroupPropertyMap">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_template_group_property
+        gen_template_group_property
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -58,9 +66,9 @@
     <!-- Entity列表 -->
     <select id="entityList" resultMap="templateGroupPropertyMap">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_template_group_property
+        gen_template_group_property
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -71,9 +79,9 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_template_group_property
+        gen_template_group_property
         <where>
             is_delete = 0
             <include refid="whereSQL"/>
@@ -84,9 +92,9 @@
     <!-- VO列表 -->
     <select id="voList" resultType="com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO">
         SELECT
-            <include refid="allColumns"/>
+        <include refid="allColumns"/>
         FROM
-            gen_template_group_property
+        gen_template_group_property
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

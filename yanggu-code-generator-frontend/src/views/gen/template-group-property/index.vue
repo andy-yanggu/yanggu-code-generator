@@ -103,10 +103,10 @@ const state: IHooksOptions = reactive({
 	queryForm: {
 		templateGroupId: null,
 		propTitle: '',
-		propKey: '',
-		order: 'propOrder',
-		asc: true
-	}
+		propKey: ''
+	},
+	order: 'propOrder',
+	asc: true
 })
 
 const {

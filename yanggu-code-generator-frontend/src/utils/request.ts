@@ -64,8 +64,9 @@ service.interceptors.response.use(
 			return config.rawResponse === false ? res : res.data
 		}
 
-		// 重定向到登录页面
+		// 未认证
 		if (res.code === 401) {
+			// 重定向到登录页面
 			ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
 				confirmButtonText: '重新登录',
 				cancelButtonText: '取消',
@@ -82,6 +83,12 @@ service.interceptors.response.use(
 				})
 			})
 			return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+		} else if (res.code === 403) {
+			// 未授权
+			if (!config.noErrorMessage) {
+				ElMessage.error('您没有权限访问该资源')
+			}
+			return Promise.reject('您没有权限访问该资源')
 		}
 
 		// 业务错误提示：只有没有设置 noErrorMessage 才提示

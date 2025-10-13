@@ -16,7 +16,12 @@
 				</el-radio-group>
 			</el-form-item>
 			<el-form-item v-if="hasComponentOptions" label="组件选项" prop="componentOptions">
-				<el-row v-for="(item, index) in state.dataForm.componentOptions" :key="item.id" :gutter="10">
+				<el-row
+					v-for="(item, index) in state.dataForm.componentOptions"
+					:key="item.id"
+					:gutter="10"
+					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
+				>
 					<el-col :span="11">
 						<el-input v-model="item.label" clearable placeholder="请输入选项标题"></el-input>
 					</el-col>
@@ -25,10 +30,14 @@
 					</el-col>
 					<el-col :span="2">
 						<div style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-left: 10px">
-							<el-icon style="cursor: pointer" @click="() => state.dataForm.componentOptions.push({ label: '', value: '' })">
+							<el-icon style="cursor: pointer" @click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })">
 								<Plus></Plus>
 							</el-icon>
-							<el-icon style="cursor: pointer" @click="() => state.dataForm.componentOptions.splice(index, 1)">
+							<el-icon
+								v-if="state.dataForm.componentOptions.length > 1"
+								style="cursor: pointer"
+								@click="() => state.dataForm.componentOptions.splice(index, 1)"
+							>
 								<Delete></Delete>
 							</el-icon>
 						</div>
@@ -60,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive } from 'vue'
 import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
@@ -91,19 +100,24 @@ const state: FormOptions = reactive({
 
 const hasComponentOptions = computed(() => [2, 3].includes(state.dataForm.componentType))
 
-watch(
-	() => state.dataForm.componentOptions.length === 0,
-	() => {
-		state.dataForm.componentOptions = [{ label: '', value: '' }]
-	}
-)
-
 const componentOptions = (_: any, __: any, callback: any) => {
-	if (hasComponentOptions.value && state.dataForm.componentOptions.length === 0) {
-		callback(new Error())
-	} else {
+	if (!hasComponentOptions.value) {
 		callback()
+		return
 	}
+	const message = '必填项不能为空'
+	if (state.dataForm.componentOptions.length === 0) {
+		callback(new Error(message))
+		return
+	}
+	for (let i = 0; i < state.dataForm.componentOptions.length; i++) {
+		const item = state.dataForm.componentOptions[i]
+		if (!item.label || !item.value) {
+			callback(new Error(`第${i + 1}个选项标题或选项值不能为空`))
+			return
+		}
+	}
+	callback()
 }
 
 const dataRules = reactive({
@@ -112,7 +126,7 @@ const dataRules = reactive({
 	required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	componentOptions: [{ required: true, validator: componentOptions, message: '必填项不能为空', trigger: 'blur' }]
+	componentOptions: [{ required: true, validator: componentOptions, trigger: 'blur' }]
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)

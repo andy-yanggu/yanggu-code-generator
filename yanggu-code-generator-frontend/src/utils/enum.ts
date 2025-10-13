@@ -9,7 +9,7 @@ export type EnumTagTypeValue = 'primary' | 'success' | 'warning' | 'danger' | 'i
  */
 export const getLabel = (enumList: EnumItem[]) => {
 	return (_: any, __: any, value: EnumValueType): string => {
-		return <string>getByValue(value, enumList)?.label
+		return <string>getLabelData(value, enumList)
 	}
 }
 

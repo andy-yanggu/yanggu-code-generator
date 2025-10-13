@@ -198,7 +198,7 @@ const handleExceed: UploadProps['onExceed'] = files => {
 }
 
 // 处理文件移除
-const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+const handleRemove: UploadProps['onRemove'] = () => {
 	// 清除文件数据
 	state.dataForm.binaryOriginalFileName = ''
 	state.dataForm.templateContent = ''

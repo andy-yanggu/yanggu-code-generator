@@ -6,20 +6,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
-import com.yanggu.code.generator.mapstruct.TemplateGroupPropertyMapstruct;
-import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
+import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.mapper.TemplateGroupPropertyMapper;
+import com.yanggu.code.generator.mapstruct.TemplateGroupPropertyMapstruct;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
 
@@ -164,6 +163,10 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
 
     private LambdaQueryWrapper<TemplateGroupPropertyEntity> buildQueryWrapper(TemplateGroupPropertyEntityQuery query) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class);
+
+        //过滤字段
+        wrapper.like(MybatisUtil.isNotEmpty(query.getPropTitle()), TemplateGroupPropertyEntity::getPropTitle, query.getPropTitle());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getPropKey()), TemplateGroupPropertyEntity::getPropKey, query.getPropKey());
 
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());
