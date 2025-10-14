@@ -78,7 +78,7 @@ const state: FormOptions = reactive({
 	initAfter: () => {
 		if (props.mode == 'copy') {
 			state.submitApi = genTemplateGroupApi.copy
-			state.message = '模板组和下的所有模板已复制'
+			state.message = '模板组和下的所有模板、属性已复制'
 			state.duration = 2000
 			state.dataForm.groupName = state.dataForm.groupName + '_复制'
 		} else {

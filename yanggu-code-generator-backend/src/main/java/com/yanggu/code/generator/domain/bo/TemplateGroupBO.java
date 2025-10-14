@@ -35,4 +35,9 @@ public class TemplateGroupBO implements Serializable {
      */
     private List<TemplateBO> templateList;
 
+    /**
+     * 属性列表
+     */
+    private List<TemplateGroupPropertyBO> propertyList;
+
 }

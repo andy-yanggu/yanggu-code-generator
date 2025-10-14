@@ -242,6 +242,11 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
     private LambdaQueryWrapper<TemplateGroupPropertyEntity> buildQueryWrapper(TemplateGroupPropertyEntityQuery query) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class);
 
+        //过滤字段
+        wrapper.eq(MybatisUtil.isNotEmpty(query.getTemplateGroupId()), TemplateGroupPropertyEntity::getTemplateGroupId, query.getTemplateGroupId());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getPropTitle()), TemplateGroupPropertyEntity::getPropTitle, query.getPropTitle());
+        wrapper.like(MybatisUtil.isNotEmpty(query.getPropKey()), TemplateGroupPropertyEntity::getPropKey, query.getPropKey());
+
         //排序字段
         MybatisUtil.orderBy(wrapper, query.getOrderItemList());
         return wrapper;

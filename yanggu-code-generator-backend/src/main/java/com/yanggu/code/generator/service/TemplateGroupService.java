@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
@@ -88,6 +89,11 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      * 根据ID查询（包含所有模板）
      */
     TemplateGroupEntity getById(Long id, Boolean isIncludeTemplateList);
+
+    /**
+     * 根据ID查询详情
+     */
+    TemplateGroupEntity getDetailById(TemplateGroupDetailQuery query);
 
     List<CascaderDataVO> cascaderData(Integer templateGroupType, Long templateGroupId);
 

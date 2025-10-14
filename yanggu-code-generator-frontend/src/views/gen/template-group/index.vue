@@ -72,23 +72,18 @@
 					<template #default="scope">
 						<el-row :gutter="5">
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Setting" @click="treeData(scope.row)">配置</el-button>
+								<el-button type="primary" link :icon="Document" @click="treeData(scope.row)">模板</el-button>
 							</el-col>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="List" @click="propertyHandler(scope.row)">属性</el-button>
+							</el-col>
+						</el-row>
+						<el-row :gutter="5">
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
 							</el-col>
-						</el-row>
-						<el-row :gutter="5">
 							<el-col :span="12">
 								<el-button type="primary" link :icon="CopyDocument" @click="copyTemplateGroupHandle(scope.row.id)">复制</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
-							</el-col>
-						</el-row>
-						<el-row :gutter="5">
-							<el-col :span="24">
-								<el-button type="primary" link :icon="List" @click="propertyHandler(scope.row)">属性</el-button>
 							</el-col>
 						</el-row>
 					</template>
@@ -118,7 +113,11 @@
 			:template-group-type="currentTemplateGroup.type"
 		></template-tree>
 
-		<template-group-property ref="propertyRef"></template-group-property>
+		<template-group-property
+			ref="propertyRef"
+			:template-group-id="currentTemplateGroup.id"
+			:template-group-name="currentTemplateGroup.groupName"
+		></template-group-property>
 	</div>
 </template>
 
@@ -133,7 +132,7 @@ import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
-import { CopyDocument, Delete, Download, Edit, List, Plus, Refresh, Search, Setting, Upload } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Document, Download, Edit, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -146,7 +145,7 @@ const state: IHooksOptions = reactive({
 		groupName: '',
 		type: ''
 	},
-	deleteMessage: '删除模板组，模板组下面的所有模板都会删除'
+	deleteMessage: '删除模板组，模板组下面的所有模板、属性都会删除'
 })
 
 const tableRef = ref()
@@ -218,6 +217,7 @@ const handleManualUpload = (options: any) => {
 }
 
 const propertyHandler = (row: any) => {
+	Object.assign(currentTemplateGroup, row)
 	nextTick(() => {
 		propertyRef.value.init(row.id)
 	})

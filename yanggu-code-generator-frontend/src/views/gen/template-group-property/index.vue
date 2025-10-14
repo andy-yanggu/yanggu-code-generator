@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" title="模板组属性" :close-on-click-modal="false" width="80%">
+	<el-dialog v-model="visible" :title="`${templateGroupName} - 属性配置`" :close-on-click-modal="false" width="80%">
 		<el-card class="layout-query" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="属性标题" prop="propTitle">
@@ -101,6 +101,17 @@ defineOptions({
 	name: 'GenTemplateGroupProperty'
 })
 
+const props = defineProps({
+	templateGroupId: {
+		type: Number,
+		required: true
+	},
+	templateGroupName: {
+		type: String,
+		required: true
+	}
+})
+
 const visible = ref(false)
 const tableRef = ref()
 
@@ -128,9 +139,9 @@ const {
 	tableIndex
 } = useIndexQuery(state)
 
-const init = (templateGroupId: number) => {
+const init = () => {
 	visible.value = true
-	state.queryForm.templateGroupId = templateGroupId
+	state.queryForm.templateGroupId = props.templateGroupId
 }
 
 // 导出

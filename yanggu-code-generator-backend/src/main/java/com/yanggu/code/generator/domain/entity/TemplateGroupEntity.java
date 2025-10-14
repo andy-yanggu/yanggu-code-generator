@@ -55,4 +55,10 @@ public class TemplateGroupEntity extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List<TemplateEntity> templateList;
 
+    /**
+     * 属性列表
+     */
+    @TableField(exist = false)
+    private List<TemplateGroupPropertyEntity> propertyList;
+
 }

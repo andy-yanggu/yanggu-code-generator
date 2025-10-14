@@ -17,9 +17,12 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.TemplateBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupBO;
+import com.yanggu.code.generator.domain.bo.TemplateGroupPropertyBO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.entity.*;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
@@ -27,6 +30,7 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
+import com.yanggu.code.generator.mapstruct.TemplateGroupPropertyMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +75,12 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Autowired
     private EnumService enumService;
+
+    @Autowired
+    private TemplateGroupPropertyService templateGroupPropertyService;
+
+    @Autowired
+    private TemplateGroupPropertyMapstruct templateGroupPropertyMapstruct;
 
     /**
      * 新增
@@ -123,6 +133,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         //关联删除
         templateGroupMapper.deleteByIds(idList);
         templateService.deleteByGroupId(idList);
+        templateGroupPropertyService.deleteByGroupId(idList);
     }
 
     /**
@@ -197,25 +208,42 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         TemplateGroupEntity add = add(dto);
         Long newTemplateGroupId = add.getId();
 
-        //查询原有模板组下的所有模板
-        List<TemplateEntity> templateList = templateService.selectByGroupId(oldGroupId);
-        if (CollUtil.isEmpty(templateList)) {
-            return;
-        }
+        TemplateGroupDetailQuery query = new TemplateGroupDetailQuery();
+        query.setId(oldGroupId);
+        query.setIsIncludeTemplateList(true);
+        query.setIsIncludePropertyList(true);
+        TemplateGroupEntity oldTemplateGroup = getDetailById(query);
 
         // 先保存所有顶级模板（parentId为null的模板）
+        List<TemplateEntity> templateList = oldTemplateGroup.getTemplateList();
         List<TemplateEntity> rootTemplates = templateList.stream()
                 .filter(template -> template.getParentId().equals(0L))
                 .toList();
 
         // 递归复制模板树
         rootTemplates.forEach(rootTemplate -> copyTemplateTree(rootTemplate, 0L, newTemplateGroupId, templateList));
+
+        // 复制模板组属性
+        List<TemplateGroupPropertyEntity> propertyList = oldTemplateGroup.getPropertyList();
+        if (CollUtil.isNotEmpty(propertyList)) {
+            propertyList.forEach(temp -> {
+                temp.setTemplateGroupId(newTemplateGroupId);
+                temp.setId(null);
+                templateGroupPropertyService.save(temp);
+            });
+        }
     }
 
     @Override
     public ResponseEntity<byte[]> export(List<Long> idList) {
         List<TemplateGroupEntity> list = idList.stream()
-                .map(temp -> getById(temp, true))
+                .map(temp -> {
+                    TemplateGroupDetailQuery query = new TemplateGroupDetailQuery();
+                    query.setId(temp);
+                    query.setIsIncludeTemplateList(true);
+                    query.setIsIncludePropertyList(true);
+                    return getDetailById(query);
+                })
                 .toList();
 
         //转换成导出对象
@@ -260,6 +288,15 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
                 // 直接使用树形结构递归导入
                 templateList.forEach(template -> importTemplateTree(template, 0L, groupEntity.getId()));
             }
+
+            List<TemplateGroupPropertyBO> propertyList = templateGroup.getPropertyList();
+            if (CollUtil.isNotEmpty(propertyList)) {
+                propertyList.forEach(property -> {
+                    TemplateGroupPropertyDTO propertyDTO = templateGroupPropertyMapstruct.boToDTO(property);
+                    propertyDTO.setTemplateGroupId(groupEntity.getId());
+                    templateGroupPropertyService.add(propertyDTO);
+                });
+            }
         });
     }
 
@@ -271,6 +308,23 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         }
         List<TemplateEntity> templateList = templateService.selectByGroupId(id);
         templateGroup.setTemplateList(templateList);
+        return templateGroup;
+    }
+
+    @Override
+    public TemplateGroupEntity getDetailById(TemplateGroupDetailQuery query) {
+        Long id = query.getId();
+        TemplateGroupEntity templateGroup = selectById(id);
+        if (query.getIsIncludeTemplateList()) {
+            List<TemplateEntity> templateList = templateService.selectByGroupId(id);
+            templateGroup.setTemplateList(templateList);
+        }
+        if (query.getIsIncludePropertyList()) {
+            LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
+                    .eq(TemplateGroupPropertyEntity::getTemplateGroupId, id);
+            List<TemplateGroupPropertyEntity> propertyList = templateGroupPropertyService.list(wrapper);
+            templateGroup.setPropertyList(propertyList);
+        }
         return templateGroup;
     }
 

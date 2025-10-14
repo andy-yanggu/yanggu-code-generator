@@ -21,6 +21,12 @@ public class TemplateGroupPropertyEntityQuery extends PageQuery<TemplateGroupPro
     private static final long serialVersionUID = 1L;
 
     /**
+     * 模板组ID
+     */
+    @Schema(description = "模板组ID")
+    private Long templateGroupId;
+
+    /**
      * 属性标题
      */
     @Schema(description = "属性标题")
