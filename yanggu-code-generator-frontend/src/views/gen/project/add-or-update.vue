@@ -1,31 +1,65 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item prop="projectName">
-				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>项目名称</span>
-						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
-				</template>
-				<el-input v-model="state.dataForm.projectName" clearable placeholder="请输入项目名称"></el-input>
-			</el-form-item>
+			<el-divider content-position="left" style="margin: 30px 0">基础信息</el-divider>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item prop="projectName">
+						<template #label>
+							<div style="display: flex; align-items: center">
+								<span>项目名称</span>
+								<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性" effect="dark" placement="top">
+									<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+								</el-tooltip>
+							</div>
+						</template>
+						<el-input v-model="state.dataForm.projectName" clearable placeholder="请输入项目名称"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item label="项目版本" prop="projectVersion">
+						<el-input v-model="state.dataForm.projectVersion" clearable placeholder="请输入项目版本"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item label="生成方式" prop="generatorType">
+						<el-radio-group v-model="state.dataForm.generatorType">
+							<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
+						</el-radio-group>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item label="数据源" prop="datasourceId">
+						<el-select v-model="state.dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
+							<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
+								<span style="font-weight: bold">{{ item.connName }}</span>
+								<span v-if="item.datasourceDesc && item.datasourceDesc.trim()" style="color: #999; font-size: 12px">
+									（{{ item.datasourceDesc }}）
+								</span>
+							</el-option>
+						</el-select>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item label="作者" prop="author">
+						<el-input v-model="state.dataForm.author" clearable placeholder="请输入作者"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item label="项目描述" prop="projectDesc">
+						<el-input v-model="state.dataForm.projectDesc" clearable placeholder="请输入项目描述"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
 			<el-form-item label="项目包名" prop="projectPackage">
 				<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
 			</el-form-item>
-			<el-form-item label="项目版本" prop="projectVersion">
-				<el-input v-model="state.dataForm.projectVersion" clearable placeholder="请输入项目版本"></el-input>
-			</el-form-item>
-			<el-form-item label="数据源" prop="datasourceId">
-				<el-select v-model="state.dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
-					<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
-						<span style="font-weight: bold">{{ item.connName }}</span>
-						<span v-if="item.datasourceDesc && item.datasourceDesc.trim()" style="color: #999; font-size: 12px">（{{ item.datasourceDesc }}） </span>
-					</el-option>
-				</el-select>
-			</el-form-item>
+
+			<el-divider content-position="left" style="margin: 30px 0">项目模板组</el-divider>
 			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
 				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -34,6 +68,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-divider content-position="left" style="margin: 30px 0">表模板组</el-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -42,6 +77,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-divider content-position="left" style="margin: 30px 0">枚举模板组</el-divider>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -50,11 +86,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="生成方式" prop="generatorType">
-				<el-radio-group v-model="state.dataForm.generatorType">
-					<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
-				</el-radio-group>
-			</el-form-item>
+			<el-divider content-position="left" style="margin: 30px 0">基类配置</el-divider>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
 				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
 					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
@@ -71,17 +103,12 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-divider content-position="left" style="margin: 30px 0">其他配置</el-divider>
 			<el-form-item label="后端路径" prop="backendPath">
 				<el-input v-model="state.dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
 			</el-form-item>
 			<el-form-item label="前端路径" prop="frontendPath">
 				<el-input v-model="state.dataForm.frontendPath" clearable placeholder="请输入前端路径"></el-input>
-			</el-form-item>
-			<el-form-item label="作者" prop="author">
-				<el-input v-model="state.dataForm.author" clearable placeholder="请输入作者"></el-input>
-			</el-form-item>
-			<el-form-item label="项目描述" prop="projectDesc">
-				<el-input v-model="state.dataForm.projectDesc" clearable placeholder="请输入项目描述"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -178,3 +205,23 @@ defineExpose({
 	init
 })
 </script>
+<style lang="scss" scoped>
+.section-header {
+	display: flex;
+	align-items: center;
+	margin: 8px 0 6px;
+	padding-left: 6px;
+}
+.blue-indicator {
+	width: 3px;
+	height: 14px;
+	background-color: var(--el-color-primary);
+	border-radius: 1px;
+	margin-right: 6px;
+}
+.section-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: #303133;
+}
+</style>

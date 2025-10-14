@@ -27,8 +27,8 @@ export const TEMPLATE_TYPES: EnumItem[] = [
 
 // 项目生成方式
 export const PROJECT_GENERATE_TYPES: EnumItem[] = [
-	{ label: 'zip压缩包', value: 0 },
-	{ label: '服务器本地', value: 1 }
+	{ label: 'ZIP', value: 0 },
+	{ label: '本地', value: 1 }
 ]
 
 // 表单布局枚举
