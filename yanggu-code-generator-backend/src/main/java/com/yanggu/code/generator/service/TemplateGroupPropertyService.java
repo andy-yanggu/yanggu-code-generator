@@ -1,13 +1,16 @@
 package com.yanggu.code.generator.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
-import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
-import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -64,5 +67,15 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
      * 复杂列表
      */
     List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyVOQuery query);
+
+    /**
+     * 导出
+     */
+    ResponseEntity<byte[]> export(List<Long> idList);
+
+    /**
+     * 导入
+     */
+    void importTemplateGroupProperty(MultipartFile file, Long templateGroupId) throws IOException;
 
 }

@@ -11,12 +11,17 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -140,6 +145,38 @@ public class TemplateGroupPropertyController {
     @Operation(summary = "模板组属性复杂列表")
     public List<TemplateGroupPropertyVO> voList(@RequestBody TemplateGroupPropertyVOQuery query) {
         return templateGroupPropertyService.voList(query);
+    }
+
+    /**
+     * 导出模板组属性
+     *
+     * @param idList 模板组属性ID列表
+     */
+    @GetMapping("/export")
+    @ApiOperationSupport(order = 11)
+    @Operation(summary = "导出模板组属性")
+    @Parameter(name = "idList", description = "模板组属性ID列表", required = true)
+    public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "模板组属性ID列表不能为空") List<Long> idList) {
+        return templateGroupPropertyService.export(idList);
+    }
+
+    /**
+     * 导入模板组属性
+     *
+     * @param file            文件
+     * @param templateGroupId 模板组ID
+     */
+    @PostMapping("/import")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "导入模板组属性")
+    @Parameters({
+            @Parameter(name = "templateGroupId", description = "模板组ID", required = true),
+            @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
+                    schema = @Schema(name = "file", format = "binary"))
+    })
+    public void importTemplateGroup(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("templateGroupId") Long templateGroupId) throws Exception {
+        templateGroupPropertyService.importTemplateGroupProperty(file, templateGroupId);
     }
 
 }

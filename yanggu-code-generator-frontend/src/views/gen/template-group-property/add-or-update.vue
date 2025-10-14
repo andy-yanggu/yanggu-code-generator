@@ -1,10 +1,26 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
-			<el-form-item label="属性标题" prop="propTitle">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
+			<el-form-item prop="propTitle">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>属性标题</span>
+						<el-tooltip content="属性标题具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.propTitle" clearable placeholder="请输入属性标题"></el-input>
 			</el-form-item>
-			<el-form-item label="属性键" prop="propKey">
+			<el-form-item prop="propKey">
+				<template #label>
+					<div style="display: flex; align-items: center">
+						<span>属性键</span>
+						<el-tooltip content="属性键具有唯一性，不能重复" effect="dark" placement="top">
+							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
+						</el-tooltip>
+					</div>
+				</template>
 				<el-input v-model="state.dataForm.propKey" clearable placeholder="请输入属性键"></el-input>
 			</el-form-item>
 			<el-form-item label="属性默认值" prop="propDefaultValue">
@@ -69,10 +85,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
+import { Check, Close, Delete, InfoFilled, Plus } from '@element-plus/icons-vue'
 import { COMPONENT_TYPES } from '@/constant/enum'
 
 const emit = defineEmits(['refreshDataList'])
@@ -95,8 +111,22 @@ const state: FormOptions = reactive({
 		propOrder: 0,
 		remark: ''
 	},
+	submitBefore: () => {
+		if (!hasComponentOptions.value) {
+			state.dataForm.componentOptions = []
+		}
+	},
 	emit
 })
+
+watch(
+	() => state.dataForm.componentType,
+	() => {
+		if (hasComponentOptions.value && state.dataForm.componentOptions.length === 0) {
+			state.dataForm.componentOptions.push({ label: '', value: '' })
+		}
+	}
+)
 
 const hasComponentOptions = computed(() => [2, 3].includes(state.dataForm.componentType))
 

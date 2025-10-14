@@ -87,7 +87,7 @@
 							</el-col>
 						</el-row>
 						<el-row :gutter="5">
-							<el-col :span="12">
+							<el-col :span="24">
 								<el-button type="primary" link :icon="List" @click="propertyHandler(scope.row)">属性</el-button>
 							</el-col>
 						</el-row>

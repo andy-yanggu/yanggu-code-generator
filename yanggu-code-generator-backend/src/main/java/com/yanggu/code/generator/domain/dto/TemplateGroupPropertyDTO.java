@@ -2,6 +2,7 @@ package com.yanggu.code.generator.domain.dto;
 
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -30,18 +31,21 @@ public class TemplateGroupPropertyDTO implements Serializable {
 	 * 模板组ID
 	 */
 	@Schema(description = "模板组ID")
+	@NotNull(message = "模板组ID不能为空")
 	private Long templateGroupId;
 
 	/**
 	 * 属性标题
 	 */
 	@Schema(description = "属性标题")
+	@NotBlank(message = "属性标题不能为空")
 	private String propTitle;
 
 	/**
 	 * 属性键
 	 */
 	@Schema(description = "属性键")
+	@NotBlank(message = "属性键不能为空")
 	private String propKey;
 
 	/**
@@ -66,12 +70,14 @@ public class TemplateGroupPropertyDTO implements Serializable {
 	 * 必填，1：是，0：否
 	 */
 	@Schema(description = "必填，1：是，0：否")
+	@NotNull(message = "必填，1：是，0：否不能为空")
 	private Integer required;
 
 	/**
 	 * 排序
 	 */
 	@Schema(description = "排序")
+	@NotNull(message = "排序不能为空")
 	private Integer propOrder;
 
 	/**

@@ -20,8 +20,13 @@
 			<el-space class="layout-space">
 				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+				<el-upload :limit="1" :show-file-list="false" :http-request="handleManualUpload">
+					<el-button type="success" :icon="Upload">导入</el-button>
+				</el-upload>
+				<el-button type="info" :icon="Download" @click="exportHandle()">导出</el-button>
 			</el-space>
 			<el-table
+				ref="tableRef"
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
@@ -86,16 +91,18 @@ import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
 import { reactive, ref } from 'vue'
 import AddOrUpdate from '@/views/gen/template-group-property/add-or-update.vue'
-import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
 import { getLabel } from '@/utils/enum'
 import { COMPONENT_TYPES } from '@/constant/enum'
+import { ElMessage } from 'element-plus'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
 })
 
 const visible = ref(false)
+const tableRef = ref()
 
 const state: IHooksOptions = reactive({
 	dataListApi: genTemplateGroupPropertyApi.entityPage,
@@ -124,6 +131,37 @@ const {
 const init = (templateGroupId: number) => {
 	visible.value = true
 	state.queryForm.templateGroupId = templateGroupId
+}
+
+// 导出
+const exportHandle = () => {
+	const idList = state.dataListSelections ? state.dataListSelections : []
+	if (idList.length === 0) {
+		ElMessage.warning('请选择导出的模板组属性')
+		return
+	}
+	genTemplateGroupPropertyApi.export(idList).then(() => {
+		ElMessage.success('导出成功，请查看已下载的文件')
+		tableRef.value.clearSelection()
+		state.dataListSelections = []
+	})
+}
+
+// 导入
+const handleManualUpload = (options: any) => {
+	const { file } = options
+	const formData = new FormData()
+	formData.append('file', file)
+	formData.append('templateGroupId', state.queryForm.templateGroupId)
+
+	genTemplateGroupPropertyApi
+		.import(formData)
+		.then(() => {
+			ElMessage.success('模板组属性导入成功')
+		})
+		.then(() => {
+			getDataList()
+		})
 }
 
 defineExpose({
