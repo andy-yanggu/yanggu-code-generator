@@ -72,7 +72,7 @@
 					<template #default="scope">
 						<el-row :gutter="5">
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Document" @click="treeData(scope.row)">模板</el-button>
+								<el-button type="primary" link :icon="Files" @click="treeData(scope.row)">模板</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="List" @click="propertyHandler(scope.row)">属性</el-button>
@@ -132,7 +132,7 @@ import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
-import { CopyDocument, Delete, Document, Download, Edit, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
