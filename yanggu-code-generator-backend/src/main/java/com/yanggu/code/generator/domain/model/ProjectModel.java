@@ -3,6 +3,7 @@ package com.yanggu.code.generator.domain.model;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 项目模型实体类
@@ -89,6 +90,11 @@ public class ProjectModel {
      * 数据库密码
      */
     private String databasePassword;
+
+    /**
+     * 项目模板属性数据
+     */
+    private Map<String, Object> projectTemplatePropertyData;
 
     /**
      * 表模型数据列表

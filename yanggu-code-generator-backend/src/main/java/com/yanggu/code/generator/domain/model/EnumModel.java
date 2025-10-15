@@ -3,6 +3,7 @@ package com.yanggu.code.generator.domain.model;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 枚举模型实体类
@@ -74,5 +75,15 @@ public class EnumModel {
      * 枚举值列表
      */
     private List<EnumItemModel> enumItemList;
+
+    /**
+     * 项目模板属性数据
+     */
+    private Map<String, Object> projectTemplatePropertyData;
+
+    /**
+     * 枚举模板属性数据
+     */
+    private Map<String, Object> enumTemplatePropertyData;
 
 }

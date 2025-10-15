@@ -91,6 +91,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Autowired
     private EnumService enumService;
 
+    @Autowired
+    private ProjectTemplateGroupPropertyValueService projectTemplateGroupPropertyValueService;
+
     @Override
     public List<PreviewTemplateVO> preview(CodePreviewQuery codePreviewQuery) throws Exception {
         Integer generatorProductType = codePreviewQuery.getGeneratorProductType();
@@ -435,6 +438,10 @@ public class GeneratorServiceImpl implements GeneratorService {
             projectModel.setDatabasePassword(dataSource.getPassword());
 
         }
+
+        // 项目模板属性数据
+        projectModel.setProjectTemplatePropertyData(projectTemplateGroupPropertyValueService.getData(project.getId(), project.getProjectTemplateGroupId()));
+
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
         projectModel.setTableModelList(tableModelList);

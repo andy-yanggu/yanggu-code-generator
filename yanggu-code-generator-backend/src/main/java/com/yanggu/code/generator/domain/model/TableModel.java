@@ -3,6 +3,7 @@ package com.yanggu.code.generator.domain.model;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -190,5 +191,15 @@ public class TableModel {
      * 查询列表
      */
     private List<TableFieldModel> queryList;
+
+    /**
+     * 项目模板属性数据
+     */
+    private Map<String, Object> projectTemplatePropertyData;
+
+    /**
+     * 表模板属性数据
+     */
+    private Map<String, Object> tableTemplatePropertyData;
 
 }

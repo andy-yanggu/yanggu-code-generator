@@ -56,19 +56,11 @@
 					header-align="center"
 					align="center"
 				></el-table-column>
+				<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"
-				></el-table-column>
-				<el-table-column
-					prop="updateTime"
-					label="修改时间"
 					show-overflow-tooltip
 					min-width="120"
 					header-align="center"
