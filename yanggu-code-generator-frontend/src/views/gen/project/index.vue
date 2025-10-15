@@ -101,7 +101,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<form ref="addOrUpdateRef" @refresh-data-list="getDataList"></form>
+			<project-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></project-form>
 
 			<!-- 预览 -->
 			<preview ref="previewRef" :key="currentProjectIdTs"></preview>
@@ -117,6 +117,7 @@ import { nextTick, reactive, ref } from 'vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi } from '@/api/gen/project'
 import Steps from '@/views/gen/project/steps.vue'
+import ProjectForm from '@/views/gen/project/form.vue'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'

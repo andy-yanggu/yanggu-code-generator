@@ -75,7 +75,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<enum-item-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></enum-item-form>
 		</el-card>
 	</el-dialog>
 </template>
@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive, ref } from 'vue'
-import AddOrUpdate from '@/views/gen/enum-item/add-or-update.vue'
+import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { genEnumItemApi } from '@/api/gen/enum-item'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 

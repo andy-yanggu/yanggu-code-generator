@@ -109,7 +109,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<enum-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></enum-form>
 
 			<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 
@@ -123,7 +123,7 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, onMounted, reactive, ref } from 'vue'
-import AddOrUpdate from '@/views/gen/enum/add-or-update.vue'
+import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/components/preview/index.vue'

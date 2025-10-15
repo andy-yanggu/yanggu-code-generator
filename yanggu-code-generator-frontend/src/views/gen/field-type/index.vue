@@ -84,7 +84,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<field-type-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></field-type-form>
 		</el-card>
 	</div>
 </template>
@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { reactive } from 'vue'
-import AddOrUpdate from '@/views/gen/field-type/add-or-update.vue'
+import FieldTypeForm from '@/views/gen/field-type/form.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { genFieldTypeApi } from '@/api/gen/field-type'

@@ -96,14 +96,14 @@
 			</el-aside>
 
 			<!-- 新增和修改页面	-->
-			<add-or-update
+			<template-form
 				ref="addOrUpdateRef"
 				:template-group-id="templateGroupId"
 				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
 				:template-path="contextMenu.templatePath"
 				@refresh-data-list="initAfterHandler"
-			></add-or-update>
+			></template-form>
 
 			<!-- 右侧：模板编辑 -->
 			<el-container v-if="templateTreeData.tabList.length > 0" style="padding: 0; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
@@ -238,7 +238,7 @@
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import AddOrUpdate from '@/views/gen/template/add-or-update.vue'
+import TemplateForm from '@/views/gen/template/form.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { genTemplateApi } from '@/api/gen/template'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'

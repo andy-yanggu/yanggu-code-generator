@@ -81,7 +81,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<template-group-property-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></template-group-property-form>
 		</el-card>
 	</el-dialog>
 </template>
@@ -90,7 +90,7 @@
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { useInitForm } from '@/hooks/use-init-form'
 import { reactive, ref } from 'vue'
-import AddOrUpdate from '@/views/gen/template-group-property/add-or-update.vue'
+import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
 import { getLabel } from '@/utils/enum'
