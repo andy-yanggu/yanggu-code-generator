@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { AxiosPromise } from 'axios'
 
@@ -33,9 +33,11 @@ export const useSubmitForm = (options: FormOptions) => {
 		visible.value = true
 		options.dataForm.id = null
 		// 重置表单状态
-		if (dataFormRef.value) {
-			dataFormRef.value.resetFields()
-		}
+		nextTick(() => {
+			if (dataFormRef.value) {
+				dataFormRef.value.resetFields()
+			}
+		})
 
 		// 初始化之前调用
 		options.initBefore?.()

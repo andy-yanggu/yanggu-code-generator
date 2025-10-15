@@ -195,7 +195,19 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     public List<TemplateGroupVO> voList(TemplateGroupVOQuery query) {
         //查询全部数据
         query.setPageSize(-1L);
-        return templateGroupMapper.voList(query);
+        List<TemplateGroupVO> voList = templateGroupMapper.voList(query);
+
+        List<Long> groupIdList = voList.stream()
+                .map(TemplateGroupVO::getId)
+                .toList();
+        Map<Long, List<TemplateGroupPropertyEntity>> collectMap = templateGroupPropertyService.listByGroupId(groupIdList).stream()
+                .collect(Collectors.groupingBy(TemplateGroupPropertyEntity::getTemplateGroupId));
+
+        voList.forEach(vo -> {
+            List<TemplateGroupPropertyEntity> propertyList = collectMap.get(vo.getId());
+            vo.setPropertyList(templateGroupPropertyMapstruct.entityToVO(propertyList));
+        });
+        return voList;
     }
 
     @Override
@@ -320,9 +332,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
             templateGroup.setTemplateList(templateList);
         }
         if (query.getIsIncludePropertyList()) {
-            LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
-                    .eq(TemplateGroupPropertyEntity::getTemplateGroupId, id);
-            List<TemplateGroupPropertyEntity> propertyList = templateGroupPropertyService.list(wrapper);
+            List<TemplateGroupPropertyEntity> propertyList = templateGroupPropertyService.listByGroupId(List.of(id));
             templateGroup.setPropertyList(propertyList);
         }
         return templateGroup;

@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 项目DTO实体类
@@ -63,6 +64,12 @@ public class ProjectDTO implements Serializable {
     private Long projectTemplateGroupId;
 
     /**
+     * 项目模板属性数据
+     */
+    @Schema(description = "项目模板属性数据")
+    private Map<String, Object> projectTemplateGroupPropValue;
+
+    /**
      * 表模板组ID
      */
     @Schema(description = "表模板组ID")
@@ -70,10 +77,22 @@ public class ProjectDTO implements Serializable {
     private Long tableTemplateGroupId;
 
     /**
+     * 表模板属性数据
+     */
+    @Schema(description = "表模板属性数据")
+    private Map<String, Object> tableTemplateGroupPropValue;
+
+    /**
      * 枚举模板组ID
      */
     @Schema(description = "枚举模板组ID")
     private Long enumTemplateGroupId;
+
+    /**
+     * 枚举模板属性数据
+     */
+    @Schema(description = "枚举模板属性数据")
+    private Map<String, Object> enumTemplateGroupPropValue;
 
     /**
      * 生成方式（0-zip压缩包，1-服务器本地）

@@ -29,6 +29,7 @@ import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.*;
+import com.yanggu.code.generator.util.GenUtil;
 import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -553,7 +554,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     EnumItemModel enumItemModel = new EnumItemModel();
                     enumItemModel.setEnumItemName(enumItemEntity.getEnumItemName());
                     enumItemModel.setEnumItemNameAllUpper(NameUtil.toAllUpperCase(enumItemEntity.getEnumItemName()));
-                    enumItemModel.setEnumItemCode(convertStringToAppropriateType(enumItemEntity.getEnumItemCode()));
+                    enumItemModel.setEnumItemCode(GenUtil.convertStringToAppropriateType(enumItemEntity.getEnumItemCode()));
                     enumItemModel.setEnumItemDesc(enumItemEntity.getEnumItemDesc());
                     return enumItemModel;
                 }).toList();
@@ -870,44 +871,6 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, HttpHeaderUtil.createAttachmentDisposition(fileName, CharsetUtil.UTF_8))
                 .body(data);
-    }
-
-    // 添加一个辅助方法来转换字符串到适当的类型
-    private Object convertStringToAppropriateType(String value) {
-        if (value == null) {
-            return null;
-        }
-
-        // 尝试转换为布尔值
-        if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-            return Boolean.parseBoolean(value);
-        }
-
-        // 尝试转换为整数
-        try {
-            if (value.matches("-?\\d+")) {
-                long longValue = Long.parseLong(value);
-                if (longValue >= Integer.MIN_VALUE && longValue <= Integer.MAX_VALUE) {
-                    return (int) longValue;
-                } else {
-                    return longValue;
-                }
-            }
-        } catch (NumberFormatException e) {
-            // 不是有效的整数格式，继续尝试其他类型
-        }
-
-        // 尝试转换为浮点数
-        try {
-            if (value.matches("-?\\d+\\.\\d+")) {
-                return Double.parseDouble(value);
-            }
-        } catch (NumberFormatException e) {
-            // 不是有效的浮点数格式
-        }
-
-        // 默认返回原始字符串
-        return value;
     }
 
 }

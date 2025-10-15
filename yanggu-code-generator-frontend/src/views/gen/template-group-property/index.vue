@@ -118,6 +118,7 @@ const tableRef = ref()
 const state: IHooksOptions = reactive({
 	dataListApi: genTemplateGroupPropertyApi.entityPage,
 	deleteListApi: genTemplateGroupPropertyApi.deleteList,
+	createdIsNeed: false,
 	queryForm: {
 		templateGroupId: null,
 		propTitle: '',
@@ -142,6 +143,7 @@ const {
 const init = () => {
 	visible.value = true
 	state.queryForm.templateGroupId = props.templateGroupId
+	getDataList()
 }
 
 // 导出

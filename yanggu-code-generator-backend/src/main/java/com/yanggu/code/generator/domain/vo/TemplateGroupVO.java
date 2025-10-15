@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 模板组VO实体类
@@ -42,5 +43,11 @@ public class TemplateGroupVO extends BaseVO implements Serializable {
      */
     @Schema(description = "模板组描述")
     private String groupDesc;
+
+    /**
+     * 属性列表
+     */
+    @Schema(description = "属性列表")
+    private List<TemplateGroupPropertyVO> propertyList;
 
 }

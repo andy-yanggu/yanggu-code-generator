@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.service.impl;
 
 import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -19,16 +20,14 @@ import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
-import com.yanggu.code.generator.service.DatasourceService;
-import com.yanggu.code.generator.service.EnumService;
-import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.service.TableService;
+import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.DbUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_ALREADY_EXIST;
@@ -55,6 +54,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Autowired
     private EnumService enumService;
 
+    @Autowired
+    private ProjectTemplateGroupPropertyValueService projectTemplateGroupPropertyValueService;
+
     /**
      * 新增
      */
@@ -66,9 +68,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         projectMapper.insert(entity);
 
+        Long projectId = entity.getId();
+
+        // 保存模板组对应的属性数据
+        saveTemplateGroupPropValue(false, projectId, dto.getProjectTemplateGroupId(), dto.getProjectTemplateGroupPropValue());
+        saveTemplateGroupPropValue(false, projectId, dto.getTableTemplateGroupId(), dto.getTableTemplateGroupPropValue());
+        saveTemplateGroupPropValue(false, projectId, dto.getEnumTemplateGroupId(), dto.getEnumTemplateGroupPropValue());
+
+        //默认导入项目对应数据库下的所有表
         Long datasourceId = entity.getDatasourceId();
         if (datasourceId != null) {
-            //默认导入项目对应数据库下的所有表
             DataSourceBO dataSourceBO = datasourceService.get(datasourceId);
             List<String> tableNameList = DbUtil.getTableNameList(dataSourceBO);
 
@@ -93,8 +102,25 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         //唯一性校验等
         checkUnique(dto);
         ProjectEntity formEntity = projectMapstruct.dtoToEntity(dto);
-        ProjectEntity dbEntity = selectById(dto.getId());
+        Long projectId = dto.getId();
+        ProjectEntity dbEntity = selectById(projectId);
         projectMapper.updateById(formEntity);
+
+        // 保存模板组对应的属性数据
+        saveTemplateGroupPropValue(true, projectId, dto.getProjectTemplateGroupId(), dto.getProjectTemplateGroupPropValue());
+        saveTemplateGroupPropValue(true, projectId, dto.getTableTemplateGroupId(), dto.getTableTemplateGroupPropValue());
+        saveTemplateGroupPropValue(true, projectId, dto.getEnumTemplateGroupId(), dto.getEnumTemplateGroupPropValue());
+    }
+
+    private void saveTemplateGroupPropValue(boolean delete, Long projectId, Long templateGroupId, Map<String, Object> templateGroupPropValue) {
+        // 删除该项目、模板组下，配置的数据
+        if (delete) {
+            projectTemplateGroupPropertyValueService.deleteByProjectIdAndTemplateGroupId(projectId, templateGroupId);
+        }
+        // 保存数据
+        if (MapUtil.isNotEmpty(templateGroupPropValue)) {
+            projectTemplateGroupPropertyValueService.saveData(projectId, templateGroupId, templateGroupPropValue);
+        }
     }
 
     /**
@@ -127,7 +153,11 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Override
     public ProjectVO detail(Long id) {
         ProjectEntity dbEntity = selectById(id);
-        return projectMapstruct.entityToVO(dbEntity);
+        ProjectVO projectVO = projectMapstruct.entityToVO(dbEntity);
+        projectVO.setProjectTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getProjectTemplateGroupId()));
+        projectVO.setTableTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getTableTemplateGroupId()));
+        projectVO.setEnumTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getEnumTemplateGroupId()));
+        return projectVO;
     }
 
     /**

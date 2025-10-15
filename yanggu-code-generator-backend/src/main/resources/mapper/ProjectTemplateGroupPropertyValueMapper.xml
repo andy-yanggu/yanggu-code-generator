@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yanggu.code.generator.mapper.ProjectTemplateGroupPropertyValueMapper">
+
+    <!-- 所有字段 -->
+    <sql id="allColumns">
+        id,
+        project_id,
+        template_group_id,
+        template_group_property_id,
+        template_group_property_value,
+        create_time,
+        update_time,
+        is_delete
+    </sql>
+
+    <!-- 过滤SQL -->
+    <sql id="whereSQL">
+        <!-- 这里写过滤语句，过滤项需要加query前缀 -->
+    </sql>
+
+    <!-- Entity类字段映射 -->
+    <resultMap type="com.yanggu.code.generator.domain.entity.ProjectTemplateGroupPropertyValueEntity"
+               id="genProjectTemplateGroupPropertyValueMap">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="templateGroupId" column="template_group_id"/>
+        <result property="templateGroupPropertyId" column="template_group_property_id"/>
+        <result property="templateGroupPropertyValue" column="template_group_property_value"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+</mapper>

@@ -298,6 +298,7 @@ const { refreshPage } = usePageRefresher()
 	max-height: 41px;
 	margin-bottom: 10px;
 	overflow-x: auto;
+	border-bottom: 1px solid #e6e6e6;
 }
 
 .tag-wrapper {
@@ -319,7 +320,24 @@ const { refreshPage } = usePageRefresher()
 }
 
 :deep(.tag-wrapper .el-tag) {
+	position: relative;
 	cursor: pointer;
+}
+
+/* 每个标签右侧加竖线 */
+:deep(.tag-wrapper .el-tag::after) {
+	content: '';
+	position: absolute;
+	right: -6px;
+	top: 0;
+	bottom: 0; /* ✅ 撑满整个高度 */
+	width: 1px;
+	background-color: #e6e6e6;
+}
+
+/* 去掉第一个和最后一个标签的外侧分割线 */
+:deep(.tag-wrapper .el-tag:last-child::after) {
+	display: none;
 }
 
 .tag-context-menu {

@@ -80,9 +80,22 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
      */
     void importTemplateGroupProperty(MultipartFile file, Long templateGroupId) throws IOException;
 
+    /**
+     * 根据模板组ID删除
+     */
     default void deleteByGroupId(List<Long> idList) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> queryWrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
                 .in(TemplateGroupPropertyEntity::getTemplateGroupId, idList);
         this.remove(queryWrapper);
     }
+
+    /**
+     * 根据模板组ID查询
+     */
+    default List<TemplateGroupPropertyEntity> listByGroupId(List<Long> groupIdList) {
+        LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
+                .in(TemplateGroupPropertyEntity::getTemplateGroupId, groupIdList);
+        return this.list(wrapper);
+    }
+
 }
