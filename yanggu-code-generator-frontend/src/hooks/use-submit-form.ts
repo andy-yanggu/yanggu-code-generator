@@ -32,27 +32,26 @@ export const useSubmitForm = (options: FormOptions) => {
 	const init = (id?: number) => {
 		visible.value = true
 		options.dataForm.id = null
-		// 重置表单状态
+
 		nextTick(() => {
+			// 清空表单校验和重置表单数据
 			if (dataFormRef.value) {
+				dataFormRef.value.clearValidate()
 				dataFormRef.value.resetFields()
 			}
-		})
 
-		// 初始化之前调用
-		options.initBefore?.()
+			// 初始化之前调用
+			options.initBefore?.()
 
-		if (id) {
-			// 获取详情数据
-			options.detailApi(id).then(data => {
-				Object.assign(options.dataForm, data)
-
-				// 获取详情之后调用
+			if (id) {
+				options.detailApi(id).then(data => {
+					Object.assign(options.dataForm, data)
+					options.initAfter?.()
+				})
+			} else {
 				options.initAfter?.()
-			})
-		} else {
-			options.initAfter?.()
-		}
+			}
+		})
 	}
 
 	// 表单验证并提交

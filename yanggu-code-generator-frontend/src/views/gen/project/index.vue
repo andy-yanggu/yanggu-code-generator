@@ -101,7 +101,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<add-or-update ref="addOrUpdateRef" @refresh-data-list="getDataList"></add-or-update>
+			<form ref="addOrUpdateRef" @refresh-data-list="getDataList"></form>
 
 			<!-- 预览 -->
 			<preview ref="previewRef" :key="currentProjectIdTs"></preview>
@@ -114,7 +114,6 @@
 <script setup lang="ts">
 import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
 import { nextTick, reactive, ref } from 'vue'
-import AddOrUpdate from '@/views/gen/project/add-or-update.vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi } from '@/api/gen/project'
 import Steps from '@/views/gen/project/steps.vue'

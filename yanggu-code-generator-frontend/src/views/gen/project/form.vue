@@ -1,6 +1,13 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:rules="dataRules"
+			label-width="120px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<el-divider content-position="left" class="form-section-title">基础信息</el-divider>
 			<el-row>
 				<el-col :span="12">
