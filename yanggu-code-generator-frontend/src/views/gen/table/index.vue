@@ -94,7 +94,7 @@
 							</el-col>
 							<el-col :span="12">
 								<el-dropdown>
-									<el-button type="primary" link class="more-button" :icon="More">更多</el-button>
+									<el-button type="primary" link :icon="More">更多</el-button>
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
@@ -256,12 +256,7 @@ const { formRef, formInitHandle } = useInitForm()
 </script>
 
 <style scoped>
-.more-button {
-	display: inline-flex;
-	align-items: center;
-	height: 24px; /* 强制统一高度 */
-	line-height: 1; /* 统一行高 */
-	padding: 0; /* 去掉内边距 */
-	vertical-align: middle;
+:deep(.el-dropdown) {
+	vertical-align: middle; /* 行内对齐中线 */
 }
 </style>
