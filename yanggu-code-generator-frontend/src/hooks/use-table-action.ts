@@ -1,8 +1,14 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+// 数据列表接口
 type DataListApi<T = any> = (params: any) => Promise<T>
+// 批量删除接口
 type DeleteListApi<T = any> = (params: any) => Promise<T>
+// 导出接口
+type ExportApi<T = any> = (idList: number[]) => Promise<T>
+// 导入接口
+type ImportApi<T = any> = (formData: FormData) => Promise<T>
 
 export interface IHooksOptions {
 	// 否在创建页面时，调用数据列表接口
@@ -13,6 +19,10 @@ export interface IHooksOptions {
 	dataListApi?: DataListApi
 	// 删除接口
 	deleteListApi?: DeleteListApi
+	// 导出接口
+	exportApi?: ExportApi
+	// 导入接口
+	importApi?: ImportApi
 	// 主键key，用于删除场景
 	primaryKey?: string
 	// 查询条件
@@ -33,26 +43,39 @@ export interface IHooksOptions {
 	pageSizes?: number[]
 	// 数据列表，loading状态
 	dataListLoading?: boolean
+	// 导出loading状态
+	exportLoading?: boolean
 	// 数据列表，多选项
 	dataListSelections?: any[]
 	// 删除时提示语
 	deleteMessage?: string
+	// 导出时提示语
+	exportSuccessMessage?: string
+	// 导入成功提示语
+	importSuccessMessage?: string
 }
 
-export const useIndexQuery = (options: IHooksOptions) => {
+// 提供分页、批量删除、导出功能
+const useTableAction = (options: IHooksOptions) => {
 	// 表单查询引用
 	const queryRef = ref()
+	// 表格引用
+	const tableRef = ref()
 
 	// 重置查询
 	const resetQueryHandle = () => {
 		if (queryRef.value) {
+			queryRef.value.clearValidate()
 			queryRef.value.resetFields()
 		}
 	}
 
+	// 默认值
 	const defaultOptions: IHooksOptions = {
-		dataListApi: () => Promise.resolve({ data: [] }),
-		deleteListApi: () => Promise.resolve(),
+		dataListApi: undefined,
+		deleteListApi: undefined,
+		exportApi: undefined,
+		importApi: undefined,
 		createdIsNeed: true,
 		isPage: true,
 		primaryKey: 'id',
@@ -65,8 +88,11 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		total: 0,
 		pageSizes: [10, 20, 50, 100, 200],
 		dataListLoading: false,
+		exportLoading: false,
 		dataListSelections: [],
-		deleteMessage: '确定进行删除操作?'
+		deleteMessage: '确定进行删除操作？',
+		exportSuccessMessage: '导出成功，请查看下载的文件',
+		importSuccessMessage: '导入成功，请查看数据'
 	}
 
 	const mergeDefaultOptions = (options: any, props: any): IHooksOptions => {
@@ -90,11 +116,15 @@ export const useIndexQuery = (options: IHooksOptions) => {
 
 	// 执行实际的查询逻辑
 	const executeQuery = () => {
-		//解构查询条件
+		if (!state.dataListApi) {
+			ElMessage.warning('未配置查询接口')
+			return
+		}
+		// 解构查询条件
 		const queryForm = {
 			...state.queryForm
 		}
-		//如果queryForm包含dateRange
+		// 如果queryForm包含dateRange
 		if (queryForm.hasOwnProperty('dateRange')) {
 			if (queryForm.dateRange && queryForm.dateRange.length === 2) {
 				queryForm.startDate = queryForm.dateRange[0]
@@ -103,7 +133,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			delete queryForm.dateRange
 		}
 
-		//如果queryForm包含dateTimeRange
+		// 如果queryForm包含dateTimeRange
 		if (queryForm.hasOwnProperty('dateTimeRange')) {
 			if (queryForm.dateTimeRange && queryForm.dateTimeRange.length === 2) {
 				queryForm.startTime = queryForm.dateTimeRange[0]
@@ -112,20 +142,20 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			delete queryForm.dateTimeRange
 		}
 
-		//如果是分页，添加分页参数
+		// 如果是分页，添加分页参数
 		if (state.isPage) {
 			queryForm.pageNum = state.pageNum
 			queryForm.pageSize = state.pageSize
 		}
 
-		//排序字段
+		// 排序字段
 		if (state.order) {
 			queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
 		}
 
 		state.dataListLoading = true
 
-		//调用接口
+		// 调用接口
 		state.dataListApi!(queryForm)
 			.then(data => {
 				if (state.isPage) {
@@ -156,6 +186,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		})
 	}
 
+	// 查询
 	const query = () => {
 		// 先进行表单验证，验证通过后再执行查询
 		validateQueryForm().then(valid => {
@@ -206,6 +237,10 @@ export const useIndexQuery = (options: IHooksOptions) => {
 
 	// 批量删除
 	const deleteBatchHandle = (key?: number | string) => {
+		if (!state.deleteListApi) {
+			ElMessage.warning('未配置删除接口')
+			return
+		}
 		let data: any[] = []
 		if (key) {
 			data = [key]
@@ -230,8 +265,72 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		})
 	}
 
+	// 表格序号列计算
 	const tableIndex = (index: number) => {
 		return (state.pageNum! - 1) * state.pageSize! + index + 1
+	}
+
+	// 勾选导出和单个导出
+	const exportHandle = (id?: number) => {
+		if (!state.exportApi) {
+			ElMessage.warning('未配置导出接口')
+			return
+		}
+
+		const idList: number[] = []
+		// 勾选批量导出
+		if (!id) {
+			idList.push(...(state.dataListSelections as number[]))
+			if (idList.length === 0) {
+				ElMessage.warning('请勾选要导出的数据')
+				return
+			}
+		} else {
+			// 单个导出
+			idList.push(id)
+		}
+
+		state.exportLoading = true
+		state.exportApi!(idList)
+			.then(() => {
+				ElMessage.success(state.exportSuccessMessage)
+				tableRef.value.clearSelection()
+				state.dataListSelections = []
+			})
+			.catch(e => {
+				ElMessage.error(e?.message || '导出失败')
+			})
+			.finally(() => {
+				state.exportLoading = false
+			})
+	}
+
+	// 导入数据
+	const importHandle = (file: File, params: Record<string, any> = {}) => {
+		if (!file) {
+			ElMessage.warning('请选择要导入的文件')
+			return
+		}
+
+		if (!state.importApi) {
+			ElMessage.warning('未配置导入接口')
+			return
+		}
+		// 表单参数
+		const formData = new FormData()
+		// 文件
+		formData.append('file', file)
+		// 添加其他参数
+		Object.keys(params).forEach(key => formData.append(key, params[key]))
+
+		// 调用导入接口
+		state.importApi!(formData)
+			.then(() => {
+				ElMessage.success(state.importSuccessMessage)
+			})
+			.then(() => {
+				getDataList()
+			})
 	}
 
 	return {
@@ -242,7 +341,11 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		sortChangeHandle,
 		deleteBatchHandle,
 		queryRef,
+		tableRef,
 		resetQueryHandle,
-		tableIndex
+		tableIndex,
+		exportHandle,
+		importHandle
 	}
 }
+export default useTableAction

@@ -50,7 +50,7 @@ import { ElMessage } from 'element-plus/es'
 import { genTableApi } from '@/api/gen/table'
 import { genProjectApi } from '@/api/gen/project'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -116,7 +116,7 @@ const submitHandle = () => {
 		})
 }
 
-const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
+const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 defineExpose({
 	init

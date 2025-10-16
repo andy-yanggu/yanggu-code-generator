@@ -21,7 +21,7 @@
 
 		<el-card shadow="hover">
 			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 			</el-space>
 			<el-table
@@ -66,7 +66,7 @@
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -84,13 +84,13 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<field-type-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></field-type-form>
+			<field-type-form ref="formRef" @refresh-data-list="getDataList"></field-type-form>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive } from 'vue'
 import FieldTypeForm from '@/views/gen/field-type/form.vue'
 import { ATTR_TYPES } from '@/constant/enum'
@@ -122,7 +122,7 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>

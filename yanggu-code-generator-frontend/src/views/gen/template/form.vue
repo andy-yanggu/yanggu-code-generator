@@ -109,6 +109,9 @@ const state: FormOptions = reactive({
 	detailApi: (id: number) => {
 		return genTemplateApi.detail({ id })
 	},
+	initBefore: () => {
+		state.dataForm.templateName = ''
+	},
 	dataForm: {
 		id: null,
 		templateGroupId: -1,

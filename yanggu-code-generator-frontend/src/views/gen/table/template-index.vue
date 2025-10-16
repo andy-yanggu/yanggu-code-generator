@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { genGeneratorApi } from '@/api/gen/generator'
@@ -149,7 +149,7 @@ const generateCode = () => {
 	}
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
+const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 defineExpose({
 	init

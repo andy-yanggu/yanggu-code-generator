@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import { genEnumApi } from '@/api/gen/enum'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
@@ -99,7 +99,7 @@ const enumItemIndexShow = (enumId: number) => {
 	enumItemIndexRef.value.init(enumId)
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 defineExpose({
 	init,

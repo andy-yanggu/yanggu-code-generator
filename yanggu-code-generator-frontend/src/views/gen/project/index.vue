@@ -32,7 +32,7 @@
 
 		<el-card shadow="hover">
 			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 			</el-space>
 			<el-table
@@ -71,7 +71,7 @@
 					<template #default="scope">
 						<el-row>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-button>
@@ -101,7 +101,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<project-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></project-form>
+			<project-form ref="formRef" @refresh-data-list="getDataList"></project-form>
 
 			<!-- 预览 -->
 			<preview ref="previewRef" :key="currentProjectIdTs"></preview>
@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, reactive, ref } from 'vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi } from '@/api/gen/project'
@@ -166,7 +166,7 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>

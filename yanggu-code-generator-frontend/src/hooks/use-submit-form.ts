@@ -2,6 +2,9 @@ import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { AxiosPromise } from 'axios'
 
+// 表单模式：新增、修改、复制
+export type FormType = 'add' | 'update' | 'copy'
+
 export interface FormOptions {
 	// 提交API
 	submitApi: (data: any) => AxiosPromise
@@ -24,9 +27,28 @@ export interface FormOptions {
 }
 
 export const useSubmitForm = (options: FormOptions) => {
-	const visible = ref(false) // 弹窗可见性
-	const submitLoading = ref(false) // 提交按钮loading状态
-	const dataFormRef = ref() // 表单ref
+	// 弹窗可见性
+	const visible = ref(false)
+
+	// 提交按钮loading状态
+	const submitLoading = ref(false)
+
+	// 表单ref
+	const dataFormRef = ref()
+
+	// 对话框标题
+	const dialogTitle = (formType: FormType) => {
+		switch (formType) {
+			case 'add':
+				return '新增'
+			case 'update':
+				return '修改'
+			case 'copy':
+				return '复制'
+			default:
+				return '操作'
+		}
+	}
 
 	// 初始化表单
 	const init = (id?: number) => {
@@ -87,6 +109,7 @@ export const useSubmitForm = (options: FormOptions) => {
 	return {
 		visible,
 		dataFormRef,
+		dialogTitle,
 		init,
 		submitHandle,
 		submitLoading

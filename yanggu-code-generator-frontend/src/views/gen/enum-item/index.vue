@@ -39,15 +39,6 @@
 				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="enumItemOrder" label="枚举项排序" width="120" header-align="center" align="center" sortable="custom"></el-table-column>
 				<el-table-column
-					prop="createTime"
-					label="创建时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"
-				></el-table-column>
-				<el-table-column
 					prop="updateTime"
 					label="修改时间"
 					show-overflow-tooltip
@@ -75,19 +66,18 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<enum-item-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></enum-item-form>
+			<enum-item-form ref="formRef" @refresh-data-list="getDataList"></enum-item-form>
 		</el-card>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { genEnumItemApi } from '@/api/gen/enum-item'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
-const enumIdRef = ref()
 const state: IHooksOptions = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	deleteListApi: genEnumItemApi.deleteList,
@@ -102,15 +92,14 @@ const state: IHooksOptions = reactive({
 const enumNameRef = ref('')
 
 const dialogVisible = ref(false)
-const addOrUpdateRef = ref()
+const formRef = ref()
 const addOrUpdateHandle = (id?: number) => {
-	addOrUpdateRef.value.initData(enumIdRef.value, id)
+	formRef.value.initData(state.queryForm.enumId, id)
 }
 
 const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
 	resetQueryHandle()
-	enumIdRef.value = enumId
 	enumNameRef.value = enumName
 	state.queryForm.enumId = enumId
 	getDataList()
@@ -130,5 +119,5 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 </script>

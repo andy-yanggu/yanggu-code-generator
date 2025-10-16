@@ -85,7 +85,7 @@
 								<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
@@ -121,7 +121,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<update ref="addOrUpdateRef" @refresh-data-list="getDataList"></update>
+			<update ref="formRef" @refresh-data-list="getDataList"></update>
 
 			<!-- 导入表组件 -->
 			<import ref="importRef" @refresh-data-list="getDataList"></import>
@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import Import from '@/views/gen/table/import.vue'
 import Update from '@/views/gen/table/update.vue'
@@ -250,9 +250,9 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>
 
 <style scoped>

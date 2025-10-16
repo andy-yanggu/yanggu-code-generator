@@ -21,7 +21,7 @@
 
 		<el-card shadow="hover">
 			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 				<el-button type="success" :icon="DocumentAdd" @click="generatorBatchHandler()">生成</el-button>
 			</el-space>
@@ -74,7 +74,7 @@
 								<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
 						</el-row>
 						<el-row :gutter="5">
@@ -109,7 +109,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<enum-form ref="addOrUpdateRef" @refresh-data-list="getDataList"></enum-form>
+			<enum-form ref="formRef" @refresh-data-list="getDataList"></enum-form>
 
 			<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 
@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
@@ -211,9 +211,9 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 
-const { addOrUpdateRef, addOrUpdateHandle } = useInitForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>
 
 <style scoped>

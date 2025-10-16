@@ -97,7 +97,7 @@
 
 			<!-- 新增和修改页面	-->
 			<template-form
-				ref="addOrUpdateRef"
+				ref="formRef"
 				:template-group-id="templateGroupId"
 				:parent-id="contextMenu.parentId"
 				:template-type="contextMenu.templateType"
@@ -246,6 +246,7 @@ import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
+import { useInitForm } from '@/hooks/use-init-form'
 
 interface Tree {
 	// 主键ID
@@ -387,7 +388,6 @@ const activeTabItem = computed(() => {
 
 const treeSearchText = ref('')
 const isCollapse = ref(false)
-const addOrUpdateRef = ref()
 const { isFullscreen, toggle } = useFullscreen()
 // 模板树右键菜单状态
 const contextMenu = reactive({
@@ -921,7 +921,7 @@ const updateTemplate = (node: Tree) => {
 	const templatePath = getFullPathById(node.id, templateTreeData.treeList).replace(node.fileName, '').replace(/\/$/, '')
 	contextMenu.templatePath = templatePath ? templatePath : '/'
 	nextTick(() => {
-		addOrUpdateRef.value.init(node.id)
+		formInitHandle(node.id)
 	})
 	hideContextMenu()
 }
@@ -932,7 +932,7 @@ const newDir = (parent: Tree) => {
 	contextMenu.templateType = 0
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		addOrUpdateRef.value.init()
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -943,7 +943,7 @@ const newTemplateFile = (parent: Tree) => {
 	contextMenu.templateType = 1
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		addOrUpdateRef.value.init()
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -954,7 +954,7 @@ const newBinaryFile = (parent: Tree) => {
 	contextMenu.templateType = 2
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		addOrUpdateRef.value.init()
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -1164,6 +1164,8 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 	}
 	hideTabContextMenu()
 }
+
+const { formRef, formInitHandle } = useInitForm()
 
 defineExpose({
 	init

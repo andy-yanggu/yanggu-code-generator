@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import { genTableApi } from '@/api/gen/table'
 import { Refresh, Search } from '@element-plus/icons-vue'
@@ -84,7 +84,7 @@ const selectionChangeHandle = (selections: any[]) => {
 		emit('selectChange', selections)
 	}
 }
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 const toggleRowSelection = (rowList: any[]) => {
 	if (rowList.length === 0) {

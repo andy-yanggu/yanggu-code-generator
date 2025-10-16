@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import { genEnumItemApi } from '@/api/gen/enum-item'
 import { Refresh, Search } from '@element-plus/icons-vue'
@@ -90,5 +90,5 @@ defineExpose({
 	init
 })
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, sortChangeHandle, queryRef, resetQueryHandle, tableIndex } = useIndexQuery(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, sortChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 </script>

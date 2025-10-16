@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle(mode)" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item prop="connName">
 				<template #label>
@@ -38,10 +38,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType, reactive } from 'vue'
+import { PropType, reactive } from 'vue'
 import { genDataSourceApi } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -51,22 +51,8 @@ defineOptions({
 // 定义组件props
 const props = defineProps({
 	mode: {
-		type: String as PropType<'add' | 'update' | 'copy'>,
+		type: String as PropType<FormType>,
 		required: true
-	}
-})
-
-// 计算对话框标题
-const dialogTitle = computed(() => {
-	switch (props.mode) {
-		case 'add':
-			return '新增'
-		case 'update':
-			return '修改'
-		case 'copy':
-			return '复制'
-		default:
-			return '操作'
 	}
 })
 
@@ -104,7 +90,7 @@ const dataRules = reactive({
 	password: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

@@ -19,7 +19,7 @@
 
 		<el-card shadow="hover">
 			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
 				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 			</el-space>
 			<el-table
@@ -59,8 +59,8 @@
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="CopyDocument" @click="copyBaseClassHandle(scope.row.id)">复制</el-button>
+						<el-button type="primary" link :icon="Edit" @click="formInitHandle('update', scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle('copy', scope.row.id)">复制</el-button>
 						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -78,15 +78,15 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<base-class-form ref="addOrUpdateRef" :mode="dialogMode" @refresh-data-list="getDataList"></base-class-form>
+			<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList"></base-class-form>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { IHooksOptions, useIndexQuery } from '@/hooks/use-index-query'
-import { useInitForm } from '@/hooks/use-init-form'
-import { nextTick, reactive, ref } from 'vue'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useComplexForm } from '@/hooks/use-init-form'
+import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
 import { genBaseClassApi } from '@/api/gen/base-class'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
@@ -114,30 +114,7 @@ const {
 	queryRef,
 	resetQueryHandle,
 	tableIndex
-} = useIndexQuery(state)
+} = useTableAction(state)
 
-// 添加一个响应式变量来控制对话框模式
-const dialogMode = ref<'add' | 'update' | 'copy'>('add')
-
-// 修改添加/更新处理函数
-const addOrUpdateHandle = (id?: number) => {
-	// 设置模式为添加或更新
-	dialogMode.value = id ? 'update' : 'add'
-	// 调用原始函数
-	nextTick(() => {
-		addOrUpdateRef.value.init(id)
-	})
-}
-
-// 修改复制处理函数
-const copyBaseClassHandle = (id: number) => {
-	// 设置模式为复制
-	dialogMode.value = 'copy'
-	// 调用初始化函数
-	nextTick(() => {
-		addOrUpdateRef.value.init(id)
-	})
-}
-
-const { addOrUpdateRef } = useInitForm()
+const { formRef, dialogMode, formInitHandle } = useComplexForm()
 </script>
