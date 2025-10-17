@@ -3,14 +3,14 @@
 		<el-card class="layout-query" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目名称" prop="projectName">
-					<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称"></el-input>
+					<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称" style="width: 140px"></el-input>
 				</el-form-item>
 				<el-form-item label="生成方式" prop="generatorType">
-					<el-select v-model="state.queryForm.generatorType" style="width: 160px" clearable placeholder="请选择生成方式">
+					<el-select v-model="state.queryForm.generatorType" style="width: 150px" clearable placeholder="请选择生成方式">
 						<el-option v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="创建时间" prop="dateTimeRange" style="width: 350px">
+				<el-form-item label="创建时间" prop="dateTimeRange" style="width: 340px">
 					<el-date-picker
 						v-model="state.queryForm.dateTimeRange"
 						value-format="YYYY-MM-DD HH:mm:ss"

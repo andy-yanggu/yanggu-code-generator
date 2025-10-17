@@ -1,4 +1,4 @@
-import { service } from '@/utils/request'
+import { downloadFile, service } from '@/utils/request'
 
 // 所有可能的CRUD方法签名
 interface CrudApi {
@@ -48,6 +48,16 @@ interface CrudApi {
 	 * - 包含关联表 JOIN 的额外信息
 	 */
 	voList: (queryForm?: any) => Promise<any>
+
+	/**
+	 * 导出数据，勾选导出数据
+	 */
+	export: (idList: number[] | string[]) => Promise<any>
+
+	/**
+	 * 导入数据
+	 */
+	import: (formData: FormData) => Promise<any>
 }
 
 // 配置接口，默认所有方法启用，禁用方法时显式设置false
@@ -63,7 +73,12 @@ export interface CrudConfig {
 	entityList?: boolean
 	voPage?: boolean
 	voList?: boolean
+	export?: boolean
+	import?: boolean
 }
+
+// 默认配置值（运行时使用）
+const defaultCrudConfig: CrudConfig = {}
 
 // ----------------------------------------------------
 // 工具类型：根据 CrudConfig 过滤掉被显式设置为 false 的接口
@@ -88,16 +103,18 @@ type EnabledCrudApi<C extends CrudConfig> = Pick<
 // 返回值：自动排除了禁用方法的 CRUD API 对象
 // ----------------------------------------------------
 export const createCrudApi = <C extends CrudConfig = CrudConfig>(baseUrl: string, opts?: C): EnabledCrudApi<C> => {
-	const api = {} as any
-	const defaultOpts = {
-		add: false,
-		update: false
-	} as C
-	const o = opts || defaultOpts
+	// api 对象，用于保存生成的方法
+	const api = {} as Partial<EnabledCrudApi<C>>
+
+	// 合并默认配置（保留传入项）
+	const o = {
+		...defaultCrudConfig,
+		...opts
+	} satisfies CrudConfig
 
 	const add = <K extends keyof CrudApi>(key: K, fn: CrudApi[K]) => {
 		if (o[key] !== false) {
-			api[key] = fn
+			;(api[key as unknown as keyof EnabledCrudApi<C>] as CrudApi[K]) = fn
 		}
 	}
 
@@ -123,5 +140,9 @@ export const createCrudApi = <C extends CrudConfig = CrudConfig>(baseUrl: string
 
 	add('voList', queryForm => service.post(`${baseUrl}/voList`, queryForm || {}))
 
-	return api
+	add('export', idList => downloadFile(`${baseUrl}/export`, { idList }))
+
+	add('import', formData => service.post(`${baseUrl}/import`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }))
+
+	return api as EnabledCrudApi<C>
 }

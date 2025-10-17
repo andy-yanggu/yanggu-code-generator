@@ -4,6 +4,8 @@ declare module 'axios' {
 	export interface AxiosRequestConfig {
 		/**
 		 * 是否禁止全局错误提示
+		 * - 不设置 或 false：显示错误提示（默认行为）
+		 * - true：不显示错误提示。自行处理错误
 		 */
 		noErrorMessage?: boolean
 

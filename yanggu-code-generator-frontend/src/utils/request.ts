@@ -115,7 +115,7 @@ service.interceptors.response.use(
  *
  * @param url 请求地址
  * @param params 请求参数
- * @param noErrorMessage
+ * @param noErrorMessage 是否不显示错误提示
  */
 export const downloadFile = (url: string, params?: any, noErrorMessage = false): Promise<void> => {
 	return new Promise((resolve, reject) => {
@@ -139,7 +139,7 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 							: filename
 				}
 
-				const downloadUrl = window.URL.createObjectURL(new Blob([response.data]))
+				const downloadUrl = URL.createObjectURL(new Blob([response.data]))
 				const a = document.createElement('a')
 				a.href = downloadUrl
 				a.download = filename
@@ -163,4 +163,25 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 				reject(error)
 			})
 	})
+}
+
+/**
+ * 加载blob数据
+ *
+ * @param url 请求地址
+ * @param type blob类型
+ * @param params 请求参数
+ * @param noErrorMessage 是否不显示错误提示
+ */
+export const loadBlob = (url: string, type: string, params?: any, noErrorMessage = false) => {
+	return service
+		.get(url, {
+			responseType: 'blob',
+			params,
+			noErrorMessage
+		})
+		.then(resp => {
+			const blob = new Blob([resp.data], { type })
+			return URL.createObjectURL(blob)
+		})
 }
