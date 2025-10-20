@@ -63,17 +63,17 @@ export const routeGuard = (router: Router) => {
 
 		const userStore = useUserStore()
 		// 是否登录
-		if (!userStore.isLogin) {
-			// 未登录，跳转登录页面
-			next({
-				name: 'Login',
-				query: {
-					redirect: encodeURIComponent(to.fullPath || '/')
-				}
-			})
-			NProgress.done()
-			return
-		}
+		// if (!userStore.isLogin) {
+		// 	// 未登录，跳转登录页面
+		// 	next({
+		// 		name: 'Login',
+		// 		query: {
+		// 			redirect: encodeURIComponent(to.fullPath || '/')
+		// 		}
+		// 	})
+		// 	NProgress.done()
+		// 	return
+		// }
 		// 是否添加路由
 		if (!userStore.isAddRoutes) {
 			// 1. 添加路由
@@ -133,6 +133,11 @@ const loadView = (component: string | undefined) => {
 			res = () => modules[path]()
 			return res
 		}
+	}
+	if (!res) {
+		console.warn(`未找到组件: ${component}`)
+		res = () => import('@/views/error/404.vue')
+		return res
 	}
 }
 

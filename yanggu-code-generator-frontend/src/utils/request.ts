@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user-store'
-import { useRouter } from 'vue-router'
+import { router } from '@/router'
 
 // axios实例
 export const service = axios.create({
@@ -74,7 +74,6 @@ service.interceptors.response.use(
 			}).then(() => {
 				const userStore = useUserStore()
 				userStore.clearAll()
-				const router = useRouter()
 				router.replace({
 					path: '/login',
 					query: {

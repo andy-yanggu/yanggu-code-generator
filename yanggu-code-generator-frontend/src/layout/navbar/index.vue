@@ -11,7 +11,7 @@
 				<breadcrumb v-if="systemSettingStore.isOpenBreadcrumb"></breadcrumb>
 			</div>
 
-			<!-- 右侧区域：菜单搜索 + 刷新 + 切换布局大小 + 链接 + 全屏按钮 -->
+			<!-- 右侧区域 -->
 			<div class="navbar-toolbar-right">
 				<!-- 菜单搜索 -->
 				<menu-search v-if="systemSettingStore.isOpenMenuSearch"></menu-search>
@@ -25,6 +25,8 @@
 				</el-tooltip>
 				<!-- 日间/夜间模式切换  -->
 				<theme-switch v-if="systemSettingStore.isOpenThemeSwitch"></theme-switch>
+				<!-- 用户下拉菜单 -->
+				<user-dropdown></user-dropdown>
 				<!-- 系统设置 -->
 				<system-setting></system-setting>
 			</div>
@@ -47,6 +49,7 @@ import LayoutSize from '@/layout/navbar/components/layout-size.vue'
 import { useFullscreen } from '@vueuse/core'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import ThemeSwitch from '@/layout/navbar/components/theme-switch.vue'
+import UserDropdown from '@/layout/navbar/components/user-dropdown.vue'
 
 defineOptions({
 	name: 'LayoutNavbar'

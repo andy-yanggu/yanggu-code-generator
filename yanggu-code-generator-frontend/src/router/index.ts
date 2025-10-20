@@ -1,41 +1,6 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { routeGuard } from '@/router/guard'
-
-// 常量路由
-export const constantRoutes: RouteRecordRaw[] = [
-	{
-		path: '/',
-		name: 'Layout',
-		component: () => import('@/layout/index.vue'),
-		redirect: '/index',
-		children: []
-	},
-	{
-		path: '/redirect',
-		name: 'Redirect',
-		component: () => import('@/layout/index.vue'),
-		children: [
-			{
-				path: '/redirect/:path(.*)',
-				component: () => import('@/views/router/redirect.vue'),
-				meta: {
-					title: '重定向',
-					cache: false,
-					type: 1
-				}
-			}
-		]
-	},
-	{
-		path: '/:pathMatch(.*)',
-		component: () => import('@/views/error/404.vue'),
-		meta: {
-			title: '404',
-			cache: false,
-			type: 1
-		}
-	}
-]
+import { constantRoutes } from '@/router/constant'
 
 export const router = createRouter({
 	history: createWebHashHistory(),
