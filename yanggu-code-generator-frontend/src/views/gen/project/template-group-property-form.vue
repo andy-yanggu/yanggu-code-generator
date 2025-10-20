@@ -35,20 +35,21 @@
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
+import { Key } from '@/types/common'
 
 /**
  * 下拉或单选项结构
  */
 interface ComponentOption {
 	label: string
-	value: string | number
+	value: Key
 }
 
 /**
  * 动态属性项定义
  */
 export interface PropertyItem {
-	id: number | string
+	id: Key
 	propKey: string
 	propTitle: string
 	componentType: number // 0: input, 1: number, 2: select, 3: radio

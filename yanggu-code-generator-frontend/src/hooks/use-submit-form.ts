@@ -1,6 +1,7 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { AxiosPromise } from 'axios'
+import { Key } from '@/types/common'
 
 // 表单模式：新增、修改、复制
 export type FormType = 'add' | 'update' | 'copy'
@@ -9,7 +10,7 @@ export interface FormOptions {
 	// 提交API
 	submitApi: (data: any) => AxiosPromise
 	// 详情API
-	detailApi: (id: number) => AxiosPromise
+	detailApi: (id: Key) => AxiosPromise
 	// 初始化之前调用
 	initBefore?: () => void
 	// 表单数据
@@ -51,7 +52,7 @@ export const useSubmitForm = (options: FormOptions) => {
 	}
 
 	// 初始化表单
-	const init = (id?: number) => {
+	const init = (id?: Key) => {
 		visible.value = true
 		options.dataForm.id = null
 

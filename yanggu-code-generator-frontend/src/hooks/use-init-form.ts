@@ -1,5 +1,6 @@
 import { nextTick, ref } from 'vue'
 import { FormType } from '@/hooks/use-submit-form'
+import { Key } from '@/types/common'
 
 // 简单表单
 export const useInitForm = () => {
@@ -7,7 +8,7 @@ export const useInitForm = () => {
 	const formRef = ref()
 
 	// 初始化表单方法
-	const formInitHandle = (id?: number) => {
+	const formInitHandle = (id?: Key) => {
 		formRef.value.init(id)
 	}
 
@@ -26,7 +27,7 @@ export const useComplexForm = () => {
 	const dialogMode = ref<FormType>('add')
 
 	// 表单初始化函数
-	const formInitHandle = (formType: FormType, id?: number) => {
+	const formInitHandle = (formType: FormType, id?: Key) => {
 		// 设置模式
 		dialogMode.value = formType
 		// 调用原始函数

@@ -1,4 +1,5 @@
 import { downloadFile, service } from '@/utils/request'
+import { Key, KeyArray } from '@/types/common'
 
 // 所有可能的CRUD方法签名
 interface CrudApi {
@@ -12,16 +13,16 @@ interface CrudApi {
 	submit: (dataForm: any) => Promise<any>
 
 	// 单个删除接口
-	delete: (id: number | string) => Promise<any>
+	delete: (id: Key) => Promise<any>
 
 	// 批量删除接口
-	deleteList: (idList: number[] | string[]) => Promise<any>
+	deleteList: (idList: KeyArray) => Promise<any>
 
 	// 详情接口
-	detail: (id: number | string) => Promise<any>
+	detail: (id: Key) => Promise<any>
 
 	// 批量详情接口
-	detailList: (idList: number[] | string[]) => Promise<any>
+	detailList: (idList: KeyArray) => Promise<any>
 
 	/**
 	 * 分页查询基础实体数据
@@ -52,7 +53,7 @@ interface CrudApi {
 	/**
 	 * 导出数据，勾选导出数据
 	 */
-	export: (idList: number[] | string[]) => Promise<any>
+	export: (idList: KeyArray) => Promise<any>
 
 	/**
 	 * 导入数据

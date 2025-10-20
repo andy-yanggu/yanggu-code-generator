@@ -1,12 +1,13 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Key, KeyArray } from '@/types/common'
 
 // 数据列表接口
 type DataListApi<T = any> = (params: any) => Promise<T>
 // 批量删除接口
-type DeleteListApi<T = any> = (params: any) => Promise<T>
+type DeleteListApi<T = any> = (idList: KeyArray) => Promise<T>
 // 导出接口
-type ExportApi<T = any> = (idList: number[]) => Promise<T>
+type ExportApi<T = any> = (idList: KeyArray) => Promise<T>
 // 导入接口
 type ImportApi<T = any> = (formData: FormData) => Promise<T>
 
@@ -46,9 +47,9 @@ export interface IHooksOptions {
 	// 导出loading状态
 	exportLoading?: boolean
 	// 数据列表，多选项
-	dataListSelections?: any[]
+	dataListSelections?: KeyArray
 	// 删除时提示语
-	deleteMessage?: string
+	deleteConfirmMessage?: string
 	// 导出时提示语
 	exportSuccessMessage?: string
 	// 导入成功提示语
@@ -90,11 +91,12 @@ const useTableAction = (options: IHooksOptions) => {
 		dataListLoading: false,
 		exportLoading: false,
 		dataListSelections: [],
-		deleteMessage: '确定进行删除操作？',
+		deleteConfirmMessage: '确定进行删除操作？',
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
 	}
 
+	// 合并默认值
 	const mergeDefaultOptions = (options: any, props: any): IHooksOptions => {
 		for (const key in options) {
 			if (!Object.getOwnPropertyDescriptor(props, key)) {
@@ -218,7 +220,11 @@ const useTableAction = (options: IHooksOptions) => {
 
 	// 多选
 	const selectionChangeHandle = (selections: any[]) => {
-		state.dataListSelections = selections.map((item: any) => state.primaryKey && item[state.primaryKey])
+		if (!state.primaryKey) {
+			console.error('未配置主键')
+			return
+		}
+		state.dataListSelections = selections.map((item: any) => item[state.primaryKey!])
 	}
 
 	// 排序
@@ -236,29 +242,24 @@ const useTableAction = (options: IHooksOptions) => {
 	}
 
 	// 批量删除
-	const deleteBatchHandle = (key?: number | string) => {
+	const deleteBatchHandle = (id?: Key) => {
 		if (!state.deleteListApi) {
 			ElMessage.warning('未配置删除接口')
 			return
 		}
-		let data: any[] = []
-		if (key) {
-			data = [key]
-		} else {
-			data = state.dataListSelections ? state.dataListSelections : []
+		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
-			if (data.length === 0) {
-				ElMessage.warning('请选择删除记录')
-				return
-			}
+		if (idList.length === 0) {
+			ElMessage.warning('请选择删除记录')
+			return
 		}
 
-		ElMessageBox.confirm(state.deleteMessage, '提示', {
+		ElMessageBox.confirm(state.deleteConfirmMessage, '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
 		}).then(() => {
-			state.deleteListApi!(data).then(() => {
+			state.deleteListApi!(idList).then(() => {
 				ElMessage.success('删除成功')
 				query()
 			})
@@ -271,23 +272,17 @@ const useTableAction = (options: IHooksOptions) => {
 	}
 
 	// 勾选导出和单个导出
-	const exportHandle = (id?: number) => {
+	const exportHandle = (id?: Key) => {
 		if (!state.exportApi) {
 			ElMessage.warning('未配置导出接口')
 			return
 		}
 
-		const idList: number[] = []
-		// 勾选批量导出
-		if (!id) {
-			idList.push(...(state.dataListSelections as number[]))
-			if (idList.length === 0) {
-				ElMessage.warning('请勾选要导出的数据')
-				return
-			}
-		} else {
-			// 单个导出
-			idList.push(id)
+		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
+
+		if (idList.length === 0) {
+			ElMessage.warning('请勾选要导出的数据')
+			return
 		}
 
 		state.exportLoading = true
@@ -296,9 +291,6 @@ const useTableAction = (options: IHooksOptions) => {
 				ElMessage.success(state.exportSuccessMessage)
 				tableRef.value.clearSelection()
 				state.dataListSelections = []
-			})
-			.catch(e => {
-				ElMessage.error(e?.message || '导出失败')
 			})
 			.finally(() => {
 				state.exportLoading = false

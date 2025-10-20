@@ -63,12 +63,17 @@ export const routeGuard = (router: Router) => {
 
 		const userStore = useUserStore()
 		// 是否登录
-		// if (!userStore.isLogin) {
-		// 	// 未登录，跳转登录页面
-		// 	next({ name: 'Login' })
-		//  NProgress.done()
-		// 	return
-		// }
+		if (!userStore.isLogin) {
+			// 未登录，跳转登录页面
+			next({
+				name: 'Login',
+				query: {
+					redirect: encodeURIComponent(to.fullPath || '/')
+				}
+			})
+			NProgress.done()
+			return
+		}
 		// 是否添加路由
 		if (!userStore.isAddRoutes) {
 			// 1. 添加路由
@@ -80,7 +85,7 @@ export const routeGuard = (router: Router) => {
 
 			// 3. 设置添加路由标记
 			userStore.setAddRouteFlag()
-			//添加完路由需要重新执行一次路由跳转，否则会出现空白页面
+			// 添加完路由需要重新执行一次路由跳转，否则会出现空白页面
 			next({ ...to, replace: true })
 			return
 		}
