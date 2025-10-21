@@ -128,7 +128,7 @@ watch(
 	}
 )
 
-const hasComponentOptions = computed(() => [2, 3].includes(state.dataForm.componentType))
+const hasComponentOptions = computed(() => [2, 3, 4].includes(state.dataForm.componentType))
 
 const componentOptions = (_: any, __: any, callback: any) => {
 	if (!hasComponentOptions.value) {

@@ -28,6 +28,16 @@
 					{{ selectItem.label }}
 				</el-radio>
 			</el-radio-group>
+
+			<!-- 多选框	-->
+			<el-checkbox-group v-else-if="item.componentType === 4" v-model="formData[item.propKey]">
+				<el-checkbox
+					v-for="selectItem in item.componentOptions"
+					:key="selectItem.value"
+					:value="selectItem.value"
+					:label="selectItem.label"
+				></el-checkbox>
+			</el-checkbox-group>
 		</el-form-item>
 	</template>
 </template>
@@ -80,7 +90,7 @@ const emit = defineEmits(['update:modelValue'])
 const formData = computed({
 	get: () => props.modelValue,
 	set: val => {
-		// 监听 propertyList 变化，补齐默认值
+		// 补齐默认值
 		props.propertyList.forEach((item: PropertyItem) => {
 			if (!(item.propKey in props.modelValue)) {
 				val[item.propKey] = item.defaultValue ?? ''

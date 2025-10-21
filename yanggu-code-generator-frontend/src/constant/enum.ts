@@ -58,7 +58,8 @@ export const COMPONENT_TYPES: EnumItem[] = [
 	{ label: '输入框', value: 0 },
 	{ label: '数字输入框', value: 1 },
 	{ label: '选择器', value: 2 },
-	{ label: '单选框', value: 3 }
+	{ label: '单选框', value: 3 },
+	{ label: '多选框', value: 4 }
 ]
 
 // 生成产物类型枚举

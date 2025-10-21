@@ -1,5 +1,7 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.v7.json.JSONArray;
+import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,7 +43,7 @@ public class ProjectTemplateGroupPropertyValueServiceImpl extends ServiceImpl<Pr
             entity.setProjectId(projectId);
             entity.setTemplateGroupId(templateGroupId);
             entity.setTemplateGroupPropertyId(collectMap.get(key));
-            entity.setTemplateGroupPropertyValue(value.toString());
+            entity.setTemplateGroupPropertyValue(JSONUtil.toJsonStr(value));
             projectTemplateGroupPropertyValueMapper.insert(entity);
         });
     }
@@ -58,8 +60,17 @@ public class ProjectTemplateGroupPropertyValueServiceImpl extends ServiceImpl<Pr
         return this.list(queryWrapper).stream()
                 .collect(Collectors.toMap(
                         temp -> collectMap.get(temp.getTemplateGroupPropertyId()),
-                        temp -> GenUtil.convertStringToAppropriateType(temp.getTemplateGroupPropertyValue()))
+                        temp -> handlerData(temp.getTemplateGroupPropertyValue()))
                 );
+    }
+
+    private Object handlerData(String value) {
+        Object object = GenUtil.convertStringToAppropriateType(value);
+        if (JSONUtil.isTypeJSONArray(object.toString())) {
+            JSONArray array = JSONUtil.parseArray(object);
+            return array.stream().map(item -> item.asJSONPrimitive().getValue()).toList();
+        }
+        return object;
     }
 
 }
