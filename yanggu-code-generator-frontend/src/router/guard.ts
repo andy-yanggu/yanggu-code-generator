@@ -34,7 +34,7 @@ NProgress.configure({ showSpinner: false })
 const whiteLists = ['Login']
 
 export const routeGuard = (router: Router) => {
-	// 路由拦截
+	// 路由前置拦截
 	router.beforeEach((to, from, next) => {
 		const systemSettingStore = useSystemSettingStore()
 
@@ -108,7 +108,7 @@ export const routeGuard = (router: Router) => {
 		next()
 	})
 
-	// 路由结束
+	// 路由后置拦截
 	router.afterEach(to => {
 		const systemSettingStore = useSystemSettingStore()
 		// 设置动态标题

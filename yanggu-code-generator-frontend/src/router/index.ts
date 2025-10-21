@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { routeGuard } from '@/router/guard'
 import { constantRoutes } from '@/router/constant'
 
+// 创建路由实例
 export const router = createRouter({
 	history: createWebHashHistory(),
 	scrollBehavior(_to, _from, savedPosition) {
@@ -11,6 +12,7 @@ export const router = createRouter({
 			return { top: 0 }
 		}
 	},
+	// 常量路由
 	routes: constantRoutes
 })
 

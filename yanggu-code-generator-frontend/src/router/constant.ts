@@ -10,7 +10,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/user/profile',
-				name: 'Profile',
+				name: 'UserProfile',
 				component: () => import('@/views/user/profile.vue'),
 				meta: {
 					title: '个人中心',
