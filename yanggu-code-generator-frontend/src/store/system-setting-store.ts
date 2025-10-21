@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
+import { cloneObject, resetReactiveObject } from '@/utils/tool'
 
 interface SystemSetting {
 	// 是否开启面包屑
@@ -77,11 +78,11 @@ const defaultSystemSetting: SystemSetting = {
 export const useSystemSettingStore = defineStore(
 	'system-setting',
 	() => {
-		const state = reactive<SystemSetting>({ ...defaultSystemSetting })
+		const state = reactive<SystemSetting>(cloneObject(defaultSystemSetting))
 
 		// 恢复默认配置
 		const resetSettings = () => {
-			Object.assign(state, defaultSystemSetting)
+			resetReactiveObject(state, defaultSystemSetting)
 		}
 
 		return {

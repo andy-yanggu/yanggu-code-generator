@@ -1,6 +1,7 @@
 import type { App, Component, Plugin } from 'vue' // 添加 Component 类型
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
+import { cloneDeep } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -24,6 +25,16 @@ export const copyToClipboard = (text: string): Promise<void> => {
 			reject()
 		}
 	})
+}
+
+// 克隆对象
+export const cloneObject = <T extends object>(obj: T): T => {
+	return cloneDeep(obj) as T
+}
+
+// 重置对象
+export const resetReactiveObject = <T extends object>(target: T, source: T): void => {
+	Object.assign(target, cloneObject(source))
 }
 
 const title = useTitle()

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
+import { cloneObject, resetReactiveObject } from '@/utils/tool'
 
 export interface UserInfo {
 	username: string
@@ -470,9 +471,9 @@ export const useUserStore = defineStore(
 		// 登录用户信息
 		// 这里必须使用解构的方式，不然一直使用一个对象
 		// reactive每次初始化，必须传入一个全新的对象
-		const userInfo = reactive<UserInfo>({ ...INITIAL_USER_INFO })
+		const userInfo = reactive<UserInfo>(cloneObject(INITIAL_USER_INFO))
 		// token信息
-		const tokenInfo = reactive<TokenInfo>({ ...INITIAL_TOKEN_INFO })
+		const tokenInfo = reactive<TokenInfo>(cloneObject(INITIAL_TOKEN_INFO))
 
 		// 计算属性
 		const isLogin = computed(() => {
@@ -490,10 +491,10 @@ export const useUserStore = defineStore(
 			menuList.value = []
 			permissionList.value = []
 			// 完全清空 userInfo
-			Object.assign(userInfo, INITIAL_USER_INFO)
+			resetReactiveObject(userInfo, INITIAL_USER_INFO)
 
 			// 完全清空 tokenInfo
-			Object.assign(tokenInfo, INITIAL_TOKEN_INFO)
+			resetReactiveObject(tokenInfo, INITIAL_TOKEN_INFO)
 		}
 
 		// 设置登录后的数据
