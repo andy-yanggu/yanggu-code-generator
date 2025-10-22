@@ -20,7 +20,7 @@ export interface FormOptions {
 	// 提交之前操作
 	submitBefore?: () => void
 	// 触发事件
-	emit: any
+	emit?: any
 	// 提示信息
 	message?: string
 	// 提示时长
@@ -99,7 +99,8 @@ export const useSubmitForm = (options: FormOptions) => {
 						duration: options.duration || 500
 					})
 					visible.value = false
-					options.emit('refreshDataList', data)
+					// 触发刷新列表事件
+					options.emit?.('refreshDataList', data)
 				})
 				.finally(() => {
 					submitLoading.value = false

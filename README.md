@@ -14,10 +14,10 @@
 
 1. JDK 21
 2. MySQL
-3. vue3
-4. vite
-5. nodejs
-6. npm或者pnpm
+3. Vue3
+4. Vite
+5. NodeJs
+6. pnpm
 
 
 
@@ -29,7 +29,7 @@
 1. 创建数据库code_generator
 2. 运行sql文件夹下的code_generator.sql文件，创建表和添加一些默认数据
 3. 修改resource目录下的application.yaml，更新数据库驱动、URL、账号和密码。运行主启动类CodeGeneratorApplication，启动项目
-4. 访问http://localhost:8888/code-generator/doc.html#/home，说明后端项目正常启动
+4. 访问后端knife4j地址: http://localhost:8888/code-generator/doc.html#/home
 #### 3.1.2 前端项目
 1. npm install（下载依赖包）
 2. npm run dev（开发环境）
@@ -39,17 +39,21 @@
 
 ### 3.2 生产运行
 
-- 前往发行版页面，下载最新版本zip文件
+- 使用maven将前端项目打包到后端target/classes的static目录下，是前端后端一体运行
 
-- 解压zip，在application.yaml文件中修改相关配置信息，数据库链接，端口等配置
+- 使用`mvn clean package`命令打包生成jar包。使用`java -jar yanggu-code-generator-backend.jar`启动项目
 
 - 在sql文件夹下，在数据库中运行sql文件，创建表和内置数据
 
-- 浏览器访问`http://localhost:8888/#/gen/project`
+- 在jar包同路径下新建application.yaml文件，修改数据库驱动、URL、账号和密码等其他配置
 
-- 代码预览时，复制到剪切板功能受限，浏览器仅支持localhost或者https。使用keytool生成自签名证书，同时配置一下springboot的https
+- 浏览器访问`http://localhost:8888/code-generator#/index`
+
+- 复制到剪切板功能受限，处于安全考虑浏览器仅支持localhost或者https。想要在非localhost域名下使用复制到剪切板功能，需要给springboot配置https。使用keytool生成自签名证书，同时配置一下springboot的https
 
   - 运行`keytool -genkeypair -alias mydomain -keyalg RSA -keysize 2048 -validity 365 -storetype PKCS12 -keystore ./keystore.p12 -storepass changeit -dname "CN=你的IP地址, OU=Dev, O=MyOrg, L=City, ST=State, C=CN"`命令，生成keystore.p12文件
+
+  - 生成的keystore.p12文件文件需要放在jar包同路径下
 
   - 在application.yaml文件中进行配置
 
@@ -62,15 +66,13 @@
         key-alias: mydomain
     ```
 
-  - 访问地址需要修改成`https://你的IP地址:你的端口/#/gen/project`
-
-- 后续更新前后端代码时，只需要更新jar包和dist文件夹即可
+  - 访问地址需要修改成`https://你的IP地址:你的端口/#/`
 
 
 
 ## 4. 功能说明
 ### 4.1 字段类型管理
-字段类型管理可以对数据库字段类型到Java数据类型的一个映射配置。可以进行新增、修改、删除、查询等。已经内置了大量基础数据。主要是标量字段的一个映射
+字段类型管理可以对数据库字段类型到Java数据类型的一个映射配置。可以进行新增、修改、删除、查询等。已经内置了大量基础数据。主要是标量字段的一个映射，数据组json字段映射为String。
 
 ![image-20250616165254475](./images/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E7%AE%A1%E7%90%86%E6%96%B0%E5%A2%9E%E9%A1%B5%E9%9D%A2.png)
 

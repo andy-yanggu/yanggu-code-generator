@@ -68,10 +68,11 @@
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
+import { cloneObject, resetReactiveObject } from '@/utils/tool'
 
 defineOptions({
 	name: 'MenuSearch'
@@ -86,14 +87,16 @@ interface SearchItem extends MenuInfo {
 	breadcrumbItemList: BreadcrumbItem[]
 }
 
-const searchState = reactive({
+const INIT_STATE = {
 	visible: false,
 	keyword: '',
 	searchItemList: [] as SearchItem[],
 	matchItemList: [] as SearchItem[],
 	activeIndex: -1,
 	usingKeyboard: false // 是否在键盘模式
-})
+}
+
+const searchState = reactive(cloneObject(INIT_STATE))
 
 const searchInputRef = ref()
 const scrollbarRef = ref()
@@ -103,13 +106,9 @@ const router = useRouter()
 
 // 打开搜索框
 const openSearch = () => {
+	resetReactiveObject(searchState, INIT_STATE)
 	searchState.visible = true
-	searchState.keyword = ''
-	searchState.activeIndex = -1
-	searchState.usingKeyboard = false
 
-	// 平铺 menuList
-	searchState.searchItemList = []
 	userStore.menuList.forEach(menuItem => {
 		buildMenuInfo([], menuItem)
 	})
@@ -117,10 +116,17 @@ const openSearch = () => {
 	querySearch('')
 }
 
-const onDialogOpened = () => {
-	nextTick(() => {
-		searchInputRef.value?.focus()
-	})
+watch(
+	() => searchState.keyword,
+	() => {
+		nextTick(() => scrollbarRef.value?.setScrollTop(0))
+	}
+)
+
+const onDialogOpened = async () => {
+	await nextTick()
+	searchInputRef.value?.focus()
+	scrollbarRef.value?.setScrollTop(0)
 }
 
 const buildMenuInfo = (parentBreadcrumb: BreadcrumbItem[], menuItem: MenuInfo) => {
@@ -163,7 +169,6 @@ const debouncedQuerySearch = useDebounceFn((queryString?: string) => {
 		searchState.matchItemList = searchState.searchItemList
 		searchState.activeIndex = -1
 		searchState.usingKeyboard = false
-		nextTick(() => scrollbarRef.value?.setScrollTop(0))
 		return
 	}
 
@@ -180,11 +185,14 @@ const debouncedQuerySearch = useDebounceFn((queryString?: string) => {
 		}
 	})
 
+	if (!results || results.length === 0) {
+		return
+	}
+
 	searchState.matchItemList = results
-	searchState.activeIndex = results.length > 0 ? 0 : -1
+	searchState.activeIndex = 0
 	searchState.usingKeyboard = false
-	nextTick(() => scrollbarRef.value?.setScrollTop(0))
-}, 300) // 300ms 防抖延迟
+}, 100) // 100ms 防抖延迟
 
 // 修改原来的 querySearch 函数来使用防抖
 const querySearch = (queryString?: string) => {
@@ -261,10 +269,7 @@ const handleKeyEnter = () => {
 
 // 选择
 const handleSelect = (item: SearchItem) => {
-	searchState.visible = false
-	searchState.keyword = ''
-	searchState.activeIndex = -1
-	searchState.usingKeyboard = false
+	resetReactiveObject(searchState, INIT_STATE)
 	// 如果是菜单或者iframe，则路由跳转
 	if ([1, 3].includes(item.meta.type)) {
 		if (item.path != route.path) {
@@ -305,7 +310,6 @@ onUnmounted(() => {
 }
 .search-results {
 	margin-top: 8px;
-	overflow-y: auto;
 }
 /* 禁用键盘模式下非激活项的 hover 高亮 */
 .search-results.using-keyboard .menu-item:not(.active):hover {

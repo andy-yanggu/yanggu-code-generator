@@ -140,7 +140,7 @@ import { genBaseClassApi } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
-import TemplateGroupPropertyForm, { PropertyItem } from '@/views/gen/project/template-group-property-form.vue'
+import TemplateGroupPropertyForm, { PropertyItem } from '@/views/gen/template-group-property/property-form.vue'
 
 interface Datasource {
 	id: number
@@ -240,7 +240,7 @@ const state: FormOptions = reactive({
 			state.dataForm.projectTemplateGroupPropValue = {}
 		}
 	},
-	emit: emit
+	emit
 })
 
 const projectTemplateGroupPropertyList = computed(() => {

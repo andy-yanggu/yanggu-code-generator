@@ -6,7 +6,7 @@
 				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
 					<div class="icon-item" @click="selectIcon(iconName)">
 						<div class="icon-wrapper">
-							<svg-icon :icon="iconName" class="large-icon"></svg-icon>
+							<svg-icon :icon="iconName" class="large-icon" is-pointer></svg-icon>
 							<el-text size="small" truncated>{{ iconName }}</el-text>
 						</div>
 					</div>
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElMessage } from 'element-plus'
 import { copyToClipboard } from '@/utils/tool'
@@ -89,6 +89,7 @@ onMounted(() => {
 
 .icon-col {
 	margin-bottom: 20px;
+	cursor: pointer;
 }
 
 .icon-item {

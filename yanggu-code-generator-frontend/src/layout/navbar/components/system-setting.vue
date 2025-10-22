@@ -4,7 +4,7 @@
 			<Setting></Setting>
 		</el-icon>
 	</el-tooltip>
-	<el-drawer v-model="visible" title="系统设置" size="20%" destroy-on-close>
+	<el-drawer v-model="visible" title="系统设置" size="30%" body-class="system-setting-drawer-body" destroy-on-close>
 		<el-scrollbar>
 			<div class="drawer-content">
 				<div>
@@ -185,7 +185,12 @@ const handlerResetSystemSetting = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
+.system-setting-drawer-body {
+	padding: 10px 5px 10px 10px;
+}
+</style>
+<style scoped lang="scss">
 .setting-icon {
 	cursor: pointer;
 }

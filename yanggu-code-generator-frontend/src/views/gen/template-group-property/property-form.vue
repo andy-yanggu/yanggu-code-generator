@@ -62,7 +62,7 @@ export interface PropertyItem {
 	id: Key
 	propKey: string
 	propTitle: string
-	componentType: number // 0: input, 1: number, 2: select, 3: radio
+	componentType: number // 0: input, 1: number, 2: select, 3: radio, 4: checkbox
 	required: number
 	remark?: string
 	defaultValue?: string | number | boolean
