@@ -33,7 +33,7 @@
 		<el-card shadow="hover">
 			<el-space class="layout-space">
 				<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+				<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 			</el-space>
 			<el-table
 				v-loading="state.dataListLoading"

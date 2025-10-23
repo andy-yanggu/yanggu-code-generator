@@ -22,7 +22,7 @@
 		<el-card shadow="hover">
 			<el-space class="layout-space">
 				<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
-				<el-button type="danger" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+				<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 				<el-upload :limit="1" :show-file-list="false" :http-request="({ file }) => importHandle(file)">
 					<el-button type="success" :icon="Upload">导入</el-button>
 				</el-upload>

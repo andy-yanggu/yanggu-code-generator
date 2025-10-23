@@ -10,6 +10,9 @@ export const authApi = {
 	// 注册
 	register: (dataForm: any) => service.post(`${baseUrl}/register`, dataForm),
 
+	// 刷新token
+	refreshToken: (refreshToken: string) => service.get(`${baseUrl}/refreshToken`, { params: { refreshToken } }),
+
 	// 退出登录
 	logout: () => service.post(`${baseUrl}/logout`)
 }

@@ -44,6 +44,8 @@ export interface IHooksOptions {
 	pageSizes?: number[]
 	// 数据列表，loading状态
 	dataListLoading?: boolean
+	// 删除loading状态
+	deleteLoading?: boolean
 	// 导出loading状态
 	exportLoading?: boolean
 	// 数据列表，多选项
@@ -90,6 +92,7 @@ const useTableAction = (options: IHooksOptions) => {
 		pageSizes: [10, 20, 50, 100, 200],
 		dataListLoading: false,
 		exportLoading: false,
+		deleteLoading: false,
 		dataListSelections: [],
 		deleteConfirmMessage: '确定进行删除操作？',
 		exportSuccessMessage: '导出成功，请查看下载的文件',
@@ -259,10 +262,15 @@ const useTableAction = (options: IHooksOptions) => {
 			cancelButtonText: '取消',
 			type: 'warning'
 		}).then(() => {
-			state.deleteListApi!(idList).then(() => {
-				ElMessage.success('删除成功')
-				query()
-			})
+			state.deleteLoading = true
+			state.deleteListApi!(idList)
+				.then(() => {
+					ElMessage.success('删除成功')
+					query()
+				})
+				.finally(() => {
+					state.deleteLoading = false
+				})
 		})
 	}
 
@@ -281,7 +289,7 @@ const useTableAction = (options: IHooksOptions) => {
 		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
 		if (idList.length === 0) {
-			ElMessage.warning('请勾选要导出的数据')
+			ElMessage.warning('请选择要导出的数据')
 			return
 		}
 
