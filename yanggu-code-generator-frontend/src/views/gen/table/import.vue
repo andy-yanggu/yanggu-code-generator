@@ -27,6 +27,8 @@
 			border
 			style="width: 100%"
 			:max-height="450"
+			class="layout-table"
+			header-cell-class-name="layout-table-header"
 			@selection-change="selectionChangeHandle"
 		>
 			<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="(row: any) => !row.exist"></el-table-column>

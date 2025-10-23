@@ -8,7 +8,7 @@
 			:validate-on-rule-change="false"
 			@keyup.enter="submitHandle()"
 		>
-			<el-divider content-position="left" class="form-section-title">基础信息</el-divider>
+			<el-divider content-position="left">基础信息</el-divider>
 			<el-row>
 				<el-col :span="12">
 					<el-form-item prop="projectName">
@@ -361,9 +361,6 @@ defineExpose({
 })
 </script>
 <style lang="scss" scoped>
-.form-section-title {
-	margin: 36px 0 26px;
-}
 ::v-deep(.el-divider__text) {
 	font-size: 15px;
 	font-weight: 600; /* 加粗 */

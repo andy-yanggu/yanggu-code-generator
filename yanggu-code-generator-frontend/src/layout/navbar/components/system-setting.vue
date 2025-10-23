@@ -4,7 +4,14 @@
 			<Setting></Setting>
 		</el-icon>
 	</el-tooltip>
-	<el-drawer v-model="visible" title="系统设置" size="30%" body-class="system-setting-drawer-body" destroy-on-close>
+	<el-drawer
+		v-model="visible"
+		title="系统设置"
+		size="30%"
+		body-class="system-setting-drawer-body"
+		footer-class="system-setting-drawer-footer"
+		destroy-on-close
+	>
 		<el-scrollbar>
 			<div class="drawer-content">
 				<div>
@@ -101,7 +108,7 @@
 		</el-scrollbar>
 		<template #footer>
 			<el-button icon="CopyDocument" type="primary" size="small" @click="copySystemSetting()">复制设置</el-button>
-			<el-button icon="Refresh" size="small" @click="handlerResetSystemSetting()">重置设置</el-button>
+			<el-button icon="Refresh" size="small" style="margin-right: 5px" @click="handlerResetSystemSetting()">重置设置</el-button>
 		</template>
 	</el-drawer>
 </template>
@@ -188,6 +195,10 @@ const handlerResetSystemSetting = () => {
 <style lang="scss">
 .system-setting-drawer-body {
 	padding: 10px 5px 10px 10px;
+}
+.system-setting-drawer-footer {
+	border-top: 1px solid var(--el-border-color);
+	padding: 10px 10px 10px 15px;
 }
 </style>
 <style scoped lang="scss">

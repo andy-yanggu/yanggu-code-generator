@@ -6,7 +6,15 @@
 				<Search></Search>
 			</el-icon>
 		</el-tooltip>
-		<el-dialog v-model="searchState.visible" placement="bottom" trigger="click" title="菜单搜索" width="40%" @opened="onDialogOpened">
+		<el-dialog
+			v-model="searchState.visible"
+			placement="bottom"
+			trigger="click"
+			title="菜单搜索"
+			width="50%"
+			destroy-on-close
+			@opened="onDialogOpened"
+		>
 			<el-input
 				ref="searchInputRef"
 				v-model="searchState.keyword"
