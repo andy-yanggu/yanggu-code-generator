@@ -16,7 +16,7 @@
 			>
 				<template #default>
 					<span style="display: inline-flex; align-items: center; gap: 5px">
-						<svg-icon v-if="tag.icon && systemSettingStore.isOpenTagIcon" :icon="tag.icon"></svg-icon>
+						<svg-icon v-if="tag.icon && systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer></svg-icon>
 						{{ tag.title }}
 					</span>
 				</template>
@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
@@ -51,7 +51,7 @@ import { usePageRefresher } from '@/hooks/use-refresh-current-page'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
 defineOptions({
-	name: 'Tag'
+	name: 'TagBar'
 })
 
 const route = useRoute()
@@ -65,7 +65,7 @@ const currentMenuTag = ref<NavbarTag>({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const tagRefs: Record<string, HTMLElement | null> = {}
+const tagRefs: Record<string, any> = reactive({})
 const scrollbarRef = ref()
 
 onMounted(() => {
@@ -88,11 +88,14 @@ watch(
 const scrollToTag = (fullPath: string) => {
 	const tagEl = tagRefs[fullPath]
 
-	const tagDom = tagEl?.$el || tagEl?.el || tagEl
-	if (!tagDom || !(tagDom instanceof HTMLElement)) {
+	if (!tagEl) {
 		return
 	}
 
+	// 获取对应的dom元素
+	const tagDom = tagEl.$el || tagEl.el || tagEl
+
+	// 滚动到指定标签
 	tagDom.scrollIntoView({
 		behavior: 'smooth',
 		inline: 'center',
@@ -142,7 +145,9 @@ onUnmounted(() => {
 
 // 处理点击标签
 const handleClick = (_: number, tag: NavbarTag) => {
-	router.push(tag.fullPath)
+	if (tag.fullPath != route.fullPath) {
+		router.push(tag.fullPath)
+	}
 }
 
 // 处理关闭单个标签
@@ -298,7 +303,7 @@ const { refreshPage } = usePageRefresher()
 	max-height: 41px;
 	margin-bottom: 10px;
 	overflow-x: auto;
-	border-bottom: 1px solid #e6e6e6;
+	border-bottom: 1px solid var(--el-border-color);
 }
 
 .tag-wrapper {
@@ -332,7 +337,7 @@ const { refreshPage } = usePageRefresher()
 	top: 0;
 	bottom: 0; /* ✅ 撑满整个高度 */
 	width: 1px;
-	background-color: #e6e6e6;
+	background-color: var(--el-border-color);
 }
 
 /* 去掉第一个和最后一个标签的外侧分割线 */

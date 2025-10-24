@@ -40,7 +40,7 @@ a:hover {
     height: 100%;
     overflow-x: auto;
     overflow-y: auto;
-    border-right: 1px solid #e6e6e6;
+    border-right: 1px solid var(--el-border-color);
   }
 
   .layout-header {

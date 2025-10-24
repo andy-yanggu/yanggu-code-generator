@@ -3,6 +3,7 @@ import qs from 'qs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user-store'
 import { router } from '@/router'
+import { Result } from '@/api/common/type'
 
 // axios实例
 export const service = axios.create({
@@ -57,15 +58,15 @@ service.interceptors.response.use(
 			return response
 		}
 
-		const res = data
+		const result = data as Result<any>
 
 		// 响应成功
-		if (res.code === 200) {
-			return config.rawResponse === false ? res : res.data
+		if (result.code === 200) {
+			return config.rawResponse === false ? result : result.data
 		}
 
 		// 未认证
-		if (res.code === 401) {
+		if (result.code === 401) {
 			// 重定向到登录页面
 			ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
 				confirmButtonText: '重新登录',
@@ -82,20 +83,20 @@ service.interceptors.response.use(
 				})
 			})
 			return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
-		} else if (res.code === 403) {
+		} else if (result.code === 403) {
 			// 未授权
 			if (!config.noErrorMessage) {
 				ElMessage.error('您没有权限访问该资源')
 			}
 			return Promise.reject('您没有权限访问该资源')
-		}
+		} else {
+			// 业务错误提示：只有没有设置 noErrorMessage 才提示
+			if (!config.noErrorMessage) {
+				ElMessage.error(result.message || '请求错误')
+			}
 
-		// 业务错误提示：只有没有设置 noErrorMessage 才提示
-		if (!config.noErrorMessage) {
-			ElMessage.error(res.message || '请求错误')
+			return Promise.reject(new Error(result.message || '请求错误'))
 		}
-
-		return Promise.reject(new Error(res.message || '请求错误'))
 	},
 	error => {
 		const config = error.config || {}

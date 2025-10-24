@@ -194,7 +194,7 @@ const submitLoading = ref(false)
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
-const typeList = ref([]) as any
+const typeList = ref([])
 const tableId = ref()
 const projectIdRef = ref()
 const fieldList = ref([])

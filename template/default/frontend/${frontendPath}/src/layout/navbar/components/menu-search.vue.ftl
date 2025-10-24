@@ -63,13 +63,11 @@
 </template>
 
 <script setup lang="ts">
-import { Search } from '@element-plus/icons-vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
-import { nextTick, reactive, ref } from 'vue'
-import { MenuInfo, useUserStore } from '@/store/user-store'
-import { useRouter } from 'vue-router'
+    import {nextTick, reactive, ref} from 'vue'
+    import {MenuInfo, useUserStore} from '@/store/user-store'
+    import {useRouter} from 'vue-router'
 
-defineOptions({
+    defineOptions({
 	name: 'MenuSearch'
 })
 
@@ -348,7 +346,7 @@ const handleSelect = (item: any) => {
 	margin: 10px 0 0;
 	padding: 8px 12px;
 	background: #ffffff;
-	border-top: 1px solid #e6e6e6;
+	border-top: 1px solid var(--el-border-color);
 	font-size: 12px;
 	align-items: center;
 }

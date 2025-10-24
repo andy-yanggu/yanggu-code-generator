@@ -32,14 +32,14 @@
 			</div>
 		</div>
 		<!-- 标签栏 -->
-		<tag v-if="systemSettingStore.isOpenTag"></tag>
+		<tag-bar v-if="systemSettingStore.isOpenTag"></tag-bar>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { Expand, Fold } from '@element-plus/icons-vue'
 import { useAppStore } from '@/store/app-store'
-import Tag from '@/layout/navbar/components/tag.vue'
+import TagBar from '@/layout/navbar/components/tag-bar.vue'
 import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/navbar/components/menu-search.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
@@ -67,7 +67,7 @@ const systemSettingStore = useSystemSettingStore()
 	align-items: center;
 	padding: 0 10px;
 	margin-top: 6px;
-	border-bottom: 1px solid #e6e6e6;
+	border-bottom: 1px solid var(--el-border-color);
 }
 
 .navbar-toolbar-left {

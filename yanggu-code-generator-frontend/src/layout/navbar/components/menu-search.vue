@@ -405,7 +405,7 @@ onUnmounted(() => {
 	gap: 20px;
 	margin: 10px 0 0;
 	padding: 8px 12px;
-	border-top: 1px solid #e6e6e6;
+	border-top: 1px solid var(--el-border-color);
 	font-size: 12px;
 	align-items: center;
 }

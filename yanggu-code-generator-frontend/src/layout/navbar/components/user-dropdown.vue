@@ -47,5 +47,4 @@ const logout = () => {
 	})
 }
 </script>
-
 <style scoped lang="scss"></style>

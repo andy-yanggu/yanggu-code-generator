@@ -1,9 +1,10 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Key, KeyArray } from '@/types/common'
+import { PageVO } from '@/api/common/type'
 
 // 数据列表接口
-type DataListApi<T = any> = (params: any) => Promise<T>
+type DataListApi<T> = (params: any) => Promise<PageVO<T> | T[]>
 // 批量删除接口
 type DeleteListApi<T = any> = (idList: KeyArray) => Promise<T>
 // 导出接口
@@ -11,15 +12,15 @@ type ExportApi<T = any> = (idList: KeyArray) => Promise<T>
 // 导入接口
 type ImportApi<T = any> = (formData: FormData) => Promise<T>
 
-export interface IHooksOptions {
+export interface IHooksOptions<T = any> {
 	// 否在创建页面时，调用数据列表接口
 	createdIsNeed?: boolean
 	// 是否需要分页
 	isPage?: boolean
 	// 数据列表接口
-	dataListApi?: DataListApi
+	dataListApi?: DataListApi<T>
 	// 删除接口
-	deleteListApi?: DeleteListApi
+	deleteListApi?: DeleteListApi<T>
 	// 导出接口
 	exportApi?: ExportApi
 	// 导入接口
@@ -29,7 +30,7 @@ export interface IHooksOptions {
 	// 查询条件
 	queryForm?: any
 	// 数据列表
-	dataList?: any[]
+	dataList?: T[]
 	// 排序字段
 	order?: string
 	// 是否升序
@@ -59,7 +60,7 @@ export interface IHooksOptions {
 }
 
 // 提供分页、批量删除、导出功能
-const useTableAction = (options: IHooksOptions) => {
+const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 	// 表单查询引用
 	const queryRef = ref()
 	// 表格引用
@@ -100,17 +101,16 @@ const useTableAction = (options: IHooksOptions) => {
 	}
 
 	// 合并默认值
-	const mergeDefaultOptions = (options: any, props: any): IHooksOptions => {
-		for (const key in options) {
+	const mergeDefaultOptions = (defaultOptions: IHooksOptions, props: IHooksOptions) => {
+		for (const key in defaultOptions) {
 			if (!Object.getOwnPropertyDescriptor(props, key)) {
-				props[key] = options[key]
+				props[key as keyof IHooksOptions] = defaultOptions[key as keyof IHooksOptions]
 			}
 		}
-		return props
 	}
 
 	// 覆盖默认值
-	const state = mergeDefaultOptions(defaultOptions, options)
+	mergeDefaultOptions(defaultOptions, state)
 
 	// 创建完毕
 	onMounted(() => {
@@ -164,13 +164,15 @@ const useTableAction = (options: IHooksOptions) => {
 		state.dataListApi!(queryForm)
 			.then(data => {
 				if (state.isPage) {
-					state.dataList = data.records
-					state.total = data.total
+					const pageVO = data as PageVO<T>
+					state.dataList = pageVO.records
+					state.total = pageVO.total
 				} else {
-					state.dataList = data
-					state.total = data.length
+					const dataList = data as T[]
+					state.dataList = dataList
+					state.total = dataList.length
 					state.pageNum = 1
-					state.pageSize = data.length
+					state.pageSize = dataList.length
 				}
 			})
 			.finally(() => {
