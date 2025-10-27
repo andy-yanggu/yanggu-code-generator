@@ -1,8 +1,8 @@
 <template>
 	<div class="menu-item">
 		<svg-icon v-if="icon" :icon="icon" is-pointer></svg-icon>
-		<el-tooltip :content="title" :disabled="!isTooltipEnabled" placement="top">
-			<el-text ref="titleRef" truncated class="menu-title">
+		<el-tooltip :content="title" :disabled="!isTitleOverflow" placement="top">
+			<el-text ref="titleRef" truncated class="menu-title" :style="{ maxWidth: systemSettingStore.menuExpandWidth - 100 + 'px' }">
 				{{ title }}
 			</el-text>
 		</el-tooltip>
@@ -10,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, onUpdated, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, onUpdated, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElText } from 'element-plus'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 defineProps({
 	icon: {
@@ -25,23 +26,19 @@ defineProps({
 	}
 })
 
-const titleRef = ref<InstanceType<typeof ElText> | null>(null)
+const titleRef = ref()
 const isTitleOverflow = ref(false)
+const systemSettingStore = useSystemSettingStore()
 
 // 检查文本是否溢出
 const checkOverflow = () => {
 	nextTick(() => {
 		if (titleRef.value && titleRef.value.$el) {
 			const element = titleRef.value.$el
-			isTitleOverflow.value = element.scrollWidth > element.clientWidth
+			isTitleOverflow.value = element.scrollWidth > element.offsetWidth
 		}
 	})
 }
-
-// 折叠时 tooltip 始终可用
-const isTooltipEnabled = computed(() => {
-	return isTitleOverflow.value
-})
 
 // 监听窗口大小变化
 let resizeObserver: ResizeObserver | null = null
@@ -68,12 +65,5 @@ onUnmounted(() => {
 .menu-item {
 	display: flex;
 	align-items: center; /* 图标+文字垂直居中 */
-	overflow: hidden; /* 折叠时避免残留 */
-}
-.menu-title {
-	flex: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 </style>
