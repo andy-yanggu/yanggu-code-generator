@@ -15,8 +15,16 @@ import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQ
 import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
 import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
 import org.springframework.web.bind.annotation.*;
+<#if hasFunction(generatorFunction, 7)>
+import org.springframework.http.ResponseEntity;
+</#if>
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+<#if hasFunction(generatorFunction, 6)>
+import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+</#if>
 
 import java.util.List;
 
@@ -32,6 +40,14 @@ public class ${classNameUpper}Controller {
     @Autowired
     private ${classNameUpper}Service ${className}Service;
 
+<#-- 判断某个功能编号是否在 generatorFunction 列表中 -->
+<#function hasFunction generatorFunction target>
+    <#if generatorFunction?? && (generatorFunction?seq_contains(target))>
+        <#return true>
+    </#if>
+    <#return false>
+</#function>
+<#if hasFunction(generatorFunction, 0)>
     /**
      * 新增${tableComment}
      */
@@ -42,6 +58,8 @@ public class ${classNameUpper}Controller {
         ${className}Service.add(dto);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 1)>
     /**
      * 修改${tableComment}
      */
@@ -51,6 +69,8 @@ public class ${classNameUpper}Controller {
     public void update(@RequestBody @Validated(UpdateGroup.class) ${classNameUpper}DTO dto) {
         ${className}Service.update(dto);
     }
+
+</#if>
 <#function getPrimaryKeyType fieldList>
     <#list fieldList as field>
         <#if field.primaryPk == 1>
@@ -60,7 +80,7 @@ public class ${classNameUpper}Controller {
     <#return Long>
 </#function>
 <#assign primaryKeyType = getPrimaryKeyType(fieldList)>
-
+<#if hasFunction(generatorFunction, 2)>
     /**
      * 删除${tableComment}
      *
@@ -74,6 +94,8 @@ public class ${classNameUpper}Controller {
         ${className}Service.delete(id);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 2)>
     /**
      * 批量删除${tableComment}
      *
@@ -86,6 +108,8 @@ public class ${classNameUpper}Controller {
         ${className}Service.deleteList(idList);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 3)>
     /**
      * ${tableComment}详情
      *
@@ -99,6 +123,8 @@ public class ${classNameUpper}Controller {
         return ${className}Service.detail(id);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 3)>
     /**
      * ${tableComment}详情列表
      *
@@ -111,6 +137,8 @@ public class ${classNameUpper}Controller {
         return ${className}Service.detailList(idList);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 4)>
     /**
      * ${tableComment}简单分页
      */
@@ -121,6 +149,8 @@ public class ${classNameUpper}Controller {
         return ${className}Service.entityPage(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     /**
      * ${tableComment}简单列表
      */
@@ -131,6 +161,8 @@ public class ${classNameUpper}Controller {
         return ${className}Service.entityList(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 4)>
     /**
      * ${tableComment}复杂分页
      */
@@ -141,6 +173,8 @@ public class ${classNameUpper}Controller {
         return ${className}Service.voPage(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     /**
      * ${tableComment}复杂列表
      */
@@ -151,4 +185,36 @@ public class ${classNameUpper}Controller {
         return ${className}Service.voList(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 6)>
+    /**
+     * 导入${tableComment}
+     *
+     * @param file 文件
+    */
+    @PostMapping("/import")
+    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 11)
+    @Operation(summary = "导入${tableComment}")
+    @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
+    schema = @Schema(name = "file", format = "binary"))
+    public void import(@RequestParam("file") MultipartFile file) throws Exception {
+        ${className}Service.import(file);
+    }
+
+</#if>
+<#if hasFunction(generatorFunction, 7)>
+    /**
+     * 导出${tableComment}
+     *
+     * @param idList ${tableComment}ID列表
+    */
+    @GetMapping("/export")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "导出${tableComment}")
+    @Parameter(name = "idList", description = "${tableComment}ID列表", required = true)
+    public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "${tableComment}ID列表不能为空") List<Long> idList) {
+        return ${className}Service.export(idList);
+    }
+
+</#if>
 }

@@ -1,5 +1,20 @@
 package ${projectPackage}.${projectNameDot}.service.impl;
 
+<#if hasFunction(generatorFunction, 6)>
+import cn.hutool.v7.core.io.IoUtil;
+import cn.hutool.v7.json.JSONUtil;
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.CharsetUtil;
+import cn.hutool.v7.core.collection.CollUtil;
+</#if>
+<#if hasFunction(generatorFunction, 7)>
+import cn.hutool.v7.core.collection.CollUtil;
+import cn.hutool.v7.core.date.DateUtil;
+import cn.hutool.v7.core.util.CharsetUtil;
+import cn.hutool.v7.http.meta.HttpHeaderUtil;
+import cn.hutool.v7.json.JSONUtil;
+import org.springframework.http.ResponseEntity;
+</#if>
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,11 +32,26 @@ import ${projectPackage}.${projectNameDot}.service.${classNameUpper}Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+<#if hasFunction(generatorFunction, 6)>
+import org.springframework.web.multipart.MultipartFile;
+</#if>
+<#-- 判断某个功能编号是否在 generatorFunction 列表中 -->
+<#function hasFunction generatorFunction target>
+    <#if generatorFunction?? && (generatorFunction?seq_contains(target))>
+        <#return true>
+    </#if>
+    <#return false>
+</#function>
 
 import java.util.List;
 import java.util.Objects;
 
 import static ${projectPackage}.${projectNameDot}.common.response.ResultEnum.DATA_NOT_EXIST;
+<#if hasFunction(generatorFunction, 7)>
+import static cn.hutool.v7.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
+</#if>
 
 /**
  * ${tableComment}Service实现类
@@ -44,6 +74,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
 </#function>
 <#assign isUnique = checkUnique(fieldList)>
 
+<#if hasFunction(generatorFunction, 0)>
     /**
      * 新增
      */
@@ -59,6 +90,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return entity;
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 1)>
     /**
      * 修改
      */
@@ -73,6 +106,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         ${classNameUpper}Entity dbEntity = selectById(dto.getId());
         ${className}Mapper.updateById(formEntity);
     }
+
+</#if>
 <#function getPrimaryKeyType fieldList>
     <#list fieldList as field>
         <#if field.primaryPk == 1>
@@ -82,7 +117,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
     <#return Long>
 </#function>
 <#assign primaryKeyType = getPrimaryKeyType(fieldList)>
-
+<#if hasFunction(generatorFunction, 2)>
     /**
      * 删除
      */
@@ -105,6 +140,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         ${className}Mapper.deleteByIds(idList);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 3)>
     /**
      * 详情
      */
@@ -123,6 +160,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return ${className}Mapstruct.entityToVO(entityList);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 4)>
     /**
      * 简单分页
      */
@@ -135,6 +174,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return ${className}Mapstruct.entityToPageVO(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     /**
      * 简单列表
      */
@@ -148,6 +189,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return ${className}Mapstruct.entityToVO(entityList);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 4)>
     /**
      * 复杂分页
      */
@@ -157,6 +200,8 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         return ${className}Mapstruct.voToPageVO(query);
     }
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     /**
      * 复杂列表
      */
@@ -166,6 +211,53 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         query.setPageSize(-1L);
         return ${className}Mapper.voList(query);
     }
+
+</#if>
+<#if hasFunction(generatorFunction, 6)>
+    /**
+     * 导入
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void import(MultipartFile file) throws Exception {
+        String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
+        if (StrUtil.isBlank(data)) {
+            throw new BusinessException("导入数据不能为空");
+        }
+        List<${classNameUpper}DTO> dtoList = JSONUtil.toList(data, ${classNameUpper}DTO.class);
+        if (CollUtil.isEmpty(dtoList)) {
+            throw new BusinessException("导入数据不能为空");
+        }
+        dtoList.forEach(dto -> {
+            add(dto);
+        });
+    }
+
+</#if>
+<#if hasFunction(generatorFunction, 7)>
+    /**
+     * 导出
+     */
+    @Override
+    public ResponseEntity<byte[]> export(List<${primaryKeyType}> idList) {
+        List<${classNameUpper}Entity> entityList = this.listByIds(idList);
+        if (CollUtil.isEmpty(entityList)) {
+            throw new BusinessException("导入数据不能为空");
+        }
+
+        String jsonStr = JSONUtil.toJsonStr(entityList);
+
+        // 导出文件名
+        String fileName = "${tableName}_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
+
+        // 构建下载对象
+        return ResponseEntity.ok()
+            .header(CONTENT_DISPOSITION, HttpHeaderUtil.createAttachmentDisposition(fileName, CharsetUtil.UTF_8))
+            .contentType(APPLICATION_OCTET_STREAM)
+            .body(jsonStr.getBytes());
+    }
+
+</#if>
 
     /**
      * ID查询

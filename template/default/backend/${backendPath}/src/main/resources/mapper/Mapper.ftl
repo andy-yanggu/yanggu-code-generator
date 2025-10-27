@@ -62,7 +62,15 @@
     <#return "">
 </#function>
 <#assign logicDeleteFlex = getLogicDeleteField(fieldList)>
+<#-- 判断某个功能编号是否在 generatorFunction 列表中 -->
+<#function hasFunction generatorFunction target>
+    <#if generatorFunction?? && (generatorFunction?seq_contains(target))>
+        <#return true>
+    </#if>
+    <#return false>
+</#function>
 
+<#if hasFunction(generatorFunction, 4)>
     <!-- Entity分页 -->
     <select id="entityPage" resultMap="${className}Map">
         SELECT
@@ -78,6 +86,8 @@
         <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     <!-- Entity列表 -->
     <select id="entityList" resultMap="${className}Map">
         SELECT
@@ -93,6 +103,8 @@
         <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
+</#if>
+<#if hasFunction(generatorFunction, 4)>
     <!-- VO分页 -->
     <select id="voPage" resultType="${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO">
         SELECT
@@ -108,6 +120,8 @@
         <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
 
+</#if>
+<#if hasFunction(generatorFunction, 5)>
     <!-- VO列表 -->
     <select id="voList" resultType="${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO">
         SELECT
@@ -122,5 +136,7 @@
         </where>
         <include refid="${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
     </select>
+
+</#if>
 
 </mapper>
