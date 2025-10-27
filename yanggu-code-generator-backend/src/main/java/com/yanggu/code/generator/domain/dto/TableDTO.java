@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 表DTO实体类
@@ -90,6 +91,12 @@ public class TableDTO implements Serializable {
      */
     @Schema(description = "权限标识")
     private String permissionFlag;
+
+    /**
+     * 生成功能
+     */
+    @Schema(description = "生成功能")
+    private List<Integer> generatorFunction;
 
     /**
      * 表单布局  1：一列   2：两列

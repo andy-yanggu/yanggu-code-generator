@@ -42,6 +42,8 @@ mybatis-plus:
 # knife4j配置
 knife4j:
   enable: true
+  setting:
+    enable-dynamic-parameter: true
 
 # 代码生成器相关配置
 generator:

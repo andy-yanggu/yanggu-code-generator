@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
+import com.yanggu.code.generator.common.mybatis.typehandler.list.ListIntegerTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
 
@@ -17,8 +19,8 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
  * 表Entity实体类
  */
 @Data
-@TableName(value = "gen_table")
 @EqualsAndHashCode(callSuper = true)
+@TableName(value = "gen_table", autoResultMap = true)
 public class TableEntity extends BaseEntity implements Serializable {
 
     @Serial
@@ -95,5 +97,11 @@ public class TableEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "form_layout")
     private Integer formLayout;
+
+    /**
+     * 生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）
+     */
+    @TableField(value = "generator_function", typeHandler = ListIntegerTypeHandler.class)
+    private List<Integer> generatorFunction;
 
 }

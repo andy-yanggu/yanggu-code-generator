@@ -27,6 +27,11 @@
 			<el-form-item label="权限标识" prop="permissionFlag">
 				<el-input v-model="state.dataForm.permissionFlag" clearable placeholder="请输入权限标识"></el-input>
 			</el-form-item>
+			<el-form-item label="生成功能" prop="generatorFunction">
+				<el-checkbox-group v-model="state.dataForm.generatorFunction">
+					<el-checkbox v-for="item in TABLE_GENERATOR_FUNCTION_TYPES" :key="item.value" :value="item.value" :label="item.label"></el-checkbox>
+				</el-checkbox-group>
+			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
 				<el-radio-group v-model="state.dataForm.formLayout">
 					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
@@ -49,7 +54,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { genTableApi } from '@/api/gen/table'
-import { FORM_LAYOUT_TYPES } from '@/constant/enum'
+import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { genProjectApi } from '@/api/gen/project'
 import { Check, Close } from '@element-plus/icons-vue'
@@ -78,7 +83,8 @@ const state: FormOptions = reactive({
 		moduleName: '',
 		functionName: '',
 		permissionFlag: '',
-		formLayout: ''
+		formLayout: '',
+		generatorFunction: [0, 1, 2, 3, 4, 5]
 	},
 	emit
 })
@@ -89,7 +95,8 @@ const dataRules = reactive({
 	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	moduleName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	generatorFunction: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)

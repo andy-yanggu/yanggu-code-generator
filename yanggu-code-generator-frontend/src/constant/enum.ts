@@ -37,6 +37,18 @@ export const FORM_LAYOUT_TYPES: EnumItem[] = [
 	{ label: '两列', value: 2 }
 ]
 
+// 表生成功能枚举
+export const TABLE_GENERATOR_FUNCTION_TYPES: EnumItem[] = [
+	{ label: '新增', value: 0 },
+	{ label: '修改', value: 1 },
+	{ label: '删除', value: 2 },
+	{ label: '详情', value: 3 },
+	{ label: '分页', value: 4 },
+	{ label: '列表', value: 5 },
+	{ label: '导入', value: 6 },
+	{ label: '导出', value: 7 }
+]
+
 // 属性类型枚举
 export const ATTR_TYPES: EnumItem[] = [
 	{ label: 'Byte', value: 'Byte' },

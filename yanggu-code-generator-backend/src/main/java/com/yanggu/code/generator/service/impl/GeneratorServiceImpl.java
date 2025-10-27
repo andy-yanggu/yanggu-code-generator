@@ -530,6 +530,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setTableComment(table.getTableComment());
         tableModel.setClassName(StrUtil.lowerFirst(table.getClassName()));
         tableModel.setClassNameUpper(table.getClassName());
+        tableModel.setGeneratorFunction(table.getGeneratorFunction());
 
         //前后端生成路径
         tableModel.setBackendPath(project.getBackendPath());

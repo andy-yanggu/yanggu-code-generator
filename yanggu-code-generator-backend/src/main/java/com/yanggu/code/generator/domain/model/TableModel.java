@@ -173,6 +173,11 @@ public class TableModel {
     private Integer generatorType;
 
     /**
+     * 生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）
+     */
+    private List<Integer> generatorFunction;
+
+    /**
      * 主键列表 (支持多主键)
      */
     private List<TableFieldModel> primaryList;

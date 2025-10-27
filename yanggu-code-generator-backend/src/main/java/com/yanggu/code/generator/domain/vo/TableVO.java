@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 表VO实体类
@@ -108,5 +109,11 @@ public class TableVO extends BaseVO implements Serializable {
      */
     @Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
     private Integer generatorType;
+
+    /**
+     * 生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）
+     */
+    @Schema(description = "生成功能")
+    private List<Integer> generatorFunction = List.of();
 
 }
