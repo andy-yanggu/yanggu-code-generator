@@ -4,11 +4,7 @@
 			<template #default>
 				<span style="display: flex; align-items: center; gap: 5px">
 					<svg-icon v-if="item.icon && systemSettingStore.isOpenBreadcrumbIcon" :icon="item.icon"></svg-icon>
-					<el-tooltip :content="item.title" :disabled="!breadcrumbTitleRecord[item.title]" placement="top">
-						<el-text :ref="el => (breadcrumbTitleRefs[item.title] = el)" class="breadcrumb-title">
-							{{ item.title }}
-						</el-text>
-					</el-tooltip>
+					<text-tooltip :title="item.title" :placement="'bottom'"></text-tooltip>
 				</span>
 			</template>
 		</el-breadcrumb-item>
@@ -17,8 +13,9 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/index.vue'
+import TextTooltip from '@/components/text-tooltip/index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
-import { nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
@@ -36,8 +33,6 @@ interface Breadcrumb {
 const route = useRoute()
 const router = useRouter()
 const systemSettingStore = useSystemSettingStore()
-const breadcrumbTitleRecord: Record<string, boolean> = reactive({})
-const breadcrumbTitleRefs: Record<string, any> = reactive({})
 
 // 面包屑列表
 const breadcrumbList = ref<Breadcrumb[]>([])
@@ -57,16 +52,6 @@ watch(
 		setBreadcrumb(newPath)
 	}
 )
-
-// 检测面包屑文字是否过长
-onMounted(() => {
-	nextTick(() => {
-		Object.entries(breadcrumbTitleRefs).forEach(([title, el]) => {
-			const element = el.$el
-			breadcrumbTitleRecord[title] = element.scrollWidth > element.offsetWidth
-		})
-	})
-})
 
 // 设置面包屑
 const setBreadcrumb = (fullPath: string) => {
@@ -101,14 +86,3 @@ const findRouteByPath = (targetPath: string): Breadcrumb => {
 	}
 }
 </script>
-<style scoped lang="scss">
-.breadcrumb-title {
-	max-width: 100px; /* 控制最大宽度 */
-	display: inline-block;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	color: inherit;
-}
-</style>
