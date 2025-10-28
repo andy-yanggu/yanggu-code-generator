@@ -15,10 +15,14 @@
 				@contextmenu.prevent="showTagMenu($event, tag, index)"
 			>
 				<template #default>
-					<span style="display: inline-flex; align-items: center; gap: 5px">
+					<div style="display: inline-flex; align-items: center; gap: 5px">
 						<svg-icon v-if="tag.icon && systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer></svg-icon>
-						{{ tag.title }}
-					</span>
+						<el-tooltip :content="tag.title" :disabled="!tagTextRecord[tag.fullPath]" placement="top">
+							<el-text :ref="el => (tagTextRefs[tag.fullPath] = el)" class="tag-text">
+								{{ tag.title }}
+							</el-text>
+						</el-tooltip>
+					</div>
 				</template>
 			</el-tag>
 
@@ -66,6 +70,8 @@ const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 const tagRefs: Record<string, any> = reactive({})
+const tagTextRecord: Record<string, boolean> = reactive({})
+const tagTextRefs: Record<string, any> = reactive({})
 const scrollbarRef = ref()
 
 onMounted(() => {
@@ -135,6 +141,16 @@ onMounted(() => {
 		} else {
 			console.error('未找到.tag-wrapper或scrollWrapper元素')
 		}
+	})
+})
+
+// 检测标签文字是否过长
+onMounted(() => {
+	nextTick(() => {
+		Object.entries(tagTextRefs).forEach(([fullPath, el]) => {
+			const tagTextElement = el.$el
+			tagTextRecord[fullPath] = tagTextElement.scrollWidth > tagTextElement.offsetWidth
+		})
 	})
 })
 
@@ -317,6 +333,15 @@ const { refreshPage } = usePageRefresher()
 	width: max-content;
 	padding-right: 5px;
 	box-sizing: content-box;
+}
+.tag-text {
+	max-width: 100px; /* 控制最大宽度 */
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	color: inherit;
 }
 
 :deep(.el-scrollbar__wrap) {

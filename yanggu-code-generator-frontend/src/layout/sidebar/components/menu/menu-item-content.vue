@@ -2,7 +2,7 @@
 	<div class="menu-item">
 		<svg-icon v-if="icon" :icon="icon" is-pointer></svg-icon>
 		<el-tooltip :content="title" :disabled="!isTitleOverflow" placement="top">
-			<el-text ref="titleRef" truncated class="menu-title" :style="{ maxWidth: systemSettingStore.menuExpandWidth - 100 + 'px' }">
+			<el-text ref="titleRef" class="menu-title" :style="{ maxWidth: systemSettingStore.menuExpandWidth - 100 + 'px' }">
 				{{ title }}
 			</el-text>
 		</el-tooltip>
@@ -65,5 +65,13 @@ onUnmounted(() => {
 .menu-item {
 	display: flex;
 	align-items: center; /* 图标+文字垂直居中 */
+}
+.menu-title {
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	color: inherit;
 }
 </style>
