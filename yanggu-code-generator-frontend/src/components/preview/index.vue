@@ -53,7 +53,7 @@
 							<el-col :span="isFullscreen ? 16 : 15">
 								<div class="path-container">
 									<text-tooltip :title="'路径：' + templateTreeData.item.filePath" :max-width="'100%'"></text-tooltip>
-									<el-tooltip content="复制文件路径" placement="top" effect="dark" :teleported="false">
+									<el-tooltip content="复制文件路径" placement="top">
 										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
 											<CopyDocument></CopyDocument>
 										</el-icon>

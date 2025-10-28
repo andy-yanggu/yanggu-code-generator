@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
 	title: {
@@ -47,6 +47,11 @@ watch(
 
 onMounted(() => {
 	checkOverflow()
+	window.addEventListener('resize', checkOverflow)
+})
+
+onBeforeUnmount(() => {
+	window.removeEventListener('resize', checkOverflow)
 })
 </script>
 <style scoped lang="scss">
