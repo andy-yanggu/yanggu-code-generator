@@ -117,11 +117,7 @@
 							</el-icon>
 						</el-col>
 						<el-col :span="isFullscreen ? 17 : 16">
-							<el-tooltip :content="fullFilePath" placement="top">
-								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
-									路径：{{ fullFilePath }}
-								</el-text>
-							</el-tooltip>
+							<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
 						</el-col>
 						<el-col :span="7" style="text-align: right">
 							<el-button
@@ -239,6 +235,7 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
+import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { genTemplateApi } from '@/api/gen/template'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'

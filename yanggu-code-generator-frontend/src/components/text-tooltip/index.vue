@@ -7,16 +7,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
 	title: {
 		type: String,
 		required: true
 	},
 	maxWidth: {
 		type: String,
-		default: '100px'
+		default: '100px' // 如果是el-row和el-col的title，则maxWidth为100%
 	},
 	placement: {
 		type: String,
@@ -28,13 +28,25 @@ const textRef = ref()
 const isTitleOverflow = ref(false)
 
 // 检查文本是否溢出
-onMounted(() => {
-	if (textRef.value && textRef.value.$el) {
-		const element = textRef.value.$el
-		console.log(element)
-		isTitleOverflow.value = element.scrollWidth > element.offsetWidth
-		console.log(isTitleOverflow.value)
+const checkOverflow = () => {
+	nextTick(() => {
+		if (textRef.value && textRef.value.$el) {
+			const element = textRef.value.$el
+			isTitleOverflow.value = element.scrollWidth > element.offsetWidth
+		}
+	})
+}
+
+// watch title的值是否发生变化，如果发生变化则重新检查
+watch(
+	() => props.title,
+	() => {
+		checkOverflow()
 	}
+)
+
+onMounted(() => {
+	checkOverflow()
 })
 </script>
 <style scoped lang="scss">
