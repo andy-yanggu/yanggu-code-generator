@@ -52,7 +52,7 @@
 							</el-col>
 							<el-col :span="isFullscreen ? 16 : 15">
 								<div class="path-container">
-									<el-text truncated class="path-text">路径：{{ templateTreeData.item.filePath }}</el-text>
+									<text-tooltip :title="'路径：' + templateTreeData.item.filePath" :max-width="'100%'"></text-tooltip>
 									<el-tooltip content="复制文件路径" placement="top" effect="dark" :teleported="false">
 										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
 											<CopyDocument></CopyDocument>
@@ -60,7 +60,7 @@
 									</el-tooltip>
 								</div>
 							</el-col>
-							<el-col :span="8" style="text-align: right">
+							<el-col :span="7" style="text-align: right">
 								<el-button
 									v-if="templateTreeData.item.templateType === 1"
 									type="primary"
@@ -136,6 +136,7 @@
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
+import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { CopyDocument, DocumentAdd, Expand, Fold } from '@element-plus/icons-vue'
 import { copyToClipboard } from '@/utils/tool'
@@ -393,13 +394,7 @@ defineExpose({
 .path-container {
 	display: inline-flex; /* 改为 inline-flex 保持内容紧密排列 */
 	align-items: center;
-	max-width: 100%; /* 限制最大宽度，防止超出 */
-}
-
-.path-text {
-	white-space: nowrap; /* 保持文本不换行 */
-	overflow: hidden; /* 超出部分隐藏 */
-	text-overflow: ellipsis; /* 使用省略号 */
+	max-width: 100%;
 }
 
 .copy-icon {
