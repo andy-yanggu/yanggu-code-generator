@@ -1,7 +1,7 @@
 <template>
 	<!-- 防止tag过多添加滚动条 -->
 	<el-scrollbar ref="scrollbarRef" class="tag-scrollbar">
-		<div class="tag-wrapper">
+		<div ref="tagWrapperRef" class="tag-wrapper">
 			<!-- 标签栏 -->
 			<el-tag
 				v-for="(tag, index) in appStore.tagList"
@@ -10,15 +10,12 @@
 				size="default"
 				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
 				:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
-				@click="handleClick(index, tag)"
+				@click="handleClick(tag)"
 				@close="handleClose(index, tag)"
 				@contextmenu.prevent="showTagMenu($event, tag, index)"
 			>
 				<template #default>
-					<div style="display: inline-flex; align-items: center; gap: 5px">
-						<svg-icon v-if="tag.icon && systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer></svg-icon>
-						<text-tooltip :title="tag.title"></text-tooltip>
-					</div>
+					<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
 				</template>
 			</el-tag>
 
@@ -45,11 +42,10 @@ import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refresh-current-page'
 import { useSystemSettingStore } from '@/store/system-setting-store'
-import TextTooltip from '@/components/text-tooltip/index.vue'
+import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
 	name: 'TagBar'
@@ -68,6 +64,7 @@ const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 const tagRefs: Record<string, any> = reactive({})
 const scrollbarRef = ref()
+const tagWrapperRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
@@ -107,35 +104,35 @@ const scrollToTag = (fullPath: string) => {
 // 实现标签页的拖拽效果
 onMounted(() => {
 	nextTick(() => {
-		const el = document.querySelector('.tag-wrapper') as HTMLElement
+		const el = tagWrapperRef.value
 		const scrollWrapper = scrollbarRef.value?.wrapRef as HTMLElement
 
-		if (el && scrollWrapper) {
-			new Sortable(el, {
-				animation: 200,
-				scroll: scrollWrapper, // ✅ 指定真正的滚动容器
-				direction: 'horizontal', // ✅ 明确水平拖拽
-				scrollSensitivity: 30,
-				scrollSpeed: 30,
-				onEnd: evt => {
-					const { oldIndex, newIndex } = evt
-					if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-						const newTags = [...appStore.tagList]
-						const movedTag = newTags.splice(oldIndex!, 1)[0]
-						newTags.splice(newIndex!, 0, movedTag)
-						appStore.addAllTags(newTags)
-						// 激活被移动的标签
-						if (systemSettingStore.isOpenTagDragActivated) {
-							if (route.fullPath != movedTag.fullPath) {
-								router.push(movedTag.fullPath)
-							}
+		if (!el || !scrollWrapper) {
+			console.error('未找到.tag-wrapper或scrollWrapper元素')
+			return
+		}
+		new Sortable(el, {
+			animation: 200,
+			scroll: scrollWrapper, // ✅ 指定真正的滚动容器
+			direction: 'horizontal', // ✅ 明确水平拖拽
+			scrollSensitivity: 30,
+			scrollSpeed: 30,
+			onEnd: evt => {
+				const { oldIndex, newIndex } = evt
+				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
+					const newTags = [...appStore.tagList]
+					const movedTag = newTags.splice(oldIndex!, 1)[0]
+					newTags.splice(newIndex!, 0, movedTag)
+					appStore.addAllTags(newTags)
+					// 激活被移动的标签
+					if (systemSettingStore.isOpenTagDragActivated) {
+						if (route.fullPath != movedTag.fullPath) {
+							router.push(movedTag.fullPath)
 						}
 					}
 				}
-			})
-		} else {
-			console.error('未找到.tag-wrapper或scrollWrapper元素')
-		}
+			}
+		})
 	})
 })
 
@@ -145,7 +142,7 @@ onUnmounted(() => {
 })
 
 // 处理点击标签
-const handleClick = (_: number, tag: NavbarTag) => {
+const handleClick = (tag: NavbarTag) => {
 	if (tag.fullPath != route.fullPath) {
 		router.push(tag.fullPath)
 	}
@@ -318,15 +315,6 @@ const { refreshPage } = usePageRefresher()
 	width: max-content;
 	padding-right: 5px;
 	box-sizing: content-box;
-}
-.tag-text {
-	max-width: 100px; /* 控制最大宽度 */
-	display: inline-block;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	color: inherit;
 }
 
 :deep(.el-scrollbar__wrap) {

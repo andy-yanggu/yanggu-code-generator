@@ -30,7 +30,7 @@ public abstract class AbstractEnumCodeValidator<T> implements ConstraintValidato
         if (!FieldUtil.hasField(value, this.enumFieldName)) {
             throw new IllegalArgumentException("枚举属性名称: " + enumName + ", 枚举属性名称: " + enumFieldName + " 不存在");
         }
-        List<Object> fieldValues = EnumUtil.getFieldValues(value, this.enumFieldName);
+        List<Object> fieldValues = EnumUtil.getFieldValues((Class) value, this.enumFieldName);
         String[] valueList = annotation.valueList();
         if (ArrayUtil.isNotEmpty(valueList)) {
             Field declaredField = value.getDeclaredField(this.enumFieldName);

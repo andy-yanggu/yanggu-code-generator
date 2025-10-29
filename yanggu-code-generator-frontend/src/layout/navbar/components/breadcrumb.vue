@@ -2,18 +2,19 @@
 	<el-breadcrumb separator="/">
 		<el-breadcrumb-item v-for="item in breadcrumbList" :key="item.title">
 			<template #default>
-				<span style="display: flex; align-items: center; gap: 5px">
-					<svg-icon v-if="item.icon && systemSettingStore.isOpenBreadcrumbIcon" :icon="item.icon"></svg-icon>
-					<text-tooltip :title="item.title" :placement="'bottom'"></text-tooltip>
-				</span>
+				<icon-text-tooltip
+					:enable-icon="systemSettingStore.isOpenBreadcrumbIcon"
+					:icon="item.icon"
+					:title="item.title"
+					:placement="'bottom'"
+				></icon-text-tooltip>
 			</template>
 		</el-breadcrumb-item>
 	</el-breadcrumb>
 </template>
 
 <script setup lang="ts">
-import SvgIcon from '@/components/svg-icon/index.vue'
-import TextTooltip from '@/components/text-tooltip/index.vue'
+import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

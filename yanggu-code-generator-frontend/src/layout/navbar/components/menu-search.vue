@@ -43,7 +43,7 @@
 						<el-breadcrumb-item v-for="breadcrumbItem in item.breadcrumbItemList" :key="breadcrumbItem.title">
 							<span class="breadcrumb-content">
 								<svg-icon :icon="breadcrumbItem.icon" is-pointer class="breadcrumb-icon"></svg-icon>
-								<el-text class="breadcrumb-title">{{ breadcrumbItem.title }}</el-text>
+								<el-text truncated class="breadcrumb-title">{{ breadcrumbItem.title }}</el-text>
 							</span>
 						</el-breadcrumb-item>
 					</el-breadcrumb>
@@ -422,5 +422,8 @@ onUnmounted(() => {
 	display: inline-flex;
 	align-items: center; /* 垂直居中 */
 	gap: 5px; /* 控制图标和文字间距 */
+}
+.breadcrumb-title {
+	max-width: 200px;
 }
 </style>
