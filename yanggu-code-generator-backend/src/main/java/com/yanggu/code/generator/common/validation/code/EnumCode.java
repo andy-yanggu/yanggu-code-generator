@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.common.validation.code;
 
-
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

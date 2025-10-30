@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.common.mybatis.typehandler.map;
 
-
 import java.util.List;
 
 /**

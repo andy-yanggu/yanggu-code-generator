@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.common.mybatis.typehandler.map;
 
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;

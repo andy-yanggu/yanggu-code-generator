@@ -32,10 +32,18 @@ const systemSettingStore = useSystemSettingStore()
 // 检查文本是否溢出
 onMounted(() => {
 	nextTick(() => {
-		if (titleRef.value && titleRef.value.$el) {
-			const element = titleRef.value.$el
-			isTitleOverflow.value = element.scrollWidth > element.offsetWidth
+		const el = titleRef.value?.$el
+		if (!el) {
+			return
 		}
+
+		const check = () => {
+			isTitleOverflow.value = el.scrollWidth > el.offsetWidth
+		}
+		check()
+
+		const observer = new ResizeObserver(check)
+		observer.observe(el)
 	})
 })
 </script>

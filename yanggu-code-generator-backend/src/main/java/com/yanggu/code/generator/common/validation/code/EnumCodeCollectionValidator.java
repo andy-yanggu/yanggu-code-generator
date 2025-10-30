@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.common.validation.code;
 
-
 import cn.hutool.v7.core.collection.CollUtil;
 
 import java.util.Collection;

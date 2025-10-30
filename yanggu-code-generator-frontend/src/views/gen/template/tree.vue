@@ -195,7 +195,7 @@
 				<el-main style="padding: 10px; overflow: hidden">
 					<template v-if="activeTabItem.templateType === 1">
 						<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
-							<code-mirror v-model="activeTabItem.templateContent"></code-mirror>
+							<code-mirror v-model="activeTabItem.templateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
 						</el-scrollbar>
 					</template>
 					<template v-else-if="activeTabItem.templateType === 2">
@@ -223,7 +223,7 @@
 					</el-col>
 				</el-row>
 				<div style="flex: 1; display: flex; align-items: center; justify-content: center">
-					<el-text size="large" tag="b">请点击左侧的文件树进行代码预览</el-text>
+					<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
 				</div>
 			</el-main>
 		</el-container>
@@ -811,6 +811,9 @@ const testTemplateContent = () => {
 
 // 保存模板内容
 const saveTemplateContent = () => {
+	if (!activeTabItem.value.isEdited) {
+		return
+	}
 	submitLoading.value = true
 	const dataForm = {
 		id: templateTreeData.activeItemId,

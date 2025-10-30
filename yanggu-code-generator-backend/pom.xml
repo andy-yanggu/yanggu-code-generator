@@ -186,6 +186,7 @@
                     <!-- pnpm install -->
                     <execution>
                         <id>pnpm-install</id>
+                        <!-- 在package前执行 -->
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -202,6 +203,7 @@
                     <!-- pnpm build -->
                     <execution>
                         <id>pnpm-build</id>
+                        <!-- 在package前执行 -->
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>exec</goal>
@@ -226,6 +228,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
+                        <!-- 在package前执行 -->
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>

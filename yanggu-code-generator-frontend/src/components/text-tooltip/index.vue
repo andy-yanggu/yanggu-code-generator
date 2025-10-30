@@ -27,10 +27,12 @@ const props = defineProps({
 const textRef = ref()
 const isTitleOverflow = ref(false)
 
+let observer: ResizeObserver | null = null
+
 // 检查文本是否溢出
 const checkOverflow = () => {
 	nextTick(() => {
-		if (textRef.value && textRef.value.$el) {
+		if (textRef.value?.$el) {
 			const element = textRef.value.$el
 			isTitleOverflow.value = element.scrollWidth > element.offsetWidth
 		}
@@ -45,13 +47,33 @@ watch(
 	}
 )
 
+// maxWidth 变化时也重新检测（支持响应式传入 maxWidth）
+watch(
+	() => props.maxWidth,
+	() => {
+		checkOverflow()
+	}
+)
+
 onMounted(() => {
-	checkOverflow()
-	window.addEventListener('resize', checkOverflow)
+	nextTick(() => {
+		const el = textRef.value?.$el
+		if (!el) {
+			return
+		}
+
+		checkOverflow()
+
+		// ✅ 使用 ResizeObserver 自动监听元素尺寸变化
+		observer = new ResizeObserver(checkOverflow)
+		observer.observe(el)
+	})
 })
 
 onBeforeUnmount(() => {
-	window.removeEventListener('resize', checkOverflow)
+	if (observer && textRef.value?.$el) {
+		observer.unobserve(textRef.value.$el)
+	}
 })
 </script>
 <style scoped lang="scss">
