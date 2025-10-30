@@ -458,6 +458,7 @@ const init = async () => {
 
 		if (templateContentList.length > 0 && templateTreeData.activeItemId === -1) {
 			templateTreeData.activeItemId = templateContentList[0].id
+			expandedKeys.value.push(templateContentList[0].id)
 			tabPush(templateContentList[0])
 		}
 		// 更新一下tab中的数据，已新加载数据为准
