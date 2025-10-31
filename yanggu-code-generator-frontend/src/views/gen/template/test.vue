@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" :modal="false" class="template-test-drawer">
+	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" class="template-test-drawer" destroy-on-close>
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
@@ -35,11 +35,7 @@
 						</el-col>
 						<!-- 文件路径	-->
 						<el-col :span="testData.activeName === 'template' ? 21 : 19">
-							<el-tooltip :content="fullFilePath" :disabled="!fullFilePath" placement="top">
-								<el-text style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%">
-									路径：{{ fullFilePath }}
-								</el-text>
-							</el-tooltip>
+							<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
 						</el-col>
 						<el-col :span="testData.activeName === 'template' ? 2 : 4" style="text-align: right">
 							<el-button
@@ -105,14 +101,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import { genTemplateApi } from '@/api/gen/template'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
 import { CopyDocument, Document, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { genGeneratorApi } from '@/api/gen/generator'
-import { copyToClipboard } from '@/utils/tool'
+import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
+import TextTooltip from '@/components/text-tooltip/index.vue'
 
 interface CascaderData {
 	value: string
@@ -123,7 +120,7 @@ interface CascaderData {
 	children?: CascaderData[]
 }
 
-const testData = reactive({
+const INIT_TEST_DATA = {
 	visible: false,
 	asideCollapsed: false,
 	activeName: 'template',
@@ -139,9 +136,12 @@ const testData = reactive({
 	renderedTemplateContent: '',
 	cascaderValue: '',
 	cascaderData: [] as CascaderData[]
-})
+}
+
+const testData = reactive(cloneObject(INIT_TEST_DATA))
 
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number) => {
+	resetReactiveObject(testData, INIT_TEST_DATA)
 	testData.visible = true
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
@@ -197,16 +197,14 @@ const handleCascaderChange = async val => {
 		queryForm.testId = val[1].split('_')[1]
 	}
 	const loadingInstance = ElLoading.service({
-		target: '.template-test-drawer',
+		target: '.template-test-drawer .el-drawer__body',
 		text: '模板渲染中...'
 	})
 	try {
 		const data = await genGeneratorApi.templateTest(queryForm)
 		testData.renderedFileName = data.filePath
 		testData.renderedTemplateContent = data.content
-		nextTick(() => {
-			testData.activeName = 'render'
-		})
+		testData.activeName = 'render'
 	} finally {
 		loadingInstance.close()
 	}

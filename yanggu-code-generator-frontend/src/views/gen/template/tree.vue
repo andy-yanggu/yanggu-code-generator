@@ -43,16 +43,18 @@
 							@node-collapse="handleNodeCollapse"
 						>
 							<template #default="{ node, data }">
-								<el-tooltip :content="data.templateDesc" placement="top" effect="light" :disabled="!data.templateDesc">
+								<el-tooltip :content="data.templateDesc" placement="top" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
 										<svg-icon :icon="getIcon(node, data)"></svg-icon>
 										<span class="tree-node-label">
 											{{ node.label }}
 											<span v-if="data.isEdited" class="edit-dot"></span>
 										</span>
-										<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
-											<Edit></Edit>
-										</el-icon>
+										<div class="tree-node-actions">
+											<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
+												<Edit></Edit>
+											</el-icon>
+										</div>
 									</div>
 								</el-tooltip>
 							</template>
@@ -148,7 +150,7 @@
 					<el-tabs ref="tabsRef" v-model="templateTreeData.activeItemId" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 						<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 							<template #label>
-								<el-tooltip :content="tabItem.templateDesc" effect="light" :disabled="!tabItem.templateDesc" placement="bottom">
+								<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
 									<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
 										<svg-icon :icon="getIcon({ expanded: false }, tabItem)" style="margin-right: 5px"></svg-icon>
 										<span>{{ tabItem.fileName }}</span>
@@ -188,7 +190,7 @@
 						</ul>
 					</div>
 					<!-- 测试页面 -->
-					<template-test ref="templateTestRef" :key="templateTestKey"></template-test>
+					<template-test ref="templateTestRef"></template-test>
 				</el-header>
 
 				<!-- 代码区域 -->
@@ -287,7 +289,6 @@ const props = defineProps({
 
 const treeRef = ref()
 const templateTestRef = ref()
-const templateTestKey = ref()
 const tabsRef = ref()
 const codeScrollbarRef = ref()
 const templateTreeData = reactive({
@@ -804,7 +805,6 @@ const refreshData = (dataList: Tree[]) => {
 
 // 测试模板内容
 const testTemplateContent = () => {
-	templateTestKey.value = Date.now()
 	nextTick(() => {
 		templateTestRef.value.init(props.templateGroupId, props.templateGroupType, templateTreeData.activeItemId)
 	})
@@ -1190,6 +1190,16 @@ defineExpose({
 	display: flex;
 	align-items: center;
 	gap: 5px;
+	position: relative;
+}
+
+.tree-node-actions {
+	display: none;
+	margin-left: 5px;
+}
+
+.custom-tree-node:hover .tree-node-actions {
+	display: block;
 }
 
 .edit-icon {

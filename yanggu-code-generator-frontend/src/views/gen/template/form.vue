@@ -46,6 +46,7 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
 import { UploadProps } from 'element-plus'
+import { Key } from '@/types/common'
 
 const props = defineProps({
 	templateGroupId: {
@@ -106,9 +107,7 @@ const state: FormOptions = reactive({
 	visible: false,
 	submitBefore: submitBeforeHandle,
 	submitApi: genTemplateApi.submit,
-	detailApi: (id: number) => {
-		return genTemplateApi.detail({ id })
-	},
+	detailApi: (id: Key) => genTemplateApi.detail({ id }),
 	initBefore: () => {
 		state.dataForm.templateName = ''
 	},
