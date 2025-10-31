@@ -177,7 +177,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genTableFieldApi } from '@/api/gen/table-field'
 import { genEnumApi } from '@/api/gen/enum'
@@ -198,19 +198,19 @@ const typeList = ref([])
 const tableId = ref()
 const projectIdRef = ref()
 const fieldList = ref([])
-const fillList = reactive([
+const fillList = ref([
 	{ label: 'DEFAULT', value: 'DEFAULT' },
 	{ label: 'INSERT', value: 'INSERT' },
 	{ label: 'UPDATE', value: 'UPDATE' },
 	{ label: 'INSERT_UPDATE', value: 'INSERT_UPDATE' }
 ])
-const formValidatorList = reactive([
+const formValidatorList = ref([
 	{ label: 'NotNull', value: 'NotNull' },
 	{ label: 'NotBlank', value: 'NotBlank' },
 	{ label: 'NotEmpty', value: 'NotEmpty' },
 	{ label: 'Null', value: 'Null' }
 ])
-const queryList = reactive([
+const queryList = ref([
 	{ label: '=', value: '=' },
 	{ label: '!=', value: '!=' },
 	{ label: '>', value: '>' },
@@ -223,7 +223,7 @@ const queryList = reactive([
 	{ label: 'between', value: 'between' }
 ])
 
-const formTypeList = reactive([
+const formTypeList = ref([
 	{ label: '单行文本', value: 'text' },
 	{ label: '多行文本', value: 'textarea' },
 	{ label: '富文本编辑器', value: 'editor' },
