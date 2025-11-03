@@ -115,7 +115,7 @@
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, reactive, ref } from 'vue'
 import Preview from '@/components/preview/index.vue'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity, GenProjectQuery } from '@/api/gen/project'
 import Steps from '@/views/gen/project/steps.vue'
 import ProjectForm from '@/views/gen/project/form.vue'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
@@ -127,16 +127,16 @@ defineOptions({
 	name: 'GenProject'
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genProjectApi.entityPage,
 	deleteListApi: genProjectApi.deleteList,
 	queryForm: {
 		projectName: '',
-		generatorType: null,
-		dateTimeRange: []
+		generatorType: undefined,
+		dateTimeRange: [] as string[]
 	},
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'
-})
+} as IHooksOptions<GenProjectQuery, GenProjectEntity>)
 
 const previewRef = ref()
 const currentProjectIdTs = ref()

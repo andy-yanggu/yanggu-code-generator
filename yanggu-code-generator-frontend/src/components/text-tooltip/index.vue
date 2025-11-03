@@ -7,7 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
 
 const props = defineProps({
 	title: {
@@ -27,8 +28,6 @@ const props = defineProps({
 const textRef = ref()
 const isTitleOverflow = ref(false)
 
-let observer: ResizeObserver | null = null
-
 // 检查文本是否溢出
 const checkOverflow = () => {
 	nextTick(() => {
@@ -39,42 +38,13 @@ const checkOverflow = () => {
 	})
 }
 
-// watch title的值是否发生变化，如果发生变化则重新检查
-watch(
-	() => props.title,
-	() => {
-		checkOverflow()
-	}
-)
+// 监听 title 和 maxWidth 的变化
+watch(() => [props.title, props.maxWidth], checkOverflow)
 
-// maxWidth 变化时也重新检测（支持响应式传入 maxWidth）
-watch(
-	() => props.maxWidth,
-	() => {
-		checkOverflow()
-	}
-)
+onMounted(checkOverflow)
 
-onMounted(() => {
-	nextTick(() => {
-		const el = textRef.value?.$el
-		if (!el) {
-			return
-		}
-
-		checkOverflow()
-
-		// ✅ 使用 ResizeObserver 自动监听元素尺寸变化
-		observer = new ResizeObserver(checkOverflow)
-		observer.observe(el)
-	})
-})
-
-onBeforeUnmount(() => {
-	if (observer && textRef.value?.$el) {
-		observer.unobserve(textRef.value.$el)
-	}
-})
+// 使用 VueUse 的 useResizeObserver 自动监听尺寸变化
+useResizeObserver(textRef, checkOverflow)
 </script>
 <style scoped lang="scss">
 .text-tooltip-title {

@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genTemplateApi } from '@/api/gen/template'
+import { genTemplateApi, GenTemplateEntity } from '@/api/gen/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
@@ -103,7 +103,7 @@ const submitBeforeHandle = () => {
 	}
 }
 
-const state: FormOptions = reactive({
+const state = reactive({
 	visible: false,
 	submitBefore: submitBeforeHandle,
 	submitApi: genTemplateApi.submit,
@@ -112,7 +112,7 @@ const state: FormOptions = reactive({
 		state.dataForm.templateName = ''
 	},
 	dataForm: {
-		id: null,
+		id: -1,
 		templateGroupId: -1,
 		parentId: -1,
 		templateName: '',
@@ -125,7 +125,7 @@ const state: FormOptions = reactive({
 	},
 	initAfter: initAfterHandle,
 	emit
-})
+} as FormOptions<GenTemplateEntity>)
 
 const validateTemplateName = (_: any, value: any, callback: any) => {
 	if (state.dataForm.templateType != 0 && !value) {

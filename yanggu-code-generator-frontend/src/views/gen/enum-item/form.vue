@@ -39,20 +39,20 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { genEnumItemApi } from '@/api/gen/enum-item'
+import { genEnumItemApi, GenEnumItemEntity } from '@/api/gen/enum-item'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 
-const state: FormOptions = reactive({
+const state = reactive({
 	// 提交API
 	submitApi: genEnumItemApi.submit,
 	// 详情API
 	detailApi: genEnumItemApi.detail,
 	// 详情数据
 	dataForm: {
-		id: null,
+		id: -1,
 		enumId: -1,
 		enumItemName: '',
 		enumItemCode: '',
@@ -60,7 +60,7 @@ const state: FormOptions = reactive({
 		enumItemOrder: 0
 	},
 	emit
-})
+} as FormOptions<GenEnumItemEntity>)
 
 const dataRules = reactive({
 	enumItemName: [{ required: true, message: '请输入枚举项名称', trigger: 'blur' }],

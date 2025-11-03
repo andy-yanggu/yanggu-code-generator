@@ -133,7 +133,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { genDataSourceApi } from '@/api/gen/datasource'
 import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { genBaseClassApi } from '@/api/gen/base-class'
@@ -193,7 +193,7 @@ const getList = () => {
 	})
 }
 
-const state: FormOptions = reactive({
+const state = reactive({
 	submitApi: genProjectApi.submit,
 	detailApi: genProjectApi.detail,
 	initBefore: () => {
@@ -203,24 +203,24 @@ const state: FormOptions = reactive({
 		state.dataForm.enumTemplateGroupPropValue = {}
 	},
 	dataForm: {
-		id: null,
+		id: -1,
 		projectName: '',
 		projectPackage: '',
 		projectVersion: '',
-		datasourceId: '',
-		projectTemplateGroupId: '',
+		datasourceId: -1,
+		projectTemplateGroupId: -1,
 		projectTemplateGroupPropValue: {},
-		tableTemplateGroupId: '',
+		tableTemplateGroupId: -1,
 		tableTemplateGroupPropValue: {},
-		enumTemplateGroupId: '',
+		enumTemplateGroupId: -1,
 		enumTemplateGroupPropValue: {},
 		backendPath: '',
 		frontendPath: '',
 		projectDesc: '',
 		author: '',
-		entityBaseClassId: '',
-		voBaseClassId: '',
-		generatorType: null
+		entityBaseClassId: -1,
+		voBaseClassId: -1,
+		generatorType: -1
 	},
 	submitBefore: () => {
 		if (!state.dataForm.id) {
@@ -241,7 +241,7 @@ const state: FormOptions = reactive({
 		}
 	},
 	emit
-})
+} as FormOptions<GenProjectEntity>)
 
 const projectTemplateGroupPropertyList = computed(() => {
 	const find = projectTemplateGroupList.value.find(item => item.id === state.dataForm.projectTemplateGroupId)

@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genDataSourceApi } from '@/api/gen/datasource'
+import { genDataSourceApi, GenGenDatasourceEntity } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -58,11 +58,11 @@ const props = defineProps({
 
 const emit = defineEmits(['refreshDataList'])
 
-const state: FormOptions = reactive({
+const state = reactive({
 	submitApi: genDataSourceApi.submit,
 	detailApi: genDataSourceApi.detail,
 	dataForm: {
-		id: '',
+		id: -1,
 		dbType: '',
 		connName: '',
 		connUrl: '',
@@ -73,14 +73,14 @@ const state: FormOptions = reactive({
 	initAfter: () => {
 		if (props.mode === 'copy') {
 			state.dataForm.connName = state.dataForm.connName + '_复制'
-			state.dataForm.id = null
+			state.dataForm.id = -1
 			state.message = '复制成功'
 		} else {
 			state.message = ''
 		}
 	},
 	emit
-})
+} as FormOptions<GenGenDatasourceEntity>)
 
 const dataRules = reactive({
 	dbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

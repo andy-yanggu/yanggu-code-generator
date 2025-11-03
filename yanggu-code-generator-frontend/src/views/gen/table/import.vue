@@ -49,27 +49,27 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { genTableApi } from '@/api/gen/table'
-import { genProjectApi } from '@/api/gen/project'
+import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 
 const emit = defineEmits(['refreshDataList'])
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	primaryKey: 'tableName',
 	createdIsNeed: false,
 	isPage: false,
 	dataListApi: genProjectApi.tableList,
 	queryForm: {
-		projectId: null,
+		projectId: undefined,
 		tableName: ''
 	}
-})
+} as IHooksOptions<GenTableQuery, GenTableEntity>)
 
 const visible = ref(false)
 const submitLoading = ref(false)
-const projectList = ref([])
+const projectList = ref([] as GenProjectEntity[])
 
 const dataRules = reactive({
 	projectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }]

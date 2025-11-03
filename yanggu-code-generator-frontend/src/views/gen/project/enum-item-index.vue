@@ -65,17 +65,17 @@
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
-import { genEnumItemApi } from '@/api/gen/enum-item'
+import { genEnumItemApi, GenEnumItemEntity, GenEnumItemQuery } from '@/api/gen/enum-item'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		enumItemName: '',
 		enumId: -1
 	}
-})
+} as IHooksOptions<GenEnumItemQuery, GenEnumItemEntity>)
 
 const dialogVisible = ref(false)
 

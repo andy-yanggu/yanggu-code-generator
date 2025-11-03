@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genEnumApi } from '@/api/gen/enum'
+import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
 import { genProjectApi } from '@/api/gen/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -43,17 +43,18 @@ const getProjectList = () => {
 }
 
 const emit = defineEmits(['refreshDataList'])
-const state: FormOptions = reactive({
+const state = reactive({
 	submitApi: genEnumApi.submit,
 	detailApi: genEnumApi.detail,
 	initBefore: getProjectList,
 	dataForm: {
-		projectId: null,
+		id: -1,
+		projectId: -1,
 		enumName: '',
 		enumDesc: ''
 	},
 	emit
-})
+} as FormOptions<GenEnumEntity>)
 
 const dataRules = reactive({
 	enumName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

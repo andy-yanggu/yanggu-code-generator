@@ -30,24 +30,24 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { genFieldTypeApi } from '@/api/gen/field-type'
+import { genFieldTypeApi, GenFieldTypeEntity } from '@/api/gen/field-type'
 import { ATTR_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 
-const state: FormOptions = reactive({
+const state = reactive({
 	submitApi: genFieldTypeApi.submit,
 	detailApi: genFieldTypeApi.detail,
 	dataForm: {
-		id: '',
+		id: -1,
 		columnType: '',
 		attrType: '',
 		packageName: ''
 	},
 	emit
-})
+} as FormOptions<GenFieldTypeEntity>)
 
 const dataRules = reactive({
 	columnType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

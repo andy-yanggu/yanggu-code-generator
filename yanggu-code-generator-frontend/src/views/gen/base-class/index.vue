@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import useTableAction from '@/hooks/use-table-action'
 import { useComplexForm } from '@/hooks/use-init-form'
 import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
@@ -95,7 +95,7 @@ defineOptions({
 	name: 'GenBaseClass'
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genBaseClassApi.entityPage,
 	deleteListApi: genBaseClassApi.deleteList,
 	queryForm: {

@@ -53,20 +53,20 @@
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
-import { genTableApi } from '@/api/gen/table'
+import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genTableApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		tableName: '',
 		className: '',
-		projectId: null
+		projectId: -1
 	}
-})
+} as IHooksOptions<GenTableQuery, GenTableEntity>)
 
 const tableRef = ref()
 let isManualSelection = true

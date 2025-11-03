@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genTemplateGroupApi } from '@/api/gen/template-group'
+import { genTemplateGroupApi, GenTemplateGroupEntity } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -49,16 +49,16 @@ const props = defineProps({
 	}
 })
 
-const state: FormOptions = reactive({
+const state = reactive({
 	// 提交API
 	submitApi: genTemplateGroupApi.submit,
 	// 详情API
 	detailApi: genTemplateGroupApi.detail,
 	// 表单数据
 	dataForm: {
-		id: '',
+		id: -1,
 		groupName: '',
-		type: '',
+		type: -1,
 		groupDesc: ''
 	},
 	initAfter: () => {
@@ -74,7 +74,7 @@ const state: FormOptions = reactive({
 		}
 	},
 	emit
-})
+} as FormOptions<GenTemplateGroupEntity>)
 
 const dataRules = reactive({
 	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

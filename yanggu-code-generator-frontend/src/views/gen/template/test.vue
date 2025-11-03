@@ -34,22 +34,24 @@
 							</el-icon>
 						</el-col>
 						<!-- 文件路径	-->
-						<el-col :span="testData.activeName === 'template' ? 21 : 19">
+						<el-col :span="19">
 							<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
 						</el-col>
-						<el-col :span="testData.activeName === 'template' ? 2 : 4" style="text-align: right">
-							<el-button
-								v-if="testData.activeName === 'template'"
-								size="small"
-								type="primary"
-								:icon="Edit"
-								:loading="loading"
-								:disabled="testData.editTemplateContent === testData.originalTemplateContent"
-								@click="saveTemplateContent()"
-							>
-								保存
-							</el-button>
-							<div v-else>
+						<el-col :span="4" style="text-align: right">
+							<template v-if="testData.activeName === 'template'">
+								<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
+								<el-button
+									size="small"
+									type="primary"
+									:icon="Edit"
+									:loading="loading"
+									:disabled="testData.editTemplateContent === testData.originalTemplateContent"
+									@click="saveTemplateContent()"
+								>
+									保存
+								</el-button>
+							</template>
+							<template v-else>
 								<el-button
 									size="small"
 									type="primary"
@@ -69,7 +71,7 @@
 								>
 									生成
 								</el-button>
-							</div>
+							</template>
 						</el-col>
 					</el-row>
 
@@ -89,7 +91,7 @@
 				<!-- 主体内容（独立滚动） -->
 				<el-main class="main-scroll">
 					<el-scrollbar v-show="testData.activeName === 'template'">
-						<code-mirror v-model="testData.editTemplateContent"></code-mirror>
+						<code-mirror v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
 					</el-scrollbar>
 					<el-scrollbar v-show="testData.activeName === 'render'">
 						<code-mirror v-model="testData.renderedTemplateContent" :read-only="true"></code-mirror>

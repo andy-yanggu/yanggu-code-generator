@@ -55,19 +55,19 @@
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
-import { genEnumApi } from '@/api/gen/enum'
+import { genEnumApi, GenEnumEntity, GenEnumQuery } from '@/api/gen/enum'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
 import { Refresh, Search, View } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['selectChange'])
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genEnumApi.entityPage,
 	createdIsNeed: false,
 	queryForm: {
 		enumName: '',
-		projectId: ''
+		projectId: -1
 	}
-})
+} as IHooksOptions<GenEnumQuery, GenEnumEntity>)
 let isManualSelection = true
 
 const tableRef = ref()

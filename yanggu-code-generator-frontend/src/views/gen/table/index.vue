@@ -147,7 +147,7 @@ import Preview from '@/components/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
 import { genProjectApi } from '@/api/gen/project'
-import { genTableApi } from '@/api/gen/table'
+import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
@@ -163,15 +163,15 @@ onMounted(() => {
 	getProjectList()
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genTableApi.voPage,
 	deleteListApi: genTableApi.deleteList,
 	queryForm: {
 		tableName: '',
-		projectId: null,
+		projectId: undefined,
 		databaseName: ''
 	}
-})
+} as IHooksOptions<GenTableQuery, GenTableEntity>)
 
 const importRef = ref()
 const editRef = ref()
@@ -208,7 +208,7 @@ const generatorCode = (item: any) => {
 }
 
 const generatorCodeBatch = () => {
-	const dataList = state.dataListSelections ? state.dataListSelections : []
+	const dataList: number[] = state.dataListSelections ? state.dataListSelections : []
 	if (dataList.length === 0) {
 		ElMessage.warning('请选择要生成代码的表')
 		return

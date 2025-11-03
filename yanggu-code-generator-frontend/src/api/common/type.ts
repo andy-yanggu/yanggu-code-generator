@@ -17,13 +17,25 @@ export interface OrderItemQuery {
 }
 
 // 统一分页查询参数
-export interface PageQuery<T extends Record<string, any> = Record<string, any>> extends T {
+export interface PageQuery {
 	// 当前页码
-	pageNum: number
+	pageNum?: number
 	// 每页条数
-	pageSize: number
+	pageSize?: number
 	// 排序字段
 	orderItemList?: OrderItemQuery[]
+	// 开始时间
+	startTime?: string
+	// 结束时间
+	endTime?: string
+	// 开始日期
+	startDate?: string
+	// 结束日期
+	endDate?: string
+	// 时间范围
+	dateRange?: string[]
+	// 日期范围
+	dateTimeRange?: string[]
 }
 
 // 分页数据

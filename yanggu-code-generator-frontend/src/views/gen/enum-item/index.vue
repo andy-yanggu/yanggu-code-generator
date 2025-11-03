@@ -75,10 +75,10 @@
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import EnumItemForm from '@/views/gen/enum-item/form.vue'
-import { genEnumItemApi } from '@/api/gen/enum-item'
+import { genEnumItemApi, GenEnumItemEntity, GenEnumItemQuery } from '@/api/gen/enum-item'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	deleteListApi: genEnumItemApi.deleteList,
 	createdIsNeed: false,
@@ -87,7 +87,7 @@ const state: IHooksOptions = reactive({
 		enumItemCode: '',
 		enumId: -1
 	}
-})
+} as IHooksOptions<GenEnumItemQuery, GenEnumItemEntity>)
 
 const enumNameRef = ref('')
 

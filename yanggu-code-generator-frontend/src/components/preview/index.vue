@@ -191,7 +191,7 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
 	isCollapse.value = false
-	const loadingInstance = ElLoading.service({ fullscreen: true })
+	const loadingInstance = ElLoading.service({ fullscreen: true, text: '数据加载中...' })
 	try {
 		const previewData = {
 			previewProductId: id,

@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genTableApi } from '@/api/gen/table'
+import { genTableApi, GenTableEntity } from '@/api/gen/table'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { genProjectApi } from '@/api/gen/project'
@@ -63,7 +63,7 @@ const emit = defineEmits(['refreshDataList'])
 
 const projectList = ref([])
 
-const state: FormOptions = reactive({
+const state = reactive({
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
 	initBefore: () => {
@@ -72,12 +72,12 @@ const state: FormOptions = reactive({
 		})
 	},
 	dataForm: {
-		id: null,
+		id: -1,
 		tableName: '',
 		databaseName: '',
 		className: '',
 		tableComment: '',
-		projectId: '',
+		projectId: -1,
 		author: '',
 		version: '',
 		moduleName: '',
@@ -87,7 +87,7 @@ const state: FormOptions = reactive({
 		generatorFunction: [0, 1, 2, 3, 4, 5]
 	},
 	emit
-})
+} as FormOptions<GenTableEntity>)
 
 const dataRules = reactive({
 	databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

@@ -129,7 +129,7 @@ import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi } from '@/api/gen/project'
 import { ElMessage } from 'element-plus'
-import { genEnumApi } from '@/api/gen/enum'
+import { genEnumApi, GenEnumEntity, GenEnumQuery } from '@/api/gen/enum'
 import { getLabel } from '@/utils/enum'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
@@ -143,14 +143,14 @@ onMounted(() => {
 	getProjectList()
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genEnumApi.voPage,
 	deleteListApi: genEnumApi.deleteList,
 	queryForm: {
 		enumName: '',
-		projectId: ''
+		projectId: -1
 	}
-})
+} as IHooksOptions<GenEnumQuery, GenEnumEntity>)
 
 const enumItemIndexRef = ref()
 const previewRef = ref()

@@ -92,7 +92,7 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { reactive, ref } from 'vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
-import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
+import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery } from '@/api/gen/template-group-property'
 import { getLabel } from '@/utils/enum'
 import { COMPONENT_TYPES } from '@/constant/enum'
 
@@ -113,20 +113,20 @@ const props = defineProps({
 
 const visible = ref(false)
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genTemplateGroupPropertyApi.entityPage,
 	deleteListApi: genTemplateGroupPropertyApi.deleteList,
 	exportApi: genTemplateGroupPropertyApi.export,
 	importApi: genTemplateGroupPropertyApi.import,
 	createdIsNeed: false,
 	queryForm: {
-		templateGroupId: null,
+		templateGroupId: undefined,
 		propTitle: '',
 		propKey: ''
 	},
 	order: 'propOrder',
 	asc: true
-})
+} as IHooksOptions<GenTemplateGroupPropertyQuery, GenTemplateGroupPropertyEntity>)
 
 const {
 	getDataList,

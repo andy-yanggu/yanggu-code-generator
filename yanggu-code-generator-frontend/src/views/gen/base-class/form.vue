@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genBaseClassApi } from '@/api/gen/base-class'
+import { genBaseClassApi, GenBaseClassEntity } from '@/api/gen/base-class'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
@@ -68,14 +68,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['refreshDataList'])
-const state: FormOptions = reactive({
+const state = reactive({
 	// 提交API
 	submitApi: genBaseClassApi.submit,
 	// 详情API
 	detailApi: genBaseClassApi.detail,
 	// 表单数据
 	dataForm: {
-		id: null,
+		id: '',
 		baseClassName: '',
 		packageName: '',
 		className: '',
@@ -89,14 +89,14 @@ const state: FormOptions = reactive({
 	initAfter: () => {
 		if (props.mode === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
-			state.dataForm.id = null
+			state.dataForm.id = ''
 			state.message = '复制成功'
 		} else {
 			state.message = ''
 		}
 	},
 	emit
-})
+} as FormOptions<GenBaseClassEntity>)
 
 const dataRules = reactive({
 	baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

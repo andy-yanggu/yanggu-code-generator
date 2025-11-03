@@ -1,26 +1,26 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Key, KeyArray } from '@/types/common'
-import { PageVO } from '@/api/common/type'
+import { PageQuery, PageVO } from '@/api/common/type'
 
 // 数据列表接口
-type DataListApi<T> = (params: any) => Promise<PageVO<T> | T[]>
+type DataListApi<Query, VO> = (queryForm?: Query) => Promise<PageVO<VO> | VO[]>
 // 批量删除接口
-type DeleteListApi<T = any> = (idList: KeyArray) => Promise<T>
+type DeleteListApi = (idList: KeyArray) => Promise<void>
 // 导出接口
-type ExportApi<T = any> = (idList: KeyArray) => Promise<T>
+type ExportApi = (idList: KeyArray) => Promise<void>
 // 导入接口
-type ImportApi<T = any> = (formData: FormData) => Promise<T>
+type ImportApi = (formData: FormData) => Promise<void>
 
-export interface IHooksOptions<T = any> {
+export interface IHooksOptions<Query extends PageQuery = PageQuery, VO = any> {
 	// 否在创建页面时，调用数据列表接口
 	createdIsNeed?: boolean
 	// 是否需要分页
 	isPage?: boolean
 	// 数据列表接口
-	dataListApi?: DataListApi<T>
+	dataListApi?: DataListApi<Query, VO>
 	// 删除接口
-	deleteListApi?: DeleteListApi<T>
+	deleteListApi?: DeleteListApi
 	// 导出接口
 	exportApi?: ExportApi
 	// 导入接口
@@ -28,9 +28,9 @@ export interface IHooksOptions<T = any> {
 	// 主键key，用于删除场景
 	primaryKey?: string
 	// 查询条件
-	queryForm?: any
+	queryForm: Query
 	// 数据列表
-	dataList?: T[]
+	dataList?: VO[]
 	// 排序字段
 	order?: string
 	// 是否升序
@@ -60,7 +60,7 @@ export interface IHooksOptions<T = any> {
 }
 
 // 提供分页、批量删除、导出功能
-const useTableAction = <T = any>(state: IHooksOptions<T>) => {
+const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<Query, VO>) => {
 	// 表单查询引用
 	const queryRef = ref()
 	// 表格引用
@@ -75,7 +75,7 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 	}
 
 	// 默认值
-	const defaultOptions: IHooksOptions = {
+	const defaultOptions: IHooksOptions<Query, VO> = {
 		dataListApi: undefined,
 		deleteListApi: undefined,
 		exportApi: undefined,
@@ -83,7 +83,7 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 		createdIsNeed: true,
 		isPage: true,
 		primaryKey: 'id',
-		queryForm: {},
+		queryForm: {} as Query,
 		dataList: [],
 		order: '',
 		asc: false,
@@ -101,7 +101,7 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 	}
 
 	// 合并默认值
-	const mergeDefaultOptions = (defaultOptions: IHooksOptions, props: IHooksOptions) => {
+	const mergeDefaultOptions = (defaultOptions: IHooksOptions<Query, VO>, props: IHooksOptions<Query, VO>) => {
 		for (const key in defaultOptions) {
 			if (!Object.getOwnPropertyDescriptor(props, key)) {
 				props[key as keyof IHooksOptions] = defaultOptions[key as keyof IHooksOptions]
@@ -126,7 +126,7 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 			return
 		}
 		// 解构查询条件
-		const queryForm = {
+		const queryForm: Query = {
 			...state.queryForm
 		}
 		// 如果queryForm包含dateRange
@@ -149,13 +149,13 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 
 		// 如果是分页，添加分页参数
 		if (state.isPage) {
-			queryForm.pageNum = state.pageNum
-			queryForm.pageSize = state.pageSize
+			queryForm.pageNum = state.pageNum!
+			queryForm.pageSize = state.pageSize!
 		}
 
 		// 排序字段
 		if (state.order) {
-			queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
+			queryForm.orderItemList = [{ column: state.order, asc: state.asc! }]
 		}
 
 		state.dataListLoading = true
@@ -164,11 +164,11 @@ const useTableAction = <T = any>(state: IHooksOptions<T>) => {
 		state.dataListApi!(queryForm)
 			.then(data => {
 				if (state.isPage) {
-					const pageVO = data as PageVO<T>
+					const pageVO = data as PageVO<VO>
 					state.dataList = pageVO.records
 					state.total = pageVO.total
 				} else {
-					const dataList = data as T[]
+					const dataList = data as VO[]
 					state.dataList = dataList
 					state.total = dataList.length
 					state.pageNum = 1

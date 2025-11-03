@@ -1,20 +1,19 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { AxiosPromise } from 'axios'
 import { Key } from '@/types/common'
 
 // 表单模式：新增、修改、复制
 export type FormType = 'add' | 'update' | 'copy'
 
-export interface FormOptions {
+export interface FormOptions<VO> {
 	// 提交API
-	submitApi: (data: any) => AxiosPromise
+	submitApi: (data: VO) => Promise<void>
 	// 详情API
-	detailApi: (id: Key) => AxiosPromise
+	detailApi: (id: Key) => Promise<VO>
 	// 初始化之前调用
 	initBefore?: () => void
 	// 表单数据
-	dataForm: any
+	dataForm: VO & { id?: Key }
 	// 初始化之后调用
 	initAfter?: () => void
 	// 提交之前操作
@@ -27,7 +26,7 @@ export interface FormOptions {
 	duration?: number
 }
 
-export const useSubmitForm = (options: FormOptions) => {
+export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	// 弹窗可见性
 	const visible = ref(false)
 
@@ -54,7 +53,7 @@ export const useSubmitForm = (options: FormOptions) => {
 	// 初始化表单
 	const init = (id?: Key) => {
 		visible.value = true
-		options.dataForm.id = null
+		options.dataForm.id = undefined
 
 		nextTick(() => {
 			// 清空表单校验和重置表单数据

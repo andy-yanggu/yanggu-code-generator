@@ -19,10 +19,32 @@ export const copyToClipboard = (text: string): Promise<void> => {
 					reject()
 				})
 		} else {
-			// 不支持时的降级处理
-			console.warn('当前浏览器不支持 Clipboard API')
-			ElMessage.warning('当前浏览器不支持自动复制功能')
-			reject()
+			// ⚙️ 降级处理：使用 document.execCommand('copy')
+			try {
+				// 创建隐藏的 textarea
+				const textarea = document.createElement('textarea')
+				textarea.value = text
+				textarea.style.position = 'fixed'
+				textarea.style.top = '-9999px'
+				textarea.style.left = '-9999px'
+				document.body.appendChild(textarea)
+
+				// 选中并执行复制命令
+				textarea.select()
+				const successful = document.execCommand('copy')
+				document.body.removeChild(textarea)
+
+				if (successful) {
+					resolve()
+				} else {
+					ElMessage.warning('浏览器不支持自动复制，请手动复制')
+					reject(new Error('execCommand copy failed'))
+				}
+			} catch (err) {
+				console.error('复制失败（降级模式）:', err)
+				ElMessage.warning('浏览器不支持自动复制，请手动复制')
+				reject(err)
+			}
 		}
 	})
 }

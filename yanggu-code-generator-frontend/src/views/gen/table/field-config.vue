@@ -179,8 +179,8 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { genTableFieldApi } from '@/api/gen/table-field'
-import { genEnumApi } from '@/api/gen/enum'
+import { genTableFieldApi, GenTableFieldEntity } from '@/api/gen/table-field'
+import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
 import { genFieldTypeApi } from '@/api/gen/field-type'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
@@ -196,8 +196,8 @@ const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
 const typeList = ref([])
 const tableId = ref()
-const projectIdRef = ref()
-const fieldList = ref([])
+const projectIdRef = ref(-1)
+const fieldList = ref([] as GenTableFieldEntity[])
 const fillList = ref([
 	{ label: 'DEFAULT', value: 'DEFAULT' },
 	{ label: 'INSERT', value: 'INSERT' },
@@ -235,7 +235,7 @@ const formTypeList = ref([
 	{ label: '数值', value: 'number' }
 ])
 
-const enumList = ref([])
+const enumList = ref([] as GenEnumEntity[])
 
 const init = async (row: any) => {
 	visible.value = true
@@ -266,7 +266,7 @@ const init = async (row: any) => {
 		enumList.value = enumRes
 
 		// 设置属性类型值
-		fieldTypeRes.forEach((item: any) => {
+		fieldTypeRes.forEach((item: string) => {
 			typeList.value.push({ label: item, value: item })
 		})
 		// 增加Object类型

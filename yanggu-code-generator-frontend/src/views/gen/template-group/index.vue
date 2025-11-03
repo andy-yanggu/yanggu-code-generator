@@ -129,7 +129,7 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
-import { genTemplateGroupApi } from '@/api/gen/template-group'
+import { genTemplateGroupApi, GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/api/gen/template-group'
 import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { useComplexForm } from '@/hooks/use-init-form'
 
@@ -137,18 +137,18 @@ defineOptions({
 	name: 'GenTemplateGroup'
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genTemplateGroupApi.entityPage,
 	deleteListApi: genTemplateGroupApi.deleteList,
 	exportApi: genTemplateGroupApi.export,
 	importApi: genTemplateGroupApi.import,
 	queryForm: {
 		groupName: '',
-		type: ''
+		type: undefined
 	},
 	deleteMessage: '删除模板组，模板组下面的所有模板、属性都会删除',
 	importSuccessMessage: '模板组导入成功'
-})
+} as IHooksOptions<GenTemplateGroupQuery, GenTemplateGroupEntity>)
 
 const propertyRef = ref()
 const key = ref()

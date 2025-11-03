@@ -49,7 +49,7 @@
 
 - 浏览器访问`http://localhost:8888/code-generator#/index`
 
-- 复制到剪切板功能受限，处于安全考虑浏览器仅支持localhost或者https。想要在非localhost域名下使用复制到剪切板功能，需要给springboot配置https。使用keytool生成自签名证书，同时配置一下springboot的https
+- （可选项）复制到剪切板功能受限，处于安全考虑浏览器仅支持localhost或者https。想要在非localhost域名下使用复制到剪切板功能，需要给springboot配置https。使用keytool生成自签名证书，同时配置一下springboot的https
 
   - 运行`keytool -genkeypair -alias mydomain -keyalg RSA -keysize 2048 -validity 365 -storetype PKCS12 -keystore ./keystore.p12 -storepass changeit -dname "CN=你的IP地址, OU=Dev, O=MyOrg, L=City, ST=State, C=CN"`命令，生成keystore.p12文件
 
@@ -66,7 +66,7 @@
         key-alias: mydomain
     ```
 
-  - 访问地址需要修改成`https://你的IP地址:你的端口/#/`
+  - 访问地址需要修改成`https://你的IP地址:你的端口/你的context-path/#/`
 
 
 

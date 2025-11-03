@@ -95,7 +95,7 @@ import { reactive } from 'vue'
 import FieldTypeForm from '@/views/gen/field-type/form.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import { genFieldTypeApi } from '@/api/gen/field-type'
+import { genFieldTypeApi, GenFieldTypeEntity, GenFieldTypeQuery } from '@/api/gen/field-type'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
@@ -103,14 +103,14 @@ defineOptions({
 	name: 'GenFieldType'
 })
 
-const state: IHooksOptions = reactive({
+const state = reactive({
 	dataListApi: genFieldTypeApi.entityPage,
 	deleteListApi: genFieldTypeApi.deleteList,
 	queryForm: {
 		columnType: '',
 		attrType: ''
 	}
-})
+} as IHooksOptions<GenFieldTypeQuery, GenFieldTypeEntity>)
 
 const {
 	getDataList,

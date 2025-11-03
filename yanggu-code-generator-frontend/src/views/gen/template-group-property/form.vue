@@ -86,27 +86,28 @@
 
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
-import { genTemplateGroupPropertyApi } from '@/api/gen/template-group-property'
+import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Delete, InfoFilled, Plus } from '@element-plus/icons-vue'
 import { COMPONENT_TYPES } from '@/constant/enum'
+import { LabelData } from '@/types/common'
 
 const emit = defineEmits(['refreshDataList'])
 
-const state: FormOptions = reactive({
+const state = reactive({
 	// 提交API
 	submitApi: genTemplateGroupPropertyApi.submit,
 	// 详情API
 	detailApi: genTemplateGroupPropertyApi.detail,
 	// 表单数据
 	dataForm: {
-		id: '',
-		templateGroupId: null,
+		id: undefined,
+		templateGroupId: undefined,
 		propTitle: '',
 		propKey: '',
 		propDefaultValue: '',
-		componentType: '',
-		componentOptions: [{ label: '', value: '' }],
+		componentType: undefined,
+		componentOptions: [{ label: '', value: '' }] as LabelData[],
 		required: 0,
 		propOrder: 0,
 		remark: ''
@@ -117,7 +118,7 @@ const state: FormOptions = reactive({
 		}
 	},
 	emit
-})
+} as FormOptions<GenTemplateGroupPropertyEntity>)
 
 watch(
 	() => state.dataForm.componentType,
@@ -128,7 +129,7 @@ watch(
 	}
 )
 
-const hasComponentOptions = computed(() => [2, 3, 4].includes(state.dataForm.componentType))
+const hasComponentOptions = computed(() => [2, 3, 4].includes(state.dataForm.componentType!))
 
 const componentOptions = (_: any, __: any, callback: any) => {
 	if (!hasComponentOptions.value) {
