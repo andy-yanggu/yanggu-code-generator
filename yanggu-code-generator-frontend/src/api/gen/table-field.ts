@@ -1,5 +1,5 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 代码生成表字段Entity
@@ -64,22 +64,24 @@ export interface GenTableFieldEntity {
 
 // 代码生成表字段Query查询参数
 export interface GenTableFieldQuery extends PageQuery {
+	// 表ID
 	tableId: number
 }
 
 // 特定api
 interface CustomApi {
+	// 提交列表
 	submitList: (dataFormList: GenTableFieldEntity[]) => Promise<void>
 }
 
 const baseUrl: string = '/gen/tableField'
 
 // 代码生成表字段API
-export const genTableFieldApi: CrudApi<GenTableFieldEntity, GenTableFieldQuery> & CustomApi = {
+export const genTableFieldApi: EnabledCrudApi<GenTableFieldEntity, GenTableFieldQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 提交列表
-	submitList: (dataFormList: any[]) => {
+	submitList: (dataFormList: GenTableFieldEntity[]) => {
 		return service.post(baseUrl + '/submitList', dataFormList)
 	}
 }

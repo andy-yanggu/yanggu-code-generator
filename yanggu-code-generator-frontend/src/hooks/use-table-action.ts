@@ -1,4 +1,4 @@
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Key, KeyArray } from '@/types/common'
 import { PageQuery, PageVO } from '@/api/common/type'
@@ -12,6 +12,7 @@ type ExportApi = (idList: KeyArray) => Promise<void>
 // 导入接口
 type ImportApi = (formData: FormData) => Promise<void>
 
+// 表格操作
 export interface IHooksOptions<Query extends PageQuery = PageQuery, VO = any> {
 	// 否在创建页面时，调用数据列表接口
 	createdIsNeed?: boolean
@@ -66,25 +67,17 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	// 表格引用
 	const tableRef = ref()
 
-	// 重置查询
-	const resetQueryHandle = () => {
-		if (queryRef.value) {
-			queryRef.value.clearValidate()
-			queryRef.value.resetFields()
-		}
-	}
-
 	// 默认值
 	const defaultOptions: IHooksOptions<Query, VO> = {
+		createdIsNeed: true,
+		isPage: true,
 		dataListApi: undefined,
 		deleteListApi: undefined,
 		exportApi: undefined,
 		importApi: undefined,
-		createdIsNeed: true,
-		isPage: true,
 		primaryKey: 'id',
 		queryForm: {} as Query,
-		dataList: [],
+		dataList: [] as VO[],
 		order: '',
 		asc: false,
 		pageNum: 1,
@@ -94,37 +87,47 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 		dataListLoading: false,
 		exportLoading: false,
 		deleteLoading: false,
-		dataListSelections: [],
+		dataListSelections: [] as KeyArray,
 		deleteConfirmMessage: '确定进行删除操作？',
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
 	}
 
 	// 合并默认值
-	const mergeDefaultOptions = (defaultOptions: IHooksOptions<Query, VO>, props: IHooksOptions<Query, VO>) => {
-		for (const key in defaultOptions) {
-			if (!Object.getOwnPropertyDescriptor(props, key)) {
-				props[key as keyof IHooksOptions] = defaultOptions[key as keyof IHooksOptions]
-			}
+	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions).filter(([key]) => !Object.hasOwn(state, key))))
+
+	// 重置查询
+	const resetQueryHandle = () => {
+		if (queryRef.value) {
+			queryRef.value.clearValidate()
+			queryRef.value.resetFields()
 		}
 	}
 
-	// 覆盖默认值
-	mergeDefaultOptions(defaultOptions, state)
+	// 异步验证表单
+	const validateQueryForm = (): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			nextTick(() => {
+				queryRef.value.validate((valid: boolean) => {
+					if (valid) {
+						resolve()
+					} else {
+						reject(new Error('表单校验失败'))
+					}
+				})
+			})
+		})
+	}
 
-	// 创建完毕
-	onMounted(() => {
-		if (state.createdIsNeed) {
-			query()
-		}
-	})
+	// 查询
+	const query = () => {
+		// 先进行表单验证，验证通过后再执行查询
+		validateQueryForm().then(() => {
+			executeQuery()
+		})
+	}
 
-	// 执行实际的查询逻辑
-	const executeQuery = () => {
-		if (!state.dataListApi) {
-			ElMessage.warning('未配置查询接口')
-			return
-		}
+	const buildQueryForm = (): Query => {
 		// 解构查询条件
 		const queryForm: Query = {
 			...state.queryForm
@@ -152,11 +155,22 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			queryForm.pageNum = state.pageNum!
 			queryForm.pageSize = state.pageSize!
 		}
-
 		// 排序字段
 		if (state.order) {
 			queryForm.orderItemList = [{ column: state.order, asc: state.asc! }]
 		}
+		return queryForm
+	}
+
+	// 执行实际的查询逻辑
+	const executeQuery = () => {
+		if (!state.dataListApi) {
+			ElMessage.warning('未配置查询接口')
+			return
+		}
+
+		// 构建查询条件
+		const queryForm = buildQueryForm()
 
 		state.dataListLoading = true
 
@@ -180,30 +194,6 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			})
 	}
 
-	// 异步验证表单
-	const validateQueryForm = (): Promise<boolean> => {
-		return new Promise(resolve => {
-			if (queryRef.value) {
-				queryRef.value.validate((valid: boolean) => {
-					resolve(valid)
-				})
-			} else {
-				resolve(true)
-			}
-		})
-	}
-
-	// 查询
-	const query = () => {
-		// 先进行表单验证，验证通过后再执行查询
-		validateQueryForm().then(valid => {
-			if (!valid) {
-				return
-			}
-			executeQuery()
-		})
-	}
-
 	// 加载数据列表
 	const getDataList = () => {
 		state.pageNum = 1
@@ -224,7 +214,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	}
 
 	// 多选
-	const selectionChangeHandle = (selections: any[]) => {
+	const selectionChangeHandle = (selections: VO[]) => {
 		if (!state.primaryKey) {
 			console.error('未配置主键')
 			return
@@ -334,6 +324,15 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 				getDataList()
 			})
 	}
+
+	// 生命周期函数
+	onMounted(() => {
+		if (state.createdIsNeed) {
+			nextTick(() => {
+				query()
+			})
+		}
+	})
 
 	return {
 		getDataList,

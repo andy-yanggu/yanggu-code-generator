@@ -1,5 +1,5 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 模板组管理Entity
@@ -31,7 +31,7 @@ interface CustomApi {
 const baseUrl: string = '/gen/templateGroup'
 
 // 模板组管理API
-export const genTemplateGroupApi: CrudApi<GenTemplateGroupEntity, GenTemplateGroupQuery> & CustomApi = {
+export const genTemplateGroupApi: EnabledCrudApi<GenTemplateGroupEntity, GenTemplateGroupQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 复制模板组

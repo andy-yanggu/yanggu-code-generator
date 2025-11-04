@@ -1,4 +1,4 @@
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 import { LabelData } from '@/types/common'
 
@@ -42,7 +42,7 @@ interface CustomApi {}
 const baseUrl: string = '/gen/templateGroupProperty'
 
 // 模板组属性API
-export const genTemplateGroupPropertyApi: CrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery> & CustomApi = {
+export const genTemplateGroupPropertyApi: EnabledCrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl)
 }

@@ -184,6 +184,7 @@ import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
 import { genFieldTypeApi } from '@/api/gen/field-type'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
+import { LabelData } from '@/types/common'
 
 const activeName = ref()
 const fieldTable = ref()
@@ -194,7 +195,7 @@ const submitLoading = ref(false)
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
-const typeList = ref([])
+const typeList = ref([] as LabelData[])
 const tableId = ref()
 const projectIdRef = ref(-1)
 const fieldList = ref([] as GenTableFieldEntity[])

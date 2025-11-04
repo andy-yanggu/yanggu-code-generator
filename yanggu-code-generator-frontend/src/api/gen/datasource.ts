@@ -1,5 +1,5 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 数据源管理Entity
@@ -34,10 +34,12 @@ interface CustomApi {
 	test: (id: number) => Promise<any>
 }
 
+type ApiType = EnabledCrudApi<GenGenDatasourceEntity, GenGenDatasourceQuery> & CustomApi
+
 const baseUrl: string = '/gen/datasource'
 
 // 数据源API
-export const genDataSourceApi: CrudApi<GenGenDatasourceEntity, GenGenDatasourceQuery> & CustomApi = {
+export const genDataSourceApi: ApiType = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 测试数据源接口

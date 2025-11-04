@@ -1,4 +1,4 @@
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 枚举项Entity
@@ -33,7 +33,7 @@ interface CustomApi {}
 const baseUrl: string = '/gen/enumItem'
 
 // 枚举项API
-export const genEnumItemApi: CrudApi<GenEnumItemEntity, GenEnumItemQuery> & CustomApi = {
+export const genEnumItemApi: EnabledCrudApi<GenEnumItemEntity, GenEnumItemQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl)
 }

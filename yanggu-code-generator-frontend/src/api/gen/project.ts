@@ -1,5 +1,5 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 项目Entity
@@ -50,13 +50,14 @@ export interface GenProjectQuery extends PageQuery {
 
 // 特定api
 interface CustomApi {
+	// 项目下的表
 	tableList: (queryForm: any) => Promise<any>
 }
 
 const baseUrl: string = '/gen/project'
 
 // 项目API
-export const genProjectApi: CrudApi<GenProjectEntity, GenProjectQuery> & CustomApi = {
+export const genProjectApi: EnabledCrudApi<GenProjectEntity, GenProjectQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 项目下的表

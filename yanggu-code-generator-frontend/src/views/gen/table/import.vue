@@ -1,42 +1,46 @@
 <template>
-	<el-dialog v-model="visible" title="导入数据库表" :close-on-click-modal="false" width="70%">
-		<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules" @keyup.enter="getDataList()">
-			<el-form-item label="项目" prop="projectId">
-				<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
-					<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
-						<span style="font-weight: bold">{{ projectItem.projectName }}</span>
-						<span v-if="projectItem.projectDesc && projectItem.projectDesc.trim()" style="color: #999; font-size: 12px">
-							（{{ projectItem.projectDesc }}）
-						</span>
-					</el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item label="表名" prop="tableName" :label-width="80">
-				<el-input v-model="state.queryForm.tableName" placeholder="请输入表名" clearable style="width: 100%"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-			</el-form-item>
-		</el-form>
-		<el-table
-			v-loading="state.dataListLoading"
-			:data="state.dataList"
-			border
-			style="width: 100%"
-			:max-height="450"
-			class="layout-table"
-			header-cell-class-name="layout-table-header"
-			@selection-change="selectionChangeHandle"
-		>
-			<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="(row: any) => !row.exist"></el-table-column>
-			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="databaseName" label="数据库名称" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="tableName" label="表名" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="tableComment" label="注释" header-align="center" align="center"></el-table-column>
-		</el-table>
+	<el-dialog v-model="visible" title="导入表" :close-on-click-modal="false" width="70%">
+		<el-card class="layout-query" shadow="hover">
+			<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules" @keyup.enter="getDataList()">
+				<el-form-item label="项目" prop="projectId">
+					<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
+						<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
+							<span style="font-weight: bold">{{ projectItem.projectName }}</span>
+							<span v-if="projectItem.projectDesc && projectItem.projectDesc.trim()" style="color: #999; font-size: 12px">
+								（{{ projectItem.projectDesc }}）
+							</span>
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="表名" prop="tableName" :label-width="80">
+					<el-input v-model="state.queryForm.tableName" placeholder="请输入表名" clearable style="width: 100%"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
+				</el-form-item>
+				<el-form-item>
+					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-card>
+		<el-card shadow="hover">
+			<el-table
+				v-loading="state.dataListLoading"
+				:data="state.dataList"
+				border
+				style="width: 100%"
+				:max-height="450"
+				class="layout-table"
+				header-cell-class-name="layout-table-header"
+				@selection-change="selectionChangeHandle"
+			>
+				<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="(row: any) => !row.exist"></el-table-column>
+				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
+				<el-table-column prop="databaseName" label="数据库名称" header-align="center" align="center"></el-table-column>
+				<el-table-column prop="tableName" label="表名" header-align="center" align="center"></el-table-column>
+				<el-table-column prop="tableComment" label="注释" header-align="center" align="center"></el-table-column>
+			</el-table>
+		</el-card>
 		<template #footer>
 			<el-button type="primary" :icon="Check" :disabled="state.dataListSelections!.length === 0" :loading="submitLoading" @click="submitHandle()">
 				确定

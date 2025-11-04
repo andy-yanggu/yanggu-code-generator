@@ -1,6 +1,7 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
+import { KeyArray } from '@/types/common'
 
 // 代码生成表Entity
 export interface GenTableEntity {
@@ -40,15 +41,18 @@ export interface GenTableQuery extends PageQuery {
 
 // 特定api
 interface CustomApi {
-	import: (dataForm: any) => Promise<any>
-	sync: (id: number) => Promise<any>
-	generateCheck: (idList: number[]) => Promise<any>
+	// 导入表
+	import: (dataForm: any) => Promise<void>
+	// 同步表
+	sync: (id: number) => Promise<void>
+	// 表批量生成代码检测
+	generateCheck: (idList: KeyArray) => Promise<any>
 }
 
 const baseUrl: string = '/gen/table'
 
 // 代码生成表API
-export const genTableApi: CrudApi<GenTableEntity, GenTableQuery> & CustomApi = {
+export const genTableApi: EnabledCrudApi<GenTableEntity, GenTableQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 导入表
@@ -60,7 +64,7 @@ export const genTableApi: CrudApi<GenTableEntity, GenTableQuery> & CustomApi = {
 		return service.put(baseUrl + '/sync', {}, { params: { id } })
 	},
 	// 表批量生成代码检测
-	generateCheck: (idList: number[]): Promise<any> => {
+	generateCheck: (idList: KeyArray): Promise<any> => {
 		return service.post(baseUrl + '/generateCheck', idList)
 	}
 }

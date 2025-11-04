@@ -146,7 +146,7 @@ import Update from '@/views/gen/table/update.vue'
 import Preview from '@/components/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
 import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
@@ -154,6 +154,7 @@ import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enu
 import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
+import { KeyArray } from '@/types/common'
 
 defineOptions({
 	name: 'GenTable'
@@ -178,7 +179,7 @@ const editRef = ref()
 const previewRef = ref()
 const templateIndexRef = ref()
 const tableRef = ref()
-const projectList = ref([])
+const projectList = ref([] as GenProjectEntity[])
 const previewKey = ref()
 
 const getProjectList = () => {
@@ -208,7 +209,7 @@ const generatorCode = (item: any) => {
 }
 
 const generatorCodeBatch = () => {
-	const dataList: number[] = state.dataListSelections ? state.dataListSelections : []
+	const dataList: KeyArray = state.dataListSelections ? state.dataListSelections : []
 	if (dataList.length === 0) {
 		ElMessage.warning('请选择要生成代码的表')
 		return

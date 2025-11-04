@@ -68,41 +68,19 @@ export interface CrudApi<Entity = any, Query extends PageQuery = PageQuery, VO =
 	import: (formData: FormData) => Promise<void>
 }
 
-// 配置接口，默认所有方法启用，禁用方法时显式设置false
-export interface CrudConfig {
-	add?: boolean
-	update?: boolean
-	submit?: boolean
-	delete?: boolean
-	deleteList?: boolean
-	detail?: boolean
-	detailList?: boolean
-	entityPage?: boolean
-	entityList?: boolean
-	voPage?: boolean
-	voList?: boolean
-	export?: boolean
-	import?: boolean
-}
+/**
+ * 禁用方法的类型安全集合
+ */
+export type CrudMethodName = keyof CrudApi
 
-// 默认配置值（运行时使用）
-const defaultCrudConfig: CrudConfig = {}
-
-// ----------------------------------------------------
-// 工具类型：根据 CrudConfig 过滤掉被显式设置为 false 的接口
-// C：传入的配置类型（每个键为 CrudApi 的方法名，可选值为 false 或省略）
-// CrudApi：完整的 CRUD API 方法集合
-// ----------------------------------------------------
-export type EnabledCrudApi<C extends CrudConfig, Entity, Query extends PageQuery, VO, DTO> = Pick<
-	CrudApi,
-	Exclude<
-		keyof CrudApi<Entity, Query, VO, DTO>,
-		// 找出配置中显式为 false 的方法名，并排除
-		{
-			[K in keyof C]: C[K] extends false ? K : never
-		}[keyof C]
-	>
->
+// 工具类型：根据数组禁用的方法生成有效接口
+export type EnabledCrudApi<
+	Entity = any,
+	Query extends PageQuery = PageQuery,
+	Disabled extends readonly CrudMethodName[] = [],
+	VO = Entity,
+	DTO = Entity
+> = Omit<CrudApi<Entity, Query, VO, DTO>, Disabled[number]>
 
 // ----------------------------------------------------
 // 生成 CRUD API 工厂函数
@@ -110,22 +88,23 @@ export type EnabledCrudApi<C extends CrudConfig, Entity, Query extends PageQuery
 // - opts：可选配置，某些方法设为 false 表示禁用该方法
 // 返回值：自动排除了禁用方法的 CRUD API 对象
 // ----------------------------------------------------
-export const createCrudApi = <Entity = any, Query extends PageQuery = PageQuery, VO = Entity, DTO = Entity, C extends CrudConfig = CrudConfig>(
+export const createCrudApi = <
+	Entity = any,
+	Query extends PageQuery = PageQuery,
+	Disabled extends readonly CrudMethodName[] = [],
+	VO = Entity,
+	DTO = Entity
+>(
 	baseUrl: string,
-	opts?: C
-): EnabledCrudApi<C, Entity, Query, VO, DTO> => {
+	disabled?: Disabled
+): EnabledCrudApi<Entity, Query, Disabled, VO, DTO> => {
 	// api 对象，用于保存生成的方法
-	const api = {} as Partial<EnabledCrudApi<C, Entity, Query, VO, DTO>>
+	const api = {} as Partial<EnabledCrudApi<Entity, Query, Disabled, VO, DTO>>
+	const disabledSet = new Set(disabled ?? [])
 
-	// 合并默认配置（保留传入项）
-	const o = {
-		...defaultCrudConfig,
-		...opts
-	} satisfies CrudConfig
-
-	const add = <K extends keyof CrudApi>(key: K, fn: CrudApi[K]) => {
-		if (o[key] !== false) {
-			;(api[key as unknown as keyof EnabledCrudApi<C, Entity, Query, VO, DTO>] as CrudApi[K]) = fn
+	const add = <K extends CrudMethodName>(key: K, fn: CrudApi[K]) => {
+		if (!disabledSet.has(key)) {
+			;(api[key as unknown as keyof EnabledCrudApi<Entity, Query, CrudMethodName, VO, DTO>] as CrudApi[K]) = fn
 		}
 	}
 
@@ -155,6 +134,5 @@ export const createCrudApi = <Entity = any, Query extends PageQuery = PageQuery,
 
 	add('import', formData => service.post(`${baseUrl}/import`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }))
 
-	return api as EnabledCrudApi<C, Entity, Query, VO, DTO>
+	return api as EnabledCrudApi<Entity, Query, Disabled, VO, DTO>
 }
-export class CrudApiWithExtra {}

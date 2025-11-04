@@ -1,4 +1,4 @@
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { service } from '@/utils/request'
 import { PageQuery } from '@/api/common/type'
 
@@ -24,13 +24,14 @@ export interface GenEnumQuery extends PageQuery {
 
 // 特定api
 interface CustomApi {
+	// 枚举批量生成代码检测
 	generateCheck: (idList: number[]) => Promise<any>
 }
 
 const baseUrl: string = '/gen/enum'
 
 // 枚举API
-export const genEnumApi: CrudApi<GenEnumEntity, GenEnumQuery> & CustomApi = {
+export const genEnumApi: EnabledCrudApi<GenEnumEntity, GenEnumQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 枚举批量生成代码检测

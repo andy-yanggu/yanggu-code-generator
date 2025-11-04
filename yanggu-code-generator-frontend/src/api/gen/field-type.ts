@@ -1,5 +1,5 @@
 import { service } from '@/utils/request'
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 字段类型管理Entity
@@ -24,17 +24,17 @@ export interface GenFieldTypeQuery extends PageQuery {
 
 // 特定api
 interface CustomApi {
-	list: () => Promise<any[]>
+	list: () => Promise<string[]>
 }
 
 const baseUrl: string = '/gen/fieldType'
 
 // 字段类型管理API
-export const genFieldTypeApi: CrudApi<GenFieldTypeEntity, GenFieldTypeQuery> & CustomApi = {
+export const genFieldTypeApi: EnabledCrudApi<GenFieldTypeEntity, GenFieldTypeQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi(baseUrl),
 	// 获取字段类型列表
-	list: (): Promise<any[]> => {
+	list: (): Promise<string[]> => {
 		return service.get(baseUrl + '/distinctList')
 	}
 }

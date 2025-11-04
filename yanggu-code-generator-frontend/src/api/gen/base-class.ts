@@ -1,4 +1,4 @@
-import { createCrudApi, CrudApi } from '@/api/common'
+import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 import { Key } from '@/types/common'
 
@@ -26,12 +26,18 @@ export interface GenBaseClassQuery extends PageQuery {
 	className?: string
 }
 
-export interface CustomApi {}
+// 特定api
+interface CustomApi {}
+
+// 禁用的api
+const disabled = [] as const
+
+type ApiType = EnabledCrudApi<GenBaseClassEntity, GenBaseClassQuery, typeof disabled> & CustomApi
 
 const baseUrl: string = '/gen/baseClass'
 
 // 基类API
-export const genBaseClassApi: CrudApi<GenBaseClassEntity, GenBaseClassQuery> & CustomApi = {
+export const genBaseClassApi: ApiType = {
 	// 通用CRUD接口
-	...createCrudApi<GenBaseClassEntity, GenBaseClassQuery>(baseUrl)
+	...createCrudApi(baseUrl, disabled)
 }
