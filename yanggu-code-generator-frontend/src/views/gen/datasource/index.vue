@@ -103,7 +103,7 @@ import { reactive } from 'vue'
 import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
-import { genDataSourceApi, GenGenDatasourceEntity, GenGenDatasourceQuery } from '@/api/gen/datasource'
+import { genDataSourceApi, GenDatasourceEntity, GenDatasourceQuery } from '@/api/gen/datasource'
 import { getLabel } from '@/utils/enum'
 import { useComplexForm } from '@/hooks/use-init-form'
 import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
@@ -119,7 +119,7 @@ const state = reactive({
 		dbType: '',
 		connName: ''
 	}
-} as IHooksOptions<GenGenDatasourceQuery, GenGenDatasourceEntity>)
+} as IHooksOptions<GenDatasourceQuery, GenDatasourceEntity>)
 
 const datasourceTestHandle = (id: number) => {
 	genDataSourceApi.test(id).then(data => {

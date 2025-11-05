@@ -21,14 +21,18 @@ export interface GenTableEntity {
 	author: string
 	// 版本
 	version: string
+	// 模块名称
+	moduleName: string
 	// 功能名
 	functionName: string
 	// 表单布局  1：一列   2：两列
-	formLayout: boolean
+	formLayout: number
 	// 生成方式
 	generatorFunction: number[]
 	// 项目名称
-	projectName: string
+	projectName?: string
+	// 权限标识
+	permissionFlag: string
 }
 
 // 代码生成表Query查询参数

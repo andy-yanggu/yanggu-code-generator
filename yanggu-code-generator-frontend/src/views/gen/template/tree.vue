@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, Ref, ref, watch } from 'vue'
 import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
@@ -374,7 +374,7 @@ const getElementFromTabList = (id: number): Tree | undefined => {
 	}
 }
 
-const activeTabItem = computed(() => {
+const activeTabItem: Ref<Tree> = computed(() => {
 	const treeData = findByIdFromTree(templateTreeData.activeItemId, templateTreeData.treeList)
 	if (!treeData) {
 		return { id: -1, templateContent: '', templateType: -1 } as Tree
@@ -462,10 +462,20 @@ const init = async () => {
 			tabPush(templateContentList[0])
 		}
 		// 更新一下tab中的数据，已新加载数据为准
-		refreshData(templateContentList)
+		refreshTabData(templateContentList)
 	} finally {
 		loadingInstance.close()
 	}
+}
+
+// 只刷新数据，不改变其他状态
+const initData = async () => {
+	const data = await genTemplateApi.treeData(props.templateGroupId)
+	templateTreeData.treeList = data
+	buildTree(templateTreeData.treeList)
+	const templateContentList = buildFileList(data)
+	// 更新一下tab中的数据，已新加载数据为准
+	refreshTabData(templateContentList)
 }
 
 const findByIdFromTree = (id: number, treeList: Tree[]): Tree | undefined => {
@@ -539,7 +549,7 @@ watch(
 	}
 )
 
-// 关闭抽屉方法
+// 关闭抽屉方法。确认保存修改
 const handleClose = (done: () => void) => {
 	const editTabs: Tree[] = []
 	// 递归遍历treeList，找出isEdited为true的节点
@@ -686,7 +696,7 @@ const deleteCheckedNode = () => {
 					})
 				})
 				.then(() => {
-					init()
+					initData()
 				})
 		})
 		.catch(() => {
@@ -754,77 +764,17 @@ const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | '
 	// console.log('拖拽完成:', dataForm)
 
 	// 调用 API 更新位置
-	genTemplateApi
-		.updateParent(dataForm)
-		.then(() => {
-			ElMessage.success('移动成功')
-			// 激活被拖拽的树节点
-			templateTreeData.activeItemId = dragData.id
-			// 加入到tab中
-			tabPush(dragData)
-			init() // 重新加载数据
-		})
-		.catch(() => {
-			ElMessage.error('移动失败')
-			init() // 恢复原状
-		})
-}
-
-// tab点击
-const handleTabClick = (tab: TabsPaneContext, _: Event) => {
-	templateTreeData.activeItemId = tab.paneName as number
-}
-
-// tab删除
-const handleTabRemove = (id: number) => {
-	// 找到要删除的 tab
-	const index = templateTreeData.tabList.findIndex(item => item.id === id)
-	if (index <= -1) {
-		return
-	}
-
-	const tab = templateTreeData.tabList[index]
-
-	// 调用通用关闭逻辑
-	handleCloseTabs([tab], () => {
-		// 删除tab
-		templateTreeData.tabList.splice(index, 1)
-
-		let newTabActiveName = templateTreeData.activeItemId
-		// 删除的是否为当前tab
-		if (templateTreeData.activeItemId === id && templateTreeData.tabList.length > 0) {
-			// 优先尝试右侧标签
-			if (index < templateTreeData.tabList.length) {
-				newTabActiveName = templateTreeData.tabList[index].id
-			} else {
-				// 右侧无标签时选择左侧最后一个
-				newTabActiveName = templateTreeData.tabList[templateTreeData.tabList.length - 1].id
-			}
-		}
-
-		if (templateTreeData.tabList.length > 0) {
-			// 设置新的激活项
-			const activeTab = getElementFromTabList(newTabActiveName)
-			if (activeTab) {
-				templateTreeData.activeItemId = activeTab.id
-			}
-		}
+	genTemplateApi.updateParent(dataForm).then(() => {
+		ElMessage.success('移动成功')
+		// 激活被拖拽的树节点
+		templateTreeData.activeItemId = dragData.id
+		// 加入到tab中
+		tabPush(dragData)
+		initData() // 重新加载数据
 	})
 }
 
-// 添加tab（进行去重）
-const tabPush = (tree: Tree) => {
-	if (tree.templateType === 0) {
-		return
-	}
-	const find = templateTreeData.tabList.find(tab => tab.id === tree.id)
-	if (find) {
-		return
-	}
-	templateTreeData.tabList.push(tree)
-}
-
-const refreshData = (dataList: Tree[]) => {
+const refreshTabData = (dataList: Tree[]) => {
 	if (dataList.length === 0) {
 		templateTreeData.tabList = []
 		return
@@ -880,10 +830,8 @@ const saveTemplateContent = () => {
 				duration: 500
 			})
 			// 修改编辑状态
-			getElementFromTabList(templateTreeData.activeItemId)!.isEdited = false
-		})
-		.then(() => {
-			init()
+			activeTabItem.value.isEdited = false
+			activeTabItem.value.originalTemplateContent = activeTabItem.value.templateContent
 		})
 		.finally(() => {
 			submitLoading.value = false
@@ -1015,7 +963,7 @@ const newBinaryFile = (parent: Tree) => {
 const initAfterHandler = (tree: Tree) => {
 	tabPush(tree)
 	nextTick(() => {
-		init()
+		initData()
 	})
 	templateTreeData.activeItemId = tree.id
 }
@@ -1074,6 +1022,60 @@ const showTabMenu = (e: MouseEvent, tab: Tree, index: number) => {
 			tabContextMenu.y = Math.min(e.clientY, windowHeight - menuHeight - 10)
 		}
 	})
+}
+
+// tab点击
+const handleTabClick = (tab: TabsPaneContext, _: Event) => {
+	templateTreeData.activeItemId = tab.paneName as number
+}
+
+// tab删除
+const handleTabRemove = (id: number) => {
+	// 找到要删除的 tab
+	const index = templateTreeData.tabList.findIndex(item => item.id === id)
+	if (index <= -1) {
+		return
+	}
+
+	const tab = templateTreeData.tabList[index]
+
+	// 调用通用关闭逻辑
+	handleCloseTabs([tab], () => {
+		// 删除tab
+		templateTreeData.tabList.splice(index, 1)
+
+		let newTabActiveName = templateTreeData.activeItemId
+		// 删除的是否为当前tab
+		if (templateTreeData.activeItemId === id && templateTreeData.tabList.length > 0) {
+			// 优先尝试右侧标签
+			if (index < templateTreeData.tabList.length) {
+				newTabActiveName = templateTreeData.tabList[index].id
+			} else {
+				// 右侧无标签时选择左侧最后一个
+				newTabActiveName = templateTreeData.tabList[templateTreeData.tabList.length - 1].id
+			}
+		}
+
+		if (templateTreeData.tabList.length > 0) {
+			// 设置新的激活项
+			const activeTab = getElementFromTabList(newTabActiveName)
+			if (activeTab) {
+				templateTreeData.activeItemId = activeTab.id
+			}
+		}
+	})
+}
+
+// 添加tab（进行去重）
+const tabPush = (tree: Tree) => {
+	if (tree.templateType === 0) {
+		return
+	}
+	const find = templateTreeData.tabList.find(tab => tab.id === tree.id)
+	if (find) {
+		return
+	}
+	templateTreeData.tabList.push(tree)
 }
 
 // 关闭当前tab

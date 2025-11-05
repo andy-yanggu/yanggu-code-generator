@@ -84,11 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction from '@/hooks/use-table-action'
+import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { useComplexForm } from '@/hooks/use-init-form'
 import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
-import { genBaseClassApi } from '@/api/gen/base-class'
+import { genBaseClassApi, GenBaseClassEntity, GenBaseClassQuery } from '@/api/gen/base-class'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -102,7 +102,7 @@ const state = reactive({
 		packageName: '',
 		className: ''
 	}
-})
+} as IHooksOptions<GenBaseClassQuery, GenBaseClassEntity>)
 
 const {
 	getDataList,

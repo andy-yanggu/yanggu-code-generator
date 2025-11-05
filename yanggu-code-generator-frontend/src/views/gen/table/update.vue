@@ -56,12 +56,12 @@ import { reactive, ref } from 'vue'
 import { genTableApi, GenTableEntity } from '@/api/gen/table'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close } from '@element-plus/icons-vue'
 
 const emit = defineEmits(['refreshDataList'])
 
-const projectList = ref([])
+const projectList = ref([] as GenProjectEntity[])
 
 const state = reactive({
 	submitApi: genTableApi.submit,
@@ -83,7 +83,7 @@ const state = reactive({
 		moduleName: '',
 		functionName: '',
 		permissionFlag: '',
-		formLayout: '',
+		formLayout: -1,
 		generatorFunction: [0, 1, 2, 3, 4, 5]
 	},
 	emit

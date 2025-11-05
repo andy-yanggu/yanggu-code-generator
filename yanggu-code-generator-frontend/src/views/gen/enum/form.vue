@@ -31,11 +31,11 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 
-const projectList = ref([])
+const projectList = ref([] as GenProjectEntity[])
 const getProjectList = () => {
 	genProjectApi.entityList().then(data => {
 		projectList.value = data

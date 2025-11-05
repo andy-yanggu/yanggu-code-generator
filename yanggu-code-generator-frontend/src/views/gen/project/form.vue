@@ -134,61 +134,40 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
-import { genDataSourceApi } from '@/api/gen/datasource'
-import { genTemplateGroupApi } from '@/api/gen/template-group'
-import { genBaseClassApi } from '@/api/gen/base-class'
+import { genDataSourceApi, GenDatasourceEntity } from '@/api/gen/datasource'
+import { genTemplateGroupApi, GenTemplateGroupEntity } from '@/api/gen/template-group'
+import { genBaseClassApi, GenBaseClassEntity } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
-import TemplateGroupPropertyForm, { PropertyItem } from '@/views/gen/template-group-property/property-form.vue'
-
-interface Datasource {
-	id: number
-	connName: string
-	datasourceDesc: string
-}
-
-interface BaseClass {
-	id: number
-	packageName: string
-	className: string
-	remark: string
-}
-
-interface TemplateGroup {
-	id: number
-	type: number
-	groupName: string
-	groupDesc: string
-	propertyList: PropertyItem[]
-}
+import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 
 const emit = defineEmits(['refreshDataList'])
 
 const getList = () => {
 	// 数据源下拉
-	genDataSourceApi.entityList().then((data: Datasource[]) => {
+	genDataSourceApi.entityList().then(data => {
 		datasourceList.value = data
 	})
 
 	// 模板组下拉
-	genTemplateGroupApi.voList().then((data: TemplateGroup[]) => {
-		projectTemplateGroupList.value = data.filter((item: TemplateGroup) => item.type === 0)
+	genTemplateGroupApi.voList().then(data => {
+		projectTemplateGroupList.value = data.filter(item => item.type === 0)
 		nextTick(() => {
 			addProjectRule()
 		})
-		tableTemplateGroupList.value = data.filter((item: TemplateGroup) => item.type === 1)
+		tableTemplateGroupList.value = data.filter(item => item.type === 1)
 		nextTick(() => {
 			addTableRule()
 		})
-		enumTemplateGroupList.value = data.filter((item: TemplateGroup) => item.type === 2)
+		enumTemplateGroupList.value = data.filter(item => item.type === 2)
 		nextTick(() => {
 			addEnumRule()
 		})
 	})
 
 	// 基类下拉
-	genBaseClassApi.entityList().then((data: BaseClass[]) => {
+	genBaseClassApi.entityList().then(data => {
 		baseClassList.value = data
 	})
 }
@@ -349,11 +328,11 @@ const dataRules = reactive({
 	generatorType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const datasourceList = ref([] as Datasource[])
-const projectTemplateGroupList = ref([] as TemplateGroup[])
-const tableTemplateGroupList = ref([] as TemplateGroup[])
-const enumTemplateGroupList = ref([] as TemplateGroup[])
-const baseClassList = ref([] as BaseClass[])
+const datasourceList = ref([] as GenDatasourceEntity[])
+const projectTemplateGroupList = ref([] as GenTemplateGroupEntity[])
+const tableTemplateGroupList = ref([] as GenTemplateGroupEntity[])
+const enumTemplateGroupList = ref([] as GenTemplateGroupEntity[])
+const baseClassList = ref([] as GenBaseClassEntity[])
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
 defineExpose({

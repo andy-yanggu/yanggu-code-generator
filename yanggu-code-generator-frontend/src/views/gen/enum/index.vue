@@ -127,7 +127,7 @@ import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/components/preview/index.vue'
-import { genProjectApi } from '@/api/gen/project'
+import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { ElMessage } from 'element-plus'
 import { genEnumApi, GenEnumEntity, GenEnumQuery } from '@/api/gen/enum'
 import { getLabel } from '@/utils/enum'
@@ -156,7 +156,7 @@ const enumItemIndexRef = ref()
 const previewRef = ref()
 const tableRef = ref()
 const templateIndexRef = ref()
-const projectList = ref([])
+const projectList = ref([] as GenProjectEntity[])
 const previewKey = ref('')
 
 const getProjectList = () => {

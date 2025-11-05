@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genDataSourceApi, GenGenDatasourceEntity } from '@/api/gen/datasource'
+import { genDataSourceApi } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
@@ -80,7 +80,7 @@ const state = reactive({
 		}
 	},
 	emit
-} as FormOptions<GenGenDatasourceEntity>)
+} as FormOptions<GenDatasourceEntity>)
 
 const dataRules = reactive({
 	dbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

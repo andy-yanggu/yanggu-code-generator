@@ -3,7 +3,7 @@ import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 
 // 数据源管理Entity
-export interface GenGenDatasourceEntity {
+export interface GenDatasourceEntity {
 	// id
 	id: number
 	// 数据库类型
@@ -21,7 +21,7 @@ export interface GenGenDatasourceEntity {
 }
 
 // 数据源管理Query查询参数
-export interface GenGenDatasourceQuery extends PageQuery {
+export interface GenDatasourceQuery extends PageQuery {
 	// 数据库类型
 	dbType: string
 	// 链接名称
@@ -34,7 +34,7 @@ interface CustomApi {
 	test: (id: number) => Promise<any>
 }
 
-type ApiType = EnabledCrudApi<GenGenDatasourceEntity, GenGenDatasourceQuery> & CustomApi
+type ApiType = EnabledCrudApi<GenDatasourceEntity, GenDatasourceQuery> & CustomApi
 
 const baseUrl: string = '/gen/datasource'
 
