@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" :size="'100%'" :modal="false">
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" :size="'100%'" :modal="false" :before-close="handleClose">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
@@ -294,7 +294,6 @@ const codeScrollbarRef = ref()
 const templateTreeData = reactive({
 	visible: false,
 	treeList: [] as Tree[],
-	dataList: [] as Tree[],
 	activeItemId: -1,
 	tabList: [] as Tree[]
 })
@@ -539,6 +538,59 @@ watch(
 		}
 	}
 )
+
+// 关闭抽屉方法
+const handleClose = (done: () => void) => {
+	const editTabs: Tree[] = []
+	// 递归遍历treeList，找出isEdited为true的节点
+	const findAndClose = (nodes: Tree[]) => {
+		for (const node of nodes) {
+			if (node.isEdited) {
+				editTabs.push(node)
+			}
+			if (node.children) {
+				findAndClose(node.children)
+			}
+		}
+	}
+	findAndClose(templateTreeData.treeList)
+	if (editTabs.length === 0) {
+		done()
+		return
+	}
+	const fileNameJoin = joinFileName(editTabs)
+	const message = `${fileNameJoin}已修改未保存，是否保存后再关闭？`
+	ElMessageBox.confirm(message, '提示', {
+		distinguishCancelAndClose: true,
+		confirmButtonText: '是(Y)',
+		cancelButtonText: '否(N)',
+		type: 'warning'
+	})
+		.then(() => {
+			// 保存修改后关闭
+			const dataFormList = editTabs.map(tab => {
+				return {
+					id: tab.id,
+					templateContent: tab.templateContent
+				}
+			})
+			genTemplateApi.updateContentList(dataFormList).then(() => {
+				ElMessage.success({
+					message: '保存成功',
+					duration: 500,
+					onClose: () => {
+						done()
+					}
+				})
+			})
+		})
+		.catch((action: Action) => {
+			// 丢弃修改直接关闭
+			if (action === 'cancel') {
+				done()
+			}
+		})
+}
 
 // 递归查找并拼接路径
 const getFullPathById = (id: number, nodes: Tree[], parentPath = ''): string => {

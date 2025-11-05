@@ -104,7 +104,7 @@ export const createCrudApi = <
 
 	const add = <K extends CrudMethodName>(key: K, fn: CrudApi[K]) => {
 		if (!disabledSet.has(key)) {
-			;(api[key as unknown as keyof EnabledCrudApi<Entity, Query, CrudMethodName, VO, DTO>] as CrudApi[K]) = fn
+			;(api[key as unknown as keyof EnabledCrudApi<Entity, Query, Disabled, VO, DTO>] as CrudApi[K]) = fn
 		}
 	}
 
