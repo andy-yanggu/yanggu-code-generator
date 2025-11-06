@@ -7,7 +7,7 @@ export type FormType = 'add' | 'update' | 'copy'
 
 export interface FormOptions<VO> {
 	// 提交API
-	submitApi: (data: VO) => Promise<void>
+	submitApi: (data: VO) => Promise<any>
 	// 详情API
 	detailApi: (id: Key) => Promise<VO>
 	// 初始化之前调用
@@ -95,11 +95,13 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 				.then(data => {
 					ElMessage.success({
 						message: message,
-						duration: options.duration || 500
+						duration: options.duration || 500,
+						onClose: () => {
+							visible.value = false
+							// 触发刷新列表事件
+							options.emit?.('refreshDataList', data ?? options.dataForm)
+						}
 					})
-					visible.value = false
-					// 触发刷新列表事件
-					options.emit?.('refreshDataList', data)
 				})
 				.finally(() => {
 					submitLoading.value = false

@@ -65,7 +65,7 @@ const state = reactive({
 	createdIsNeed: false,
 	queryForm: {
 		enumName: '',
-		projectId: -1
+		projectId: ''
 	}
 } as IHooksOptions<GenEnumQuery, GenEnumEntity>)
 let isManualSelection = true

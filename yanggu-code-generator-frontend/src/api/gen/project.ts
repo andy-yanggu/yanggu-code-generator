@@ -5,7 +5,7 @@ import { PageQuery } from '@/api/common/type'
 // 项目Entity
 export interface GenProjectEntity {
 	// ID主键自增
-	id: number
+	id: number | string
 	// 项目名
 	projectName: string
 	// 项目包名
@@ -13,13 +13,13 @@ export interface GenProjectEntity {
 	// 项目版本
 	projectVersion: string
 	// 数据源ID
-	datasourceId: number
+	datasourceId: number | string
 	// 项目模板组ID
-	projectTemplateGroupId: number
+	projectTemplateGroupId: number | string
 	// 表模板组ID
-	tableTemplateGroupId: number
+	tableTemplateGroupId: number | string
 	// 枚举模板组ID
-	enumTemplateGroupId: number
+	enumTemplateGroupId: number | string
 	// 后端路径
 	backendPath: string
 	// 前端路径
@@ -29,11 +29,11 @@ export interface GenProjectEntity {
 	// 作者
 	author: string
 	// Entity基类ID
-	entityBaseClassId: number
+	entityBaseClassId: number | string
 	// VO基类ID
-	voBaseClassId: number
+	voBaseClassId: number | string
 	// 生成方式（0-zip压缩包，1-服务器本地）
-	generatorType: number
+	generatorType: number | string
 	//
 	projectTemplateGroupPropValue: object
 	tableTemplateGroupPropValue: object
@@ -45,7 +45,7 @@ export interface GenProjectQuery extends PageQuery {
 	// 项目名称
 	projectName: string
 	// 生成方式
-	generatorType: number | undefined
+	generatorType: number | string
 }
 
 // 特定api

@@ -29,13 +29,13 @@ export interface GenTemplateEntity {
 // 模板管理Query查询参数
 export interface GenTemplateQuery extends PageQuery {
 	// 模板组ID
-	templateGroupId?: number
+	templateGroupId?: number | string
 	// 模板名称
 	templateName?: string
 	// 模板类型
-	templateType?: number
+	templateType?: number | string
 	// 模板组类型
-	templateGroupType?: number
+	templateGroupType?: number | string
 	// 模板组ID列表
 	templateGroupIdList?: number[]
 	// 模板组名称

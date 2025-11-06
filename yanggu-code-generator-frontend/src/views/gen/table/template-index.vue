@@ -81,7 +81,7 @@ const state = reactive({
 	queryForm: {
 		templateGroupId: -1,
 		templateName: '',
-		templateType: -1
+		templateType: ''
 	}
 } as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
 const generatorTypeRef = ref()

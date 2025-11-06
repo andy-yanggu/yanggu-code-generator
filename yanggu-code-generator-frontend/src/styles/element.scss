@@ -100,8 +100,18 @@
 
 // 对话框
 .el-dialog__header {
-  padding: 10px 20px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0;
+  padding-left: 10px;
   border-bottom: 1px solid var(--el-border-color);
+}
+.el-dialog__headerbtn {
+  position: relative !important;
+}
+.el-dialog__header.show-close {
+  padding-right: 0;
 }
 
 .el-dialog__body {

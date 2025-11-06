@@ -26,7 +26,7 @@ export interface GenTableEntity {
 	// 功能名
 	functionName: string
 	// 表单布局  1：一列   2：两列
-	formLayout: number
+	formLayout: number | string
 	// 生成方式
 	generatorFunction: number[]
 	// 项目名称
@@ -38,7 +38,7 @@ export interface GenTableEntity {
 // 代码生成表Query查询参数
 export interface GenTableQuery extends PageQuery {
 	tableName: string
-	projectId: number | undefined
+	projectId: number | string
 	databaseName: string
 	className: string
 }

@@ -58,7 +58,7 @@ const state = reactive({
 	dataForm: {
 		id: -1,
 		groupName: '',
-		type: -1,
+		type: '',
 		groupDesc: ''
 	},
 	initAfter: () => {

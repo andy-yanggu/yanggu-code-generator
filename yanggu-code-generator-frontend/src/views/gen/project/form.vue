@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="50%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"
@@ -8,7 +8,7 @@
 			:validate-on-rule-change="false"
 			@keyup.enter="submitHandle()"
 		>
-			<el-divider content-position="left">基础信息</el-divider>
+			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
 					<el-form-item prop="projectName">
@@ -62,11 +62,8 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			<el-form-item label="项目包名" prop="projectPackage">
-				<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
-			</el-form-item>
 
-			<el-divider content-position="left" style="margin: 30px 0">项目模板组配置</el-divider>
+			<form-divider title="项目模板组配置"></form-divider>
 			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
 				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -81,7 +78,7 @@
 				:property-list="projectTemplateGroupPropertyList"
 			></template-group-property-form>
 
-			<el-divider content-position="left" style="margin: 30px 0">表模板组</el-divider>
+			<form-divider title="表模板组配置"></form-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -90,7 +87,8 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-divider content-position="left" style="margin: 30px 0">枚举模板组</el-divider>
+
+			<form-divider title="枚举模板组配置"></form-divider>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -99,7 +97,8 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-divider content-position="left" style="margin: 30px 0">基类配置</el-divider>
+
+			<form-divider title="基类配置"></form-divider>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
 				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
 					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
@@ -116,7 +115,11 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-divider content-position="left" style="margin: 30px 0">其他配置</el-divider>
+
+			<form-divider title="其他配置"></form-divider>
+			<el-form-item label="项目包名" prop="projectPackage">
+				<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
+			</el-form-item>
 			<el-form-item label="后端路径" prop="backendPath">
 				<el-input v-model="state.dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
 			</el-form-item>
@@ -141,6 +144,7 @@ import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
+import FormDivider from '@/components/form-divider/index.vue'
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -182,24 +186,24 @@ const state = reactive({
 		state.dataForm.enumTemplateGroupPropValue = {}
 	},
 	dataForm: {
-		id: -1,
+		id: '',
 		projectName: '',
 		projectPackage: '',
 		projectVersion: '',
-		datasourceId: -1,
-		projectTemplateGroupId: -1,
+		datasourceId: '',
+		projectTemplateGroupId: '',
 		projectTemplateGroupPropValue: {},
-		tableTemplateGroupId: -1,
+		tableTemplateGroupId: '',
 		tableTemplateGroupPropValue: {},
-		enumTemplateGroupId: -1,
+		enumTemplateGroupId: '',
 		enumTemplateGroupPropValue: {},
 		backendPath: '',
 		frontendPath: '',
 		projectDesc: '',
 		author: '',
-		entityBaseClassId: -1,
-		voBaseClassId: -1,
-		generatorType: -1
+		entityBaseClassId: '',
+		voBaseClassId: '',
+		generatorType: ''
 	},
 	submitBefore: () => {
 		if (!state.dataForm.id) {

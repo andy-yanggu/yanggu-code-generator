@@ -1,7 +1,7 @@
 <template>
 	<div style="display: inline-flex; align-items: center; gap: 5px">
 		<svg-icon v-if="enableIcon && icon" :icon="icon" :size="iconSize" :is-pointer="isPointer"></svg-icon>
-		<text-tooltip :title="$attrs.title as string" :max-width="$attrs.maxWidth as string" :placement="$attrs.placement as string"></text-tooltip>
+		<text-tooltip :title="title" :max-width="maxWidth" :placement="placement"></text-tooltip>
 	</div>
 </template>
 <script setup lang="ts">
@@ -19,11 +19,26 @@ defineProps({
 	},
 	iconSize: {
 		type: String,
+		required: false,
 		default: '1em'
 	},
 	isPointer: {
 		type: Boolean,
 		default: false
+	},
+	title: {
+		type: String,
+		required: true
+	},
+	maxWidth: {
+		type: String,
+		required: false,
+		default: '100px'
+	},
+	placement: {
+		type: String,
+		required: false,
+		default: 'top'
 	}
 })
 </script>

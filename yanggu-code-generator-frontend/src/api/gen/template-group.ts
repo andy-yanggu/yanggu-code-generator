@@ -9,7 +9,7 @@ export interface GenTemplateGroupEntity {
 	// 模板组名称
 	groupName: string
 	// 模板组类型（0-项目，1-表）
-	type: number | undefined
+	type: number | string
 	// 模板组描述
 	groupDesc: string
 }
@@ -19,7 +19,7 @@ export interface GenTemplateGroupQuery extends PageQuery {
 	// 模板组名称
 	groupName: string
 	// 模板组类型（0-项目，1-表）
-	type: number | undefined
+	type: number | string
 }
 
 // 特定api

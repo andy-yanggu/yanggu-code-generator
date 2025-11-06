@@ -148,7 +148,7 @@ const state = reactive({
 	deleteListApi: genEnumApi.deleteList,
 	queryForm: {
 		enumName: '',
-		projectId: -1
+		projectId: ''
 	}
 } as IHooksOptions<GenEnumQuery, GenEnumEntity>)
 

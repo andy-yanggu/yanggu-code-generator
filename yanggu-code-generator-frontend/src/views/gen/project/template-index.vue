@@ -104,8 +104,8 @@ const state = reactive({
 		templateGroupIdList: [],
 		templateGroupName: '',
 		fileName: '',
-		templateGroupType: -1,
-		templateType: -1
+		templateGroupType: '',
+		templateType: ''
 	}
 } as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
 let isManualSelection = true

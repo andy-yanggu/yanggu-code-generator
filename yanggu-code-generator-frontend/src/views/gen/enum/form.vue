@@ -49,7 +49,7 @@ const state = reactive({
 	initBefore: getProjectList,
 	dataForm: {
 		id: -1,
-		projectId: -1,
+		projectId: '',
 		enumName: '',
 		enumDesc: ''
 	},

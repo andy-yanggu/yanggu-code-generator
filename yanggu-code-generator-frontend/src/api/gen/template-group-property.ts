@@ -5,9 +5,9 @@ import { LabelData } from '@/types/common'
 // 模板组属性Entity
 export interface GenTemplateGroupPropertyEntity {
 	// 主键ID
-	id: number | undefined
+	id: number | string
 	// 模板组ID
-	templateGroupId: number | undefined
+	templateGroupId: number | string
 	// 属性标题
 	propTitle: string
 	// 属性键
@@ -15,7 +15,7 @@ export interface GenTemplateGroupPropertyEntity {
 	// 属性默认值
 	propDefaultValue: string
 	// 组件类型
-	componentType: number | undefined
+	componentType: number | string
 	// 组件选项
 	componentOptions: LabelData[]
 	// 必填
@@ -29,7 +29,7 @@ export interface GenTemplateGroupPropertyEntity {
 // 模板组属性Query查询参数
 export interface GenTemplateGroupPropertyQuery extends PageQuery {
 	// 模板组ID
-	templateGroupId: number | undefined
+	templateGroupId: number | string
 	// 属性标题
 	propTitle: string
 	// 属性键

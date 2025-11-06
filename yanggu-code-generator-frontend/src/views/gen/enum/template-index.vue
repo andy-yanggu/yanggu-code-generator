@@ -81,9 +81,9 @@ const state = reactive({
 	dataListApi: genTemplateApi.voPage,
 	createdIsNeed: false,
 	queryForm: {
-		templateGroupId: -1,
+		templateGroupId: '',
 		templateName: '',
-		templateType: -1
+		templateType: ''
 	}
 } as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
 
