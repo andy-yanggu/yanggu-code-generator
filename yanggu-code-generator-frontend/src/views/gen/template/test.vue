@@ -207,6 +207,10 @@ const handleCascaderChange = async val => {
 		testData.renderedFileName = data.filePath
 		testData.renderedTemplateContent = data.content
 		testData.activeName = 'render'
+		ElMessage.success({
+			message: '渲染成功',
+			duration: 1000
+		})
 	} finally {
 		loadingInstance.close()
 	}

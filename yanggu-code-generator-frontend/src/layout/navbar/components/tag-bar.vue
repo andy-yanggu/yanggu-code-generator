@@ -4,21 +4,23 @@
 		<div ref="tagWrapperRef" class="tag-wrapper">
 			<template v-for="(tag, index) in appStore.tagList" :key="tag.fullPath">
 				<!-- 标签 -->
-				<el-tag
-					:ref="el => (tagRefs[tag.fullPath] = el)"
-					size="default"
-					:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-					:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
-					@click="handleClick(tag)"
-					@close="handleClose(index, tag)"
-					@contextmenu.prevent="showTagMenu($event, tag, index)"
-				>
-					<template #default>
-						<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
-					</template>
-				</el-tag>
-				<!-- 分割线 -->
-				<el-divider v-if="index != appStore.tagLength - 1" direction="vertical"></el-divider>
+				<div class="tag-item">
+					<el-tag
+						:ref="el => (tagRefs[tag.fullPath] = el)"
+						size="default"
+						:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
+						:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
+						@click="handleClick(tag)"
+						@close="handleClose(index, tag)"
+						@contextmenu.prevent="showTagMenu($event, tag, index)"
+					>
+						<template #default>
+							<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
+						</template>
+					</el-tag>
+					<!-- 分割线 -->
+					<el-divider v-if="index != appStore.tagLength - 1" direction="vertical"></el-divider>
+				</div>
 			</template>
 
 			<!-- 右键菜单 -->
@@ -56,15 +58,15 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 const tagMenuVisible = ref(false)
-const menuPosition = ref({
+const menuPosition = reactive({
 	left: '0px',
 	top: '0px'
 })
-const currentMenuTag = ref<NavbarTag>({} as NavbarTag)
+const currentMenuTag = reactive({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const tagRefs: Record<string, any> = reactive({})
+const tagRefs = reactive({} as Record<string, any>)
 const scrollbarRef = ref()
 const tagWrapperRef = ref()
 
@@ -182,7 +184,7 @@ const handleClose = (index: number, tag: NavbarTag) => {
 // 显示标签右键菜单
 const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	e.preventDefault()
-	currentMenuTag.value = tag
+	Object.assign(currentMenuTag, tag)
 	currentMenuTagIndex.value = index
 
 	const x = e.clientX
@@ -193,10 +195,10 @@ const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	const windowWidth = window.innerWidth
 	const windowHeight = window.innerHeight
 
-	menuPosition.value = {
+	Object.assign(menuPosition, {
 		left: `${Math.min(x, windowWidth - menuWidth)}px`,
 		top: `${Math.min(y, windowHeight - menuHeight)}px`
-	}
+	})
 
 	tagMenuVisible.value = true
 }
@@ -208,8 +210,8 @@ const closeTagMenu = () => {
 
 // 刷新当前标签页
 const refreshCurrentTag = () => {
-	if (route.fullPath != currentMenuTag.value.fullPath) {
-		router.push(currentMenuTag.value.fullPath)
+	if (route.fullPath != currentMenuTag.fullPath) {
+		router.push(currentMenuTag.fullPath)
 		setTimeout(() => refreshPage(), 10)
 	} else {
 		refreshPage()
@@ -219,13 +221,13 @@ const refreshCurrentTag = () => {
 
 // 关闭当前标签
 const closeCurrentTag = () => {
-	handleClose(currentMenuTagIndex.value, currentMenuTag.value)
+	handleClose(currentMenuTagIndex.value, currentMenuTag)
 	closeTagMenu()
 }
 
 // 关闭其他标签
 const closeOtherTags = () => {
-	const currentPath = currentMenuTag.value.fullPath
+	const currentPath = currentMenuTag.fullPath
 	// 保留当前标签，关闭其他所有标签
 	const deleteTagList = appStore.tagList.filter(tag => tag.fullPath !== currentPath)
 	deleteCacheAndTag(deleteTagList)
@@ -252,7 +254,7 @@ const closeLeftTag = () => {
 	// 检查当前激活的标签是否在被关闭的标签中
 	if (activeTagIndex < currentMenuTagIndex.value) {
 		// 当前激活标签在被关闭范围内，切换到右键点击的标签
-		router.push(currentMenuTag.value.fullPath)
+		router.push(currentMenuTag.fullPath)
 	}
 	closeTagMenu()
 }
@@ -267,7 +269,7 @@ const closeRightTag = () => {
 	// 检查当前激活的标签是否在被关闭的标签中
 	if (activeTagIndex > currentMenuTagIndex.value) {
 		// 当前激活标签在被关闭范围内，切换到右键点击的标签
-		router.push(currentMenuTag.value.fullPath)
+		router.push(currentMenuTag.fullPath)
 	}
 	closeTagMenu()
 }
@@ -289,7 +291,7 @@ const deleteCacheAndTag = (tagList: NavbarTag[]) => {
 
 // 打开新窗口
 const openNewWindow = () => {
-	const resolve = router.resolve(currentMenuTag.value.fullPath)
+	const resolve = router.resolve(currentMenuTag.fullPath)
 	// 构造完整 URL
 	const fullUrl = window.location.origin + resolve.href
 	window.open(fullUrl, '_blank')
@@ -312,7 +314,7 @@ const { refreshPage } = usePageRefresher()
 	margin-top: 7px;
 	margin-left: 10px;
 	margin-right: 10px;
-	gap: 10px;
+	gap: 5px;
 	flex-wrap: nowrap;
 	width: max-content;
 	padding-right: 5px;
@@ -328,25 +330,25 @@ const { refreshPage } = usePageRefresher()
 	position: relative;
 	cursor: pointer;
 }
+.tag-item {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
 :deep(.el-divider--vertical) {
 	display: flex;
 	margin: 0 0;
 	width: 0;
-	height: 20px;
+	height: 24px;
+	border-left: 2px solid var(--el-border-color);
 }
 
 .tag-context-menu {
 	position: fixed;
 	align-items: center;
-	background: white;
-	border: 1px solid #ddd;
+	background: var(--el-tag-bg-color);
+	border: 1px solid var(--el-border-color);
 	z-index: 1000;
 	min-width: 100px;
-}
-
-/* 暗黑模式下的右键菜单样式 */
-html.dark .tag-context-menu {
-	background: #1e1e1e;
-	border: 1px solid #3a3a3a;
 }
 </style>
