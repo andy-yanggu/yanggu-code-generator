@@ -2,22 +2,24 @@
 	<!-- 防止tag过多添加滚动条 -->
 	<el-scrollbar ref="scrollbarRef" class="tag-scrollbar">
 		<div ref="tagWrapperRef" class="tag-wrapper">
-			<!-- 标签栏 -->
-			<el-tag
-				v-for="(tag, index) in appStore.tagList"
-				:ref="el => (tagRefs[tag.fullPath] = el)"
-				:key="tag.fullPath"
-				size="default"
-				:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-				:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
-				@click="handleClick(tag)"
-				@close="handleClose(index, tag)"
-				@contextmenu.prevent="showTagMenu($event, tag, index)"
-			>
-				<template #default>
-					<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
-				</template>
-			</el-tag>
+			<template v-for="(tag, index) in appStore.tagList" :key="tag.fullPath">
+				<!-- 标签 -->
+				<el-tag
+					:ref="el => (tagRefs[tag.fullPath] = el)"
+					size="default"
+					:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
+					:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
+					@click="handleClick(tag)"
+					@close="handleClose(index, tag)"
+					@contextmenu.prevent="showTagMenu($event, tag, index)"
+				>
+					<template #default>
+						<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
+					</template>
+				</el-tag>
+				<!-- 分割线 -->
+				<el-divider v-if="index != appStore.tagLength - 1" direction="vertical"></el-divider>
+			</template>
 
 			<!-- 右键菜单 -->
 			<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
@@ -326,21 +328,11 @@ const { refreshPage } = usePageRefresher()
 	position: relative;
 	cursor: pointer;
 }
-
-/* 每个标签右侧加竖线 */
-:deep(.tag-wrapper .el-tag::after) {
-	content: '';
-	position: absolute;
-	right: -6px;
-	top: 0;
-	bottom: 0; /* ✅ 撑满整个高度 */
-	width: 1px;
-	background-color: var(--el-border-color);
-}
-
-/* 去掉第一个和最后一个标签的外侧分割线 */
-:deep(.tag-wrapper .el-tag:last-child::after) {
-	display: none;
+:deep(.el-divider--vertical) {
+	display: flex;
+	margin: 0 0;
+	width: 0;
+	height: 20px;
 }
 
 .tag-context-menu {

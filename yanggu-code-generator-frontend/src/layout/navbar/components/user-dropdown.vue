@@ -1,15 +1,20 @@
 <template>
 	<el-dropdown>
-		<div style="display: flex; align-items: center; cursor: pointer">
-			<el-icon size="16px" style="margin-right: 5px">
-				<Avatar></Avatar>
-			</el-icon>
+		<div style="display: flex; align-items: center; cursor: pointer; gap: 5px">
+			<template v-if="userStore.userInfo.avatar">
+				<el-avatar :src="userStore.userInfo.avatar" :size="16"></el-avatar>
+			</template>
+			<template v-else>
+				<el-icon size="16px">
+					<Avatar></Avatar>
+				</el-icon>
+			</template>
 			<el-text>{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
 		</div>
 		<template #dropdown>
 			<el-dropdown-menu>
 				<router-link to="/user/profile">
-					<el-dropdown-item :icon="User">个人中心</el-dropdown-item>
+					<el-dropdown-item :icon="User">个人信息</el-dropdown-item>
 				</router-link>
 				<el-dropdown-item :icon="SwitchButton" @click="logout()">退出登录</el-dropdown-item>
 			</el-dropdown-menu>
@@ -19,10 +24,10 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/store/user-store'
-import { Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 import { authApi } from '@/api/auth'
 import { ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
+import { Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
 const route = useRoute()

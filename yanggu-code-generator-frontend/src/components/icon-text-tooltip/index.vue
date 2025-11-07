@@ -1,5 +1,5 @@
 <template>
-	<div style="display: inline-flex; align-items: center; gap: 5px">
+	<div class="icon-text-tooltip">
 		<svg-icon v-if="enableIcon && icon" :icon="icon" :size="iconSize" :is-pointer="isPointer"></svg-icon>
 		<text-tooltip :title="title" :max-width="maxWidth" :placement="placement"></text-tooltip>
 	</div>
@@ -42,3 +42,10 @@ defineProps({
 	}
 })
 </script>
+<style scoped>
+.icon-text-tooltip {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+</style>

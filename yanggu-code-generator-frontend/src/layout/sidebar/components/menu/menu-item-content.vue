@@ -17,6 +17,7 @@ import { useSystemSettingStore } from '@/store/system-setting-store'
 defineProps({
 	icon: {
 		type: String,
+		required: false,
 		default: ''
 	},
 	title: {

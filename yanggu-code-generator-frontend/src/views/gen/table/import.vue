@@ -66,7 +66,7 @@ const state = reactive({
 	isPage: false,
 	dataListApi: genProjectApi.tableList,
 	queryForm: {
-		projectId: undefined,
+		projectId: '',
 		tableName: ''
 	}
 } as IHooksOptions<GenTableQuery, GenTableEntity>)

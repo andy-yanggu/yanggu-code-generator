@@ -7,19 +7,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		name: 'Layout',
 		component: () => import('@/layout/index.vue'),
 		redirect: '/index',
-		children: [
-			{
-				path: '/user/profile',
-				name: 'UserProfile',
-				component: () => import('@/views/user/profile.vue'),
-				meta: {
-					title: '个人中心',
-					hidden: true,
-					cache: false,
-					type: 1
-				}
-			}
-		]
+		children: []
 	},
 	{
 		path: '/login',
@@ -40,6 +28,30 @@ export const constantRoutes: RouteRecordRaw[] = [
 			cache: false,
 			type: 1
 		}
+	},
+	{
+		path: '/user',
+		name: 'User',
+		component: () => import('@/layout/index.vue'),
+		meta: {
+			title: '个人中心',
+			icon: 'icon-user',
+			type: 0
+		},
+		children: [
+			{
+				path: '/user/profile',
+				name: 'UserProfile',
+				component: () => import('@/views/user/profile.vue'),
+				meta: {
+					title: '个人信息',
+					icon: 'icon-user-profile',
+					hidden: true,
+					cache: false,
+					type: 1
+				}
+			}
+		]
 	},
 	{
 		path: '/redirect',

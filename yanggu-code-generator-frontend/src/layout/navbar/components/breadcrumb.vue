@@ -77,7 +77,7 @@ const findRouteByPath = (targetPath: string): Breadcrumb => {
 	// 使用 Vue Router 的路径匹配算法
 	const matchedRoute = router.resolve(targetPath)
 
-	if (matchedRoute?.meta?.title) {
+	if (matchedRoute?.meta?.title && matchedRoute?.meta?.title != '404') {
 		return {
 			title: matchedRoute.meta.title as string,
 			icon: matchedRoute.meta.icon as string

@@ -51,10 +51,15 @@ const dataRules = reactive({
 })
 
 const loginHandle = () => {
-	authApi.login(form).then(data => {
-		userStore.setData(data)
-		ElMessage.success('登录成功')
-		router.push(redirect.value)
+	loginRef.value.validate((valid: boolean) => {
+		if (!valid) {
+			return false
+		}
+		authApi.login(form).then(data => {
+			userStore.setData(data)
+			ElMessage.success('登录成功')
+			router.push(redirect.value)
+		})
 	})
 }
 </script>
