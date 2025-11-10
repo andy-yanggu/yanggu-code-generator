@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
+defineOptions({
+	name: 'Error404'
+})
+
 const router = useRouter()
 
 const onBack = () => {

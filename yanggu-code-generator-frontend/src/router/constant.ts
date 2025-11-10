@@ -80,6 +80,17 @@ export const constantRoutes: RouteRecordRaw[] = [
 		},
 		children: [
 			{
+				path: '/error/400',
+				name: 'Error400',
+				component: () => import('@/views/error/400.vue'),
+				meta: {
+					title: '400',
+					icon: 'icon-error-400',
+					cache: false,
+					type: 1
+				}
+			},
+			{
 				path: '/error/401',
 				name: 'Error401',
 				component: () => import('@/views/error/401.vue'),

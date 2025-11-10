@@ -65,17 +65,15 @@ a:hover {
 
       .layout-card {
 
-        .layout-query {
+        .layout-query-card {
         }
+        .layout-table-card {
 
-        .layout-space {
-          margin-bottom: 15px
-        }
-
-        .layout-table {
-          .layout-table-header {
-            background: var(--el-fill-color-light);
-            color: var(--el-text-color-regular);
+          .layout-table {
+            .layout-table-header {
+              background: var(--el-fill-color-light);
+              color: var(--el-text-color-regular);
+            }
           }
         }
       }

@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" title="导入表" :close-on-click-modal="false" width="70%">
-		<el-card class="layout-query" shadow="hover">
+		<el-card class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
 					<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-card class="layout-query" shadow="hover">
+		<el-card class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 			<#list queryList as field>
 				<#if field.queryFormType == 'date'>

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" @close="dialogVisible = false">
-			<el-card class="layout-query" shadow="hover">
+			<el-card class="layout-query-card" shadow="hover">
 				<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 					<el-form-item label="模板名称" prop="templateName">
 						<el-input v-model="state.queryForm.templateName" clearable placeholder="请输入模板名称"></el-input>
@@ -20,7 +20,7 @@
 				</el-form>
 			</el-card>
 
-			<el-card shadow="hover">
+			<el-card class="layout-table-card" shadow="hover">
 				<el-table
 					v-loading="state.dataListLoading"
 					:data="state.dataList"

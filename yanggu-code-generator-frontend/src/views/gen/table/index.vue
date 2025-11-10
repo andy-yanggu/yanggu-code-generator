@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-card class="layout-query" shadow="hover">
+		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
 					<el-select v-model="state.queryForm.projectId" style="width: 140px" clearable placeholder="请选择项目">
@@ -22,12 +22,19 @@
 			</el-form>
 		</el-card>
 
-		<el-card shadow="hover">
-			<el-space class="layout-space">
-				<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
-				<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-				<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成</el-button>
-			</el-space>
+		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
+			<!-- 表格工具栏 -->
+			<template #header>
+				<table-tool-bar v-if="tableCardRef" v-model:show-search="queryShow" :table-card-ref="tableCardRef" @get-data-list="getDataList()">
+					<template #left>
+						<el-space>
+							<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
+							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+							<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成</el-button>
+						</el-space>
+					</template>
+				</table-tool-bar>
+			</template>
 			<el-table
 				ref="tableRef"
 				v-loading="state.dataListLoading"
@@ -155,6 +162,7 @@ import { getLabel } from '@/utils/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
 import { KeyArray } from '@/types/common'
+import TableToolBar from '@/components/table/tool-bar/index.vue'
 
 defineOptions({
 	name: 'GenTable'
@@ -169,7 +177,7 @@ const state = reactive({
 	deleteListApi: genTableApi.deleteList,
 	queryForm: {
 		tableName: '',
-		projectId: undefined,
+		projectId: '',
 		databaseName: ''
 	}
 } as IHooksOptions<GenTableQuery, GenTableEntity>)
@@ -249,6 +257,8 @@ const {
 	deleteBatchHandle,
 	sortChangeHandle,
 	queryRef,
+	queryShow,
+	tableCardRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)

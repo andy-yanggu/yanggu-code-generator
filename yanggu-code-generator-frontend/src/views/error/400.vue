@@ -1,9 +1,10 @@
 <template>
-	<h1>抱歉，未认证，请先登录</h1>
+	<h1>抱歉客户端错误，请稍后再试</h1>
 </template>
+
 <script setup lang="ts">
 defineOptions({
-	name: 'Error401'
+	name: 'Error400'
 })
 </script>
 <style scoped></style>

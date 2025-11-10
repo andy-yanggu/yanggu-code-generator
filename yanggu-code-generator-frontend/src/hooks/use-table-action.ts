@@ -64,6 +64,10 @@ export interface IHooksOptions<Query extends PageQuery = PageQuery, VO = any> {
 const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<Query, VO>) => {
 	// 表单查询引用
 	const queryRef = ref()
+	// 表单查询是否显示
+	const queryShow = ref(true)
+	// 表格卡片引用
+	const tableCardRef = ref()
 	// 表格引用
 	const tableRef = ref()
 
@@ -102,6 +106,8 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			queryRef.value.clearValidate()
 			queryRef.value.resetFields()
 		}
+		// 查询数据
+		getDataList()
 	}
 
 	// 异步验证表单
@@ -342,6 +348,8 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 		sortChangeHandle,
 		deleteBatchHandle,
 		queryRef,
+		queryShow,
+		tableCardRef,
 		tableRef,
 		resetQueryHandle,
 		tableIndex,

@@ -1,5 +1,5 @@
 <template>
-	<el-card class="layout-query" shadow="hover">
+	<el-card class="layout-query-card" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" label-position="right" label-width="auto" @keyup.enter="getDataList()">
 			<el-row>
 				<el-col :span="8">

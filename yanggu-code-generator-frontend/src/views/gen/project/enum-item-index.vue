@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="dialogVisible" title="枚举项" width="80%" @close="dialogVisible = false">
-		<el-card class="layout-query" shadow="hover">
+		<el-card class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="枚举项名称" prop="enumItemName">
 					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>

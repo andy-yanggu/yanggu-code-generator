@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-card class="layout-query" shadow="hover">
+		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="模板组名称" prop="groupName">
 					<el-input v-model="state.queryForm.groupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
@@ -19,15 +19,22 @@
 			</el-form>
 		</el-card>
 
-		<el-card shadow="hover">
-			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
-				<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-				<el-upload :limit="1" :show-file-list="false" :http-request="({ file }) => importHandle(file)">
-					<el-button type="success" :icon="Upload">导入</el-button>
-				</el-upload>
-				<el-button type="info" :icon="Download" @click="exportHandle()">导出</el-button>
-			</el-space>
+		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
+			<!-- 表格工具栏 -->
+			<template #header>
+				<table-tool-bar v-if="tableCardRef" v-model:show-search="queryShow" :table-card-ref="tableCardRef" @get-data-list="getDataList()">
+					<template #left>
+						<el-space>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
+							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+							<el-upload :limit="1" :show-file-list="false" :http-request="({ file }) => importHandle(file)">
+								<el-button type="success" :icon="Upload">导入</el-button>
+							</el-upload>
+							<el-button type="info" :icon="Download" @click="exportHandle()">导出</el-button>
+						</el-space>
+					</template>
+				</table-tool-bar>
+			</template>
 			<el-table
 				ref="tableRef"
 				v-loading="state.dataListLoading"
@@ -132,6 +139,7 @@ import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue
 import { genTemplateGroupApi, GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/api/gen/template-group'
 import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { useComplexForm } from '@/hooks/use-init-form'
+import TableToolBar from '@/components/table/tool-bar/index.vue'
 
 defineOptions({
 	name: 'GenTemplateGroup'
@@ -144,7 +152,7 @@ const state = reactive({
 	importApi: genTemplateGroupApi.import,
 	queryForm: {
 		groupName: '',
-		type: undefined
+		type: ''
 	},
 	deleteMessage: '删除模板组，模板组下面的所有模板、属性都会删除',
 	importSuccessMessage: '模板组导入成功'
@@ -182,6 +190,8 @@ const {
 	deleteBatchHandle,
 	sortChangeHandle,
 	queryRef,
+	queryShow,
+	tableCardRef,
 	tableRef,
 	resetQueryHandle,
 	tableIndex,

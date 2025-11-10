@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-card class="layout-query" shadow="hover">
+		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="字段类型" prop="columnType">
 					<el-input v-model="state.queryForm.columnType" clearable placeholder="请输入字段类型"></el-input>
@@ -19,11 +19,18 @@
 			</el-form>
 		</el-card>
 
-		<el-card shadow="hover">
-			<el-space class="layout-space">
-				<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-				<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-			</el-space>
+		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
+			<!-- 表格工具栏 -->
+			<template #header>
+				<table-tool-bar v-if="tableCardRef" v-model:show-search="queryShow" :table-card-ref="tableCardRef" @get-data-list="getDataList()">
+					<template #left>
+						<el-space>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
+							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
+						</el-space>
+					</template>
+				</table-tool-bar>
+			</template>
 			<el-table
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
@@ -99,6 +106,7 @@ import { getLabel } from '@/utils/enum'
 import { genFieldTypeApi, GenFieldTypeEntity, GenFieldTypeQuery } from '@/api/gen/field-type'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import TableToolBar from '@/components/table/tool-bar/index.vue'
 
 defineOptions({
 	name: 'GenFieldType'
@@ -121,6 +129,8 @@ const {
 	deleteBatchHandle,
 	sortChangeHandle,
 	queryRef,
+	queryShow,
+	tableCardRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)
