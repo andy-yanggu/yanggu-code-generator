@@ -114,6 +114,11 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	const validateQueryForm = (): Promise<void> => {
 		return new Promise((resolve, reject) => {
 			nextTick(() => {
+				// 查询表单卡片隐藏时，表单未渲染，需要添加这个判断
+				if (!queryShow.value) {
+					resolve()
+					return
+				}
 				queryRef.value.validate((valid: boolean) => {
 					if (valid) {
 						resolve()
