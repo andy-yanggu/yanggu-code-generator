@@ -142,12 +142,13 @@ const INIT_TEST_DATA = {
 
 const testData = reactive(cloneObject(INIT_TEST_DATA))
 
-const init = async (templateGroupId: number, templateGroupType: number, templateId: number) => {
+const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	resetReactiveObject(testData, INIT_TEST_DATA)
 	testData.visible = true
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
+	testData.editTemplateContent = templateContent
 
 	// 获取级联数据
 	await refreshCascaderData()
@@ -248,7 +249,6 @@ const refreshCascaderData = async () => {
 		testData.templateName = data.templateName
 		testData.originalFileName = data.fileName
 		testData.originalTemplateContent = data.templateContent
-		testData.editTemplateContent = data.templateContent
 		testData.fullFilePath = data.generatorPath
 	})
 }

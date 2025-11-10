@@ -808,7 +808,7 @@ const refreshTabData = (dataList: Tree[]) => {
 // 测试模板内容
 const testTemplateContent = () => {
 	nextTick(() => {
-		templateTestRef.value.init(props.templateGroupId, props.templateGroupType, templateTreeData.activeItemId)
+		templateTestRef.value.init(props.templateGroupId, props.templateGroupType, activeTabItem.value.id, activeTabItem.value.templateContent)
 	})
 }
 
