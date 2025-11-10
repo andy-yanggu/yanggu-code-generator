@@ -5,7 +5,7 @@ const baseUrl: string = '/gen/generator'
 // 生成代码API
 export const genGeneratorApi = {
 	// 预览代码
-	preview: (dataForm: any) => {
+	preview: (dataForm: any): Promise<any> => {
 		return service.post(baseUrl + '/preview', dataForm)
 	},
 	// 下载单文件

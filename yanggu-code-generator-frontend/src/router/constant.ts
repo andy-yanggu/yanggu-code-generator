@@ -70,12 +70,75 @@ export const constantRoutes: RouteRecordRaw[] = [
 		]
 	},
 	{
-		path: '/:pathMatch(.*)',
-		component: () => import('@/views/error/404.vue'),
+		path: '/error',
+		name: 'Error',
+		component: () => import('@/layout/index.vue'),
 		meta: {
-			title: '404',
-			cache: false,
-			type: 1
-		}
+			title: '错误页',
+			icon: 'icon-error',
+			type: 0
+		},
+		children: [
+			{
+				path: '/error/401',
+				name: 'Error401',
+				component: () => import('@/views/error/401.vue'),
+				meta: {
+					title: '401',
+					icon: 'icon-error-401',
+					cache: false,
+					type: 1
+				}
+			},
+			{
+				path: '/error/403',
+				name: 'Error403',
+				component: () => import('@/views/error/403.vue'),
+				meta: {
+					title: '403',
+					icon: 'icon-error-403',
+					cache: false,
+					type: 1
+				}
+			},
+			{
+				path: '/error/404',
+				name: 'Error404',
+				component: () => import('@/views/error/404.vue'),
+				meta: {
+					title: '404',
+					icon: 'icon-error-404',
+					cache: false,
+					type: 1
+				}
+			},
+			{
+				path: '/error/500',
+				name: 'Error500',
+				component: () => import('@/views/error/500.vue'),
+				meta: {
+					title: '500',
+					icon: 'icon-error-500',
+					cache: false,
+					type: 1
+				}
+			}
+		]
+	},
+	{
+		path: '/:pathMatch(.*)*',
+		component: () => import('@/layout/index.vue'),
+		children: [
+			{
+				path: '',
+				component: () => import('@/views/error/404.vue'),
+				meta: {
+					title: '404',
+					icon: 'icon-error-404',
+					cache: false,
+					type: 1
+				}
+			}
+		]
 	}
 ]
