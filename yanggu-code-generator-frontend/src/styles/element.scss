@@ -99,17 +99,22 @@
 }
 
 // 对话框
+.el-dialog {
+  padding: 0;
+}
+
 .el-dialog__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 0;
-  padding-left: 10px;
+  padding: 10px 30px 5px;
   border-bottom: 1px solid var(--el-border-color);
 }
+
 .el-dialog__headerbtn {
   position: relative !important;
 }
+
 .el-dialog__header.show-close {
   padding-right: 0;
 }
@@ -119,7 +124,7 @@
 }
 
 .el-dialog__footer {
-  padding-top: 14px;
+  padding: 15px 25px 15px 15px;
   border-top: 1px solid var(--el-border-color);
 }
 

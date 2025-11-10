@@ -9,19 +9,19 @@
 		<div class="table-tool-bar-right">
 			<el-space>
 				<!-- 搜索 -->
-				<el-tooltip v-if="!isFullscreen" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="false">
+				<el-tooltip v-if="!isFullscreen" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
 					<el-button circle :icon="Search" @click="toggleSearch()"></el-button>
 				</el-tooltip>
 
 				<!-- 刷新 -->
-				<el-tooltip content="刷新表格" placement="top" :teleported="false">
+				<el-tooltip content="刷新表格" placement="top" :teleported="teleported">
 					<el-button circle :icon="Refresh" @click="emit('getDataList')"></el-button>
 				</el-tooltip>
 
 				<!-- 全屏 -->
-				<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top" :teleported="false">
+				<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top" :teleported="teleported">
 					<el-button circle @click="toggle()">
-						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" is-pointer></svg-icon>
+						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" is-pointer></svg-icon>
 					</el-button>
 				</el-tooltip>
 			</el-space>
@@ -33,7 +33,7 @@
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { useFullscreen, useToggle } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon'
-import { PropType, Ref } from 'vue'
+import { computed, PropType, Ref } from 'vue'
 
 defineOptions({
 	name: 'TableToolBar'
@@ -52,6 +52,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['getDataList'])
+
+const teleported = computed(() => !isFullscreen.value)
 
 const toggleSearch = useToggle(showSearch)
 

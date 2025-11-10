@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-card class="layout-query-card" shadow="hover">
+		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目名称" prop="projectName">
 					<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称" style="width: 140px"></el-input>
@@ -30,13 +30,13 @@
 			</el-form>
 		</el-card>
 
-		<el-card ref="tableCardRef" shadow="hover">
+		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
 				<table-tool-bar v-if="tableCardRef" v-model:show-search="queryShow" :table-card-ref="tableCardRef" @get-data-list="getDataList()">
 					<template #left>
 						<el-space>
-							<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 						</el-space>
 					</template>

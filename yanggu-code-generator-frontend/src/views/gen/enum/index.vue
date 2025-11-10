@@ -191,8 +191,8 @@ const generatorBatchHandler = () => {
 		ElMessage.warning('请选择要生成代码的枚举')
 		return
 	}
-	genEnumApi.generateCheck(data).then(res => {
-		const { checkResult, enumTemplateGroupId, generatorType } = res.data
+	genEnumApi.generateCheck(data).then(resData => {
+		const { checkResult, enumTemplateGroupId, generatorType } = resData
 		if (!checkResult) {
 			ElMessage.warning('当前选择的枚举不是同一个项目')
 		} else {
