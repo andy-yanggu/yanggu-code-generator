@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="50%">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"

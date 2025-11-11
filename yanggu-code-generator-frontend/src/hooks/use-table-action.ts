@@ -16,6 +16,8 @@ type ImportApi = (formData: FormData) => Promise<void>
 export interface IHooksOptions<Query extends PageQuery = PageQuery, VO = any> {
 	// 否在创建页面时，调用数据列表接口
 	createdIsNeed?: boolean
+	// 重置后是否查询
+	resetQueryIsNeed?: boolean
 	// 是否需要分页
 	isPage?: boolean
 	// 数据列表接口
@@ -74,6 +76,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	// 默认值
 	const defaultOptions: IHooksOptions<Query, VO> = {
 		createdIsNeed: true,
+		resetQueryIsNeed: true,
 		isPage: true,
 		dataListApi: undefined,
 		deleteListApi: undefined,
@@ -107,14 +110,16 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			queryRef.value.resetFields()
 		}
 		// 查询数据
-		getDataList()
+		if (state.resetQueryIsNeed) {
+			getDataList()
+		}
 	}
 
 	// 异步验证表单
 	const validateQueryForm = (): Promise<void> => {
 		return new Promise((resolve, reject) => {
 			nextTick(() => {
-				// 查询表单卡片隐藏时，表单未渲染，需要添加这个判断
+				// 查询表单卡片隐藏时，查询表单未渲染，需要添加这个判断
 				if (!queryShow.value) {
 					resolve()
 					return
@@ -138,6 +143,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 		})
 	}
 
+	// 构建查询条件
 	const buildQueryForm = (): Query => {
 		// 解构查询条件
 		const queryForm: Query = {
@@ -230,7 +236,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			console.error('未配置主键')
 			return
 		}
-		state.dataListSelections = selections.map((item: any) => item[state.primaryKey!])
+		state.dataListSelections = selections.map(item => item[state.primaryKey!])
 	}
 
 	// 排序
@@ -269,7 +275,8 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			state.deleteListApi!(idList)
 				.then(() => {
 					ElMessage.success('删除成功')
-					query()
+					tableRef.value.clearSelection()
+					getDataList()
 				})
 				.finally(() => {
 					state.deleteLoading = false
@@ -340,7 +347,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	onMounted(() => {
 		if (state.createdIsNeed) {
 			nextTick(() => {
-				query()
+				getDataList()
 			})
 		}
 	})

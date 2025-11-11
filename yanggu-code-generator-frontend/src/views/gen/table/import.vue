@@ -63,6 +63,7 @@ const emit = defineEmits(['refreshDataList'])
 const state = reactive({
 	primaryKey: 'tableName',
 	createdIsNeed: false,
+	resetQueryIsNeed: false,
 	isPage: false,
 	dataListApi: genProjectApi.tableList,
 	queryForm: {

@@ -1,5 +1,5 @@
 <template>
-	<el-scrollbar class="layout-scrollbar">
+	<el-scrollbar ref="layoutScrollbarRef" class="layout-scrollbar">
 		<div class="layout-card">
 			<!-- 开启了全局缓存 -->
 			<template v-if="systemSettingStore.isOpenPageCache">
@@ -35,6 +35,7 @@ import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/app-store'
 import { useSystemSettingStore } from '@/store/system-setting-store'
+import { ref, watch } from 'vue'
 
 defineOptions({
 	name: 'LayoutMain'
@@ -43,4 +44,13 @@ defineOptions({
 const route = useRoute()
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
+const layoutScrollbarRef = ref()
+
+watch(
+	() => route.fullPath,
+	() => {
+		// 滚动到顶部
+		layoutScrollbarRef.value.scrollTo({ top: 0 })
+	}
+)
 </script>
