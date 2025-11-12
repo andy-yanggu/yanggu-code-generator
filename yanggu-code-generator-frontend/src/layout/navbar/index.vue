@@ -4,10 +4,12 @@
 		<div class="navbar-toolbar">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-toolbar-left">
+				<!-- 折叠按钮 -->
 				<el-icon v-if="systemSettingStore.isOpenMenuCollapseButton" :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
 					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
+				<!-- 面包屑 -->
 				<breadcrumb v-if="systemSettingStore.isOpenBreadcrumb"></breadcrumb>
 			</div>
 
@@ -62,6 +64,7 @@ const systemSettingStore = useSystemSettingStore()
 
 <style scoped>
 .navbar-toolbar {
+	height: 35px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -80,7 +83,6 @@ const systemSettingStore = useSystemSettingStore()
 	display: flex;
 	align-items: center;
 	gap: 15px;
-	margin-left: auto;
 }
 
 .collapse-icon {

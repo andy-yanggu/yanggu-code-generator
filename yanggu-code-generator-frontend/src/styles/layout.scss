@@ -35,6 +35,8 @@ a:hover {
   .layout-sidebar {
     background: var(--theme-menu-bg-color);
     position: relative;
+    transition: width 0.3s ease;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;

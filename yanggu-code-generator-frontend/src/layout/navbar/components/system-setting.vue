@@ -66,6 +66,7 @@
 								:props="{ label: (data: MenuInfo) => data.meta.title, value: 'path' }"
 								node-key="id"
 								filterable
+								default-expand-all
 								placeholder="请选择默认菜单"
 								style="width: 180px"
 							>
@@ -95,9 +96,7 @@
 						v-model="systemSettingStore.isOpenTagDragActivated"
 						label="拖拽后激活标签"
 						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
-					>
-					</setting-item>
-
+					></setting-item>
 					<setting-item
 						v-model="systemSettingStore.isOpenTagCache"
 						label="持久化"
@@ -125,17 +124,17 @@
 			</div>
 		</el-scrollbar>
 		<template #footer>
-			<el-button icon="CopyDocument" type="primary" size="small" @click="copySystemSetting()">复制设置</el-button>
-			<el-button icon="Refresh" size="small" style="margin-right: 5px" @click="handlerResetSystemSetting()">重置设置</el-button>
+			<el-button :icon="CopyDocument" type="primary" size="small" @click="copySystemSetting()">复制设置</el-button>
+			<el-button :icon="Refresh" size="small" style="margin-right: 5px" @click="handlerResetSystemSetting()">重置设置</el-button>
 		</template>
 	</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { Setting } from '@element-plus/icons-vue'
+import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { menuExpandWidthList, menuFoldWidthList, useSystemSettingStore } from '@/store/system-setting-store'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { ElMessage } from 'element-plus'
@@ -153,7 +152,6 @@ const systemSettingStore = useSystemSettingStore()
 
 const visible = ref(false)
 const route = useRoute()
-const router = useRouter()
 
 // 标签是否开启
 watch(

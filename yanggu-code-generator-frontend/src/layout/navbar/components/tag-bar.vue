@@ -10,6 +10,8 @@
 						size="default"
 						:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
 						:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
+						class="tag-hover-closable"
+						disable-transitions
 						@click="handleClick(tag)"
 						@close="handleClose(index, tag)"
 						@contextmenu.prevent="showTagMenu($event, tag, index)"
@@ -339,6 +341,28 @@ const { refreshPage } = usePageRefresher()
 	align-items: center;
 	gap: 5px;
 }
+
+/* 默认隐藏关闭按钮（保留位置，避免跳动） */
+:deep(.tag-hover-closable .el-tag__close) {
+	visibility: hidden;
+	opacity: 0;
+	transition:
+		opacity 0.25s ease,
+		visibility 0.25s ease 0.1s;
+}
+
+/* 悬停时显示关闭按钮 */
+:deep(.tag-hover-closable:hover .el-tag__close) {
+	visibility: visible;
+	opacity: 1;
+}
+
+/* ✅ 激活标签（effect=dark）时常驻显示关闭按钮 */
+:deep(.el-tag--dark .el-tag__close) {
+	visibility: visible;
+	opacity: 1;
+}
+
 :deep(.el-divider--vertical) {
 	display: flex;
 	margin: 0 0;

@@ -1,10 +1,7 @@
 <template>
 	<el-container class="layout-container">
 		<!-- 侧边栏 -->
-		<el-aside
-			class="layout-sidebar"
-			:style="{ width: (appStore.isCollapse ? systemSettingStore.menuFoldWidth : systemSettingStore.menuExpandWidth) + 'px' }"
-		>
+		<el-aside class="layout-sidebar" :style="{ width: calculateLayoutSidebarWidth }">
 			<layout-sidebar></layout-sidebar>
 		</el-aside>
 		<el-container direction="vertical">
@@ -26,6 +23,7 @@ import LayoutNavbar from '@/layout/navbar/index.vue'
 import LayoutMain from '@/layout/main/index.vue'
 import { useAppStore } from '@/store/app-store'
 import { useSystemSettingStore } from '@/store/system-setting-store'
+import { computed } from 'vue'
 
 defineOptions({
 	name: 'Layout'
@@ -33,4 +31,9 @@ defineOptions({
 
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
+
+// 计算布局宽度
+const calculateLayoutSidebarWidth = computed(() => {
+	return (appStore.isCollapse ? systemSettingStore.menuFoldWidth : systemSettingStore.menuExpandWidth) + 'px'
+})
 </script>

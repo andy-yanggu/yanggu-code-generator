@@ -31,7 +31,8 @@ watch(
 	() => route,
 	() => {
 		if (route.query?.redirect) {
-			redirect.value = decodeURIComponent(<string>route.query?.redirect)
+			const redirectPath = route.query?.redirect as string
+			redirect.value = decodeURIComponent(redirectPath)
 		}
 	},
 	{ immediate: true }
