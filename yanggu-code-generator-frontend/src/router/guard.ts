@@ -38,6 +38,11 @@ export const routeGuard = (router: Router) => {
 	router.beforeEach((to, from, next) => {
 		const systemSettingStore = useSystemSettingStore()
 
+		// 动态设置默认跳转
+		if (to.path === '/') {
+			return next(systemSettingStore.menuDefault ?? '/index')
+		}
+
 		if (systemSettingStore.isOpenProgress) {
 			NProgress.start()
 		}

@@ -4,7 +4,7 @@
 			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新当前</span>
 		</div>
-		<div v-if="props.currentMenuTag.fullPath != '/index' || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
+		<div v-if="props.currentMenuTag.fullPath != defaultMenu || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
 		</div>
@@ -44,6 +44,10 @@ defineOptions({
 const appStore = useAppStore()
 
 const props = defineProps({
+	defaultMenu: {
+		type: String,
+		required: true
+	},
 	currentMenuTag: {
 		type: Object as PropType<NavbarTag>,
 		required: true

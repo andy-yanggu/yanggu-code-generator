@@ -43,6 +43,8 @@ interface SystemSetting {
 	menuExpandWidth: number
 	// 菜单折叠宽度
 	menuFoldWidth: number
+	// 默认菜单
+	menuDefault: string
 }
 
 // 菜单展开宽度
@@ -72,7 +74,8 @@ const defaultSystemSetting: SystemSetting = {
 	isOpenMenuUniqueOpened: false,
 	isOpenMenuCollapseButton: true,
 	menuExpandWidth: menuExpandWidthList.length >= 3 ? menuExpandWidthList[1] : menuExpandWidthList[0],
-	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0]
+	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0],
+	menuDefault: '/index'
 }
 
 export const useSystemSettingStore = defineStore(

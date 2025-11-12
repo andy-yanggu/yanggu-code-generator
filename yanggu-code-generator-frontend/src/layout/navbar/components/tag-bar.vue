@@ -9,7 +9,7 @@
 						:ref="el => (tagRefs[tag.fullPath] = el)"
 						size="default"
 						:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-						:closable="tag.fullPath != '/index' || appStore.tagLength > 1"
+						:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
 						@click="handleClick(tag)"
 						@close="handleClose(index, tag)"
 						@contextmenu.prevent="showTagMenu($event, tag, index)"
@@ -26,6 +26,7 @@
 			<!-- 右键菜单 -->
 			<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
 				<tag-menu
+					:default-menu="defaultMenu"
 					:current-menu-tag="currentMenuTag"
 					:current-menu-tag-index="currentMenuTagIndex"
 					@close-current-tag="closeCurrentTag()"
@@ -44,7 +45,7 @@
 <script setup lang="ts">
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refresh-current-page'
@@ -85,6 +86,9 @@ watch(
 		})
 	}
 )
+
+// 默认菜单
+const defaultMenu = computed(() => systemSettingStore.menuDefault)
 
 // 滚动到指定标签
 const scrollToTag = (fullPath: string) => {
@@ -155,7 +159,7 @@ const handleClick = (tag: NavbarTag) => {
 // 处理关闭单个标签
 const handleClose = (index: number, tag: NavbarTag) => {
 	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
-	if (appStore.tagLength === 1 && tag.fullPath === '/index') {
+	if (appStore.tagLength === 1 && tag.fullPath === defaultMenu.value) {
 		return // 直接返回，不执行关闭操作
 	}
 
@@ -164,7 +168,7 @@ const handleClose = (index: number, tag: NavbarTag) => {
 
 	// 判断当前标签页是否为当前路由
 	if (tag.fullPath === route.fullPath) {
-		let to = '/index' // 默认跳转首页
+		let to = defaultMenu.value // 默认跳转首页
 
 		// 关闭后如果还有标签页
 		if (appStore.tagLength > 0) {
@@ -237,11 +241,11 @@ const closeOtherTags = () => {
 
 // 关闭所有标签
 const closeAllTags = () => {
-	deleteCacheAndTag(appStore.tagList.filter(item => item.fullPath !== '/index'))
+	deleteCacheAndTag(appStore.tagList.filter(item => item.fullPath !== defaultMenu.value))
 	closeTagMenu()
 	// 回到首页
-	if (route.fullPath !== '/index') {
-		router.push('/index')
+	if (route.fullPath !== defaultMenu.value) {
+		router.push(defaultMenu.value)
 	}
 }
 

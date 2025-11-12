@@ -6,7 +6,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		path: '/',
 		name: 'Layout',
 		component: () => import('@/layout/index.vue'),
-		redirect: '/index',
+		// 设置了动态首页，不需要设置重定向
 		children: []
 	},
 	{

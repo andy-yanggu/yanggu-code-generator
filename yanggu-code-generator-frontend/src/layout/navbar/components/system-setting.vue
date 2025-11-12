@@ -57,6 +57,24 @@
 						label="手风琴模式"
 						tooltip="开启后同一时间只允许一个子菜单展开，打开新子菜单时其他子菜单自动收起"
 					></setting-item>
+					<el-row class="setting-row">
+						<el-text style="margin-right: 5px">默认菜单</el-text>
+						<div style="display: flex; align-items: center">
+							<el-tree-select
+								v-model="systemSettingStore.menuDefault"
+								:data="userStore.menuList"
+								:props="{ label: (data: MenuInfo) => data.meta.title, value: 'path' }"
+								node-key="id"
+								filterable
+								placeholder="请选择默认菜单"
+								style="width: 180px"
+							>
+								<template #default="{ data }">
+									<icon-text-tooltip :icon="data.meta.icon" :title="data.meta.title"></icon-text-tooltip>
+								</template>
+							</el-tree-select>
+						</div>
+					</el-row>
 				</div>
 				<div>
 					<el-divider>工具栏设置</el-divider>
@@ -117,21 +135,25 @@
 import { Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { menuExpandWidthList, menuFoldWidthList, useSystemSettingStore } from '@/store/system-setting-store'
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { ElMessage } from 'element-plus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
+import { MenuInfo, useUserStore } from '@/store/user-store'
+import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
 	name: 'SystemSetting'
 })
 
 const appStore = useAppStore()
+const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
 
 const visible = ref(false)
 const route = useRoute()
+const router = useRouter()
 
 // 标签是否开启
 watch(
