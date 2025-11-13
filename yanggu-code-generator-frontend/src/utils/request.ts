@@ -30,7 +30,7 @@ service.interceptors.request.use(
 		// 处理token
 		const userStore = useUserStore()
 		if (userStore.tokenInfo) {
-			config.headers.Authorization = 'Bearer ' + userStore.tokenInfo.accessToken
+			config.headers.Authorization = userStore.tokenInfo.accessToken
 		}
 
 		return config
@@ -76,7 +76,7 @@ service.interceptors.response.use(
 				const userStore = useUserStore()
 				userStore.clearAll()
 				router.replace({
-					path: '/login',
+					path: '/auth/login',
 					query: {
 						redirect: encodeURIComponent(router.currentRoute.value.fullPath || '/')
 					}
@@ -129,6 +129,7 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 				const contentDisposition = response.headers['content-disposition']
 				let filename = 'download'
 
+				// 获取下载的文件名
 				if (contentDisposition) {
 					const filenameStarMatch = contentDisposition.match(/filename\*=['"]?(?:UTF-8['"]?)?''?([^;]+)/i)
 					const filenameMatch = contentDisposition.match(/filename=['"]?([^;]+)['"]?/i)
@@ -181,7 +182,23 @@ export const loadBlob = (url: string, type: string, params?: any, noErrorMessage
 			noErrorMessage
 		})
 		.then(resp => {
+			// 进行一下非空判断，有些组件当没有数据时，会报错
+			if (resp.data.size === 0) {
+				return Promise.reject(new Error('Blob 内容为空'))
+			}
 			const blob = new Blob([resp.data], { type })
 			return URL.createObjectURL(blob)
+		})
+		.catch(error => {
+			let errorMessage = '加载blob数据失败，请稍后重试或联系管理员'
+			if (!noErrorMessage) {
+				if (error.response) {
+					errorMessage = `加载blob数据失败，服务器返回状态码：${error.response.status}`
+				} else if (error.request) {
+					errorMessage = '加载blob数据失败，请检查网络连接或稍后重试'
+				}
+				ElMessage.error(errorMessage)
+			}
+			return Promise.reject(new Error(errorMessage))
 		})
 }

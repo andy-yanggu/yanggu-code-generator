@@ -2,7 +2,7 @@
 	<div class="menu-item">
 		<svg-icon v-if="icon" :icon="icon" is-pointer></svg-icon>
 		<el-tooltip :content="title" :disabled="!isTitleOverflow" placement="top">
-			<el-text ref="titleRef" class="menu-title" :style="{ maxWidth: systemSettingStore.menuExpandWidth - 100 + 'px' }">
+			<el-text ref="titleRef" class="menu-title" :style="{ maxWidth: menuTitleMaxWidth }">
 				{{ title }}
 			</el-text>
 		</el-tooltip>
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
@@ -29,6 +29,10 @@ defineProps({
 const titleRef = ref()
 const isTitleOverflow = ref(false)
 const systemSettingStore = useSystemSettingStore()
+
+const menuTitleMaxWidth = computed(() => {
+	return systemSettingStore.menuExpandWidth - 100 + 'px'
+})
 
 // 检查文本是否溢出
 onMounted(() => {

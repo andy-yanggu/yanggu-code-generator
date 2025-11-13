@@ -31,17 +31,12 @@ export interface RouteMetaData {
 NProgress.configure({ showSpinner: false })
 
 // 路由白名单名称列表
-const whiteLists = ['Login']
+const whiteLists: string[] = ['AuthLogin']
 
 export const routeGuard = (router: Router) => {
 	// 路由前置拦截
 	router.beforeEach((to, from, next) => {
 		const systemSettingStore = useSystemSettingStore()
-
-		// 动态设置默认跳转
-		if (to.path === '/') {
-			return next(systemSettingStore.menuDefault ?? '/index')
-		}
 
 		if (systemSettingStore.isOpenProgress) {
 			NProgress.start()
@@ -93,6 +88,11 @@ export const routeGuard = (router: Router) => {
 			// 添加完路由需要重新执行一次路由跳转，否则会出现空白页面
 			next({ ...to, replace: true })
 			return
+		}
+
+		// 动态设置默认跳转
+		if (to.path === '/') {
+			return next(systemSettingStore.menuDefault ?? '/index')
 		}
 
 		const appStore = useAppStore()

@@ -488,6 +488,7 @@ export const useUserStore = defineStore(
 		// 清空数据
 		const clearAll = () => {
 			menuList.value = []
+			roleList.value = []
 			permissionList.value = []
 			// 完全清空 userInfo
 			resetReactiveObject(userInfo, INITIAL_USER_INFO)

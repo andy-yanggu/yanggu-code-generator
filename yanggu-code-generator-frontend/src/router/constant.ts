@@ -8,24 +8,30 @@ export const constantRoutes: RouteRecordRaw[] = [
 		component: () => import('@/layout/index.vue')
 	},
 	{
-		path: '/login',
-		name: 'Login',
-		component: () => import('@/views/auth/login.vue'),
-		meta: {
-			title: '登录',
-			cache: false,
-			type: 1
-		}
-	},
-	{
-		path: '/register',
-		name: 'Register',
-		component: () => import('@/views/auth/register.vue'),
-		meta: {
-			title: '注册',
-			cache: false,
-			type: 1
-		}
+		path: '/auth',
+		name: 'Auth',
+		children: [
+			{
+				path: '/auth/login',
+				name: 'AuthLogin',
+				component: () => import('@/views/auth/login.vue'),
+				meta: {
+					title: '登录',
+					cache: false,
+					type: 1
+				}
+			},
+			{
+				path: '/auth/register',
+				name: 'AuthRegister',
+				component: () => import('@/views/auth/register.vue'),
+				meta: {
+					title: '注册',
+					cache: false,
+					type: 1
+				}
+			}
+		]
 	},
 	{
 		path: '/user',
