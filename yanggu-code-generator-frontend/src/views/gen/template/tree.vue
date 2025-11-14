@@ -3,7 +3,7 @@
 	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" :size="'100%'" :modal="false" :before-close="handleClose">
 		<el-container style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
+			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden; border-right: 1px solid var(--el-border-color)">
 				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
 					<el-input
 						v-model="treeSearchText"
@@ -110,8 +110,8 @@
 			<!-- 右侧：模板编辑 -->
 			<el-container v-if="templateTreeData.tabList.length > 0" style="padding: 0; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
 				<!-- 头部操作区域 -->
-				<el-header style="display: flex; flex-direction: column; padding: 10px; height: 70px; margin-bottom: 5px">
-					<el-row>
+				<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
+					<el-row style="margin-bottom: 5px">
 						<el-col v-if="!isFullscreen" :span="1">
 							<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
 								<Expand v-if="isCollapse"></Expand>
@@ -147,7 +147,14 @@
 							</el-button>
 						</el-col>
 					</el-row>
-					<el-tabs ref="tabsRef" v-model="templateTreeData.activeItemId" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+					<el-tabs
+						ref="tabsRef"
+						v-model="templateTreeData.activeItemId"
+						tab-position="top"
+						type="card"
+						@tab-click="handleTabClick"
+						@tab-remove="handleTabRemove"
+					>
 						<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 							<template #label>
 								<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
@@ -194,7 +201,7 @@
 				</el-header>
 
 				<!-- 代码区域 -->
-				<el-main style="padding: 10px; overflow: hidden">
+				<el-main style="padding: 5px; overflow: hidden">
 					<template v-if="activeTabItem.templateType === 1">
 						<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
 							<code-mirror v-model="activeTabItem.templateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
@@ -965,6 +972,10 @@ const initAfterHandler = (tree: Tree) => {
 	nextTick(() => {
 		initData()
 	})
+	if (tree.templateType === 0) {
+		return
+	}
+	// 激活模板文件
 	templateTreeData.activeItemId = tree.id
 }
 
