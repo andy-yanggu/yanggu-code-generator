@@ -38,6 +38,17 @@
 					:label="selectItem.label"
 				></el-checkbox>
 			</el-checkbox-group>
+
+			<!-- 开关 -->
+			<el-switch
+				v-else-if="item.componentType === 5"
+				v-model="formData[item.propKey]"
+				:inactive-value="item.componentOptions![0].value"
+				:active-value="item.componentOptions![1].value"
+				:inactive-text="item.componentOptions![0].label"
+				:active-text="item.componentOptions![1].label"
+				inline-prompt
+			></el-switch>
 		</el-form-item>
 	</template>
 </template>

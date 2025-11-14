@@ -8,7 +8,9 @@
 						<el-button :icon="Refresh" size="small" type="primary" :loading="loading" @click="refreshCascaderData()">刷新</el-button>
 					</el-tooltip>
 					<el-tooltip content="根据当前选择重新渲染模板" placement="top">
-						<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
+						<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="handleCascaderChange(testData.cascaderValue)">
+							渲染
+						</el-button>
 					</el-tooltip>
 				</div>
 				<el-cascader
@@ -39,7 +41,9 @@
 						</el-col>
 						<el-col :span="4" style="text-align: right">
 							<template v-if="testData.activeName === 'template'">
-								<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="refreshHandler()">渲染</el-button>
+								<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="handleCascaderChange(testData.cascaderValue)">
+									渲染
+								</el-button>
 								<el-button
 									size="small"
 									type="primary"
@@ -136,7 +140,7 @@ const INIT_TEST_DATA = {
 	fullFilePath: '',
 	renderedFileName: '',
 	renderedTemplateContent: '',
-	cascaderValue: '',
+	cascaderValue: [] as string[],
 	cascaderData: [] as CascaderData[]
 }
 
@@ -182,7 +186,7 @@ const saveTemplateContent = () => {
 }
 
 // 处理选中值变化
-const handleCascaderChange = async val => {
+const handleCascaderChange = async (val: string[]) => {
 	// val 是选中节点的值数组
 	const queryForm = {
 		projectId: val[0].split('_')[1],
@@ -195,9 +199,9 @@ const handleCascaderChange = async val => {
 	if (testData.templateGroupType === 0) {
 		queryForm.testId = testData.templateId
 	} else if (testData.templateGroupType === 1) {
-		queryForm.testId = val[1].split('_')[1]
+		queryForm.testId = Number(val[1].split('_')[1])
 	} else if (testData.templateGroupType === 2) {
-		queryForm.testId = val[1].split('_')[1]
+		queryForm.testId = Number(val[1].split('_')[1])
 	}
 	const loadingInstance = ElLoading.service({
 		target: '.template-test-drawer .el-drawer__body',
@@ -251,12 +255,6 @@ const refreshCascaderData = async () => {
 		testData.originalTemplateContent = data.templateContent
 		testData.fullFilePath = data.generatorPath
 	})
-}
-
-// 刷新渲染数据
-const refreshHandler = () => {
-	testData.activeName = 'render'
-	handleCascaderChange(testData.cascaderValue)
 }
 
 const generatorHandler = () => {

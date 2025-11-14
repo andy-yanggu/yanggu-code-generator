@@ -34,7 +34,7 @@
 			<el-form-item v-if="hasComponentOptions" label="组件选项" prop="componentOptions">
 				<el-row
 					v-for="(item, index) in state.dataForm.componentOptions"
-					:key="item.id"
+					:key="item.value"
 					:gutter="10"
 					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
 				>
@@ -101,12 +101,12 @@ const state = reactive({
 	detailApi: genTemplateGroupPropertyApi.detail,
 	// 表单数据
 	dataForm: {
-		id: undefined,
-		templateGroupId: undefined,
+		id: '',
+		templateGroupId: '',
 		propTitle: '',
 		propKey: '',
 		propDefaultValue: '',
-		componentType: undefined,
+		componentType: '',
 		componentOptions: [{ label: '', value: '' }] as LabelData[],
 		required: 0,
 		propOrder: 0,
@@ -129,7 +129,7 @@ watch(
 	}
 )
 
-const hasComponentOptions = computed(() => [2, 3, 4].includes(state.dataForm.componentType!))
+const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.componentType! as number))
 
 const componentOptions = (_: any, __: any, callback: any) => {
 	if (!hasComponentOptions.value) {
