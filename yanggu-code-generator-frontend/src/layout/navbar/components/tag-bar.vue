@@ -1,58 +1,46 @@
 <template>
-	<!-- 防止tag过多添加滚动条 -->
-	<el-scrollbar ref="scrollbarRef" class="tag-scrollbar">
-		<div ref="tagWrapperRef" class="tag-wrapper">
-			<template v-for="(tag, index) in appStore.tagList" :key="tag.fullPath">
-				<!-- 标签 -->
-				<div class="tag-item">
-					<el-tag
-						:ref="el => (tagRefs[tag.fullPath] = el)"
-						size="default"
-						:effect="tag.fullPath === route.fullPath ? 'dark' : 'plain'"
-						:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
-						class="tag-hover-closable"
-						disable-transitions
-						@click="handleClick(tag)"
-						@close="handleClose(index, tag)"
-						@contextmenu.prevent="showTagMenu($event, tag, index)"
-					>
-						<template #default>
-							<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
-						</template>
-					</el-tag>
-					<!-- 分割线 -->
-					<el-divider v-if="index != appStore.tagLength - 1" direction="vertical"></el-divider>
-				</div>
+	<el-tabs ref="tagWrapperRef" v-model="userStore.activeMenuPath" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+		<!-- 标签 -->
+		<el-tab-pane
+			v-for="tag in appStore.tagList"
+			:key="tag.fullPath"
+			:name="tag.fullPath"
+			:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
+		>
+			<template #label>
+				<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
 			</template>
+		</el-tab-pane>
+	</el-tabs>
 
-			<!-- 右键菜单 -->
-			<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
-				<tag-menu
-					:default-menu="defaultMenu"
-					:current-menu-tag="currentMenuTag"
-					:current-menu-tag-index="currentMenuTagIndex"
-					@close-current-tag="closeCurrentTag()"
-					@refresh-current-tag="refreshCurrentTag()"
-					@close-other-tags="closeOtherTags()"
-					@close-left-tag="closeLeftTag()"
-					@close-right-tag="closeRightTag()"
-					@close-all-tags="closeAllTags()"
-					@open-new-window="openNewWindow()"
-				></tag-menu>
-			</div>
-		</div>
-	</el-scrollbar>
+	<!-- 右键菜单 -->
+	<div v-if="tagMenuVisible" class="tag-context-menu" :style="menuPosition">
+		<tag-menu
+			:default-menu="defaultMenu"
+			:current-menu-tag="currentMenuTag"
+			:current-menu-tag-index="currentMenuTagIndex"
+			@close-current-tag="closeCurrentTag()"
+			@refresh-current-tag="refreshCurrentTag()"
+			@close-other-tags="closeOtherTags()"
+			@close-left-tag="closeLeftTag()"
+			@close-right-tag="closeRightTag()"
+			@close-all-tags="closeAllTags()"
+			@open-new-window="openNewWindow()"
+		></tag-menu>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refresh-current-page'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
+import { useUserStore } from '@/store/user-store'
+import { TabsPaneContext } from 'element-plus'
 
 defineOptions({
 	name: 'TagBar'
@@ -69,66 +57,31 @@ const currentMenuTag = reactive({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const tagRefs = reactive({} as Record<string, any>)
-const scrollbarRef = ref()
+const userStore = useUserStore()
 const tagWrapperRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
 	document.addEventListener('click', closeTagMenu)
-	scrollToTag(route.fullPath)
 })
-
-// 监控路由变化，实现滚动条自动滚动
-watch(
-	() => route.fullPath,
-	(newPath, _) => {
-		nextTick(() => {
-			scrollToTag(newPath)
-		})
-	}
-)
 
 // 默认菜单
 const defaultMenu = computed(() => systemSettingStore.menuDefault)
 
-// 滚动到指定标签
-const scrollToTag = (fullPath: string) => {
-	const tagEl = tagRefs[fullPath]
-
-	if (!tagEl) {
-		return
-	}
-
-	// 获取对应的dom元素
-	const tagDom = tagEl.$el || tagEl.el || tagEl
-
-	// 滚动到指定标签
-	tagDom.scrollIntoView({
-		behavior: 'smooth',
-		inline: 'center',
-		block: 'nearest'
-	})
-}
-
 // 实现标签页的拖拽效果
 onMounted(() => {
 	nextTick(() => {
-		const el = tagWrapperRef.value
-		const scrollWrapper = scrollbarRef.value?.wrapRef as HTMLElement
-
-		if (!el || !scrollWrapper) {
-			console.error('未找到.tag-wrapper或scrollWrapper元素')
+		const tabsWrapper = tagWrapperRef.value.$el.querySelector('.el-tabs__nav') as HTMLElement
+		if (!tabsWrapper) {
 			return
 		}
-		new Sortable(el, {
+		new Sortable(tabsWrapper, {
 			animation: 200,
-			scroll: scrollWrapper, // ✅ 指定真正的滚动容器
-			direction: 'horizontal', // ✅ 明确水平拖拽
-			scrollSensitivity: 30,
-			scrollSpeed: 30,
+			handle: '.el-tabs__item', // 拖拽手柄
 			onEnd: evt => {
-				const { oldIndex, newIndex } = evt
+				// el-tab会有一个高亮的样式需要排除掉
+				const oldIndex = evt.oldIndex! - 1
+				const newIndex = evt.newIndex! - 1
 				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
 					const newTags = [...appStore.tagList]
 					const movedTag = newTags.splice(oldIndex!, 1)[0]
@@ -146,16 +99,44 @@ onMounted(() => {
 	})
 })
 
+onMounted(() => {
+	nextTick(() => {
+		const nav = tagWrapperRef.value.$el.querySelector('.el-tabs__nav')
+		if (!nav) {
+			return
+		}
+
+		nav.addEventListener('contextmenu', (e: MouseEvent) => {
+			const item = (e.target as HTMLElement).closest('.el-tabs__item')
+			if (!item) {
+				return
+			}
+
+			const index = Array.from(nav.children).indexOf(item)
+			const tag = appStore.tagList[index]
+
+			showTagMenu(e, tag, index)
+		})
+	})
+})
+
 // 组件卸载时移除事件监听
 onUnmounted(() => {
 	document.removeEventListener('click', closeTagMenu)
 })
 
 // 处理点击标签
-const handleClick = (tag: NavbarTag) => {
-	if (tag.fullPath != route.fullPath) {
-		router.push(tag.fullPath)
+const handleTabClick = (tab: TabsPaneContext, _: Event) => {
+	const fullPath = tab.paneName as string
+	if (fullPath != route.fullPath) {
+		router.push(fullPath)
 	}
+}
+
+// 处理标签删除
+const handleTabRemove = (fullPath: string) => {
+	const index = appStore.tagList.findIndex(tag => tag.fullPath === fullPath)
+	handleClose(index, appStore.tagList[index])
 }
 
 // 处理关闭单个标签
@@ -307,68 +288,8 @@ const { refreshPage } = usePageRefresher()
 </script>
 
 <style scoped>
-.tag-scrollbar {
-	max-height: 41px;
-	margin-bottom: 10px;
-	overflow-x: auto;
-	border-bottom: 1px solid var(--el-border-color);
-}
-
-.tag-wrapper {
-	display: flex;
-	align-items: center;
-	margin-top: 7px;
-	margin-left: 10px;
-	margin-right: 10px;
-	gap: 5px;
-	flex-wrap: nowrap;
-	width: max-content;
-	padding-right: 5px;
-	box-sizing: content-box;
-}
-
-:deep(.el-scrollbar__wrap) {
-	overflow-x: auto !important;
-	overflow-y: hidden !important;
-}
-
-:deep(.tag-wrapper .el-tag) {
-	position: relative;
-	cursor: pointer;
-}
-.tag-item {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-}
-
-/* 默认隐藏关闭按钮（保留位置，避免跳动） */
-:deep(.tag-hover-closable .el-tag__close) {
-	visibility: hidden;
-	opacity: 0;
-	transition:
-		opacity 0.25s ease,
-		visibility 0.25s ease 0.1s;
-}
-
-/* 悬停时显示关闭按钮 */
-:deep(.tag-hover-closable:hover .el-tag__close) {
-	visibility: visible;
-	opacity: 1;
-}
-
-/* ✅ 激活标签（effect=dark）时常驻显示关闭按钮 */
-:deep(.el-tag--dark .el-tag__close) {
-	visibility: visible;
-	opacity: 1;
-}
-
-:deep(.el-divider--vertical) {
-	display: flex;
-	margin: 0 0;
-	width: 0;
-	height: 24px;
-	border-left: 2px solid var(--el-border-color);
+:deep(.el-tabs__header) {
+	margin-bottom: 0;
 }
 
 .tag-context-menu {
