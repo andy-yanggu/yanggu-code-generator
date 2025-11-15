@@ -7,7 +7,8 @@
 					border
 					row-key="id"
 					max-height="60vh"
-					class="sortable-row-gen"
+					class="layout-table"
+					header-cell-class-name="layout-table-header"
 					:data="getFieldListData(0)"
 					:show-overflow-tooltip="true"
 				>
@@ -80,7 +81,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="查询配置" name="query">
-				<el-table ref="queryTable" border row-key="id" :data="getFieldListData(1)">
+				<el-table ref="queryTable" border row-key="id" :data="getFieldListData(1)" class="layout-table" header-cell-class-name="layout-table-header">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -111,7 +112,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="表单配置" name="form">
-				<el-table ref="formTable" border row-key="id" :data="getFieldListData(2)">
+				<el-table ref="formTable" border row-key="id" class="layout-table" header-cell-class-name="layout-table-header" :data="getFieldListData(2)">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -147,7 +148,7 @@
 				</el-table>
 			</el-tab-pane>
 			<el-tab-pane label="列表配置" name="grid">
-				<el-table ref="gridTable" border row-key="id" :data="getFieldListData(3)">
+				<el-table ref="gridTable" border row-key="id" class="layout-table" header-cell-class-name="layout-table-header" :data="getFieldListData(3)">
 					<el-table-column type="index" width="60" label="序号" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="attrName" label="属性名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="fieldComment" label="注释" header-align="center" align="center"></el-table-column>
@@ -170,14 +171,14 @@
 			</el-tab-pane>
 		</el-tabs>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle(fieldList)">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genTableFieldApi, GenTableFieldEntity } from '@/api/gen/table-field'
 import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
@@ -185,13 +186,13 @@ import { genFieldTypeApi } from '@/api/gen/field-type'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 import { LabelData } from '@/types/common'
+import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
 const activeName = ref()
 const fieldTable = ref()
 const formTable = ref()
 const gridTable = ref()
 const queryTable = ref()
-const submitLoading = ref(false)
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
@@ -299,39 +300,18 @@ const getFieldListData = (type: number) => {
 	}
 }
 
-// 表单提交
-const submitHandle = () => {
-	submitLoading.value = true
-	genTableFieldApi
-		.submitList(fieldList.value)
-		.then(() => {
-			ElMessage.success({
-				message: '字段配置成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-		.finally(() => {
-			submitLoading.value = false
-		})
-}
+const state = shallowReactive({
+	visible,
+	submitApi: genTableFieldApi.submitList,
+	message: '字段配置成功',
+	emit
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(state)
 
 defineExpose({
 	init
 })
 </script>
 
-<style lang="scss">
-.sortable-row-gen .drag-btn {
-	cursor: move;
-	font-size: 12px;
-}
-
-.sortable-row-gen .el-table__row.sortable-ghost,
-.sortable-row-gen .el-table__row.sortable-chosen {
-	background-color: #dfecfb;
-}
-</style>
+<style lang="scss"></style>

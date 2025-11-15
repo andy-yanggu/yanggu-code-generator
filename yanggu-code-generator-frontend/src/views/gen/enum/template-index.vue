@@ -57,7 +57,7 @@
 			</el-card>
 			<template #footer>
 				<div class="footer-buttons">
-					<el-button type="success" :icon="DocumentAdd" :loading="generatorLoading" @click="generateCode()">生成</el-button>
+					<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
 					<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 				</div>
 			</template>
@@ -67,13 +67,14 @@
 
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { reactive, ref } from 'vue'
+import { reactive, ref, shallowReactive } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
 import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
+import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
 const emit = defineEmits(['clearSelection'])
 
@@ -93,7 +94,6 @@ const initData = reactive({
 })
 
 const dialogVisible = ref(false)
-const generatorLoading = ref(false)
 
 const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []) => {
 	dialogVisible.value = true
@@ -109,7 +109,7 @@ const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []
 }
 
 const generateCode = () => {
-	const data = state.dataListSelections ? state.dataListSelections : []
+	const data = state.dataListSelections ?? []
 
 	if (data.length === 0) {
 		ElMessage.warning('请选择模板')
@@ -121,39 +121,27 @@ const generateCode = () => {
 	}
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
-		generatorLoading.value = true
-		genGeneratorApi
-			.enumDownloadZip(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到本地，请查看',
-					duration: 1000
-				})
-				dialogVisible.value = false
-				emit('clearSelection')
-			})
-			.finally(() => {
-				generatorLoading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.enumDownloadZip
+		submitState.message = '代码已经下载到本地，请查看'
 	} else if (generatorType === 1) {
-		generatorLoading.value = true
-		genGeneratorApi
-			.enumDownloadLocal(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到服务器本地，请查看',
-					duration: 1000
-				})
-				dialogVisible.value = false
-				emit('clearSelection')
-			})
-			.finally(() => {
-				generatorLoading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.enumDownloadLocal
+		submitState.message = '代码已经下载到服务器本地，请查看'
 	}
+	submitHandle(dataForm)
 }
 
 const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
+
+const submitState = shallowReactive({
+	visible: dialogVisible,
+	duration: 1000,
+	onSuccess: () => {
+		emit('clearSelection')
+		state.dataListSelections = []
+	}
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 defineExpose({
 	init

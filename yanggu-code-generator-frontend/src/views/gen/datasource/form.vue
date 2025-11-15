@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genDataSourceApi } from '@/api/gen/datasource'
+import { genDataSourceApi, GenDatasourceEntity } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
