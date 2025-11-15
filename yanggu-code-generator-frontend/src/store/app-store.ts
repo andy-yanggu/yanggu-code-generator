@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 import { useDark, useToggle } from '@vueuse/core'
+import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 
 // 标签数据
 export interface NavbarTag {
@@ -27,6 +28,28 @@ export interface IframeInfo {
 
 // 布局大小
 export type LayOutSize = 'large' | 'default' | 'small'
+
+// 持久化配置
+const getPersistConfig = () => {
+	const key = 'appStore'
+	if (import.meta.env.PROD) {
+		return {
+			key,
+			storage: localStorage,
+			// 支持动态配置忽略字段
+			omit: (_: never) => {
+				const originOmitList = []
+				const systemSettingStore = useSystemSettingStore()
+				if (!systemSettingStore.isOpenTagCache) {
+					originOmitList.push('tagList')
+				}
+				return originOmitList
+			}
+		} as unknown as PersistenceOptions
+	} else {
+		return false
+	}
+}
 
 export const useAppStore = defineStore(
 	'app',
@@ -182,20 +205,6 @@ export const useAppStore = defineStore(
 		}
 	},
 	{
-		// @ts-expect-error - 忽略下一行的类型检查
-		persist: {
-			key: 'appStore',
-			storage: localStorage,
-			// @ts-expect-error - 忽略下一行的类型检查
-			// 支持动态配置忽略字段
-			omit: _ => {
-				const originOmitList = []
-				const systemSettingStore = useSystemSettingStore()
-				if (!systemSettingStore.isOpenTagCache) {
-					originOmitList.push('tagList')
-				}
-				return originOmitList
-			}
-		}
+		persist: getPersistConfig()
 	}
 )

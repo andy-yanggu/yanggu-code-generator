@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { cloneObject, resetReactiveObject } from '@/utils/tool'
+import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 
 interface SystemSetting {
 	// 是否开启面包屑
@@ -78,6 +79,19 @@ const defaultSystemSetting: SystemSetting = {
 	menuDefault: '/index'
 }
 
+// 持久化配置
+const getPersistConfig = () => {
+	const key = 'systemSettingStore'
+	if (import.meta.env.PROD) {
+		return {
+			key,
+			storage: localStorage
+		} as PersistenceOptions
+	} else {
+		return false
+	}
+}
+
 export const useSystemSettingStore = defineStore(
 	'system-setting',
 	() => {
@@ -95,9 +109,6 @@ export const useSystemSettingStore = defineStore(
 		}
 	},
 	{
-		persist: {
-			key: 'systemSettingStore',
-			storage: localStorage
-		}
+		persist: getPersistConfig()
 	}
 )

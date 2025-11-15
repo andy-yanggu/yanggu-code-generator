@@ -1,16 +1,17 @@
 <template>
-	<div v-html="readmeContent"></div>
+	<iframe :src="readmeUrl" class="readme-iframe"></iframe>
 </template>
 
 <script setup lang="ts">
-import README from './README.html?raw'
-import { ref, onMounted } from 'vue'
+import README_URL from './README.html?url'
 
-const readmeContent = ref('')
-
-onMounted(() => {
-	readmeContent.value = README
-})
+const readmeUrl = README_URL
 </script>
 
-<style scoped></style>
+<style scoped>
+.readme-iframe {
+	width: 100%;
+	height: calc(100vh - 100px);
+	border: none;
+}
+</style>

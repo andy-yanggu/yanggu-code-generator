@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import { cloneObject, resetReactiveObject } from '@/utils/tool'
+import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 
 export interface UserInfo {
 	username: string
@@ -454,6 +455,24 @@ const businessMenuInfoList: MenuInfo[] = [
 	}
 ]
 
+// 持久化配置
+const getPersistConfig = () => {
+	const key = 'userStore'
+	if (import.meta.env.PROD) {
+		return {
+			key,
+			omit: ['isAddRoutes'],
+			storage: localStorage
+		} as PersistenceOptions
+	} else {
+		return {
+			key,
+			pick: ['userInfo', 'tokenInfo', 'permissionList', 'roleList'],
+			storage: localStorage
+		} as PersistenceOptions
+	}
+}
+
 export const useUserStore = defineStore(
 	'user',
 	() => {
@@ -526,10 +545,6 @@ export const useUserStore = defineStore(
 		}
 	},
 	{
-		persist: {
-			key: 'userStore',
-			omit: ['isAddRoutes'],
-			storage: localStorage
-		}
+		persist: getPersistConfig()
 	}
 )
