@@ -42,7 +42,7 @@
 			</el-table>
 		</el-card>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :disabled="state.dataListSelections!.length === 0" :loading="submitLoading" @click="submitHandle()">
+			<el-button type="primary" :icon="Check" :disabled="state.dataListSelections!.length === 0" :loading="submitLoading" @click="submitData()">
 				确定
 			</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
@@ -51,12 +51,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
 import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
 const emit = defineEmits(['refreshDataList'])
 
@@ -73,7 +74,6 @@ const state = reactive({
 } as IHooksOptions<GenTableQuery, GenTableEntity>)
 
 const visible = ref(false)
-const submitLoading = ref(false)
 const projectList = ref([] as GenProjectEntity[])
 
 const dataRules = reactive({
@@ -95,7 +95,7 @@ const init = () => {
 }
 
 // 表单提交
-const submitHandle = () => {
+const submitData = () => {
 	if (state.dataListSelections!.length === 0) {
 		ElMessage.warning('请选择表')
 		return
@@ -104,26 +104,18 @@ const submitHandle = () => {
 		tableNameList: state.dataListSelections,
 		projectId: state.queryForm.projectId
 	}
-	submitLoading.value = true
-
-	genTableApi
-		.import(dataForm)
-		.then(() => {
-			ElMessage.success({
-				message: '导入成功',
-				duration: 500,
-				onClose: () => {
-					visible.value = false
-					emit('refreshDataList')
-				}
-			})
-		})
-		.finally(() => {
-			submitLoading.value = false
-		})
+	submitHandle(dataForm)
 }
 
 const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
+
+const submitState = shallowReactive({
+	visible,
+	submitApi: genTableApi.import,
+	emit
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 defineExpose({
 	init

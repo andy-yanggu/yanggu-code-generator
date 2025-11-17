@@ -21,22 +21,21 @@
 				<el-button v-if="activeRef < 2" type="primary" @click="nextStep()">
 					下一步<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
 				</el-button>
-				<el-button v-if="activeRef === 2" :loading="generateCodeLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成 </el-button>
+				<el-button v-if="activeRef === 2" :loading="submitLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成 </el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, reactive, ref, shallowReactive } from 'vue'
 import TemplateIndex from './template-index.vue'
 import TableIndex from './table-index.vue'
 import EnumIndex from './enum-index.vue'
-import { ElMessage } from 'element-plus'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
+import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
-const generateCodeLoading = ref(false)
 const activeRef = ref(0)
 const dialogVisible = ref(false)
 const tableIndexRef = ref()
@@ -138,34 +137,13 @@ const generateCode = () => {
 
 	const generatorType = projectReactive.generatorType
 	if (generatorType === 0) {
-		generateCodeLoading.value = true
-		genGeneratorApi
-			.projectDownloadZip(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到浏览器',
-					duration: 1000
-				})
-				dialogVisible.value = false
-			})
-			.finally(() => {
-				generateCodeLoading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.projectDownloadZip
+		submitState.message = '代码已经下载到浏览器'
 	} else if (generatorType === 1) {
-		generateCodeLoading.value = true
-		genGeneratorApi
-			.projectDownloadLocal(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到本地',
-					duration: 1000
-				})
-				dialogVisible.value = false
-			})
-			.finally(() => {
-				generateCodeLoading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.projectDownloadLocal
+		submitState.message = '代码已经下载到本地'
 	}
+	submitHandle(dataForm)
 }
 
 const templateSelectChange = (data: any[]) => {
@@ -179,6 +157,13 @@ const tableSelectChange = (data: any[]) => {
 const enumSelectChange = (data: any[]) => {
 	enumListRef.value = data
 }
+
+const submitState = shallowReactive({
+	visible: dialogVisible,
+	duration: 1000
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 defineExpose({
 	init
