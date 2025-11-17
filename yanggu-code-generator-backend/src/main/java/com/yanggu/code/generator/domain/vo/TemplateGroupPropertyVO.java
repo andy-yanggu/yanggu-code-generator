@@ -48,7 +48,7 @@ public class TemplateGroupPropertyVO extends BaseVO implements Serializable {
 	 * 属性默认值
 	 */
 	@Schema(description = "属性默认值")
-	private String propDefaultValue;
+	private Object propDefaultValue;
 
 	/**
 	 * 组件类型，前端显示的组件类型（0-input，1-select、2-radio）

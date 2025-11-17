@@ -3,12 +3,7 @@
 		<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
 			<!-- label标签 -->
 			<template #label>
-				<div style="display: flex; align-items: center">
-					<span>{{ item.propTitle }}</span>
-					<el-tooltip v-if="item.remark" :content="item.remark" effect="dark" placement="top">
-						<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-					</el-tooltip>
-				</div>
+				<form-label-tooltip :label="item.propTitle" :tooltip="item.remark!"></form-label-tooltip>
 			</template>
 
 			<!-- 文本输入 -->
@@ -54,40 +49,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
-import { InfoFilled } from '@element-plus/icons-vue'
-import { Key } from '@/types/common'
+import { nextTick, onMounted, PropType, watchEffect } from 'vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 
-/**
- * 下拉或单选项结构
- */
-interface ComponentOption {
-	label: string
-	value: Key
-}
-
-/**
- * 动态属性项定义
- */
-export interface PropertyItem {
-	id: Key
-	propKey: string
-	propTitle: string
-	componentType: number // 0: input, 1: number, 2: select, 3: radio, 4: checkbox
-	required: number
-	remark?: string
-	defaultValue?: string | number | boolean
-	componentOptions?: ComponentOption[]
-}
+defineOptions({
+	name: 'TemplateGroupPropertyForm'
+})
 
 const props = defineProps({
 	propertyList: {
-		type: Array as PropType<PropertyItem[]>,
-		default: [] as PropertyItem[]
-	},
-	modelValue: {
-		type: Object,
-		required: true
+		type: Array as PropType<GenTemplateGroupPropertyEntity[]>,
+		default: [] as GenTemplateGroupPropertyEntity[]
 	},
 	modelValueProp: {
 		type: String,
@@ -95,19 +68,19 @@ const props = defineProps({
 	}
 })
 
-const emit = defineEmits(['update:modelValue'])
+// 定义双向绑定表单数据
+const formData = defineModel('formData', {
+	type: Object
+})
 
-// 使用 computed 代理 modelValue，实现双向绑定
-const formData = computed({
-	get: () => props.modelValue,
-	set: val => {
+onMounted(() => {
+	nextTick(() => {
 		// 补齐默认值
-		props.propertyList.forEach((item: PropertyItem) => {
-			if (!(item.propKey in props.modelValue)) {
-				val[item.propKey] = item.defaultValue ?? ''
+		props.propertyList.forEach((item: GenTemplateGroupPropertyEntity) => {
+			if (!formData.value[item.propKey] && item.propDefaultValue) {
+				formData.value[item.propKey] = item.propDefaultValue
 			}
 		})
-		emit('update:modelValue', val)
-	}
+	})
 })
 </script>

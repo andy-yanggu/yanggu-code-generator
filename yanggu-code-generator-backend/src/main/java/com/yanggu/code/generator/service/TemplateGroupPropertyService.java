@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service;
 
+import cn.hutool.v7.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -9,6 +10,7 @@ import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
+import com.yanggu.code.generator.util.GenUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,7 +97,15 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
     default List<TemplateGroupPropertyEntity> listByGroupId(List<Long> groupIdList) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
                 .in(TemplateGroupPropertyEntity::getTemplateGroupId, groupIdList);
-        return this.list(wrapper);
+        List<TemplateGroupPropertyEntity> list = this.list(wrapper);
+        list.forEach(temp -> {
+            if (CollUtil.isNotEmpty(temp.getComponentOptions())) {
+                temp.getComponentOptions().forEach(tempOption -> {
+                    tempOption.setValue(GenUtil.convertStringToAppropriateType(tempOption.getValue().toString()));
+                });
+            }
+        });
+        return list;
     }
 
 }

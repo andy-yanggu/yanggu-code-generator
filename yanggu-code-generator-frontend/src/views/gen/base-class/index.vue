@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<!-- 查询表单卡片 -->
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="基类包名" prop="packageName">
@@ -17,6 +18,7 @@
 			</el-form>
 		</el-card>
 
+		<!-- 表格卡片 -->
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
@@ -85,11 +87,10 @@
 				@current-change="currentChangeHandle"
 			>
 			</el-pagination>
-
-			<!-- 弹窗表单 -->
-			<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></base-class-form>
 		</el-card>
 	</div>
+	<!-- 弹窗表单 -->
+	<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></base-class-form>
 </template>
 
 <script setup lang="ts">

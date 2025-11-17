@@ -1,6 +1,7 @@
 import { service } from '@/utils/request'
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
+import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 
 // 模板组管理Entity
 export interface GenTemplateGroupEntity {
@@ -11,7 +12,9 @@ export interface GenTemplateGroupEntity {
 	// 模板组类型（0-项目，1-表）
 	type: number | string
 	// 模板组描述
-	groupDesc: string
+	groupDesc?: string
+	// 模板组属性
+	propertyList?: GenTemplateGroupPropertyEntity[]
 }
 
 // 模板组管理Query查询参数

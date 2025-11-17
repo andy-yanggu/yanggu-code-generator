@@ -13,7 +13,7 @@ export interface GenTemplateGroupPropertyEntity {
 	// 属性键
 	propKey: string
 	// 属性默认值
-	propDefaultValue: string
+	propDefaultValue: string | number | boolean
 	// 组件类型
 	componentType: number | string
 	// 组件选项

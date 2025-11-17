@@ -68,7 +68,8 @@
 				</el-select>
 			</el-form-item>
 			<template-group-property-form
-				:model-value="state.dataForm.projectTemplateGroupPropValue"
+				:key="state.dataForm.projectTemplateGroupId"
+				v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
 				model-value-prop="projectTemplateGroupPropValue"
 				:property-list="projectTemplateGroupPropertyList"
 			></template-group-property-form>
@@ -141,6 +142,7 @@ import { Check, Close } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 
 defineOptions({
 	name: 'GenProjectForm'
@@ -161,13 +163,7 @@ const getList = () => {
 			addProjectRule()
 		})
 		tableTemplateGroupList.value = data.filter(item => item.type === 1)
-		nextTick(() => {
-			addTableRule()
-		})
 		enumTemplateGroupList.value = data.filter(item => item.type === 2)
-		nextTick(() => {
-			addEnumRule()
-		})
 	})
 
 	// 基类下拉
@@ -231,16 +227,8 @@ const projectTemplateGroupPropertyList = computed(() => {
 	if (find) {
 		return find.propertyList
 	} else {
-		return []
+		return [] as GenTemplateGroupPropertyEntity[]
 	}
-})
-
-const tableTemplateGroupPropertyList = computed(() => {
-	return tableTemplateGroupList.value.find(item => item.id === state.dataForm.tableTemplateGroupId)?.propertyList
-})
-
-const enumTemplateGroupPropertyList = computed(() => {
-	return enumTemplateGroupList.value.find(item => item.id === state.dataForm.enumTemplateGroupId)?.propertyList
 })
 
 watch(
@@ -248,27 +236,7 @@ watch(
 	() => {
 		addProjectRule()
 		if (!state.dataForm.id) {
-			state.dataForm.projectTemplateGroupPropValue = {}
-		}
-	}
-)
-
-watch(
-	() => state.dataForm.tableTemplateGroupId,
-	() => {
-		addTableRule()
-		if (!state.dataForm.id) {
-			state.dataForm.tableTemplateGroupPropValue = {}
-		}
-	}
-)
-
-watch(
-	() => state.dataForm.enumTemplateGroupId,
-	() => {
-		addEnumRule()
-		if (!state.dataForm.id) {
-			state.dataForm.enumTemplateGroupPropValue = {}
+			Object.assign(state.dataForm.projectTemplateGroupPropValue, {})
 		}
 	}
 )
@@ -286,40 +254,6 @@ const addProjectRule = () => {
 	projectTemplateGroupPropertyList.value?.forEach(item => {
 		if (item.required === 1) {
 			dataRules[`projectTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
-		}
-	})
-}
-
-const addTableRule = () => {
-	// 删除之前的规则
-	// 字段是tableTemplateGroupPropValue.xxx的形式
-	for (const key in dataRules) {
-		if (key.startsWith('tableTemplateGroupPropValue.')) {
-			delete dataRules[key]
-		}
-	}
-
-	// 添加后面的规则
-	tableTemplateGroupPropertyList.value?.forEach(item => {
-		if (item.required === 1) {
-			dataRules[`tableTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
-		}
-	})
-}
-
-const addEnumRule = () => {
-	// 删除之前的规则
-	// 字段是enumTemplateGroupPropValue.xxx的形式
-	for (const key in dataRules) {
-		if (key.startsWith('enumTemplateGroupPropValue.')) {
-			delete dataRules[key]
-		}
-	}
-
-	// 添加后面的规则
-	enumTemplateGroupPropertyList.value?.forEach(item => {
-		if (item.required === 1) {
-			dataRules[`enumTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 		}
 	})
 }
