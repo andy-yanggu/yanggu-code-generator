@@ -8,7 +8,12 @@
 						<el-button :icon="Refresh" size="small" type="primary" :loading="loading" @click="refreshCascaderData()">刷新</el-button>
 					</el-tooltip>
 					<el-tooltip content="根据当前选择重新渲染模板" placement="top">
-						<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="handleCascaderChange(testData.cascaderValue)">
+						<el-button
+							:icon="Document"
+							size="small"
+							:disabled="testData.cascaderValue.length === 0"
+							@click="handleCascaderChange(testData.cascaderValue)"
+						>
 							渲染
 						</el-button>
 					</el-tooltip>
@@ -41,7 +46,12 @@
 						</el-col>
 						<el-col :span="4" style="text-align: right">
 							<template v-if="testData.activeName === 'template'">
-								<el-button :icon="Document" size="small" :disabled="!testData.cascaderValue" @click="handleCascaderChange(testData.cascaderValue)">
+								<el-button
+									:icon="Document"
+									size="small"
+									:disabled="testData.cascaderValue.length === 0"
+									@click="handleCascaderChange(testData.cascaderValue)"
+								>
 									渲染
 								</el-button>
 								<el-button
@@ -240,7 +250,6 @@ const refreshCascaderData = async () => {
 		} else if (templateGroupType === 2) {
 			ElMessage.warning('请先关联枚举')
 		}
-		return
 	}
 	testData.cascaderData = data
 

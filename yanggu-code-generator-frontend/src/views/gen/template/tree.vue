@@ -108,7 +108,7 @@
 			></template-form>
 
 			<!-- 右侧：模板编辑 -->
-			<el-container v-if="templateTreeData.tabList.length > 0" style="padding: 0; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-container v-if="templateTreeData.tabList.length > 0" style="height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
 				<!-- 头部操作区域 -->
 				<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 					<el-row style="margin-bottom: 5px">
@@ -1356,8 +1356,7 @@ html.dark .context-menu svg {
 	display: inline-block;
 }
 
-/* 覆盖 Element Plus 默认样式 */
-:deep(.full-screen-mode) {
+.full-screen-mode {
 	position: fixed;
 	top: 0;
 	left: 0;
