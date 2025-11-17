@@ -28,7 +28,8 @@ defineProps({
 	},
 	tooltip: {
 		type: String,
-		required: true
+		required: true,
+		default: ''
 	},
 	icon: {
 		type: Object,

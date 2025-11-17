@@ -88,15 +88,14 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<template-group-property-form ref="formRef" @refresh-data-list="getDataList"></template-group-property-form>
+			<template-group-property-form ref="formRef" @refresh-data-list="getDataList()"></template-group-property-form>
 		</el-card>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { useInitForm } from '@/hooks/use-init-form'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery } from '@/api/gen/template-group-property'
@@ -159,13 +158,15 @@ const init = () => {
 	getDataList()
 }
 
+const formRef = ref()
+
+const addOrUpdateHandle = (id?: number) => {
+	nextTick(() => {
+		formRef.value.initHandle(state.queryForm.templateGroupId, id)
+	})
+}
+
 defineExpose({
 	init
 })
-
-const addOrUpdateHandle = (id?: number) => {
-	formRef.value.initHandle(state.queryForm.templateGroupId, id)
-}
-
-const { formRef } = useInitForm()
 </script>

@@ -31,6 +31,10 @@ import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
+defineOptions({
+	name: 'GenEnumForm'
+})
+
 const projectList = ref([] as GenProjectEntity[])
 const getProjectList = () => {
 	genProjectApi.entityList().then(data => {

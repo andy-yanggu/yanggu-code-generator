@@ -140,7 +140,7 @@ const state = reactive({
 	deleteListApi: genProjectApi.deleteList,
 	queryForm: {
 		projectName: '',
-		generatorType: undefined,
+		generatorType: '',
 		dateTimeRange: [] as string[]
 	},
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'

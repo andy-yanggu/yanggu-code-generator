@@ -59,6 +59,10 @@ import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenTableForm'
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const projectList = ref([] as GenProjectEntity[])

@@ -188,6 +188,10 @@ import { ElLoading } from 'element-plus'
 import { LabelData } from '@/types/common'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
+defineOptions({
+	name: 'GenTableFieldConfig'
+})
+
 const activeName = ref()
 const fieldTable = ref()
 const formTable = ref()

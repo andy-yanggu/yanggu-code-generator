@@ -83,6 +83,10 @@ import { COMPONENT_TYPES } from '@/constant/enum'
 import { LabelData } from '@/types/common'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
+defineOptions({
+	name: 'GenTemplateGroupPropertyForm'
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
@@ -90,6 +94,9 @@ const state = reactive({
 	submitApi: genTemplateGroupPropertyApi.submit,
 	// 详情API
 	detailApi: genTemplateGroupPropertyApi.detail,
+	initBefore: () => {
+		state.dataForm.componentOptions = [{ label: '', value: '' }] as LabelData[]
+	},
 	// 表单数据
 	dataForm: {
 		id: '',
@@ -120,7 +127,7 @@ watch(
 	}
 )
 
-const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.componentType! as number))
+const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.componentType as number))
 
 const componentOptions = (_: any, __: any, callback: any) => {
 	if (!hasComponentOptions.value) {

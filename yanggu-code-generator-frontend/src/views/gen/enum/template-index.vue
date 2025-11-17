@@ -76,6 +76,10 @@ import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/t
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
+defineOptions({
+	name: 'GenEnumTemplateDialog'
+})
+
 const emit = defineEmits(['clearSelection'])
 
 const state = reactive({

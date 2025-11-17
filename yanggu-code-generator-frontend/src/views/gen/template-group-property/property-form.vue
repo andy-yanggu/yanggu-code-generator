@@ -3,17 +3,17 @@
 		<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
 			<!-- label标签 -->
 			<template #label>
-				<form-label-tooltip :label="item.propTitle" :tooltip="item.remark!"></form-label-tooltip>
+				<form-label-tooltip :label="item.propTitle" :tooltip="item.remark"></form-label-tooltip>
 			</template>
 
 			<!-- 文本输入 -->
 			<el-input v-if="item.componentType === 0" v-model="formData[item.propKey]" :placeholder="`请输入${item.propTitle}`" clearable></el-input>
 
 			<!-- 数字输入 -->
-			<el-input-number v-else-if="item.componentType === 1" v-model="formData[item.propKey]" :min="0"></el-input-number>
+			<el-input-number v-else-if="item.componentType === 1" v-model="formData[item.propKey]"></el-input-number>
 
 			<!-- 下拉框 -->
-			<el-select v-else-if="item.componentType === 2" v-model="formData[item.propKey]" :placeholder="`请选择${item.propTitle}`" clearable>
+			<el-select v-else-if="item.componentType === 2" v-model="formData[item.propKey]" :placeholder="`请选择${item.propTitle}`" filterable clearable>
 				<el-option v-for="selectItem in item.componentOptions" :key="selectItem.value" :value="selectItem.value">{{ selectItem.label }}</el-option>
 			</el-select>
 
@@ -49,12 +49,12 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, PropType, watchEffect } from 'vue'
+import { nextTick, onMounted, PropType } from 'vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 
 defineOptions({
-	name: 'TemplateGroupPropertyForm'
+	name: 'GenTemplateGroupPropertyPropertyForm'
 })
 
 const props = defineProps({

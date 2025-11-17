@@ -73,7 +73,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<enum-item-form ref="formRef" @refresh-data-list="getDataList"></enum-item-form>
+			<enum-item-form ref="formRef" @refresh-data-list="getDataList()"></enum-item-form>
 		</el-card>
 	</el-dialog>
 </template>
@@ -85,6 +85,10 @@ import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { genEnumItemApi, GenEnumItemEntity, GenEnumItemQuery } from '@/api/gen/enum-item'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
+
+defineOptions({
+	name: 'GenEnumItem'
+})
 
 const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,

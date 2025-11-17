@@ -99,7 +99,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<gen-datasource-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList"></gen-datasource-form>
+			<gen-datasource-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></gen-datasource-form>
 		</el-card>
 	</div>
 </template>
