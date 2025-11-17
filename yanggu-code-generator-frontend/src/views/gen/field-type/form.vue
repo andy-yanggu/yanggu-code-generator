@@ -3,12 +3,7 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item prop="columnType">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>字段类型</span>
-						<el-tooltip content="数据库中的字段类型；字段类型具有唯一性，不能重复" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="字段类型" tooltip="数据库中的字段类型；字段类型具有唯一性，不能重复"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
@@ -33,7 +28,8 @@ import { reactive } from 'vue'
 import { genFieldTypeApi, GenFieldTypeEntity } from '@/api/gen/field-type'
 import { ATTR_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 const emit = defineEmits(['refreshDataList'])
 

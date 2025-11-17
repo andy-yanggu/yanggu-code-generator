@@ -8,12 +8,7 @@
 			</el-form-item>
 			<el-form-item prop="enumName">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>枚举名称</span>
-						<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接；在同一个项目下唯一" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="枚举名称" tooltip="使用英文小写字母，单词之间使用'-'拼接；在同一个项目下唯一"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
 			</el-form-item>
@@ -33,7 +28,8 @@ import { reactive, ref } from 'vue'
 import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
 import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 const projectList = ref([] as GenProjectEntity[])
 const getProjectList = () => {

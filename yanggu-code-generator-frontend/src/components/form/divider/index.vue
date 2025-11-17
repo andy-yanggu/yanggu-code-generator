@@ -5,6 +5,10 @@
 	</div>
 </template>
 <script setup lang="ts">
+defineOptions({
+	name: 'FormDivider'
+})
+
 defineProps({
 	title: {
 		type: String,

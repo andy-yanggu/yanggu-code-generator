@@ -3,23 +3,13 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<el-form-item prop="enumItemName">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>枚举项名称</span>
-						<el-tooltip content="使用英文大写字母，单词之间使用'_'拼接；该字段具有唯一性" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="枚举项名称" tooltip="使用英文大写字母，单词之间使用'_'拼接；该字段具有唯一性"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.enumItemName" clearable placeholder="请输入枚举项名称"></el-input>
 			</el-form-item>
 			<el-form-item prop="enumItemCode">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>枚举项编码</span>
-						<el-tooltip content="枚举项编码具有唯一性" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="枚举项编码" tooltip="枚举项编码具有唯一性"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.enumItemCode" clearable placeholder="请输入枚举项编码"></el-input>
 			</el-form-item>
@@ -41,7 +31,8 @@
 import { reactive } from 'vue'
 import { genEnumItemApi, GenEnumItemEntity } from '@/api/gen/enum-item'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 const emit = defineEmits(['refreshDataList'])
 

@@ -3,12 +3,7 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<el-form-item prop="groupName">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>模板组名称</span>
-						<el-tooltip content="模板组名称具有唯一性，不能重复" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="模板组名称" tooltip="模板组名称具有唯一性，不能重复"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.groupName" clearable placeholder="请输入模板组名称"></el-input>
 			</el-form-item>
@@ -33,7 +28,8 @@ import { PropType, reactive } from 'vue'
 import { genTemplateGroupApi, GenTemplateGroupEntity } from '@/api/gen/template-group'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'

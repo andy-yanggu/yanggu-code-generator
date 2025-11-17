@@ -13,12 +13,7 @@
 				<el-col :span="12">
 					<el-form-item prop="projectName">
 						<template #label>
-							<div style="display: flex; align-items: center">
-								<span>项目名称</span>
-								<el-tooltip content="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性" effect="dark" placement="top">
-									<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-								</el-tooltip>
-							</div>
+							<form-label-tooltip label="项目名称" tooltip="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性"></form-label-tooltip>
 						</template>
 						<el-input v-model="state.dataForm.projectName" clearable placeholder="请输入项目名称"></el-input>
 					</el-form-item>
@@ -142,9 +137,14 @@ import { genTemplateGroupApi, GenTemplateGroupEntity } from '@/api/gen/template-
 import { genBaseClassApi, GenBaseClassEntity } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
-import FormDivider from '@/components/form-divider/index.vue'
+import FormDivider from '@/components/form/divider/index.vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+
+defineOptions({
+	name: 'GenProjectForm'
+})
 
 const emit = defineEmits(['refreshDataList'])
 

@@ -3,12 +3,7 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item prop="connName">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>连接名称</span>
-						<el-tooltip content="连接名称具有唯一性，不能重复" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="连接名称" tooltip="连接名称具有唯一性"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
 			</el-form-item>
@@ -42,7 +37,8 @@ import { PropType, reactive } from 'vue'
 import { genDataSourceApi, GenDatasourceEntity } from '@/api/gen/datasource'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, InfoFilled } from '@element-plus/icons-vue'
+import { Check, Close } from '@element-plus/icons-vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'GenDatasourceForm'

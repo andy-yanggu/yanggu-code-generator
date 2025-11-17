@@ -3,28 +3,15 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
 			<el-form-item prop="propTitle">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>属性标题</span>
-						<el-tooltip content="属性标题具有唯一性，不能重复" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="属性标题" tooltip="属性标题具有唯一性，不能重复"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.propTitle" clearable placeholder="请输入属性标题"></el-input>
 			</el-form-item>
 			<el-form-item prop="propKey">
 				<template #label>
-					<div style="display: flex; align-items: center">
-						<span>属性键</span>
-						<el-tooltip content="属性键具有唯一性，不能重复" effect="dark" placement="top">
-							<el-icon style="margin-left: 5px; cursor: pointer"><InfoFilled></InfoFilled></el-icon>
-						</el-tooltip>
-					</div>
+					<form-label-tooltip label="属性键" tooltip="属性键具有唯一性，不能重复"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.propKey" clearable placeholder="请输入属性键"></el-input>
-			</el-form-item>
-			<el-form-item label="属性默认值" prop="propDefaultValue">
-				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
 			</el-form-item>
 			<el-form-item label="组件类型" prop="componentType">
 				<el-radio-group v-model="state.dataForm.componentType">
@@ -70,6 +57,9 @@
 					inactive-text="否"
 				></el-switch>
 			</el-form-item>
+			<el-form-item label="属性默认值" prop="propDefaultValue">
+				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
+			</el-form-item>
 			<el-form-item label="排序" prop="propOrder">
 				<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
 			</el-form-item>
@@ -88,9 +78,10 @@
 import { computed, reactive, watch } from 'vue'
 import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { Check, Close, Delete, InfoFilled, Plus } from '@element-plus/icons-vue'
+import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
 import { COMPONENT_TYPES } from '@/constant/enum'
 import { LabelData } from '@/types/common'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 const emit = defineEmits(['refreshDataList'])
 
