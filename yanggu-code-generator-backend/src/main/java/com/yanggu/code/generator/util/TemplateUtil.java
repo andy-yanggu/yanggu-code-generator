@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.util;
 
 import com.yanggu.code.generator.common.exception.BusinessException;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,10 @@ public class TemplateUtil {
     public static String renderTemplate(String templateName, String templateContent, Object dataModel) {
         try (StringReader reader = new StringReader(templateContent);
              StringWriter sw = new StringWriter()) {
-            Template template = new Template(templateName, reader, null, "utf-8");
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
+            // 不要千分位，从根源解决
+            cfg.setNumberFormat("0");
+            Template template = new Template(templateName, reader, cfg, "utf-8");
             template.process(dataModel, sw);
             return sw.toString();
         } catch (Exception e) {

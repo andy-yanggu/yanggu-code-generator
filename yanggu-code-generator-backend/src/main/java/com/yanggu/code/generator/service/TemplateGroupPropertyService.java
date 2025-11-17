@@ -96,7 +96,8 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
      */
     default List<TemplateGroupPropertyEntity> listByGroupId(List<Long> groupIdList) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class)
-                .in(TemplateGroupPropertyEntity::getTemplateGroupId, groupIdList);
+                .in(TemplateGroupPropertyEntity::getTemplateGroupId, groupIdList)
+                .orderByAsc(TemplateGroupPropertyEntity::getPropOrder);
         List<TemplateGroupPropertyEntity> list = this.list(wrapper);
         list.forEach(temp -> {
             if (CollUtil.isNotEmpty(temp.getComponentOptions())) {
