@@ -87,3 +87,10 @@ const findRouteByPath = (targetPath: string): Breadcrumb => {
 	}
 }
 </script>
+<style scoped>
+:deep(.el-breadcrumb__inner),
+:deep(.el-breadcrumb__inner.is-link),
+:deep(.el-breadcrumb__separator) {
+	color: var(--el-text-color-primary) !important;
+}
+</style>
