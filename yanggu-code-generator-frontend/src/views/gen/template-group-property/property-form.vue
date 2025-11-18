@@ -76,8 +76,9 @@ const formData = defineModel('formData', {
 onMounted(() => {
 	nextTick(() => {
 		// 补齐默认值
+		const keys = Object.keys(formData.value)
 		props.propertyList.forEach((item: GenTemplateGroupPropertyEntity) => {
-			if (!formData.value[item.propKey] && item.propDefaultValue) {
+			if (!keys.includes(item.propKey)) {
 				formData.value[item.propKey] = item.propDefaultValue
 			}
 		})

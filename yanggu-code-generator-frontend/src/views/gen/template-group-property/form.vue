@@ -57,6 +57,9 @@
 					</el-col>
 				</el-row>
 			</el-form-item>
+			<el-form-item label="属性默认值" prop="propDefaultValue">
+				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
+			</el-form-item>
 			<el-form-item label="是否必填" prop="required">
 				<el-switch
 					v-model="state.dataForm.required"
@@ -66,9 +69,6 @@
 					active-text="是"
 					inactive-text="否"
 				></el-switch>
-			</el-form-item>
-			<el-form-item label="属性默认值" prop="propDefaultValue">
-				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
@@ -168,6 +168,7 @@ const dataRules = reactive({
 	propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	propDefaultValue: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	componentOptions: [{ required: true, validator: componentOptions, trigger: 'blur' }]

@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.core.reflect.ClassUtil;
 import cn.hutool.v7.json.JSONArray;
 import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -44,12 +43,7 @@ public class ProjectTemplateGroupPropertyValueServiceImpl extends ServiceImpl<Pr
             entity.setProjectId(projectId);
             entity.setTemplateGroupId(templateGroupId);
             entity.setTemplateGroupPropertyId(collectMap.get(key));
-            String data;
-            if (ClassUtil.isSimpleValueType(value.getClass())) {
-                data = value.toString();
-            } else {
-                data = JSONUtil.toJsonStr(value);
-            }
+            String data = GenUtil.getStringValue(value);
             entity.setTemplateGroupPropertyValue(data);
             projectTemplateGroupPropertyValueMapper.insert(entity);
         });

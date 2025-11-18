@@ -26,6 +26,7 @@ import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
+import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateGroupMapper;
@@ -33,6 +34,7 @@ import com.yanggu.code.generator.mapstruct.TemplateGroupMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateGroupPropertyMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.*;
+import com.yanggu.code.generator.util.GenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -205,7 +207,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
         voList.forEach(vo -> {
             List<TemplateGroupPropertyEntity> propertyList = collectMap.get(vo.getId());
-            vo.setPropertyList(templateGroupPropertyMapstruct.entityToVO(propertyList));
+            List<TemplateGroupPropertyVO> propertyVOList = templateGroupPropertyMapstruct.entityToVO(propertyList);
+            propertyVOList.forEach(temp -> temp.setPropDefaultValue(GenUtil.handleData(temp.getPropDefaultValue().toString())));
+            vo.setPropertyList(propertyVOList);
         });
         return voList;
     }

@@ -105,7 +105,7 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
         list.forEach(temp -> {
             if (CollUtil.isNotEmpty(temp.getComponentOptions())) {
                 temp.getComponentOptions().forEach(tempOption -> {
-                    tempOption.setValue(GenUtil.convertStringToAppropriateType(tempOption.getValue().toString()));
+                    tempOption.setValue(GenUtil.handleData(tempOption.getValue().toString()));
                 });
             }
         });

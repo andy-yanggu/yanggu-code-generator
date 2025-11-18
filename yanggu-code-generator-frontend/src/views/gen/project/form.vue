@@ -233,10 +233,20 @@ const projectTemplateGroupPropertyList = computed(() => {
 
 watch(
 	() => state.dataForm.projectTemplateGroupId,
-	() => {
-		addProjectRule()
-		if (!state.dataForm.id) {
-			Object.assign(state.dataForm.projectTemplateGroupPropValue, {})
+	(newVal, oldVal) => {
+		// 初始化阶段（oldVal 为 undefined 或空），不需要清空
+		if (!oldVal) {
+			addProjectRule()
+			return
+		}
+
+		// 只有真正发生变更时才清空
+		if (newVal !== oldVal) {
+			addProjectRule()
+
+			// 清空而不替换引用
+			const obj = state.dataForm.projectTemplateGroupPropValue
+			Object.keys(obj).forEach(k => delete obj[k])
 		}
 	}
 )

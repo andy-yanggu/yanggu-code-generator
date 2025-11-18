@@ -1,6 +1,8 @@
 package com.yanggu.code.generator.util;
 
+import cn.hutool.v7.core.text.StrUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
+import freemarker.core.InvalidReferenceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.experimental.UtilityClass;
@@ -34,7 +36,12 @@ public class TemplateUtil {
             return sw.toString();
         } catch (Exception e) {
             log.error("模板渲染失败，模板名称: {}，异常信息: {}", templateName, e.getMessage(), e);
-            throw new BusinessException(e.getMessage());
+            if (e instanceof InvalidReferenceException e2) {
+                String format = StrUtil.format("{}模板文件渲染异常，请查看异常信息：{}", templateName, e2.getMessageWithoutStackTop());
+                throw new BusinessException(format);
+            } else {
+                throw new BusinessException(e.getMessage());
+            }
         }
     }
 
