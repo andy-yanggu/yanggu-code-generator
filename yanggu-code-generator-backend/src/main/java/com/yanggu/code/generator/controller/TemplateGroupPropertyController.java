@@ -5,6 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
@@ -177,6 +178,16 @@ public class TemplateGroupPropertyController {
     public void importTemplateGroup(@RequestParam("file") MultipartFile file,
                                     @RequestParam("templateGroupId") Long templateGroupId) throws Exception {
         templateGroupPropertyService.importTemplateGroupProperty(file, templateGroupId);
+    }
+
+    /**
+     * 变更是否必填
+     */
+    @PutMapping("/changeRequired")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "变更是否必填")
+    public void changeRequired(@RequestBody @Validated TemplateGroupPropertyUpdateRequiredDTO dto) {
+        templateGroupPropertyService.changeRequired(dto);
     }
 
 }

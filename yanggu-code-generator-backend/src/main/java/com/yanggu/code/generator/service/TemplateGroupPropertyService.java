@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.util.GenUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -107,6 +109,14 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
             }
         });
         return list;
+    }
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    default void changeRequired(TemplateGroupPropertyUpdateRequiredDTO dto) {
+        TemplateGroupPropertyEntity updateEntity = new TemplateGroupPropertyEntity();
+        updateEntity.setId(dto.getId());
+        updateEntity.setRequired(dto.getRequired());
+        this.updateById(updateEntity);
     }
 
 }

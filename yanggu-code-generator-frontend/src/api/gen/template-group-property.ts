@@ -1,6 +1,7 @@
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { PageQuery } from '@/api/common/type'
 import { LabelData } from '@/types/common'
+import { service } from '@/utils/request'
 
 // 模板组属性Entity
 export interface GenTemplateGroupPropertyEntity {
@@ -37,12 +38,19 @@ export interface GenTemplateGroupPropertyQuery extends PageQuery {
 }
 
 // 特定api
-interface CustomApi {}
+interface CustomApi {
+	// 变更是否必填
+	changeRequired: (id: number | string, required: number) => Promise<void>
+}
 
 const baseUrl: string = '/gen/templateGroupProperty'
 
 // 模板组属性API
 export const genTemplateGroupPropertyApi: EnabledCrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl)
+	...createCrudApi(baseUrl),
+	// 变更是否必填
+	changeRequired: (id: number | string, required: number) => {
+		return service.put(baseUrl + '/changeRequired', { id, required })
+	}
 }

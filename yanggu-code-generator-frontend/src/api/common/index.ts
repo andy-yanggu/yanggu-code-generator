@@ -1,6 +1,7 @@
 import { downloadFile, service } from '@/utils/request'
 import { Key, KeyArray } from '@/types/common'
 import { PageQuery, PageVO } from '@/api/common/type'
+import { AxiosResponse } from 'axios'
 
 /**
  * 通用 CRUD 接口定义
@@ -11,7 +12,7 @@ import { PageQuery, PageVO } from '@/api/common/type'
  */
 export interface CrudApi<Entity = any, Query extends PageQuery = PageQuery, VO = Entity, DTO = Entity> {
 	// 新增接口
-	add: (dataForm: DTO) => Promise<void>
+	add: (dataForm: DTO) => Promise<AxiosResponse<any, any>>
 
 	// 修改接口
 	update: (dataForm: DTO & { id: Key }) => Promise<void>

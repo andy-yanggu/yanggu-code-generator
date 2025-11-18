@@ -58,14 +58,19 @@
 					:formatter="getLabel(COMPONENT_TYPES)"
 					min-width="70"
 				></el-table-column>
-				<el-table-column
-					prop="required"
-					label="是否必填"
-					show-overflow-tooltip
-					header-align="center"
-					align="center"
-					:formatter="row => (row.required === 0 ? '否' : '是')"
-				></el-table-column>
+				<el-table-column prop="required" label="是否必填" show-overflow-tooltip header-align="center" align="center">
+					<template #default="scope">
+						<el-switch
+							v-model="scope.row.required"
+							:active-value="requiredSwitch.activeValue"
+							:inactive-value="requiredSwitch.inactiveValue"
+							:active-text="requiredSwitch.activeText"
+							:inactive-text="requiredSwitch.inactiveText"
+							inline-prompt
+							@change="(val: number) => requiredChangeHandle(val, scope.row)"
+						></el-switch>
+					</template>
+				</el-table-column>
 				<el-table-column prop="propOrder" label="排序" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
@@ -102,6 +107,7 @@ import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity, GenTemplat
 import { getLabel } from '@/utils/enum'
 import { COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
+import { useSwitchChangeHandler, useSwitchState } from '@/hooks/use-switch-change-handler'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
@@ -157,6 +163,20 @@ const init = () => {
 	state.queryForm.templateGroupId = props.templateGroupId
 	getDataList()
 }
+
+const requiredSwitch = useSwitchState({
+	field: 'required',
+	states: [
+		{ value: 1, text: '是', isActive: true },
+		{ value: 0, text: '否', isActive: false }
+	]
+})
+
+const requiredChangeHandle = useSwitchChangeHandler(
+	requiredSwitch,
+	(val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
+	getDataList
+)
 
 const formRef = ref()
 

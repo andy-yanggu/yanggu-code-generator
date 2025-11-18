@@ -146,6 +146,10 @@ const componentOptions = (_: any, __: any, callback: any) => {
 			return
 		}
 	}
+	if (state.dataForm.componentType === 5 && state.dataForm.componentOptions.length != 2) {
+		callback(new Error('开关组件选项只能添加两个'))
+		return
+	}
 	callback()
 }
 
