@@ -15,7 +15,7 @@
 
 				<!-- 刷新 -->
 				<el-tooltip v-if="useRefresh" content="刷新表格" placement="top" :teleported="teleported">
-					<el-button circle :icon="Refresh" @click="emit('getDataList')"></el-button>
+					<el-button circle :icon="Refresh" :loading-icon="Refresh" :loading="queryLoading" @click="emit('getDataList')"></el-button>
 				</el-tooltip>
 
 				<!-- 全屏 -->
@@ -42,6 +42,11 @@ defineOptions({
 const showSearch = defineModel('showSearch', {
 	type: Boolean,
 	default: true
+})
+
+const queryLoading = defineModel('queryLoading', {
+	type: Boolean,
+	default: false
 })
 
 const props = defineProps({

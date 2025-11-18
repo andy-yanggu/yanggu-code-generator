@@ -25,7 +25,13 @@
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar v-if="tableCardRef" v-model:show-search="queryShow" :table-card-ref="tableCardRef" @get-data-list="getDataList()">
+				<table-tool-bar
+					v-if="tableCardRef"
+					v-model:show-search="queryShow"
+					v-model:query-loading="state.dataListLoading"
+					:table-card-ref="tableCardRef"
+					@get-data-list="getDataList()"
+				>
 					<template #left>
 						<el-space>
 							<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
