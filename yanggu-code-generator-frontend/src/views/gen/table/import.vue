@@ -59,6 +59,10 @@ import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
+defineOptions({
+	name: 'GenTableImport'
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({

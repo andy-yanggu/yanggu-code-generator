@@ -6,7 +6,7 @@
 import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
-	name: 'Redirect'
+	name: 'RouterRedirect'
 })
 
 const route = useRoute()

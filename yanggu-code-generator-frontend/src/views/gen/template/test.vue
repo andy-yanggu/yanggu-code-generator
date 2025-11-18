@@ -127,6 +127,10 @@ import { genGeneratorApi } from '@/api/gen/generator'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 
+defineOptions({
+	name: 'GenTemplateTest'
+})
+
 interface CascaderData {
 	value: string
 	label: string

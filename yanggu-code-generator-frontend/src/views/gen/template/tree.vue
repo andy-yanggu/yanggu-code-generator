@@ -254,6 +254,10 @@ import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 import { useInitForm } from '@/hooks/use-init-form'
 
+defineOptions({
+	name: 'GenTemplateTree'
+})
+
 interface Tree {
 	// 主键ID
 	id: number

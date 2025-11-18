@@ -8,6 +8,10 @@
 import { computed, PropType } from 'vue'
 import { MenuInfo, useUserStore } from '@/store/user-store'
 
+defineOptions({
+	name: 'MenuLink'
+})
+
 const props = defineProps({
 	menu: {
 		type: Object as PropType<MenuInfo>,

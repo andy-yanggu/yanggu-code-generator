@@ -24,6 +24,10 @@ import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
 import { useDebounceFn } from '@vueuse/core'
 
+defineOptions({
+	name: 'IconSearch'
+})
+
 const loading = ref(true)
 const allIcons = ref<string[]>([])
 const allOriginIcons = ref<string[]>([])

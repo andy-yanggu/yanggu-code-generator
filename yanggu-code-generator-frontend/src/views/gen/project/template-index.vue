@@ -95,6 +95,10 @@ import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/t
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 
+defineOptions({
+	name: 'GenProjectTemplate'
+})
+
 const emit = defineEmits(['selectChange'])
 const tableRef = ref()
 const state = reactive({

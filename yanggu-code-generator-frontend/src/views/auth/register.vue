@@ -22,6 +22,10 @@ import { useUserStore } from '@/store/user-store'
 import { useRoute, useRouter } from 'vue-router'
 import { Lock, User } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'AuthRegister'
+})
+
 const redirect = ref('/')
 const route = useRoute()
 const router = useRouter()

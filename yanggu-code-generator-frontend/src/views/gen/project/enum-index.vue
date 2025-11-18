@@ -59,6 +59,10 @@ import { genEnumApi, GenEnumEntity, GenEnumQuery } from '@/api/gen/enum'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
 import { Refresh, Search, View } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenProjectEnum'
+})
+
 const emit = defineEmits(['selectChange'])
 const state = reactive({
 	dataListApi: genEnumApi.entityPage,

@@ -8,6 +8,10 @@
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
+defineOptions({
+	name: 'IconTextTooltip'
+})
+
 defineProps({
 	enableIcon: {
 		type: Boolean,

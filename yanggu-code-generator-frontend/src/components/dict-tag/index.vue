@@ -6,6 +6,10 @@
 import { computed, PropType } from 'vue'
 import { EnumItem, EnumValueType, getByValue } from '@/utils/enum'
 
+defineOptions({
+	name: 'DictTag'
+})
+
 const props = defineProps({
 	value: {
 		type: [String, Number, Boolean] as PropType<EnumValueType>,

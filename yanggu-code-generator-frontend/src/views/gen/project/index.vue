@@ -111,16 +111,17 @@
 			<project-form ref="formRef" @refresh-data-list="getDataList"></project-form>
 
 			<!-- 预览 -->
-			<preview ref="previewRef" :key="currentProjectIdTs"></preview>
+			<preview ref="previewRef"></preview>
 
-			<steps ref="stepsRef" :key="currentProjectIdTs"></steps>
+			<!-- 生成代码步骤条 -->
+			<steps ref="stepsRef"></steps>
 		</el-card>
 	</div>
 </template>
 
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { nextTick, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi, GenProjectEntity, GenProjectQuery } from '@/api/gen/project'
 import Steps from '@/views/gen/project/steps.vue'
@@ -143,25 +144,18 @@ const state = reactive({
 		generatorType: '',
 		dateTimeRange: [] as string[]
 	},
-	deleteMessage: '删除项目会删除项目下的所有表，是否继续?'
+	deleteMessage: '删除项目会删除项目下的所有表，是否继续？'
 } as IHooksOptions<GenProjectQuery, GenProjectEntity>)
 
 const previewRef = ref()
-const currentProjectIdTs = ref()
 const stepsRef = ref()
 
 const previewHandle = (projectItem: any) => {
-	currentProjectIdTs.value = Date.now()
-	nextTick(() => {
-		previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
-	})
+	previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
 }
 
 const generatorCode = (item: any) => {
-	currentProjectIdTs.value = Date.now()
-	nextTick(() => {
-		stepsRef.value.init(item)
-	})
+	stepsRef.value.init(item)
 }
 
 const {

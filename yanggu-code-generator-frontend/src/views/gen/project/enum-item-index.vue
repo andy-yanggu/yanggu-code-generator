@@ -68,6 +68,10 @@ import { reactive, ref } from 'vue'
 import { genEnumItemApi, GenEnumItemEntity, GenEnumItemQuery } from '@/api/gen/enum-item'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'ProjectEnumItem'
+})
+
 const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	createdIsNeed: false,

@@ -48,6 +48,10 @@ import { Check, Close, Upload } from '@element-plus/icons-vue'
 import { UploadProps } from 'element-plus'
 import { Key } from '@/types/common'
 
+defineOptions({
+	name: 'GenTemplateForm'
+})
+
 const props = defineProps({
 	templateGroupId: {
 		type: Number,

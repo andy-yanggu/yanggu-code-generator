@@ -5,6 +5,10 @@
 <script setup lang="ts">
 import README_URL from './README.html?url'
 
+defineOptions({
+	name: 'Index'
+})
+
 const readmeUrl = README_URL
 </script>
 

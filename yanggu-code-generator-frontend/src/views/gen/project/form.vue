@@ -84,13 +84,15 @@
 				</el-select>
 			</el-form-item>
 			<!-- 项目模板组属性表单 -->
-			<form-divider title="项目模板组属性"></form-divider>
-			<template-group-property-form
-				:key="state.dataForm.projectTemplateGroupId"
-				v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
-				model-value-prop="projectTemplateGroupPropValue"
-				:property-list="projectTemplateGroupPropertyList"
-			></template-group-property-form>
+			<template v-if="state.dataForm.projectTemplateGroupId && projectTemplateGroupPropertyList!.length > 0">
+				<form-divider title="项目模板组属性"></form-divider>
+				<template-group-property-form
+					:key="state.dataForm.projectTemplateGroupId"
+					v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
+					model-value-prop="projectTemplateGroupPropValue"
+					:property-list="projectTemplateGroupPropertyList"
+				></template-group-property-form>
+			</template>
 
 			<form-divider title="基类配置"></form-divider>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">

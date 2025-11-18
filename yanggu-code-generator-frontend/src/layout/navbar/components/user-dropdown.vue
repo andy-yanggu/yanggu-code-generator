@@ -29,6 +29,10 @@ import { ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'UserDropdown'
+})
+
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()

@@ -56,6 +56,9 @@ import { reactive, ref } from 'vue'
 import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
+defineOptions({
+	name: 'GenProjectTable'
+})
 const emit = defineEmits(['selectChange'])
 
 const state = reactive({

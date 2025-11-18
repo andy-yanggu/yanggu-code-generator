@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" destroy-on-close @close="dialogVisible = false">
 		<el-card class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="模板名称" prop="templateName">
@@ -51,14 +51,11 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 		</el-card>
 		<template #footer>
-			<div class="footer-buttons">
-				<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
-				<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
-			</div>
+			<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
+			<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
@@ -73,6 +70,10 @@ import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/t
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+
+defineOptions({
+	name: 'GenTableTemplate'
+})
 
 const emit = defineEmits(['clearSelection'])
 
@@ -95,15 +96,12 @@ const init = (templateGroupId: number, generatorType: number, tableIdList: numbe
 	generatorTypeRef.value = generatorType
 	tableIdRef.value = tableIdList
 
-	//重置查询表单数据
+	//重置查询表单数据，并且进行分页查询
 	resetQueryHandle()
-
-	//加载列表数据
-	getDataList()
 }
 
 const generateCode = () => {
-	const data = state.dataListSelections ? state.dataListSelections : []
+	const data = state.dataListSelections ?? []
 
 	if (data.length === 0) {
 		ElMessage.warning('请选择模板')
@@ -143,10 +141,3 @@ defineExpose({
 	init
 })
 </script>
-
-<style scoped>
-.footer-buttons {
-	display: flex;
-	justify-content: flex-end;
-}
-</style>

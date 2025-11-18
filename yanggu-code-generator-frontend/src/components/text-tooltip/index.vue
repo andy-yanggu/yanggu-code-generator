@@ -10,6 +10,10 @@
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
 
+defineOptions({
+	name: 'TextTooltipTitle'
+})
+
 const props = defineProps({
 	title: {
 		type: String,

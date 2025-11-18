@@ -1,7 +1,7 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" :size="'100%'" :modal="false">
-		<el-container style="height: 100%">
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" :size="'100%'" destroy-on-close>
+		<el-container class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
 				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
@@ -139,9 +139,13 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { CopyDocument, DocumentAdd, Expand, Fold } from '@element-plus/icons-vue'
-import { copyToClipboard } from '@/utils/tool'
+import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
+
+defineOptions({
+	name: 'Preview'
+})
 
 interface Tree {
 	// 模板ID
@@ -167,7 +171,7 @@ interface Tree {
 const currentNodeKey = ref('')
 const treeRef = ref()
 const treeScrollbarRef = ref()
-const templateTreeData = reactive({
+const INIT_TEMPLATE_TREE_DATA = {
 	visible: false,
 	id: -1,
 	name: '',
@@ -178,7 +182,8 @@ const templateTreeData = reactive({
 	item: {} as Tree,
 	tabList: [] as Tree[],
 	tabActiveName: ''
-})
+}
+const templateTreeData = reactive(cloneObject(INIT_TEMPLATE_TREE_DATA))
 const treeSearchText = ref('')
 const isCollapse = ref(false)
 const { isFullscreen, toggle } = useFullscreen()
@@ -186,12 +191,16 @@ const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ic
 
 // 初始化方法
 const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
+	resetReactiveObject(templateTreeData, INIT_TEMPLATE_TREE_DATA)
 	templateTreeData.id = id
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
+	templateTreeData.visible = true
 	isCollapse.value = false
-	const loadingInstance = ElLoading.service({ fullscreen: true, text: '数据加载中...' })
+	// 等待DOM更新后再显示loading
+	await nextTick()
+	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...' })
 	try {
 		const previewData = {
 			previewProductId: id,
@@ -201,7 +210,6 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 		templateTreeData.treeList = data
 		const templateContentList = buildFileList(data)
 		templateTreeData.dataList = templateContentList
-		templateTreeData.visible = true
 		await nextTick()
 		if (templateContentList.length > 0 && templateTreeData.tabActiveName === '') {
 			templateTreeData.item = templateContentList[0]

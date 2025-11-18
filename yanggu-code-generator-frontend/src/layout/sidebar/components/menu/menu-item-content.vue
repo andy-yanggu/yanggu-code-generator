@@ -14,6 +14,10 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
+defineOptions({
+	name: 'MenuItemContent'
+})
+
 defineProps({
 	icon: {
 		type: String,

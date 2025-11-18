@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
+defineOptions({
+	name: 'MenuTreeNode'
+})
+
 export interface TreeNode {
 	title: string
 	icon: string

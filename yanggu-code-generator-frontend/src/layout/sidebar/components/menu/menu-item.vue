@@ -24,6 +24,10 @@ import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
 import { MenuInfo } from '@/store/user-store'
 
+defineOptions({
+	name: 'MenuItem'
+})
+
 const props = defineProps({
 	menu: {
 		type: Object as PropType<MenuInfo>,

@@ -18,6 +18,10 @@ import { EditorView } from '@codemirror/view'
 import { oneDarkTheme } from '@codemirror/theme-one-dark'
 import { useAppStore } from '@/store/app-store'
 
+defineOptions({
+	name: 'CodeMirror'
+})
+
 const model = defineModel<string>()
 
 const props = defineProps({

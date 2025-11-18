@@ -128,18 +128,18 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<update ref="formRef" @refresh-data-list="getDataList"></update>
+			<gen-table-form ref="formRef" @refresh-data-list="getDataList"></gen-table-form>
 
 			<!-- 导入表组件 -->
 			<import ref="importRef" @refresh-data-list="getDataList"></import>
 
 			<!-- 预览 -->
-			<preview ref="previewRef" :key="previewKey"></preview>
+			<preview ref="previewRef"></preview>
 
 			<!-- 字段配置 -->
 			<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
 
-			<!-- 模板组展示 -->
+			<!-- 代码生成 -->
 			<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 		</el-card>
 	</div>
@@ -147,9 +147,9 @@
 
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import Import from '@/views/gen/table/import.vue'
-import Update from '@/views/gen/table/update.vue'
+import GenTableForm from '@/views/gen/table/form.vue'
 import Preview from '@/components/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
@@ -188,7 +188,6 @@ const previewRef = ref()
 const templateIndexRef = ref()
 const tableRef = ref()
 const projectList = ref([] as GenProjectEntity[])
-const previewKey = ref()
 
 const getProjectList = () => {
 	genProjectApi.entityList().then(data => {
@@ -201,10 +200,7 @@ const importHandle = () => {
 }
 
 const previewHandle = (tableItem: any) => {
-	previewKey.value = Date.now()
-	nextTick(() => {
-		previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
-	})
+	previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
 }
 
 const editHandle = (row: any) => {

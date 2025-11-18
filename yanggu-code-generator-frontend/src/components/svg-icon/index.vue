@@ -13,6 +13,10 @@
 	</svg>
 </template>
 <script setup lang="ts">
+defineOptions({
+	name: 'SvgIcon'
+})
+
 defineProps({
 	// 图标名称（传入时需要带上前缀 icon-）
 	icon: {

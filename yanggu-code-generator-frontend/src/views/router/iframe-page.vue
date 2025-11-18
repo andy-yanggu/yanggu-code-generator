@@ -10,7 +10,7 @@ import NProgress from 'nprogress'
 import { useSystemSettingStore } from '@/store/system-setting-store'
 
 defineOptions({
-	name: 'IframePage'
+	name: 'RouterIframePage'
 })
 
 const props = defineProps({

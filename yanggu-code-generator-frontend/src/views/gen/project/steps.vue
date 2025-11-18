@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" title="请选择模板、表和枚举" width="85%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" title="请选择模板、表和枚举" width="85%" destroy-on-close @close="dialogVisible = false">
 		<el-container>
 			<!-- 步骤条 -->
 			<el-header height="60px">
@@ -21,7 +21,7 @@
 				<el-button v-if="activeRef < 2" type="primary" @click="nextStep()">
 					下一步<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
 				</el-button>
-				<el-button v-if="activeRef === 2" :loading="submitLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成 </el-button>
+				<el-button v-if="activeRef === 2" :loading="submitLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成</el-button>
 			</el-footer>
 		</el-container>
 	</el-dialog>
@@ -35,6 +35,10 @@ import EnumIndex from './enum-index.vue'
 import { genGeneratorApi } from '@/api/gen/generator'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+
+defineOptions({
+	name: 'GenProjectSteps'
+})
 
 const activeRef = ref(0)
 const dialogVisible = ref(false)

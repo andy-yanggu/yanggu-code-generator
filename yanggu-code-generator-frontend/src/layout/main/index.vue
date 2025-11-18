@@ -6,7 +6,7 @@
 				<router-view v-slot="{ Component }">
 					<transition name="slide" mode="out-in">
 						<!-- 内置|业务菜单和非缓存的iframe页面 -->
-						<keep-alive :include="appStore.cacheList" :exclude="['Redirect']">
+						<keep-alive :include="appStore.cacheList" :exclude="['RouterRedirect']">
 							<component
 								:is="Component"
 								v-if="route.meta.type === 1 || (route.meta.type === 3 && !route.meta.cache)"
