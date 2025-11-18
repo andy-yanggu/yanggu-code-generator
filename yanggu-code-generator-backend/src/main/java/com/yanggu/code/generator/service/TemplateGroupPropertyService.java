@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateOrderDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
@@ -116,6 +117,14 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
         TemplateGroupPropertyEntity updateEntity = new TemplateGroupPropertyEntity();
         updateEntity.setId(dto.getId());
         updateEntity.setRequired(dto.getRequired());
+        this.updateById(updateEntity);
+    }
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    default void changeOrder(TemplateGroupPropertyUpdateOrderDTO dto) {
+        TemplateGroupPropertyEntity updateEntity = new TemplateGroupPropertyEntity();
+        updateEntity.setId(dto.getId());
+        updateEntity.setPropOrder(dto.getPropOrder());
         this.updateById(updateEntity);
     }
 

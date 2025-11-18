@@ -58,23 +58,7 @@
 				</el-col>
 			</el-row>
 
-			<form-divider title="项目模板组配置"></form-divider>
-			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
-				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
-						<span style="font-weight: bold">{{ item.groupName }}</span>
-						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
-					</el-option>
-				</el-select>
-			</el-form-item>
-			<template-group-property-form
-				:key="state.dataForm.projectTemplateGroupId"
-				v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
-				model-value-prop="projectTemplateGroupPropValue"
-				:property-list="projectTemplateGroupPropertyList"
-			></template-group-property-form>
-
-			<form-divider title="表模板组配置"></form-divider>
+			<form-divider title="模板组配置"></form-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -83,8 +67,6 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-
-			<form-divider title="枚举模板组配置"></form-divider>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
@@ -93,6 +75,22 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
+				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
+					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+						<span style="font-weight: bold">{{ item.groupName }}</span>
+						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<!-- 项目模板组属性表单 -->
+			<form-divider title="项目模板组属性"></form-divider>
+			<template-group-property-form
+				:key="state.dataForm.projectTemplateGroupId"
+				v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
+				model-value-prop="projectTemplateGroupPropValue"
+				:property-list="projectTemplateGroupPropertyList"
+			></template-group-property-form>
 
 			<form-divider title="基类配置"></form-divider>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">

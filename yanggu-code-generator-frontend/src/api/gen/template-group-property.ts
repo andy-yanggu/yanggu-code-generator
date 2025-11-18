@@ -41,6 +41,8 @@ export interface GenTemplateGroupPropertyQuery extends PageQuery {
 interface CustomApi {
 	// 变更是否必填
 	changeRequired: (id: number | string, required: number) => Promise<void>
+	// 变更排序
+	changeOrder: (id: number | string, propOrder: number) => Promise<void>
 }
 
 const baseUrl: string = '/gen/templateGroupProperty'
@@ -52,5 +54,9 @@ export const genTemplateGroupPropertyApi: EnabledCrudApi<GenTemplateGroupPropert
 	// 变更是否必填
 	changeRequired: (id: number | string, required: number) => {
 		return service.put(baseUrl + '/changeRequired', { id, required })
+	},
+	// 变更排序
+	changeOrder: (id: number | string, propOrder: number) => {
+		return service.put(baseUrl + '/changeOrder', { id, propOrder })
 	}
 }

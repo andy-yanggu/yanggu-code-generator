@@ -13,6 +13,9 @@
 				</template>
 				<el-input v-model="state.dataForm.propKey" clearable placeholder="请输入属性键"></el-input>
 			</el-form-item>
+			<el-form-item label="排序" prop="propOrder">
+				<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
+			</el-form-item>
 			<el-form-item label="组件类型" prop="componentType">
 				<el-radio-group v-model="state.dataForm.componentType">
 					<el-radio v-for="item in COMPONENT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
@@ -26,14 +29,21 @@
 					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
 				>
 					<el-col :span="11">
-						<el-input v-model="item.label" clearable placeholder="请输入选项标题"></el-input>
+						<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 240px"></el-input>
 					</el-col>
 					<el-col :span="11">
-						<el-input v-model="item.value" clearable placeholder="请输入选项值"></el-input>
+						<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 240px"></el-input>
 					</el-col>
 					<el-col :span="2">
 						<div style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-left: 10px">
-							<el-icon style="cursor: pointer" @click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })">
+							<el-icon
+								style="cursor: pointer"
+								:style="{
+									cursor: switchOptionFull ? 'not-allowed' : 'pointer',
+									opacity: switchOptionFull ? 0.5 : 1
+								}"
+								@click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })"
+							>
 								<Plus></Plus>
 							</el-icon>
 							<el-icon
@@ -59,9 +69,6 @@
 			</el-form-item>
 			<el-form-item label="属性默认值" prop="propDefaultValue">
 				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
-			</el-form-item>
-			<el-form-item label="排序" prop="propOrder">
-				<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
@@ -120,14 +127,18 @@ const state = reactive({
 
 watch(
 	() => state.dataForm.componentType,
-	() => {
-		if (hasComponentOptions.value && state.dataForm.componentOptions.length === 0) {
-			state.dataForm.componentOptions.push({ label: '', value: '' })
+	(newValue, oldValue) => {
+		if (newValue && oldValue && newValue != oldValue && hasComponentOptions.value) {
+			state.dataForm.componentOptions = [{ label: '', value: '' }]
 		}
 	}
 )
 
+// 是否需要组件选项
 const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.componentType as number))
+
+// 开关类型只能有两个选项
+const switchOptionFull = computed(() => state.dataForm.componentType === 5 && state.dataForm.componentOptions.length === 2)
 
 const componentOptions = (_: any, __: any, callback: any) => {
 	if (!hasComponentOptions.value) {
@@ -147,7 +158,7 @@ const componentOptions = (_: any, __: any, callback: any) => {
 		}
 	}
 	if (state.dataForm.componentType === 5 && state.dataForm.componentOptions.length != 2) {
-		callback(new Error('开关组件选项只能添加两个'))
+		callback(new Error('组件类型为开关，组件选项必须为两个'))
 		return
 	}
 	callback()

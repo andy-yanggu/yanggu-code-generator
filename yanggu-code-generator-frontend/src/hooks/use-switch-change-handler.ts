@@ -24,9 +24,9 @@ export const useSwitchState = (options: SwitchState) => {
 
 	const textMap = Object.fromEntries(states.map(s => [s.value, s.text]))
 
-	const confirmMessage = options.confirmText ?? ((newText: string) => `确定要修改为「${newText}」吗？`)
+	const confirmMessage = options.confirmText ?? ((newText: string) => `确定要修改为【${newText}】吗？`)
 
-	const successMessage = options.successText ?? ((_: string, newText: string) => `修改为「${newText}」成功`)
+	const successMessage = options.successText ?? ((_: string, newText: string) => `修改为【${newText}】成功`)
 
 	const getOldValue = (newValue: any) => {
 		return newValue === activeState.value ? inactiveState.value : activeState.value

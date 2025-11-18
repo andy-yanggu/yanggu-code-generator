@@ -5,6 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateOrderDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
@@ -188,6 +189,16 @@ public class TemplateGroupPropertyController {
     @Operation(summary = "变更是否必填")
     public void changeRequired(@RequestBody @Validated TemplateGroupPropertyUpdateRequiredDTO dto) {
         templateGroupPropertyService.changeRequired(dto);
+    }
+
+    /**
+     * 变更顺序
+     */
+    @PutMapping("/changeOrder")
+    @ApiOperationSupport(order = 14)
+    @Operation(summary = "变更顺序")
+    public void changeOrder(@RequestBody @Validated TemplateGroupPropertyUpdateOrderDTO dto) {
+        templateGroupPropertyService.changeOrder(dto);
     }
 
 }

@@ -71,7 +71,18 @@
 						></el-switch>
 					</template>
 				</el-table-column>
-				<el-table-column prop="propOrder" label="排序" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="propOrder" label="排序" header-align="center" align="center" sortable="custom">
+					<template #default="scope">
+						<el-input-number
+							v-model="scope.row.propOrder"
+							:min="0"
+							size="small"
+							controls-position="right"
+							@focus="scope.row._oldPropOrder = scope.row.propOrder"
+							@change="(currentValue: number, oldValue: number) => orderChangeHandle(currentValue, oldValue, scope.row)"
+						></el-input-number>
+					</template>
+				</el-table-column>
 				<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
@@ -108,6 +119,8 @@ import { getLabel } from '@/utils/enum'
 import { COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { useSwitchChangeHandler, useSwitchState } from '@/hooks/use-switch-change-handler'
+import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
@@ -177,6 +190,22 @@ const requiredChangeHandle = useSwitchChangeHandler(
 	(val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
 	getDataList
 )
+
+const orderChangeHandle = useDebounceFn((currentValue: number, oldValue: number, row: GenTemplateGroupPropertyEntity) => {
+	// 如果没变化，直接返回
+	if (currentValue === oldValue) {
+		return
+	}
+	genTemplateGroupPropertyApi
+		.changeOrder(row.id, currentValue)
+		.then(() => {
+			ElMessage.success('排序修改成功')
+			getDataList()
+		})
+		.catch(() => {
+			row.propOrder = oldValue
+		})
+}, 500)
 
 const formRef = ref()
 

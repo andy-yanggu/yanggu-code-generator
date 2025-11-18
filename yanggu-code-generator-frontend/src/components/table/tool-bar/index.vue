@@ -9,17 +9,17 @@
 		<div class="table-tool-bar-right">
 			<el-space>
 				<!-- 搜索 -->
-				<el-tooltip v-if="!isFullscreen" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
+				<el-tooltip v-if="useSearch && !isFullscreen" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
 					<el-button circle :icon="Search" @click="toggleSearch()"></el-button>
 				</el-tooltip>
 
 				<!-- 刷新 -->
-				<el-tooltip content="刷新表格" placement="top" :teleported="teleported">
+				<el-tooltip v-if="useRefresh" content="刷新表格" placement="top" :teleported="teleported">
 					<el-button circle :icon="Refresh" @click="emit('getDataList')"></el-button>
 				</el-tooltip>
 
 				<!-- 全屏 -->
-				<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top" :teleported="teleported">
+				<el-tooltip v-if="useFullscreenButton" :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top" :teleported="teleported">
 					<el-button circle @click="toggle()">
 						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" is-pointer></svg-icon>
 					</el-button>
@@ -48,6 +48,18 @@ const props = defineProps({
 	tableCardRef: {
 		type: Object as PropType<Ref<HTMLElement>>,
 		required: true
+	},
+	useSearch: {
+		type: Boolean,
+		default: true
+	},
+	useRefresh: {
+		type: Boolean,
+		default: true
+	},
+	useFullscreenButton: {
+		type: Boolean,
+		default: true
 	}
 })
 
