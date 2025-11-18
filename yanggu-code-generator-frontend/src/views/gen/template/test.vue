@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" class="template-test-drawer" destroy-on-close>
+	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" destroy-on-close>
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
@@ -217,19 +217,21 @@ const handleCascaderChange = async (val: string[]) => {
 	} else if (testData.templateGroupType === 2) {
 		queryForm.testId = Number(val[1].split('_')[1])
 	}
+	testData.activeName = 'render'
 	const loadingInstance = ElLoading.service({
-		target: '.template-test-drawer .el-drawer__body',
+		target: '.main-scroll',
 		text: '模板渲染中...'
 	})
 	try {
 		const data = await genGeneratorApi.templateTest(queryForm)
 		testData.renderedFileName = data.filePath
 		testData.renderedTemplateContent = data.content
-		testData.activeName = 'render'
 		ElMessage.success({
 			message: '渲染成功',
 			duration: 1000
 		})
+	} catch {
+		testData.activeName = 'template'
 	} finally {
 		loadingInstance.close()
 	}
