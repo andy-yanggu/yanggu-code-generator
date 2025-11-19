@@ -6,9 +6,14 @@
 					<el-input v-model="state.queryForm.groupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
 				</el-form-item>
 				<el-form-item label="模板组类型" prop="type">
-					<el-select v-model="state.queryForm.type" style="width: 170px" placeholder="请选择模板组类型" filterable clearable>
-						<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
+					<el-select
+						v-model="state.queryForm.type"
+						:options="TEMPLATE_GROUP_TYPES"
+						style="width: 170px"
+						placeholder="请选择模板组类型"
+						filterable
+						clearable
+					></el-select>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>

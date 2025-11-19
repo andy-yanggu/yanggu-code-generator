@@ -9,9 +9,13 @@
 				</el-col>
 				<el-col :span="8">
 					<el-form-item label="模板组类型" prop="templateGroupType">
-						<el-select v-model="state.queryForm.templateGroupType" style="width: 160px" clearable placeholder="请选择模板组类型">
-							<el-option v-for="item in TEMPLATE_GROUP_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-						</el-select>
+						<el-select
+							v-model="state.queryForm.templateGroupType"
+							:options="TEMPLATE_GROUP_TYPES"
+							style="width: 160px"
+							clearable
+							placeholder="请选择模板组类型"
+						></el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="8">
@@ -23,9 +27,13 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="模板类型" prop="templateType">
-						<el-select v-model="state.queryForm.templateType" style="width: 150px" clearable placeholder="请选择模板类型">
-							<el-option v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-						</el-select>
+						<el-select
+							v-model="state.queryForm.templateType"
+							:options="TEMPLATE_TYPES"
+							style="width: 150px"
+							clearable
+							placeholder="请选择模板类型"
+						></el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="16">

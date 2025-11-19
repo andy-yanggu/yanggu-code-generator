@@ -115,7 +115,7 @@ const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableInd
 
 const submitState = shallowReactive({
 	visible,
-	submitApi: genTableApi.import,
+	submitApi: genTableApi.importData,
 	emit
 } as SubmitOptions)
 

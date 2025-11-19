@@ -35,5 +35,5 @@ const baseUrl: string = '/gen/enumItem'
 // 枚举项API
 export const genEnumItemApi: EnabledCrudApi<GenEnumItemEntity, GenEnumItemQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl)
+	...createCrudApi<GenEnumItemEntity, GenEnumItemQuery>(baseUrl)
 }

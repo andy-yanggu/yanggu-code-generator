@@ -58,7 +58,7 @@ const baseUrl: string = '/gen/template'
 // 模板管理API
 export const genTemplateApi: EnabledCrudApi<GenTemplateEntity, GenTemplateQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenTemplateEntity, GenTemplateQuery>(baseUrl),
 	// 查询详情
 	detail: (queryForm: any): Promise<any> => {
 		return service.get(baseUrl + '/detail', { params: queryForm })

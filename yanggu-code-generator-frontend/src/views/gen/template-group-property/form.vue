@@ -17,9 +17,7 @@
 				<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
 			</el-form-item>
 			<el-form-item label="组件类型" prop="componentType">
-				<el-radio-group v-model="state.dataForm.componentType">
-					<el-radio v-for="item in COMPONENT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
-				</el-radio-group>
+				<el-radio-group v-model="state.dataForm.componentType" :options="COMPONENT_TYPES"></el-radio-group>
 			</el-form-item>
 			<el-form-item v-if="hasComponentOptions" label="组件选项" prop="componentOptions">
 				<el-row

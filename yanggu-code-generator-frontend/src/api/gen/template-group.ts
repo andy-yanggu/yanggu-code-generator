@@ -36,7 +36,7 @@ const baseUrl: string = '/gen/templateGroup'
 // 模板组管理API
 export const genTemplateGroupApi: EnabledCrudApi<GenTemplateGroupEntity, GenTemplateGroupQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenTemplateGroupEntity, GenTemplateGroupQuery>(baseUrl),
 	// 复制模板组
 	copy: (dataForm: any) => {
 		return service.post(baseUrl + '/copy', dataForm)

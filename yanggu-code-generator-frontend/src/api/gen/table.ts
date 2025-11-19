@@ -46,7 +46,7 @@ export interface GenTableQuery extends PageQuery {
 // 特定api
 interface CustomApi {
 	// 导入表
-	import: (dataForm: any) => Promise<void>
+	importData: (dataForm: any) => Promise<void>
 	// 同步表
 	sync: (id: number) => Promise<void>
 	// 表批量生成代码检测
@@ -58,9 +58,9 @@ const baseUrl: string = '/gen/table'
 // 代码生成表API
 export const genTableApi: EnabledCrudApi<GenTableEntity, GenTableQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenTableEntity, GenTableQuery>(baseUrl),
 	// 导入表
-	import: (dataForm: any) => {
+	importData: (dataForm: any) => {
 		return service.post(baseUrl + '/import', dataForm)
 	},
 	// 同步表

@@ -15,11 +15,7 @@
 				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="state.dataForm.templateType" disabled>
-					<el-radio v-for="item in TEMPLATE_TYPES" :key="item.value" :value="item.value">
-						{{ item.label }}
-					</el-radio>
-				</el-radio-group>
+				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES" disabled></el-radio-group>
 			</el-form-item>
 			<!-- 文件上传 -->
 			<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">

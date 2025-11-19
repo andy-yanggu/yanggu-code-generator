@@ -2,9 +2,14 @@
 	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目" prop="projectId">
-				<el-select v-model="state.dataForm.projectId" clearable placeholder="请选择项目" disabled>
-					<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
-				</el-select>
+				<el-select
+					v-model="state.dataForm.projectId"
+					:options="projectList"
+					:props="{ label: 'projectName', value: 'id' }"
+					clearable
+					placeholder="请选择项目"
+					disabled
+				></el-select>
 			</el-form-item>
 			<el-form-item label="数据库名" prop="databaseName">
 				<el-input v-model="state.dataForm.databaseName" clearable placeholder="请输入数据库名"></el-input>
@@ -28,14 +33,10 @@
 				<el-input v-model="state.dataForm.permissionFlag" clearable placeholder="请输入权限标识"></el-input>
 			</el-form-item>
 			<el-form-item label="生成功能" prop="generatorFunction">
-				<el-checkbox-group v-model="state.dataForm.generatorFunction">
-					<el-checkbox v-for="item in TABLE_GENERATOR_FUNCTION_TYPES" :key="item.value" :value="item.value" :label="item.label"></el-checkbox>
-				</el-checkbox-group>
+				<el-checkbox-group v-model="state.dataForm.generatorFunction" :options="TABLE_GENERATOR_FUNCTION_TYPES"></el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="表单布局" prop="formLayout">
-				<el-radio-group v-model="state.dataForm.formLayout">
-					<el-radio v-for="item in FORM_LAYOUT_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
-				</el-radio-group>
+				<el-radio-group v-model="state.dataForm.formLayout" :options="FORM_LAYOUT_TYPES"></el-radio-group>
 			</el-form-item>
 			<el-form-item label="作者" prop="author">
 				<el-input v-model="state.dataForm.author" clearable placeholder="请输入作者"></el-input>

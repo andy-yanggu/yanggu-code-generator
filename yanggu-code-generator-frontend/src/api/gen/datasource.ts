@@ -41,7 +41,7 @@ const baseUrl: string = '/gen/datasource'
 // 数据源API
 export const genDataSourceApi: ApiType = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenDatasourceEntity, GenDatasourceQuery>(baseUrl),
 	// 测试数据源接口
 	test: (id: number): Promise<any> => {
 		return service.get(baseUrl + '/test', { params: { id } })

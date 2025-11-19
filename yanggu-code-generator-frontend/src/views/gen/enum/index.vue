@@ -3,9 +3,14 @@
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
-					<el-select v-model="state.queryForm.projectId" style="width: 140px" clearable placeholder="请选择项目">
-						<el-option v-for="item in projectList" :key="item.id" :value="item.id" :label="item.projectName">{{ item.projectName }}</el-option>
-					</el-select>
+					<el-select
+						v-model="state.queryForm.projectId"
+						:options="projectList"
+						:props="{ label: 'projectName', value: 'id' }"
+						style="width: 140px"
+						clearable
+						placeholder="请选择项目"
+					></el-select>
 				</el-form-item>
 				<el-form-item label="枚举名称" prop="enumName">
 					<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>

@@ -7,9 +7,13 @@
 						<el-input v-model="state.queryForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 					</el-form-item>
 					<el-form-item label="模板类型" prop="templateType">
-						<el-select v-model="state.queryForm.templateType" style="width: 160px" clearable placeholder="请选择模板类型">
-							<el-option v-for="item in TEMPLATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-						</el-select>
+						<el-select
+							v-model="state.queryForm.templateType"
+							:options="TEMPLATE_TYPES"
+							style="width: 160px"
+							clearable
+							placeholder="请选择模板类型"
+						></el-select>
 					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>

@@ -3,9 +3,15 @@
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
-					<el-select v-model="state.queryForm.projectId" style="width: 140px" placeholder="请选择项目" filterable clearable>
-						<el-option v-for="item in projectList" :key="item.id" :label="item.projectName" :value="item.id"></el-option>
-					</el-select>
+					<el-select
+						v-model="state.queryForm.projectId"
+						:options="projectList"
+						:props="{ label: 'projectName', value: 'id' }"
+						style="width: 140px"
+						placeholder="请选择项目"
+						filterable
+						clearable
+					></el-select>
 				</el-form-item>
 				<el-form-item label="数据库名称" prop="databaseName">
 					<el-input v-model="state.queryForm.databaseName" placeholder="请输入数据库名称" clearable></el-input>

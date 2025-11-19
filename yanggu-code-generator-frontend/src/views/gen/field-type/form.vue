@@ -8,9 +8,7 @@
 				<el-input v-model="state.dataForm.columnType" clearable placeholder="请输入字段类型"></el-input>
 			</el-form-item>
 			<el-form-item label="属性类型" prop="attrType">
-				<el-select v-model="state.dataForm.attrType" clearable placeholder="请选择属性类型">
-					<el-option v-for="item in ATTR_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-				</el-select>
+				<el-select v-model="state.dataForm.attrType" :options="ATTR_TYPES" clearable placeholder="请选择属性类型"></el-select>
 			</el-form-item>
 			<el-form-item label="包名" prop="packageName">
 				<el-input v-model="state.dataForm.packageName" clearable placeholder="请输入包名"></el-input>

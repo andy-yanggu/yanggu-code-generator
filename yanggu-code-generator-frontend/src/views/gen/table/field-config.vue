@@ -27,16 +27,12 @@
 					</el-table-column>
 					<el-table-column prop="attrType" label="属性类型" width="120" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.attrType">
-								<el-option v-for="item in typeList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.attrType" :options="typeList"></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="autoFill" label="自动填充" width="140" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.autoFill">
-								<el-option v-for="item in fillList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.autoFill" :options="fillList"></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="fieldSort" label="字段排序" width="150" header-align="center" align="center">
@@ -53,9 +49,14 @@
 					</el-table-column>
 					<el-table-column prop="enumId" label="枚举配置" width="110" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.enumId" filterable placeholder="请选择枚举" clearable>
-								<el-option v-for="item in enumList" :key="item.id" :value="item.id" :label="item.enumName"></el-option>
-							</el-select>
+							<el-select
+								v-model="row.enumId"
+								:options="enumList"
+								:props="{ label: 'enumName', value: 'id' }"
+								filterable
+								placeholder="请选择枚举"
+								clearable
+							></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="uniqueField" label="唯一性" width="110" header-align="center" align="center">
@@ -97,16 +98,12 @@
 					</el-table-column>
 					<el-table-column prop="queryType" label="查询方式" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.queryType">
-								<el-option v-for="item in queryList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.queryType" :options="queryList"></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="queryFormType" label="查询表单类型" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.queryFormType">
-								<el-option v-for="item in formTypeList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.queryFormType" :options="formTypeList"></el-select>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -133,16 +130,12 @@
 					</el-table-column>
 					<el-table-column prop="formValidator" label="表单效验" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.formValidator">
-								<el-option v-for="item in formValidatorList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.formValidator" :options="formValidatorList"></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formType" label="表单类型" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.formType">
-								<el-option v-for="item in formTypeList" :key="item.value" :value="item.value" :label="item.label"></el-option>
-							</el-select>
+							<el-select v-model="row.formType" :options="formTypeList"></el-select>
 						</template>
 					</el-table-column>
 				</el-table>
