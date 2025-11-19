@@ -16,6 +16,8 @@ export interface UserInfo {
 }
 
 export interface TokenInfo {
+	// token名称
+	tokenName: string
 	// 访问令牌
 	accessToken: string
 	// 刷新令牌
@@ -59,6 +61,7 @@ const INITIAL_USER_INFO: UserInfo = {
 }
 
 const INITIAL_TOKEN_INFO: TokenInfo = {
+	tokenName: 'satoken',
 	accessToken: '',
 	refreshToken: '',
 	expire: 0

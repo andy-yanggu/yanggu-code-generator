@@ -27,10 +27,10 @@ service.interceptors.request.use(
 			config.data = qs.stringify(config.data)
 		}
 
-		// 处理token
+		// 添加token
 		const userStore = useUserStore()
 		if (userStore.tokenInfo) {
-			config.headers.Authorization = userStore.tokenInfo.accessToken
+			config.headers[userStore.tokenInfo.tokenName] = userStore.tokenInfo.accessToken
 		}
 
 		return config
@@ -111,7 +111,7 @@ service.interceptors.response.use(
 )
 
 /**
- * 统一文件下载工具
+ * 统一文件下载工具（适用于小文件）
  *
  * @param url 请求地址
  * @param params 请求参数
@@ -163,6 +163,31 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 				}
 				reject(error)
 			})
+	})
+}
+
+/**
+ * 下载大文件（通过 a 标签 + token 拼接）
+ */
+export const downloadBigFile = (url: string, params?: Record<string, any>) => {
+	return new Promise<void>(resolve => {
+		const userStore = useUserStore()
+		const tokenName = userStore.tokenInfo.tokenName
+		const tokenValue = userStore.tokenInfo.accessToken
+		const requestParam = { ...(params ?? {}), [tokenName]: tokenValue }
+
+		// 拼接完整 URL
+		const baseURL = import.meta.env.VITE_API_URL as string
+		const downloadUrl = `${baseURL}${url}?${qs.stringify(requestParam, { indices: false })}`
+
+		// 创建隐藏的 a 标签
+		const a = document.createElement('a')
+		a.href = downloadUrl
+		a.style.display = 'none'
+		document.body.appendChild(a)
+		a.click()
+		document.body.removeChild(a)
+		resolve()
 	})
 }
 
