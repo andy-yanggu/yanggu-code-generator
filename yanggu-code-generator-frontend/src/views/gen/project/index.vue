@@ -6,9 +6,13 @@
 					<el-input v-model="state.queryForm.projectName" clearable placeholder="请输入项目名称" style="width: 140px"></el-input>
 				</el-form-item>
 				<el-form-item label="生成方式" prop="generatorType">
-					<el-select v-model="state.queryForm.generatorType" style="width: 150px" clearable placeholder="请选择生成方式">
-						<el-option v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :label="item.label" :value="item.value"></el-option>
-					</el-select>
+					<el-select
+						v-model="state.queryForm.generatorType"
+						:options="PROJECT_GENERATE_TYPES"
+						style="width: 150px"
+						clearable
+						placeholder="请选择生成方式"
+					></el-select>
 				</el-form-item>
 				<el-form-item label="创建时间" prop="dateTimeRange" style="width: 340px">
 					<el-date-picker
@@ -69,6 +73,7 @@
 					header-align="center"
 					align="center"
 				></el-table-column>
+				<el-table-column prop="projectPort" label="项目端口" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column

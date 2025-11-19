@@ -10,6 +10,8 @@ export interface GenProjectEntity {
 	projectName: string
 	// 项目包名
 	projectPackage: string
+	// 项目端口
+	projectPort: number | string | null
 	// 项目版本
 	projectVersion: string
 	// 数据源ID
@@ -36,8 +38,6 @@ export interface GenProjectEntity {
 	generatorType: number | string
 	//
 	projectTemplateGroupPropValue: object
-	tableTemplateGroupPropValue: object
-	enumTemplateGroupPropValue: object
 }
 
 // 项目Query查询参数
@@ -59,7 +59,7 @@ const baseUrl: string = '/gen/project'
 // 项目API
 export const genProjectApi: EnabledCrudApi<GenProjectEntity, GenProjectQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenProjectEntity, GenProjectQuery>(baseUrl),
 	// 项目下的表
 	tableList: (queryForm: any): Promise<any> => {
 		return service.post(baseUrl + '/tableList', queryForm)

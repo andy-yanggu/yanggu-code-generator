@@ -52,6 +52,11 @@ public class ProjectModel {
     private String projectPackageSlash;
 
     /**
+     * 项目端口
+     */
+    private Integer projectPort;
+
+    /**
      * 项目版本
      */
     private String projectVersion;

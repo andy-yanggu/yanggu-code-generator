@@ -27,9 +27,20 @@
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="生成方式" prop="generatorType">
-						<el-radio-group v-model="state.dataForm.generatorType">
-							<el-radio v-for="item in PROJECT_GENERATE_TYPES" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
-						</el-radio-group>
+						<el-radio-group v-model="state.dataForm.generatorType" :options="PROJECT_GENERATE_TYPES"></el-radio-group>
+					</el-form-item>
+				</el-col>
+
+				<el-col :span="12">
+					<el-form-item label="项目端口" prop="projectPort">
+						<el-input v-model.number="state.dataForm.projectPort" placeholder="请输入项目端口" clearable @input="projectPortInputHandler"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item label="项目包名" prop="projectPackage">
+						<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -113,9 +124,6 @@
 			</el-form-item>
 
 			<form-divider title="其他配置"></form-divider>
-			<el-form-item label="项目包名" prop="projectPackage">
-				<el-input v-model="state.dataForm.projectPackage" clearable placeholder="请输入项目包名"></el-input>
-			</el-form-item>
 			<el-form-item label="后端路径" prop="backendPath">
 				<el-input v-model="state.dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
 			</el-form-item>
@@ -178,21 +186,18 @@ const state = reactive({
 	initBefore: () => {
 		getList()
 		state.dataForm.projectTemplateGroupPropValue = {}
-		state.dataForm.tableTemplateGroupPropValue = {}
-		state.dataForm.enumTemplateGroupPropValue = {}
 	},
 	dataForm: {
 		id: '',
 		projectName: '',
 		projectPackage: '',
+		projectPort: '',
 		projectVersion: '',
 		datasourceId: '',
 		projectTemplateGroupId: '',
 		projectTemplateGroupPropValue: {},
 		tableTemplateGroupId: '',
-		tableTemplateGroupPropValue: {},
 		enumTemplateGroupId: '',
-		enumTemplateGroupPropValue: {},
 		backendPath: '',
 		frontendPath: '',
 		projectDesc: '',
@@ -271,10 +276,20 @@ const addProjectRule = () => {
 const dataRules = reactive({
 	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	generatorType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
+
+const projectPortInputHandler = (value: number | string) => {
+	if (value === '') {
+		state.dataForm.projectPort = null
+	} else {
+		const n = Number(value)
+		state.dataForm.projectPort = Number.isNaN(n) ? null : n
+	}
+}
 
 const datasourceList = ref([] as GenDatasourceEntity[])
 const projectTemplateGroupList = ref([] as GenTemplateGroupEntity[])

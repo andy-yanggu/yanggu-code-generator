@@ -39,6 +39,12 @@ public class ProjectVO extends BaseVO implements Serializable {
     private String projectPackage;
 
     /**
+     * 项目端口
+     */
+    @Schema(description = "项目端口")
+    private Integer projectPort;
+
+    /**
      * 项目版本
      */
     @Schema(description = "项目版本")

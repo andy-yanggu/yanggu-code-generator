@@ -8,6 +8,7 @@
         id,
         project_name,
         project_package,
+        project_port,
         project_version,
         datasource_id,
         project_template_group_id,
@@ -38,6 +39,7 @@
         <id property="id" column="id"/>
         <result property="projectName" column="project_name"/>
         <result property="projectPackage" column="project_package"/>
+        <result property="projectPort" column="project_port"/>
         <result property="projectVersion" column="project_version"/>
         <result property="datasourceId" column="datasource_id"/>
         <result property="projectTemplateGroupId" column="project_template_group_id"/>

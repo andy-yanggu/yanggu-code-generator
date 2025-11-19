@@ -43,6 +43,12 @@ public class ProjectEntity extends BaseEntity implements Serializable {
     private String projectPackage;
 
     /**
+     * 项目端口
+     */
+    @TableField(value = "project_port")
+    private Integer projectPort;
+
+    /**
      * 项目版本
      */
     @TableField(value = "project_version")
