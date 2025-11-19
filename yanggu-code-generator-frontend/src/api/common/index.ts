@@ -1,7 +1,6 @@
 import { downloadFile, service } from '@/utils/request'
 import { Key, KeyArray } from '@/types/common'
 import { PageQuery, PageVO } from '@/api/common/type'
-import { AxiosResponse } from 'axios'
 
 /**
  * 通用 CRUD 接口定义
@@ -12,13 +11,13 @@ import { AxiosResponse } from 'axios'
  */
 export interface CrudApi<Entity = any, Query extends PageQuery = PageQuery, VO = Entity, DTO = Entity> {
 	// 新增接口
-	add: (dataForm: DTO) => Promise<AxiosResponse<any, any>>
+	add: (dataForm: DTO) => Promise<void>
 
 	// 修改接口
 	update: (dataForm: DTO & { id: Key }) => Promise<void>
 
 	// 提交接口（根据是否存在 id 自动选择新增或更新）
-	submit: (dataForm: DTO) => Promise<void>
+	submit: (dataForm: DTO & { id?: Key }) => Promise<void>
 
 	// 单个删除接口
 	delete: (id: Key) => Promise<void>
@@ -123,13 +122,13 @@ export const createCrudApi = <
 
 	add('detailList', idList => service.post(`${baseUrl}/detailList`, idList))
 
-	add('entityPage', queryForm => service.post(`${baseUrl}/entityPage`, queryForm || {}))
+	add('entityPage', queryForm => service.post(`${baseUrl}/entityPage`, queryForm ?? {}))
 
-	add('entityList', queryForm => service.post(`${baseUrl}/entityList`, queryForm || {}))
+	add('entityList', queryForm => service.post(`${baseUrl}/entityList`, queryForm ?? {}))
 
-	add('voPage', queryForm => service.post(`${baseUrl}/voPage`, queryForm || {}))
+	add('voPage', queryForm => service.post(`${baseUrl}/voPage`, queryForm ?? {}))
 
-	add('voList', queryForm => service.post(`${baseUrl}/voList`, queryForm || {}))
+	add('voList', queryForm => service.post(`${baseUrl}/voList`, queryForm ?? {}))
 
 	add('export', idList => downloadFile(`${baseUrl}/export`, { idList }))
 

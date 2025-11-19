@@ -19,7 +19,12 @@
 				</el-tooltip>
 
 				<!-- 全屏 -->
-				<el-tooltip v-if="useFullscreenButton" :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top" :teleported="teleported">
+				<el-tooltip
+					v-if="useFullscreenButton && tableCardRef"
+					:content="isFullscreen ? '退出全屏' : '开启全屏'"
+					placement="top"
+					:teleported="teleported"
+				>
 					<el-button circle @click="toggle()">
 						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" is-pointer></svg-icon>
 					</el-button>
