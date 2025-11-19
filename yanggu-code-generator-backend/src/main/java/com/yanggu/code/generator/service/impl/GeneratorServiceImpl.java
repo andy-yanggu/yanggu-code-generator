@@ -426,6 +426,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectModel.setProjectPackage(project.getProjectPackage());
         projectModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         projectModel.setProjectVersion(project.getProjectVersion());
+        projectModel.setProjectPort(project.getProjectPort());
         projectModel.setBackendPath(project.getBackendPath());
         projectModel.setFrontendPath(project.getFrontendPath());
         projectModel.setProjectDesc(project.getProjectDesc());

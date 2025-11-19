@@ -24,7 +24,7 @@
 			<el-form-item v-if="hasComponentOptions" label="组件选项" prop="componentOptions">
 				<el-row
 					v-for="(item, index) in state.dataForm.componentOptions"
-					:key="item.value"
+					:key="index"
 					:gutter="10"
 					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
 				>
@@ -70,6 +70,9 @@
 					inactive-text="否"
 				></el-switch>
 			</el-form-item>
+			<el-form-item label="字段布局方式" prop="columnSpan">
+				<el-radio-group v-model="state.dataForm.columnSpan" :options="COLUMN_SPAN_TYPES"></el-radio-group>
+			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
 			</el-form-item>
@@ -86,7 +89,7 @@ import { computed, reactive, watch } from 'vue'
 import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
-import { COMPONENT_TYPES } from '@/constant/enum'
+import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import { LabelData } from '@/types/common'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
@@ -171,6 +174,7 @@ const dataRules = reactive({
 	propDefaultValue: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	columnSpan: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	componentOptions: [{ required: true, validator: componentOptions, trigger: 'blur' }]
 })
 

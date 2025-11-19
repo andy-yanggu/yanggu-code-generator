@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.impl;
 
+import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.json.JSONArray;
 import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -51,17 +53,28 @@ public class ProjectTemplateGroupPropertyValueServiceImpl extends ServiceImpl<Pr
 
     @Override
     public Map<String, Object> getData(Long projectId, Long templateGroupId) {
-        Map<Long, String> collectMap = templateGroupPropertyService.listByGroupId(List.of(templateGroupId)).stream()
-                .collect(Collectors.toMap(TemplateGroupPropertyEntity::getId, TemplateGroupPropertyEntity::getPropKey));
+        Map<Long, TemplateGroupPropertyEntity> collectMap = templateGroupPropertyService.listByGroupId(List.of(templateGroupId)).stream()
+                .collect(Collectors.toMap(TemplateGroupPropertyEntity::getId, Function.identity()));
 
         LambdaQueryWrapper<ProjectTemplateGroupPropertyValueEntity> queryWrapper = Wrappers.lambdaQuery(ProjectTemplateGroupPropertyValueEntity.class)
                 .eq(ProjectTemplateGroupPropertyValueEntity::getProjectId, projectId)
                 .eq(ProjectTemplateGroupPropertyValueEntity::getTemplateGroupId, templateGroupId);
 
         return this.list(queryWrapper).stream()
+                .filter(temp -> collectMap.containsKey(temp.getTemplateGroupPropertyId()))
                 .collect(Collectors.toMap(
-                        temp -> collectMap.get(temp.getTemplateGroupPropertyId()),
-                        temp -> handlerData(temp.getTemplateGroupPropertyValue()))
+                        temp -> collectMap.get(temp.getTemplateGroupPropertyId()).getPropKey(),
+                        temp -> {
+                            String propertyValue = temp.getTemplateGroupPropertyValue();
+                            boolean empty = ObjUtil.isEmpty(propertyValue);
+                            String data;
+                            if (empty) {
+                                data = collectMap.get(temp.getTemplateGroupPropertyId()).getPropDefaultValue();
+                            } else {
+                                data = propertyValue;
+                            }
+                            return handlerData(data);
+                        })
                 );
     }
 

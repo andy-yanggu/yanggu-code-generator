@@ -14,6 +14,7 @@
         component_type,
         component_options,
         required,
+        column_span,
         prop_order,
         remark,
         create_time,
@@ -44,6 +45,7 @@
                 typeHandler="com.yanggu.code.generator.config.LabelValueDataTypeHandler"/>
         <result property="required" column="required"/>
         <result property="propOrder" column="prop_order"/>
+        <result property="columnSpan" column="column_span"/>
         <result property="remark" column="remark"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>

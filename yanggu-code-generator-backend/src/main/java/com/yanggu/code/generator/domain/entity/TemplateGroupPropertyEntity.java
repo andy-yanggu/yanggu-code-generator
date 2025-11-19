@@ -72,7 +72,13 @@ public class TemplateGroupPropertyEntity extends BaseEntity implements Serializa
 	@TableField(value = "required")
 	private Integer required;
 
-	/**
+    /**
+     * 字段布局方式（1-独占一行，2-一行两个字段）
+     */
+    @TableField(value = "column_span")
+    private Integer columnSpan;
+
+    /**
 	 * 排序
 	 */
 	@TableField(value = "prop_order")

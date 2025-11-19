@@ -21,6 +21,8 @@ export interface GenTemplateGroupPropertyEntity {
 	componentOptions: LabelData[]
 	// 必填
 	required: number
+	// 字段布局方式（1-独占一行，2-一行两个字段）
+	columnSpan: number
 	// 排序
 	propOrder: number
 	// 备注
@@ -50,7 +52,7 @@ const baseUrl: string = '/gen/templateGroupProperty'
 // 模板组属性API
 export const genTemplateGroupPropertyApi: EnabledCrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery> & CustomApi = {
 	// 通用CRUD接口
-	...createCrudApi(baseUrl),
+	...createCrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery>(baseUrl),
 	// 变更是否必填
 	changeRequired: (id: number | string, required: number) => {
 		return service.put(baseUrl + '/changeRequired', { id, required })

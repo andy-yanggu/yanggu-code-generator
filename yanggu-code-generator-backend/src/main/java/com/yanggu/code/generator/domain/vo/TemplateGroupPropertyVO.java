@@ -68,6 +68,12 @@ public class TemplateGroupPropertyVO extends BaseVO implements Serializable {
 	@Schema(description = "必填，1：是，0：否")
 	private Integer required;
 
+    /**
+     * 字段布局方式（1-独占一行，2-一行两个字段）
+     */
+    @Schema(description = "字段布局方式（1-独占一行，2-一行两个字段）")
+    private Integer columnSpan;
+
 	/**
 	 * 排序
 	 */

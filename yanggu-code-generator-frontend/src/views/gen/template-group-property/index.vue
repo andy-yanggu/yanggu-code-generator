@@ -77,18 +77,26 @@
 						></el-switch>
 					</template>
 				</el-table-column>
-				<el-table-column prop="propOrder" label="排序" header-align="center" align="center" sortable="custom">
+				<el-table-column prop="propOrder" label="排序" header-align="center" align="center" sortable="custom" :min-width="100">
 					<template #default="scope">
 						<el-input-number
 							v-model="scope.row.propOrder"
+							:disabled="state.dataListLoading"
 							:min="0"
 							size="small"
-							controls-position="right"
 							@focus="scope.row._oldPropOrder = scope.row.propOrder"
 							@change="(currentValue: number, oldValue: number) => orderChangeHandle(currentValue, oldValue, scope.row)"
 						></el-input-number>
 					</template>
 				</el-table-column>
+				<el-table-column
+					prop="columnSpan"
+					label="字段布局方式"
+					show-overflow-tooltip
+					header-align="center"
+					align="center"
+					:formatter="getLabel(COLUMN_SPAN_TYPES)"
+				></el-table-column>
 				<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
@@ -122,11 +130,10 @@ import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi, GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery } from '@/api/gen/template-group-property'
 import { getLabel } from '@/utils/enum'
-import { COMPONENT_TYPES } from '@/constant/enum'
+import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { useSwitchChangeHandler, useSwitchState } from '@/hooks/use-switch-change-handler'
 import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
@@ -197,7 +204,7 @@ const requiredChangeHandle = useSwitchChangeHandler(
 	getDataList
 )
 
-const orderChangeHandle = useDebounceFn((currentValue: number, oldValue: number, row: GenTemplateGroupPropertyEntity) => {
+const orderChangeHandle = (currentValue: number, oldValue: number, row: GenTemplateGroupPropertyEntity) => {
 	// 如果没变化，直接返回
 	if (currentValue === oldValue) {
 		return
@@ -205,13 +212,16 @@ const orderChangeHandle = useDebounceFn((currentValue: number, oldValue: number,
 	genTemplateGroupPropertyApi
 		.changeOrder(row.id, currentValue)
 		.then(() => {
-			ElMessage.success('排序修改成功')
+			ElMessage.success({
+				message: '排序修改成功',
+				grouping: true
+			})
 			getDataList()
 		})
 		.catch(() => {
 			row.propOrder = oldValue
 		})
-}, 500)
+}
 
 const formRef = ref()
 

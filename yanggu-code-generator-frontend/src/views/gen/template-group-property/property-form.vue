@@ -1,66 +1,31 @@
 <template>
-	<template v-for="item in propertyList" :key="item.id">
-		<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
-			<!-- label标签 -->
-			<template #label>
-				<form-label-tooltip :label="item.propTitle" :tooltip="item.remark"></form-label-tooltip>
-			</template>
+	<template v-for="(row, rowIndex) in rows" :key="rowIndex">
+		<el-row>
+			<el-col v-for="item in row" :key="item.id" :span="item.columnSpan === 1 ? 24 : 12">
+				<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
+					<!-- label -->
+					<template #label>
+						<form-label-tooltip :label="item.propTitle" :tooltip="item.remark"></form-label-tooltip>
+					</template>
 
-			<!-- 文本输入 -->
-			<el-input v-if="item.componentType === 0" v-model="formData[item.propKey]" :placeholder="`请输入${item.propTitle}`" clearable></el-input>
-
-			<!-- 数字输入 -->
-			<el-input-number v-else-if="item.componentType === 1" v-model="formData[item.propKey]"></el-input-number>
-
-			<!-- 下拉框 -->
-			<el-select v-else-if="item.componentType === 2" v-model="formData[item.propKey]" :placeholder="`请选择${item.propTitle}`" filterable clearable>
-				<el-option v-for="selectItem in item.componentOptions" :key="selectItem.value" :value="selectItem.value">{{ selectItem.label }}</el-option>
-			</el-select>
-
-			<!-- 单选 -->
-			<el-radio-group v-else-if="item.componentType === 3" v-model="formData[item.propKey]">
-				<el-radio v-for="selectItem in item.componentOptions" :key="selectItem.value" :value="selectItem.value">
-					{{ selectItem.label }}
-				</el-radio>
-			</el-radio-group>
-
-			<!-- 多选框	-->
-			<el-checkbox-group v-else-if="item.componentType === 4" v-model="formData[item.propKey]">
-				<el-checkbox
-					v-for="selectItem in item.componentOptions"
-					:key="selectItem.value"
-					:value="selectItem.value"
-					:label="selectItem.label"
-				></el-checkbox>
-			</el-checkbox-group>
-
-			<!-- 开关 -->
-			<el-switch
-				v-else-if="item.componentType === 5"
-				v-model="formData[item.propKey]"
-				:inactive-value="item.componentOptions![0].value"
-				:active-value="item.componentOptions![1].value"
-				:inactive-text="item.componentOptions![0].label"
-				:active-text="item.componentOptions![1].label"
-				inline-prompt
-			></el-switch>
-		</el-form-item>
+					<!-- 动态渲染组件 -->
+					<component :is="getComponentType(item)" v-model="formData[item.propKey]" v-bind="getComponentProps(item)"></component>
+				</el-form-item>
+			</el-col>
+		</el-row>
 	</template>
 </template>
-
 <script setup lang="ts">
-import { nextTick, onMounted, PropType } from 'vue'
+import { computed, nextTick, PropType } from 'vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
 
-defineOptions({
-	name: 'GenTemplateGroupPropertyPropertyForm'
-})
+defineOptions({ name: 'GenTemplateGroupPropertyPropertyForm' })
 
 const props = defineProps({
 	propertyList: {
 		type: Array as PropType<GenTemplateGroupPropertyEntity[]>,
-		default: [] as GenTemplateGroupPropertyEntity[]
+		required: true
 	},
 	modelValueProp: {
 		type: String,
@@ -68,20 +33,156 @@ const props = defineProps({
 	}
 })
 
-// 定义双向绑定表单数据
-const formData = defineModel('formData', {
-	type: Object
+const formData = defineModel('formData', { type: Object })
+
+// -------- 行布局计算（核心部分）-----------
+const rows = computed(() => {
+	const res: GenTemplateGroupPropertyEntity[][] = []
+	const list = props.propertyList ?? []
+	if (list.length === 0) {
+		return res
+	}
+
+	// 计算一个 item 占用的实际 span（标准化为 24 格布局）
+	const calcSpan = (item: GenTemplateGroupPropertyEntity) => {
+		const cs = Number(item.columnSpan) || 1
+		// 你的逻辑：columnSpan 越大，占越少格；columnSpan=1 -> 24，columnSpan=2 -> 12，columnSpan=3 -> 8...
+		const span = Math.floor(24 / cs)
+		return Math.min(Math.max(span, 1), 24)
+	}
+
+	// 1) 按 columnSpan 建立分组
+	const groups = new Map<number, GenTemplateGroupPropertyEntity[]>()
+	for (const item of list) {
+		const key = Number(item.columnSpan) || 1
+		if (!groups.has(key)) {
+			groups.set(key, [])
+		}
+		groups.get(key)!.push(item)
+	}
+
+	// 2) 对 key 进行降序排序（columnSpan 大的优先）
+	const sortedKeys = Array.from(groups.keys()).sort((a, b) => b - a)
+
+	// 3) 遍历每个降序 key，组内按 propOrder 排序，并按内容塞满 24
+	for (const key of sortedKeys) {
+		const groupItems = groups.get(key)!
+
+		// 组内按 propOrder 排序
+		const sorted = groupItems.slice().sort((a, b) => (a.propOrder ?? 0) - (b.propOrder ?? 0))
+
+		let currentRow: GenTemplateGroupPropertyEntity[] = []
+		let currentUsed = 0
+
+		for (const item of sorted) {
+			const span = calcSpan(item)
+
+			// 单项独占整行
+			if (span >= 24) {
+				if (currentRow.length > 0) {
+					res.push(currentRow)
+					currentRow = []
+					currentUsed = 0
+				}
+				res.push([item])
+				continue
+			}
+
+			// 本行放不下时，先推入当前行，再开新行
+			if (currentUsed + span > 24) {
+				if (currentRow.length > 0) {
+					res.push(currentRow)
+				}
+				currentRow = []
+				currentUsed = 0
+			}
+
+			// 放入当前行
+			currentRow.push(item)
+			currentUsed += span
+
+			// 正好满行
+			if (currentUsed === 24) {
+				res.push(currentRow)
+				currentRow = []
+				currentUsed = 0
+			}
+		}
+
+		// 当前组的剩余内容
+		if (currentRow.length > 0) {
+			res.push(currentRow)
+		}
+	}
+
+	return res
 })
 
-onMounted(() => {
-	nextTick(() => {
-		// 补齐默认值
-		const keys = Object.keys(formData.value)
-		props.propertyList.forEach((item: GenTemplateGroupPropertyEntity) => {
-			if (!keys.includes(item.propKey)) {
-				formData.value[item.propKey] = item.propDefaultValue
+// -------- 动态渲染组件 --------
+const getComponentType = (item: GenTemplateGroupPropertyEntity) => {
+	switch (item.componentType) {
+		case 0:
+			return 'el-input'
+		case 1:
+			return 'el-input-number'
+		case 2:
+			return 'el-select'
+		case 3:
+			return 'el-radio-group'
+		case 4:
+			return 'el-checkbox-group'
+		case 5:
+			return 'el-switch'
+		default:
+			return 'el-input'
+	}
+}
+
+const getComponentProps = (item: GenTemplateGroupPropertyEntity) => {
+	switch (item.componentType) {
+		case 0:
+			return { placeholder: `请输入${item.propTitle}`, clearable: true }
+
+		case 1:
+			return {}
+
+		case 2:
+			return {
+				placeholder: `请选择${item.propTitle}`,
+				filterable: true,
+				clearable: true,
+				options: item.componentOptions
 			}
-		})
+
+		case 3:
+			return {
+				options: item.componentOptions
+			}
+		case 4:
+			return {
+				options: item.componentOptions
+			}
+
+		case 5:
+			return {
+				activeValue: item.componentOptions?.[1]?.value,
+				inactiveValue: item.componentOptions?.[0]?.value,
+				activeText: item.componentOptions?.[1]?.label,
+				inactiveText: item.componentOptions?.[0]?.label,
+				inlinePrompt: true
+			}
+
+		default:
+			return {}
+	}
+}
+
+// -------- 默认值填充 --------
+nextTick(() => {
+	props.propertyList!.forEach(item => {
+		if (!(item.propKey in formData.value)) {
+			formData.value[item.propKey] = item.propDefaultValue
+		}
 	})
 })
 </script>
