@@ -1,26 +1,6 @@
 import { service } from '@/utils/request'
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { PageQuery } from '@/api/common/type'
-
-// 字段类型管理Entity
-export interface GenFieldTypeEntity {
-	// id
-	id: number
-	// 字段类型
-	columnType: string
-	// 属性类型
-	attrType: string
-	// 属性包名
-	packageName: string
-}
-
-// 字段类型管理Query查询参数
-export interface GenFieldTypeQuery extends PageQuery {
-	// 字段类型
-	columnType: string
-	// 属性类型
-	attrType: string
-}
+import { GenFieldTypeEntity, GenFieldTypeQuery } from '@/types'
 
 // 特定api
 interface CustomApi {

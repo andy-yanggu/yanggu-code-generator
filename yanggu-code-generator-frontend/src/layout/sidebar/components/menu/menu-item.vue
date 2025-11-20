@@ -22,7 +22,7 @@
 import { onMounted, PropType, ref } from 'vue'
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
-import { MenuInfo } from '@/store/user-store'
+import { MenuInfo } from '@/types'
 
 defineOptions({
 	name: 'MenuItem'

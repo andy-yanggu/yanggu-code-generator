@@ -2,51 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { cloneObject, resetReactiveObject } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
-
-interface SystemSetting {
-	// 是否开启面包屑
-	isOpenBreadcrumb: boolean
-	// 面包屑是否设置图标
-	isOpenBreadcrumbIcon: boolean
-	// 是否开启标签页
-	isOpenTag: boolean
-	// 是否开启标签页图标
-	isOpenTagIcon: boolean
-	// 是否开启tag持久化
-	isOpenTagCache: boolean
-	// 是否开启被激活拖拽标签
-	isOpenTagDragActivated: boolean
-	// 是否设置动态标题
-	isOpenDynamicTitle: boolean
-	// 是否开启logo
-	isOpenLogo: boolean
-	// 是否开启载入进度条
-	isOpenProgress: boolean
-	// 是否开启页面缓存
-	isOpenPageCache: boolean
-	// 是否开启菜单搜索
-	isOpenMenuSearch: boolean
-	// 是否开启刷新页面
-	isOpenRefreshPage: boolean
-	// 布局大小
-	isOpenLayoutSetting: boolean
-	// 切换全屏
-	isOpenFullscreen: boolean
-	// 主题切换
-	isOpenThemeSwitch: boolean
-	// 是否开启菜单折叠动画
-	isOpenMenuCollapseAnimation: boolean
-	// 是否开启菜单只打开一个菜单
-	isOpenMenuUniqueOpened: boolean
-	// 菜单展开/折叠按钮
-	isOpenMenuCollapseButton: boolean
-	// 菜单展开宽度
-	menuExpandWidth: number
-	// 菜单折叠宽度
-	menuFoldWidth: number
-	// 默认菜单
-	menuDefault: string
-}
+import { SystemSetting } from '@/types'
 
 // 菜单展开宽度
 export const menuExpandWidthList = [180, 210, 240]

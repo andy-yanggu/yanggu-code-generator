@@ -1,6 +1,5 @@
-import { useAppStore } from '@/store/app-store'
+import { useAppStore, useSystemSettingStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
-import { useSystemSettingStore } from '@/store/system-setting-store'
 
 // 刷新当前页面
 export const usePageRefresher = () => {

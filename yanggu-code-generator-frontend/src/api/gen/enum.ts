@@ -1,27 +1,6 @@
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
 import { service } from '@/utils/request'
-import { PageQuery } from '@/api/common/type'
-import { KeyArray } from '@/types/common'
-
-// 枚举Entity
-export interface GenEnumEntity {
-	// id
-	id: number
-	// 枚举名称
-	enumName: string
-	// 枚举描述
-	enumDesc: string
-	// 项目ID
-	projectId: number | string
-}
-
-// 枚举Query查询参数
-export interface GenEnumQuery extends PageQuery {
-	// 枚举名称
-	enumName?: string
-	// 项目ID
-	projectId: number | string
-}
+import { GenEnumEntity, GenEnumQuery, KeyArray } from '@/types'
 
 // 特定api
 interface CustomApi {

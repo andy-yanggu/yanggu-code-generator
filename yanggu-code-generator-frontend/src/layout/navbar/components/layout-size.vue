@@ -18,7 +18,8 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/index'
 import { ref } from 'vue'
-import { LayOutSize, useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
+import { LayOutSize } from '@/types'
 
 defineOptions({
 	name: 'LayoutSize'

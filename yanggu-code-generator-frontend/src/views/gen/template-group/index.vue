@@ -147,10 +147,11 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
-import { genTemplateGroupApi, GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/api/gen/template-group'
 import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { useComplexForm } from '@/hooks/use-init-form'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
+import { genTemplateGroupApi } from '@/api'
+import { GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroup'

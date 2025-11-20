@@ -53,11 +53,11 @@
 <script setup lang="ts">
 import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { genTableApi, GenTableEntity, GenTableQuery } from '@/api/gen/table'
-import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+import { genProjectApi, genTableApi } from '@/api'
+import { GenProjectEntity, GenTableEntity, GenTableQuery } from '@/types'
 
 defineOptions({
 	name: 'GenTableImport'

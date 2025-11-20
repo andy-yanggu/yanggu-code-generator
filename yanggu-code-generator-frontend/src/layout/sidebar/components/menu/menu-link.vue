@@ -6,7 +6,8 @@
 
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
-import { MenuInfo, useUserStore } from '@/store/user-store'
+import { useUserStore } from '@/store'
+import { MenuInfo } from '@/types'
 
 defineOptions({
 	name: 'MenuLink'

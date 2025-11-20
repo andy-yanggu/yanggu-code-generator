@@ -33,8 +33,7 @@
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useRoute } from 'vue-router'
-import { useAppStore } from '@/store/app-store'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useAppStore, useSystemSettingStore } from '@/store'
 import { ref, watch } from 'vue'
 
 defineOptions({

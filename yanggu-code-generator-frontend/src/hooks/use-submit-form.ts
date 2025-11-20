@@ -1,6 +1,6 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Key } from '@/types/common'
+import { Key } from '@/types'
 
 // 表单模式：新增、修改、复制
 export type FormType = 'add' | 'update' | 'copy'

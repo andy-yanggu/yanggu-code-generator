@@ -5,7 +5,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
 
 defineOptions({
 	name: 'Logo'

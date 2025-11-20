@@ -65,7 +65,8 @@
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
-import { genEnumItemApi, GenEnumItemEntity, GenEnumItemQuery } from '@/api/gen/enum-item'
+import { genEnumItemApi } from '@/api'
+import { GenEnumItemEntity, GenEnumItemQuery } from '@/types'
 import { Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({

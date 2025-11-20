@@ -1,7 +1,6 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Key, KeyArray } from '@/types/common'
-import { PageQuery, PageVO } from '@/api/common/type'
+import { Key, KeyArray, PageQuery, PageVO } from '@/types'
 
 // 数据列表接口
 type DataListApi<Query, VO> = (queryForm?: Query) => Promise<PageVO<VO> | VO[]>

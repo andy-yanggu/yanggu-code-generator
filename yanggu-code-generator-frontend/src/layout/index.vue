@@ -21,8 +21,7 @@
 import LayoutSidebar from '@/layout/sidebar/index.vue'
 import LayoutNavbar from '@/layout/navbar/index.vue'
 import LayoutMain from '@/layout/main/index.vue'
-import { useAppStore } from '@/store/app-store'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useAppStore, useSystemSettingStore } from '@/store'
 import { computed } from 'vue'
 
 defineOptions({

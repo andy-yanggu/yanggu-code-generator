@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 

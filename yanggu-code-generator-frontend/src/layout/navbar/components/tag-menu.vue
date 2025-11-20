@@ -33,7 +33,8 @@
 
 <script setup lang="ts">
 import { Back, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
-import { NavbarTag, useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
+import { NavbarTag } from '@/types'
 import { defineEmits, defineProps, PropType } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 

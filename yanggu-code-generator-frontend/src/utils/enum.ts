@@ -1,8 +1,4 @@
-// 枚举值类型
-export type EnumValueType = string | number | boolean | null
-
-// 枚举标签类型
-export type EnumTagTypeValue = 'primary' | 'success' | 'warning' | 'danger' | 'info'
+import { EnumItem, EnumTagTypeValue, EnumValueType } from '@/types'
 
 /**
  * 获取表格枚举标签（单独给el-table-column的formatter属性使用）
@@ -32,27 +28,4 @@ export const getByValue = (value: EnumValueType, enumList: EnumItem[]) => {
 	return enumList.find(item => item.value === value)
 }
 
-/**
- * 枚举项
- */
-export interface EnumItem {
-	/**
-	 * 枚举值
-	 */
-	value: EnumValueType
-
-	/**
-	 * 枚举标签
-	 */
-	label: string
-
-	/**
-	 * element的type类型
-	 */
-	type?: EnumTagTypeValue
-
-	/**
-	 * 颜色
-	 */
-	color?: string
-}
+export type { EnumValueType, EnumTagTypeValue, EnumItem }

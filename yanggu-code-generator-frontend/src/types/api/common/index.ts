@@ -1,5 +1,11 @@
-// 统一返回数据
-export interface Result<T> {
+/**
+ * API 通用类型定义
+ */
+
+/**
+ * 统一返回数据结构
+ */
+export interface Result<T = any> {
 	// 状态码 200为正常
 	code: number
 	// 提示信息 正常为success
@@ -8,7 +14,9 @@ export interface Result<T> {
 	data: T
 }
 
-// 排序查询参数
+/**
+ * 排序查询参数
+ */
 export interface OrderItemQuery {
 	// 排序字段
 	column: string
@@ -16,7 +24,9 @@ export interface OrderItemQuery {
 	asc: boolean
 }
 
-// 统一分页查询参数
+/**
+ * 分页查询参数基类
+ */
 export interface PageQuery {
 	// 当前页码
 	pageNum?: number
@@ -38,8 +48,10 @@ export interface PageQuery {
 	dateTimeRange?: string[]
 }
 
-// 分页数据
-export interface PageVO<T> {
+/**
+ * 分页返回数据
+ */
+export interface PageVO<T = any> {
 	// 当前页码
 	pageNum: number
 	// 每页条数

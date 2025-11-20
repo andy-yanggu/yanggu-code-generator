@@ -54,11 +54,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genTableApi, GenTableEntity } from '@/api/gen/table'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
-import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
 import { Check, Close } from '@element-plus/icons-vue'
+import { genProjectApi, genTableApi } from '@/api'
+import { GenProjectEntity, GenTableEntity } from '@/types'
 
 defineOptions({
 	name: 'GenTableForm'

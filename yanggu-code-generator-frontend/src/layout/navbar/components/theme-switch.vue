@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
 import { Moon, Sunny } from '@element-plus/icons-vue'
 
 defineOptions({

@@ -23,8 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@/store/user-store'
-import { authApi } from '@/api/auth'
+import { useUserStore } from '@/store'
+import { authApi } from '@/api'
 import { ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { Avatar, SwitchButton, User } from '@element-plus/icons-vue'

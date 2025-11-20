@@ -40,7 +40,6 @@
 
 <script setup lang="ts">
 import { Expand, Fold } from '@element-plus/icons-vue'
-import { useAppStore } from '@/store/app-store'
 import TagBar from '@/layout/navbar/components/tag-bar.vue'
 import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/navbar/components/menu-search.vue'
@@ -48,10 +47,10 @@ import SvgIcon from '@/components/svg-icon/index.vue'
 import SystemSetting from '@/layout/navbar/components/system-setting.vue'
 import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.vue'
 import LayoutSize from '@/layout/navbar/components/layout-size.vue'
-import { useFullscreen } from '@vueuse/core'
-import { useSystemSettingStore } from '@/store/system-setting-store'
 import ThemeSwitch from '@/layout/navbar/components/theme-switch.vue'
 import UserDropdown from '@/layout/navbar/components/user-dropdown.vue'
+import { useFullscreen } from '@vueuse/core'
+import { useAppStore, useSystemSettingStore } from '@/store'
 
 defineOptions({
 	name: 'LayoutNavbar'

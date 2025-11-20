@@ -119,13 +119,11 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { genTemplateApi } from '@/api/gen/template'
-import { genTemplateGroupApi } from '@/api/gen/template-group'
 import { ElLoading, ElMessage } from 'element-plus'
 import { CopyDocument, Document, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { genGeneratorApi } from '@/api/gen/generator'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
+import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 
 defineOptions({
 	name: 'GenTemplateTest'

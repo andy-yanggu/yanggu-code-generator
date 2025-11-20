@@ -37,12 +37,12 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genTemplateApi, GenTemplateEntity } from '@/api/gen/template'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
 import { UploadProps } from 'element-plus'
-import { Key } from '@/types/common'
+import { genTemplateApi } from '@/api'
+import { GenTemplateEntity, Key } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateForm'

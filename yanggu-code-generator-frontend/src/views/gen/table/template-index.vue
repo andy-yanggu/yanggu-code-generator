@@ -68,12 +68,12 @@
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref, shallowReactive } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { genGeneratorApi } from '@/api/gen/generator'
 import { ElMessage } from 'element-plus'
-import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/template'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+import { genGeneratorApi, genTemplateApi } from '@/api'
+import { GenTemplateEntity, GenTemplateQuery } from '@/types'
 
 defineOptions({
 	name: 'GenTableTemplate'

@@ -1,0 +1,12 @@
+// Gen 模块类型
+export * from '@/types/api/gen/base-class'
+export * from '@/types/api/gen/datasource'
+export * from '@/types/api/gen/enum'
+export * from '@/types/api/gen/enum-item'
+export * from '@/types/api/gen/field-type'
+export * from '@/types/api/gen/project'
+export * from '@/types/api/gen/table'
+export * from '@/types/api/gen/table-field'
+export * from '@/types/api/gen/template'
+export * from '@/types/api/gen/template-group'
+export * from '@/types/api/gen/template-group-property'

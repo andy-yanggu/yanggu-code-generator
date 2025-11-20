@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import Logo from '@/layout/sidebar/components/logo.vue'
 import MenuIndex from '@/layout/sidebar/components/menu/menu-index.vue'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useSystemSettingStore } from '@/store'
 
 defineOptions({
 	name: 'LayoutSidebar'

@@ -32,7 +32,8 @@
 
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
-import { genDataSourceApi, GenDatasourceEntity } from '@/api/gen/datasource'
+import { genDatasourceApi } from '@/api'
+import { GenDatasourceEntity } from '@/types'
 import { DB_TYPES } from '@/constant/enum'
 import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
@@ -53,8 +54,8 @@ const props = defineProps({
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
-	submitApi: genDataSourceApi.submit,
-	detailApi: genDataSourceApi.detail,
+	submitApi: genDatasourceApi.submit,
+	detailApi: genDatasourceApi.detail,
 	dataForm: {
 		id: -1,
 		dbType: '',

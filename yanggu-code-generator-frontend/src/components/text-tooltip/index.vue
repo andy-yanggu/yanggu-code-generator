@@ -11,7 +11,7 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
 
 defineOptions({
-	name: 'TextTooltipTitle'
+	name: 'TextTooltip'
 })
 
 const props = defineProps({

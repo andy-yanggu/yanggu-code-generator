@@ -29,10 +29,10 @@
 
 <script lang="ts" setup>
 import { nextTick, reactive, ref, shallowReactive } from 'vue'
-import TemplateIndex from './template-index.vue'
-import TableIndex from './table-index.vue'
-import EnumIndex from './enum-index.vue'
-import { genGeneratorApi } from '@/api/gen/generator'
+import TemplateIndex from '@/views/gen/project/template-index.vue'
+import TableIndex from '@/views/gen/project/table-index.vue'
+import EnumIndex from '@/views/gen/project/enum-index.vue'
+import { genGeneratorApi } from '@/api'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 

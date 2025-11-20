@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, nextTick, PropType } from 'vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
-import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
+import { GenTemplateGroupPropertyEntity } from '@/types'
 
 defineOptions({ name: 'GenTemplateGroupPropertyPropertyForm' })
 

@@ -1,6 +1,5 @@
 import { downloadFile, service } from '@/utils/request'
-import { Key, KeyArray } from '@/types/common'
-import { PageQuery, PageVO } from '@/api/common/type'
+import { Key, KeyArray, PageQuery, PageVO } from '@/types'
 
 /**
  * 通用 CRUD 接口定义

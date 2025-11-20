@@ -1,29 +1,6 @@
 import { service } from '@/utils/request'
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { PageQuery } from '@/api/common/type'
-import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
-
-// 模板组管理Entity
-export interface GenTemplateGroupEntity {
-	// 主键ID
-	id: number
-	// 模板组名称
-	groupName: string
-	// 模板组类型（0-项目，1-表）
-	type: number | string
-	// 模板组描述
-	groupDesc?: string
-	// 模板组属性
-	propertyList?: GenTemplateGroupPropertyEntity[]
-}
-
-// 模板组管理Query查询参数
-export interface GenTemplateGroupQuery extends PageQuery {
-	// 模板组名称
-	groupName: string
-	// 模板组类型（0-项目，1-表）
-	type: number | string
-}
+import { GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/types'
 
 // 特定api
 interface CustomApi {

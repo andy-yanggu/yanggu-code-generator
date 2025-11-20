@@ -1,30 +1,5 @@
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { PageQuery } from '@/api/common/type'
-import { Key } from '@/types/common'
-
-// 基类Entity
-export interface GenBaseClassEntity {
-	// 主键ID
-	id: Key
-	// 基类名称
-	baseClassName: string
-	// 基类包名
-	packageName: string
-	// 基类类名
-	className: string
-	// 基类字段
-	fields: string
-	// 备注
-	remark: string
-}
-
-// 基类查询参数
-export interface GenBaseClassQuery extends PageQuery {
-	// 基类包名
-	packageName?: string
-	// 基类类名
-	className?: string
-}
+import { GenBaseClassEntity, GenBaseClassQuery } from '@/types'
 
 // 特定api
 interface CustomApi {}

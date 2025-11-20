@@ -140,17 +140,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { genProjectApi, GenProjectEntity } from '@/api/gen/project'
-import { genDataSourceApi, GenDatasourceEntity } from '@/api/gen/datasource'
-import { genTemplateGroupApi, GenTemplateGroupEntity } from '@/api/gen/template-group'
-import { genBaseClassApi, GenBaseClassEntity } from '@/api/gen/base-class'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
-import { GenTemplateGroupPropertyEntity } from '@/api/gen/template-group-property'
+import { genBaseClassApi, genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
+import { GenBaseClassEntity, GenDatasourceEntity, GenProjectEntity, GenTemplateGroupEntity, GenTemplateGroupPropertyEntity } from '@/types'
 
 defineOptions({
 	name: 'GenProjectForm'
@@ -160,7 +157,7 @@ const emit = defineEmits(['refreshDataList'])
 
 const getList = () => {
 	// 数据源下拉
-	genDataSourceApi.entityList().then(data => {
+	genDatasourceApi.entityList().then(data => {
 		datasourceList.value = data
 	})
 

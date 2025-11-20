@@ -114,7 +114,8 @@ import { reactive } from 'vue'
 import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
-import { genDataSourceApi, GenDatasourceEntity, GenDatasourceQuery } from '@/api/gen/datasource'
+import { genDatasourceApi } from '@/api'
+import { GenDatasourceEntity, GenDatasourceQuery } from '@/types'
 import { getLabel } from '@/utils/enum'
 import { useComplexForm } from '@/hooks/use-init-form'
 import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
@@ -125,8 +126,8 @@ defineOptions({
 })
 
 const state = reactive({
-	dataListApi: genDataSourceApi.entityPage,
-	deleteListApi: genDataSourceApi.deleteList,
+	dataListApi: genDatasourceApi.entityPage,
+	deleteListApi: genDatasourceApi.deleteList,
 	queryForm: {
 		dbType: '',
 		connName: ''
@@ -134,7 +135,7 @@ const state = reactive({
 } as IHooksOptions<GenDatasourceQuery, GenDatasourceEntity>)
 
 const datasourceTestHandle = (id: number) => {
-	genDataSourceApi.test(id).then(data => {
+	genDatasourceApi.test(id).then(data => {
 		const { result, message } = data
 		if (result) {
 			ElMessage.success(message)

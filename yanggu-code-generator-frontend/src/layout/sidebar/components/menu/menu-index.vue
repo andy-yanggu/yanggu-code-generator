@@ -18,9 +18,7 @@
 import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useRoute } from 'vue-router'
 import { nextTick, ref, watch } from 'vue'
-import { useAppStore } from '@/store/app-store'
-import { useUserStore } from '@/store/user-store'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
 
 defineOptions({
 	name: 'MenuIndex'

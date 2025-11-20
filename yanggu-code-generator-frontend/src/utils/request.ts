@@ -1,9 +1,9 @@
 import axios from 'axios'
 import qs from 'qs'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/store/user-store'
+import { useUserStore } from '@/store'
 import { router } from '@/router'
-import { Result } from '@/api/common/type'
+import { Result } from '@/types/api/common'
 
 // axios实例
 export const service = axios.create({
@@ -58,7 +58,7 @@ service.interceptors.response.use(
 			return response
 		}
 
-		const result = data as Result<any>
+		const result = data as Result
 
 		// 响应成功
 		if (result.code === 200) {

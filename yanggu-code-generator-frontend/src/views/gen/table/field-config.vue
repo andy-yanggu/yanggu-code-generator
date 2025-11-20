@@ -173,12 +173,11 @@
 <script setup lang="ts">
 import { nextTick, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { genTableFieldApi, GenTableFieldEntity } from '@/api/gen/table-field'
-import { genEnumApi, GenEnumEntity } from '@/api/gen/enum'
-import { genFieldTypeApi } from '@/api/gen/field-type'
+import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
+import { GenTableFieldEntity } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
-import { LabelData } from '@/types/common'
+import { LabelData } from '@/types'
 import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
 defineOptions({

@@ -23,7 +23,8 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { genFieldTypeApi, GenFieldTypeEntity } from '@/api/gen/field-type'
+import { genFieldTypeApi } from '@/api'
+import { GenFieldTypeEntity } from '@/types'
 import { ATTR_TYPES } from '@/constant/enum'
 import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
 import { Check, Close } from '@element-plus/icons-vue'

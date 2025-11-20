@@ -1,4 +1,4 @@
-import { EnumItem } from '@/utils/enum'
+import { EnumItem } from '@/types'
 
 // 数据库类型枚举
 export const DB_TYPES: EnumItem[] = [

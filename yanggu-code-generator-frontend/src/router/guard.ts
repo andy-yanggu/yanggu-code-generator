@@ -1,32 +1,9 @@
-import { useAppStore } from '@/store/app-store'
-import { MenuInfo, useUserStore } from '@/store/user-store'
+import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
 import { Router, RouteRecordRaw } from 'vue-router'
 import 'nprogress/nprogress.css'
 import NProgress from 'nprogress'
 import { setTitle } from '@/utils/tool'
-import { useSystemSettingStore } from '@/store/system-setting-store'
-
-// 路由数据
-export interface RouteMetaData {
-	// 路径
-	path: string
-	// 完整路径
-	fullPath: string
-	// 组件名称
-	name: string
-	// 标题
-	title: string
-	// 图标
-	icon: string
-	// 缓存
-	cache: boolean
-	// 隐藏
-	hidden: boolean
-	// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
-	type: number
-	// 外链地址
-	externalUrl?: string
-}
+import { MenuInfo, RouteMetaData } from '@/types'
 
 NProgress.configure({ showSpinner: false })
 
@@ -97,8 +74,8 @@ export const routeGuard = (router: Router) => {
 
 		const appStore = useAppStore()
 
-		// 不是新窗口，添加tag标签
-		if (routeMetaData.type != 4 && systemSettingStore.isOpenTag) {
+		// 不是新窗口,添加tag标签
+		if (routeMetaData.type !== 4 && systemSettingStore.isOpenTag) {
 			// 添加标签
 			appStore.addTag({
 				...routeMetaData

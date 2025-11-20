@@ -105,7 +105,8 @@ import { useComplexForm } from '@/hooks/use-init-form'
 import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
-import { genBaseClassApi, GenBaseClassEntity, GenBaseClassQuery } from '@/api/gen/base-class'
+import { genBaseClassApi } from '@/api'
+import { GenBaseClassEntity, GenBaseClassQuery } from '@/types'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({

@@ -99,9 +99,10 @@
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
-import { genTemplateApi, GenTemplateEntity, GenTemplateQuery } from '@/api/gen/template'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
+import { genTemplateApi } from '@/api'
+import { GenTemplateEntity, GenTemplateQuery } from '@/types'
 
 defineOptions({
 	name: 'GenProjectTemplate'

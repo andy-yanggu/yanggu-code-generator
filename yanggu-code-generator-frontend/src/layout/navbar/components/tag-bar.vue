@@ -31,15 +31,14 @@
 </template>
 
 <script setup lang="ts">
-import { NavbarTag, useAppStore } from '@/store/app-store'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks/use-refresh-current-page'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
-import { useUserStore } from '@/store/user-store'
 import { TabsPaneContext } from 'element-plus'
 
 defineOptions({
