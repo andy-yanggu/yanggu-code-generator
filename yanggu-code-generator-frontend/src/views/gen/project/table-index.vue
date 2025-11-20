@@ -80,7 +80,6 @@ const init = (projectId: number) => {
 
 	//重置表单查询
 	resetQueryHandle()
-	getDataList()
 }
 
 const selectionChangeHandle = (selections: any[]) => {

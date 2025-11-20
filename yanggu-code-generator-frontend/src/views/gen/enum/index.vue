@@ -174,7 +174,6 @@ const state = reactive({
 
 const enumItemIndexRef = ref()
 const previewRef = ref()
-const tableRef = ref()
 const templateIndexRef = ref()
 const projectList = ref([] as GenProjectEntity[])
 const previewKey = ref('')
@@ -231,6 +230,7 @@ const {
 	queryRef,
 	queryShow,
 	tableCardRef,
+	tableRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)

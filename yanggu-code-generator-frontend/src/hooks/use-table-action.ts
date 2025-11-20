@@ -94,7 +94,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 		exportLoading: false,
 		deleteLoading: false,
 		dataListSelections: [] as KeyArray,
-		deleteConfirmMessage: '确定进行删除操作？',
+		deleteConfirmMessage: '确定进行删除操作吗？',
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
 	}
@@ -274,7 +274,11 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 			state.deleteListApi!(idList)
 				.then(() => {
 					ElMessage.success('删除成功')
-					tableRef.value.clearSelection()
+					// 删除勾选数据
+					if (state.dataListSelections && state.dataListSelections.length > 0) {
+						state.dataListSelections = []
+						tableRef.value.clearSelection()
+					}
 					getDataList()
 				})
 				.finally(() => {
@@ -346,7 +350,7 @@ const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IH
 	onMounted(() => {
 		if (state.createdIsNeed) {
 			nextTick(() => {
-				getDataList()
+				resetQueryHandle()
 			})
 		}
 	})

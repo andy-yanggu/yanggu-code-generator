@@ -81,7 +81,6 @@ const init = (projectId: number) => {
 	state.queryForm.projectId = projectId
 	//重置表单查询
 	resetQueryHandle()
-	getDataList()
 }
 
 const selectionChangeHandle = (selections: any[]) => {

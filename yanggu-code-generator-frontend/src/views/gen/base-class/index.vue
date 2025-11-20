@@ -39,6 +39,7 @@
 			</template>
 			<!-- 表格数据 -->
 			<el-table
+				ref="tableRef"
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
@@ -132,6 +133,7 @@ const {
 	queryRef,
 	queryShow,
 	tableCardRef,
+	tableRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)

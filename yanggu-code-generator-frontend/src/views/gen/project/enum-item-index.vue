@@ -86,9 +86,8 @@ const dialogVisible = ref(false)
 
 const init = (enumId: number) => {
 	dialogVisible.value = true
-	resetQueryHandle()
 	state.queryForm.enumId = enumId
-	getDataList()
+	resetQueryHandle()
 }
 
 defineExpose({

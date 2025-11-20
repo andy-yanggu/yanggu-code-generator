@@ -15,15 +15,18 @@
 				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
 				<enum-index v-if="activeRef === 2" ref="enumIndexRef" @select-change="enumSelectChange"></enum-index>
 			</el-main>
-			<!-- 操作按钮 -->
-			<el-footer height="60px" style="text-align: center">
+		</el-container>
+		<!-- 操作按钮 -->
+		<template #footer>
+			<div style="text-align: center">
 				<el-button v-if="activeRef > 0" type="primary" :icon="ArrowLeft" @click="prevStep()">上一步</el-button>
 				<el-button v-if="activeRef < 2" type="primary" @click="nextStep()">
-					下一步<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
+					下一步
+					<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
 				</el-button>
 				<el-button v-if="activeRef === 2" :loading="submitLoading" type="success" :icon="DocumentAdd" @click="generateCode()">生成</el-button>
-			</el-footer>
-		</el-container>
+			</div>
+		</template>
 	</el-dialog>
 </template>
 

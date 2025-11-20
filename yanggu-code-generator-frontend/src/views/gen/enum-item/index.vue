@@ -36,6 +36,7 @@
 				</table-tool-bar>
 			</template>
 			<el-table
+				ref="tableRef"
 				v-loading="state.dataListLoading"
 				:data="state.dataList"
 				border
@@ -121,7 +122,6 @@ const init = (enumId: number, enumName: string) => {
 	resetQueryHandle()
 	enumNameRef.value = enumName
 	state.queryForm.enumId = enumId
-	getDataList()
 }
 
 defineExpose({
@@ -138,6 +138,7 @@ const {
 	queryRef,
 	queryShow,
 	tableCardRef,
+	tableRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)

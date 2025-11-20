@@ -173,7 +173,7 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genProjectApi, genTableApi } from '@/api'
-import { GenTableEntity, GenTableQuery, KeyArray } from '@/types'
+import { GenProjectEntity, GenTableEntity, GenTableQuery, KeyArray } from '@/types'
 
 defineOptions({
 	name: 'GenTable'
@@ -197,7 +197,6 @@ const importRef = ref()
 const editRef = ref()
 const previewRef = ref()
 const templateIndexRef = ref()
-const tableRef = ref()
 const projectList = ref([] as GenProjectEntity[])
 
 const getProjectList = () => {
@@ -266,6 +265,7 @@ const {
 	queryRef,
 	queryShow,
 	tableCardRef,
+	tableRef,
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)

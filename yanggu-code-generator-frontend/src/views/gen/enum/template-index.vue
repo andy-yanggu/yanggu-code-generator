@@ -111,9 +111,6 @@ const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []
 
 	//重置查询表单数据
 	resetQueryHandle()
-
-	//加载列表数据
-	getDataList()
 }
 
 const generateCode = () => {

@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
@@ -109,7 +109,6 @@ defineOptions({
 })
 
 const emit = defineEmits(['selectChange'])
-const tableRef = ref()
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
 	createdIsNeed: false,
@@ -126,11 +125,8 @@ let isManualSelection = true
 const init = (templateGroupIdList: number[]) => {
 	state.queryForm.templateGroupIdList = templateGroupIdList
 
-	//重置查询表单数据
+	//重置查询表单并且查询数据
 	resetQueryHandle()
-
-	//加载列表数据
-	getDataList()
 }
 
 const selectionChangeHandle = (selections: any[]) => {
@@ -147,7 +143,7 @@ const toggleRowSelection = (rowList: any[]) => {
 	isManualSelection = true
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
+const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, tableRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 defineExpose({
 	init,
