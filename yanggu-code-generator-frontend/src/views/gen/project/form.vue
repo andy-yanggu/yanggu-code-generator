@@ -141,13 +141,20 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genBaseClassApi, genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
-import { GenBaseClassEntity, GenDatasourceEntity, GenProjectEntity, GenTemplateGroupEntity, GenTemplateGroupPropertyEntity } from '@/types'
+import {
+	FormOptions,
+	GenBaseClassEntity,
+	GenDatasourceEntity,
+	GenProjectEntity,
+	GenTemplateGroupEntity,
+	GenTemplateGroupPropertyEntity
+} from '@/types'
 
 defineOptions({
 	name: 'GenProjectForm'

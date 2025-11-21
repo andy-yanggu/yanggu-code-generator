@@ -8,6 +8,9 @@ export * from '@/types/api'
 // 通用类型
 export * from '@/types/common'
 
+// hooks
+export * from '@/types/hooks'
+
 // 路由类型
 export * from '@/types/router'
 

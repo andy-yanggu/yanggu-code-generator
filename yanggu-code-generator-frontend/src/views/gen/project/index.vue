@@ -132,11 +132,11 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
 import Preview from '@/components/preview/index.vue'
 import { genProjectApi } from '@/api'
-import { GenProjectEntity, GenProjectQuery } from '@/types'
+import { GenProjectEntity, GenProjectQuery, IHooksOptions } from '@/types'
 import Steps from '@/views/gen/project/steps.vue'
 import ProjectForm from '@/views/gen/project/form.vue'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'

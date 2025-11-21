@@ -31,11 +31,11 @@
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
-import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupApi } from '@/api'
-import { GenTemplateGroupEntity } from '@/types'
+import { FormOptions, FormType, GenTemplateGroupEntity } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'

@@ -158,7 +158,6 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { onMounted, reactive, ref } from 'vue'
 import Import from '@/views/gen/table/import.vue'
 import GenTableForm from '@/views/gen/table/form.vue'
@@ -169,11 +168,11 @@ import { ElMessage } from 'element-plus/es'
 import { ElMessageBox } from 'element-plus'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import { useInitForm } from '@/hooks/use-init-form'
+import { useInitForm, useTableAction } from '@/hooks'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genProjectApi, genTableApi } from '@/api'
-import { GenProjectEntity, GenTableEntity, GenTableQuery, KeyArray } from '@/types'
+import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, KeyArray } from '@/types'
 
 defineOptions({
 	name: 'GenTable'

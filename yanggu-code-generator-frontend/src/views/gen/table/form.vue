@@ -55,10 +55,10 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES } from '@/constant/enum'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import { genProjectApi, genTableApi } from '@/api'
-import { GenProjectEntity, GenTableEntity } from '@/types'
+import { FormOptions, GenProjectEntity, GenTableEntity } from '@/types'
 
 defineOptions({
 	name: 'GenTableForm'

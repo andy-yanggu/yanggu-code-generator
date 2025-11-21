@@ -140,14 +140,14 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/components/preview/index.vue'
 import { genEnumApi, genProjectApi } from '@/api'
-import { GenEnumEntity, GenEnumQuery, GenProjectEntity } from '@/types'
+import { useTableAction } from '@/hooks/use-table-action'
+import { GenEnumEntity, GenEnumQuery, GenProjectEntity, IHooksOptions } from '@/types'
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
 import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'

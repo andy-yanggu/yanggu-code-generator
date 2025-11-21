@@ -47,7 +47,7 @@ const logout = () => {
 		authApi.logout().then(() => {
 			userStore.clearAll()
 			router.push({
-				path: '/login',
+				path: '/auth/login',
 				query: {
 					redirect: encodeURIComponent(route.fullPath || '/')
 				}

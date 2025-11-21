@@ -70,25 +70,24 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useSubmitHandler, useTableAction } from '@/hooks'
 import { reactive, ref, shallowReactive } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { getLabel } from '@/utils/enum'
 import { genGeneratorApi, genTemplateApi } from '@/api'
-import { GenTemplateEntity, GenTemplateQuery } from '@/types'
+import { GenTemplateEntity, GenTemplateQuery, IHooksOptions, SubmitOptions } from '@/types'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
-import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
 
 defineOptions({
-	name: 'GenEnumTemplateDialog'
+	name: 'GenEnumTemplate'
 })
 
 const emit = defineEmits(['clearSelection'])
 
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		templateGroupId: '',
 		templateName: '',

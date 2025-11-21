@@ -1,6 +1,5 @@
 import { nextTick, ref } from 'vue'
-import { FormType } from '@/hooks/use-submit-form'
-import { Key } from '@/types'
+import { FormType, Key } from '@/types'
 
 // 简单表单
 export const useInitForm = () => {

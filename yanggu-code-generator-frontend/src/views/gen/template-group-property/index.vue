@@ -124,17 +124,16 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { nextTick, reactive, ref } from 'vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
-import { useSwitchChangeHandler, useSwitchState } from '@/hooks/use-switch-change-handler'
+import { useSwitchChangeHandler, useSwitchState, useTableAction } from '@/hooks'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupPropertyApi } from '@/api'
-import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery } from '@/types'
+import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
@@ -158,7 +157,7 @@ const state = reactive({
 	deleteListApi: genTemplateGroupPropertyApi.deleteList,
 	exportApi: genTemplateGroupPropertyApi.export,
 	importApi: genTemplateGroupPropertyApi.import,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		templateGroupId: '',
 		propTitle: '',

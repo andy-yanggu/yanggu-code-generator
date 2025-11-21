@@ -31,8 +31,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { genEnumApi, genProjectApi } from '@/api'
-import { GenEnumEntity, GenProjectEntity } from '@/types'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { FormOptions, GenEnumEntity, GenProjectEntity } from '@/types'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 

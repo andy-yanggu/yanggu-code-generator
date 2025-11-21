@@ -86,13 +86,13 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
 import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genEnumItemApi } from '@/api'
-import { GenEnumItemEntity, GenEnumItemQuery } from '@/types'
+import { GenEnumItemEntity, GenEnumItemQuery, IHooksOptions } from '@/types'
 
 defineOptions({
 	name: 'GenEnumItem'
@@ -101,7 +101,7 @@ defineOptions({
 const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	deleteListApi: genEnumItemApi.deleteList,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		enumItemName: '',
 		enumItemCode: '',

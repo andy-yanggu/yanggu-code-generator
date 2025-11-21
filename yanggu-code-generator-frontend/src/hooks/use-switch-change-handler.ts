@@ -1,18 +1,7 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { SwitchState } from '@/types'
 
-export interface SwitchOption<T = any> {
-	value: T
-	text: string
-	isActive: boolean
-}
-
-export interface SwitchState {
-	field: string
-	states: SwitchOption[]
-	confirmText?: (newText: string) => string
-	successText?: (oldText: string, newText: string) => string
-}
-
+// 开关状态切换
 export const useSwitchState = (options: SwitchState) => {
 	const { field, states } = options
 	if (options.states.length !== 2) {
@@ -66,8 +55,11 @@ export const useSwitchChangeHandler = (
 
 			await apiFn(newValue, row)
 
-			ElMessage.success(switchState.successMessage(oldText, newText))
-
+			if (afterSuccess) {
+				afterSuccess()
+			} else {
+				ElMessage.success(switchState.successMessage(oldText, newText))
+			}
 			afterSuccess?.()
 		} catch {
 			row[field] = oldValue

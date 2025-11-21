@@ -95,21 +95,20 @@
 				@current-change="currentChangeHandle"
 			>
 			</el-pagination>
-
-			<!-- 弹窗, 新增 / 修改 -->
-			<field-type-form ref="formRef" @refresh-data-list="getDataList"></field-type-form>
 		</el-card>
+		<!-- 弹窗表单 -->
+		<field-type-form ref="formRef" @refresh-data-list="getDataList"></field-type-form>
 	</div>
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive } from 'vue'
 import FieldTypeForm from '@/views/gen/field-type/form.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { genFieldTypeApi } from '@/api'
-import { GenFieldTypeEntity, GenFieldTypeQuery } from '@/types'
+import { GenFieldTypeEntity, GenFieldTypeQuery, IHooksOptions } from '@/types'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'

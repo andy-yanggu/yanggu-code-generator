@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import NProgress from 'nprogress'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useSystemSettingStore } from '@/store'
 
 defineOptions({
 	name: 'RouterIframePage'

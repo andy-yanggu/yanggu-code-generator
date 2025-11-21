@@ -54,10 +54,9 @@
 import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genProjectApi, genTableApi } from '@/api'
-import { GenProjectEntity, GenTableEntity, GenTableQuery } from '@/types'
+import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, SubmitOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTableImport'
@@ -67,8 +66,8 @@ const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
 	primaryKey: 'tableName',
-	createdIsNeed: false,
-	resetQueryIsNeed: false,
+	mountedGetData: false,
+	resetQueryGetData: false,
 	isPage: false,
 	dataListApi: genProjectApi.tableList,
 	queryForm: {

@@ -64,7 +64,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/redirect/:path(.*)',
-				component: () => import('@/views/router/redirect.vue'),
+				component: () => import('@/components/router/redirect.vue'),
 				meta: {
 					title: '重定向',
 					cache: false,

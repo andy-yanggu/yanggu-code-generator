@@ -53,10 +53,10 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { genEnumApi } from '@/api'
-import { GenEnumEntity, GenEnumQuery } from '@/types'
+import { GenEnumEntity, GenEnumQuery, IHooksOptions } from '@/types'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
 import { Refresh, Search, View } from '@element-plus/icons-vue'
 
@@ -67,7 +67,7 @@ defineOptions({
 const emit = defineEmits(['selectChange'])
 const state = reactive({
 	dataListApi: genEnumApi.entityPage,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		enumName: '',
 		projectId: ''

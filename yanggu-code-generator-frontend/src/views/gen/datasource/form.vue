@@ -33,9 +33,9 @@
 <script setup lang="ts">
 import { PropType, reactive } from 'vue'
 import { genDatasourceApi } from '@/api'
-import { GenDatasourceEntity } from '@/types'
+import { FormOptions, FormType, GenDatasourceEntity } from '@/types'
 import { DB_TYPES } from '@/constant/enum'
-import { FormOptions, FormType, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 

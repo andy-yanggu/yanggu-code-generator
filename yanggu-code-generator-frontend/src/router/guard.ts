@@ -169,7 +169,7 @@ const loadIframeComponent = (item: MenuInfo) => {
 	} else {
 		// 否则使用公共的组件，并且重新设置组件名称
 		return () =>
-			import('@/views/router/iframe-page.vue').then(comp => {
+			import('@/components/router/iframe-page.vue').then(comp => {
 				// 给组件动态设置 name
 				comp.default.name = item.name
 				return comp

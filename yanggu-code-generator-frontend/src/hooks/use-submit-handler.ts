@@ -1,23 +1,8 @@
-import { Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { SubmitOptions } from '@/types'
 
-export interface SubmitOptions {
-	// 控制 dialog 显示
-	visible?: Ref<boolean, boolean>
-	// 提交方法
-	submitApi?: (dataForm: any) => Promise<any>
-	// 触发事件
-	emit?: any
-	// 成功提示
-	message?: string
-	// 提示时长
-	duration?: number
-	// 成功回调
-	onSuccess?: (res: any) => void
-	// 错误回调
-	onError?: (err: any) => void
-}
-
+// 提交处理
 export const useSubmitHandler = (options: SubmitOptions) => {
 	const submitLoading = ref(false)
 

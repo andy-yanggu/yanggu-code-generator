@@ -95,19 +95,18 @@
 			>
 			</el-pagination>
 		</el-card>
+		<!-- 弹窗表单 -->
+		<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></base-class-form>
 	</div>
-	<!-- 弹窗表单 -->
-	<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></base-class-form>
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
-import { useComplexForm } from '@/hooks/use-init-form'
+import { useComplexForm, useTableAction } from '@/hooks'
 import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genBaseClassApi } from '@/api'
-import { GenBaseClassEntity, GenBaseClassQuery } from '@/types'
+import { GenBaseClassEntity, GenBaseClassQuery, IHooksOptions } from '@/types'
 import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 
 defineOptions({

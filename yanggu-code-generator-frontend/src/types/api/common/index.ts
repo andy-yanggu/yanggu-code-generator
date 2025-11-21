@@ -1,8 +1,4 @@
 /**
- * API 通用类型定义
- */
-
-/**
  * 统一返回数据结构
  */
 export interface Result<T = any> {

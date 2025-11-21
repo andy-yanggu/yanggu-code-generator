@@ -110,15 +110,14 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive } from 'vue'
 import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { genDatasourceApi } from '@/api'
-import { GenDatasourceEntity, GenDatasourceQuery } from '@/types'
+import { GenDatasourceEntity, GenDatasourceQuery, IHooksOptions } from '@/types'
+import { useComplexForm, useTableAction } from '@/hooks'
 import { getLabel } from '@/utils/enum'
-import { useComplexForm } from '@/hooks/use-init-form'
 import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 

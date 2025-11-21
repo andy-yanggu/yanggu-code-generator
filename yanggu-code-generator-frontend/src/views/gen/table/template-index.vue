@@ -65,15 +65,14 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { reactive, ref, shallowReactive } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
-import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genGeneratorApi, genTemplateApi } from '@/api'
-import { GenTemplateEntity, GenTemplateQuery } from '@/types'
+import { GenTemplateEntity, GenTemplateQuery, IHooksOptions, SubmitOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTableTemplate'
@@ -83,7 +82,7 @@ const emit = defineEmits(['clearSelection'])
 
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		templateGroupId: -1,
 		templateName: '',

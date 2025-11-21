@@ -51,11 +51,11 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
 import { genTableApi } from '@/api'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import { GenTableEntity, GenTableQuery } from '@/types'
+import { GenTableEntity, GenTableQuery, IHooksOptions } from '@/types'
 
 defineOptions({
 	name: 'GenProjectTable'
@@ -64,7 +64,7 @@ const emit = defineEmits(['selectChange'])
 
 const state = reactive({
 	dataListApi: genTableApi.entityPage,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		tableName: '',
 		className: '',

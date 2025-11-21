@@ -24,9 +24,9 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { genFieldTypeApi } from '@/api'
-import { GenFieldTypeEntity } from '@/types'
+import { FormOptions, GenFieldTypeEntity } from '@/types'
 import { ATTR_TYPES } from '@/constant/enum'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 

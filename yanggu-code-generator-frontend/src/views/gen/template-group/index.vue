@@ -140,7 +140,6 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
 import { getLabel } from '@/utils/enum'
 import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
@@ -148,10 +147,10 @@ import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
-import { useComplexForm } from '@/hooks/use-init-form'
+import { useComplexForm, useTableAction } from '@/hooks'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genTemplateGroupApi } from '@/api'
-import { GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/types'
+import { GenTemplateGroupEntity, GenTemplateGroupQuery, IHooksOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroup'

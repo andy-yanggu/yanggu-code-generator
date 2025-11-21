@@ -96,13 +96,13 @@
 </template>
 
 <script setup lang="ts">
-import useTableAction, { IHooksOptions } from '@/hooks/use-table-action'
+import { useTableAction } from '@/hooks'
 import { reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { genTemplateApi } from '@/api'
-import { GenTemplateEntity, GenTemplateQuery } from '@/types'
+import { GenTemplateEntity, GenTemplateQuery, IHooksOptions } from '@/types'
 
 defineOptions({
 	name: 'GenProjectTemplate'
@@ -111,7 +111,7 @@ defineOptions({
 const emit = defineEmits(['selectChange'])
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
-	createdIsNeed: false,
+	mountedGetData: false,
 	queryForm: {
 		templateGroupIdList: [],
 		templateGroupName: '',

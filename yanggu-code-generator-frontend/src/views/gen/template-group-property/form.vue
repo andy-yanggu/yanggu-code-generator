@@ -84,12 +84,12 @@
 
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue'
-import { FormOptions, useSubmitForm } from '@/hooks/use-submit-form'
+import { useSubmitForm } from '@/hooks'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupPropertyApi } from '@/api'
-import { GenTemplateGroupPropertyEntity, LabelData } from '@/types'
+import { FormOptions, GenTemplateGroupPropertyEntity, LabelData } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroupPropertyForm'

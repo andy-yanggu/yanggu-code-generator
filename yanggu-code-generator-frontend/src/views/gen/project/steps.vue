@@ -37,7 +37,8 @@ import TableIndex from '@/views/gen/project/table-index.vue'
 import EnumIndex from '@/views/gen/project/enum-index.vue'
 import { genGeneratorApi } from '@/api'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
-import { SubmitOptions, useSubmitHandler } from '@/hooks/use-submit-handler'
+import { useSubmitHandler } from '@/hooks'
+import { SubmitOptions } from '@/types'
 
 defineOptions({
 	name: 'GenProjectSteps'
