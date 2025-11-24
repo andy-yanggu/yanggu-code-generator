@@ -1,13 +1,13 @@
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery } from '@/types'
+import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, Key } from '@/types'
 import { service } from '@/utils/request'
 
 // 特定api
 interface CustomApi {
 	// 变更是否必填
-	changeRequired: (id: number | string, required: number) => Promise<void>
+	changeRequired: (id: Key, required: number) => Promise<void>
 	// 变更排序
-	changeOrder: (id: number | string, propOrder: number) => Promise<void>
+	changeOrder: (id: Key, propOrder: number) => Promise<void>
 }
 
 const baseUrl: string = '/gen/templateGroupProperty'
@@ -17,11 +17,11 @@ export const genTemplateGroupPropertyApi: EnabledCrudApi<GenTemplateGroupPropert
 	// 通用CRUD接口
 	...createCrudApi<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery>(baseUrl),
 	// 变更是否必填
-	changeRequired: (id: number | string, required: number) => {
+	changeRequired: (id: Key, required: number) => {
 		return service.put(baseUrl + '/changeRequired', { id, required })
 	},
 	// 变更排序
-	changeOrder: (id: number | string, propOrder: number) => {
+	changeOrder: (id: Key, propOrder: number) => {
 		return service.put(baseUrl + '/changeOrder', { id, propOrder })
 	}
 }

@@ -29,6 +29,7 @@
 							:current-node-key="templateTreeData.activeItemId"
 							highlight-current
 							show-checkbox
+							:check-on-click-leaf="false"
 							class="custom-tree"
 							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"

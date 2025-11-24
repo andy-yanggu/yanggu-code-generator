@@ -102,6 +102,11 @@ public class ProjectModel {
     private Map<String, Object> projectTemplatePropertyData;
 
     /**
+     * 模块列表
+     */
+    private List<String> moduleList;
+
+    /**
      * 表模型数据列表
      */
     private List<TableModel> tableModelList;

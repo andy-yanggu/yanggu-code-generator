@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { useSystemSettingStore } from '@/store/system-setting-store'
+import { useSystemSettingStore } from '@/store'
 import { useDark, useFullscreen, useToggle } from '@vueuse/core'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { IframeInfo, LayOutSize, NavbarTag } from '@/types'

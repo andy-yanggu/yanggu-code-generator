@@ -446,13 +446,16 @@ public class GeneratorServiceImpl implements GeneratorService {
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
         projectModel.setTableModelList(tableModelList);
+        Set<String> moduleList = new HashSet<>();
 
         List<TableEntity> tableList = tableService.getTableListByProjectId(project.getId());
 
         for (TableEntity table : tableList) {
             TableModel tableModel = buildTableDataModel(table, project);
             tableModelList.add(tableModel);
+            moduleList.add(tableModel.getModuleName());
         }
+        projectModel.setModuleList(new ArrayList<>(moduleList));
 
         //枚举模型数据列表
         List<EnumModel> enumModelList = new ArrayList<>();
