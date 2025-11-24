@@ -28,6 +28,10 @@
 			<svg-icon icon="icon-new-window" size="10px"></svg-icon>
 			<span>打开窗口</span>
 		</div>
+		<div class="icon-item" @click="emits('fullScreen')">
+			<svg-icon icon="icon-fullscreen" size="10px"></svg-icon>
+			<span>内容全屏</span>
+		</div>
 	</div>
 </template>
 
@@ -66,7 +70,8 @@ const emits = defineEmits([
 	'closeOtherTags',
 	'closeLeftTag',
 	'closeRightTag',
-	'openNewWindow'
+	'openNewWindow',
+	'fullScreen'
 ])
 </script>
 

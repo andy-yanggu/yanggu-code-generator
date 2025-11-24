@@ -45,11 +45,12 @@ const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 const layoutScrollbarRef = ref()
 
+// 路由切换时滚动到顶部
 watch(
 	() => route.fullPath,
 	() => {
-		// 滚动到顶部
-		layoutScrollbarRef.value.scrollTo({ top: 0 })
+		// 滚动到顶部和左侧
+		layoutScrollbarRef.value.scrollTo({ top: 0, left: 0 })
 	}
 )
 </script>

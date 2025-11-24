@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useSystemSettingStore } from '@/store/system-setting-store'
-import { useDark, useToggle } from '@vueuse/core'
+import { useDark, useFullscreen, useToggle } from '@vueuse/core'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 
@@ -48,6 +48,8 @@ export const useAppStore = defineStore(
 			valueDark: 'dark',
 			valueLight: 'light'
 		})
+		// Layout Main Ref
+		const layoutMainRef = ref()
 
 		// 计算属性
 		// 标签数量
@@ -58,6 +60,8 @@ export const useAppStore = defineStore(
 		const toggleCollapse = () => {
 			isCollapse.value = !isCollapse.value
 		}
+
+		const { toggle: toolFullscreen } = useFullscreen(layoutMainRef)
 
 		// 添加标签
 		const addTag = (tag: NavbarTag) => {
@@ -161,8 +165,10 @@ export const useAppStore = defineStore(
 			cacheList,
 			iframeCacheList,
 			isDark,
+			layoutMainRef,
 			tagLength,
 			toggleCollapse,
+			toolFullscreen,
 			addTag,
 			removeTag,
 			addAllTags,

@@ -26,6 +26,7 @@
 			@close-right-tag="closeRightTag()"
 			@close-all-tags="closeAllTags()"
 			@open-new-window="openNewWindow()"
+			@full-screen="fullScreen()"
 		></tag-menu>
 	</div>
 </template>
@@ -281,6 +282,11 @@ const openNewWindow = () => {
 	// 构造完整 URL
 	const fullUrl = window.location.origin + resolve.href
 	window.open(fullUrl, '_blank')
+}
+
+// 窗口最大化
+const fullScreen = () => {
+	appStore.toolFullscreen()
 }
 
 const { refreshPage } = usePageRefresher()
