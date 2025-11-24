@@ -4,6 +4,14 @@
 			<el-icon size="10"><Refresh></Refresh></el-icon>
 			<span>刷新当前</span>
 		</div>
+		<div class="icon-item" @click="emits('openNewWindow')">
+			<svg-icon icon="icon-new-window" size="10px"></svg-icon>
+			<span>打开窗口</span>
+		</div>
+		<div class="icon-item" @click="emits('fullScreen')">
+			<svg-icon icon="icon-fullscreen" size="10px"></svg-icon>
+			<span>内容全屏</span>
+		</div>
 		<div v-if="props.currentMenuTag.fullPath != defaultMenu || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
@@ -23,14 +31,6 @@
 		<div v-if="appStore.tagLength > 1" class="icon-item" @click="emits('closeAllTags')">
 			<svg-icon icon="icon-close-all" size="10px"></svg-icon>
 			<span>关闭全部</span>
-		</div>
-		<div class="icon-item" @click="emits('openNewWindow')">
-			<svg-icon icon="icon-new-window" size="10px"></svg-icon>
-			<span>打开窗口</span>
-		</div>
-		<div class="icon-item" @click="emits('fullScreen')">
-			<svg-icon icon="icon-fullscreen" size="10px"></svg-icon>
-			<span>内容全屏</span>
 		</div>
 	</div>
 </template>

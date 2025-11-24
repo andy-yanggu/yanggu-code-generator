@@ -8,23 +8,24 @@ import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 // 持久化配置
 const getPersistConfig = () => {
 	const key = 'appStore'
-	if (import.meta.env.PROD) {
-		return {
-			key,
-			storage: localStorage,
-			// 支持动态配置忽略字段
-			omit: (_: never) => {
-				const originOmitList = []
-				const systemSettingStore = useSystemSettingStore()
-				if (!systemSettingStore.isOpenTagCache) {
-					originOmitList.push('tagList')
-				}
-				return originOmitList
+	// 忽略字段
+	const originOmitList = ['layoutMainRef']
+	// 根据环境设置持久化配置
+	// if (import.meta.env.PROD) {
+	//
+	// }
+	return {
+		key,
+		storage: localStorage,
+		// 支持动态配置忽略字段
+		omit: (_: never) => {
+			const systemSettingStore = useSystemSettingStore()
+			if (!systemSettingStore.isOpenTagCache) {
+				originOmitList.push('tagList')
 			}
-		} as unknown as PersistenceOptions
-	} else {
-		return false
-	}
+			return originOmitList
+		}
+	} as unknown as PersistenceOptions
 }
 
 export const useAppStore = defineStore(
