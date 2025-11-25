@@ -160,8 +160,10 @@
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
 										<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
-											<svg-icon :icon="getIcon({ expanded: false }, tabItem)" style="margin-right: 5px"></svg-icon>
-											<span>{{ tabItem.fileName }}</span>
+											<div style="display: flex; align-items: center; gap: 5px">
+												<svg-icon :icon="getIcon({ expanded: false }, tabItem)"></svg-icon>
+												<span>{{ tabItem.fileName }}</span>
+											</div>
 											<span v-if="tabItem.isEdited" class="edit-dot"></span>
 										</div>
 									</el-tooltip>
@@ -323,6 +325,7 @@ watch(
 		nextTick(() => {
 			const dom = treeRef.value.$el.querySelector(`[data-key="${id}"]`)
 			if (dom) {
+				// 树节点滚动到可视区域
 				dom.scrollIntoView({
 					behavior: 'smooth',
 					inline: 'center',
@@ -330,6 +333,7 @@ watch(
 				})
 			}
 
+			// 代码编辑区滚动到顶部
 			codeScrollbarRef.value?.scrollTo({
 				top: 0,
 				behavior: 'smooth'
