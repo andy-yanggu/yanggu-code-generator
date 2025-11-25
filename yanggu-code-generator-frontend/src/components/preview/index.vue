@@ -112,7 +112,7 @@
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
 						<template v-if="templateTreeData.item.templateType === 1">
-							<el-scrollbar style="height: 100%">
+							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
 								<code-mirror v-model="templateTreeData.item.templateContent" :read-only="true"></code-mirror>
 							</el-scrollbar>
 						</template>
@@ -236,6 +236,33 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 		loadingInstance.close()
 	}
 }
+
+const codeScrollbarRef = ref()
+
+// 监听树节点变化，实现节点自动滚动到可视区域内
+watch(
+	() => templateTreeData.item.filePath,
+	filePath => {
+		// 等待 el-tree 渲染完成
+		nextTick(() => {
+			const dom = treeRef.value.$el.querySelector(`[data-key="${filePath}"]`)
+			if (dom) {
+				// 树节点滚动到可视区域
+				dom.scrollIntoView({
+					behavior: 'smooth',
+					inline: 'center',
+					block: 'nearest'
+				})
+			}
+
+			// 代码编辑区滚动到顶部
+			codeScrollbarRef.value?.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			})
+		})
+	}
+)
 
 const buildFileList = (treeList: Tree[]) => {
 	const templateContentList: Tree[] = []
