@@ -12,6 +12,9 @@
 			<svg-icon icon="icon-fullscreen" size="10px"></svg-icon>
 			<span>内容全屏</span>
 		</div>
+	</div>
+	<el-divider></el-divider>
+	<div class="icon-list">
 		<div v-if="props.currentMenuTag.fullPath != defaultMenu || appStore.tagLength > 1" class="icon-item" @click="emits('closeCurrentTag')">
 			<el-icon size="10"><CloseBold></CloseBold></el-icon>
 			<span>关闭当前</span>
@@ -108,5 +111,8 @@ const emits = defineEmits([
 html.dark .icon-item:hover {
 	background-color: #3a3a3a;
 	color: #e0e0e0;
+}
+.el-divider--horizontal {
+	margin: 0 0;
 }
 </style>
