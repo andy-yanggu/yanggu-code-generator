@@ -1,25 +1,27 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" :size="'100%'" :modal="false" :before-close="handleClose">
-		<el-container style="height: 100%">
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" size="100%" :modal="false" :before-close="handleClose">
+		<el-splitter style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden; border-right: 1px solid var(--el-border-color)">
-				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
-					<el-input
-						v-model="treeSearchText"
-						placeholder="请输入目录/文件名称"
-						size="small"
-						clearable
-						prefix-icon="Search"
-						style="width: 200px"
-					></el-input>
-					<div style="display: flex; text-align: right">
+			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
+				<el-row style="margin-bottom: 10px" :gutter="10">
+					<el-col :span="14">
+						<el-input
+							v-model="treeSearchText"
+							placeholder="请输入目录/文件名称"
+							size="small"
+							clearable
+							prefix-icon="Search"
+							style="width: 100%"
+						></el-input>
+					</el-col>
+					<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
 						<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
 						<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()">
 							删除
 						</el-button>
-					</div>
-				</div>
+					</el-col>
+				</el-row>
 				<el-scrollbar style="height: calc(100% - 40px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree
@@ -96,147 +98,140 @@
 						</template>
 					</ul>
 				</div>
-			</el-aside>
-
-			<!-- 新增和修改页面	-->
-			<template-form
-				ref="formRef"
-				:template-group-id="templateGroupId"
-				:parent-id="contextMenu.parentId"
-				:template-type="contextMenu.templateType"
-				:template-path="contextMenu.templatePath"
-				@refresh-data-list="initAfterHandler"
-			></template-form>
-
+				<!-- 新增和修改页面	-->
+				<template-form
+					ref="formRef"
+					:template-group-id="templateGroupId"
+					:parent-id="contextMenu.parentId"
+					:template-type="contextMenu.templateType"
+					:template-path="contextMenu.templatePath"
+					@refresh-data-list="initAfterHandler"
+				></template-form>
+			</el-splitter-panel>
 			<!-- 右侧：模板编辑 -->
-			<el-container v-if="templateTreeData.tabList.length > 0" style="height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
-				<!-- 头部操作区域 -->
-				<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
-					<el-row style="margin-bottom: 5px">
-						<el-col v-if="!isFullscreen" :span="1">
-							<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-								<Expand v-if="isCollapse"></Expand>
-								<Fold v-else></Fold>
-							</el-icon>
-						</el-col>
-						<el-col :span="isFullscreen ? 17 : 16">
-							<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
-						</el-col>
-						<el-col :span="7" style="text-align: right">
-							<el-button
-								v-if="![0, 2].includes(activeTabItem.templateType)"
-								size="small"
-								type="warning"
-								:icon="DocumentChecked"
-								@click="testTemplateContent"
-							>
-								测试
-							</el-button>
-							<el-button
-								:disabled="!activeTabItem.isEdited"
-								size="small"
-								type="primary"
-								:icon="Edit"
-								:loading="submitLoading"
-								@click="saveTemplateContent"
-							>
-								保存
-							</el-button>
-							<el-button size="small" @click="toggle()">
-								<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
-								{{ isFullscreen ? '退出' : '全屏' }}
-							</el-button>
+			<el-splitter-panel>
+				<el-container
+					v-if="templateTreeData.tabList.length > 0"
+					ref="templateContainerRef"
+					style="height: 100%"
+					:class="{ 'full-screen-mode': isFullscreen }"
+				>
+					<!-- 头部操作区域 -->
+					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
+						<el-row style="margin-bottom: 5px">
+							<el-col :span="17" style="padding-left: 10px">
+								<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
+							</el-col>
+							<el-col :span="7" style="text-align: right">
+								<el-button
+									v-if="![0, 2].includes(activeTabItem.templateType)"
+									size="small"
+									type="warning"
+									:icon="DocumentChecked"
+									@click="testTemplateContent"
+								>
+									测试
+								</el-button>
+								<el-button
+									:disabled="!activeTabItem.isEdited"
+									size="small"
+									type="primary"
+									:icon="Edit"
+									:loading="submitLoading"
+									@click="saveTemplateContent"
+								>
+									保存
+								</el-button>
+								<el-button size="small" @click="toggle()">
+									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
+									{{ isFullscreen ? '退出' : '全屏' }}
+								</el-button>
+							</el-col>
+						</el-row>
+						<el-tabs
+							ref="tabsRef"
+							v-model="templateTreeData.activeItemId"
+							tab-position="top"
+							type="card"
+							@tab-click="handleTabClick"
+							@tab-remove="handleTabRemove"
+						>
+							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
+								<template #label>
+									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
+										<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
+											<svg-icon :icon="getIcon({ expanded: false }, tabItem)" style="margin-right: 5px"></svg-icon>
+											<span>{{ tabItem.fileName }}</span>
+											<span v-if="tabItem.isEdited" class="edit-dot"></span>
+										</div>
+									</el-tooltip>
+								</template>
+							</el-tab-pane>
+						</el-tabs>
+						<!-- tab右键菜单 -->
+						<div v-if="tabContextMenu.visible">
+							<ul class="context-menu" :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }">
+								<li @click="closeCurrentTab">
+									<el-icon size="10"><CloseBold></CloseBold></el-icon>
+									<span>关闭当前</span>
+								</li>
+								<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
+									<svg-icon icon="icon-close-others" size="10px"></svg-icon>
+									<span>关闭其他</span>
+								</li>
+								<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
+									<el-icon size="10"><Back></Back></el-icon>
+									<span>关闭左侧</span>
+								</li>
+								<li v-if="tabContextMenu.index < templateTreeData.tabList.length - 1" @click="closeRightTabs">
+									<el-icon size="10"><Right></Right></el-icon>
+									<span>关闭右侧</span>
+								</li>
+								<li v-if="templateTreeData.tabList.some(item => !item.isEdited)" @click="closeUneditedTabs">
+									<el-icon size="10"><Remove></Remove></el-icon>
+									<span>关闭未改</span>
+								</li>
+								<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
+									<svg-icon icon="icon-close-all" size="10px"></svg-icon>
+									<span>关闭全部</span>
+								</li>
+							</ul>
+						</div>
+						<!-- 测试页面 -->
+						<template-test ref="templateTestRef"></template-test>
+					</el-header>
+
+					<!-- 代码区域 -->
+					<el-main style="padding: 5px; overflow: hidden">
+						<template v-if="activeTabItem.templateType === 1">
+							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
+								<code-mirror v-model="activeTabItem.templateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
+							</el-scrollbar>
+						</template>
+						<template v-else-if="activeTabItem.templateType === 2">
+							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
+								<template v-if="imageTypeList.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
+									<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
+								</template>
+								<template v-else>
+									<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
+								</template>
+							</div>
+						</template>
+					</el-main>
+				</el-container>
+				<el-main v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+					<el-row>
+						<el-col :span="24" style="text-align: right">
+							<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
 						</el-col>
 					</el-row>
-					<el-tabs
-						ref="tabsRef"
-						v-model="templateTreeData.activeItemId"
-						tab-position="top"
-						type="card"
-						@tab-click="handleTabClick"
-						@tab-remove="handleTabRemove"
-					>
-						<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
-							<template #label>
-								<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
-									<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
-										<svg-icon :icon="getIcon({ expanded: false }, tabItem)" style="margin-right: 5px"></svg-icon>
-										<span>{{ tabItem.fileName }}</span>
-										<span v-if="tabItem.isEdited" class="edit-dot"></span>
-									</div>
-								</el-tooltip>
-							</template>
-						</el-tab-pane>
-					</el-tabs>
-					<!-- tab右键菜单 -->
-					<div v-if="tabContextMenu.visible">
-						<ul class="context-menu" :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }">
-							<li @click="closeCurrentTab">
-								<el-icon size="10"><CloseBold></CloseBold></el-icon>
-								<span>关闭当前</span>
-							</li>
-							<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
-								<svg-icon icon="icon-close-others" size="10px"></svg-icon>
-								<span>关闭其他</span>
-							</li>
-							<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
-								<el-icon size="10"><Back></Back></el-icon>
-								<span>关闭左侧</span>
-							</li>
-							<li v-if="tabContextMenu.index < templateTreeData.tabList.length - 1" @click="closeRightTabs">
-								<el-icon size="10"><Right></Right></el-icon>
-								<span>关闭右侧</span>
-							</li>
-							<li v-if="templateTreeData.tabList.some(item => !item.isEdited)" @click="closeUneditedTabs">
-								<el-icon size="10"><Remove></Remove></el-icon>
-								<span>关闭未改</span>
-							</li>
-							<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
-								<svg-icon icon="icon-close-all" size="10px"></svg-icon>
-								<span>关闭全部</span>
-							</li>
-						</ul>
+					<div style="flex: 1; display: flex; align-items: center; justify-content: center">
+						<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
 					</div>
-					<!-- 测试页面 -->
-					<template-test ref="templateTestRef"></template-test>
-				</el-header>
-
-				<!-- 代码区域 -->
-				<el-main style="padding: 5px; overflow: hidden">
-					<template v-if="activeTabItem.templateType === 1">
-						<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
-							<code-mirror v-model="activeTabItem.templateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
-						</el-scrollbar>
-					</template>
-					<template v-else-if="activeTabItem.templateType === 2">
-						<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-							<template v-if="imageTypeList.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
-								<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
-							</template>
-							<template v-else>
-								<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
-							</template>
-						</div>
-					</template>
 				</el-main>
-			</el-container>
-			<el-main v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
-				<el-row>
-					<el-col v-if="!isFullscreen" :span="1">
-						<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-							<Expand v-if="isCollapse"></Expand>
-							<Fold v-else></Fold>
-						</el-icon>
-					</el-col>
-					<el-col :span="23" style="text-align: right">
-						<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
-					</el-col>
-				</el-row>
-				<div style="flex: 1; display: flex; align-items: center; justify-content: center">
-					<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
-				</div>
-			</el-main>
-		</el-container>
+			</el-splitter-panel>
+		</el-splitter>
 	</el-drawer>
 </template>
 
@@ -247,7 +242,7 @@ import CodeMirror from '@/components/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'
-import { Back, CloseBold, Delete, DocumentChecked, Edit, Expand, Fold, Refresh, Remove, Right } from '@element-plus/icons-vue'
+import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import { useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
@@ -345,6 +340,8 @@ watch(
 
 const checkedNodeListLength = computed(() => treeRef.value?.getCheckedKeys().length)
 
+const templateContainerRef = ref()
+
 // 实现tab的拖拽排序
 const initTabSortable = () => {
 	if (!tabsRef.value) {
@@ -396,8 +393,7 @@ const activeTabItem: Ref<Tree> = computed(() => {
 })
 
 const treeSearchText = ref('')
-const isCollapse = ref(false)
-const { isFullscreen, toggle } = useFullscreen()
+const { isFullscreen, toggle } = useFullscreen(templateContainerRef)
 // 模板树右键菜单状态
 const contextMenu = reactive({
 	visible: false,
@@ -450,7 +446,6 @@ const handleNodeCollapse = (data: Tree) => {
 
 // 初始化方法
 const init = async () => {
-	isCollapse.value = false
 	const loadingInstance = ElLoading.service({ fullscreen: true })
 	try {
 		const data = await genTemplateApi.treeData(props.templateGroupId)
@@ -655,10 +650,6 @@ const buildFileList = (treeList: Tree[]) => {
 		}
 	})
 	return templateContentList
-}
-
-const toggleCollapse = () => {
-	isCollapse.value = !isCollapse.value
 }
 
 watch(treeSearchText, val => {
@@ -1331,10 +1322,6 @@ html.dark .context-menu li:hover {
 /* 为图标添加暗黑模式适配 */
 html.dark .context-menu svg {
 	color: #e0e0e0;
-}
-
-.collapse-icon {
-	cursor: pointer;
 }
 /* 两种容器：tab 和 tree node 都可以挂红点 */
 .tab-label,

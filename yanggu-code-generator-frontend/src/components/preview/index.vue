@@ -1,19 +1,39 @@
 <template>
 	<!-- 预览界面 -->
 	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" :size="'100%'" destroy-on-close>
-		<el-container class="preview-container" style="height: 100%">
+		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-aside v-show="!isCollapse" width="400px" style="overflow: hidden">
-				<div style="margin-bottom: 10px; gap: 20px; display: flex; justify-content: center; align-items: center">
-					<el-input
-						v-model="treeSearchText"
-						placeholder="请输入目录/文件名称"
-						size="small"
-						clearable
-						prefix-icon="Search"
-						style="width: 240px"
-					></el-input>
-				</div>
+			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
+				<el-row style="margin-bottom: 10px" :gutter="10">
+					<el-col :span="16">
+						<el-input
+							v-model="treeSearchText"
+							placeholder="请输入目录/文件名称"
+							size="small"
+							clearable
+							:prefix-icon="Search"
+							style="width: 100%"
+						></el-input>
+					</el-col>
+					<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
+						<el-button
+							size="small"
+							type="primary"
+							:icon="Refresh"
+							@click="
+								init(
+									templateTreeData.id,
+									templateTreeData.name,
+									templateTreeData.projectId,
+									templateTreeData.generatorType,
+									templateTreeData.generatorProductType
+								)
+							"
+						>
+							刷新
+						</el-button>
+					</el-col>
+				</el-row>
 				<el-scrollbar ref="treeScrollbarRef" style="height: calc(100% - 30px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
@@ -36,21 +56,15 @@
 						</el-tree>
 					</div>
 				</el-scrollbar>
-			</el-aside>
+			</el-splitter-panel>
 
 			<!-- 右侧：代码预览区 -->
-			<el-main v-if="templateTreeData.tabList.length > 0" style="padding: 0" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-splitter-panel v-if="templateTreeData.tabList.length > 0" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; padding: 10px; height: 70px; margin-bottom: 5px">
-						<el-row>
-							<el-col v-if="!isFullscreen" :span="1">
-								<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-									<Expand v-if="isCollapse"></Expand>
-									<Fold v-else></Fold>
-								</el-icon>
-							</el-col>
-							<el-col :span="isFullscreen ? 16 : 15">
+					<el-header style="display: flex; flex-direction: column; margin-bottom: 10px">
+						<el-row style="margin-bottom: 5px">
+							<el-col :span="16">
 								<div class="path-container">
 									<text-tooltip :title="'路径：' + templateTreeData.item.filePath" :max-width="'100%'"></text-tooltip>
 									<el-tooltip content="复制文件路径" placement="top">
@@ -60,7 +74,7 @@
 									</el-tooltip>
 								</div>
 							</el-col>
-							<el-col :span="7" style="text-align: right">
+							<el-col :span="8" style="text-align: right">
 								<el-button
 									v-if="templateTreeData.item.templateType === 1"
 									type="primary"
@@ -77,7 +91,13 @@
 								</el-button>
 							</el-col>
 						</el-row>
-						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+						<el-tabs
+							v-model="templateTreeData.tabActiveName"
+							tab-position="top"
+							type="card"
+							@tab-click="handleTabClick"
+							@tab-remove="handleTabRemove"
+						>
 							<el-tab-pane
 								v-for="tabItem in templateTreeData.tabList"
 								:key="tabItem.filePath"
@@ -108,16 +128,10 @@
 						</template>
 					</el-main>
 				</el-container>
-			</el-main>
-			<el-main v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+			</el-splitter-panel>
+			<el-splitter-panel v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-row>
-					<el-col v-if="!isFullscreen" :span="1">
-						<el-icon :size="20" class="collapse-icon" @click="toggleCollapse()">
-							<Expand v-if="isCollapse"></Expand>
-							<Fold v-else></Fold>
-						</el-icon>
-					</el-col>
-					<el-col :span="23" style="text-align: right">
+					<el-col :span="24" style="text-align: right">
 						<el-button size="small" @click="toggle()">
 							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
 							{{ isFullscreen ? '退出' : '全屏' }}
@@ -127,8 +141,8 @@
 				<div style="flex: 1; display: flex; align-items: center; justify-content: center">
 					<el-text size="large" tag="b">请点击左侧的文件树进行代码预览</el-text>
 				</div>
-			</el-main>
-		</el-container>
+			</el-splitter-panel>
+		</el-splitter>
 	</el-drawer>
 </template>
 
@@ -138,7 +152,7 @@ import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
-import { CopyDocument, DocumentAdd, Expand, Fold } from '@element-plus/icons-vue'
+import { CopyDocument, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import { useFullscreen } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
@@ -177,6 +191,7 @@ const INIT_TEMPLATE_TREE_DATA = {
 	name: '',
 	projectId: -1,
 	generatorType: -1,
+	generatorProductType: -1,
 	treeList: [] as Tree[],
 	dataList: [] as Tree[],
 	item: {} as Tree,
@@ -185,7 +200,6 @@ const INIT_TEMPLATE_TREE_DATA = {
 }
 const templateTreeData = reactive(cloneObject(INIT_TEMPLATE_TREE_DATA))
 const treeSearchText = ref('')
-const isCollapse = ref(false)
 const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
@@ -196,8 +210,8 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
+	templateTreeData.generatorProductType = generatorProductType
 	templateTreeData.visible = true
-	isCollapse.value = false
 	// 等待DOM更新后再显示loading
 	await nextTick()
 	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...' })
@@ -221,10 +235,6 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	} finally {
 		loadingInstance.close()
 	}
-}
-
-const toggleCollapse = () => {
-	isCollapse.value = !isCollapse.value
 }
 
 const buildFileList = (treeList: Tree[]) => {
@@ -433,10 +443,6 @@ defineExpose({
 .context-menu li:hover {
 	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
 	color: #333; /* 可选：加深文字颜色 */
-}
-
-.collapse-icon {
-	cursor: pointer;
 }
 
 /* 覆盖 Element Plus 默认样式 */
