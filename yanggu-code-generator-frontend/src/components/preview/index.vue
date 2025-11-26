@@ -67,28 +67,42 @@
 							<el-col :span="16">
 								<div class="path-container">
 									<text-tooltip :title="'路径：' + templateTreeData.item.filePath" :max-width="'100%'"></text-tooltip>
-									<el-tooltip content="复制文件路径" placement="top">
+									<el-tooltip :disabled="copyIconState === Check" content="复制文件路径" placement="top">
 										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
-											<CopyDocument></CopyDocument>
+											<component :is="copyIconState"></component>
 										</el-icon>
 									</el-tooltip>
 								</div>
 							</el-col>
 							<el-col :span="8" style="text-align: right">
-								<el-button
-									v-if="templateTreeData.item.templateType === 1"
-									type="primary"
-									size="small"
-									:icon="CopyDocument"
-									@click="handleCopy(templateTreeData.item.templateContent!)"
-								>
-									复制
-								</el-button>
-								<el-button type="success" size="small" :icon="DocumentAdd" @click="downloadTemplateData(templateTreeData.item)">生成</el-button>
-								<el-button size="small" @click="toggle()">
-									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
-									{{ isFullscreen ? '退出' : '全屏' }}
-								</el-button>
+								<el-tooltip content="复制代码" placement="top">
+									<el-button
+										v-if="templateTreeData.item.templateType === 1"
+										type="primary"
+										size="small"
+										:icon="CopyDocument"
+										@click="handleCopy(templateTreeData.item.templateContent!)"
+									>
+										复制
+									</el-button>
+								</el-tooltip>
+								<el-tooltip :content="generatorState.tooltip" placement="top">
+									<el-button
+										type="success"
+										size="small"
+										:loading="submitLoading"
+										:icon="generatorState.icon"
+										@click="downloadTemplateData(templateTreeData.item)"
+									>
+										{{ generatorState.text }}
+									</el-button>
+								</el-tooltip>
+								<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top">
+									<el-button size="small" @click="toggle()">
+										<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px" is-pointer></svg-icon>
+										{{ isFullscreen ? '退出' : '全屏' }}
+									</el-button>
+								</el-tooltip>
 							</el-col>
 						</el-row>
 						<el-tabs
@@ -105,6 +119,9 @@
 								:label="tabItem.fileName"
 								closable
 							>
+								<template #label>
+									<icon-text-tooltip :title="tabItem.fileName" :icon="getIcon({ expanded: false }, tabItem)"></icon-text-tooltip>
+								</template>
 							</el-tab-pane>
 						</el-tabs>
 					</el-header>
@@ -133,7 +150,7 @@
 				<el-row>
 					<el-col :span="24" style="text-align: right">
 						<el-button size="small" @click="toggle()">
-							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
+							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px" is-pointer></svg-icon>
 							{{ isFullscreen ? '退出' : '全屏' }}
 						</el-button>
 					</el-col>
@@ -147,15 +164,18 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref, watch } from 'vue'
+import { nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/components/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
-import { CopyDocument, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
+import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
-import { useFullscreen } from '@vueuse/core'
+import { useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
+import { useSubmitHandler } from '@/hooks'
+import { SubmitOptions } from '@/types'
+import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
 	name: 'Preview'
@@ -185,6 +205,24 @@ interface Tree {
 const currentNodeKey = ref('')
 const treeRef = ref()
 const treeScrollbarRef = ref()
+const copyIconState = shallowRef(CopyDocument)
+const { start: startTimer } = useTimeoutFn(() => {
+	copyIconState.value = CopyDocument
+}, 2000)
+
+const INIT_GENERATOR_STATE_ARRAY = [
+	{
+		icon: Download,
+		text: '下载',
+		tooltip: '下载代码'
+	},
+	{
+		icon: DocumentAdd,
+		text: '生成',
+		tooltip: '生成代码'
+	}
+]
+const generatorState = shallowReactive(cloneObject(INIT_GENERATOR_STATE_ARRAY[0]))
 const INIT_TEMPLATE_TREE_DATA = {
 	visible: false,
 	id: -1,
@@ -210,6 +248,11 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
+	if (generatorType === 0) {
+		resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[0])
+	} else {
+		resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[1])
+	}
 	templateTreeData.generatorProductType = generatorProductType
 	templateTreeData.visible = true
 	// 等待DOM更新后再显示loading
@@ -351,9 +394,25 @@ const handleCopy = (content: string) => {
 
 // 文件路径复制到剪切板
 const copyPath = (path: string) => {
-	copyToClipboard(path).then(() => {
-		ElMessage.success('文件路径已复制到剪切板')
-	})
+	// 如果当前是Check状态，则不处理点击事件（防止重复点击）
+	if (copyIconState.value === Check) {
+		return
+	}
+
+	// 切换图标为Check
+	copyIconState.value = Check
+
+	copyToClipboard(path)
+		.then(() => {
+			ElMessage.success('文件路径已复制到剪贴板')
+
+			// 2秒后恢复为CopyDocument图标
+			startTimer()
+		})
+		.catch(() => {
+			// 如果复制失败也恢复图标
+			copyIconState.value = CopyDocument
+		})
 }
 
 //下载单个模板代码
@@ -375,21 +434,20 @@ const downloadTemplateData = (item: Tree) => {
 		templateGroupType: item.templateGroupType
 	}
 	if (templateTreeData.generatorType === 0) {
-		genGeneratorApi.downloadSingle(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到浏览器',
-				duration: 1000
-			})
-		})
+		submitState.submitApi = genGeneratorApi.downloadSingle
+		submitState.successMessage = '代码已经下载到浏览器'
 	} else if (templateTreeData.generatorType === 1) {
-		genGeneratorApi.singleLocal(dataForm).then(() => {
-			ElMessage.success({
-				message: '代码已经下载到本地',
-				duration: 1000
-			})
-		})
+		submitState.submitApi = genGeneratorApi.singleLocal
+		submitState.successMessage = '代码已经生成到本地'
 	}
+	submitHandle(dataForm)
 }
+
+const submitState = shallowReactive({
+	successDuration: 1000
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 const filterNode = (value: string, data: Tree) => {
 	if (!value) {
