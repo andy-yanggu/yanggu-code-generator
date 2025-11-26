@@ -133,7 +133,7 @@ import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { useSwitchChangeHandler, useSwitchState, useTableAction } from '@/hooks'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupPropertyApi } from '@/api'
-import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions } from '@/types'
+import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions, SwitchUpdateConfig } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroupProperty'
@@ -198,11 +198,13 @@ const requiredSwitch = useSwitchState({
 	]
 })
 
-const requiredChangeHandle = useSwitchChangeHandler(
-	requiredSwitch,
-	(val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
-	getDataList
-)
+const switchUpdateConfig = {
+	switchState: requiredSwitch,
+	apiFn: (val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
+	afterSuccess: getDataList
+} as SwitchUpdateConfig
+
+const requiredChangeHandle = useSwitchChangeHandler(switchUpdateConfig)
 
 const orderChangeHandle = (currentValue: number, oldValue: number, row: GenTemplateGroupPropertyEntity) => {
 	// 如果没变化，直接返回

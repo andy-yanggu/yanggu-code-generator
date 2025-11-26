@@ -8,9 +8,13 @@ export interface SubmitOptions {
 	// 触发事件
 	emit?: any
 	// 成功提示
-	message?: string
-	// 提示时长
-	duration?: number
+	successMessage?: string
+	// 成功提示时长
+	successDuration?: number
+	// 错误提示
+	errorMessage?: string
+	// 错误提示时长
+	errorDuration?: number
 	// 成功回调
 	onSuccess?: (res: any) => void
 	// 错误回调

@@ -298,7 +298,7 @@ const getFieldListData = (type: number) => {
 const state = shallowReactive({
 	visible,
 	submitApi: genTableFieldApi.submitList,
-	message: '字段配置成功',
+	successMessage: '字段配置成功',
 	emit
 } as SubmitOptions)
 

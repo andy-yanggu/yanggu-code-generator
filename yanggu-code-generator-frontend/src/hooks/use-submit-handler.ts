@@ -7,8 +7,10 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 	const submitLoading = ref(false)
 
 	const defaultOptions: SubmitOptions = {
-		message: '提交成功',
-		duration: 500
+		successMessage: '提交成功',
+		successDuration: 500,
+		errorMessage: '提交失败，请稍后重试',
+		errorDuration: 1000
 	}
 
 	// 合并默认值
@@ -31,8 +33,8 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 			const res = await options.submitApi(dataForm)
 
 			ElMessage.success({
-				message: options.message,
-				duration: options.duration,
+				message: options.successMessage,
+				duration: options.successDuration,
 				onClose: () => {
 					// 关闭弹窗
 					if (options.visible) {
@@ -54,8 +56,8 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 			} else {
 				// 默认错误处理
 				ElMessage.error({
-					message: '提交失败，请稍后重试',
-					duration: 1000
+					message: options.errorMessage,
+					duration: options.errorDuration
 				})
 			}
 		} finally {

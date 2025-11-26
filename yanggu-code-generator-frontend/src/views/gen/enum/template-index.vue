@@ -126,10 +126,10 @@ const generateCode = () => {
 	const generatorType = initData.generatorType
 	if (generatorType === 0) {
 		submitState.submitApi = genGeneratorApi.enumDownloadZip
-		submitState.message = '代码已经下载到本地，请查看'
+		submitState.successMessage = '代码已经下载到本地，请查看'
 	} else if (generatorType === 1) {
 		submitState.submitApi = genGeneratorApi.enumDownloadLocal
-		submitState.message = '代码已经下载到服务器本地，请查看'
+		submitState.successMessage = '代码已经下载到服务器本地，请查看'
 	}
 	submitHandle(dataForm)
 }
@@ -138,7 +138,7 @@ const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandl
 
 const submitState = shallowReactive({
 	visible: dialogVisible,
-	duration: 1000,
+	successDuration: 1000,
 	onSuccess: () => {
 		emit('clearSelection')
 		state.dataListSelections = []

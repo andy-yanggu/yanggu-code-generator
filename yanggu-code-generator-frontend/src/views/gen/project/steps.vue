@@ -146,10 +146,10 @@ const generateCode = () => {
 	const generatorType = projectReactive.generatorType
 	if (generatorType === 0) {
 		submitState.submitApi = genGeneratorApi.projectDownloadZip
-		submitState.message = '代码已经下载到浏览器'
+		submitState.successMessage = '代码已经下载到浏览器'
 	} else if (generatorType === 1) {
 		submitState.submitApi = genGeneratorApi.projectDownloadLocal
-		submitState.message = '代码已经下载到本地'
+		submitState.successMessage = '代码已经下载到本地'
 	}
 	submitHandle(dataForm)
 }
@@ -168,7 +168,7 @@ const enumSelectChange = (data: any[]) => {
 
 const submitState = shallowReactive({
 	visible: dialogVisible,
-	duration: 1000
+	successDuration: 1000
 } as SubmitOptions)
 
 const { submitLoading, submitHandle } = useSubmitHandler(submitState)

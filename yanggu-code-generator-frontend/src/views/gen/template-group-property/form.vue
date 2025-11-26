@@ -27,10 +27,10 @@
 					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
 				>
 					<el-col :span="11">
-						<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 240px"></el-input>
+						<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 200px"></el-input>
 					</el-col>
 					<el-col :span="11">
-						<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 240px"></el-input>
+						<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 200px"></el-input>
 					</el-col>
 					<el-col :span="2">
 						<div style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-left: 10px">

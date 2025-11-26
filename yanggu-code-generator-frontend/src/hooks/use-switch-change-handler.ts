@@ -1,8 +1,8 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { SwitchState } from '@/types'
+import { SwitchState, SwitchStateResult, SwitchUpdateConfig } from '@/types'
 
 // 开关状态切换
-export const useSwitchState = (options: SwitchState) => {
+export const useSwitchState = <T = any>(options: SwitchState<T>): SwitchStateResult<T> => {
 	const { field, states } = options
 	if (options.states.length !== 2) {
 		throw new Error('Switch options must contain exactly two items')
@@ -17,7 +17,7 @@ export const useSwitchState = (options: SwitchState) => {
 
 	const successMessage = options.successText ?? ((_: string, newText: string) => `修改为【${newText}】成功`)
 
-	const getOldValue = (newValue: any) => {
+	const getOldValue = (newValue: T) => {
 		return newValue === activeState.value ? inactiveState.value : activeState.value
 	}
 
@@ -34,12 +34,9 @@ export const useSwitchState = (options: SwitchState) => {
 	}
 }
 
-export const useSwitchChangeHandler = (
-	switchState: ReturnType<typeof useSwitchState>,
-	apiFn: (newValue: any, row: any) => Promise<any>,
-	afterSuccess?: () => void
-) => {
-	return async (newValue: any, row: any) => {
+export const useSwitchChangeHandler = <T = any>(switchUpdateConfig: SwitchUpdateConfig<T>) => {
+	return async (newValue: T, row: any) => {
+		const { switchState, apiFn, afterSuccess } = switchUpdateConfig
 		const { field, text, getOldValue } = switchState
 
 		const oldValue = getOldValue(newValue)
@@ -50,17 +47,19 @@ export const useSwitchChangeHandler = (
 			await ElMessageBox.confirm(switchState.confirmMessage(newText), '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
-				type: 'warning'
+				type: 'primary'
 			})
 
 			await apiFn(newValue, row)
 
-			if (afterSuccess) {
-				afterSuccess()
-			} else {
-				ElMessage.success(switchState.successMessage(oldText, newText))
-			}
-			afterSuccess?.()
+			ElMessage.success({
+				message: switchState.successMessage(oldText, newText),
+				onClose: () => {
+					if (afterSuccess) {
+						afterSuccess()
+					}
+				}
+			})
 		} catch {
 			row[field] = oldValue
 		}

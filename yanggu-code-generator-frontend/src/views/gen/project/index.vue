@@ -66,7 +66,9 @@
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="projectPort" label="项目端口" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="generatorType"
 					label="生成方式"
@@ -74,9 +76,7 @@
 					header-align="center"
 					align="center"
 				></el-table-column>
-				<el-table-column prop="projectPort" label="项目端口" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="author" label="作者" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="projectDesc" label="项目描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"
