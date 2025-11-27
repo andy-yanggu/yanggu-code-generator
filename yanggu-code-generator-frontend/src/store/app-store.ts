@@ -20,7 +20,7 @@ const getPersistConfig = () => {
 		// 支持动态配置忽略字段
 		omit: (_: never) => {
 			const systemSettingStore = useSystemSettingStore()
-			if (!systemSettingStore.isOpenTagCache) {
+			if (!systemSettingStore.tag.isOpenTagCache) {
 				originOmitList.push('tagList')
 			}
 			return originOmitList

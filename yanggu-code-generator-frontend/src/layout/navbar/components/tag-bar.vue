@@ -8,7 +8,7 @@
 			:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
 		>
 			<template #label>
-				<icon-text-tooltip :enable-icon="systemSettingStore.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
+				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
 			</template>
 		</el-tab-pane>
 	</el-tabs>
@@ -66,7 +66,7 @@ onMounted(() => {
 })
 
 // 默认菜单
-const defaultMenu = computed(() => systemSettingStore.menuDefault)
+const defaultMenu = computed(() => systemSettingStore.menu.menuDefault)
 
 // 实现标签页的拖拽效果
 onMounted(() => {
@@ -88,7 +88,7 @@ onMounted(() => {
 					newTags.splice(newIndex!, 0, movedTag)
 					appStore.addAllTags(newTags)
 					// 激活被移动的标签
-					if (systemSettingStore.isOpenTagDragActivated) {
+					if (systemSettingStore.tag.isOpenTagDragActivated) {
 						if (route.fullPath != movedTag.fullPath) {
 							router.push(movedTag.fullPath)
 						}

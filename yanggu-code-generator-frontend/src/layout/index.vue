@@ -35,6 +35,6 @@ const { layoutMainRef } = storeToRefs(appStore)
 
 // 计算布局宽度
 const calculateLayoutSidebarWidth = computed(() => {
-	return (appStore.isCollapse ? systemSettingStore.menuFoldWidth : systemSettingStore.menuExpandWidth) + 'px'
+	return (appStore.isCollapse ? systemSettingStore.menu.menuFoldWidth : systemSettingStore.menu.menuExpandWidth) + 'px'
 })
 </script>

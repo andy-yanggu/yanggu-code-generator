@@ -56,6 +56,12 @@ export const cloneObject = <T extends object>(obj: T): T => {
 
 // 重置对象
 export const resetReactiveObject = <T extends object>(target: T, source: T): void => {
+	// 清空目标对象的所有属性
+	Object.keys(target).forEach(key => {
+		delete (target as never)[key]
+	})
+
+	// 将克隆的源对象属性复制到目标对象
 	Object.assign(target, cloneObject(source))
 }
 

@@ -5,28 +5,33 @@
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-toolbar-left">
 				<!-- 折叠按钮 -->
-				<el-icon v-if="systemSettingStore.isOpenMenuCollapseButton" :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
+				<el-icon v-if="systemSettingStore.toolbar.isOpenMenuCollapseButton" :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
 					<Expand v-if="appStore.isCollapse"></Expand>
 					<Fold v-else></Fold>
 				</el-icon>
 				<!-- 面包屑 -->
-				<breadcrumb v-if="systemSettingStore.isOpenBreadcrumb"></breadcrumb>
+				<breadcrumb v-if="systemSettingStore.toolbar.isOpenBreadcrumb"></breadcrumb>
 			</div>
 
 			<!-- 右侧区域 -->
 			<div class="navbar-toolbar-right">
 				<!-- 菜单搜索 -->
-				<menu-search v-if="systemSettingStore.isOpenMenuSearch"></menu-search>
+				<menu-search v-if="systemSettingStore.toolbar.isOpenMenuSearch"></menu-search>
 				<!-- 刷新当前页 -->
-				<refresh-current-page v-if="systemSettingStore.isOpenRefreshPage"></refresh-current-page>
+				<refresh-current-page v-if="systemSettingStore.toolbar.isOpenRefreshPage"></refresh-current-page>
 				<!-- 切换布局大小	-->
-				<layout-size v-if="systemSettingStore.isOpenLayoutSetting"></layout-size>
+				<layout-size v-if="systemSettingStore.toolbar.isOpenLayoutSetting"></layout-size>
 				<!-- 全屏按钮 -->
-				<el-tooltip v-if="systemSettingStore.isOpenFullscreen" :content="isFullscreen ? '退出全屏' : '开启全屏'" effect="dark" placement="bottom">
+				<el-tooltip
+					v-if="systemSettingStore.toolbar.isOpenFullscreen"
+					:content="isFullscreen ? '退出全屏' : '开启全屏'"
+					effect="dark"
+					placement="bottom"
+				>
 					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" is-pointer @click="toggle()"></svg-icon>
 				</el-tooltip>
 				<!-- 日间/夜间模式切换  -->
-				<theme-switch v-if="systemSettingStore.isOpenThemeSwitch"></theme-switch>
+				<theme-switch v-if="systemSettingStore.toolbar.isOpenThemeSwitch"></theme-switch>
 				<!-- 用户下拉菜单 -->
 				<user-dropdown></user-dropdown>
 				<!-- 系统设置 -->
@@ -34,7 +39,7 @@
 			</div>
 		</div>
 		<!-- 标签栏 -->
-		<tag-bar v-if="systemSettingStore.isOpenTag"></tag-bar>
+		<tag-bar v-if="systemSettingStore.tag.isOpenTag"></tag-bar>
 	</div>
 </template>
 

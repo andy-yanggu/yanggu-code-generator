@@ -2,7 +2,7 @@
 	<el-scrollbar ref="layoutScrollbarRef" class="layout-scrollbar">
 		<div class="layout-card">
 			<!-- 开启了全局缓存 -->
-			<template v-if="systemSettingStore.isOpenPageCache">
+			<template v-if="systemSettingStore.other.isOpenPageCache">
 				<router-view v-slot="{ Component }">
 					<transition name="slide" mode="out-in">
 						<!-- 内置|业务菜单和非缓存的iframe页面 -->

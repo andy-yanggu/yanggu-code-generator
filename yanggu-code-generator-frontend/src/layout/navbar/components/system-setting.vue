@@ -16,18 +16,18 @@
 			<div class="drawer-content">
 				<div>
 					<el-divider>菜单设置</el-divider>
-					<setting-item v-model="systemSettingStore.isOpenLogo" label="展示logo"></setting-item>
+					<setting-item v-model="systemSettingStore.menu.isOpenLogo" label="展示logo"></setting-item>
 					<el-row class="setting-row">
 						<el-text style="margin-right: 5px">折叠宽度</el-text>
 						<div style="display: flex; align-items: center">
 							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menuFoldWidth" size="small" clearable style="width: 90px">
+							<el-select v-model="systemSettingStore.menu.menuFoldWidth" size="small" clearable style="width: 90px">
 								<el-option
 									v-for="value in menuFoldWidthList"
 									:key="value"
 									:label="`${value}px`"
 									:value="value"
-									:disabled="systemSettingStore.menuFoldWidth === value"
+									:disabled="systemSettingStore.menu.menuFoldWidth === value"
 								></el-option>
 							</el-select>
 						</div>
@@ -36,24 +36,24 @@
 						<el-text style="margin-right: 5px">展开宽度</el-text>
 						<div style="display: flex; align-items: center">
 							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menuExpandWidth" size="small" clearable style="width: 90px">
+							<el-select v-model="systemSettingStore.menu.menuExpandWidth" size="small" clearable style="width: 90px">
 								<el-option
 									v-for="value in menuExpandWidthList"
 									:key="value"
 									:label="`${value}px`"
 									:value="value"
-									:disabled="systemSettingStore.menuExpandWidth === value"
+									:disabled="systemSettingStore.menu.menuExpandWidth === value"
 								></el-option>
 							</el-select>
 						</div>
 					</el-row>
 					<setting-item
-						v-model="systemSettingStore.isOpenMenuCollapseAnimation"
+						v-model="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 						label="展开收起动画"
 						tooltip="开启后菜单展开和收起时会有平滑过渡动画效果"
 					></setting-item>
 					<setting-item
-						v-model="systemSettingStore.isOpenMenuUniqueOpened"
+						v-model="systemSettingStore.menu.isOpenMenuUniqueOpened"
 						label="手风琴模式"
 						tooltip="开启后同一时间只允许一个子菜单展开，打开新子菜单时其他子菜单自动收起"
 					></setting-item>
@@ -61,7 +61,7 @@
 						<el-text style="margin-right: 5px">默认菜单</el-text>
 						<div style="display: flex; align-items: center">
 							<el-tree-select
-								v-model="systemSettingStore.menuDefault"
+								v-model="systemSettingStore.menu.menuDefault"
 								:data="userStore.menuList"
 								:props="{ label: (data: MenuInfo) => data.meta.title, value: 'path' }"
 								node-key="id"
@@ -79,26 +79,26 @@
 				</div>
 				<div>
 					<el-divider>工具栏设置</el-divider>
-					<setting-item v-model="systemSettingStore.isOpenMenuCollapseButton" label="菜单展开/折叠按钮"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenBreadcrumb" label="面包屑"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenBreadcrumbIcon" label="面包屑图标"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenMenuSearch" label="菜单搜索"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenRefreshPage" label="刷新页面"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenLayoutSetting" label="布局大小"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenFullscreen" label="开启/退出全屏"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenThemeSwitch" label="日间/夜间主题切换"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenMenuCollapseButton" label="菜单展开/折叠按钮"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenBreadcrumb" label="面包屑"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenBreadcrumbIcon" label="面包屑图标"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenMenuSearch" label="菜单搜索"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenRefreshPage" label="刷新页面"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenLayoutSetting" label="布局大小"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenFullscreen" label="开启/退出全屏"></setting-item>
+					<setting-item v-model="systemSettingStore.toolbar.isOpenThemeSwitch" label="日间/夜间主题切换"></setting-item>
 				</div>
 				<div>
 					<el-divider>标签页设置</el-divider>
-					<setting-item v-model="systemSettingStore.isOpenTag" label="启用"></setting-item>
-					<setting-item v-model="systemSettingStore.isOpenTagIcon" label="图标"></setting-item>
+					<setting-item v-model="systemSettingStore.tag.isOpenTag" label="启用"></setting-item>
+					<setting-item v-model="systemSettingStore.tag.isOpenTagIcon" label="图标"></setting-item>
 					<setting-item
-						v-model="systemSettingStore.isOpenTagDragActivated"
+						v-model="systemSettingStore.tag.isOpenTagDragActivated"
 						label="拖拽后激活标签"
 						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
 					></setting-item>
 					<setting-item
-						v-model="systemSettingStore.isOpenTagCache"
+						v-model="systemSettingStore.tag.isOpenTagCache"
 						label="持久化"
 						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"
 					></setting-item>
@@ -106,17 +106,17 @@
 				<div>
 					<el-divider>其他设置</el-divider>
 					<setting-item
-						v-model="systemSettingStore.isOpenPageCache"
+						v-model="systemSettingStore.other.isOpenPageCache"
 						label="页面缓存"
 						tooltip="开启后切换菜单时页面数据保留，避免重复加载"
 					></setting-item>
 					<setting-item
-						v-model="systemSettingStore.isOpenDynamicTitle"
+						v-model="systemSettingStore.other.isOpenDynamicTitle"
 						label="动态标题"
 						tooltip="开启后页面标题会根据当前菜单动态显示"
 					></setting-item>
 					<setting-item
-						v-model="systemSettingStore.isOpenProgress"
+						v-model="systemSettingStore.other.isOpenProgress"
 						label="载入进度条"
 						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"
 					></setting-item>
@@ -154,18 +154,18 @@ const route = useRoute()
 
 // 标签是否开启
 watch(
-	() => systemSettingStore.isOpenTag,
+	() => systemSettingStore.tag.isOpenTag,
 	newValue => {
 		// 为false的情况
 		if (!newValue) {
 			appStore.removeAllTags()
 		} else {
-			const tag = {
+			const tag: NavbarTag = {
 				fullPath: route.fullPath,
 				name: route.name as string,
 				title: route.meta.title as string,
 				icon: route.meta.icon as string
-			} as NavbarTag
+			}
 			appStore.addTag(tag)
 		}
 	}
@@ -173,7 +173,7 @@ watch(
 
 // 页面缓存
 watch(
-	() => systemSettingStore.isOpenPageCache,
+	() => systemSettingStore.other.isOpenPageCache,
 	newValue => {
 		// 为false的情况
 		if (!newValue) {
@@ -185,7 +185,7 @@ watch(
 
 // 动态标题
 watch(
-	() => systemSettingStore.isOpenDynamicTitle,
+	() => systemSettingStore.other.isOpenDynamicTitle,
 	newValue => {
 		// 为false的情况
 		if (!newValue) {
@@ -198,7 +198,12 @@ watch(
 
 // 复制系统设置到剪切板
 const copySystemSetting = () => {
-	const stateData = { ...systemSettingStore.$state }
+	const stateData = {
+		menu: systemSettingStore.menu,
+		toolbar: systemSettingStore.toolbar,
+		tag: systemSettingStore.tag,
+		other: systemSettingStore.other
+	}
 	copyToClipboard(JSON.stringify(stateData, null, 2)).then(() => {
 		ElMessage.success('系统设置已复制到剪贴板')
 	})
@@ -206,7 +211,7 @@ const copySystemSetting = () => {
 
 // 重置系统设置
 const handlerResetSystemSetting = () => {
-	systemSettingStore.resetSettings()
+	systemSettingStore.resetSetting()
 	ElMessage.success('系统设置重置成功')
 }
 </script>

@@ -12,26 +12,26 @@
 
 <script setup lang="ts">
 import { InfoFilled } from '@element-plus/icons-vue'
-import { computed } from 'vue'
 
 defineOptions({
 	name: 'SystemSettingItem'
 })
 
-const props = defineProps<{
-	label: string
-	tooltip?: string
-	modelValue: boolean
-}>()
+const localValue = defineModel({
+	type: Boolean,
+	required: true,
+	default: false
+})
 
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void
-}>()
-
-// 通过 computed 做双向绑定
-const localValue = computed({
-	get: () => props.modelValue,
-	set: (val: boolean) => emit('update:modelValue', val)
+defineProps({
+	label: {
+		type: String,
+		required: true
+	},
+	tooltip: {
+		type: String,
+		default: ''
+	}
 })
 </script>
 

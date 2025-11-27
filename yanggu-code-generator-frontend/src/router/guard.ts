@@ -15,7 +15,7 @@ export const routeGuard = (router: Router) => {
 	router.beforeEach((to, from, next) => {
 		const systemSettingStore = useSystemSettingStore()
 
-		if (systemSettingStore.isOpenProgress) {
+		if (systemSettingStore.other.isOpenProgress) {
 			NProgress.start()
 		}
 		const routeMetaData: RouteMetaData = {
@@ -69,13 +69,13 @@ export const routeGuard = (router: Router) => {
 
 		// 动态设置默认跳转
 		if (to.path === '/') {
-			return next(systemSettingStore.menuDefault ?? '/index')
+			return next(systemSettingStore.menu.menuDefault ?? '/index')
 		}
 
 		const appStore = useAppStore()
 
 		// 不是新窗口,添加tag标签
-		if (routeMetaData.type !== 4 && systemSettingStore.isOpenTag) {
+		if (routeMetaData.type !== 4 && systemSettingStore.tag.isOpenTag) {
 			// 添加标签
 			appStore.addTag({
 				...routeMetaData
@@ -83,7 +83,7 @@ export const routeGuard = (router: Router) => {
 		}
 
 		// 添加缓存路由 - 有名称和是菜单时才添加缓存
-		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1 && systemSettingStore.isOpenPageCache) {
+		if (routeMetaData.cache && routeMetaData.name && routeMetaData.type === 1 && systemSettingStore.other.isOpenPageCache) {
 			appStore.addCacheComponent(routeMetaData.name)
 		}
 
@@ -94,12 +94,12 @@ export const routeGuard = (router: Router) => {
 	router.afterEach(to => {
 		const systemSettingStore = useSystemSettingStore()
 		// 设置动态标题
-		if (systemSettingStore.isOpenDynamicTitle) {
+		if (systemSettingStore.other.isOpenDynamicTitle) {
 			setTitle(to.meta.title as string)
 		}
 
 		// 关闭进度条
-		if (systemSettingStore.isOpenProgress && NProgress.isStarted()) {
+		if (systemSettingStore.other.isOpenProgress && NProgress.isStarted()) {
 			NProgress.done()
 		}
 	})

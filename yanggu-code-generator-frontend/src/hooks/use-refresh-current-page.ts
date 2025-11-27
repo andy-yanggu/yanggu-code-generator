@@ -13,7 +13,7 @@ export const usePageRefresher = () => {
 		const name = route.name as string
 
 		// 关闭了全局页面缓存，使用路由跳转实现刷新
-		if (!systemSettingStore.isOpenPageCache) {
+		if (!systemSettingStore.other.isOpenPageCache) {
 			// 使用路由跳转实现刷新
 			router.push({
 				path: '/redirect' + route.fullPath,

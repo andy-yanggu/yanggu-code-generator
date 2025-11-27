@@ -3,7 +3,7 @@
 		<el-breadcrumb-item v-for="item in breadcrumbList" :key="item.title">
 			<template #default>
 				<icon-text-tooltip
-					:enable-icon="systemSettingStore.isOpenBreadcrumbIcon"
+					:enable-icon="systemSettingStore.toolbar.isOpenBreadcrumbIcon"
 					:icon="item.icon"
 					:title="item.title"
 					:placement="'bottom'"

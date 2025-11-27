@@ -35,7 +35,7 @@ const isTitleOverflow = ref(false)
 const systemSettingStore = useSystemSettingStore()
 
 const menuTitleMaxWidth = computed(() => {
-	return systemSettingStore.menuExpandWidth - 100 + 'px'
+	return systemSettingStore.menu.menuExpandWidth - 100 + 'px'
 })
 
 // 检查文本是否溢出

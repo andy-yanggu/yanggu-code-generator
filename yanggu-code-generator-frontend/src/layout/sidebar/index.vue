@@ -1,6 +1,6 @@
 <template>
 	<!-- 项目logo和文字 -->
-	<logo v-if="systemSettingStore.isOpenLogo"></logo>
+	<logo v-if="systemSettingStore.menu.isOpenLogo"></logo>
 	<!-- 菜单 -->
 	<menu-index></menu-index>
 </template>

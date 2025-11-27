@@ -36,7 +36,7 @@ if (props.cache) {
 	watch(
 		() => props.iframeSrc,
 		() => {
-			if (systemSettingStore.isOpenProgress) {
+			if (systemSettingStore.other.isOpenProgress) {
 				NProgress.start()
 			}
 			currentLoading.value = true
@@ -47,7 +47,7 @@ if (props.cache) {
 // iframe加载完成，关闭loading
 const handleLoad = () => {
 	// 只有在启用缓存模式下才处理 NProgress
-	if (props.cache && NProgress.isStarted() && systemSettingStore.isOpenProgress) {
+	if (props.cache && NProgress.isStarted() && systemSettingStore.other.isOpenProgress) {
 		NProgress.done()
 	}
 	currentLoading.value = false

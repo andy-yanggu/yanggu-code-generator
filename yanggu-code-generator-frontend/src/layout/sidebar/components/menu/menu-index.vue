@@ -5,8 +5,8 @@
 			background-color="transparent"
 			mode="vertical"
 			router
-			:unique-opened="systemSettingStore.isOpenMenuUniqueOpened"
-			:collapse-transition="systemSettingStore.isOpenMenuCollapseAnimation"
+			:unique-opened="systemSettingStore.menu.isOpenMenuUniqueOpened"
+			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 			:collapse="appStore.isCollapse"
 		>
 			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
