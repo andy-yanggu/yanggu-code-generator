@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" :size="'100%'" destroy-on-close>
+	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" size="100%" destroy-on-close>
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
@@ -34,7 +34,7 @@
 						</el-button>
 					</el-col>
 				</el-row>
-				<el-scrollbar ref="treeScrollbarRef" style="height: calc(100% - 30px); overflow-x: auto">
+				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
 							ref="treeRef"
@@ -171,7 +171,7 @@ import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
-import { useFullscreen, useTimeoutFn } from '@vueuse/core'
+import { useDebounceFn, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 import { useSubmitHandler } from '@/hooks'
 import { SubmitOptions } from '@/types'
@@ -204,7 +204,6 @@ interface Tree {
 
 const currentNodeKey = ref('')
 const treeRef = ref()
-const treeScrollbarRef = ref()
 const copyIconState = shallowRef(CopyDocument)
 const { start: startTimer } = useTimeoutFn(() => {
 	copyIconState.value = CopyDocument
@@ -244,6 +243,7 @@ const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ic
 // 初始化方法
 const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
 	resetReactiveObject(templateTreeData, INIT_TEMPLATE_TREE_DATA)
+	treeSearchText.value = ''
 	templateTreeData.id = id
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
@@ -320,8 +320,13 @@ const buildFileList = (treeList: Tree[]) => {
 	return templateContentList
 }
 
-watch(treeSearchText, val => {
+// 防抖过滤
+const debouncedFilter = useDebounceFn(val => {
 	treeRef.value!.filter(val)
+}, 300)
+
+watch(treeSearchText, val => {
+	debouncedFilter(val)
 })
 
 // tree点击

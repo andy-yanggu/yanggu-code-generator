@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" destroy-on-close>
+	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" destroy-on-close :before-close="handleClose">
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
@@ -92,10 +92,7 @@
 					<el-tabs v-model="testData.activeName">
 						<el-tab-pane name="template">
 							<template #label>
-								<div class="tab-label">
-									<span>原始模板</span>
-									<span v-if="testData.editTemplateContent !== testData.originalTemplateContent" class="edit-dot"></span>
-								</div>
+								<el-badge is-dot :hidden="!isEdit">原始模板</el-badge>
 							</template>
 						</el-tab-pane>
 						<el-tab-pane name="render" label="渲染结果"></el-tab-pane>
@@ -119,7 +116,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import CodeMirror from '@/components/code-mirror/index.vue'
-import { ElLoading, ElMessage } from 'element-plus'
+import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { CopyDocument, Document, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
@@ -128,6 +125,8 @@ import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 defineOptions({
 	name: 'GenTemplateTest'
 })
+
+const emit = defineEmits(['refreshDataList'])
 
 interface CascaderData {
 	value: string
@@ -158,6 +157,8 @@ const INIT_TEST_DATA = {
 
 const testData = reactive(cloneObject(INIT_TEST_DATA))
 
+const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
+
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	resetReactiveObject(testData, INIT_TEST_DATA)
 	testData.visible = true
@@ -177,7 +178,7 @@ const fullFilePath = computed(() => {
 })
 
 // 保存模板内容
-const saveTemplateContent = () => {
+const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 	loading.value = true
 	const dataForm = {
 		id: testData.templateId,
@@ -191,6 +192,7 @@ const saveTemplateContent = () => {
 				duration: 500
 			})
 			testData.originalTemplateContent = testData.editTemplateContent
+			callBack?.()
 		})
 		.finally(() => {
 			loading.value = false
@@ -319,6 +321,35 @@ const copyTemplateContent = () => {
 	})
 }
 
+// 关闭抽屉方法。确认保存修改
+const handleClose = (done: () => void) => {
+	if (!isEdit.value) {
+		done()
+		emit('refreshDataList')
+		return
+	}
+	const message = `${testData.originalFileName}已修改未保存，是否保存后再关闭？`
+	ElMessageBox.confirm(message, '提示', {
+		distinguishCancelAndClose: true,
+		confirmButtonText: '是(Y)',
+		cancelButtonText: '否(N)',
+		type: 'warning'
+	})
+		.then(() => {
+			// 保存修改后关闭
+			saveTemplateContent(() => {
+				done()
+				emit('refreshDataList')
+			})
+		})
+		.catch((action: Action) => {
+			// 丢弃修改直接关闭
+			if (action === 'cancel') {
+				done()
+			}
+		})
+}
+
 defineExpose({ init })
 </script>
 
@@ -366,25 +397,11 @@ defineExpose({ init })
 	overflow: auto;
 	padding: 0 16px 16px;
 }
-.tab-label {
-	position: relative;
-	display: inline-block;
-}
-
-/* 仅在包含编辑红点时添加右边距 */
-.tab-label:has(.edit-dot) {
-	padding-right: 10px;
-}
-
-/* 通用红点 */
-.edit-dot {
-	position: absolute;
-	top: 2px;
+:deep(.el-badge__content.is-fixed.is-dot) {
 	right: 0;
-	width: 6px;
+}
+:deep(.el-badge__content.is-dot) {
 	height: 6px;
-	background-color: #f56c6c;
-	border-radius: 50%;
-	display: inline-block;
+	width: 6px;
 }
 </style>

@@ -48,11 +48,11 @@
 							<template #default="{ node, data }">
 								<el-tooltip :content="data.templateDesc" placement="top" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
-										<svg-icon :icon="getIcon(node, data)"></svg-icon>
-										<span class="tree-node-label">
+										<!-- 修改时添加小红点 -->
+										<el-badge is-dot :hidden="!data.isEdited">
+											<svg-icon :icon="getIcon(node, data)"></svg-icon>
 											{{ node.label }}
-											<span v-if="data.isEdited" class="edit-dot"></span>
-										</span>
+										</el-badge>
 										<div class="tree-node-actions">
 											<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
 												<Edit></Edit>
@@ -160,11 +160,13 @@
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
 										<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
-											<div style="display: flex; align-items: center; gap: 5px">
-												<svg-icon :icon="getIcon({ expanded: false }, tabItem)"></svg-icon>
-												<span>{{ tabItem.fileName }}</span>
-											</div>
-											<span v-if="tabItem.isEdited" class="edit-dot"></span>
+											<!-- 修改时添加小红点 -->
+											<el-badge is-dot :hidden="!tabItem.isEdited">
+												<div style="display: flex; align-items: center; gap: 5px">
+													<svg-icon :icon="getIcon({ expanded: false }, tabItem)"></svg-icon>
+													{{ tabItem.fileName }}
+												</div>
+											</el-badge>
 										</div>
 									</el-tooltip>
 								</template>
@@ -200,7 +202,7 @@
 							</ul>
 						</div>
 						<!-- 测试页面 -->
-						<template-test ref="templateTestRef"></template-test>
+						<template-test ref="templateTestRef" @refresh-data-list="initData()"></template-test>
 					</el-header>
 
 					<!-- 代码区域 -->
@@ -1217,10 +1219,6 @@ const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
 			})
 			.catch((action: Action) => {
 				if (action === 'cancel') {
-					editTabs.forEach(tab => {
-						tab.isEdited = false
-						tab.templateContent = tab.originalTemplateContent
-					})
 					nextTick(() => {
 						// 等待视图更新完成
 						closeTab()
@@ -1328,28 +1326,17 @@ html.dark .context-menu svg {
 	color: #e0e0e0;
 }
 /* 两种容器：tab 和 tree node 都可以挂红点 */
-.tab-label,
-.tree-node-label {
+.tab-label {
 	position: relative;
 	display: inline-block;
 }
 
-/* 仅在包含编辑红点时添加右边距 */
-.tab-label:has(.edit-dot),
-.tree-node-label:has(.edit-dot) {
-	padding-right: 10px;
-}
-
-/* 通用红点 */
-.edit-dot {
-	position: absolute;
-	top: 2px;
+:deep(.el-badge__content.is-fixed.is-dot) {
 	right: 0;
-	width: 6px;
+}
+:deep(.el-badge__content.is-dot) {
 	height: 6px;
-	background-color: #f56c6c;
-	border-radius: 50%;
-	display: inline-block;
+	width: 6px;
 }
 
 .full-screen-mode {
