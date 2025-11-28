@@ -144,7 +144,7 @@ import { nextTick, onMounted, reactive, ref } from 'vue'
 import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
-import Preview from '@/components/preview/index.vue'
+import Preview from '@/business/preview/index.vue'
 import { genEnumApi, genProjectApi } from '@/api'
 import { useTableAction } from '@/hooks/use-table-action'
 import { GenEnumEntity, GenEnumQuery, GenProjectEntity, IHooksOptions } from '@/types'
@@ -170,7 +170,7 @@ const state = reactive({
 		enumName: '',
 		projectId: ''
 	}
-} as IHooksOptions<GenEnumQuery, GenEnumEntity>)
+} as IHooksOptions<GenEnumEntity, GenEnumQuery>)
 
 const enumItemIndexRef = ref()
 const previewRef = ref()

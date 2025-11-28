@@ -74,7 +74,7 @@ const state = reactive({
 		projectId: '',
 		tableName: ''
 	}
-} as IHooksOptions<GenTableQuery, GenTableEntity>)
+} as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const visible = ref(false)
 const projectList = ref([] as GenProjectEntity[])

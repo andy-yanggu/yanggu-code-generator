@@ -123,7 +123,7 @@ const state = reactive({
 		columnType: '',
 		attrType: ''
 	}
-} as IHooksOptions<GenFieldTypeQuery, GenFieldTypeEntity>)
+} as IHooksOptions<GenFieldTypeEntity, GenFieldTypeQuery>)
 
 const {
 	getDataList,

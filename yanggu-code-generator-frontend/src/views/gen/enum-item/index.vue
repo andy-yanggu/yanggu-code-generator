@@ -107,7 +107,7 @@ const state = reactive({
 		enumItemCode: '',
 		enumId: -1
 	}
-} as IHooksOptions<GenEnumItemQuery, GenEnumItemEntity>)
+} as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
 
 const enumNameRef = ref('')
 

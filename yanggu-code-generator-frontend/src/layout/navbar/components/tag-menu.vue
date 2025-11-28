@@ -2,7 +2,7 @@
 	<div class="icon-list">
 		<div class="icon-item" @click="emits('refreshCurrentTag')">
 			<el-icon size="10"><Refresh></Refresh></el-icon>
-			<span>刷新当前</span>
+			<span>刷新页面</span>
 		</div>
 		<div class="icon-item" @click="emits('openNewWindow')">
 			<svg-icon icon="icon-new-window" size="10px"></svg-icon>
@@ -10,7 +10,7 @@
 		</div>
 		<div class="icon-item" @click="emits('fullScreen')">
 			<svg-icon icon="icon-fullscreen" size="10px"></svg-icon>
-			<span>内容全屏</span>
+			<span>页面全屏</span>
 		</div>
 	</div>
 	<el-divider></el-divider>

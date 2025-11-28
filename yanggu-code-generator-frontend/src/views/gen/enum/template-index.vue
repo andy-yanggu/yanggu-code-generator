@@ -93,7 +93,7 @@ const state = reactive({
 		templateName: '',
 		templateType: ''
 	}
-} as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
+} as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 
 const initData = reactive({
 	enumIdList: [],

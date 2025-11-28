@@ -242,7 +242,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, Ref, ref, watch } from 'vue'
 import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
-import CodeMirror from '@/components/code-mirror/index.vue'
+import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'

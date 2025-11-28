@@ -70,7 +70,7 @@ const state = reactive({
 		className: '',
 		projectId: -1
 	}
-} as IHooksOptions<GenTableQuery, GenTableEntity>)
+} as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const tableRef = ref()
 let isManualSelection = true

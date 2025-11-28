@@ -3,7 +3,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { IHooksOptions, Key, KeyArray, PageQuery, PageVO } from '@/types'
 
 // 提供分页、批量删除、导出功能
-export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<Query, VO>) => {
+export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<VO, Query>) => {
 	// 表单查询引用
 	const queryRef = ref()
 	// 表单查询是否显示
@@ -14,7 +14,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	const tableRef = ref()
 
 	// 默认值
-	const defaultOptions: IHooksOptions<Query, VO> = {
+	const defaultOptions: IHooksOptions<VO, Query> = {
 		mountedGetData: true,
 		resetQueryGetData: true,
 		isPage: true,
@@ -143,6 +143,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 					state.dataList = dataList
 					state.total = dataList.length
 					state.pageNum = 1
+					state.pageSize = dataList.length
 				}
 			})
 			.finally(() => {

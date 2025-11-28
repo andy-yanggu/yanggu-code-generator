@@ -72,7 +72,7 @@ const state = reactive({
 		enumName: '',
 		projectId: ''
 	}
-} as IHooksOptions<GenEnumQuery, GenEnumEntity>)
+} as IHooksOptions<GenEnumEntity, GenEnumQuery>)
 let isManualSelection = true
 
 const tableRef = ref()

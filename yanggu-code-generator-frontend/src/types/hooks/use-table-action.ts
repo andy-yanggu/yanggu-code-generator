@@ -10,7 +10,7 @@ type ExportApi = (idList: KeyArray) => Promise<void>
 type ImportApi = (formData: FormData) => Promise<void>
 
 // 表格操作
-export interface IHooksOptions<Query extends PageQuery = PageQuery, VO = any> {
+export interface IHooksOptions<VO = any, Query extends PageQuery = PageQuery> {
 	// 否在创建页面时，调用数据列表接口
 	mountedGetData?: boolean
 	// 重置后是否查询

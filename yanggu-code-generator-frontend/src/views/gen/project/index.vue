@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import { useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
-import Preview from '@/components/preview/index.vue'
+import Preview from '@/business/preview/index.vue'
 import { genProjectApi } from '@/api'
 import { GenProjectEntity, GenProjectQuery, IHooksOptions } from '@/types'
 import Steps from '@/views/gen/project/steps.vue'
@@ -158,7 +158,7 @@ const state = reactive({
 		dateTimeRange: [] as string[]
 	},
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续？'
-} as IHooksOptions<GenProjectQuery, GenProjectEntity>)
+} as IHooksOptions<GenProjectEntity, GenProjectQuery>)
 
 const previewRef = ref()
 const stepsRef = ref()

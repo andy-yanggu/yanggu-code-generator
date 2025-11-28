@@ -119,7 +119,7 @@ const state = reactive({
 		templateGroupType: '',
 		templateType: ''
 	}
-} as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
+} as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 let isManualSelection = true
 
 const init = (templateGroupIdList: number[]) => {

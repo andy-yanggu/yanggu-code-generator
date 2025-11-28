@@ -80,7 +80,7 @@ const state = reactive({
 		enumItemName: '',
 		enumId: -1
 	}
-} as IHooksOptions<GenEnumItemQuery, GenEnumItemEntity>)
+} as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
 
 const dialogVisible = ref(false)
 

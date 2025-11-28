@@ -132,7 +132,7 @@ const state = reactive({
 		dbType: '',
 		connName: ''
 	}
-} as IHooksOptions<GenDatasourceQuery, GenDatasourceEntity>)
+} as IHooksOptions<GenDatasourceEntity, GenDatasourceQuery>)
 
 const datasourceTestHandle = (id: number) => {
 	genDatasourceApi.test(id).then(data => {

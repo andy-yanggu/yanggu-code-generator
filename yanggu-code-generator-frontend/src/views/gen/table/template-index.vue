@@ -88,7 +88,7 @@ const state = reactive({
 		templateName: '',
 		templateType: ''
 	}
-} as IHooksOptions<GenTemplateQuery, GenTemplateEntity>)
+} as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 const generatorTypeRef = ref()
 const tableIdRef = ref()
 const dialogVisible = ref(false)

@@ -167,7 +167,7 @@ const state = reactive({
 	},
 	deleteMessage: '删除模板组，模板组下面的所有模板、属性都会删除',
 	importSuccessMessage: '模板组导入成功'
-} as IHooksOptions<GenTemplateGroupQuery, GenTemplateGroupEntity>)
+} as IHooksOptions<GenTemplateGroupEntity, GenTemplateGroupQuery>)
 
 const propertyRef = ref()
 const key = ref()

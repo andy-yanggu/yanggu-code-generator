@@ -22,7 +22,11 @@ defineOptions({
 	name: 'CodeMirror'
 })
 
-const model = defineModel<string>()
+const model = defineModel({
+	type: String,
+	required: true,
+	default: ''
+})
 
 const props = defineProps({
 	readOnly: {

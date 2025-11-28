@@ -120,7 +120,7 @@ const state = reactive({
 		packageName: '',
 		className: ''
 	}
-} as IHooksOptions<GenBaseClassQuery, GenBaseClassEntity>)
+} as IHooksOptions<GenBaseClassEntity, GenBaseClassQuery>)
 
 const {
 	getDataList,

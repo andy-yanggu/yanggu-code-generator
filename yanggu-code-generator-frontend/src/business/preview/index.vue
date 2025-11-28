@@ -166,7 +166,7 @@
 <script setup lang="ts">
 import { nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
-import CodeMirror from '@/components/code-mirror/index.vue'
+import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'

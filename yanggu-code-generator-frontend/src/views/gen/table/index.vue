@@ -161,7 +161,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import Import from '@/views/gen/table/import.vue'
 import GenTableForm from '@/views/gen/table/form.vue'
-import Preview from '@/components/preview/index.vue'
+import Preview from '@/business/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
 import { ElMessage } from 'element-plus/es'
@@ -190,7 +190,7 @@ const state = reactive({
 		projectId: '',
 		databaseName: ''
 	}
-} as IHooksOptions<GenTableQuery, GenTableEntity>)
+} as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const importRef = ref()
 const editRef = ref()

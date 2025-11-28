@@ -165,7 +165,7 @@ const state = reactive({
 	},
 	order: 'propOrder',
 	asc: true
-} as IHooksOptions<GenTemplateGroupPropertyQuery, GenTemplateGroupPropertyEntity>)
+} as IHooksOptions<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery>)
 
 const {
 	getDataList,

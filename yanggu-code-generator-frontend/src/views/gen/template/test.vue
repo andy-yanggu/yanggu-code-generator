@@ -11,7 +11,7 @@
 						<el-button
 							:icon="Document"
 							size="small"
-							:disabled="testData.cascaderValue.length === 0"
+							:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
 							@click="handleCascaderChange(testData.cascaderValue)"
 						>
 							渲染
@@ -49,7 +49,7 @@
 								<el-button
 									:icon="Document"
 									size="small"
-									:disabled="testData.cascaderValue.length === 0"
+									:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
 									@click="handleCascaderChange(testData.cascaderValue)"
 								>
 									渲染
@@ -66,25 +66,29 @@
 								</el-button>
 							</template>
 							<template v-else>
-								<el-button
-									size="small"
-									type="primary"
-									:icon="CopyDocument"
-									:disabled="!testData.renderedTemplateContent"
-									@click="copyTemplateContent()"
-								>
-									复制
-								</el-button>
-								<el-button
-									size="small"
-									:icon="DocumentAdd"
-									:disabled="!testData.cascaderValue"
-									type="success"
-									:loading="loading"
-									@click="generatorHandler()"
-								>
-									生成
-								</el-button>
+								<el-tooltip content="复制代码" placement="top">
+									<el-button
+										size="small"
+										type="primary"
+										:icon="CopyDocument"
+										:disabled="!testData.renderedTemplateContent"
+										@click="copyTemplateContent()"
+									>
+										复制
+									</el-button>
+								</el-tooltip>
+								<el-tooltip :content="generatorState.tooltip" placement="top">
+									<el-button
+										size="small"
+										:icon="generatorState.icon"
+										:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
+										type="success"
+										:loading="submitLoading"
+										@click="generatorHandler()"
+									>
+										{{ generatorState.text }}
+									</el-button>
+								</el-tooltip>
 							</template>
 						</el-col>
 					</el-row>
@@ -114,13 +118,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import CodeMirror from '@/components/code-mirror/index.vue'
+import { computed, reactive, ref, shallowReactive } from 'vue'
+import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
-import { CopyDocument, Document, DocumentAdd, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
+import { CopyDocument, Document, DocumentAdd, Download, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
 import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
+import { SubmitOptions } from '@/types'
+import { useSubmitHandler } from '@/hooks'
 
 defineOptions({
 	name: 'GenTemplateTest'
@@ -158,6 +164,19 @@ const INIT_TEST_DATA = {
 const testData = reactive(cloneObject(INIT_TEST_DATA))
 
 const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
+const INIT_GENERATOR_STATE_ARRAY = [
+	{
+		icon: Download,
+		text: '下载',
+		tooltip: '下载代码'
+	},
+	{
+		icon: DocumentAdd,
+		text: '生成',
+		tooltip: '生成代码'
+	}
+]
+const generatorState = shallowReactive(cloneObject(INIT_GENERATOR_STATE_ARRAY[0]))
 
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	resetReactiveObject(testData, INIT_TEST_DATA)
@@ -201,6 +220,9 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 
 // 处理选中值变化
 const handleCascaderChange = async (val: string[]) => {
+	if (!val || val.length === 0) {
+		return
+	}
 	// val 是选中节点的值数组
 	const queryForm = {
 		projectId: val[0].split('_')[1],
@@ -230,6 +252,13 @@ const handleCascaderChange = async (val: string[]) => {
 			message: '渲染成功',
 			duration: 1000
 		})
+		const projectId = Number(testData.cascaderValue[0].split('_')[1])
+		const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
+		if (generatorType === 0) {
+			resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[0])
+		} else {
+			resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[1])
+		}
 	} catch {
 		testData.activeName = 'template'
 	} finally {
@@ -273,6 +302,13 @@ const refreshCascaderData = async () => {
 }
 
 const generatorHandler = () => {
+	if (isEdit.value) {
+		ElMessage.warning({
+			message: `请先保存模板内容，再进行${generatorState.text}`,
+			duration: 1000
+		})
+		return
+	}
 	let id: number
 	const projectId = Number(testData.cascaderValue[0].split('_')[1])
 	if (testData.cascaderValue.length > 1) {
@@ -287,33 +323,20 @@ const generatorHandler = () => {
 	}
 	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 	if (generatorType === 0) {
-		loading.value = true
-		genGeneratorApi
-			.downloadSingle(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到浏览器',
-					duration: 1000
-				})
-			})
-			.finally(() => {
-				loading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.downloadSingle
+		submitState.successMessage = '代码已经下载到浏览器'
 	} else if (generatorType === 1) {
-		loading.value = true
-		genGeneratorApi
-			.singleLocal(dataForm)
-			.then(() => {
-				ElMessage.success({
-					message: '代码已经下载到本地',
-					duration: 1000
-				})
-			})
-			.finally(() => {
-				loading.value = false
-			})
+		submitState.submitApi = genGeneratorApi.singleLocal
+		submitState.successMessage = '代码已经生成到本地'
 	}
+	submitHandle(dataForm)
 }
+
+const submitState = shallowReactive({
+	successDuration: 1000
+} as SubmitOptions)
+
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 const copyTemplateContent = () => {
 	copyToClipboard(testData.renderedTemplateContent).then(() => {
