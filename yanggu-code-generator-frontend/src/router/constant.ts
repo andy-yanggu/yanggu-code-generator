@@ -12,7 +12,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		name: 'Auth',
 		children: [
 			{
-				path: '/auth/login',
+				path: 'login',
 				name: 'AuthLogin',
 				component: () => import('@/views/auth/login.vue'),
 				meta: {
@@ -22,7 +22,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/auth/register',
+				path: 'register',
 				name: 'AuthRegister',
 				component: () => import('@/views/auth/register.vue'),
 				meta: {
@@ -44,7 +44,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		},
 		children: [
 			{
-				path: '/user/profile',
+				path: 'profile',
 				name: 'UserProfile',
 				component: () => import('@/views/user/profile.vue'),
 				meta: {
@@ -63,7 +63,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		component: () => import('@/layout/index.vue'),
 		children: [
 			{
-				path: '/redirect/:path(.*)',
+				path: ':path(.*)',
 				component: () => import('@/components/router/redirect.vue'),
 				name: 'RouterRedirect',
 				meta: {
@@ -85,7 +85,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		},
 		children: [
 			{
-				path: '/error/400',
+				path: '400',
 				name: 'Error400',
 				component: () => import('@/views/error/400.vue'),
 				meta: {
@@ -96,7 +96,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/error/401',
+				path: '401',
 				name: 'Error401',
 				component: () => import('@/views/error/401.vue'),
 				meta: {
@@ -107,7 +107,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/error/403',
+				path: '403',
 				name: 'Error403',
 				component: () => import('@/views/error/403.vue'),
 				meta: {
@@ -118,7 +118,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/error/404',
+				path: '404',
 				name: 'Error404',
 				component: () => import('@/views/error/404.vue'),
 				meta: {
@@ -129,7 +129,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				}
 			},
 			{
-				path: '/error/500',
+				path: '500',
 				name: 'Error500',
 				component: () => import('@/views/error/500.vue'),
 				meta: {

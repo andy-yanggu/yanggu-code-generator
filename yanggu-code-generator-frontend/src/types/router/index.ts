@@ -1,6 +1,24 @@
+import 'vue-router'
+
 /**
  * 路由相关类型定义
  */
+declare module 'vue-router' {
+	interface RouteMeta {
+		// 标题
+		title: string
+		// 图标
+		icon?: string
+		// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
+		type: RouteType
+		// 外链地址
+		externalUrl?: string
+		// 缓存
+		cache?: boolean
+		// 隐藏
+		hidden?: boolean
+	}
+}
 
 /**
  * 路由元数据类型

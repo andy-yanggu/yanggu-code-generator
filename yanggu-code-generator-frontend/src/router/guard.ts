@@ -55,10 +55,9 @@ export const routeGuard = (router: Router) => {
 		if (!userStore.isAddRoutes) {
 			// 1. 添加路由
 			const routeList = buildRouteList(userStore.menuList)
-			routeList.forEach((item: RouteRecordRaw) => {
-				// console.log('item', item)
-				router.addRoute('Layout', item)
-			})
+
+			// 2. 添加路由
+			addRoutesToRouter(router, routeList)
 
 			// 3. 设置添加路由标记
 			userStore.setAddRouteFlag()
@@ -159,6 +158,19 @@ const buildRouteList = (menuList: MenuInfo[]): RouteRecordRaw[] => {
 			return menu
 		})
 		.filter(Boolean) as RouteRecordRaw[]
+}
+
+// 递归添加路由到对应的父级路由下
+const addRoutesToRouter = (router: Router, routes: RouteRecordRaw[], parentName: string = 'Layout') => {
+	routes.forEach((route: RouteRecordRaw) => {
+		// 添加路由到父级路由下
+		router.addRoute(parentName, route)
+
+		// 如果有子路由，递归添加到当前路由下
+		if (route.children && route.children.length > 0) {
+			addRoutesToRouter(router, route.children, route.name as string)
+		}
+	})
 }
 
 // 处理iframe菜单对应的组件

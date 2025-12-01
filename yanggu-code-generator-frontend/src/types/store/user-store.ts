@@ -1,15 +1,19 @@
+import { RouteMeta } from 'vue-router'
+
+// 用户信息
 export interface UserInfo {
+	// 用户名
 	username: string
-
+	// 昵称
 	nickname: string
-
+	// 头像
 	avatar: string
-
+	// 邮箱
 	email: string
-
+	// 手机
 	mobile: string
 }
-
+// 令牌信息
 export interface TokenInfo {
 	// token名称
 	tokenName: string
@@ -20,7 +24,7 @@ export interface TokenInfo {
 	// 过期时间
 	expire: number
 }
-
+// 菜单信息
 export interface MenuInfo {
 	// 名称
 	name: string
@@ -29,20 +33,7 @@ export interface MenuInfo {
 	// 组件路径
 	component?: string
 	// 元数据
-	meta: {
-		// 标题
-		title: string
-		// 图标
-		icon: string
-		// 类型 0-目录、1-菜单、2-按钮、3-iframe、4-外链
-		type: number
-		// 外链地址
-		externalUrl?: string
-		// 缓存
-		cache?: boolean
-		// 隐藏
-		hidden?: boolean
-	}
+	meta: RouteMeta
 	// 子菜单
 	children?: MenuInfo[]
 }

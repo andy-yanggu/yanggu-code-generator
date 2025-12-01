@@ -245,7 +245,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		},
 		children: [
 			{
-				path: '/test-external/iframe',
+				path: 'iframe',
 				name: 'TestExternalIframeJava',
 				meta: {
 					title: 'java官网（iframe）',
@@ -256,7 +256,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/test-external/iframe2',
+				path: 'iframe2',
 				name: 'TestExternalIframeVite',
 				meta: {
 					title: 'vite官网（iframe）（不缓存）',
@@ -267,7 +267,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/test-external/iframe3',
+				path: 'iframe3',
 				name: 'TestExternalIframeElementPlus',
 				meta: {
 					title: 'element-plus',
@@ -278,7 +278,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/test-external/new-window',
+				path: 'new-window',
 				name: 'TestExternalNewWindow',
 				meta: {
 					title: '阿里巴巴（新窗口）',
@@ -299,7 +299,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		},
 		children: [
 			{
-				path: '/project-git/github',
+				path: 'github',
 				name: 'ProjectGitGithub',
 				meta: {
 					title: 'github地址',
@@ -309,7 +309,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/project-git/gitee',
+				path: 'gitee',
 				name: 'ProjectGitGitee',
 				meta: {
 					title: 'gitee地址',
@@ -330,7 +330,7 @@ const businessMenuInfoList: MenuInfo[] = [
 		},
 		children: [
 			{
-				path: '/gen/project',
+				path: 'project',
 				name: 'GenProject',
 				component: 'gen/project/index',
 				meta: {
@@ -341,7 +341,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/table',
+				path: 'table',
 				name: 'GenTable',
 				component: 'gen/table/index',
 				meta: {
@@ -352,7 +352,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/enum',
+				path: 'enum',
 				name: 'GenEnum',
 				component: 'gen/enum/index',
 				meta: {
@@ -363,7 +363,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/template-group',
+				path: 'template-group',
 				name: 'GenTemplateGroup',
 				component: 'gen/template-group/index',
 				meta: {
@@ -374,7 +374,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/datasource',
+				path: 'datasource',
 				name: 'GenDatasource',
 				component: 'gen/datasource/index',
 				meta: {
@@ -385,7 +385,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/base-class',
+				path: 'base-class',
 				name: 'GenBaseClass',
 				component: 'gen/base-class/index',
 				meta: {
@@ -396,7 +396,7 @@ const businessMenuInfoList: MenuInfo[] = [
 				}
 			},
 			{
-				path: '/gen/field-type',
+				path: 'field-type',
 				name: 'GenFieldType',
 				component: 'gen/field-type/index',
 				meta: {
