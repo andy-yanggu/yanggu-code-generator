@@ -179,6 +179,12 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		state.dataListSelections = selections.map(item => item[state.primaryKey!])
 	}
 
+	// 清空勾选
+	const clearSelectionHandle = () => {
+		state.dataListSelections = []
+		tableRef.value.clearSelection()
+	}
+
 	// 排序
 	const sortChangeHandle = ({ order, prop }: any) => {
 		if (order === 'ascending') {
@@ -217,8 +223,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 					ElMessage.success('删除成功')
 					// 删除勾选数据
 					if (state.dataListSelections && state.dataListSelections.length > 0) {
-						state.dataListSelections = []
-						tableRef.value.clearSelection()
+						clearSelectionHandle()
 					}
 					getDataList()
 				})
@@ -253,8 +258,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 				ElMessage.success(state.exportSuccessMessage)
 				// 删除勾选数据
 				if (state.dataListSelections && state.dataListSelections.length > 0) {
-					state.dataListSelections = []
-					tableRef.value.clearSelection()
+					clearSelectionHandle()
 				}
 			})
 			.finally(() => {
@@ -304,6 +308,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		sizeChangeHandle,
 		currentChangeHandle,
 		selectionChangeHandle,
+		clearSelectionHandle,
 		sortChangeHandle,
 		deleteBatchHandle,
 		queryRef,

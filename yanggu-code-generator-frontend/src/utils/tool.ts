@@ -1,4 +1,4 @@
-import type { App, Component, Plugin } from 'vue' // 添加 Component 类型
+import { App, Component, Plugin, reactive } from 'vue' // 添加 Component 类型
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import { cloneDeep } from 'lodash-unified'
@@ -52,6 +52,11 @@ export const copyToClipboard = (text: string): Promise<void> => {
 // 克隆对象
 export const cloneObject = <T extends object>(obj: T): T => {
 	return cloneDeep(obj) as T
+}
+
+// 初始化响应式对象
+export const initReactiveObject = <T extends object>(obj: T) => {
+	return reactive(cloneDeep(obj))
 }
 
 // 重置对象

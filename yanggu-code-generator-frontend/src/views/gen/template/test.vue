@@ -118,11 +118,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, shallowReactive } from 'vue'
+import { computed, ref, shallowReactive } from 'vue'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { CopyDocument, Document, DocumentAdd, Download, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
+import { cloneObject, copyToClipboard, initReactiveObject, resetReactiveObject } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { SubmitOptions } from '@/types'
@@ -161,7 +161,7 @@ const INIT_TEST_DATA = {
 	cascaderData: [] as CascaderData[]
 }
 
-const testData = reactive(cloneObject(INIT_TEST_DATA))
+const testData = initReactiveObject(INIT_TEST_DATA)
 
 const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
 const INIT_GENERATOR_STATE_ARRAY = [

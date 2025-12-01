@@ -32,12 +32,12 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-import { cloneObject, resetReactiveObject } from '@/utils/tool'
+import { initReactiveObject, resetReactiveObject } from '@/utils/tool'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
 
 defineOptions({
@@ -51,7 +51,7 @@ const INIT_STATE = {
 	matchItemList: [] as TreeNode[]
 }
 
-const searchState = reactive(cloneObject(INIT_STATE))
+const searchState = initReactiveObject(INIT_STATE)
 
 const searchInputRef = ref()
 const scrollbarRef = ref()

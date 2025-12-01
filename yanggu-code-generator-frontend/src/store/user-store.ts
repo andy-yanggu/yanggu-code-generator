@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { computed, reactive, ref } from 'vue'
-import { cloneObject, resetReactiveObject } from '@/utils/tool'
+import { computed, ref } from 'vue'
+import { initReactiveObject, resetReactiveObject } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuInfo, TokenInfo, UserInfo } from '@/types'
 
@@ -225,6 +225,17 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 	]
 	// },
 	{
+		path: 'test-echarts',
+		component: 'test-echarts/index',
+		name: 'TestEcharts',
+		meta: {
+			title: '测试echarts',
+			icon: 'icon-areachart',
+			type: 1,
+			cache: true
+		}
+	},
+	{
 		path: '/icon-search',
 		component: 'icon-search/index',
 		name: 'IconSearch',
@@ -444,9 +455,9 @@ export const useUserStore = defineStore(
 		const roleList = ref<string[]>([])
 		// 登录用户信息
 		// reactive每次初始化，必须传入一个全新的对象
-		const userInfo = reactive<UserInfo>(cloneObject(INITIAL_USER_INFO))
+		const userInfo = initReactiveObject(INITIAL_USER_INFO)
 		// token信息
-		const tokenInfo = reactive<TokenInfo>(cloneObject(INITIAL_TOKEN_INFO))
+		const tokenInfo = initReactiveObject(INITIAL_TOKEN_INFO)
 
 		// 计算属性
 		const isLogin = computed(() => {

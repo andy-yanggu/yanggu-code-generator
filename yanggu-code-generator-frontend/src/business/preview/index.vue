@@ -164,13 +164,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
+import { nextTick, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
-import { cloneObject, copyToClipboard, resetReactiveObject } from '@/utils/tool'
+import { cloneObject, copyToClipboard, initReactiveObject, resetReactiveObject } from '@/utils/tool'
 import { useDebounceFn, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 import { useSubmitHandler } from '@/hooks'
@@ -235,7 +235,7 @@ const INIT_TEMPLATE_TREE_DATA = {
 	tabList: [] as Tree[],
 	tabActiveName: ''
 }
-const templateTreeData = reactive(cloneObject(INIT_TEMPLATE_TREE_DATA))
+const templateTreeData = initReactiveObject(INIT_TEMPLATE_TREE_DATA)
 const treeSearchText = ref('')
 const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
