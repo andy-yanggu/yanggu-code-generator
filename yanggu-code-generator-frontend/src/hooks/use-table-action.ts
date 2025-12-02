@@ -181,8 +181,10 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 	// 清空勾选
 	const clearSelectionHandle = () => {
-		state.dataListSelections = []
-		tableRef.value.clearSelection()
+		nextTick(() => {
+			state.dataListSelections = []
+			tableRef.value.clearSelection()
+		})
 	}
 
 	// 排序
