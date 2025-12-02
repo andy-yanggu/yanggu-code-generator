@@ -1,16 +1,17 @@
 <template>
 	<!-- 渲染目录 -->
-	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menu.path">
+	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menuIndexPath">
 		<template #title>
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="menu.children && menu.children.length > 0">
-			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap"></menu-item>
+			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap" :parent-paths="submenuParentPaths">
+			</menu-item>
 		</template>
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
-	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menu.path">
+	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
 		<menu-link :menu="menu">
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
@@ -19,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, PropType, ref } from 'vue'
+import { computed, onMounted, PropType, Ref, ref } from 'vue'
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
 import { MenuInfo } from '@/types'
@@ -34,11 +35,40 @@ const props = defineProps({
 		required: true
 	},
 	refMap: {
-		type: Map,
+		type: Map as PropType<Map<string, Ref<HTMLElement>>>,
 		required: true
+	},
+	parentPaths: {
+		type: Array as PropType<string[]>,
+		default: [] as string[]
 	}
 })
+
 const rootRef = ref()
+
+// 计算菜单项的完整路径索引
+const menuIndexPath = computed(() => {
+	const path = props.menu.path
+	// 如果已经是绝对路径，直接返回
+	if (path.startsWith('/')) {
+		return path
+	}
+
+	// 如果是相对路径，需要拼接父级路径
+	if (props.parentPaths.length > 0) {
+		const parentPath = props.parentPaths[props.parentPaths.length - 1]
+		return parentPath.endsWith('/') ? `${parentPath}${path}` : `${parentPath}/${path}`
+	}
+
+	// 默认情况直接返回路径
+	return path
+})
+
+// 计算子菜单的父级路径数组
+const submenuParentPaths = computed(() => {
+	return [...props.parentPaths, menuIndexPath.value]
+})
+
 // 添加ref引用到refMap中
 onMounted(() => {
 	props.refMap.set(props.menu.path, rootRef.value)
