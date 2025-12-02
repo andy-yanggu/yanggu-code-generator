@@ -157,6 +157,7 @@ const INIT_TEST_DATA = {
 	fullFilePath: '',
 	renderedFileName: '',
 	renderedTemplateContent: '',
+	update: false,
 	cascaderValue: [] as string[],
 	cascaderData: [] as CascaderData[]
 }
@@ -211,6 +212,7 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 				duration: 500
 			})
 			testData.originalTemplateContent = testData.editTemplateContent
+			testData.update = true
 			callBack?.()
 		})
 		.finally(() => {
@@ -348,7 +350,7 @@ const copyTemplateContent = () => {
 const handleClose = (done: () => void) => {
 	if (!isEdit.value) {
 		done()
-		emit('refreshDataList')
+		emit('refreshDataList', testData.update)
 		return
 	}
 	const message = `${testData.originalFileName}已修改未保存，是否保存后再关闭？`
@@ -362,7 +364,7 @@ const handleClose = (done: () => void) => {
 			// 保存修改后关闭
 			saveTemplateContent(() => {
 				done()
-				emit('refreshDataList')
+				emit('refreshDataList', true)
 			})
 		})
 		.catch((action: Action) => {

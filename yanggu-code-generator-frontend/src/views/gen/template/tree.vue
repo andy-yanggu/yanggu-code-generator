@@ -202,14 +202,14 @@
 							</ul>
 						</div>
 						<!-- 测试页面 -->
-						<template-test ref="templateTestRef" @refresh-data-list="initData()"></template-test>
+						<template-test ref="templateTestRef" @refresh-data-list="refreshActiveItemContent"></template-test>
 					</el-header>
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 5px; overflow: hidden">
 						<template v-if="activeTabItem.templateType === 1">
 							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
-								<code-mirror v-model="activeTabItem.templateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
+								<code-mirror v-model="activeTabItem.templateContent!" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
 							</el-scrollbar>
 						</template>
 						<template v-else-if="activeTabItem.templateType === 2">
@@ -818,6 +818,21 @@ const refreshTabData = (dataList: Tree[]) => {
 const testTemplateContent = () => {
 	nextTick(() => {
 		templateTestRef.value.init(props.templateGroupId, props.templateGroupType, activeTabItem.value.id, activeTabItem.value.templateContent)
+	})
+}
+
+// 刷新当前模板内容
+const refreshActiveItemContent = (update: boolean) => {
+	if (!update) {
+		return
+	}
+	genTemplateApi.detail({ id: templateTreeData.activeItemId }).then(detailData => {
+		const tempTree = findByIdFromTree(templateTreeData.activeItemId, templateTreeData.treeList)
+		if (tempTree) {
+			tempTree.templateContent = detailData.templateContent
+			tempTree.originalTemplateContent = detailData.templateContent
+			tempTree.isEdited = false
+		}
 	})
 }
 
