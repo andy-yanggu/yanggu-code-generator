@@ -1,6 +1,13 @@
 <template>
 	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:rules="dataRules"
+			label-width="130px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<el-form-item prop="propTitle">
 				<template #label>
 					<form-label-tooltip label="属性标题" tooltip="属性标题具有唯一性，不能重复"></form-label-tooltip>
@@ -24,35 +31,37 @@
 					v-for="(item, index) in state.dataForm.componentOptions"
 					:key="index"
 					:gutter="10"
-					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '10px' : '0' }"
+					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '18px' : '0' }"
 				>
-					<el-col :span="11">
-						<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 200px"></el-input>
+					<el-col :span="10">
+						<el-form-item :prop="`componentOptions.${index}.label`">
+							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 200px"></el-input>
+						</el-form-item>
 					</el-col>
-					<el-col :span="11">
-						<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 200px"></el-input>
+					<el-col :span="10">
+						<el-form-item :prop="`componentOptions.${index}.value`">
+							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 200px"></el-input>
+						</el-form-item>
 					</el-col>
-					<el-col :span="2">
-						<div style="height: 100%; width: 100%; display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-left: 10px">
-							<el-icon
-								style="cursor: pointer"
-								:style="{
-									cursor: switchOptionFull ? 'not-allowed' : 'pointer',
-									opacity: switchOptionFull ? 0.5 : 1
-								}"
-								@click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })"
-							>
-								<Plus></Plus>
-							</el-icon>
-							<el-icon
-								v-if="state.dataForm.componentOptions.length > 1"
-								style="cursor: pointer"
-								@click="() => state.dataForm.componentOptions.splice(index, 1)"
-							>
-								<Delete></Delete>
-							</el-icon>
-						</div>
-					</el-col>
+					<div class="module-actions">
+						<el-icon
+							style="cursor: pointer"
+							:style="{
+								cursor: switchOptionFull ? 'not-allowed' : 'pointer',
+								opacity: switchOptionFull ? 0.5 : 1
+							}"
+							@click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })"
+						>
+							<Plus></Plus>
+						</el-icon>
+						<el-icon
+							v-show="state.dataForm.componentOptions.length > 1"
+							style="cursor: pointer"
+							@click="() => state.dataForm.componentOptions.splice(index, 1)"
+						>
+							<Delete></Delete>
+						</el-icon>
+					</div>
 				</el-row>
 			</el-form-item>
 			<el-form-item label="属性默认值" prop="propDefaultValue">
@@ -141,39 +150,24 @@ const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.
 // 开关类型只能有两个选项
 const switchOptionFull = computed(() => state.dataForm.componentType === 5 && state.dataForm.componentOptions.length === 2)
 
-const componentOptions = (_: any, __: any, callback: any) => {
-	if (!hasComponentOptions.value) {
-		callback()
-		return
+const dataRules = computed(() => {
+	const rules: Record<string, any[]> = {
+		propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		propDefaultValue: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		columnSpan: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		componentOptions: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 	}
-	const message = '必填项不能为空'
-	if (state.dataForm.componentOptions.length === 0) {
-		callback(new Error(message))
-		return
-	}
-	for (let i = 0; i < state.dataForm.componentOptions.length; i++) {
-		const item = state.dataForm.componentOptions[i]
-		if (!item.label || !item.value) {
-			callback(new Error(`第${i + 1}个选项标题或选项值不能为空`))
-			return
-		}
-	}
-	if (state.dataForm.componentType === 5 && state.dataForm.componentOptions.length != 2) {
-		callback(new Error('组件类型为开关，组件选项必须为两个'))
-		return
-	}
-	callback()
-}
 
-const dataRules = reactive({
-	propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	propDefaultValue: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	columnSpan: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	componentOptions: [{ required: true, validator: componentOptions, trigger: 'blur' }]
+	// 动态模块校验
+	state.dataForm.componentOptions.forEach((_, index) => {
+		rules[`componentOptions.${index}.label`] = [{ required: true, message: '选项标题不能为空', trigger: 'blur' }]
+		rules[`componentOptions.${index}.value`] = [{ required: true, message: '选项值不能为空', trigger: 'blur' }]
+	})
+	return rules
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
@@ -187,3 +181,12 @@ defineExpose({
 	initHandle
 })
 </script>
+<style lang="scss" scoped>
+.module-actions {
+	width: 60px; /* ⭐ 固定宽度，解决大屏抖动问题 */
+	display: flex;
+	align-items: center;
+	padding-left: 20px;
+	gap: 15px;
+}
+</style>

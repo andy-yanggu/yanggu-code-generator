@@ -16,6 +16,8 @@ export interface GenProjectEntity {
 	projectVersion: string
 	// 数据源ID
 	datasourceId: number | string
+	// 模块列表
+	moduleList: GenModuleEntity[]
 	// 项目模板组ID
 	projectTemplateGroupId: number | string
 	// 表模板组ID
@@ -36,8 +38,20 @@ export interface GenProjectEntity {
 	voBaseClassId: number | string
 	// 生成方式（0-zip压缩包，1-服务器本地）
 	generatorType: number | string
-	//
+	// 项目模板组属性值
 	projectTemplateGroupPropValue: object
+}
+
+/**
+ * 模块实体
+ */
+export interface GenModuleEntity {
+	// 模块名称
+	moduleName: string
+	// 模块描述
+	moduleDesc: string
+	// 模块路径
+	modulePath: string
 }
 
 /**

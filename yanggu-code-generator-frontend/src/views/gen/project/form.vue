@@ -30,7 +30,6 @@
 						<el-radio-group v-model="state.dataForm.generatorType" :options="PROJECT_GENERATE_TYPES"></el-radio-group>
 					</el-form-item>
 				</el-col>
-
 				<el-col :span="12">
 					<el-form-item label="项目端口" prop="projectPort">
 						<el-input v-model.number="state.dataForm.projectPort" placeholder="请输入项目端口" clearable @input="projectPortInputHandler"></el-input>
@@ -68,6 +67,40 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
+			<el-form-item label="模块列表" prop="moduleList">
+				<el-row
+					v-for="(item, index) in state.dataForm.moduleList"
+					:key="index"
+					:gutter="10"
+					:style="{ marginBottom: index < state.dataForm.moduleList.length - 1 ? '18px' : '0' }"
+				>
+					<el-col :span="7">
+						<el-form-item :prop="`moduleList.${index}.moduleName`">
+							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="7">
+						<el-form-item :prop="`moduleList.${index}.modulePath`">
+							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="7">
+						<el-form-item :prop="`moduleList.${index}.moduleDesc`">
+							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述"></el-input>
+						</el-form-item>
+					</el-col>
+					<div class="module-actions">
+						<el-space>
+							<el-icon class="action-icon" @click="() => state.dataForm.moduleList.splice(index + 1, 0, emptyModule())">
+								<Plus></Plus>
+							</el-icon>
+							<el-icon v-show="state.dataForm.moduleList.length > 1" class="action-icon" @click="() => state.dataForm.moduleList.splice(index, 1)">
+								<Delete></Delete>
+							</el-icon>
+						</el-space>
+					</div>
+				</el-row>
+			</el-form-item>
 
 			<form-divider title="模板组配置"></form-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
@@ -101,7 +134,7 @@
 					:key="state.dataForm.projectTemplateGroupId"
 					v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
 					model-value-prop="projectTemplateGroupPropValue"
-					:property-list="projectTemplateGroupPropertyList"
+					:property-list="projectTemplateGroupPropertyList!"
 				></template-group-property-form>
 			</template>
 
@@ -139,10 +172,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
@@ -171,9 +204,6 @@ const getList = () => {
 	// 模板组下拉
 	genTemplateGroupApi.voList().then(data => {
 		projectTemplateGroupList.value = data.filter(item => item.type === 0)
-		nextTick(() => {
-			addProjectRule()
-		})
 		tableTemplateGroupList.value = data.filter(item => item.type === 1)
 		enumTemplateGroupList.value = data.filter(item => item.type === 2)
 	})
@@ -183,6 +213,12 @@ const getList = () => {
 		baseClassList.value = data
 	})
 }
+
+const emptyModule = () => ({
+	moduleName: '',
+	modulePath: '',
+	moduleDesc: ''
+})
 
 const state = reactive({
 	submitApi: genProjectApi.submit,
@@ -198,6 +234,7 @@ const state = reactive({
 		projectPort: '',
 		projectVersion: '',
 		datasourceId: '',
+		moduleList: [emptyModule()],
 		projectTemplateGroupId: '',
 		projectTemplateGroupPropValue: {},
 		tableTemplateGroupId: '',
@@ -240,50 +277,30 @@ const projectTemplateGroupPropertyList = computed(() => {
 	}
 })
 
-watch(
-	() => state.dataForm.projectTemplateGroupId,
-	(newVal, oldVal) => {
-		// 初始化阶段（oldVal 为 undefined 或空），不需要清空
-		if (!oldVal) {
-			addProjectRule()
-			return
-		}
-
-		// 只有真正发生变更时才清空
-		if (newVal !== oldVal) {
-			addProjectRule()
-
-			// 清空而不替换引用
-			const obj = state.dataForm.projectTemplateGroupPropValue
-			Object.keys(obj).forEach(k => delete obj[k])
-		}
-	}
-)
-
-const addProjectRule = () => {
-	// 删除之前的规则
-	// 字段是projectTemplateGroupPropValue.xxx的形式
-	for (const key in dataRules) {
-		if (key.startsWith('projectTemplateGroupPropValue.')) {
-			delete dataRules[key]
-		}
+const dataRules = computed(() => {
+	const rules: Record<string, any[]> = {
+		projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
+		moduleList: [{ required: true, message: '必填项不能为空', trigger: 'change' }]
 	}
 
-	// 添加后面的规则
+	// 动态模块校验
+	state.dataForm.moduleList.forEach((_, index) => {
+		rules[`moduleList.${index}.moduleName`] = [{ required: true, message: '模块名称不能为空', trigger: 'blur' }]
+		rules[`moduleList.${index}.modulePath`] = [{ required: true, message: '模块路径不能为空', trigger: 'blur' }]
+		rules[`moduleList.${index}.moduleDesc`] = [{ required: true, message: '模块描述不能为空', trigger: 'blur' }]
+	})
+
+	// 模板组属性校验
 	projectTemplateGroupPropertyList.value?.forEach(item => {
 		if (item.required === 1) {
-			dataRules[`projectTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+			rules[`projectTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 		}
 	})
-}
 
-const dataRules = reactive({
-	projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	tableTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	generatorType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	return rules
 })
 
 const projectPortInputHandler = (value: number | string) => {
@@ -307,8 +324,14 @@ defineExpose({
 })
 </script>
 <style lang="scss" scoped>
-::v-deep(.el-divider__text) {
-	font-size: 15px;
-	font-weight: 600; /* 加粗 */
+.module-actions {
+	width: 60px; /* ⭐ 固定宽度，解决大屏抖动问题 */
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
+}
+
+.action-icon {
+	cursor: pointer;
 }
 </style>
