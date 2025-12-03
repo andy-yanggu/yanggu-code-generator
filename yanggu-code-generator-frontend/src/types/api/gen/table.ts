@@ -26,6 +26,8 @@ export interface GenTableEntity {
 	functionName: string
 	// 表单布局  1：一列   2：两列
 	formLayout: number | string
+	// 弹窗方式（0-对话框，1-抽屉）
+	popupType: number | string
 	// 生成方式
 	generatorFunction: number[]
 	// 项目名称

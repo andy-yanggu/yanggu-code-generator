@@ -49,6 +49,12 @@ export const TABLE_GENERATOR_FUNCTION_TYPES: EnumItem[] = [
 	{ label: '导出', value: 7 }
 ]
 
+// 表弹窗方式
+export const TABLE_POPUP_TYPE_TYPES: EnumItem[] = [
+	{ label: '对话框', value: 0 },
+	{ label: '抽屉', value: 1 }
+]
+
 // 属性类型枚举
 export const ATTR_TYPES: EnumItem[] = [
 	{ label: 'Byte', value: 'Byte' },

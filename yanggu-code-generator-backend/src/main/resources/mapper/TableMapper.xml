@@ -16,6 +16,7 @@
         t.module_name,
         t.function_name,
         t.form_layout,
+        t.popup_type,
         t.generator_function,
         t.permission_flag,
         t.create_time,
@@ -58,6 +59,7 @@
         <result property="formLayout" column="form_layout"/>
         <result property="generatorFunction" column="generator_function" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ListIntegerTypeHandler"/>
         <result property="permissionFlag" column="permission_flag"/>
+        <result property="popupType" column="popup_type"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

@@ -99,6 +99,12 @@ public class TableEntity extends BaseEntity implements Serializable {
     private Integer formLayout;
 
     /**
+     * 弹窗方式（0-对话框，1-抽屉）
+     */
+    @TableField(value = "popup_type")
+    private Integer popupType;
+
+    /**
      * 生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）
      */
     @TableField(value = "generator_function", typeHandler = ListIntegerTypeHandler.class)

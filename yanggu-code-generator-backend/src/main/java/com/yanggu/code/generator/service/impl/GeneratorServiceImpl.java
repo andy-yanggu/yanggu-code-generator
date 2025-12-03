@@ -512,6 +512,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));
         tableModel.setPermissionFlag(table.getPermissionFlag());
         tableModel.setFormLayout(table.getFormLayout());
+        tableModel.setPopupType(table.getPopupType());
 
         //开发者信息
         tableModel.setAuthor(table.getAuthor());

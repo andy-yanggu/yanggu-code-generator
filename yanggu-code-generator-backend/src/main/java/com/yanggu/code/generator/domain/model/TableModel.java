@@ -98,6 +98,11 @@ public class TableModel {
     private int formLayout;
 
     /**
+     * 弹窗方式（0-对话框，1-抽屉）
+     */
+    private int popupType;
+
+    /**
      * 作者
      */
     private String author;

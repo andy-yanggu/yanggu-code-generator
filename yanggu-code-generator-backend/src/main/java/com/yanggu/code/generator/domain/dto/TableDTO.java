@@ -99,6 +99,12 @@ public class TableDTO implements Serializable {
     private List<Integer> generatorFunction;
 
     /**
+     * 弹窗方式（0-对话框，1-抽屉）
+     */
+    @Schema(description = "弹窗方式（0-对话框，1-抽屉）")
+    private Integer popupType;
+
+    /**
      * 表单布局  1：一列   2：两列
      */
     @Schema(description = "表单布局  1：一列   2：两列")

@@ -99,6 +99,12 @@ public class TableVO extends BaseVO implements Serializable {
     private Integer formLayout;
 
     /**
+     * 弹窗方式（0-对话框，1-抽屉）
+     */
+    @Schema(description = "弹窗方式（0-对话框，1-抽屉）")
+    private Integer popupType;
+
+    /**
      * 表模板组ID
      */
     @Schema(description = "表模板组ID")
