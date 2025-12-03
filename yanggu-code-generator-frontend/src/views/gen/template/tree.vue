@@ -826,7 +826,10 @@ const refreshActiveItemContent = (update: boolean) => {
 	if (!update) {
 		return
 	}
-	genTemplateApi.detail({ id: templateTreeData.activeItemId }).then(detailData => {
+	const queryForm = {
+		id: templateTreeData.activeItemId
+	}
+	genTemplateApi.detailData(queryForm).then(detailData => {
 		const tempTree = findByIdFromTree(templateTreeData.activeItemId, templateTreeData.treeList)
 		if (tempTree) {
 			tempTree.templateContent = detailData.templateContent

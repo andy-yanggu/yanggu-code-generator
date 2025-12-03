@@ -107,7 +107,7 @@ const state = reactive({
 	visible: false,
 	submitBefore: submitBeforeHandle,
 	submitApi: genTemplateApi.submit,
-	detailApi: (id: Key) => genTemplateApi.detail({ id }),
+	detailApi: (id: Key) => genTemplateApi.detailData({ id }),
 	initBefore: () => {
 		state.dataForm.templateName = ''
 	},

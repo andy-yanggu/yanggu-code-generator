@@ -295,7 +295,7 @@ const refreshCascaderData = async () => {
 		id: testData.templateId,
 		setPath: true
 	}
-	genTemplateApi.detail(detailQueryForm).then(data => {
+	genTemplateApi.detailData(detailQueryForm).then(data => {
 		testData.templateName = data.templateName
 		testData.originalFileName = data.fileName
 		testData.originalTemplateContent = data.templateContent

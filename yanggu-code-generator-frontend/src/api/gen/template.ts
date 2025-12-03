@@ -4,7 +4,7 @@ import { GenTemplateEntity, GenTemplateQuery } from '@/types'
 
 // 特定api
 interface CustomApi {
-	detail: (queryForm: any) => Promise<any>
+	detailData: (queryForm: any) => Promise<any>
 	treeData: (templateGroupId: number) => Promise<any[]>
 	updateContent: (dataForm: any) => Promise<void>
 	updateParent: (dataForm: any) => Promise<void>
@@ -18,7 +18,7 @@ export const genTemplateApi: EnabledCrudApi<GenTemplateEntity, GenTemplateQuery>
 	// 通用CRUD接口
 	...createCrudApi<GenTemplateEntity, GenTemplateQuery>(baseUrl),
 	// 查询详情
-	detail: (queryForm: any): Promise<any> => {
+	detailData: (queryForm: any): Promise<any> => {
 		return service.get(baseUrl + '/detail', { params: queryForm })
 	},
 	// 树形数据
