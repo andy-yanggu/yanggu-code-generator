@@ -104,7 +104,7 @@ public class ProjectModel {
     /**
      * 模块列表
      */
-    private List<String> moduleList;
+    private List<ModuleModel> moduleList;
 
     /**
      * 表模型数据列表

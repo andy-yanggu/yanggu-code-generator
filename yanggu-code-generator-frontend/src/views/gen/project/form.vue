@@ -46,10 +46,7 @@
 					<el-form-item label="数据源" prop="datasourceId">
 						<el-select v-model="state.dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
 							<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
-								<span style="font-weight: bold">{{ item.connName }}</span>
-								<span v-if="item.datasourceDesc && item.datasourceDesc.trim()" style="color: #999; font-size: 12px">
-									（{{ item.datasourceDesc }}）
-								</span>
+								<option-label :label="item.connName" :desc="item.datasourceDesc"></option-label>
 							</el-option>
 						</el-select>
 					</el-form-item>
@@ -245,6 +242,11 @@ const state = reactive({
 		voBaseClassId: '',
 		generatorType: ''
 	},
+	initAfter: () => {
+		if (state.dataForm.moduleList.length === 0) {
+			state.dataForm.moduleList = [emptyModule()]
+		}
+	},
 	submitBefore: () => {
 		if (!state.dataForm.id) {
 			if (state.dataForm.datasourceId) {
@@ -281,21 +283,96 @@ const dataRules = computed(() => {
 		projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
-		moduleList: [{ required: true, message: '必填项不能为空', trigger: 'change' }]
+		generatorType: [{ required: true, message: '请选择生成类型', trigger: 'blur' }]
+		// moduleList 是否必填由外层 form-item 控制，若 required: true 则会出现在 rules['moduleList']
 	}
-
-	// 动态模块校验
-	state.dataForm.moduleList.forEach((_, index) => {
-		rules[`moduleList.${index}.moduleName`] = [{ required: true, message: '模块名称不能为空', trigger: 'blur' }]
-		rules[`moduleList.${index}.modulePath`] = [{ required: true, message: '模块路径不能为空', trigger: 'blur' }]
-		rules[`moduleList.${index}.moduleDesc`] = [{ required: true, message: '模块描述不能为空', trigger: 'blur' }]
-	})
 
 	// 模板组属性校验
 	projectTemplateGroupPropertyList.value?.forEach(item => {
 		if (item.required === 1) {
 			rules[`projectTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 		}
+	})
+
+	// === 判定 moduleList 是否必填 ===
+	const moduleListRequired = rules['moduleList']?.some((r: any) => r.required)
+
+	const list = state.dataForm.moduleList || []
+
+	// === 工具方法：判断是否只有一个空模块 ===
+	const isSingleEmptyModule = () => {
+		if (list.length !== 1) {
+			return false
+		}
+		const item = list[0]
+		return !item.moduleName && !item.modulePath && !item.moduleDesc
+	}
+
+	// === 动态字段校验生成器 ===
+	const makeValidator = (index: number) => {
+		return (_: string) => ({
+			validator(_: any, value: any, callback: any) {
+				const item = list[index]
+				const name = (item.moduleName || '').trim()
+				const path = (item.modulePath || '').trim()
+				const desc = (item.moduleDesc || '').trim()
+
+				const allEmpty = !name && !path && !desc
+
+				// ================================
+				//  moduleList 非必填的处理逻辑
+				// ================================
+				if (!moduleListRequired) {
+					// 整个 list 只有 1 个且为空 → 完全跳过校验
+					if (isSingleEmptyModule()) {
+						callback()
+						return
+					}
+
+					// 当前行全空 → 跳过校验（无效占位行）
+					if (allEmpty) {
+						callback()
+						return
+					}
+
+					// 当前行非空 → 所有字段必须填写
+					if (!value || !value.trim()) {
+						callback(new Error('必填项不能为空'))
+						return
+					}
+
+					callback()
+					return
+				}
+
+				// ================================
+				//  moduleList 为必填（严格模式）
+				// ================================
+				// 当前行全空 → 报错
+				if (allEmpty) {
+					callback(new Error('模块内容不能为空'))
+					return
+				}
+
+				// 当前字段为空 → 报错
+				if (!value || !value.trim()) {
+					callback(new Error('必填项不能为空'))
+					return
+				}
+
+				callback()
+			},
+			trigger: 'blur'
+		})
+	}
+
+	// === 生成动态规则 ===
+	list.forEach((_, index) => {
+		const validator = makeValidator(index)
+
+		rules[`moduleList.${index}.moduleName`] = [validator('moduleName')]
+		rules[`moduleList.${index}.modulePath`] = [validator('modulePath')]
+		rules[`moduleList.${index}.moduleDesc`] = [validator('moduleDesc')]
 	})
 
 	return rules

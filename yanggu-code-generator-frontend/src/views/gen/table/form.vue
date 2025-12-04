@@ -4,7 +4,7 @@
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
-					<el-form-item label="项目" prop="projectId">
+					<el-form-item label="所属项目" prop="projectId">
 						<el-select
 							v-model="state.dataForm.projectId"
 							:options="projectList"
@@ -17,7 +17,16 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="所属模块" prop="moduleName">
-						<el-input v-model="state.dataForm.moduleName" clearable placeholder="请选择所属模块"></el-input>
+						<el-select v-model="state.dataForm.moduleName" clearable filterable placeholder="请选择所属模块" style="width: 100%">
+							<el-option
+								v-for="item in projectList.find(temp => temp.id === state.dataForm.projectId)?.moduleList"
+								:key="item.moduleName"
+								:label="item.moduleName"
+								:value="item.moduleName"
+							>
+								<option-label :label="item.moduleName" :desc="item.moduleDesc"></option-label>
+							</el-option>
+						</el-select>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -100,6 +109,7 @@ import { Check, Close } from '@element-plus/icons-vue'
 import { genProjectApi, genTableApi } from '@/api'
 import { FormOptions, GenProjectEntity, GenTableEntity } from '@/types'
 import FormDivider from '@/components/form/divider/index.vue'
+import OptionLabel from '@/components/option/label/index.vue'
 
 defineOptions({
 	name: 'GenTableForm'
@@ -142,7 +152,6 @@ const dataRules = reactive({
 	databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	moduleName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	popupType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

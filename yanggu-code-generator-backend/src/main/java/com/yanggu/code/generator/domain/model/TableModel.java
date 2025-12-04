@@ -88,6 +88,16 @@ public class TableModel {
     private String moduleNamePascal;
 
     /**
+     * 模块路径
+     */
+    private String modulePath;
+
+    /**
+     * 模块描述
+     */
+    private String moduleDesc;
+
+    /**
      * 权限标识
      */
     private String permissionFlag;

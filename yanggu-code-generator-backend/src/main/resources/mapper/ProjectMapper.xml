@@ -21,6 +21,7 @@
         entity_base_class_id,
         vo_base_class_id,
         generator_type,
+        module_list,
         create_time,
         update_time,
         is_delete
@@ -52,6 +53,7 @@
         <result property="entityBaseClassId" column="entity_base_class_id"/>
         <result property="voBaseClassId" column="vo_base_class_id"/>
         <result property="generatorType" column="generator_type"/>
+        <result property="moduleList" column="module_list" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

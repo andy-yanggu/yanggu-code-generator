@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,22 +76,10 @@ public class ProjectVO extends BaseVO implements Serializable {
     private Long tableTemplateGroupId;
 
     /**
-     * 表模板属性数据
-     */
-    @Schema(description = "表模板属性数据")
-    private Map<String, Object> tableTemplateGroupPropValue;
-
-    /**
      * 枚举模板组ID
      */
     @Schema(description = "枚举模板组ID")
     private Long enumTemplateGroupId;
-
-    /**
-     * 枚举模板属性数据
-     */
-    @Schema(description = "枚举模板属性数据")
-    private Map<String, Object> enumTemplateGroupPropValue;
 
     /**
      * 后端路径
@@ -133,5 +122,11 @@ public class ProjectVO extends BaseVO implements Serializable {
      */
     @Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
     private Integer generatorType;
+
+    /**
+     * 模块列表
+     */
+    @Schema(description = "模块列表")
+    private List<ModuleVO> moduleList;
 
 }

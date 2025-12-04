@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
+import com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
 
@@ -17,7 +19,7 @@ import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
  * 项目Entity实体类
  */
 @Data
-@TableName(value = "gen_project")
+@TableName(value = "gen_project", autoResultMap = true)
 @EqualsAndHashCode(callSuper = true)
 public class ProjectEntity extends BaseEntity implements Serializable {
 
@@ -119,5 +121,11 @@ public class ProjectEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "generator_type")
     private Integer generatorType;
+
+    /**
+     * 模块列表
+     */
+    @TableField(value = "module_list", typeHandler = ModuleListTypeHandler.class)
+    private List<ModuleEntity> moduleList;
 
 }

@@ -1,6 +1,7 @@
 package com.yanggu.code.generator.service.impl;
 
 import cn.hutool.v7.core.array.ArrayUtil;
+import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.codec.binary.Base64;
 import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.date.DateFormatPool;
@@ -430,6 +431,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectModel.setBackendPath(project.getBackendPath());
         projectModel.setFrontendPath(project.getFrontendPath());
         projectModel.setProjectDesc(project.getProjectDesc());
+        projectModel.setModuleList(BeanUtil.copyToList(project.getModuleList(), ModuleModel.class));
 
         //数据源数据
         if (dataSource != null) {
@@ -446,16 +448,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
         projectModel.setTableModelList(tableModelList);
-        Set<String> moduleList = new HashSet<>();
 
         List<TableEntity> tableList = tableService.getTableListByProjectId(project.getId());
 
         for (TableEntity table : tableList) {
             TableModel tableModel = buildTableDataModel(table, project);
             tableModelList.add(tableModel);
-            moduleList.add(tableModel.getModuleName());
         }
-        projectModel.setModuleList(new ArrayList<>(moduleList));
 
         //枚举模型数据列表
         List<EnumModel> enumModelList = new ArrayList<>();
@@ -507,6 +506,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setModuleName(table.getModuleName());
         tableModel.setModuleNameCase(NameUtil.toCamel(table.getModuleName()));
         tableModel.setModuleNamePascal(NameUtil.toPascal(table.getModuleName()));
+        project.getModuleList().stream()
+                .filter(module -> module.getModuleName().equals(table.getModuleName()))
+                .findFirst()
+                .ifPresent(module -> {
+                    tableModel.setModulePath(module.getModulePath());
+                    tableModel.setModuleDesc(module.getModuleDesc());
+                });
         tableModel.setFunctionName(table.getFunctionName());
         tableModel.setFunctionNamePascal(StrUtil.upperFirst(table.getFunctionName()));
         tableModel.setFunctionNameKebabCase(NamingCase.toKebabCase(table.getFunctionName()));

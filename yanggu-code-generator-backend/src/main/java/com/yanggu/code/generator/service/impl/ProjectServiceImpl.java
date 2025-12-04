@@ -108,8 +108,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
         // 保存模板组对应的属性数据
         saveTemplateGroupPropValue(true, projectId, dto.getProjectTemplateGroupId(), dto.getProjectTemplateGroupPropValue());
-        saveTemplateGroupPropValue(true, projectId, dto.getTableTemplateGroupId(), dto.getTableTemplateGroupPropValue());
-        saveTemplateGroupPropValue(true, projectId, dto.getEnumTemplateGroupId(), dto.getEnumTemplateGroupPropValue());
     }
 
     private void saveTemplateGroupPropValue(boolean delete, Long projectId, Long templateGroupId, Map<String, Object> templateGroupPropValue) {
@@ -155,8 +153,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity dbEntity = selectById(id);
         ProjectVO projectVO = projectMapstruct.entityToVO(dbEntity);
         projectVO.setProjectTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getProjectTemplateGroupId()));
-        projectVO.setTableTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getTableTemplateGroupId()));
-        projectVO.setEnumTemplateGroupPropValue(projectTemplateGroupPropertyValueService.getData(id, dbEntity.getEnumTemplateGroupId()));
         return projectVO;
     }
 

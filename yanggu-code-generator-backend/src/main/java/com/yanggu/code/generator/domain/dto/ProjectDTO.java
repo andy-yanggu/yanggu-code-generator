@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -145,5 +146,11 @@ public class ProjectDTO implements Serializable {
      */
     @Schema(description = "VO基类ID")
     private Long voBaseClassId;
+
+    /**
+     * 模块列表
+     */
+    @Schema(description = "模块列表")
+    private List<ModuleDTO> moduleList;
 
 }
