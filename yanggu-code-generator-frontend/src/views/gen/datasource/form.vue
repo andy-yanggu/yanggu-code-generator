@@ -8,7 +8,7 @@
 				<el-input v-model="state.dataForm.connName" clearable placeholder="请输入连接名称"></el-input>
 			</el-form-item>
 			<el-form-item label="数据库类型" prop="dbType">
-				<el-select v-model="state.dataForm.dbType" :options="DB_TYPES" clearable placeholder="请选择数据库类型"></el-select>
+				<el-select v-model="state.dataForm.dbType" :options="DB_TYPES" filterable clearable placeholder="请选择数据库类型"></el-select>
 			</el-form-item>
 			<el-form-item label="URL" prop="connUrl">
 				<el-input v-model="state.dataForm.connUrl" clearable placeholder="请输入URL"></el-input>

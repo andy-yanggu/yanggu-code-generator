@@ -76,17 +76,17 @@
 				>
 					<el-col :span="7">
 						<el-form-item :prop="`moduleList.${index}.moduleName`">
-							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称"></el-input>
+							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="7">
 						<el-form-item :prop="`moduleList.${index}.modulePath`">
-							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径"></el-input>
+							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="7">
 						<el-form-item :prop="`moduleList.${index}.moduleDesc`">
-							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述"></el-input>
+							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
@@ -106,27 +106,25 @@
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
-						<span style="font-weight: bold">{{ item.groupName }}</span>
-						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
-						<span style="font-weight: bold">{{ item.groupName }}</span>
-						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
 				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
 					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
-						<span style="font-weight: bold">{{ item.groupName }}</span>
-						<span v-if="item.groupDesc && item.groupDesc.trim()" style="color: #999; font-size: 12px">（{{ item.groupDesc }}）</span>
+						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
+
 			<!-- 项目模板组属性表单 -->
 			<template v-if="state.dataForm.projectTemplateGroupId && projectTemplateGroupPropertyList!.length > 0">
 				<form-divider title="项目模板组属性"></form-divider>
@@ -142,16 +140,14 @@
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
 				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
 					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
-						<span style="font-weight: bold">{{ item.packageName }}.{{ item.className }}</span>
-						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
+						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item prop="voBaseClassId" label="VO基类">
 				<el-select v-model="state.dataForm.voBaseClassId" placeholder="请选择VO基类" style="width: 100%" clearable filterable>
 					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
-						<span style="font-weight: bold">{{ item.packageName }}.{{ item.className }}</span>
-						<span v-if="item.remark && item.remark.trim()" style="color: #999; font-size: 12px">（{{ item.remark }}）</span>
+						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
@@ -179,6 +175,7 @@ import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import OptionLabel from '@/components/option/label/index.vue'
 import { genBaseClassApi, genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
 import {
 	FormOptions,
@@ -226,6 +223,7 @@ const state = reactive({
 	initBefore: () => {
 		getList()
 		state.dataForm.projectTemplateGroupPropValue = {}
+		state.dataForm.moduleList = [emptyModule()]
 	},
 	dataForm: {
 		id: '',

@@ -83,8 +83,8 @@ export const COMPONENT_TYPES: EnumItem[] = [
 
 // 字段布局方式枚举
 export const COLUMN_SPAN_TYPES: EnumItem[] = [
-	{ label: '独占一行', value: 1 },
-	{ label: '一行两个字段', value: 2 }
+	{ label: '1个字段', value: 1 },
+	{ label: '2个字段', value: 2 }
 ]
 
 // 生成产物类型枚举

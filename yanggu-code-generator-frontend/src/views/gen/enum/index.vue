@@ -3,14 +3,11 @@
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
-					<el-select
-						v-model="state.queryForm.projectId"
-						:options="projectList"
-						:props="{ label: 'projectName', value: 'id' }"
-						style="width: 140px"
-						clearable
-						placeholder="请选择项目"
-					></el-select>
+					<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
+						<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
+							<option-label :label="projectItem.projectName" :desc="projectItem.projectDesc"></option-label>
+						</el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="枚举名称" prop="enumName">
 					<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
@@ -154,6 +151,7 @@ import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enu
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
+import OptionLabel from '@/components/option/label/index.vue'
 
 defineOptions({
 	name: 'GenEnum'

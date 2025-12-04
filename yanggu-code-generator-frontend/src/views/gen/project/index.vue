@@ -10,6 +10,7 @@
 						v-model="state.queryForm.generatorType"
 						:options="PROJECT_GENERATE_TYPES"
 						style="width: 150px"
+						filterable
 						clearable
 						placeholder="请选择生成方式"
 					></el-select>

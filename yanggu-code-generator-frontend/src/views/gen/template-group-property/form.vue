@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"
@@ -8,20 +8,57 @@
 			:validate-on-rule-change="false"
 			@keyup.enter="submitHandle()"
 		>
-			<el-form-item prop="propTitle">
-				<template #label>
-					<form-label-tooltip label="属性标题" tooltip="属性标题具有唯一性，不能重复"></form-label-tooltip>
-				</template>
-				<el-input v-model="state.dataForm.propTitle" clearable placeholder="请输入属性标题"></el-input>
-			</el-form-item>
-			<el-form-item prop="propKey">
-				<template #label>
-					<form-label-tooltip label="属性键" tooltip="属性键具有唯一性，不能重复"></form-label-tooltip>
-				</template>
-				<el-input v-model="state.dataForm.propKey" clearable placeholder="请输入属性键"></el-input>
-			</el-form-item>
-			<el-form-item label="排序" prop="propOrder">
-				<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item prop="propTitle">
+						<template #label>
+							<form-label-tooltip label="属性标题" tooltip="属性标题具有唯一性，不能重复"></form-label-tooltip>
+						</template>
+						<el-input v-model="state.dataForm.propTitle" clearable placeholder="请输入属性标题"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item prop="propKey">
+						<template #label>
+							<form-label-tooltip label="属性键" tooltip="属性键具有唯一性，不能重复"></form-label-tooltip>
+						</template>
+						<el-input v-model="state.dataForm.propKey" clearable placeholder="请输入属性键"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item label="排序" prop="propOrder">
+						<el-input-number v-model="state.dataForm.propOrder" :min="0"></el-input-number>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item label="是否必填" prop="required">
+						<el-switch
+							v-model="state.dataForm.required"
+							:active-value="1"
+							:inactive-value="0"
+							inline-prompt
+							active-text="是"
+							inactive-text="否"
+						></el-switch>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-form-item label="布局方式" prop="columnSpan">
+						<el-radio-group v-model="state.dataForm.columnSpan" :options="COLUMN_SPAN_TYPES"></el-radio-group>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12">
+					<el-form-item label="备注" prop="remark">
+						<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
+					</el-form-item>
+				</el-col>
+			</el-row>
+			<el-form-item label="属性默认值" prop="propDefaultValue">
+				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
 			</el-form-item>
 			<el-form-item label="组件类型" prop="componentType">
 				<el-radio-group v-model="state.dataForm.componentType" :options="COMPONENT_TYPES"></el-radio-group>
@@ -35,12 +72,12 @@
 				>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions.${index}.label`">
-							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 200px"></el-input>
+							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 220px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions.${index}.value`">
-							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 200px"></el-input>
+							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 220px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
@@ -63,25 +100,6 @@
 						</el-icon>
 					</div>
 				</el-row>
-			</el-form-item>
-			<el-form-item label="属性默认值" prop="propDefaultValue">
-				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
-			</el-form-item>
-			<el-form-item label="是否必填" prop="required">
-				<el-switch
-					v-model="state.dataForm.required"
-					:active-value="1"
-					:inactive-value="0"
-					inline-prompt
-					active-text="是"
-					inactive-text="否"
-				></el-switch>
-			</el-form-item>
-			<el-form-item label="字段布局方式" prop="columnSpan">
-				<el-radio-group v-model="state.dataForm.columnSpan" :options="COLUMN_SPAN_TYPES"></el-radio-group>
-			</el-form-item>
-			<el-form-item label="备注" prop="remark">
-				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -183,10 +201,10 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .module-actions {
-	width: 60px; /* ⭐ 固定宽度，解决大屏抖动问题 */
+	width: 50px; /* ⭐ 固定宽度，解决大屏抖动问题 */
 	display: flex;
 	align-items: center;
-	padding-left: 20px;
+	padding-left: 10px;
 	gap: 15px;
 }
 </style>

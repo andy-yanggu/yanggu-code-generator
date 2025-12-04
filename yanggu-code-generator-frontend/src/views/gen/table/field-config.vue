@@ -27,12 +27,12 @@
 					</el-table-column>
 					<el-table-column prop="attrType" label="属性类型" width="120" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.attrType" :options="typeList"></el-select>
+							<el-select v-model="row.attrType" :options="typeList" filterable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="autoFill" label="自动填充" width="140" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.autoFill" :options="fillList"></el-select>
+							<el-select v-model="row.autoFill" :options="fillList" filterable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="fieldSort" label="字段排序" width="150" header-align="center" align="center">
@@ -98,12 +98,12 @@
 					</el-table-column>
 					<el-table-column prop="queryType" label="查询方式" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.queryType" :options="queryList"></el-select>
+							<el-select v-model="row.queryType" :options="queryList" filterable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="queryFormType" label="查询表单类型" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.queryFormType" :options="formTypeList"></el-select>
+							<el-select v-model="row.queryFormType" :options="formTypeList" filterable></el-select>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -130,12 +130,12 @@
 					</el-table-column>
 					<el-table-column prop="formValidator" label="表单效验" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.formValidator" :options="formValidatorList"></el-select>
+							<el-select v-model="row.formValidator" :options="formValidatorList" filterable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formType" label="表单类型" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.formType" :options="formTypeList"></el-select>
+							<el-select v-model="row.formType" :options="formTypeList" filterable></el-select>
 						</template>
 					</el-table-column>
 				</el-table>

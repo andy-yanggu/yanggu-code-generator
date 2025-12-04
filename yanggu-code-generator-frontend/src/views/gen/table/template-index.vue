@@ -10,6 +10,7 @@
 						v-model="state.queryForm.templateType"
 						:options="TEMPLATE_TYPES"
 						style="width: 160px"
+						filterable
 						clearable
 						placeholder="请选择模板类型"
 					></el-select>

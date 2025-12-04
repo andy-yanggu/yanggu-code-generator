@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false" width="60%">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>

@@ -13,6 +13,7 @@
 							v-model="state.queryForm.templateGroupType"
 							:options="TEMPLATE_GROUP_TYPES"
 							style="width: 160px"
+							filterable
 							clearable
 							placeholder="请选择模板组类型"
 						></el-select>
@@ -31,6 +32,7 @@
 							v-model="state.queryForm.templateType"
 							:options="TEMPLATE_TYPES"
 							style="width: 150px"
+							filterable
 							clearable
 							placeholder="请选择模板类型"
 						></el-select>

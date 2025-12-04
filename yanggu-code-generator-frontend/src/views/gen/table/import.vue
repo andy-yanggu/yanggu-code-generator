@@ -5,10 +5,7 @@
 				<el-form-item label="项目" prop="projectId">
 					<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
 						<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
-							<span style="font-weight: bold">{{ projectItem.projectName }}</span>
-							<span v-if="projectItem.projectDesc && projectItem.projectDesc.trim()" style="color: #999; font-size: 12px">
-								（{{ projectItem.projectDesc }}）
-							</span>
+							<option-label :label="projectItem.projectName" :desc="projectItem.projectDesc"></option-label>
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -54,6 +51,7 @@
 import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
+import OptionLabel from '@/components/option/label/index.vue'
 import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genProjectApi, genTableApi } from '@/api'
 import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, SubmitOptions } from '@/types'
