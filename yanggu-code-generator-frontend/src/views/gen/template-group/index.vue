@@ -120,7 +120,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<template-group-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList"></template-group-form>
+			<template-group-form ref="formRef" @refresh-data-list="getDataList"></template-group-form>
 		</el-card>
 
 		<template-tree
@@ -147,7 +147,7 @@ import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
-import { useComplexForm, useTableAction } from '@/hooks'
+import { useInitForm, useTableAction } from '@/hooks'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genTemplateGroupApi } from '@/api'
 import { GenTemplateGroupEntity, GenTemplateGroupQuery, IHooksOptions } from '@/types'
@@ -210,6 +210,6 @@ const {
 	importHandle
 } = useTableAction(state)
 
-const { formRef, dialogMode, formInitHandle } = useComplexForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>
 <style scoped></style>

@@ -3,7 +3,7 @@
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="字段类型" prop="columnType">
-					<el-input v-model="state.queryForm.columnType" clearable placeholder="请输入字段类型"></el-input>
+					<el-input v-model="state.queryForm.columnType" clearable placeholder="请输入字段类型" style="width: 160px"></el-input>
 				</el-form-item>
 				<el-form-item label="属性类型" prop="attrType">
 					<el-select

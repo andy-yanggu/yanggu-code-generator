@@ -17,9 +17,14 @@ public class DatasourceTestVO {
     private Boolean result;
 
     /**
-     * 检测信息
+     * 数据库名称
      */
-    @Schema(description = "检测信息")
-    private String message;
+    @Schema(description = "数据库名称")
+    private String databaseName;
+
+    /**
+     * 错误信息
+     */
+    private String errorMessage;
 
 }

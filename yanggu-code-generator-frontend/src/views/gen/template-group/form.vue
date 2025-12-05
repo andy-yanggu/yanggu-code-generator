@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle(mode)" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<el-form-item prop="groupName">
 				<template #label>
@@ -29,27 +29,19 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, reactive } from 'vue'
+import { reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupApi } from '@/api'
-import { FormOptions, FormType, GenTemplateGroupEntity } from '@/types'
+import { FormOptions, GenTemplateGroupEntity } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'
 })
 
 const emit = defineEmits(['refreshDataList'])
-
-// 定义组件props
-const props = defineProps({
-	mode: {
-		type: String as PropType<FormType>,
-		required: true
-	}
-})
 
 const state = reactive({
 	// 提交API
@@ -64,7 +56,7 @@ const state = reactive({
 		groupDesc: ''
 	},
 	initAfter: () => {
-		if (props.mode == 'copy') {
+		if (formType.value == 'copy') {
 			state.submitApi = genTemplateGroupApi.copy
 			state.message = '模板组和下的所有模板、属性已复制'
 			state.duration = 2000
@@ -83,7 +75,7 @@ const dataRules = reactive({
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

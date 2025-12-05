@@ -4,7 +4,8 @@
 
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
-import { EnumItem, EnumValueType, getByValue } from '@/utils/enum'
+import { getEnumByValue } from '@/utils/enum'
+import { EnumItem, EnumValueType } from '@/types'
 
 defineOptions({
 	name: 'DictTag'
@@ -22,7 +23,7 @@ const props = defineProps({
 })
 
 const enumItem = computed(() => {
-	const byValue = getByValue(props.value, props.enumItemList)
+	const byValue = getEnumByValue(props.value, props.enumItemList)
 	if (byValue) {
 		return byValue
 	} else {

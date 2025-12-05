@@ -1,6 +1,6 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { FormOptions, FormType, Key } from '@/types'
+import { FormOptions, FormType, formTypes, Key } from '@/types'
 
 export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	// 弹窗可见性
@@ -12,22 +12,55 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	// 表单ref
 	const dataFormRef = ref()
 
+	// 当前表单类型
+	const formType = ref<FormType>('add')
+
 	// 对话框标题
-	const dialogTitle = (formType: FormType) => {
-		switch (formType) {
+	const dialogTitle = () => {
+		switch (formType.value) {
 			case 'add':
 				return '新增'
 			case 'update':
 				return '修改'
 			case 'copy':
 				return '复制'
+			case 'detail':
+				return '详情'
 			default:
 				return '操作'
 		}
 	}
 
+	const isFormType = (value: any): value is FormType => {
+		return (formTypes as readonly string[]).includes(value)
+	}
+
+	// 重载声明
+	// init() // 新增
+	// init(id: Key) // 修改
+	// init(type: FormType) // 新增
+	// init(type: FormType, id: Key) // 修改、复制、详情
+
 	// 初始化表单
-	const init = (id?: Key) => {
+	const init = (arg1?: FormType | Key, arg2?: Key) => {
+		let type: FormType = 'add'
+		let id: Key | undefined = undefined
+
+		if (arg1 !== undefined) {
+			if (isFormType(arg1)) {
+				// arg1 是 FormType
+				type = arg1 as FormType
+				if (arg2 !== undefined) {
+					id = arg2
+				}
+			} else {
+				// arg1 是 Key → 老调用方式，默认为修改
+				id = arg1
+				type = 'update'
+			}
+		}
+
+		formType.value = type
 		visible.value = true
 		options.dataForm.id = undefined
 
@@ -54,6 +87,11 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 
 	// 表单验证并提交
 	const submitHandle = () => {
+		if (formType.value === 'detail') {
+			// 详情模式无提交按钮
+			ElMessage.warning('详情模式无法提交')
+			return
+		}
 		dataFormRef.value.validate((valid: boolean) => {
 			if (!valid) {
 				return false
@@ -88,6 +126,7 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	return {
 		visible,
 		dataFormRef,
+		formType,
 		dialogTitle,
 		init,
 		submitHandle,

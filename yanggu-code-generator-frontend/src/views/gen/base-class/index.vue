@@ -76,9 +76,22 @@
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="formInitHandle('update', scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle('copy', scope.row.id)">复制</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="View" @click="formInitHandle('detail', scope.row.id)">详情</el-button>
+							</el-col>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle('update', scope.row.id)">修改</el-button>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle('copy', scope.row.id)">复制</el-button>
+							</el-col>
+							<el-col :span="12">
+								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+							</el-col>
+						</el-row>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -96,18 +109,18 @@
 			</el-pagination>
 		</el-card>
 		<!-- 弹窗表单 -->
-		<base-class-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></base-class-form>
+		<base-class-form ref="formRef" @refresh-data-list="getDataList()"></base-class-form>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { useComplexForm, useTableAction } from '@/hooks'
+import { useInitForm, useTableAction } from '@/hooks'
 import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genBaseClassApi } from '@/api'
 import { GenBaseClassEntity, GenBaseClassQuery, IHooksOptions } from '@/types'
-import { CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Edit, Plus, Refresh, Search, View } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenBaseClass'
@@ -137,5 +150,5 @@ const {
 	tableIndex
 } = useTableAction(state)
 
-const { formRef, dialogMode, formInitHandle } = useComplexForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>

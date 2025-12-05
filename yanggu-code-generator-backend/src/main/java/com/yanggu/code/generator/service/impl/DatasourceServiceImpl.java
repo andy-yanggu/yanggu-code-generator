@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -167,12 +166,12 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         try (DataSourceBO dataSource = get(id)) {
             String databaseName = DbUtil.getDatabaseName(dataSource);
             result.setResult(true);
-            result.setMessage(StrUtil.format("连接成功，数据库为：{}", databaseName));
+            result.setDatabaseName(databaseName);
             return result;
         } catch (Exception e) {
             log.warn("数据源测试失败, 异常信息: {}", e.getMessage(), e);
             result.setResult(false);
-            result.setMessage(e.getMessage());
+            result.setErrorMessage(e.getMessage());
             return result;
         }
     }

@@ -92,7 +92,6 @@ import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { genTemplateApi } from '@/api/gen/template'
 
 const treeRef = ref()
-const treeRef = ref()
 const templateTestRef = ref()
 const tabsRef = ref()
 const codeScrollbarRef = ref()

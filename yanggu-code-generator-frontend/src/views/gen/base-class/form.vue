@@ -1,6 +1,14 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle(mode)" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:disabled="formType === 'detail'"
+			:rules="dataRules"
+			label-width="130px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<el-form-item prop="baseClassName">
 				<template #label>
 					<form-label-tooltip label="基类名称" tooltip="基类名称具有唯一性，不能重复"></form-label-tooltip>
@@ -12,9 +20,13 @@
 					<form-label-tooltip label="基类全类名" tooltip="基类全类名具有唯一性，不能重复"></form-label-tooltip>
 				</template>
 				<div style="display: flex; align-items: center; gap: 10px; width: 100%">
-					<el-input v-model="state.dataForm.packageName" style="flex: 1" placeholder="请输入基类包名"></el-input>
+					<el-form-item prop="packageName">
+						<el-input v-model="state.dataForm.packageName" style="flex: 1" placeholder="请输入基类包名"></el-input>
+					</el-form-item>
 					<span>.</span>
-					<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名"></el-input>
+					<el-form-item prop="className">
+						<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名"></el-input>
+					</el-form-item>
 				</div>
 			</el-form-item>
 			<el-form-item prop="fields">
@@ -28,30 +40,24 @@
 			</el-form-item>
 		</el-form>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
+			<el-button v-if="formType === 'detail'" type="primary" :icon="Edit" @click="formType = 'update'">修改</el-button>
+			<el-button v-else type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { PropType, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { genBaseClassApi } from '@/api'
-import { FormOptions, FormType, GenBaseClassEntity } from '@/types'
+import { FormOptions, GenBaseClassEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'
-import { Check, Close } from '@element-plus/icons-vue'
+import { Check, Close, Edit } from '@element-plus/icons-vue'
+import { FormItemRule } from 'element-plus'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'GenBaseClassForm'
-})
-
-// 定义组件props
-const props = defineProps({
-	mode: {
-		type: String as PropType<FormType>,
-		required: true
-	}
 })
 
 const emit = defineEmits(['refreshDataList'])
@@ -74,7 +80,7 @@ const state = reactive({
 		state.dataForm.className = ''
 	},
 	initAfter: () => {
-		if (props.mode === 'copy') {
+		if (formType.value === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
 			state.dataForm.id = ''
 			state.message = '复制成功'
@@ -85,15 +91,23 @@ const state = reactive({
 	emit
 } as FormOptions<GenBaseClassEntity>)
 
-const dataRules = reactive({
-	baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
-	packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+const dataRules = computed(() => {
+	const rules: Record<string, FormItemRule[]> = {}
+	if (formType.value === 'detail') {
+		return rules
+	}
+	const constRules: Record<string, FormItemRule[]> = {
+		baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
+		packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	}
+	Object.assign(rules, constRules)
+	return rules
 })
 
-const { visible, dataFormRef, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

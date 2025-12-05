@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle(mode)" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item prop="connName">
 				<template #label>
@@ -31,9 +31,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, reactive } from 'vue'
+import { reactive } from 'vue'
 import { genDatasourceApi } from '@/api'
-import { FormOptions, FormType, GenDatasourceEntity } from '@/types'
+import { FormOptions, GenDatasourceEntity } from '@/types'
 import { DB_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
@@ -41,14 +41,6 @@ import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'GenDatasourceForm'
-})
-
-// 定义组件props
-const props = defineProps({
-	mode: {
-		type: String as PropType<FormType>,
-		required: true
-	}
 })
 
 const emit = defineEmits(['refreshDataList'])
@@ -66,12 +58,16 @@ const state = reactive({
 		datasourceDesc: ''
 	},
 	initAfter: () => {
-		if (props.mode === 'copy') {
+		if (formType.value === 'copy') {
 			state.dataForm.connName = state.dataForm.connName + '_复制'
-			state.dataForm.id = -1
 			state.message = '复制成功'
 		} else {
 			state.message = ''
+		}
+	},
+	submitBefore: () => {
+		if (formType.value === 'copy') {
+			state.dataForm.id = undefined
 		}
 	},
 	emit
@@ -85,7 +81,7 @@ const dataRules = reactive({
 	password: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

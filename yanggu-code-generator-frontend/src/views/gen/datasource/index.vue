@@ -111,7 +111,7 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<gen-datasource-form ref="formRef" :mode="dialogMode" @refresh-data-list="getDataList()"></gen-datasource-form>
+			<gen-datasource-form ref="formRef" @refresh-data-list="getDataList()"></gen-datasource-form>
 		</el-card>
 	</div>
 </template>
@@ -123,7 +123,7 @@ import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'
 import { genDatasourceApi } from '@/api'
 import { GenDatasourceEntity, GenDatasourceQuery, IHooksOptions } from '@/types'
-import { useComplexForm, useTableAction } from '@/hooks'
+import { useInitForm, useTableAction } from '@/hooks'
 import { getLabel } from '@/utils/enum'
 import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
@@ -143,11 +143,11 @@ const state = reactive({
 
 const datasourceTestHandle = (id: number) => {
 	genDatasourceApi.test(id).then(data => {
-		const { result, message } = data
+		const { result, errorMessage, databaseName } = data
 		if (result) {
-			ElMessage.success(message)
+			ElMessage.success(`测试成功，数据库为：${databaseName}`)
 		} else {
-			ElMessage.error(message)
+			ElMessage.error(`测试失败，异常信息：${errorMessage}`)
 		}
 	})
 }
@@ -167,5 +167,5 @@ const {
 	tableIndex
 } = useTableAction(state)
 
-const { formRef, dialogMode, formInitHandle } = useComplexForm()
+const { formRef, formInitHandle } = useInitForm()
 </script>
