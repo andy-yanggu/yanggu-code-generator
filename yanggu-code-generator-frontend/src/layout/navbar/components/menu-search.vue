@@ -61,19 +61,30 @@ const router = useRouter()
 
 // 构建树结构
 const buildMenuTree = (menuList: MenuInfo[]): TreeNode[] => {
-	const build = (items: MenuInfo[]): TreeNode[] => {
+	const build = (items: MenuInfo[], parentPath: string = ''): TreeNode[] => {
 		return items
 			.filter(item => !item.meta.hidden && item.meta.type !== 2)
 			.map(item => {
+				// 处理路径拼接逻辑
+				let fullPath: string
+				if (item.path?.startsWith('/')) {
+					// 绝对路径
+					fullPath = item.path
+				} else {
+					// 相对路径，需要拼接父路径
+					const cleanParentPath = parentPath.replace(/\/$/, '') // 移除父路径末尾的斜杠
+					fullPath = cleanParentPath + '/' + (item.path || '')
+				}
+
 				const node: TreeNode = {
 					title: item.meta.title,
 					icon: item.meta.icon,
 					type: item.meta.type,
-					path: item.path,
+					path: fullPath,
 					externalUrl: item.meta.externalUrl
 				}
 				if (item.children?.length) {
-					node.children = build(item.children)
+					node.children = build(item.children, fullPath)
 				}
 				return node
 			})

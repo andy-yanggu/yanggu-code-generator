@@ -482,11 +482,45 @@ export const useUserStore = defineStore(
 			resetReactiveObject(tokenInfo, INITIAL_TOKEN_INFO)
 		}
 
+		// 处理菜单列表中的路径。相对路径转换成绝对路径
+		const processMenuList = (menus: MenuInfo[], parentPath: string = ''): MenuInfo[] => {
+			return menus.map(menu => {
+				// 处理路径拼接逻辑
+				let fullPath: string
+				if (menu.path?.startsWith('/')) {
+					// 绝对路径保持不变
+					fullPath = menu.path
+				} else {
+					// 相对路径，需要拼接父路径
+					const cleanParentPath = parentPath.replace(/\/$/, '') // 移除父路径末尾的斜杠
+					fullPath = cleanParentPath + '/' + (menu.path || '')
+				}
+
+				const processedMenu: MenuInfo = {
+					...menu,
+					path: fullPath
+				}
+
+				// 递归处理子菜单
+				if (menu.children && menu.children.length > 0) {
+					processedMenu.children = processMenuList(menu.children, fullPath)
+				}
+
+				return processedMenu
+			})
+		}
+
 		// 设置登录后的数据
 		const setData = (loginVO: any) => {
 			Object.assign(userInfo, loginVO.userInfo)
 			Object.assign(tokenInfo, loginVO.tokenInfo)
-			menuList.value = loginVO.menuList
+
+			// 处理登录返回的菜单列表
+			if (loginVO.menuList && Array.isArray(loginVO.menuList) && loginVO.menuList.length > 0) {
+				menuList.value = processMenuList(loginVO.menuList)
+			} else {
+				menuList.value = []
+			}
 			permissionList.value = loginVO.permissionList
 			roleList.value = loginVO.roleList
 		}

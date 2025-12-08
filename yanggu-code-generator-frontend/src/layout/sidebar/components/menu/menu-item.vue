@@ -13,7 +13,7 @@
 	<!-- 渲染菜单、iframe、外链 -->
 	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
-		<menu-link :menu="menu">
+		<menu-link :menu="menu" :path="menuIndexPath">
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 		</menu-link>
 	</el-menu-item>

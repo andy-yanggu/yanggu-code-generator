@@ -1,7 +1,7 @@
 <template>
 	<div class="tree-node" @click.stop="handleClick">
 		<span class="tree-prefix" v-html="getTreePrefix(level, !!node.children)"></span>
-		<icon-text-tooltip :icon="node.icon" :title="node.title" :max-width="'300px'"></icon-text-tooltip>
+		<icon-text-tooltip :icon="node.icon ?? ''" :title="node.title" :max-width="'300px'"></icon-text-tooltip>
 	</div>
 
 	<div v-if="node.children && node.children.length" class="tree-children">
@@ -17,7 +17,7 @@ defineOptions({
 
 export interface TreeNode {
 	title: string
-	icon: string
+	icon?: string
 	path?: string
 	type: number
 	externalUrl?: string

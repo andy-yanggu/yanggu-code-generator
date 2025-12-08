@@ -17,6 +17,10 @@ const props = defineProps({
 	menu: {
 		type: Object as PropType<MenuInfo>,
 		required: true
+	},
+	path: {
+		type: String,
+		required: true
 	}
 })
 
@@ -35,7 +39,7 @@ const handleClick = (e: Event) => {
 	if (props.menu.meta.type === 4) {
 		e.stopPropagation() // 阻止事件冒泡
 	}
-	userStore.setActiveMenuPath(props.menu.path!)
+	userStore.setActiveMenuPath(props.path)
 }
 
 // 计算绑定属性
@@ -45,10 +49,10 @@ const linkProps = computed(() => {
 		return { href: props.menu.meta.externalUrl, target: '_blank', rel: 'noopener' }
 	} else if (props.menu.meta.type === 3) {
 		// iframe 内嵌
-		return { to: { path: props.menu.path } }
+		return { to: { path: props.path } }
 	} else {
 		// 普通路由
-		return { to: { path: props.menu.path } }
+		return { to: { path: props.path } }
 	}
 })
 </script>

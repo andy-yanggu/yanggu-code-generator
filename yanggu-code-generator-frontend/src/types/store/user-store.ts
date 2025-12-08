@@ -28,7 +28,7 @@ export interface TokenInfo {
 export interface MenuInfo {
 	// 名称
 	name: string
-	// 路由
+	// 路由（"/"开头表示绝对路径，否则表示相对路径）
 	path: string
 	// 组件路径
 	component?: string
