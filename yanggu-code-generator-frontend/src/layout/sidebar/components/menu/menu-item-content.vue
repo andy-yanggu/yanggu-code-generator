@@ -1,8 +1,8 @@
 <template>
 	<div class="menu-item">
 		<svg-icon v-if="icon" :icon="icon" is-pointer></svg-icon>
-		<el-tooltip :content="title" :disabled="!isTitleOverflow" placement="top">
-			<el-text ref="titleRef" class="menu-title" :style="{ maxWidth: menuTitleMaxWidth }">
+		<el-tooltip :content="title" :disabled="!isOverflow" placement="top">
+			<el-text ref="textRef" class="menu-title" :style="{ maxWidth: menuTitleMaxWidth }">
 				{{ title }}
 			</el-text>
 		</el-tooltip>
@@ -10,15 +10,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, toRefs } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { useSystemSettingStore } from '@/store'
+import { useTextOverflow } from '@/hooks'
 
 defineOptions({
 	name: 'MenuItemContent'
 })
 
-defineProps({
+const props = defineProps({
 	icon: {
 		type: String,
 		required: false,
@@ -30,31 +31,16 @@ defineProps({
 	}
 })
 
-const titleRef = ref()
-const isTitleOverflow = ref(false)
 const systemSettingStore = useSystemSettingStore()
 
 const menuTitleMaxWidth = computed(() => {
 	return systemSettingStore.menu.menuExpandWidth - 100 + 'px'
 })
 
-// 检查文本是否溢出
-onMounted(() => {
-	nextTick(() => {
-		const el = titleRef.value?.$el
-		if (!el) {
-			return
-		}
+// 变成响应式数据
+const { title: titleRef } = toRefs(props)
 
-		const check = () => {
-			isTitleOverflow.value = el.scrollWidth > el.offsetWidth
-		}
-		check()
-
-		const observer = new ResizeObserver(check)
-		observer.observe(el)
-	})
-})
+const { textRef, isOverflow } = useTextOverflow(titleRef, menuTitleMaxWidth)
 </script>
 
 <style scoped>

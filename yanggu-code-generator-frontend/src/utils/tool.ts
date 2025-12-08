@@ -1,7 +1,7 @@
 import { App, Component, Plugin, reactive } from 'vue' // 添加 Component 类型
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import { cloneDeep } from 'lodash-unified'
+import { cloneDeep, isObject } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -56,6 +56,9 @@ export const cloneObject = <T extends object>(obj: T): T => {
 
 // 初始化响应式对象
 export const initReactiveObject = <T extends Record<string, any>>(obj: T): T => {
+	if (obj === null || !isObject(obj)) {
+		throw new TypeError('Expected an object to initialize as reactive')
+	}
 	return reactive(cloneDeep(obj)) as T
 }
 
@@ -63,7 +66,7 @@ export const initReactiveObject = <T extends Record<string, any>>(obj: T): T => 
 export const resetReactiveObject = <T extends object>(target: T, source: T): void => {
 	// 清空目标对象的所有属性
 	Object.keys(target).forEach(key => {
-		delete (target as never)[key]
+		delete (target as Record<string, unknown>)[key]
 	})
 
 	// 将克隆的源对象属性复制到目标对象
@@ -85,6 +88,9 @@ export const setTitle = (newTitle: string) => {
 export const setDefaultTitle = () => {
 	title.value = originalTitle
 }
+
+// 导出非空函数
+export { isEmpty } from 'lodash-unified'
 
 // 修改泛型约束为 Component
 export const withInstall = <T extends Component>(component: T, alias?: string) => {

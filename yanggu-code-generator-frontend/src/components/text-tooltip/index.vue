@@ -1,5 +1,5 @@
 <template>
-	<el-tooltip :content="title" :disabled="!isTitleOverflow" :placement="placement">
+	<el-tooltip :content="title" :disabled="!isOverflow" :placement="placement">
 		<el-text ref="textRef" class="text-tooltip-title" :style="{ maxWidth }">
 			{{ title }}
 		</el-text>
@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { useResizeObserver } from '@vueuse/core'
+import { defineProps, toRefs } from 'vue'
+import { useTextOverflow } from '@/hooks/use-text-overflow'
 
 defineOptions({
 	name: 'TextTooltip'
@@ -28,27 +28,10 @@ const props = defineProps({
 		default: 'top'
 	}
 })
+// 变成响应式数据
+const { title: titleRef, maxWidth: maxWidthRef } = toRefs(props)
 
-const textRef = ref()
-const isTitleOverflow = ref(false)
-
-// 检查文本是否溢出
-const checkOverflow = () => {
-	nextTick(() => {
-		if (textRef.value?.$el) {
-			const element = textRef.value.$el
-			isTitleOverflow.value = element.scrollWidth > element.offsetWidth
-		}
-	})
-}
-
-// 监听 title 和 maxWidth 的变化
-watch(() => [props.title, props.maxWidth], checkOverflow)
-
-onMounted(checkOverflow)
-
-// 使用 VueUse 的 useResizeObserver 自动监听尺寸变化
-useResizeObserver(textRef, checkOverflow)
+const { textRef, isOverflow } = useTextOverflow(titleRef, maxWidthRef)
 </script>
 <style scoped lang="scss">
 .text-tooltip-title {
