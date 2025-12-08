@@ -37,7 +37,7 @@ export interface ToolbarSetting {
 }
 
 // 标签页相关设置
-export interface TagSetting {
+export interface TagBarSetting {
 	// 是否开启标签页
 	isOpenTag: boolean
 	// 标签页是否显示图标

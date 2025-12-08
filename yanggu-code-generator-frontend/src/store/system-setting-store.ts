@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { cloneObject, resetReactiveObject } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
-import { MenuSetting, OtherSetting, TagSetting, ToolbarSetting } from '@/types'
+import { MenuSetting, OtherSetting, TagBarSetting, ToolbarSetting } from '@/types'
 
 // 菜单展开宽度
 export const menuExpandWidthList = [180, 210, 240]
@@ -35,7 +35,7 @@ const defaultToolbarSetting: ToolbarSetting = {
 }
 
 // 标签页相关默认设置
-const defaultTagSetting: TagSetting = {
+const defaultTagSetting: TagBarSetting = {
 	isOpenTag: true,
 	isOpenTagIcon: true,
 	isOpenTagCache: true,
@@ -52,14 +52,13 @@ const defaultOtherSetting: OtherSetting = {
 // 持久化配置
 const getPersistConfig = () => {
 	const key = 'systemSettingStore'
-	if (import.meta.env.PROD) {
-		return {
-			key,
-			storage: localStorage
-		} as PersistenceOptions
-	} else {
-		return false
-	}
+	// 根据环境设置
+	// if (import.meta.env.PROD) {
+	// }
+	return {
+		key,
+		storage: localStorage
+	} as PersistenceOptions
 }
 
 export const useSystemSettingStore = defineStore(
@@ -82,10 +81,7 @@ export const useSystemSettingStore = defineStore(
 
 		return {
 			// 注意这里要用 toRefs 保持响应式
-			menu: toRefs(state.menu),
-			toolbar: toRefs(state.toolbar),
-			tag: toRefs(state.tag),
-			other: toRefs(state.other),
+			...toRefs(state),
 			resetSetting
 		}
 	},

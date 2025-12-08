@@ -22,6 +22,11 @@ const getPersistConfig = () => {
 			const systemSettingStore = useSystemSettingStore()
 			if (!systemSettingStore.tag.isOpenTagCache) {
 				originOmitList.push('tagList')
+			} else {
+				const start = originOmitList.indexOf('tagList')
+				if (start > -1) {
+					originOmitList.splice(start, 1)
+				}
 			}
 			return originOmitList
 		}
@@ -62,6 +67,7 @@ export const useAppStore = defineStore(
 			isCollapse.value = !isCollapse.value
 		}
 
+		// 全屏展开
 		const { toggle: toolFullscreen } = useFullscreen(layoutMainRef)
 
 		// 添加标签

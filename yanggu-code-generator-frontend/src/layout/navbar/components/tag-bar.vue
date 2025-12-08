@@ -79,9 +79,9 @@ onMounted(() => {
 			animation: 200,
 			handle: '.el-tabs__item', // 拖拽手柄
 			onEnd: evt => {
-				// el-tab会有一个高亮的样式需要排除掉
-				const oldIndex = evt.oldIndex! - 1
-				const newIndex = evt.newIndex! - 1
+				const oldIndex = evt.oldIndex!
+				const newIndex = evt.newIndex!
+				// console.log('oldIndex:', oldIndex, 'newIndex:', newIndex)
 				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
 					const newTags = [...appStore.tagList]
 					const movedTag = newTags.splice(oldIndex!, 1)[0]

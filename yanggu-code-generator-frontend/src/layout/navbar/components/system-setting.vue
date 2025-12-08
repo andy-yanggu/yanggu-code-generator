@@ -171,6 +171,30 @@ watch(
 	}
 )
 
+// 标签页缓存
+watch(
+	() => systemSettingStore.tag.isOpenTagCache,
+	newValue => {
+		// console.log('标签页缓存', newValue, appStore.tagList)
+
+		if (newValue) {
+			// 开启标签页缓存时，强制触发一次标签页状态保存
+			// 通过临时修改标签name来触发持久化
+			const name = appStore.tagList[0].name
+			appStore.tagList[0].name = name + '_temp'
+			setTimeout(() => {
+				appStore.tagList[0].name = name
+			}, 0)
+		} else {
+			// 关闭标签页缓存时，强制触发一次标签页状态保存
+			// 先删除后添加
+			const findIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
+			const tempTag = appStore.tagList.splice(findIndex, 1)[0]
+			appStore.tagList.splice(findIndex, 0, tempTag)
+		}
+	}
+)
+
 // 页面缓存
 watch(
 	() => systemSettingStore.other.isOpenPageCache,
