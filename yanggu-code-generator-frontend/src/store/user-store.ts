@@ -225,7 +225,7 @@ const businessMenuInfoList: MenuInfo[] = [
 	// 	]
 	// },
 	{
-		path: 'test-echarts',
+		path: '/test-echarts',
 		component: 'test-echarts/index',
 		name: 'TestEcharts',
 		meta: {
@@ -433,7 +433,7 @@ const getPersistConfig = () => {
 	} else {
 		return {
 			key,
-			pick: ['userInfo', 'tokenInfo', 'permissionList', 'roleList'],
+			pick: ['userInfo', 'tokenInfo', 'activeMenuPath'],
 			storage: localStorage
 		} as PersistenceOptions
 	}
@@ -448,7 +448,7 @@ export const useUserStore = defineStore(
 		// 菜单列表
 		const menuList = ref<MenuInfo[]>([...sidebarConstantMenuInfoList, ...businessMenuInfoList])
 		// 激活菜单
-		const activeMenuPath = ref<string>('')
+		const activeMenuPath = ref('')
 		// 权限列表
 		const permissionList = ref<string[]>([])
 		// 角色列表

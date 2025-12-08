@@ -38,7 +38,7 @@ import EnumIndex from '@/views/gen/project/enum-index.vue'
 import { genGeneratorApi } from '@/api'
 import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
 import { useSubmitHandler } from '@/hooks'
-import { SubmitOptions } from '@/types'
+import { GenProjectEntity, SubmitOptions } from '@/types'
 
 defineOptions({
 	name: 'GenProjectSteps'
@@ -50,25 +50,25 @@ const tableIndexRef = ref()
 const templateIndexRef = ref()
 const enumIndexRef = ref()
 const projectReactive = reactive({
-	id: null,
-	tableTemplateGroupId: null,
-	projectTemplateGroupId: null,
-	enumTemplateGroupId: null,
-	generatorType: null
+	id: -1,
+	tableTemplateGroupId: -1,
+	projectTemplateGroupId: -1,
+	enumTemplateGroupId: -1,
+	generatorType: -1
 })
 const templateListRef = ref<any[]>([])
 const tableListRef = ref<any[]>([])
 const enumListRef = ref<any[]>([])
 
 // 初始化方法
-const init = (projectItem: any) => {
+const init = (projectItem: GenProjectEntity) => {
 	activeRef.value = 0
 	dialogVisible.value = true
-	projectReactive.id = projectItem.id
-	projectReactive.tableTemplateGroupId = projectItem.tableTemplateGroupId
-	projectReactive.projectTemplateGroupId = projectItem.projectTemplateGroupId
-	projectReactive.enumTemplateGroupId = projectItem.enumTemplateGroupId
-	projectReactive.generatorType = projectItem.generatorType
+	projectReactive.id = projectItem.id as number
+	projectReactive.tableTemplateGroupId = projectItem.tableTemplateGroupId as number
+	projectReactive.projectTemplateGroupId = projectItem.projectTemplateGroupId as number
+	projectReactive.enumTemplateGroupId = projectItem.enumTemplateGroupId as number
+	projectReactive.generatorType = projectItem.generatorType as number
 	templateListRef.value = []
 	tableListRef.value = []
 	enumListRef.value = []

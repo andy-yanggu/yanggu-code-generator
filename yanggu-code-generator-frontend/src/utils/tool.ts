@@ -55,8 +55,8 @@ export const cloneObject = <T extends object>(obj: T): T => {
 }
 
 // 初始化响应式对象
-export const initReactiveObject = <T extends object>(obj: T) => {
-	return reactive(cloneDeep(obj))
+export const initReactiveObject = <T extends Record<string, any>>(obj: T): T => {
+	return reactive(cloneDeep(obj)) as T
 }
 
 // 重置对象

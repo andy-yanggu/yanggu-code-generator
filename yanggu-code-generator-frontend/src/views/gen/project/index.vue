@@ -164,11 +164,11 @@ const state = reactive({
 const previewRef = ref()
 const stepsRef = ref()
 
-const previewHandle = (projectItem: any) => {
+const previewHandle = (projectItem: GenProjectEntity) => {
 	previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
 }
 
-const generatorCode = (item: any) => {
+const generatorCode = (item: GenProjectEntity) => {
 	stepsRef.value.init(item)
 }
 

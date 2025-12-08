@@ -16,8 +16,8 @@
 
 <script setup lang="ts">
 import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
-import { useRoute } from 'vue-router'
-import { nextTick, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
 
 defineOptions({
@@ -28,6 +28,7 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
 const route = useRoute()
+const router = useRouter()
 
 // 存储所有菜单项引用的Map，格式为 <path, ref>
 const menuRefs = ref<Map<string, any>>(new Map())
@@ -43,6 +44,14 @@ watch(
 	},
 	{ immediate: true }
 )
+
+// 初始化激活菜单
+onMounted(() => {
+	const activeMenuPath = userStore.activeMenuPath
+	if (activeMenuPath) {
+		router.push(activeMenuPath)
+	}
+})
 
 // 激活的菜单滚动到可视区域中
 const scrollToMenu = (path: string) => {
