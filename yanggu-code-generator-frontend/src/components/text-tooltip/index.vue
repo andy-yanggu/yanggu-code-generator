@@ -1,6 +1,6 @@
 <template>
 	<el-tooltip :content="title" :disabled="!isOverflow" :placement="placement">
-		<el-text ref="textRef" class="text-tooltip-title" :style="{ maxWidth }">
+		<el-text ref="textRef" :class="['text-tooltip-title', textClass]" :style="{ maxWidth }">
 			{{ title }}
 		</el-text>
 	</el-tooltip>
@@ -26,6 +26,10 @@ const props = defineProps({
 	placement: {
 		type: String,
 		default: 'top'
+	},
+	textClass: {
+		type: String,
+		default: ''
 	}
 })
 // 变成响应式数据

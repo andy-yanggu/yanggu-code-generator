@@ -1,6 +1,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { IHooksOptions, Key, KeyArray, PageQuery, PageVO } from '@/types'
+import { isEmpty, isNotEmpty } from '@/utils/tool'
 
 // 提供分页、批量删除、导出功能
 export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<VO, Query>) => {
@@ -181,10 +182,12 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 	// 清空勾选
 	const clearSelectionHandle = () => {
-		nextTick(() => {
-			state.dataListSelections = []
-			tableRef.value.clearSelection()
-		})
+		if (isNotEmpty(state.dataListSelections)) {
+			nextTick(() => {
+				state.dataListSelections = []
+				tableRef.value.clearSelection()
+			})
+		}
 	}
 
 	// 排序
@@ -204,13 +207,13 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	// 批量删除
 	const deleteBatchHandle = (id?: Key) => {
 		if (!state.deleteListApi) {
-			ElMessage.warning('未配置删除接口')
+			ElMessage.warning('未配置删除接口，请检查')
 			return
 		}
 		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
-		if (idList.length === 0) {
-			ElMessage.warning('请选择删除记录')
+		if (isEmpty(idList)) {
+			ElMessage.warning('请选择要删除的数据')
 			return
 		}
 
@@ -224,9 +227,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 				.then(() => {
 					ElMessage.success('删除成功')
 					// 删除勾选数据
-					if (state.dataListSelections && state.dataListSelections.length > 0) {
-						clearSelectionHandle()
-					}
+					clearSelectionHandle()
 					getDataList()
 				})
 				.finally(() => {
@@ -249,7 +250,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
-		if (idList.length === 0) {
+		if (isEmpty(idList)) {
 			ElMessage.warning('请选择要导出的数据')
 			return
 		}
@@ -259,9 +260,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 			.then(() => {
 				ElMessage.success(state.exportSuccessMessage)
 				// 删除勾选数据
-				if (state.dataListSelections && state.dataListSelections.length > 0) {
-					clearSelectionHandle()
-				}
+				clearSelectionHandle()
 			})
 			.finally(() => {
 				state.exportLoading = false

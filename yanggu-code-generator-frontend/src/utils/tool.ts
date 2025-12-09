@@ -1,7 +1,7 @@
-import { App, Component, Plugin, reactive } from 'vue' // 添加 Component 类型
+import { App, Component, Plugin, reactive } from 'vue'
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import { cloneDeep, isObject } from 'lodash-unified'
+import { cloneDeep, isEmpty, isObject } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -91,6 +91,11 @@ export const setDefaultTitle = () => {
 
 // 导出非空函数
 export { isEmpty } from 'lodash-unified'
+
+// 添加 isNotEmpty 函数
+export const isNotEmpty = (value: any): boolean => {
+	return !isEmpty(value)
+}
 
 // 修改泛型约束为 Component
 export const withInstall = <T extends Component>(component: T, alias?: string) => {

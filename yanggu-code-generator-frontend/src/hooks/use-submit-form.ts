@@ -1,7 +1,8 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { FormOptions, FormType, formTypes, Key } from '@/types'
+import { FORM_TYPES, FormOptions, FormType, Key } from '@/types'
 
+// 提交表单
 export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	// 弹窗可见性
 	const visible = ref(false)
@@ -32,7 +33,7 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 	}
 
 	const isFormType = (value: any): value is FormType => {
-		return (formTypes as readonly string[]).includes(value)
+		return FORM_TYPES.includes(value)
 	}
 
 	// 重载声明
@@ -62,7 +63,7 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 
 		formType.value = type
 		visible.value = true
-		options.dataForm.id = undefined
+		options.dataForm.id = id
 
 		nextTick(() => {
 			// 清空表单校验和重置表单数据
@@ -75,11 +76,15 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 			options.initBefore?.()
 
 			if (id) {
+				// 调用详细接口
 				options.detailApi(id).then(data => {
+					// 赋值给表单数据
 					Object.assign(options.dataForm, data)
+					// 初始化之后调用
 					options.initAfter?.()
 				})
 			} else {
+				// 初始化之后调用
 				options.initAfter?.()
 			}
 		})
@@ -105,6 +110,7 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 			// 提示消息
 			const message = options.message || (options.dataForm.id ? '修改成功' : '新增成功')
 			options
+				// 提交表单
 				.submitApi(options.dataForm)
 				.then(data => {
 					ElMessage.success({

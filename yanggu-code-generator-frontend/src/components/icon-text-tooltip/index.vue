@@ -1,7 +1,7 @@
 <template>
 	<div class="icon-text-tooltip">
 		<svg-icon v-if="enableIcon && icon" :icon="icon" :size="iconSize" :is-pointer="isPointer"></svg-icon>
-		<text-tooltip :title="title" :max-width="maxWidth" :placement="placement"></text-tooltip>
+		<text-tooltip :title="title" :max-width="maxWidth" :placement="placement" :text-class="textClass"></text-tooltip>
 	</div>
 </template>
 <script setup lang="ts">
@@ -43,6 +43,11 @@ defineProps({
 		type: String,
 		required: false,
 		default: 'top'
+	},
+	textClass: {
+		type: String,
+		required: false,
+		default: ''
 	}
 })
 </script>

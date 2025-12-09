@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { initReactiveObject, isEmpty, resetReactiveObject } from '@/utils/tool'
+import { initReactiveObject, isNotEmpty, resetReactiveObject } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuInfo, TokenInfo, UserInfo } from '@/types'
 
@@ -516,7 +516,7 @@ export const useUserStore = defineStore(
 			Object.assign(tokenInfo, loginVO.tokenInfo)
 
 			// 处理登录返回的菜单列表
-			if (isEmpty(loginVO.menuList)) {
+			if (isNotEmpty(loginVO.menuList)) {
 				menuList.value = processMenuList(loginVO.menuList)
 			} else {
 				menuList.value = []

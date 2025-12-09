@@ -56,6 +56,7 @@ onMounted(() => {
 // 激活的菜单滚动到可视区域中
 const scrollToMenu = (path: string) => {
 	// 查找当前激活菜单的 DOM
+	// console.log('menuRefs.value', menuRefs.value)
 	const menuDom = menuRefs.value.get(path)?.$el
 
 	if (!menuDom) {

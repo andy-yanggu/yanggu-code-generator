@@ -1,17 +1,16 @@
 <template>
 	<!-- 渲染目录 -->
-	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menu.path" :index="menuIndexPath">
+	<el-sub-menu v-if="menu.meta.type === 0" ref="rootRef" :key="'sub-menu-' + menuIndexPath" :index="menuIndexPath">
 		<template #title>
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
-		<template v-if="menu.children && menu.children.length > 0">
-			<menu-item v-for="sub in menu.children" :key="'sub-menu-' + sub.path" :menu="sub" :ref-map="refMap" :parent-paths="submenuParentPaths">
-			</menu-item>
+		<template v-if="isNotEmpty(menu.children)">
+			<menu-item v-for="sub in menu.children" :key="getSubMenuKey(sub)" :menu="sub" :ref-map="refMap" :parent-paths="submenuParentPaths"></menu-item>
 		</template>
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
-	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menu.path" :index="menuIndexPath">
+	<el-menu-item v-else-if="menu.meta.type != 2 && !menu.meta.hidden" ref="rootRef" :key="'menu-item-' + menuIndexPath" :index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
 		<menu-link :menu="menu" :path="menuIndexPath">
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
@@ -24,6 +23,7 @@ import { computed, onMounted, PropType, Ref, ref } from 'vue'
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
 import { MenuInfo } from '@/types'
+import { isNotEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'MenuItem'
@@ -69,8 +69,21 @@ const submenuParentPaths = computed(() => {
 	return [...props.parentPaths, menuIndexPath.value]
 })
 
+// 获取子菜单的唯一key
+const getSubMenuKey = (subMenu: MenuInfo) => {
+	const prefix = subMenu.meta.type === 0 ? 'sub-menu-' : 'menu-item-'
+	const path = subMenu.path
+	if (path.startsWith('/')) {
+		return prefix + path
+	}
+	const basePath = submenuParentPaths.value.join('/')
+	const fullPath = basePath.endsWith('/') ? `${basePath}${path}` : `${basePath}/${path}`
+	// console.log('fullPath', `${prefix}${fullPath}`)
+	return `${prefix}${fullPath}`
+}
+
 // 添加ref引用到refMap中
 onMounted(() => {
-	props.refMap.set(props.menu.path, rootRef.value)
+	props.refMap.set(menuIndexPath.value, rootRef.value)
 })
 </script>
