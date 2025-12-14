@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item prop="columnType">
 				<template #label>
@@ -34,17 +34,19 @@ defineOptions({
 	name: 'GenFieldTypeForm'
 })
 
+const initFormData = (): GenFieldTypeEntity => ({
+	id: -1,
+	columnType: '',
+	attrType: '',
+	packageName: ''
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
 	submitApi: genFieldTypeApi.submit,
 	detailApi: genFieldTypeApi.detail,
-	dataForm: {
-		id: -1,
-		columnType: '',
-		attrType: '',
-		packageName: ''
-	},
+	initFormData,
 	emit
 } as FormOptions<GenFieldTypeEntity>)
 
@@ -53,7 +55,7 @@ const dataRules = reactive({
 	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, dialogTitle, submitLoading } = useSubmitForm(state)
 
 defineExpose({
 	init

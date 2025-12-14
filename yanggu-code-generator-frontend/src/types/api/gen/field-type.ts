@@ -5,7 +5,7 @@ import { Key, PageQuery } from '@/types'
  */
 export interface GenFieldTypeEntity {
 	// id
-	id: Key
+	id?: Key
 	// 字段类型
 	columnType: string
 	// 属性类型

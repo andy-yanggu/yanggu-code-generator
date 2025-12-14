@@ -9,6 +9,8 @@ export interface FormOptions<VO> {
 	submitApi: (data: VO) => Promise<any>
 	// 详情API
 	detailApi: (id: Key) => Promise<VO>
+	// 初始化表单数据函数
+	initFormData?: () => VO
 	// 初始化之前调用
 	initBefore?: () => void
 	// 表单数据

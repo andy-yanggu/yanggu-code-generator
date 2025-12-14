@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { FORM_TYPES, FormOptions, FormType, Key } from '@/types'
 
 // 提交表单
-export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
+export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>) => {
 	// 弹窗可见性
 	const visible = ref(false)
 
@@ -15,6 +15,22 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 
 	// 当前表单类型
 	const formType = ref<FormType>('add')
+
+	// 默认值
+	const defaultFormOptions: FormOptions<VO> = {
+		submitApi: (_: VO) => Promise.resolve(),
+		detailApi: (_: Key) => Promise.resolve({} as VO),
+		dataForm: {} as VO & { id?: Key },
+		duration: 500
+	} as const
+
+	// 合并默认值
+	Object.assign(options, Object.fromEntries(Object.entries(defaultFormOptions).filter(([key]) => !Object.hasOwn(options, key))))
+
+	// 表单字段进行初始化
+	if (options.initFormData && !options.dataForm) {
+		Object.assign(options.dataForm, options.initFormData())
+	}
 
 	// 对话框标题
 	const dialogTitle = () => {
@@ -29,6 +45,20 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 				return '详情'
 			default:
 				return '操作'
+		}
+	}
+
+	// 获取提示消息
+	const getMessage = () => {
+		switch (formType.value) {
+			case 'add':
+				return '新增成功'
+			case 'update':
+				return '修改成功'
+			case 'copy':
+				return '复制成功'
+			default:
+				return '操作成功'
 		}
 	}
 
@@ -108,14 +138,14 @@ export const useSubmitForm = <VO>(options: FormOptions<VO>) => {
 			submitLoading.value = true
 
 			// 提示消息
-			const message = options.message || (options.dataForm.id ? '修改成功' : '新增成功')
+			const message = options.message || getMessage()
 			options
 				// 提交表单
 				.submitApi(options.dataForm)
 				.then(data => {
 					ElMessage.success({
-						message: message,
-						duration: options.duration || 500,
+						message,
+						duration: options.duration,
 						onClose: () => {
 							visible.value = false
 							// 触发刷新列表事件
