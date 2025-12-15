@@ -43,31 +43,27 @@ defineOptions({
 	name: 'GenDatasourceForm'
 })
 
+// 初始化表单数据
+const initFormData = (): GenDatasourceEntity => ({
+	id: -1,
+	dbType: '',
+	connName: '',
+	connUrl: '',
+	username: '',
+	password: '',
+	datasourceDesc: ''
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
 	submitApi: genDatasourceApi.submit,
 	detailApi: genDatasourceApi.detail,
-	dataForm: {
-		id: -1,
-		dbType: '',
-		connName: '',
-		connUrl: '',
-		username: '',
-		password: '',
-		datasourceDesc: ''
-	},
+	initFormData,
 	initAfter: () => {
 		if (formType.value === 'copy') {
 			state.dataForm.connName = state.dataForm.connName + '_复制'
-			state.message = '复制成功'
-		} else {
-			state.message = ''
-		}
-	},
-	submitBefore: () => {
-		if (formType.value === 'copy') {
-			state.dataForm.id = undefined
+			state.dataForm.id = null
 		}
 	},
 	emit

@@ -41,6 +41,14 @@ defineOptions({
 	name: 'GenTemplateGroupForm'
 })
 
+// 初始化表单数据
+const initFormData = (): GenTemplateGroupEntity => ({
+	id: -1,
+	groupName: '',
+	type: '',
+	groupDesc: ''
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
@@ -48,13 +56,9 @@ const state = reactive({
 	submitApi: genTemplateGroupApi.submit,
 	// 详情API
 	detailApi: genTemplateGroupApi.detail,
+	initFormData,
 	// 表单数据
-	dataForm: {
-		id: -1,
-		groupName: '',
-		type: '',
-		groupDesc: ''
-	},
+	dataForm: initFormData(),
 	initAfter: () => {
 		if (formType.value == 'copy') {
 			state.submitApi = genTemplateGroupApi.copy

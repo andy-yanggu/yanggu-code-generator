@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="60%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"
@@ -71,33 +71,24 @@
 					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '18px' : '0' }"
 				>
 					<el-col :span="10">
-						<el-form-item :prop="`componentOptions.${index}.label`">
+						<el-form-item :prop="`componentOptions[${index}].label`">
 							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 220px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
-						<el-form-item :prop="`componentOptions.${index}.value`">
+						<el-form-item :prop="`componentOptions[${index}].value`">
 							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 220px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
-						<el-icon
-							style="cursor: pointer"
-							:style="{
-								cursor: switchOptionFull ? 'not-allowed' : 'pointer',
-								opacity: switchOptionFull ? 0.5 : 1
-							}"
-							@click="() => state.dataForm.componentOptions.splice(index + 1, 0, { label: '', value: '' })"
-						>
-							<Plus></Plus>
-						</el-icon>
-						<el-icon
-							v-show="state.dataForm.componentOptions.length > 1"
-							style="cursor: pointer"
-							@click="() => state.dataForm.componentOptions.splice(index, 1)"
-						>
-							<Delete></Delete>
-						</el-icon>
+						<el-button
+							circle
+							type="primary"
+							:icon="Plus"
+							:disabled="switchOptionFull"
+							@click="() => state.dataForm.componentOptions.splice(index + 1, 0, emptyLabelData())"
+						></el-button>
+						<el-button circle type="danger" :icon="Delete" @click="() => state.dataForm.componentOptions.splice(index, 1)"></el-button>
 					</div>
 				</el-row>
 			</el-form-item>
@@ -117,6 +108,7 @@ import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupPropertyApi } from '@/api'
 import { FormOptions, GenTemplateGroupPropertyEntity, LabelData } from '@/types'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenTemplateGroupPropertyForm'
@@ -124,32 +116,31 @@ defineOptions({
 
 const emit = defineEmits(['refreshDataList'])
 
+const emptyLabelData = (): LabelData => ({ label: '', value: '' })
+
+// 初始化表单数据
+const initFormData = (ctx?: Record<string, any>): GenTemplateGroupPropertyEntity => ({
+	id: '',
+	templateGroupId: ctx?.templateGroupId ?? '',
+	propTitle: '',
+	propKey: '',
+	propDefaultValue: '',
+	componentType: '',
+	columnSpan: null,
+	componentOptions: [emptyLabelData()] as LabelData[],
+	required: 0,
+	propOrder: 0,
+	remark: ''
+})
+
 const state = reactive({
 	// 提交API
 	submitApi: genTemplateGroupPropertyApi.submit,
 	// 详情API
 	detailApi: genTemplateGroupPropertyApi.detail,
-	initBefore: () => {
-		state.dataForm.componentOptions = [{ label: '', value: '' }] as LabelData[]
-	},
-	// 表单数据
-	dataForm: {
-		id: '',
-		templateGroupId: '',
-		propTitle: '',
-		propKey: '',
-		propDefaultValue: '',
-		componentType: '',
-		componentOptions: [{ label: '', value: '' }] as LabelData[],
-		required: 0,
-		propOrder: 0,
-		remark: ''
-	},
-	submitBefore: () => {
-		if (!hasComponentOptions.value) {
-			state.dataForm.componentOptions = []
-		}
-	},
+	// 初始化表单数据
+	initFormData,
+	dataForm: initFormData(),
 	emit
 } as FormOptions<GenTemplateGroupPropertyEntity>)
 
@@ -157,7 +148,7 @@ watch(
 	() => state.dataForm.componentType,
 	(newValue, oldValue) => {
 		if (newValue && oldValue && newValue != oldValue && hasComponentOptions.value) {
-			state.dataForm.componentOptions = [{ label: '', value: '' }]
+			state.dataForm.componentOptions = [emptyLabelData()]
 		}
 	}
 )
@@ -169,7 +160,7 @@ const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.
 const switchOptionFull = computed(() => state.dataForm.componentType === 5 && state.dataForm.componentOptions.length === 2)
 
 const dataRules = computed(() => {
-	const rules: Record<string, any[]> = {
+	const rules: Record<string, FormItemRule[]> = {
 		propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -182,17 +173,16 @@ const dataRules = computed(() => {
 
 	// 动态模块校验
 	state.dataForm.componentOptions.forEach((_, index) => {
-		rules[`componentOptions.${index}.label`] = [{ required: true, message: '选项标题不能为空', trigger: 'blur' }]
-		rules[`componentOptions.${index}.value`] = [{ required: true, message: '选项值不能为空', trigger: 'blur' }]
+		rules[`componentOptions[${index}].label`] = [{ required: true, message: '选项标题不能为空', trigger: 'blur' }]
+		rules[`componentOptions[${index}].value`] = [{ required: true, message: '选项值不能为空', trigger: 'blur' }]
 	})
 	return rules
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 const initHandle = (templateGroupId: number, id?: number) => {
-	state.dataForm.templateGroupId = templateGroupId
-	init(id)
+	init(id, undefined, { templateGroupId })
 }
 
 defineExpose({

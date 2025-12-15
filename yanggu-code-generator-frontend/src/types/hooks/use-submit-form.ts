@@ -10,7 +10,7 @@ export interface FormOptions<VO> {
 	// 详情API
 	detailApi: (id: Key) => Promise<VO>
 	// 初始化表单数据函数
-	initFormData?: () => VO
+	initFormData: (ctx?: Record<string, any>) => VO
 	// 初始化之前调用
 	initBefore?: () => void
 	// 表单数据

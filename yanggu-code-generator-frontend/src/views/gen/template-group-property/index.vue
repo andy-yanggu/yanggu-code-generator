@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
@@ -228,9 +228,7 @@ const orderChangeHandle = (currentValue: number, oldValue: number, row: GenTempl
 const formRef = ref()
 
 const addOrUpdateHandle = (id?: number) => {
-	nextTick(() => {
-		formRef.value.initHandle(state.queryForm.templateGroupId, id)
-	})
+	formRef.value.initHandle(state.queryForm.templateGroupId, id)
 }
 
 defineExpose({

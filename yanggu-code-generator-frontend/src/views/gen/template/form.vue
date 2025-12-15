@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" width="60%" :close-on-click-modal="false" @closed="visible = false">
+	<el-dialog v-model="visible" :title="dialogTitle()" width="60%" :close-on-click-modal="false" @closed="visible = false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="路径" prop="templatePath">
 				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
@@ -84,45 +84,29 @@ const initAfterHandle = () => {
 		} else {
 			fileList.value = []
 		}
-		state.dataForm.templateName = ''
 	}
 }
 
-const submitBeforeHandle = () => {
-	if (state.dataForm.templateType === 0) {
-		state.dataForm.binaryOriginalFileName = ''
-		state.dataForm.templateName = ''
-		state.dataForm.templateContent = ''
-	} else if (state.dataForm.templateType === 1) {
-		state.dataForm.binaryOriginalFileName = ''
-		if (!state.dataForm.id) {
-			state.dataForm.templateContent = ''
-		}
-	} else if (state.dataForm.templateType === 2) {
-		state.dataForm.templateName = ''
-	}
-}
+// 初始化表单数据
+const initFormData = (): GenTemplateEntity => ({
+	id: '',
+	templateGroupId: -1,
+	parentId: -1,
+	templateName: '',
+	fileName: '',
+	templateType: -1,
+	templateDesc: '',
+	binaryOriginalFileName: '',
+	templateContent: '',
+	templatePath: ''
+})
 
 const state = reactive({
 	visible: false,
-	submitBefore: submitBeforeHandle,
 	submitApi: genTemplateApi.submit,
 	detailApi: (id: Key) => genTemplateApi.detailData({ id }),
-	initBefore: () => {
-		state.dataForm.templateName = ''
-	},
-	dataForm: {
-		id: -1,
-		templateGroupId: -1,
-		parentId: -1,
-		templateName: '',
-		fileName: '',
-		templateType: -1,
-		templateDesc: '',
-		binaryOriginalFileName: '',
-		templateContent: '',
-		templatePath: ''
-	},
+	initFormData,
+	dataForm: initFormData(),
 	initAfter: initAfterHandle,
 	emit
 } as FormOptions<GenTemplateEntity>)
@@ -150,9 +134,9 @@ const dataRules = reactive({
 	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const fileList = ref<File[]>([])
+const fileList = ref([] as File[])
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 // 统一的文件处理方法
 const processFile = (file: File) => {

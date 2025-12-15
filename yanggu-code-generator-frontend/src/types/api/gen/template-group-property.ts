@@ -19,9 +19,9 @@ export interface GenTemplateGroupPropertyEntity {
 	// 组件选项
 	componentOptions: LabelData[]
 	// 必填
-	required: number
+	required: number | null
 	// 字段布局方式（1-独占一行，2-一行两个字段）
-	columnSpan: number
+	columnSpan: number | null
 	// 排序
 	propOrder: number
 	// 备注

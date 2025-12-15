@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<el-form-item prop="enumItemName">
 				<template #label>
@@ -39,6 +39,16 @@ defineOptions({
 	name: 'GenEnumItemForm'
 })
 
+// 初始化表单数据
+const initFormData = (): GenEnumItemEntity => ({
+	id: '',
+	enumId: -1,
+	enumItemName: '',
+	enumItemCode: '',
+	enumItemDesc: '',
+	enumItemOrder: 0
+})
+
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
@@ -46,15 +56,7 @@ const state = reactive({
 	submitApi: genEnumItemApi.submit,
 	// 详情API
 	detailApi: genEnumItemApi.detail,
-	// 详情数据
-	dataForm: {
-		id: -1,
-		enumId: -1,
-		enumItemName: '',
-		enumItemCode: '',
-		enumItemDesc: '',
-		enumItemOrder: 0
-	},
+	initFormData,
 	emit
 } as FormOptions<GenEnumItemEntity>)
 
@@ -65,7 +67,7 @@ const dataRules = reactive({
 	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 const initData = (enumId: number, id?: number) => {
 	state.dataForm.enumId = enumId

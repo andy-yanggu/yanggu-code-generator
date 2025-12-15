@@ -20,6 +20,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 	const defaultFormOptions: FormOptions<VO> = {
 		submitApi: (_: VO) => Promise.resolve(),
 		detailApi: (_: Key) => Promise.resolve({} as VO),
+		initFormData: () => ({}) as VO,
 		dataForm: {} as VO & { id?: Key },
 		duration: 500
 	} as const
@@ -28,7 +29,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 	Object.assign(options, Object.fromEntries(Object.entries(defaultFormOptions).filter(([key]) => !Object.hasOwn(options, key))))
 
 	// 表单字段进行初始化
-	if (options.initFormData && !options.dataForm) {
+	if (!options.dataForm) {
 		Object.assign(options.dataForm, options.initFormData())
 	}
 
@@ -71,9 +72,11 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 	// init(id: Key) // 修改
 	// init(type: FormType) // 新增
 	// init(type: FormType, id: Key) // 修改、复制、详情
+	// init(type: FormType, id: Key, ctx: Record<string, any>) // 新增、修改、复制
+	// init(id: Key, undefined, ctx: Record<string, any>) // 新增、修改、复制
 
 	// 初始化表单
-	const init = (arg1?: FormType | Key, arg2?: Key) => {
+	const init = (arg1?: FormType | Key, arg2?: Key, ctx?: Record<string, any>) => {
 		let type: FormType = 'add'
 		let id: Key | undefined = undefined
 
@@ -97,10 +100,9 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 
 		nextTick(() => {
 			// 清空表单校验和重置表单数据
-			if (dataFormRef.value) {
-				dataFormRef.value.clearValidate()
-				dataFormRef.value.resetFields()
-			}
+			dataFormRef.value.clearValidate()
+			dataFormRef.value.resetFields()
+			Object.assign(options.dataForm, options.initFormData(ctx))
 
 			// 初始化之前调用
 			options.initBefore?.()

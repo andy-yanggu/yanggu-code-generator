@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<el-form-item label="项目" prop="projectId">
 				<el-select
@@ -47,17 +47,20 @@ const getProjectList = () => {
 	})
 }
 
+// 初始化表单数据
+const initFormData = (): GenEnumEntity => ({
+	id: '',
+	projectId: '',
+	enumName: '',
+	enumDesc: ''
+})
+
 const emit = defineEmits(['refreshDataList'])
 const state = reactive({
 	submitApi: genEnumApi.submit,
 	detailApi: genEnumApi.detail,
 	initBefore: getProjectList,
-	dataForm: {
-		id: -1,
-		projectId: '',
-		enumName: '',
-		enumDesc: ''
-	},
+	initFormData,
 	emit
 } as FormOptions<GenEnumEntity>)
 
@@ -67,7 +70,7 @@ const dataRules = reactive({
 	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 defineExpose({
 	init

@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="!state.dataForm.id ? '新增' : '修改'" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="60%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"
@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
@@ -178,6 +178,7 @@ import {
 	FormOptions,
 	GenBaseClassEntity,
 	GenDatasourceEntity,
+	GenModuleEntity,
 	GenProjectEntity,
 	GenTemplateGroupEntity,
 	GenTemplateGroupPropertyEntity
@@ -188,6 +189,10 @@ defineOptions({
 })
 
 const emit = defineEmits(['refreshDataList'])
+
+onMounted(() => {
+	getList()
+})
 
 const getList = () => {
 	// 数据源下拉
@@ -208,61 +213,45 @@ const getList = () => {
 	})
 }
 
-const emptyModule = () => ({
+const emptyModule = (): GenModuleEntity => ({
 	moduleName: '',
 	modulePath: '',
 	moduleDesc: ''
 })
 
+// 初始化表单数据
+const initFormData = (): GenProjectEntity => ({
+	id: '',
+	projectName: '',
+	projectPackage: '',
+	projectPort: '',
+	projectVersion: '',
+	datasourceId: '',
+	moduleList: [emptyModule()],
+	projectTemplateGroupId: '',
+	projectTemplateGroupPropValue: {},
+	tableTemplateGroupId: '',
+	enumTemplateGroupId: '',
+	backendPath: '',
+	frontendPath: '',
+	projectDesc: '',
+	author: '',
+	entityBaseClassId: '',
+	voBaseClassId: '',
+	generatorType: ''
+})
+
 const state = reactive({
 	submitApi: genProjectApi.submit,
 	detailApi: genProjectApi.detail,
-	initBefore: () => {
-		getList()
-		state.dataForm.projectTemplateGroupPropValue = {}
-		state.dataForm.moduleList = [emptyModule()]
-	},
-	dataForm: {
-		id: '',
-		projectName: '',
-		projectPackage: '',
-		projectPort: '',
-		projectVersion: '',
-		datasourceId: '',
-		moduleList: [emptyModule()],
-		projectTemplateGroupId: '',
-		projectTemplateGroupPropValue: {},
-		tableTemplateGroupId: '',
-		enumTemplateGroupId: '',
-		backendPath: '',
-		frontendPath: '',
-		projectDesc: '',
-		author: '',
-		entityBaseClassId: '',
-		voBaseClassId: '',
-		generatorType: ''
-	},
-	initAfter: () => {
-		if (state.dataForm.moduleList.length === 0) {
-			state.dataForm.moduleList = [emptyModule()]
-		}
-	},
+	initFormData,
 	submitBefore: () => {
-		if (!state.dataForm.id) {
-			if (state.dataForm.datasourceId) {
-				state.message = '新增成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
-				state.duration = 2000
-			} else {
-				state.message = '新增成功'
-				state.duration = 1000
-			}
+		if (formType.value === 'add' && state.dataForm.datasourceId) {
+			state.message = '新增成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'
+			state.duration = 2000
 		} else {
-			state.message = '修改成功'
+			state.message = ''
 			state.duration = 500
-		}
-
-		if (!projectTemplateGroupPropertyList.value || projectTemplateGroupPropertyList.value.length === 0) {
-			state.dataForm.projectTemplateGroupPropValue = {}
 		}
 	},
 	emit
@@ -393,7 +382,7 @@ const tableTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const enumTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const baseClassList = ref([] as GenBaseClassEntity[])
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, formType, dialogTitle } = useSubmitForm(state)
 defineExpose({
 	init
 })

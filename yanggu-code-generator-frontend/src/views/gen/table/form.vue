@@ -119,6 +119,24 @@ const emit = defineEmits(['refreshDataList'])
 
 const projectList = ref([] as GenProjectEntity[])
 
+// 初始化表单数据
+const initFormData = (): GenTableEntity => ({
+	id: -1,
+	tableName: '',
+	databaseName: '',
+	className: '',
+	tableComment: '',
+	projectId: -1,
+	author: '',
+	version: '',
+	moduleName: '',
+	functionName: '',
+	permissionFlag: '',
+	formLayout: '',
+	popupType: '',
+	generatorFunction: [0, 1, 2, 3, 4, 5]
+})
+
 const state = reactive({
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
@@ -127,22 +145,8 @@ const state = reactive({
 			projectList.value = data
 		})
 	},
-	dataForm: {
-		id: -1,
-		tableName: '',
-		databaseName: '',
-		className: '',
-		tableComment: '',
-		projectId: -1,
-		author: '',
-		version: '',
-		moduleName: '',
-		functionName: '',
-		permissionFlag: '',
-		formLayout: '',
-		popupType: '',
-		generatorFunction: [0, 1, 2, 3, 4, 5]
-	},
+	initFormData,
+	dataForm: initFormData(),
 	emit
 } as FormOptions<GenTableEntity>)
 

@@ -60,32 +60,27 @@ defineOptions({
 	name: 'GenBaseClassForm'
 })
 
+// 初始化表单数据
+const initFormData = (): GenBaseClassEntity => ({
+	id: '',
+	baseClassName: '',
+	packageName: '',
+	className: '',
+	fields: '',
+	remark: ''
+})
+
 const emit = defineEmits(['refreshDataList'])
 const state = reactive({
 	// 提交API
 	submitApi: genBaseClassApi.submit,
 	// 详情API
 	detailApi: genBaseClassApi.detail,
-	// 表单数据
-	dataForm: {
-		id: '',
-		baseClassName: '',
-		packageName: '',
-		className: '',
-		fields: '',
-		remark: ''
-	},
-	initBefore: () => {
-		state.dataForm.packageName = ''
-		state.dataForm.className = ''
-	},
+	initFormData,
 	initAfter: () => {
 		if (formType.value === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
 			state.dataForm.id = ''
-			state.message = '复制成功'
-		} else {
-			state.message = ''
 		}
 	},
 	emit

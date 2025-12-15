@@ -1,11 +1,12 @@
 import { PageQuery } from '@/types/api/common'
+import { Key } from '@/types'
 
 /**
  * 枚举项实体
  */
 export interface GenEnumItemEntity {
 	// id
-	id: number
+	id: Key
 	// 枚举ID
 	enumId: number
 	// 枚举项名称

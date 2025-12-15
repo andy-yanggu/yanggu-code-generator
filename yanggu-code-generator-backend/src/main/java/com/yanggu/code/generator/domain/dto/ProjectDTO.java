@@ -80,7 +80,6 @@ public class ProjectDTO implements Serializable {
      * 表模板组ID
      */
     @Schema(description = "表模板组ID")
-    @NotNull(message = "表模板组ID不能为空")
     private Long tableTemplateGroupId;
 
     /**
