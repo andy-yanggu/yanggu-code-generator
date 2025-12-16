@@ -13,7 +13,7 @@ export interface GenBaseClassEntity {
 	// 基类类名
 	className: string
 	// 基类字段
-	fields: string
+	fieldList: string[]
 	// 备注
 	remark: string
 }
@@ -22,6 +22,8 @@ export interface GenBaseClassEntity {
  * 基类查询参数
  */
 export interface GenBaseClassQuery extends PageQuery {
+	// 基类名称
+	baseClassName?: string
 	// 基类包名
 	packageName?: string
 	// 基类类名

@@ -5,20 +5,20 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
+import com.yanggu.code.generator.common.mybatis.typehandler.list.ListStringTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
+import java.util.List;
 
 /**
  * 基类Entity实体类
  */
 @Data
-@TableName(value = "gen_base_class")
 @EqualsAndHashCode(callSuper = true)
+@TableName(value = "gen_base_class", autoResultMap = true)
 public class BaseClassEntity extends BaseEntity implements Serializable {
 
     @Serial
@@ -49,15 +49,15 @@ public class BaseClassEntity extends BaseEntity implements Serializable {
     private String className;
 
     /**
-     * 基类字段，多个用英文逗号分隔
+     * 基类字段
      */
-    @TableField(value = "fields")
-    private String fields;
+    @TableField(value = "field_list", typeHandler = ListStringTypeHandler.class)
+    private List<String> fieldList;
 
     /**
      * 备注
      */
-    @TableField(value = "remark", updateStrategy = ALWAYS)
+    @TableField(value = "remark")
     private String remark;
 
 }

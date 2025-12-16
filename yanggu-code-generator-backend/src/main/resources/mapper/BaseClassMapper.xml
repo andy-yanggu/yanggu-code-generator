@@ -9,7 +9,7 @@
         base_class_name,
         package_name,
         class_name,
-        fields,
+        field_list,
         remark,
         create_time,
         update_time,
@@ -30,7 +30,7 @@
         <result property="baseClassName" column="base_class_name"/>
         <result property="packageName" column="package_name"/>
         <result property="className" column="class_name"/>
-        <result property="fields" column="fields"/>
+        <result property="fieldList" column="field_list" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ListStringTypeHandler"/>
         <result property="remark" column="remark"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>

@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.core.array.ArrayUtil;
 import cn.hutool.v7.core.bean.BeanUtil;
 import cn.hutool.v7.core.codec.binary.Base64;
 import cn.hutool.v7.core.collection.CollUtil;
@@ -646,12 +645,9 @@ public class GeneratorServiceImpl implements GeneratorService {
             BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
             tableModel.setEntityBaseClass(baseClassModel);
 
-            // 基类字段
-            String[] fields = baseClassModel.getFields().split(",");
-
             // 标注为基类字段
             for (TableFieldModel field : fieldList) {
-                field.setEntityBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getAttrName())));
+                field.setEntityBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
             }
         }
 
@@ -661,10 +657,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (voBaseClass != null) {
             BaseClassModel baseClassModel = baseClassMapstruct.toModel(voBaseClass);
             tableModel.setVoBaseClass(baseClassModel);
-            // 基类字段
-            String[] fields = baseClassModel.getFields().split(",");
             for (TableFieldModel field : fieldList) {
-                field.setVoBaseField(BooleanUtil.toInteger(ArrayUtil.contains(fields, field.getAttrName())));
+                field.setVoBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
             }
         }
     }

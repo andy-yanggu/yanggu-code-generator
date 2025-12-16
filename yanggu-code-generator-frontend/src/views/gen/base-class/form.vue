@@ -7,7 +7,6 @@
 			:rules="dataRules"
 			label-width="130px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
 		>
 			<el-form-item prop="baseClassName">
 				<template #label>
@@ -29,11 +28,8 @@
 					</el-form-item>
 				</div>
 			</el-form-item>
-			<el-form-item prop="fields">
-				<template #label>
-					<form-label-tooltip label="基类字段" tooltip="多个字段使用英文逗号拼接"></form-label-tooltip>
-				</template>
-				<el-input v-model="state.dataForm.fields" clearable placeholder="请输入基类字段，多个用英文逗号分隔"></el-input>
+			<el-form-item label="基类字段" prop="fieldList">
+				<el-input-tag v-model="state.dataForm.fieldList" tag-effect="light" clearable placeholder="请输入基类字段"></el-input-tag>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>
@@ -66,7 +62,7 @@ const initFormData = (): GenBaseClassEntity => ({
 	baseClassName: '',
 	packageName: '',
 	className: '',
-	fields: '',
+	fieldList: [] as string[],
 	remark: ''
 })
 
@@ -77,6 +73,7 @@ const state = reactive({
 	// 详情API
 	detailApi: genBaseClassApi.detail,
 	initFormData,
+	dataForm: initFormData(),
 	initAfter: () => {
 		if (formType.value === 'copy') {
 			state.dataForm.baseClassName = state.dataForm.baseClassName + '_复制'
@@ -92,11 +89,11 @@ const dataRules = computed(() => {
 		return rules
 	}
 	const constRules: Record<string, FormItemRule[]> = {
-		baseClassName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		baseClassName: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }],
 		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
-		packageName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		fields: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+		packageName: [{ required: true, message: '基类包名不能为空', trigger: 'blur' }],
+		className: [{ required: true, message: '基类类名不能为空', trigger: 'blur' }],
+		fieldList: [{ required: true, message: '基类字段不能为空', trigger: 'blur' }]
 	}
 	Object.assign(rules, constRules)
 	return rules

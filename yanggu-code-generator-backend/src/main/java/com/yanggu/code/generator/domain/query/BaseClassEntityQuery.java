@@ -21,6 +21,12 @@ public class BaseClassEntityQuery extends PageQuery<BaseClassEntity> implements 
     private static final long serialVersionUID = 1L;
 
     /**
+     * 基类名称
+     */
+    @Schema(description = "基类名称")
+    private String baseClassName;
+
+    /**
      * 基类包名
      */
     @Schema(description = "基类包名")

@@ -2,6 +2,8 @@ package com.yanggu.code.generator.domain.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 基类模型实体类
  */
@@ -24,9 +26,9 @@ public class BaseClassModel {
     private String className;
 
     /**
-     * 基类字段，多个用英文逗号分隔
+     * 基类字段
      */
-    private String fields;
+    private List<String> fieldList;
 
     /**
      * 备注
