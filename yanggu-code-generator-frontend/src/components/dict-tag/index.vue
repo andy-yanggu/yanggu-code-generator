@@ -1,5 +1,5 @@
 <template>
-	<el-tag :type="enumItem.type" :color="enumItem.color">{{ enumItem.label }}</el-tag>
+	<el-tag v-if="value !== null && value !== undefined && value !== ''" :type="enumItem.type" :color="enumItem.color">{{ enumItem.label }}</el-tag>
 </template>
 
 <script setup lang="ts">
@@ -14,6 +14,7 @@ defineOptions({
 const props = defineProps({
 	value: {
 		type: [String, Number, Boolean] as PropType<EnumValueType>,
+		default: null,
 		required: true
 	},
 	enumItemList: {

@@ -39,8 +39,8 @@
 			</el-table>
 		</el-card>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :disabled="state.dataListSelections!.length === 0" :loading="submitLoading" @click="submitData()">
-				确定
+			<el-button type="primary" :icon="Upload" :disabled="isEmpty(state.dataListSelections!)" :loading="submitLoading" @click="submitData()">
+				导入
 			</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
@@ -50,11 +50,12 @@
 <script setup lang="ts">
 import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { Check, Close, Refresh, Search } from '@element-plus/icons-vue'
+import { Close, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import OptionLabel from '@/components/option/label/index.vue'
 import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genProjectApi, genTableApi } from '@/api'
 import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, SubmitOptions } from '@/types'
+import { isEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenTableImport'
@@ -97,8 +98,8 @@ const init = () => {
 
 // 表单提交
 const submitData = () => {
-	if (state.dataListSelections!.length === 0) {
-		ElMessage.warning('请选择表')
+	if (isEmpty(state.dataListSelections!)) {
+		ElMessage.warning('请选择要导入的表')
 		return
 	}
 	const dataForm = {
@@ -112,6 +113,7 @@ const { getDataList, selectionChangeHandle, queryRef, resetQueryHandle, tableInd
 
 const submitState = shallowReactive({
 	visible,
+	successMessage: '导入成功',
 	submitApi: genTableApi.importData,
 	emit
 } as SubmitOptions)

@@ -1,5 +1,5 @@
 <template>
-	<el-tooltip :content="title" :disabled="!isOverflow" :placement="placement">
+	<el-tooltip :content="content" :disabled="!isOverflow" :placement="placement">
 		<el-text ref="textRef" :class="['text-tooltip-title', textClass]" :style="{ maxWidth }">
 			{{ title }}
 		</el-text>
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, toRefs } from 'vue'
+import { computed, defineProps, toRefs } from 'vue'
 import { useTextOverflow } from '@/hooks/use-text-overflow'
 
 defineOptions({
@@ -18,6 +18,10 @@ const props = defineProps({
 	title: {
 		type: String,
 		required: true
+	},
+	tooltipContent: {
+		type: String,
+		default: ''
 	},
 	maxWidth: {
 		type: String,
@@ -34,6 +38,10 @@ const props = defineProps({
 })
 // 变成响应式数据
 const { title: titleRef, maxWidth: maxWidthRef } = toRefs(props)
+
+const content = computed(() => {
+	return props.tooltipContent || props.title
+})
 
 const { textRef, isOverflow } = useTextOverflow(titleRef, maxWidthRef)
 </script>

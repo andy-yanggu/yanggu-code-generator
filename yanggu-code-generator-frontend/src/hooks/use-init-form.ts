@@ -7,8 +7,8 @@ export const useInitForm = () => {
 	const formRef = ref()
 
 	// 初始化表单方法
-	const formInitHandle = (formType?: FormType, id?: Key) => {
-		formRef.value.init(formType, id)
+	const formInitHandle = (arg1?: FormType | Key, arg2?: Key) => {
+		formRef.value.init(arg1, arg2)
 	}
 
 	return {

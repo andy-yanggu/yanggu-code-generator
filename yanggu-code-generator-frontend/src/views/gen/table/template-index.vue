@@ -121,7 +121,7 @@ const generateCode = () => {
 		submitState.successMessage = '代码已经下载到浏览器'
 	} else if (generatorType === 1) {
 		submitState.submitApi = genGeneratorApi.tableDownloadLocal
-		submitState.successMessage = '代码已经下载到本地'
+		submitState.successMessage = '代码已经生成到本地'
 	} else {
 		ElMessage.warning('生成类型异常')
 		return

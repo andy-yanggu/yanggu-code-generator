@@ -130,7 +130,7 @@ const generateCode = () => {
 		submitState.successMessage = '代码已经下载到本地，请查看'
 	} else if (generatorType === 1) {
 		submitState.submitApi = genGeneratorApi.enumDownloadLocal
-		submitState.successMessage = '代码已经下载到服务器本地，请查看'
+		submitState.successMessage = '代码已经生成到服务器本地，请查看'
 	}
 	submitHandle(dataForm)
 }

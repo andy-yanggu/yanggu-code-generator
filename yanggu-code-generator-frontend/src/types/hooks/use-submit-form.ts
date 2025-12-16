@@ -1,7 +1,7 @@
 import { Key } from '@/types'
 
 // 表单模式：新增、修改、复制
-export const FORM_TYPES: string[] = ['add', 'update', 'copy', 'detail'] as const
+export const FORM_TYPES = ['add', 'update', 'copy', 'detail'] as const
 export type FormType = (typeof FORM_TYPES)[number]
 
 export interface FormOptions<VO> {

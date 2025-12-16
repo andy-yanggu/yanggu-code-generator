@@ -183,6 +183,7 @@ import {
 	GenTemplateGroupEntity,
 	GenTemplateGroupPropertyEntity
 } from '@/types'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenProjectForm'
@@ -267,7 +268,7 @@ const projectTemplateGroupPropertyList = computed(() => {
 })
 
 const dataRules = computed(() => {
-	const rules: Record<string, any[]> = {
+	const rules: Record<string, FormItemRule[]> = {
 		projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

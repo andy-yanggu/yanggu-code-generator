@@ -66,7 +66,11 @@
 						<el-row style="margin-bottom: 5px">
 							<el-col :span="16">
 								<div class="path-container">
-									<text-tooltip :title="'路径：' + templateTreeData.item.filePath" :max-width="'100%'"></text-tooltip>
+									<text-tooltip
+										:title="'路径：' + templateTreeData.item.filePath"
+										:tooltip-content="templateTreeData.item.filePath"
+										:max-width="'100%'"
+									></text-tooltip>
 									<el-tooltip :disabled="copyIconState === Check" content="复制文件路径" placement="top">
 										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
 											<component :is="copyIconState"></component>

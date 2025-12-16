@@ -35,21 +35,19 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 
 			ElMessage.success({
 				message: options.successMessage,
-				duration: options.successDuration,
-				onClose: () => {
-					// 关闭弹窗
-					if (options.visible) {
-						options.visible.value = false
-					}
-					// 执行成功回调函数
-					if (options.onSuccess) {
-						options.onSuccess?.(res)
-					} else {
-						// 默认刷新数据列表
-						options.emit?.('refreshDataList', res)
-					}
-				}
+				duration: options.successDuration
 			})
+			// 关闭弹窗
+			if (options.visible) {
+				options.visible.value = false
+			}
+			// 执行成功回调函数
+			if (options.onSuccess) {
+				options.onSuccess?.(res)
+			} else {
+				// 默认刷新数据列表
+				options.emit?.('refreshDataList', res)
+			}
 		} catch (err) {
 			// 用户自定义错误处理
 			if (options.onError) {

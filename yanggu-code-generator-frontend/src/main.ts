@@ -13,6 +13,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 cs
 import '@/styles/index.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import directive from '@/directive'
+import { setupEcharts } from '@/components/echarts'
 
 const app = createApp(App)
 
@@ -21,6 +22,9 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 pinia.use(dynamicPersistPlugin)
 app.use(pinia)
+
+// 注册echarts
+setupEcharts(app)
 
 //使用element-plus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
