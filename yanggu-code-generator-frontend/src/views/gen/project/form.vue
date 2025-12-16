@@ -72,28 +72,30 @@
 					:style="{ marginBottom: index < state.dataForm.moduleList.length - 1 ? '18px' : '0' }"
 				>
 					<el-col :span="7">
-						<el-form-item :prop="`moduleList.${index}.moduleName`">
+						<el-form-item :prop="`moduleList[${index}].moduleName`">
 							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item :prop="`moduleList.${index}.modulePath`">
+						<el-form-item :prop="`moduleList[${index}].modulePath`">
 							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="7">
-						<el-form-item :prop="`moduleList.${index}.moduleDesc`">
+						<el-form-item :prop="`moduleList[${index}].moduleDesc`">
 							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 200px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
-						<el-space>
-							<el-icon class="action-icon" @click="() => state.dataForm.moduleList.splice(index + 1, 0, emptyModule())">
-								<Plus></Plus>
-							</el-icon>
-							<el-icon v-show="state.dataForm.moduleList.length > 1" class="action-icon" @click="() => state.dataForm.moduleList.splice(index, 1)">
-								<Delete></Delete>
-							</el-icon>
+						<el-space size="default">
+							<el-button circle :icon="Plus" type="primary" @click="() => state.dataForm.moduleList.splice(index + 1, 0, emptyModule())"></el-button>
+							<el-button
+								v-show="state.dataForm.moduleList.length > 1"
+								type="danger"
+								circle
+								:icon="Delete"
+								@click="() => state.dataForm.moduleList.splice(index, 1)"
+							></el-button>
 						</el-space>
 					</div>
 				</el-row>
@@ -319,12 +321,6 @@ const dataRules = computed(() => {
 						return
 					}
 
-					// 当前行全空 → 跳过校验（无效占位行）
-					if (allEmpty) {
-						callback()
-						return
-					}
-
 					// 当前行非空 → 所有字段必须填写
 					if (!value || !value.trim()) {
 						callback(new Error('必填项不能为空'))
@@ -360,9 +356,9 @@ const dataRules = computed(() => {
 	list.forEach((_, index) => {
 		const validator = makeValidator(index)
 
-		rules[`moduleList.${index}.moduleName`] = [validator('moduleName')]
-		rules[`moduleList.${index}.modulePath`] = [validator('modulePath')]
-		rules[`moduleList.${index}.moduleDesc`] = [validator('moduleDesc')]
+		rules[`moduleList[${index}].moduleName`] = [validator('moduleName')]
+		rules[`moduleList[${index}].modulePath`] = [validator('modulePath')]
+		rules[`moduleList[${index}].moduleDesc`] = [validator('moduleDesc')]
 	})
 
 	return rules
@@ -394,9 +390,5 @@ defineExpose({
 	display: flex;
 	align-items: center;
 	padding-left: 10px;
-}
-
-.action-icon {
-	cursor: pointer;
 }
 </style>
