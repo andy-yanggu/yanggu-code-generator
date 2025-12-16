@@ -1,5 +1,23 @@
 <template>
-	<el-popover ref="popoverRef" :disabled="list.length <= previewCount" :teleported="!isFullscreen" trigger="hover" placement="top" :width="width">
+	<el-popover
+		ref="popoverRef"
+		:disabled="list.length <= previewCount"
+		teleported
+		:append-to="appStore.currentFullscreenElement || body"
+		trigger="hover"
+		placement="top"
+		:width="width"
+		:popper-options="{
+			modifiers: [
+				{
+					name: 'flip',
+					options: {
+						fallbackPlacements: [] // 禁止自动翻转
+					}
+				}
+			]
+		}"
+	>
 		<template #default>
 			<el-space :size="5" wrap spacer="、">
 				<template v-for="item in list" :key="item">
@@ -18,7 +36,7 @@
 <script setup lang="ts">
 import { PropType } from 'vue'
 import { ElPopover } from 'element-plus'
-import { useFullscreen } from '@vueuse/core'
+import { useAppStore } from '@/store'
 
 defineOptions({
 	name: 'PopoverList'
@@ -39,5 +57,7 @@ defineProps({
 	}
 })
 
-const { isFullscreen } = useFullscreen()
+const body = document.body
+
+const appStore = useAppStore()
 </script>

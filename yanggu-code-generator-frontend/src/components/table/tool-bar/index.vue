@@ -9,7 +9,7 @@
 		<div class="table-tool-bar-right">
 			<el-space>
 				<!-- 搜索 -->
-				<el-tooltip v-if="useSearch && !isFullscreen" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
+				<el-tooltip v-if="useSearch && searchInner" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
 					<el-button circle :icon="Search" @click="toggleSearch()"></el-button>
 				</el-tooltip>
 
@@ -25,7 +25,7 @@
 					placement="top"
 					:teleported="teleported"
 				>
-					<el-button circle @click="toggle()">
+					<el-button circle @click="toggle">
 						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" is-pointer></svg-icon>
 					</el-button>
 				</el-tooltip>
@@ -38,7 +38,9 @@
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { useFullscreen, useToggle } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon'
+// 在Vue3组件中
 import { computed, PropType, Ref } from 'vue'
+import { useAppStore } from '@/store'
 
 defineOptions({
 	name: 'TableToolBar'
@@ -78,6 +80,12 @@ const emit = defineEmits(['getDataList'])
 const teleported = computed(() => !isFullscreen.value)
 
 const toggleSearch = useToggle(showSearch)
+
+const searchInner = computed(() => {
+	return appStore.currentFullscreenElement !== props.tableCardRef.$el
+})
+
+const appStore = useAppStore()
 
 const { isFullscreen, toggle } = useFullscreen(props.tableCardRef)
 </script>

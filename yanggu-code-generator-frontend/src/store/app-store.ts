@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useSystemSettingStore } from '@/store'
-import { useDark, useFullscreen, useToggle } from '@vueuse/core'
+import { useDark, useEventListener, useFullscreen, useToggle } from '@vueuse/core'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 
@@ -9,7 +9,7 @@ import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 const getPersistConfig = () => {
 	const key = 'appStore'
 	// 忽略字段
-	const originOmitList = ['layoutMainRef']
+	const originOmitList = ['layoutMainRef', 'currentFullscreenElement']
 	// 根据环境设置持久化配置
 	// if (import.meta.env.PROD) {
 	//
@@ -56,6 +56,13 @@ export const useAppStore = defineStore(
 		})
 		// Layout Main Ref
 		const layoutMainRef = ref()
+
+		// 全屏元素
+		const currentFullscreenElement = ref<HTMLElement | null>(null)
+
+		useEventListener(document, 'fullscreenchange', () => {
+			currentFullscreenElement.value = document.fullscreenElement as HTMLElement | null
+		})
 
 		// 计算属性
 		// 标签数量
@@ -173,6 +180,7 @@ export const useAppStore = defineStore(
 			iframeCacheList,
 			isDark,
 			layoutMainRef,
+			currentFullscreenElement,
 			tagLength,
 			toggleCollapse,
 			toolFullscreen,
