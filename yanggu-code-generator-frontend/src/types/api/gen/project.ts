@@ -32,10 +32,6 @@ export interface GenProjectEntity {
 	projectDesc: string
 	// 作者
 	author: string
-	// Entity基类ID
-	entityBaseClassId: number | string
-	// VO基类ID
-	voBaseClassId: number | string
 	// 生成方式（0-zip压缩包，1-服务器本地）
 	generatorType: number | string
 	// 项目模板组属性值

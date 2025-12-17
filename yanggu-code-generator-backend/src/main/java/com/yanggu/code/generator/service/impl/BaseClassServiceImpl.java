@@ -8,14 +8,14 @@ import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.entity.BaseClassEntity;
-import com.yanggu.code.generator.domain.entity.ProjectEntity;
+import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.query.BaseClassEntityQuery;
 import com.yanggu.code.generator.domain.query.BaseClassVOQuery;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.mapper.BaseClassMapper;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.service.BaseClassService;
-import com.yanggu.code.generator.service.ProjectService;
+import com.yanggu.code.generator.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     private BaseClassMapstruct baseClassMapstruct;
 
     @Autowired
-    private ProjectService projectService;
+    private TableService tableService;
 
     /**
      * 新增
@@ -178,15 +178,15 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     }
 
     private void checkReference(List<Long> idList) {
-        LambdaQueryWrapper<ProjectEntity> queryWrapper = Wrappers.lambdaQuery(ProjectEntity.class)
+        LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class)
                 .and(wrapper -> wrapper
-                        .in(ProjectEntity::getEntityBaseClassId, idList)
+                        .in(TableEntity::getEntityBaseClassId, idList)
                         .or()
-                        .in(ProjectEntity::getVoBaseClassId, idList)
+                        .in(TableEntity::getVoBaseClassId, idList)
                 );
-        boolean exists = projectService.exists(queryWrapper);
+        boolean exists = tableService.exists(queryWrapper);
         if (exists) {
-            throw new BusinessException("基类已被项目引用，不能删除");
+            throw new BusinessException("基类已被表引用，不能删除");
         }
     }
 

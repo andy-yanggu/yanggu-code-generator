@@ -635,30 +635,33 @@ public class GeneratorServiceImpl implements GeneratorService {
      */
     private void setBaseClass(TableModel tableModel) {
         Long projectId = tableModel.getProjectId();
-        ProjectEntity project = projectService.getById(projectId);
 
         //Entity基类
-        BaseClassEntity baseClass = baseClassService.getById(project.getEntityBaseClassId());
         List<TableFieldModel> fieldList = tableModel.getFieldList();
         fieldList.forEach(field -> field.setEntityBaseField(0));
-        if (baseClass != null) {
-            BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
-            tableModel.setEntityBaseClass(baseClassModel);
+        if (tableModel.getEntityBaseClassId() != null) {
+            BaseClassEntity baseClass = baseClassService.getById(tableModel.getEntityBaseClassId());
+            if (baseClass != null) {
+                BaseClassModel baseClassModel = baseClassMapstruct.toModel(baseClass);
+                tableModel.setEntityBaseClass(baseClassModel);
 
-            // 标注为基类字段
-            for (TableFieldModel field : fieldList) {
-                field.setEntityBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
+                // 标注为基类字段
+                for (TableFieldModel field : fieldList) {
+                    field.setEntityBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
+                }
             }
         }
 
         //VO基类
-        BaseClassEntity voBaseClass = baseClassService.getById(project.getVoBaseClassId());
         fieldList.forEach(field -> field.setVoBaseField(0));
-        if (voBaseClass != null) {
-            BaseClassModel baseClassModel = baseClassMapstruct.toModel(voBaseClass);
-            tableModel.setVoBaseClass(baseClassModel);
-            for (TableFieldModel field : fieldList) {
-                field.setVoBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
+        if (tableModel.getVoBaseClassId() != null) {
+            BaseClassEntity voBaseClass = baseClassService.getById(tableModel.getVoBaseClassId());
+            if (voBaseClass != null) {
+                BaseClassModel baseClassModel = baseClassMapstruct.toModel(voBaseClass);
+                tableModel.setVoBaseClass(baseClassModel);
+                for (TableFieldModel field : fieldList) {
+                    field.setVoBaseField(BooleanUtil.toInteger(CollUtil.contains(baseClassModel.getFieldList(), field.getAttrName())));
+                }
             }
         }
     }

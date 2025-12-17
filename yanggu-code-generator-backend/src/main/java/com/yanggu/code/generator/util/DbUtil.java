@@ -111,7 +111,6 @@ public class DbUtil {
             table.setTableName(rs.getString(query.tableName()));
             //设置表注释
             table.setTableComment(rs.getString(query.tableComment()));
-
             //设置数据库名称
             table.setDatabaseName(DbUtil.getDatabaseName(datasource));
             return table;

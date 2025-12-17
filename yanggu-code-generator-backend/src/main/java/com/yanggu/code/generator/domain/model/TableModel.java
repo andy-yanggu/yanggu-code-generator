@@ -128,6 +128,16 @@ public class TableModel {
     private String date;
 
     /**
+     * Entity基类ID
+     */
+    private Long entityBaseClassId;
+
+    /**
+     * VO基类ID
+     */
+    private Long voBaseClassId;
+
+    /**
      * Entity继承基类
      */
     private BaseClassModel entityBaseClass;

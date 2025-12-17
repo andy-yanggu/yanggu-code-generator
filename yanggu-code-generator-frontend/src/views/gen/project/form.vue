@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="65%">
 		<el-form
 			ref="dataFormRef"
 			:model="state.dataForm"
@@ -71,19 +71,19 @@
 					:gutter="10"
 					:style="{ marginBottom: index < state.dataForm.moduleList.length - 1 ? '18px' : '0' }"
 				>
-					<el-col :span="7">
+					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].moduleName`">
-							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 200px"></el-input>
+							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 180px"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="7">
+					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].modulePath`">
-							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 200px"></el-input>
+							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 180px"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="7">
+					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].moduleDesc`">
-							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 200px"></el-input>
+							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 180px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
@@ -135,22 +135,6 @@
 				></template-group-property-form>
 			</template>
 
-			<form-divider title="基类配置"></form-divider>
-			<el-form-item prop="entityBaseClassId" label="Entity基类">
-				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
-						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
-					</el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item prop="voBaseClassId" label="VO基类">
-				<el-select v-model="state.dataForm.voBaseClassId" placeholder="请选择VO基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
-						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
-					</el-option>
-				</el-select>
-			</el-form-item>
-
 			<form-divider title="其他配置"></form-divider>
 			<el-form-item label="后端路径" prop="backendPath">
 				<el-input v-model="state.dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
@@ -175,16 +159,8 @@ import TemplateGroupPropertyForm from '@/views/gen/template-group-property/prope
 import FormDivider from '@/components/form/divider/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import OptionLabel from '@/components/option/label/index.vue'
-import { genBaseClassApi, genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
-import {
-	FormOptions,
-	GenBaseClassEntity,
-	GenDatasourceEntity,
-	GenModuleEntity,
-	GenProjectEntity,
-	GenTemplateGroupEntity,
-	GenTemplateGroupPropertyEntity
-} from '@/types'
+import { genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
+import { FormOptions, GenDatasourceEntity, GenModuleEntity, GenProjectEntity, GenTemplateGroupEntity, GenTemplateGroupPropertyEntity } from '@/types'
 import { FormItemRule } from 'element-plus'
 
 defineOptions({
@@ -208,11 +184,6 @@ const getList = () => {
 		projectTemplateGroupList.value = data.filter(item => item.type === 0)
 		tableTemplateGroupList.value = data.filter(item => item.type === 1)
 		enumTemplateGroupList.value = data.filter(item => item.type === 2)
-	})
-
-	// 基类下拉
-	genBaseClassApi.entityList().then(data => {
-		baseClassList.value = data
 	})
 }
 
@@ -377,7 +348,6 @@ const datasourceList = ref([] as GenDatasourceEntity[])
 const projectTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const tableTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const enumTemplateGroupList = ref([] as GenTemplateGroupEntity[])
-const baseClassList = ref([] as GenBaseClassEntity[])
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, formType, dialogTitle } = useSubmitForm(state)
 defineExpose({

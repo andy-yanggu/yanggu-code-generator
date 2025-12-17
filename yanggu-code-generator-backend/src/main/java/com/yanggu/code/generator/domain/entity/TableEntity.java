@@ -110,4 +110,16 @@ public class TableEntity extends BaseEntity implements Serializable {
     @TableField(value = "generator_function", typeHandler = ListIntegerTypeHandler.class)
     private List<Integer> generatorFunction;
 
+    /**
+     * Entity基类ID
+     */
+    @TableField(value = "entity_base_class_id")
+    private Long entityBaseClassId;
+
+    /**
+     * VO基类ID
+     */
+    @TableField(value = "vo_base_class_id")
+    private Long voBaseClassId;
+
 }

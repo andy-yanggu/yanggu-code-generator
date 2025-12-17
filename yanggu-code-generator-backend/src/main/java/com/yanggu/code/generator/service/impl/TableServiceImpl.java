@@ -337,6 +337,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setModuleName(getModuleName(tableName));
         table.setFunctionName(StrUtil.toCamelCase(tableName));
         table.setPermissionFlag(table.getModuleName() + ":" + table.getFunctionName());
+        table.setGeneratorFunction(List.of(0, 1, 2, 3, 4, 5, 6, 7));
         this.save(table);
 
         // 获取原生字段数据

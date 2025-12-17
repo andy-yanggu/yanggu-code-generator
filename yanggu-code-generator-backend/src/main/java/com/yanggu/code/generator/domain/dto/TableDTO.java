@@ -112,4 +112,16 @@ public class TableDTO implements Serializable {
     @EnumCode(FormLayoutEnum.class)
     private Integer formLayout;
 
+    /**
+     * Entity基类ID
+     */
+    @Schema(description = "Entity基类ID")
+    private Long entityBaseClassId;
+
+    /**
+     * VO基类ID
+     */
+    @Schema(description = "VO基类ID")
+    private Long voBaseClassId;
+
 }

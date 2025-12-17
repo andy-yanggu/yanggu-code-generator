@@ -19,6 +19,8 @@
         t.popup_type,
         t.generator_function,
         t.permission_flag,
+        t.entity_base_class_id,
+        t.vo_base_class_id,
         t.create_time,
         t.update_time,
         t.is_delete
@@ -60,6 +62,8 @@
         <result property="generatorFunction" column="generator_function" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ListIntegerTypeHandler"/>
         <result property="permissionFlag" column="permission_flag"/>
         <result property="popupType" column="popup_type"/>
+        <result property="entityBaseClassId" column="entity_base_class_id"/>
+        <result property="voBaseClassId" column="vo_base_class_id"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

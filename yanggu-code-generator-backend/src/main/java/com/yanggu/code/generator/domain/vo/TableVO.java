@@ -122,4 +122,16 @@ public class TableVO extends BaseVO implements Serializable {
     @Schema(description = "生成功能")
     private List<Integer> generatorFunction = List.of();
 
+    /**
+     * Entity基类ID
+     */
+    @Schema(description = "Entity基类ID")
+    private Long entityBaseClassId;
+
+    /**
+     * VO基类ID
+     */
+    @Schema(description = "VO基类ID")
+    private Long voBaseClassId;
+
 }

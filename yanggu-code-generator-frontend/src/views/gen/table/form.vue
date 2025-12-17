@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="'修改'" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" title="修改" :close-on-click-modal="false" width="60%">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
@@ -93,6 +93,22 @@
 			<el-form-item label="生成功能" prop="generatorFunction">
 				<el-checkbox-group v-model="state.dataForm.generatorFunction" :options="TABLE_GENERATOR_FUNCTION_TYPES"></el-checkbox-group>
 			</el-form-item>
+
+			<form-divider title="基类配置"></form-divider>
+			<el-form-item prop="entityBaseClassId" label="Entity基类">
+				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item prop="voBaseClassId" label="VO基类">
+				<el-select v-model="state.dataForm.voBaseClassId" placeholder="请选择VO基类" style="width: 100%" clearable filterable>
+					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
+					</el-option>
+				</el-select>
+			</el-form-item>
 		</el-form>
 		<template #footer>
 			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
@@ -106,8 +122,8 @@ import { reactive, ref } from 'vue'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
-import { genProjectApi, genTableApi } from '@/api'
-import { FormOptions, GenProjectEntity, GenTableEntity } from '@/types'
+import { genBaseClassApi, genProjectApi, genTableApi } from '@/api'
+import { FormOptions, GenBaseClassEntity, GenProjectEntity, GenTableEntity } from '@/types'
 import FormDivider from '@/components/form/divider/index.vue'
 import OptionLabel from '@/components/option/label/index.vue'
 
@@ -131,11 +147,15 @@ const initFormData = (): GenTableEntity => ({
 	version: '',
 	moduleName: '',
 	functionName: '',
+	voBaseClassId: '',
+	entityBaseClassId: '',
 	permissionFlag: '',
 	formLayout: '',
 	popupType: '',
 	generatorFunction: [0, 1, 2, 3, 4, 5]
 })
+
+const baseClassList = ref([] as GenBaseClassEntity[])
 
 const state = reactive({
 	submitApi: genTableApi.submit,
@@ -143,6 +163,10 @@ const state = reactive({
 	initBefore: () => {
 		genProjectApi.entityList().then(data => {
 			projectList.value = data
+		})
+		// 基类下拉
+		genBaseClassApi.entityList().then(data => {
+			baseClassList.value = data
 		})
 	},
 	initFormData,

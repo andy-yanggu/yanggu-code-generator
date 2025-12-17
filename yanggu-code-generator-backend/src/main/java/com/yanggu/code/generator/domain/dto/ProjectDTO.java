@@ -135,18 +135,6 @@ public class ProjectDTO implements Serializable {
     private String author;
 
     /**
-     * Entity基类ID
-     */
-    @Schema(description = "Entity基类ID")
-    private Long entityBaseClassId;
-
-    /**
-     * VO基类ID
-     */
-    @Schema(description = "VO基类ID")
-    private Long voBaseClassId;
-
-    /**
      * 模块列表
      */
     @Schema(description = "模块列表")

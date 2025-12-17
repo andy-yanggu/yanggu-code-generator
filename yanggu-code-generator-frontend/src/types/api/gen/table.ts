@@ -30,6 +30,10 @@ export interface GenTableEntity {
 	popupType: number | string
 	// 生成方式
 	generatorFunction: number[]
+	// Entity基类ID
+	entityBaseClassId: number | string
+	// VO基类ID
+	voBaseClassId: number | string
 	// 项目名称
 	projectName?: string
 	// 权限标识
