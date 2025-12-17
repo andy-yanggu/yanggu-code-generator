@@ -501,6 +501,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setProjectPackage(project.getProjectPackage());
         tableModel.setProjectPackageSlash(StrUtil.replace(project.getProjectPackage(), ".", "/"));
         tableModel.setVersion(table.getVersion());
+        tableModel.setEntityBaseClassId(table.getEntityBaseClassId());
+        tableModel.setVoBaseClassId(table.getVoBaseClassId());
 
         tableModel.setModuleName(table.getModuleName());
         tableModel.setModuleNameCase(NameUtil.toCamel(table.getModuleName()));
@@ -634,10 +636,8 @@ public class GeneratorServiceImpl implements GeneratorService {
      * @param tableModel 数据模型
      */
     private void setBaseClass(TableModel tableModel) {
-        Long projectId = tableModel.getProjectId();
-
-        //Entity基类
         List<TableFieldModel> fieldList = tableModel.getFieldList();
+        //Entity基类
         fieldList.forEach(field -> field.setEntityBaseField(0));
         if (tableModel.getEntityBaseClassId() != null) {
             BaseClassEntity baseClass = baseClassService.getById(tableModel.getEntityBaseClassId());
