@@ -16,22 +16,24 @@
 						></el-input>
 					</el-col>
 					<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
-						<el-button
-							size="small"
-							type="primary"
-							:icon="Refresh"
-							@click="
-								init(
-									templateTreeData.id,
-									templateTreeData.name,
-									templateTreeData.projectId,
-									templateTreeData.generatorType,
-									templateTreeData.generatorProductType
-								)
-							"
-						>
-							刷新
-						</el-button>
+						<el-tooltip content="重新渲染" placement="top">
+							<el-button
+								size="small"
+								type="primary"
+								:icon="Refresh"
+								@click="
+									init(
+										templateTreeData.id,
+										templateTreeData.name,
+										templateTreeData.projectId,
+										templateTreeData.generatorType,
+										templateTreeData.generatorProductType
+									)
+								"
+							>
+								刷新
+							</el-button>
+						</el-tooltip>
 					</el-col>
 				</el-row>
 				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto">
@@ -103,7 +105,7 @@
 								</el-tooltip>
 								<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top">
 									<el-button size="small" @click="toggle()">
-										<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px" is-pointer></svg-icon>
+										<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
 										{{ isFullscreen ? '退出' : '全屏' }}
 									</el-button>
 								</el-tooltip>
@@ -154,7 +156,7 @@
 				<el-row>
 					<el-col :span="24" style="text-align: right">
 						<el-button size="small" @click="toggle()">
-							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px" is-pointer></svg-icon>
+							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
 							{{ isFullscreen ? '退出' : '全屏' }}
 						</el-button>
 					</el-col>

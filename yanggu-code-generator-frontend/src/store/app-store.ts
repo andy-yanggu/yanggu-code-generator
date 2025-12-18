@@ -9,7 +9,7 @@ import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 const getPersistConfig = () => {
 	const key = 'appStore'
 	// 忽略字段
-	const originOmitList = ['layoutMainRef', 'currentFullscreenElement']
+	const originOmitList = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef']
 	// 根据环境设置持久化配置
 	// if (import.meta.env.PROD) {
 	//
@@ -56,6 +56,8 @@ export const useAppStore = defineStore(
 		})
 		// Layout Main Ref
 		const layoutMainRef = ref()
+		// Layout Main滚动条ref
+		const layoutScrollbarRef = ref()
 
 		// 全屏元素
 		const currentFullscreenElement = ref<HTMLElement | null>(null)
@@ -180,6 +182,7 @@ export const useAppStore = defineStore(
 			iframeCacheList,
 			isDark,
 			layoutMainRef,
+			layoutScrollbarRef,
 			currentFullscreenElement,
 			tagLength,
 			toggleCollapse,

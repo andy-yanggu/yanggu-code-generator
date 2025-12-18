@@ -34,7 +34,8 @@
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore, useSystemSettingStore } from '@/store'
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
 defineOptions({
 	name: 'LayoutMain'
@@ -43,7 +44,7 @@ defineOptions({
 const route = useRoute()
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const layoutScrollbarRef = ref()
+const { layoutScrollbarRef } = storeToRefs(appStore)
 
 // 路由切换时滚动到顶部
 watch(

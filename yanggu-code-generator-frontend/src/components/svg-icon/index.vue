@@ -1,23 +1,16 @@
 <template>
-	<svg
-		class="svg-icon"
-		:style="{
-			color,
-			width: size,
-			height: size,
-			...(isPointer !== undefined ? { cursor: isPointer ? 'pointer' : 'default' } : {})
-		}"
-		aria-hidden="true"
-	>
+	<svg class="svg-icon" :style="svgStyle" aria-hidden="true">
 		<use :xlink:href="`#${icon}`"></use>
 	</svg>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue'
+
 defineOptions({
 	name: 'SvgIcon'
 })
 
-defineProps({
+const props = defineProps({
 	// 图标名称（传入时需要带上前缀 icon-）
 	icon: {
 		type: String,
@@ -36,7 +29,26 @@ defineProps({
 	// 是否为pointer
 	isPointer: {
 		type: Boolean,
-		required: false
+		required: false,
+		default: null
+	}
+})
+
+const svgStyle = computed(() => {
+	const style = {
+		color: props.color,
+		width: props.size,
+		height: props.size,
+		cursor: ''
+	}
+	if (props.isPointer === null) {
+		return style
+	} else if (props.isPointer) {
+		style.cursor = 'pointer'
+		return style
+	} else {
+		style.cursor = 'default'
+		return style
 	}
 })
 </script>

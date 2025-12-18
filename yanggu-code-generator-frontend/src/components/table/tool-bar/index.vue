@@ -26,7 +26,7 @@
 					:teleported="teleported"
 				>
 					<el-button circle @click="toggle">
-						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" is-pointer></svg-icon>
+						<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'"></svg-icon>
 					</el-button>
 				</el-tooltip>
 			</el-space>

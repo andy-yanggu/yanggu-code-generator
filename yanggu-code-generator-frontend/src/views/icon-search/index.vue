@@ -13,6 +13,7 @@
 				</el-col>
 			</el-row>
 		</div>
+		<el-backtop :target="'.layout-scrollbar'" :bottom="50" :right="50"></el-backtop>
 	</div>
 </template>
 
@@ -88,7 +89,9 @@ onMounted(() => {
 
 <style scoped>
 .icon-grid {
-	margin-top: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
 }
 
 .icon-col {

@@ -8,7 +8,7 @@
 			:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
 		>
 			<template #label>
-				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" is-pointer :title="tag.title"></icon-text-tooltip>
+				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" :title="tag.title"></icon-text-tooltip>
 			</template>
 		</el-tab-pane>
 	</el-tabs>

@@ -28,7 +28,8 @@ defineProps({
 	},
 	isPointer: {
 		type: Boolean,
-		default: false
+		required: false,
+		default: null
 	},
 	title: {
 		type: String,
