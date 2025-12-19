@@ -13,7 +13,6 @@
 				</el-col>
 			</el-row>
 		</div>
-		<el-backtop :target="'.layout-scrollbar'" :bottom="50" :right="50"></el-backtop>
 	</div>
 </template>
 

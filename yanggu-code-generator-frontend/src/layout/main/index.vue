@@ -27,6 +27,14 @@
 				</router-view>
 			</template>
 		</div>
+		<!-- 返回顶部组件 -->
+		<el-backtop target=".layout-scrollbar .el-scrollbar__wrap" :bottom="50" :right="50">
+			<el-tooltip content="返回顶部" placement="top">
+				<el-link underline="never">
+					<svg-icon icon="icon-vertical-align-top" size="20px"></svg-icon>
+				</el-link>
+			</el-tooltip>
+		</el-backtop>
 	</el-scrollbar>
 </template>
 
@@ -36,6 +44,7 @@ import { useRoute } from 'vue-router'
 import { useAppStore, useSystemSettingStore } from '@/store'
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
 	name: 'LayoutMain'
@@ -50,8 +59,10 @@ const { layoutScrollbarRef } = storeToRefs(appStore)
 watch(
 	() => route.fullPath,
 	() => {
-		// 滚动到顶部和左侧
-		layoutScrollbarRef.value.scrollTo({ top: 0, left: 0 })
+		// 如果全局页面缓存关闭 或者 页面本身不缓存，则滚动到顶部
+		if (!systemSettingStore.other.isOpenPageCache || !route.meta.cache) {
+			layoutScrollbarRef.value.scrollTo({ top: 0, left: 0 })
+		}
 	}
 )
 </script>
