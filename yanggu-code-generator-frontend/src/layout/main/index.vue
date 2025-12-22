@@ -29,7 +29,7 @@
 		</div>
 		<!-- 返回顶部组件 -->
 		<el-backtop target=".layout-scrollbar .el-scrollbar__wrap" :bottom="50" :right="50">
-			<el-tooltip content="返回顶部" placement="top">
+			<el-tooltip content="回到顶部" placement="top">
 				<el-link underline="never">
 					<svg-icon icon="icon-vertical-align-top" size="20px"></svg-icon>
 				</el-link>

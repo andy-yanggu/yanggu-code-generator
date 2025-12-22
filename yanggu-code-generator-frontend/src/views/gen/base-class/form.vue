@@ -18,13 +18,13 @@
 				<template #label>
 					<form-label-tooltip label="基类全类名" tooltip="基类全类名具有唯一性，不能重复"></form-label-tooltip>
 				</template>
-				<div style="display: flex; align-items: center; gap: 10px; width: 100%">
-					<el-form-item prop="packageName">
-						<el-input v-model="state.dataForm.packageName" style="flex: 1" placeholder="请输入基类包名"></el-input>
+				<div class="full-class-name">
+					<el-form-item prop="packageName" class="inner-form-item">
+						<el-input v-model="state.dataForm.packageName" style="flex: 1" placeholder="请输入基类包名" clearable></el-input>
 					</el-form-item>
-					<span>.</span>
-					<el-form-item prop="className">
-						<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名"></el-input>
+					<span class="dot">.</span>
+					<el-form-item prop="className" class="inner-form-item">
+						<el-input v-model="state.dataForm.className" style="flex: 1" placeholder="请输入基类类名" clearable></el-input>
 					</el-form-item>
 				</div>
 			</el-form-item>
@@ -105,3 +105,25 @@ defineExpose({
 	init
 })
 </script>
+<style lang="scss" scoped>
+.full-class-name {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: 8px;
+}
+
+/* 子 form-item 去掉自身的布局副作用 */
+.inner-form-item {
+	flex: 1;
+	margin-bottom: 0; /* 去掉多余行距 */
+}
+
+.inner-form-item .el-form-item__content {
+	margin-left: 0 !important; /* 去掉 label 占位 */
+}
+
+.dot {
+	flex-shrink: 0;
+}
+</style>

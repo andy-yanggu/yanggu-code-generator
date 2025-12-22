@@ -1,13 +1,14 @@
 <template>
 	<el-card class="layout-query-card" shadow="hover">
 		<el-form ref="queryRef" :inline="true" :model="state.queryForm" label-position="right" label-width="auto" @keyup.enter="getDataList()">
-			<el-row>
-				<el-col :span="8">
+			<form-search-grid>
+				<!-- 第一行 -->
+				<template #item-0>
 					<el-form-item label="模板组名称" prop="templateGroupName">
 						<el-input v-model="state.queryForm.templateGroupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
 					</el-form-item>
-				</el-col>
-				<el-col :span="8">
+				</template>
+				<template #item-1>
 					<el-form-item label="模板组类型" prop="templateGroupType">
 						<el-select
 							v-model="state.queryForm.templateGroupType"
@@ -18,15 +19,15 @@
 							placeholder="请选择模板组类型"
 						></el-select>
 					</el-form-item>
-				</el-col>
-				<el-col :span="8">
+				</template>
+				<template #item-2>
 					<el-form-item label="目录/文件名称" prop="fileName">
 						<el-input v-model="state.queryForm.fileName" style="width: 160px" clearable placeholder="请输入目录/文件名称"></el-input>
 					</el-form-item>
-				</el-col>
-			</el-row>
-			<el-row>
-				<el-col :span="8">
+				</template>
+
+				<!-- 第二行 -->
+				<template #item-3>
 					<el-form-item label="模板类型" prop="templateType">
 						<el-select
 							v-model="state.queryForm.templateType"
@@ -37,16 +38,18 @@
 							placeholder="请选择模板类型"
 						></el-select>
 					</el-form-item>
-				</el-col>
-				<el-col :span="16">
+				</template>
+
+				<!-- 自定义操作区 -->
+				<template #actions>
 					<el-form-item>
 						<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
 					</el-form-item>
 					<el-form-item>
 						<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
 					</el-form-item>
-				</el-col>
-			</el-row>
+				</template>
+			</form-search-grid>
 		</el-form>
 	</el-card>
 	<el-card shadow="hover">
@@ -105,6 +108,7 @@ import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { genTemplateApi } from '@/api'
 import { GenTemplateEntity, GenTemplateQuery, IHooksOptions } from '@/types'
+import FormSearchGrid from '@/components/form/search-grid/index.vue'
 
 defineOptions({
 	name: 'GenProjectTemplate'

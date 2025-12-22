@@ -38,7 +38,6 @@
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { useFullscreen, useToggle } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon'
-// 在Vue3组件中
 import { computed, PropType, Ref } from 'vue'
 import { useAppStore } from '@/store'
 
