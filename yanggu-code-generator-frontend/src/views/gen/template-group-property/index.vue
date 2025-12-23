@@ -28,7 +28,7 @@
 				>
 					<template #left>
 						<el-space>
-							<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle({ type: 'add' })">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 							<el-upload :limit="1" :show-file-list="false" :http-request="({ file }) => importHandle(file, { templateGroupId })">
 								<el-button type="success" :icon="Upload">导入</el-button>
@@ -100,7 +100,7 @@
 				<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
 						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -130,7 +130,7 @@ import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-
 import { getLabel } from '@/utils/enum'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
-import { useSwitchChangeHandler, useSwitchState, useTableAction } from '@/hooks'
+import { useInitForm, useSwitchChangeHandler, useSwitchState, useTableAction } from '@/hooks'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupPropertyApi } from '@/api'
 import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions, SwitchUpdateConfig } from '@/types'
@@ -225,11 +225,7 @@ const orderChangeHandle = (currentValue: number, oldValue: number, row: GenTempl
 		})
 }
 
-const formRef = ref()
-
-const addOrUpdateHandle = (id?: number) => {
-	formRef.value.initHandle(state.queryForm.templateGroupId, id)
-}
+const { formRef, formInitHandle } = useInitForm(() => ({ templateGroupId: props.templateGroupId }))
 
 defineExpose({
 	init

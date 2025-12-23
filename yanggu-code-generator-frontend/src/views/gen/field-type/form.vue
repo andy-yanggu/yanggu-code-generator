@@ -35,7 +35,7 @@ defineOptions({
 })
 
 const initFormData = (): GenFieldTypeEntity => ({
-	id: -1,
+	id: null,
 	columnType: '',
 	attrType: '',
 	packageName: ''

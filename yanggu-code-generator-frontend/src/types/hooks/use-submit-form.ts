@@ -4,6 +4,19 @@ import { Key } from '@/types'
 export const FORM_TYPES = ['add', 'update', 'copy', 'detail'] as const
 export type FormType = (typeof FORM_TYPES)[number]
 
+// 表单初始化参数
+export interface FormInitOptions {
+	// 表单模式
+	type: FormType // add | update | detail | copy
+
+	// 业务主键
+	id?: Key
+
+	// 初始化上下文
+	ctx?: Record<string, any>
+}
+
+// 表单参数
 export interface FormOptions<VO> {
 	// 提交API
 	submitApi: (data: VO) => Promise<any>

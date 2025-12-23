@@ -949,7 +949,7 @@ const updateTemplate = (node: Tree) => {
 	const templatePath = getFullPathById(node.id, templateTreeData.treeList).replace(node.fileName, '').replace(/\/$/, '')
 	contextMenu.templatePath = templatePath ? templatePath : '/'
 	nextTick(() => {
-		formInitHandle(node.id)
+		formInitHandle({ type: 'update', id: node.id })
 	})
 	hideContextMenu()
 }
@@ -960,7 +960,7 @@ const newDir = (parent: Tree) => {
 	contextMenu.templateType = 0
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle()
+		formInitHandle({ type: 'add' })
 	})
 	hideContextMenu()
 }
@@ -971,7 +971,7 @@ const newTemplateFile = (parent: Tree) => {
 	contextMenu.templateType = 1
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle()
+		formInitHandle({ type: 'add' })
 	})
 	hideContextMenu()
 }
@@ -982,7 +982,7 @@ const newBinaryFile = (parent: Tree) => {
 	contextMenu.templateType = 2
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle()
+		formInitHandle({ type: 'add' })
 	})
 	hideContextMenu()
 }

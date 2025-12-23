@@ -1,23 +1,23 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-import { initReactiveObject, isNotEmpty, resetReactiveObject } from '@/utils/tool'
+import { computed, reactive, ref } from 'vue'
+import { isNotEmpty } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuInfo, TokenInfo, UserInfo } from '@/types'
 
-const INITIAL_USER_INFO: UserInfo = {
+const initialUserInfo = (): UserInfo => ({
 	username: 'admin',
 	nickname: '张三',
 	avatar: '',
 	email: 'admin@qq.com',
 	mobile: '18888888888'
-}
+})
 
-const INITIAL_TOKEN_INFO: TokenInfo = {
+const initialTokenInfo = (): TokenInfo => ({
 	tokenName: 'satoken',
 	accessToken: '',
 	refreshToken: '',
 	expire: 0
-}
+})
 
 // 定义需要在侧边栏显示的常量菜单
 const sidebarConstantMenuInfoList: MenuInfo[] = [
@@ -455,9 +455,9 @@ export const useUserStore = defineStore(
 		const roleList = ref<string[]>([])
 		// 登录用户信息
 		// reactive每次初始化，必须传入一个全新的对象
-		const userInfo = initReactiveObject(INITIAL_USER_INFO)
+		const userInfo = reactive(initialUserInfo())
 		// token信息
-		const tokenInfo = initReactiveObject(INITIAL_TOKEN_INFO)
+		const tokenInfo = reactive(initialTokenInfo())
 
 		// 计算属性
 		const isLogin = computed(() => {
@@ -476,10 +476,10 @@ export const useUserStore = defineStore(
 			roleList.value = []
 			permissionList.value = []
 			// 完全清空 userInfo
-			resetReactiveObject(userInfo, INITIAL_USER_INFO)
+			Object.assign(userInfo, initialUserInfo())
 
 			// 完全清空 tokenInfo
-			resetReactiveObject(tokenInfo, INITIAL_TOKEN_INFO)
+			Object.assign(tokenInfo, initialTokenInfo())
 		}
 
 		// 处理菜单列表中的路径。相对路径转换成绝对路径

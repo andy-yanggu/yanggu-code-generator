@@ -33,7 +33,7 @@
 				>
 					<template #left>
 						<el-space>
-							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle({ type: 'add' })">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 							<el-button type="success" :icon="DocumentAdd" @click="generatorBatchHandler()">生成</el-button>
 						</el-space>
@@ -90,7 +90,7 @@
 								<el-button type="primary" link :icon="Setting" @click="configEnumItemHandle(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
 							</el-col>
 						</el-row>
 						<el-row :gutter="5">

@@ -118,11 +118,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowReactive } from 'vue'
+import { computed, reactive, ref, shallowReactive } from 'vue'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { CopyDocument, Document, DocumentAdd, Download, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { cloneObject, copyToClipboard, initReactiveObject, resetReactiveObject } from '@/utils/tool'
+import { copyToClipboard } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { SubmitOptions } from '@/types'
@@ -143,7 +143,7 @@ interface CascaderData {
 	children?: CascaderData[]
 }
 
-const INIT_TEST_DATA = {
+const initTestData = () => ({
 	visible: false,
 	asideCollapsed: false,
 	activeName: 'template',
@@ -160,12 +160,12 @@ const INIT_TEST_DATA = {
 	update: false,
 	cascaderValue: [] as string[],
 	cascaderData: [] as CascaderData[]
-}
+})
 
-const testData = initReactiveObject(INIT_TEST_DATA)
+const testData = reactive(initTestData())
 
 const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
-const INIT_GENERATOR_STATE_ARRAY = [
+const initGeneratorStateArray = () => [
 	{
 		icon: Download,
 		text: '下载',
@@ -177,10 +177,10 @@ const INIT_GENERATOR_STATE_ARRAY = [
 		tooltip: '生成代码'
 	}
 ]
-const generatorState = shallowReactive(cloneObject(INIT_GENERATOR_STATE_ARRAY[0]))
+const generatorState = reactive(initGeneratorStateArray()[0])
 
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
-	resetReactiveObject(testData, INIT_TEST_DATA)
+	Object.assign(testData, initTestData())
 	testData.visible = true
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
@@ -257,9 +257,9 @@ const handleCascaderChange = async (val: string[]) => {
 		const projectId = Number(testData.cascaderValue[0].split('_')[1])
 		const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 		if (generatorType === 0) {
-			resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[0])
+			Object.assign(generatorState, initGeneratorStateArray()[0])
 		} else {
-			resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[1])
+			Object.assign(generatorState, initGeneratorStateArray()[1])
 		}
 	} catch {
 		testData.activeName = 'template'

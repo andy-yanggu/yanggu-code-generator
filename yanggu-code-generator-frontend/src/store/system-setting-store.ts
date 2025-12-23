@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
-import { cloneObject, resetReactiveObject } from '@/utils/tool'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuSetting, OtherSetting, TagBarSetting, ToolbarSetting } from '@/types'
 
@@ -12,7 +11,7 @@ export const menuFoldWidthList = [50, 60, 70]
 
 // 默认配置
 // 菜单相关默认设置
-const defaultMenuSetting: MenuSetting = {
+const defaultMenuSetting = (): MenuSetting => ({
 	isOpenLogo: true,
 	isOpenMenuCollapseAnimation: true,
 	isOpenMenuUniqueOpened: false,
@@ -20,10 +19,10 @@ const defaultMenuSetting: MenuSetting = {
 	menuExpandWidth: menuExpandWidthList.length >= 3 ? menuExpandWidthList[1] : menuExpandWidthList[0],
 	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0],
 	menuDefault: '/index'
-}
+})
 
 // 工具栏相关默认设置
-const defaultToolbarSetting: ToolbarSetting = {
+const defaultToolbarSetting = (): ToolbarSetting => ({
 	isOpenMenuCollapseButton: true,
 	isOpenMenuSearch: true,
 	isOpenRefreshPage: true,
@@ -32,22 +31,22 @@ const defaultToolbarSetting: ToolbarSetting = {
 	isOpenThemeSwitch: true,
 	isOpenBreadcrumb: true,
 	isOpenBreadcrumbIcon: true
-}
+})
 
 // 标签页相关默认设置
-const defaultTagSetting: TagBarSetting = {
+const defaultTagSetting = (): TagBarSetting => ({
 	isOpenTag: true,
 	isOpenTagIcon: true,
 	isOpenTagCache: true,
 	isOpenTagDragActivated: false
-}
+})
 
 // 其他设置默认值
-const defaultOtherSetting: OtherSetting = {
+const defaultOtherSetting = (): OtherSetting => ({
 	isOpenDynamicTitle: true,
 	isOpenProgress: true,
 	isOpenPageCache: true
-}
+})
 
 // 持久化配置
 const getPersistConfig = () => {
@@ -65,18 +64,18 @@ export const useSystemSettingStore = defineStore(
 	'system-setting',
 	() => {
 		const state = reactive({
-			menu: cloneObject(defaultMenuSetting),
-			toolbar: cloneObject(defaultToolbarSetting),
-			tag: cloneObject(defaultTagSetting),
-			other: cloneObject(defaultOtherSetting)
+			menu: defaultMenuSetting(),
+			toolbar: defaultToolbarSetting(),
+			tag: defaultTagSetting(),
+			other: defaultOtherSetting()
 		})
 
 		// 恢复默认配置
 		const resetSetting = () => {
-			resetReactiveObject(state.menu, defaultMenuSetting)
-			resetReactiveObject(state.toolbar, defaultToolbarSetting)
-			resetReactiveObject(state.tag, defaultTagSetting)
-			resetReactiveObject(state.other, defaultOtherSetting)
+			Object.assign(state.menu, defaultMenuSetting())
+			Object.assign(state.toolbar, defaultToolbarSetting())
+			Object.assign(state.tag, defaultTagSetting())
+			Object.assign(state.other, defaultOtherSetting())
 		}
 
 		return {

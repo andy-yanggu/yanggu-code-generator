@@ -181,12 +181,8 @@ const dataRules = computed(() => {
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
-const initHandle = (templateGroupId: number, id?: number) => {
-	init(id, undefined, { templateGroupId })
-}
-
 defineExpose({
-	initHandle
+	init
 })
 </script>
 <style lang="scss" scoped>

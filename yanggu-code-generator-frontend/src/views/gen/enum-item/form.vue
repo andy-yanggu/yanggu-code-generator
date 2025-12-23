@@ -40,9 +40,9 @@ defineOptions({
 })
 
 // 初始化表单数据
-const initFormData = (): GenEnumItemEntity => ({
+const initFormData = (ctx?: Record<string, any>): GenEnumItemEntity => ({
 	id: '',
-	enumId: -1,
+	enumId: ctx?.enumId ?? -1,
 	enumItemName: '',
 	enumItemCode: '',
 	enumItemDesc: '',
@@ -69,12 +69,7 @@ const dataRules = reactive({
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
-const initData = (enumId: number, id?: number) => {
-	state.dataForm.enumId = enumId
-	init(id)
-}
-
 defineExpose({
-	initData
+	init
 })
 </script>

@@ -1,14 +1,14 @@
 <template>
 	<el-row v-for="(row, rowIndex) in visibleRows" :key="rowIndex">
-		<el-col v-for="col in row.items" :key="col.key" :span="24 / columns">
-			<slot :name="col.type === 'item' ? col.key : 'actions'"></slot>
+		<!-- 条件项 -->
+		<el-col v-for="col in row.items" :key="col.key" :span="colSpan">
+			<slot :name="col.key"></slot>
 		</el-col>
 
-		<el-col v-show="row.hasAction" :span="24 / columns">
+		<!-- 操作区 -->
+		<el-col v-if="row.hasAction" :span="colSpan" :offset="row.actionAlignRight ? actionOffset : 0">
 			<slot name="actions"></slot>
-			<template v-if="row.showToggle">
-				<toggle-more v-model:showMore="showMore"></toggle-more>
-			</template>
+			<toggle-more v-if="row.showToggle" v-model:showMore="showMore"></toggle-more>
 		</el-col>
 	</el-row>
 </template>
@@ -24,37 +24,78 @@ const props = defineProps({
 const slots = useSlots()
 const showMore = ref(false)
 
-// 获取 item-* 插槽名称并排序
-const itemSlots = computed(() =>
-	Object.keys(slots)
+/**
+ * 单列 span
+ */
+const colSpan = computed(() => Math.floor(24 / props.columns))
+
+/**
+ * actions 右对齐时需要的 offset
+ * 24 - colSpan = 推到最右一列
+ */
+const actionOffset = computed(() => 24 - colSpan.value)
+
+/**
+ * 行结构
+ */
+type Row = {
+	items: { key: string; type: 'item' }[]
+	hasAction: boolean
+	showToggle: boolean
+	actionAlignRight: boolean
+}
+
+/**
+ * 可见行计算
+ */
+const visibleRows = computed<Row[]>(() => {
+	// 获取 item-* 插槽并排序
+	const itemSlots = Object.keys(slots)
 		.filter(key => key.startsWith('item-'))
-		.sort((a, b) => parseInt(a.split('-')[1]) - parseInt(b.split('-')[1]))
-)
+		.sort((a, b) => Number(a.split('-')[1]) - Number(b.split('-')[1]))
 
-const totalItems = computed(() => itemSlots.value.length)
+	const items = itemSlots.map(key => ({ key, type: 'item' as const }))
+	const rows: Row[] = []
 
-// 生成行数据，每行包含 item 数组，并标记是否显示操作区
-const visibleRows = computed(() => {
-	const items = [...itemSlots.value].map(key => ({ key, type: 'item' as const }))
-	const rows: { items: typeof items; hasAction: boolean; showToggle: boolean }[] = []
+	// 条件数 < columns：actions 紧跟在后
+	if (items.length < props.columns) {
+		rows.push({
+			items,
+			hasAction: true,
+			showToggle: false,
+			actionAlignRight: false
+		})
+		return rows
+	}
 
-	if (totalItems.value <= props.columns) {
-		// 少于等于 columns 条，操作区放在最后一行
-		rows.push({ items, hasAction: true, showToggle: false })
-	} else {
-		// 大于 columns 条
-		if (!showMore.value) {
-			// 收起状态：第一行放 columns - 1 条 + 操作区 + 展开
-			const firstRowItems = items.splice(0, props.columns - 1)
-			rows.push({ items: firstRowItems, hasAction: true, showToggle: true })
-		} else {
-			// 展开状态：每行最多 columns 条，操作区放在最后一行 + 收起
-			while (items.length) {
-				const rowItems = items.splice(0, props.columns)
-				const isLastRow = items.length === 0
-				rows.push({ items: rowItems, hasAction: isLastRow, showToggle: isLastRow })
-			}
-		}
+	// 条件数 > columns
+	if (!showMore.value) {
+		// 收起态：columns - 1 + actions + 展开
+		const firstRowItems = items.splice(0, props.columns - 1)
+
+		rows.push({
+			items: firstRowItems,
+			hasAction: true,
+			showToggle: true,
+			actionAlignRight: false
+		})
+
+		return rows
+	}
+
+	// 展开态：每行 columns 条，actions 放最后一行
+	while (items.length) {
+		const rowItems = items.splice(0, props.columns)
+		const isLastRow = items.length === 0
+
+		rows.push({
+			items: rowItems,
+			hasAction: isLastRow,
+			showToggle: isLastRow,
+			// ⭐ 关键逻辑：
+			// 最后一行刚好占满 → actions 另起一行 → 右对齐
+			actionAlignRight: isLastRow && rowItems.length === props.columns
+		})
 	}
 
 	return rows

@@ -1,6 +1,6 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { FORM_TYPES, FormOptions, FormType, Key } from '@/types'
+import { FormInitOptions, FormOptions, FormType, Key } from '@/types'
 
 // 提交表单
 export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>) => {
@@ -63,36 +63,12 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		}
 	}
 
-	const isFormType = (value: any): value is FormType => {
-		return FORM_TYPES.includes(value)
-	}
-
-	// 重载声明
-	// init() // 新增
-	// init(id: Key) // 修改
-	// init(type: FormType) // 新增
-	// init(type: FormType, id: Key) // 修改、复制、详情
-	// init(type: FormType, id: Key, ctx: Record<string, any>) // 新增、修改、复制
-	// init(id: Key, undefined, ctx: Record<string, any>) // 新增、修改、复制
-
 	// 初始化表单
-	const init = (arg1?: FormType | Key, arg2?: Key, ctx?: Record<string, any>) => {
-		let type: FormType = 'add'
-		let id: Key | undefined = undefined
+	const init = (initOptions: FormInitOptions) => {
+		const { type, id, ctx = {} } = initOptions
 
-		if (arg1 !== undefined) {
-			if (isFormType(arg1)) {
-				// arg1 是 FormType
-				type = arg1 as FormType
-				if (arg2 !== undefined) {
-					id = arg2
-				}
-			} else {
-				// arg1 是 Key → 老调用方式，默认为修改
-				id = arg1
-				type = 'update'
-			}
-		}
+		formType.value = type
+		visible.value = true
 
 		formType.value = type
 		visible.value = true

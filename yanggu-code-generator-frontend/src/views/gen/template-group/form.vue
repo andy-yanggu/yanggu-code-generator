@@ -43,7 +43,7 @@ defineOptions({
 
 // 初始化表单数据
 const initFormData = (): GenTemplateGroupEntity => ({
-	id: -1,
+	id: null,
 	groupName: '',
 	type: '',
 	groupDesc: ''

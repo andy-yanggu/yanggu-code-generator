@@ -29,7 +29,7 @@
 				>
 					<template #left>
 						<el-space>
-							<el-button type="primary" :icon="Plus" @click="addOrUpdateHandle()">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle({ type: 'add' })">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 						</el-space>
 					</template>
@@ -63,7 +63,7 @@
 				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+						<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
 						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -76,8 +76,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<enum-item-form ref="formRef" @refresh-data-list="getDataList()"></enum-item-form>
@@ -86,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTableAction } from '@/hooks'
+import { useInitForm, useTableAction } from '@/hooks'
 import { reactive, ref } from 'vue'
 import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
@@ -112,10 +111,6 @@ const state = reactive({
 const enumNameRef = ref('')
 
 const dialogVisible = ref(false)
-const formRef = ref()
-const addOrUpdateHandle = (id?: number) => {
-	formRef.value.initData(state.queryForm.enumId, id)
-}
 
 const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
@@ -123,6 +118,8 @@ const init = (enumId: number, enumName: string) => {
 	enumNameRef.value = enumName
 	state.queryForm.enumId = enumId
 }
+
+const { formRef, formInitHandle } = useInitForm(() => ({ enumId: state.queryForm.enumId }))
 
 defineExpose({
 	init

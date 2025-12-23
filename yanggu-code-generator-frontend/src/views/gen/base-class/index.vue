@@ -34,7 +34,7 @@
 				>
 					<template #left>
 						<el-space size="default">
-							<el-button type="primary" :icon="Plus" @click="formInitHandle('add')">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle({ type: 'add' })">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 						</el-space>
 					</template>
@@ -85,15 +85,15 @@
 					<template #default="scope">
 						<el-row>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="View" @click="formInitHandle('detail', scope.row.id)">详情</el-button>
+								<el-button type="primary" link :icon="View" @click="formInitHandle({ type: 'detail', id: scope.row.id })">详情</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle('update', scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle('copy', scope.row.id)">复制</el-button>
+								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>

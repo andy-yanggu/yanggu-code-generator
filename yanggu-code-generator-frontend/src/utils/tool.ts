@@ -1,7 +1,7 @@
-import { App, Component, Plugin, reactive } from 'vue'
+import { App, Component, Plugin } from 'vue'
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import { cloneDeep, isEmpty, isObject } from 'lodash-unified'
+import { isEmpty } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -49,30 +49,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	})
 }
 
-// 克隆对象
-export const cloneObject = <T extends object>(obj: T): T => {
-	return cloneDeep(obj) as T
-}
-
-// 初始化响应式对象
-export const initReactiveObject = <T extends Record<string, any>>(obj: T): T => {
-	if (obj === null || !isObject(obj)) {
-		throw new TypeError('Expected an object to initialize as reactive')
-	}
-	return reactive(cloneDeep(obj)) as T
-}
-
-// 重置对象
-export const resetReactiveObject = <T extends object>(target: T, source: T): void => {
-	// 清空目标对象的所有属性
-	Object.keys(target).forEach(key => {
-		delete (target as Record<string, unknown>)[key]
-	})
-
-	// 将克隆的源对象属性复制到目标对象
-	Object.assign(target, cloneObject(source))
-}
-
+// 浏览器tab的标题
 const title = useTitle()
 
 // 默认标题

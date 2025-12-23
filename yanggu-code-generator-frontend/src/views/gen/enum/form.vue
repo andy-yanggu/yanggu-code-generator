@@ -7,7 +7,7 @@
 					:options="projectList"
 					:props="{ label: 'projectName', value: 'id' }"
 					clearable
-					:disabled="state.dataForm.id != null"
+					:disabled="state.dataForm.id"
 					placeholder="请选择项目"
 				></el-select>
 			</el-form-item>
@@ -49,7 +49,7 @@ const getProjectList = () => {
 
 // 初始化表单数据
 const initFormData = (): GenEnumEntity => ({
-	id: '',
+	id: null,
 	projectId: '',
 	enumName: '',
 	enumDesc: ''
@@ -65,9 +65,9 @@ const state = reactive({
 } as FormOptions<GenEnumEntity>)
 
 const dataRules = reactive({
-	enumName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	enumDesc: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	enumName: [{ required: true, message: '枚举名称不能为空', trigger: 'blur' }],
+	enumDesc: [{ required: true, message: '枚举描述不能为空', trigger: 'blur' }],
+	projectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }]
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)

@@ -137,7 +137,7 @@ const projectList = ref([] as GenProjectEntity[])
 
 // 初始化表单数据
 const initFormData = (): GenTableEntity => ({
-	id: -1,
+	id: null,
 	tableName: '',
 	databaseName: '',
 	className: '',

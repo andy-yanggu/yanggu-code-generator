@@ -32,26 +32,25 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
-import { nextTick, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-import { initReactiveObject, resetReactiveObject } from '@/utils/tool'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
 
 defineOptions({
 	name: 'MenuSearch'
 })
 
-const INIT_STATE = {
+const initState = () => ({
 	visible: false,
 	keyword: '',
 	searchItemList: [] as TreeNode[],
 	matchItemList: [] as TreeNode[]
-}
+})
 
-const searchState = initReactiveObject(INIT_STATE)
+const searchState = reactive(initState())
 
 const searchInputRef = ref()
 const scrollbarRef = ref()
@@ -94,7 +93,7 @@ const buildMenuTree = (menuList: MenuInfo[]): TreeNode[] => {
 
 // 打开搜索框
 const openSearch = () => {
-	resetReactiveObject(searchState, INIT_STATE)
+	Object.assign(searchState, initState())
 	searchState.visible = true
 	searchState.searchItemList = buildMenuTree(userStore.menuList)
 	searchState.matchItemList = searchState.searchItemList

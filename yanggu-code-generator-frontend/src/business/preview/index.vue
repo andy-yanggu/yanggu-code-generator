@@ -170,13 +170,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, shallowReactive, shallowRef, watch } from 'vue'
+import { nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
-import { cloneObject, copyToClipboard, initReactiveObject, resetReactiveObject } from '@/utils/tool'
+import { copyToClipboard } from '@/utils/tool'
 import { useDebounceFn, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 import { useSubmitHandler } from '@/hooks'
@@ -215,7 +215,7 @@ const { start: startTimer } = useTimeoutFn(() => {
 	copyIconState.value = CopyDocument
 }, 2000)
 
-const INIT_GENERATOR_STATE_ARRAY = [
+const initGeneratorStateArray = () => [
 	{
 		icon: Download,
 		text: '下载',
@@ -227,8 +227,8 @@ const INIT_GENERATOR_STATE_ARRAY = [
 		tooltip: '生成代码'
 	}
 ]
-const generatorState = shallowReactive(cloneObject(INIT_GENERATOR_STATE_ARRAY[0]))
-const INIT_TEMPLATE_TREE_DATA = {
+const generatorState = reactive(initGeneratorStateArray()[0])
+const initTemplateTreeData = () => ({
 	visible: false,
 	id: -1,
 	name: '',
@@ -240,24 +240,24 @@ const INIT_TEMPLATE_TREE_DATA = {
 	item: {} as Tree,
 	tabList: [] as Tree[],
 	tabActiveName: ''
-}
-const templateTreeData = initReactiveObject(INIT_TEMPLATE_TREE_DATA)
+})
+const templateTreeData = reactive(initTemplateTreeData())
 const treeSearchText = ref('')
 const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 // 初始化方法
 const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
-	resetReactiveObject(templateTreeData, INIT_TEMPLATE_TREE_DATA)
+	Object.assign(templateTreeData, initTemplateTreeData())
 	treeSearchText.value = ''
 	templateTreeData.id = id
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
 	if (generatorType === 0) {
-		resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[0])
+		Object.assign(generatorState, initGeneratorStateArray()[0])
 	} else {
-		resetReactiveObject(generatorState, INIT_GENERATOR_STATE_ARRAY[1])
+		Object.assign(generatorState, initGeneratorStateArray()[1])
 	}
 	templateTreeData.generatorProductType = generatorProductType
 	templateTreeData.visible = true

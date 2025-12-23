@@ -47,7 +47,7 @@
 				>
 					<template #left>
 						<el-space size="default">
-							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
+							<el-button type="primary" :icon="Plus" @click="formInitHandle({ type: 'add' })">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 						</el-space>
 					</template>
@@ -91,7 +91,7 @@
 					<template #default="scope">
 						<el-row>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
 							</el-col>
 							<el-col :span="12">
 								<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-button>
@@ -117,8 +117,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<project-form ref="formRef" @refresh-data-list="getDataList"></project-form>

@@ -45,7 +45,7 @@ defineOptions({
 
 // 初始化表单数据
 const initFormData = (): GenDatasourceEntity => ({
-	id: -1,
+	id: null,
 	dbType: '',
 	connName: '',
 	connUrl: '',
@@ -70,11 +70,11 @@ const state = reactive({
 } as FormOptions<GenDatasourceEntity>)
 
 const dataRules = reactive({
-	dbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	connName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	connUrl: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	username: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	password: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	dbType: [{ required: true, message: '数据库类型不能为空', trigger: 'blur' }],
+	connName: [{ required: true, message: '连接名称不能为空', trigger: 'blur' }],
+	connUrl: [{ required: true, message: 'URL不能为空', trigger: 'blur' }],
+	username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+	password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
 })
 
 const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
