@@ -434,7 +434,7 @@ const fullFilePath = computed(() => {
 	return getFullPathById(activeTabItem.value.id, templateTreeData.treeList)
 })
 
-const expandedKeys = ref<number[]>([])
+const expandedKeys = ref([] as number[])
 
 // 节点展开时，把 id 加进 expandedKeys
 const handleNodeExpand = (data: Tree) => {
@@ -476,7 +476,7 @@ const init = async () => {
 
 		if (templateContentList.length > 0 && templateTreeData.activeItemId === -1) {
 			templateTreeData.activeItemId = templateContentList[0].id
-			expandedKeys.value.push(templateContentList[0].id)
+			expandedKeys.value.push(templateContentList[0].parentId)
 			tabPush(templateContentList[0])
 		}
 		// 更新一下tab中的数据，已新加载数据为准

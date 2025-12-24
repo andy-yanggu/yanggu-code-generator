@@ -15,6 +15,10 @@ export const useInitForm = (ctxGetter?: () => Record<string, any>) => {
 			initOptions.type = 'add'
 		} else if (isObject(arg)) {
 			// 2️⃣ 传的是对象 → 认为是 FormInitOptions
+			const tempArg = arg as FormInitOptions
+			if (!tempArg.type) {
+				throw new Error(`参数错误，type为空: ${arg}}`)
+			}
 			Object.assign(initOptions, arg)
 		} else if (arg) {
 			// 3️⃣ 传的是 key → 默认修改
