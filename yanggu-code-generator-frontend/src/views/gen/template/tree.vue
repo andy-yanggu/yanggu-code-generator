@@ -50,8 +50,10 @@
 									<div class="custom-tree-node">
 										<!-- 修改时添加小红点 -->
 										<el-badge is-dot :hidden="!data.isEdited">
-											<svg-icon :icon="getIcon(node, data)"></svg-icon>
-											{{ node.label }}
+											<div style="display: flex; align-items: center; justify-content: center; gap: 5px">
+												<svg-icon :icon="getIcon(node, data)"></svg-icon>
+												{{ node.label }}
+											</div>
 										</el-badge>
 										<div class="tree-node-actions">
 											<el-icon class="edit-icon" @click.stop="updateTemplate(data)">
@@ -120,7 +122,7 @@
 					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
 							<el-col :span="17" style="padding-left: 10px">
-								<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
+								<text-tooltip :title="`路径：${fullFilePath}`" :tooltip-content="fullFilePath" max-width="100%"></text-tooltip>
 							</el-col>
 							<el-col :span="7" style="text-align: right">
 								<el-button
@@ -426,7 +428,10 @@ const submitLoading = ref(false)
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 const fullFilePath = computed(() => {
-	return getFullPathById(templateTreeData.activeItemId, templateTreeData.treeList)
+	// 仅用于建立依赖，显示读取
+	// 当激活的tab的parentId改变时，路径可能会变化
+	const _ = activeTabItem.value.parentId
+	return getFullPathById(activeTabItem.value.id, templateTreeData.treeList)
 })
 
 const expandedKeys = ref<number[]>([])
@@ -949,7 +954,7 @@ const updateTemplate = (node: Tree) => {
 	const templatePath = getFullPathById(node.id, templateTreeData.treeList).replace(node.fileName, '').replace(/\/$/, '')
 	contextMenu.templatePath = templatePath ? templatePath : '/'
 	nextTick(() => {
-		formInitHandle({ type: 'update', id: node.id })
+		formInitHandle(node.id)
 	})
 	hideContextMenu()
 }
@@ -960,7 +965,7 @@ const newDir = (parent: Tree) => {
 	contextMenu.templateType = 0
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle({ type: 'add' })
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -971,7 +976,7 @@ const newTemplateFile = (parent: Tree) => {
 	contextMenu.templateType = 1
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle({ type: 'add' })
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -982,7 +987,7 @@ const newBinaryFile = (parent: Tree) => {
 	contextMenu.templateType = 2
 	contextMenu.parentId = parent.id
 	nextTick(() => {
-		formInitHandle({ type: 'add' })
+		formInitHandle()
 	})
 	hideContextMenu()
 }
@@ -1001,10 +1006,12 @@ const initAfterHandler = (tree: Tree) => {
 
 // 获取节点的图标
 const getIcon = (node: any, data: Tree): string => {
-	if (node.expanded) {
-		return 'icon-folder-open'
-	} else if (data.templateType === 0) {
-		return 'icon-folder'
+	if (data.templateType === 0) {
+		if (node.expanded) {
+			return 'icon-folder-open'
+		} else {
+			return 'icon-folder'
+		}
 	} else if (data.templateType === 1) {
 		return 'icon-file-text'
 	} else if (data.templateType === 2) {

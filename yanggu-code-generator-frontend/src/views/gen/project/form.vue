@@ -32,7 +32,7 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="项目端口" prop="projectPort">
-						<el-input v-model.number="state.dataForm.projectPort" placeholder="请输入项目端口" clearable @input="projectPortInputHandler"></el-input>
+						<el-input v-model.number="state.dataForm.projectPort" placeholder="请输入项目端口" clearable></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -210,8 +210,6 @@ const initFormData = (): GenProjectEntity => ({
 	frontendPath: '',
 	projectDesc: '',
 	author: '',
-	entityBaseClassId: '',
-	voBaseClassId: '',
 	generatorType: ''
 })
 
@@ -244,7 +242,10 @@ const dataRules = computed(() => {
 	const rules: Record<string, FormItemRule[]> = {
 		projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		projectPort: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		projectPort: [
+			{ required: true, message: '项目端口不能为空', trigger: 'blur' },
+			{ type: 'number', message: '项目端口必须为数字', trigger: 'change' }
+		],
 		projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
 		generatorType: [{ required: true, message: '请选择生成类型', trigger: 'blur' }]
 		// moduleList 是否必填由外层 form-item 控制，若 required: true 则会出现在 rules['moduleList']
@@ -334,15 +335,6 @@ const dataRules = computed(() => {
 
 	return rules
 })
-
-const projectPortInputHandler = (value: number | string) => {
-	if (value === '') {
-		state.dataForm.projectPort = null
-	} else {
-		const n = Number(value)
-		state.dataForm.projectPort = Number.isNaN(n) ? null : n
-	}
-}
 
 const datasourceList = ref([] as GenDatasourceEntity[])
 const projectTemplateGroupList = ref([] as GenTemplateGroupEntity[])

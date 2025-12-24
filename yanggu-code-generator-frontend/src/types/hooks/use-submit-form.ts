@@ -32,6 +32,8 @@ export interface FormOptions<VO> {
 	initAfter?: () => void
 	// 提交之前操作
 	submitBefore?: () => void
+	// 表单提交成功后调用
+	submitAfter?: (data: any) => void
 	// 触发事件
 	emit?: any
 	// 提示信息

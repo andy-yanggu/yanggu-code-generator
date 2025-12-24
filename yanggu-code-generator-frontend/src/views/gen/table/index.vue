@@ -100,7 +100,7 @@
 								<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">配置</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle({ type: 'update', id: scope.row.id })">修改</el-button>
+								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
 						</el-row>
 						<el-row>

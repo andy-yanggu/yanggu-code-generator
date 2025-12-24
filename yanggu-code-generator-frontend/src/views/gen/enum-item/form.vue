@@ -61,10 +61,10 @@ const state = reactive({
 } as FormOptions<GenEnumItemEntity>)
 
 const dataRules = reactive({
-	enumItemName: [{ required: true, message: '请输入枚举项名称', trigger: 'blur' }],
-	enumItemCode: [{ required: true, message: '请输入枚举项编码', trigger: 'blur' }],
-	enumItemDesc: [{ required: true, message: '请输入枚举项描述', trigger: 'blur' }],
-	enumItemOrder: [{ required: true, message: '请配置枚举项排序', trigger: 'blur' }]
+	enumItemName: [{ required: true, message: '枚举项名称不能为空', trigger: 'blur' }],
+	enumItemCode: [{ required: true, message: '枚举项编码不能为空', trigger: 'blur' }],
+	enumItemDesc: [{ required: true, message: '枚举项描述不能为空', trigger: 'blur' }],
+	enumItemOrder: [{ required: true, message: '枚举项排序不能为空', trigger: 'blur' }]
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)

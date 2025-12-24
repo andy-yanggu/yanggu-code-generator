@@ -7,7 +7,7 @@
 					:options="projectList"
 					:props="{ label: 'projectName', value: 'id' }"
 					clearable
-					:disabled="state.dataForm.id"
+					:disabled="isNotBlank(state.dataForm.id)"
 					placeholder="请选择项目"
 				></el-select>
 			</el-form-item>
@@ -35,6 +35,7 @@ import { FormOptions, GenEnumEntity, GenProjectEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { isNotBlank } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenEnumForm'

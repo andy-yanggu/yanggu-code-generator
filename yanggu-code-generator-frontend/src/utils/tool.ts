@@ -1,7 +1,7 @@
 import { App, Component, Plugin } from 'vue'
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import { isEmpty } from 'lodash-unified'
+import { isEmpty, isNil, isString } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -67,11 +67,27 @@ export const setDefaultTitle = () => {
 }
 
 // 导出非空函数
-export { isEmpty } from 'lodash-unified'
+export { isEmpty, isObject } from 'lodash-unified'
 
-// 添加 isNotEmpty 函数
+// isNotEmpty，针对聚合量（对象和数组）
 export const isNotEmpty = (value: any): boolean => {
 	return !isEmpty(value)
+}
+
+// isBlank，针对标量场景
+export const isBlank = (val: any): boolean => {
+	if (isNil(val)) {
+		return true
+	}
+	if (isString(val)) {
+		return val.trim() === ''
+	}
+	return false
+}
+
+// isNotBlank，针对标量场景
+export const isNotBlank = (value: any): boolean => {
+	return !isBlank(value)
 }
 
 // 修改泛型约束为 Component

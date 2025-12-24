@@ -123,13 +123,16 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 				.then(data => {
 					ElMessage.success({
 						message,
-						duration: options.duration,
-						onClose: () => {
-							visible.value = false
-							// 触发刷新列表事件
-							options.emit?.('refreshDataList', data ?? options.dataForm)
-						}
+						duration: options.duration
 					})
+					visible.value = false
+					if (options.submitAfter) {
+						// 提交成功后调用
+						options.submitAfter(data ?? options.dataForm)
+					} else {
+						// 默认为刷新列表
+						options.emit?.('refreshDataList', data ?? options.dataForm)
+					}
 				})
 				.finally(() => {
 					submitLoading.value = false
