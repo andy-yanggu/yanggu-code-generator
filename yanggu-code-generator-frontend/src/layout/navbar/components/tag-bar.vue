@@ -1,5 +1,5 @@
 <template>
-	<el-tabs ref="tagWrapperRef" v-model="userStore.activeMenuPath" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+	<el-tabs ref="tagWrapperRef" v-model="appStore.activeTabPath" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 		<!-- 标签 -->
 		<el-tab-pane
 			v-for="tag in appStore.tagList"
@@ -33,11 +33,11 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks'
-import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { useAppStore, useSystemSettingStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
@@ -57,13 +57,17 @@ const currentMenuTag = reactive({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const userStore = useUserStore()
 const tagWrapperRef = ref()
 
 onMounted(() => {
 	// 点击页面任意位置关闭右键菜单
 	document.addEventListener('click', closeTagMenu)
 })
+
+watch(
+	() => route.fullPath,
+	() => (appStore.activeTabPath = route.fullPath)
+)
 
 // 默认菜单
 const defaultMenu = computed(() => systemSettingStore.menu.menuDefault)

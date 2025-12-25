@@ -8,8 +8,6 @@ import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 // 持久化配置
 const getPersistConfig = () => {
 	const key = 'appStore'
-	// 忽略字段
-	const originOmitList = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef']
 	// 根据环境设置持久化配置
 	// if (import.meta.env.PROD) {
 	//
@@ -20,12 +18,16 @@ const getPersistConfig = () => {
 		// 支持动态配置忽略字段
 		omit: (_: never) => {
 			const systemSettingStore = useSystemSettingStore()
+			// 忽略字段
+			const originOmitList: string[] = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef']
+			const tagOmitList: string[] = ['tagList', 'activeTabPath']
 			if (!systemSettingStore.tag.isOpenTagCache) {
-				originOmitList.push('tagList')
+				originOmitList.push(...tagOmitList)
 			} else {
-				const start = originOmitList.indexOf('tagList')
-				if (start > -1) {
-					originOmitList.splice(start, 1)
+				for (let i = originOmitList.length - 1; i >= 0; i--) {
+					if (tagOmitList.includes(originOmitList[i])) {
+						originOmitList.splice(i, 1)
+					}
 				}
 			}
 			return originOmitList
@@ -39,6 +41,8 @@ export const useAppStore = defineStore(
 		// 状态
 		// 折叠状态
 		const isCollapse = ref(false)
+		// 激活tab
+		const activeTabPath = ref('')
 		// 标签列表
 		const tagList = ref<NavbarTag[]>([])
 		// 缓存组件列表
@@ -176,6 +180,7 @@ export const useAppStore = defineStore(
 
 		return {
 			isCollapse,
+			activeTabPath,
 			tagList,
 			layoutSize,
 			cacheList,

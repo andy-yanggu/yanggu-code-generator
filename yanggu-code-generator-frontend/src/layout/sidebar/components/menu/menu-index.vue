@@ -4,7 +4,6 @@
 			:default-active="userStore.activeMenuPath"
 			background-color="transparent"
 			mode="vertical"
-			router
 			:unique-opened="systemSettingStore.menu.isOpenMenuUniqueOpened"
 			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 			:collapse="appStore.isCollapse"
@@ -19,6 +18,7 @@ import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { findMenuByPath } from '@/store/user-store'
 
 defineOptions({
 	name: 'MenuIndex'
@@ -48,7 +48,12 @@ watch(
 // 初始化激活菜单
 onMounted(() => {
 	const activeMenuPath = userStore.activeMenuPath
-	if (activeMenuPath) {
+	const findMenu = findMenuByPath(userStore.menuList, activeMenuPath)
+	// 外链不处理
+	if (findMenu?.meta?.type === 4) {
+		return
+	}
+	if (activeMenuPath !== route.fullPath) {
 		router.push(activeMenuPath)
 	}
 })
