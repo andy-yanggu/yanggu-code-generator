@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks'
@@ -41,6 +41,8 @@ import { useAppStore, useSystemSettingStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
+import { useEventListener } from '@vueuse/core'
+import { isEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'TagBar'
@@ -59,11 +61,6 @@ const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 const tagWrapperRef = ref()
 
-onMounted(() => {
-	// 点击页面任意位置关闭右键菜单
-	document.addEventListener('click', closeTagMenu)
-})
-
 watch(
 	() => route.fullPath,
 	() => (appStore.activeTabPath = route.fullPath)
@@ -72,14 +69,13 @@ watch(
 // 默认菜单
 const defaultMenu = computed(() => systemSettingStore.menu.menuDefault)
 
+// 标签页元素
+const tabNavEl = computed(() => tagWrapperRef.value?.tabNavRef?.tabListRef)
+
 // 实现标签页的拖拽效果
 onMounted(() => {
 	nextTick(() => {
-		const tabsWrapper = tagWrapperRef.value.$el.querySelector('.el-tabs__nav') as HTMLElement
-		if (!tabsWrapper) {
-			return
-		}
-		new Sortable(tabsWrapper, {
+		new Sortable(tabNavEl.value, {
 			animation: 200,
 			handle: '.el-tabs__item', // 拖拽手柄
 			onEnd: evt => {
@@ -103,31 +99,33 @@ onMounted(() => {
 	})
 })
 
-onMounted(() => {
-	nextTick(() => {
-		const nav = tagWrapperRef.value.$el.querySelector('.el-tabs__nav')
-		if (!nav) {
-			return
-		}
+// tab右键菜单
+const onTabContextMenu = (e: MouseEvent) => {
+	const item = (e.target as HTMLElement).closest('.el-tabs__item') as HTMLElement
+	if (!item) {
+		return
+	}
 
-		nav.addEventListener('contextmenu', (e: MouseEvent) => {
-			const item = (e.target as HTMLElement).closest('.el-tabs__item')
-			if (!item) {
-				return
-			}
+	e.preventDefault()
 
-			const index = Array.from(nav.children).indexOf(item)
-			const tag = appStore.tagList[index]
+	const fullPath = item.id.replace(/^tab-/, '')
+	const index = appStore.tagList.findIndex(t => t.fullPath === fullPath)
+	if (index === -1) {
+		return
+	}
 
-			showTagMenu(e, tag, index)
-		})
-	})
-})
+	showTagMenu(e, appStore.tagList[index], index)
+}
 
-// 组件卸载时移除事件监听
-onUnmounted(() => {
-	document.removeEventListener('click', closeTagMenu)
-})
+useEventListener(tabNavEl, 'contextmenu', onTabContextMenu)
+
+// 关闭标签菜单
+const closeTagMenu = () => {
+	tagMenuVisible.value = false
+}
+
+// 点击页面任意位置关闭右键菜单
+useEventListener(document, 'click', closeTagMenu)
 
 // 处理点击标签
 const handleTabClick = (tab: TabsPaneContext, _: Event) => {
@@ -192,11 +190,6 @@ const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	})
 
 	tagMenuVisible.value = true
-}
-
-// 关闭标签菜单
-const closeTagMenu = () => {
-	tagMenuVisible.value = false
 }
 
 // 刷新当前标签页
@@ -267,7 +260,7 @@ const closeRightTag = () => {
 
 // 删除缓存和标签
 const deleteCacheAndTag = (tagList: NavbarTag[]) => {
-	if (!tagList || tagList.length === 0) {
+	if (isEmpty(tagList)) {
 		return
 	}
 	const nameList = tagList.map(item => item.name)

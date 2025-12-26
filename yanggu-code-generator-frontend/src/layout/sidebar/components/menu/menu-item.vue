@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, PropType, Ref, ref } from 'vue'
+import { computed, onMounted, PropType, ref } from 'vue'
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
 import { MenuInfo } from '@/types'
@@ -35,7 +35,7 @@ const props = defineProps({
 		required: true
 	},
 	refMap: {
-		type: Map as PropType<Map<string, Ref<HTMLElement>>>,
+		type: Map as PropType<Map<string, any>>,
 		required: true
 	},
 	parentPaths: {
@@ -45,6 +45,13 @@ const props = defineProps({
 })
 
 const rootRef = ref()
+
+// 添加ref引用到refMap中
+onMounted(() => {
+	if (rootRef.value) {
+		props.refMap.set(menuIndexPath.value, rootRef.value)
+	}
+})
 
 // 计算菜单项的完整路径索引
 const menuIndexPath = computed(() => {
@@ -81,9 +88,4 @@ const getSubMenuKey = (subMenu: MenuInfo) => {
 	// console.log('fullPath', `${prefix}${fullPath}`)
 	return `${prefix}${fullPath}`
 }
-
-// 添加ref引用到refMap中
-onMounted(() => {
-	props.refMap.set(menuIndexPath.value, rootRef.value)
-})
 </script>

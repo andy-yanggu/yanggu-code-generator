@@ -2,7 +2,6 @@
 	<el-scrollbar>
 		<el-menu
 			:default-active="userStore.activeMenuPath"
-			background-color="transparent"
 			mode="vertical"
 			:unique-opened="systemSettingStore.menu.isOpenMenuUniqueOpened"
 			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"

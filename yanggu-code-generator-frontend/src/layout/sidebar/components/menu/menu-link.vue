@@ -1,5 +1,5 @@
 <template>
-	<component :is="linkType" v-bind="linkProps" @click="handleClick">
+	<component :is="linkType" v-bind="linkProps" class="menu-link" @click="handleClick">
 		<slot></slot>
 	</component>
 </template>
@@ -34,11 +34,7 @@ const linkType = computed(() => {
 	return 'router-link'
 })
 
-const handleClick = (e: Event) => {
-	// 外链点击阻止 el-menu router 跳转
-	if (props.menu.meta.type === 4) {
-		e.stopPropagation() // 阻止事件冒泡
-	}
+const handleClick = () => {
 	userStore.setActiveMenuPath(props.path)
 }
 
@@ -56,3 +52,12 @@ const linkProps = computed(() => {
 	}
 })
 </script>
+<style scoped>
+.menu-link {
+	display: block;
+	width: 100%;
+	height: 100%;
+	color: inherit;
+	text-decoration: none;
+}
+</style>
