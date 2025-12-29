@@ -125,7 +125,7 @@ import { CopyDocument, Document, DocumentAdd, Download, Edit, Expand, Fold, Refr
 import { copyToClipboard } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
-import { SubmitOptions } from '@/types'
+import { Result, SubmitOptions } from '@/types'
 import { useSubmitHandler } from '@/hooks'
 
 defineOptions({
@@ -264,20 +264,19 @@ const handleCascaderChange = async (val: string[]) => {
 	} catch (error) {
 		testData.activeName = 'template'
 		// 检查错误是否包含预期的错误码
-		if (error && typeof error === 'object' && 'code' in error) {
-			if (error.code === 700) {
-				ElMessage.warning({
-					message: '当前模板的表达式执行为false，不渲染模板',
-					duration: 2000
-				})
-				return
-			}
-			if (error.code !== 200) {
-				ElMessage.error({
-					message: error.message,
-					duration: 2000
-				})
-			}
+		const result: Result = error as any
+		if (result.code === 700) {
+			ElMessage.warning({
+				message: '当前模板的表达式执行为false，不渲染模板',
+				duration: 2000
+			})
+			return
+		}
+		if (result.code !== 200) {
+			ElMessage.error({
+				message: result.message,
+				duration: 2000
+			})
 		}
 	} finally {
 		loadingInstance.close()

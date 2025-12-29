@@ -17,6 +17,11 @@
 			<el-form-item label="模板类型" prop="templateType">
 				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES" disabled></el-radio-group>
 			</el-form-item>
+			<template v-if="state.dataForm.templateType === 0">
+				<el-form-item label="条件表达式" prop="conditionExpression">
+					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
+				</el-form-item>
+			</template>
 			<template v-if="state.dataForm.templateType === 1">
 				<el-form-item label="模板名称" prop="templateName">
 					<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>

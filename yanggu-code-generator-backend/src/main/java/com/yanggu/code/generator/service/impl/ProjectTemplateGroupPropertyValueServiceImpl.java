@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.core.util.ObjUtil;
 import cn.hutool.v7.json.JSONArray;
 import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -60,22 +60,24 @@ public class ProjectTemplateGroupPropertyValueServiceImpl extends ServiceImpl<Pr
                 .eq(ProjectTemplateGroupPropertyValueEntity::getProjectId, projectId)
                 .eq(ProjectTemplateGroupPropertyValueEntity::getTemplateGroupId, templateGroupId);
 
-        return this.list(queryWrapper).stream()
+
+        Map<String, Object> result = new HashMap<>();
+        collectMap.forEach((id, templateGroupPropertyEntity) -> {
+            String propDefaultValue = templateGroupPropertyEntity.getPropDefaultValue();
+            Object object = handlerData(propDefaultValue);
+            result.put(templateGroupPropertyEntity.getPropKey(), object);
+        });
+
+        Map<String, Object> collect = this.list(queryWrapper).stream()
                 .filter(temp -> collectMap.containsKey(temp.getTemplateGroupPropertyId()))
                 .collect(Collectors.toMap(
                         temp -> collectMap.get(temp.getTemplateGroupPropertyId()).getPropKey(),
-                        temp -> {
-                            String propertyValue = temp.getTemplateGroupPropertyValue();
-                            boolean empty = ObjUtil.isEmpty(propertyValue);
-                            String data;
-                            if (empty) {
-                                data = collectMap.get(temp.getTemplateGroupPropertyId()).getPropDefaultValue();
-                            } else {
-                                data = propertyValue;
-                            }
-                            return handlerData(data);
-                        })
+                        temp -> handlerData(temp.getTemplateGroupPropertyValue()))
                 );
+
+        // 合并result和collect，以result数据为准
+        result.putAll(collect);
+        return result;
     }
 
     private Object handlerData(String value) {

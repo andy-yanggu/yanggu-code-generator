@@ -136,10 +136,16 @@
 			</template>
 
 			<form-divider title="其他配置"></form-divider>
-			<el-form-item label="后端路径" prop="backendPath">
+			<el-form-item prop="backendPath">
+				<template #label>
+					<form-label-tooltip label="后端路径" tooltip="以 '/' 分隔"></form-label-tooltip>
+				</template>
 				<el-input v-model="state.dataForm.backendPath" clearable placeholder="请输入后端路径"></el-input>
 			</el-form-item>
-			<el-form-item label="前端路径" prop="frontendPath">
+			<el-form-item prop="frontendPath">
+				<template #label>
+					<form-label-tooltip label="前端路径" tooltip="以 '/' 分隔"></form-label-tooltip>
+				</template>
 				<el-input v-model="state.dataForm.frontendPath" clearable placeholder="请输入前端路径"></el-input>
 			</el-form-item>
 		</el-form>

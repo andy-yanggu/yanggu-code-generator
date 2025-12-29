@@ -158,10 +158,10 @@
 							@tab-click="handleTabClick"
 							@tab-remove="handleTabRemove"
 						>
-							<el-tab-pane v-for="(tabItem, index) in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
+							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
-										<div class="tab-label" @contextmenu.prevent.stop="showTabMenu($event, tabItem, index)">
+										<div class="tab-label">
 											<!-- 修改时添加小红点 -->
 											<el-badge is-dot :hidden="!tabItem.isEdited">
 												<div style="display: flex; align-items: center; gap: 5px">
@@ -249,7 +249,7 @@ import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
-import { useFullscreen } from '@vueuse/core'
+import { useEventListener, useFullscreen } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
@@ -1040,10 +1040,11 @@ document.addEventListener('mousedown', e => {
 		}
 	}
 })
+// 标签页元素
+const tabNavEl = computed(() => tabsRef.value?.tabNavRef?.tabListRef)
 
 const showTabMenu = (e: MouseEvent, tab: Tree, index: number) => {
 	e.preventDefault()
-	// console.log('tab右键', tab)
 	tabContextMenu.index = index
 	tabContextMenu.item = tab
 	tabContextMenu.visible = true
@@ -1061,6 +1062,26 @@ const showTabMenu = (e: MouseEvent, tab: Tree, index: number) => {
 		}
 	})
 }
+
+// tab右键菜单
+const onTabContextMenu = (e: MouseEvent) => {
+	const item = (e.target as HTMLElement).closest('.el-tabs__item') as HTMLElement
+	if (!item) {
+		return
+	}
+
+	e.preventDefault()
+
+	const tempId = Number.parseInt(item.id.replace(/^tab-/, ''))
+	const index = templateTreeData.tabList.findIndex(t => t.id === tempId)
+	if (index === -1) {
+		return
+	}
+
+	showTabMenu(e, getElementFromTabList(tempId)!, index)
+}
+
+useEventListener(tabNavEl, 'contextmenu', onTabContextMenu)
 
 // tab点击
 const handleTabClick = (tab: TabsPaneContext, _: Event) => {
