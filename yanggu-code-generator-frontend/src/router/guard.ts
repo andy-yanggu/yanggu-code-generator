@@ -4,6 +4,7 @@ import 'nprogress/nprogress.css'
 import NProgress from 'nprogress'
 import { setTitle } from '@/utils/tool'
 import { MenuInfo, RouteMetaData } from '@/types'
+import { useTimeoutFn } from '@vueuse/core'
 
 NProgress.configure({ showSpinner: false })
 
@@ -13,8 +14,9 @@ const whiteLists: string[] = ['AuthLogin']
 export const routeGuard = (router: Router) => {
 	// 路由前置拦截
 	router.beforeEach((to, from, next) => {
+		const appStore = useAppStore()
+		appStore.globalLoading = true
 		const systemSettingStore = useSystemSettingStore()
-
 		if (systemSettingStore.other.isOpenProgress) {
 			NProgress.start()
 		}
@@ -71,8 +73,6 @@ export const routeGuard = (router: Router) => {
 			return next(systemSettingStore.menu.menuDefault ?? '/index')
 		}
 
-		const appStore = useAppStore()
-
 		// 不是新窗口,添加tag标签
 		if (routeMetaData.type !== 4 && systemSettingStore.tag.isOpenTag) {
 			// 添加标签
@@ -96,6 +96,9 @@ export const routeGuard = (router: Router) => {
 		if (systemSettingStore.other.isOpenDynamicTitle) {
 			setTitle(to.meta.title as string)
 		}
+
+		const appStore = useAppStore()
+		useTimeoutFn(() => (appStore.globalLoading = false), 500)
 
 		// 关闭进度条
 		if (systemSettingStore.other.isOpenProgress && NProgress.isStarted()) {

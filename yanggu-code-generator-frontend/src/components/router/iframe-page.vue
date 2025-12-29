@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import NProgress from 'nprogress'
-import { useSystemSettingStore } from '@/store'
+import { useAppStore, useSystemSettingStore } from '@/store'
 
 defineOptions({
 	name: 'RouterIframePage'
@@ -29,6 +29,7 @@ const props = defineProps({
 
 const currentLoading = ref(true) // 是否在加载中
 const systemSettingStore = useSystemSettingStore()
+const appStore = useAppStore()
 
 // 只有在缓存模式下进行监控
 if (props.cache) {
@@ -39,6 +40,7 @@ if (props.cache) {
 			if (systemSettingStore.other.isOpenProgress) {
 				NProgress.start()
 			}
+			appStore.globalLoading = true
 			currentLoading.value = true
 		}
 	)
@@ -50,6 +52,7 @@ const handleLoad = () => {
 	if (props.cache && NProgress.isStarted() && systemSettingStore.other.isOpenProgress) {
 		NProgress.done()
 	}
+	appStore.globalLoading = false
 	currentLoading.value = false
 }
 </script>

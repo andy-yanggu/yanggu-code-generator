@@ -41,6 +41,8 @@ export const useAppStore = defineStore(
 		// 状态
 		// 折叠状态
 		const isCollapse = ref(false)
+		// 全局loading
+		const globalLoading = ref(false)
 		// 激活tab
 		const activeTabPath = ref('')
 		// 标签列表
@@ -180,6 +182,7 @@ export const useAppStore = defineStore(
 
 		return {
 			isCollapse,
+			globalLoading,
 			activeTabPath,
 			tagList,
 			layoutSize,
