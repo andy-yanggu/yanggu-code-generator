@@ -247,7 +247,7 @@ const handleCascaderChange = async (val: string[]) => {
 		text: '模板渲染中...'
 	})
 	try {
-		const data = await genGeneratorApi.templateTest(queryForm)
+		const data = await genGeneratorApi.templateTest(queryForm, { noErrorMessage: true })
 		testData.renderedFileName = data.filePath
 		testData.renderedTemplateContent = data.content
 		ElMessage.success({
@@ -261,8 +261,24 @@ const handleCascaderChange = async (val: string[]) => {
 		} else {
 			Object.assign(generatorState, initGeneratorStateArray()[1])
 		}
-	} catch {
+	} catch (error) {
 		testData.activeName = 'template'
+		// 检查错误是否包含预期的错误码
+		if (error && typeof error === 'object' && 'code' in error) {
+			if (error.code === 700) {
+				ElMessage.warning({
+					message: '当前模板的表达式执行为false，不渲染模板',
+					duration: 2000
+				})
+				return
+			}
+			if (error.code !== 200) {
+				ElMessage.error({
+					message: error.message,
+					duration: 2000
+				})
+			}
+		}
 	} finally {
 		loadingInstance.close()
 	}

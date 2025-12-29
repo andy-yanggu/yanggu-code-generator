@@ -60,6 +60,7 @@ const state = reactive({
 	submitApi: genDatasourceApi.submit,
 	detailApi: genDatasourceApi.detail,
 	initFormData,
+	dataForm: initFormData(),
 	initAfter: () => {
 		if (formType.value === 'copy') {
 			state.dataForm.connName = state.dataForm.connName + '_复制'

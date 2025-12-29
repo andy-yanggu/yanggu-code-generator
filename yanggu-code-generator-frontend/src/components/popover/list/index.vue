@@ -1,6 +1,5 @@
 <template>
 	<el-popover
-		ref="popoverRef"
 		:disabled="list.length <= previewCount"
 		teleported
 		:append-to="appStore.currentFullscreenElement || body"
@@ -21,14 +20,14 @@
 		<template #default>
 			<el-space :size="5" wrap spacer="、">
 				<template v-for="item in list" :key="item">
-					<el-tag size="small">{{ item }}</el-tag>
+					<el-tag :type="tagType" :size="tagSize">{{ item }}</el-tag>
 				</template>
 			</el-space>
 		</template>
 		<template #reference>
 			<div :style="{ cursor: list.length > previewCount ? 'pointer' : 'default' }">
-				<el-tag v-for="item in list.slice(0, previewCount)" :key="item" size="small" style="margin-right: 5px"> {{ item }}</el-tag>
-				<el-tag v-if="list.length > previewCount" size="small">+{{ list.length - previewCount }}</el-tag>
+				<el-tag v-for="item in list.slice(0, previewCount)" :key="item" :type="tagType" :size="tagSize" style="margin-right: 5px"> {{ item }}</el-tag>
+				<el-tag v-if="list.length > previewCount" :type="tagType" :size="tagSize">+{{ list.length - previewCount }}</el-tag>
 			</div>
 		</template>
 	</el-popover>
@@ -46,6 +45,14 @@ defineProps({
 	list: {
 		type: Array as PropType<string[]>,
 		default: [] as string[]
+	},
+	tagType: {
+		type: String,
+		default: 'primary'
+	},
+	tagSize: {
+		type: String,
+		default: 'small'
 	},
 	width: {
 		type: Number,

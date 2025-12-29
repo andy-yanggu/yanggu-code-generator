@@ -47,6 +47,7 @@ const state = reactive({
 	submitApi: genFieldTypeApi.submit,
 	detailApi: genFieldTypeApi.detail,
 	initFormData,
+	dataForm: initFormData(),
 	emit
 } as FormOptions<GenFieldTypeEntity>)
 

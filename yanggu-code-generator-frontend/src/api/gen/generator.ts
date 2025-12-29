@@ -1,4 +1,5 @@
 import { downloadFile, service } from '@/utils/request'
+import { AxiosRequestConfig } from 'axios'
 
 const baseUrl: string = '/gen/generator'
 
@@ -41,7 +42,7 @@ export const genGeneratorApi = {
 		return service.post(baseUrl + '/enum/downloadLocal', dataForm)
 	},
 	// 模板测试
-	templateTest: (queryForm: any): Promise<any> => {
-		return service.post(baseUrl + '/template/test', queryForm)
+	templateTest: (queryForm: any, config?: AxiosRequestConfig): Promise<any> => {
+		return service.post(baseUrl + '/template/test', queryForm, config)
 	}
 }

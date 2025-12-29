@@ -29,7 +29,15 @@
 				</div>
 			</el-form-item>
 			<el-form-item label="基类字段" prop="fieldList">
-				<el-input-tag v-model="state.dataForm.fieldList" tag-effect="light" clearable placeholder="请输入基类字段"></el-input-tag>
+				<el-input-tag
+					v-model="state.dataForm.fieldList"
+					collapse-tags
+					collapse-tags-tooltip
+					:max-collapse-tags="5"
+					draggable
+					clearable
+					placeholder="请输入基类字段"
+				></el-input-tag>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>

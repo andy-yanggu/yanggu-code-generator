@@ -11,7 +11,7 @@
 				<el-select
 					v-model="state.dataForm.type"
 					:options="TEMPLATE_GROUP_TYPES"
-					:disabled="state.dataForm.id != null"
+					:disabled="isNotBlank(state.dataForm.id)"
 					clearable
 					filterable
 					placeholder="请选择模板组类型"
@@ -36,6 +36,7 @@ import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupApi } from '@/api'
 import { FormOptions, GenTemplateGroupEntity } from '@/types'
+import { isNotBlank } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'

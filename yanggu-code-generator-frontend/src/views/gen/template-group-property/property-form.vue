@@ -165,10 +165,10 @@ const getComponentProps = (item: GenTemplateGroupPropertyEntity) => {
 
 		case 5:
 			return {
-				activeValue: item.componentOptions?.[1]?.value,
+				inactiveText: item.componentOptions?.[0]?.label,
 				inactiveValue: item.componentOptions?.[0]?.value,
 				activeText: item.componentOptions?.[1]?.label,
-				inactiveText: item.componentOptions?.[0]?.label,
+				activeValue: item.componentOptions?.[1]?.value,
 				inlinePrompt: true
 			}
 

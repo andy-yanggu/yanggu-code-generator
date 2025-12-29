@@ -1,28 +1,38 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle()" width="60%" :close-on-click-modal="false" @closed="visible = false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:rules="dataRules"
+			label-width="110px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<el-form-item label="路径" prop="templatePath">
 				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
 			</el-form-item>
-			<el-form-item :label="state.dataForm.templateType === 0 ? '目录名称' : '文件名称'" prop="fileName">
-				<el-input
-					v-model="state.dataForm.fileName"
-					clearable
-					:placeholder="state.dataForm.templateType === 0 ? '请输入目录名称' : '请输入文件名称'"
-				></el-input>
-			</el-form-item>
-			<el-form-item v-if="state.dataForm.templateType === 1" label="模板名称" prop="templateName">
-				<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
+			<el-form-item :label="fileName" prop="fileName">
+				<el-input v-model="state.dataForm.fileName" clearable :placeholder="`请输入${fileName}`"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
 				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES" disabled></el-radio-group>
 			</el-form-item>
-			<!-- 文件上传 -->
-			<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
-				<el-upload :limit="1" :file-list="fileList" :on-exceed="handleExceed" :http-request="handleManualUpload" :on-remove="handleRemove">
-					<el-button type="primary" :icon="Upload">点击上传</el-button>
-				</el-upload>
-			</el-form-item>
+			<template v-if="state.dataForm.templateType === 1">
+				<el-form-item label="模板名称" prop="templateName">
+					<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
+				</el-form-item>
+				<el-form-item label="条件表达式" prop="conditionExpression">
+					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
+				</el-form-item>
+			</template>
+			<template v-else-if="state.dataForm.templateType === 2">
+				<!-- 文件上传 -->
+				<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
+					<el-upload :limit="1" :file-list="fileList" :on-exceed="handleExceed" :http-request="handleManualUpload" :on-remove="handleRemove">
+						<el-button type="primary" :icon="Upload">点击上传</el-button>
+					</el-upload>
+				</el-form-item>
+			</template>
 			<el-form-item label="描述" prop="templateDesc">
 				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入描述"></el-input>
 			</el-form-item>
@@ -36,11 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Upload } from '@element-plus/icons-vue'
-import { UploadProps } from 'element-plus'
+import { FormItemRule, UploadProps } from 'element-plus'
 import { genTemplateApi } from '@/api'
 import { FormOptions, GenTemplateEntity, Key } from '@/types'
 
@@ -97,6 +107,7 @@ const initFormData = (): GenTemplateEntity => ({
 	templateType: -1,
 	templateDesc: '',
 	binaryOriginalFileName: '',
+	conditionExpression: '',
 	templateContent: '',
 	templatePath: ''
 })
@@ -127,11 +138,22 @@ const validateBinaryFile = (_: any, value: any, callback: any) => {
 	}
 }
 
-const dataRules = reactive({
-	templateName: [{ required: true, validator: validateTemplateName, message: '必填项不能为空', trigger: 'blur' }],
-	fileName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	templateType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '必填项不能为空', trigger: 'blur' }]
+const fileName = computed(() => {
+	if (state.dataForm.templateType === 0) {
+		return '目录名称'
+	} else {
+		return '文件名称'
+	}
+})
+
+const dataRules = computed(() => {
+	const constRules: Record<string, FormItemRule[]> = {
+		templateName: [{ required: true, validator: validateTemplateName, message: '模板名称不能为空', trigger: 'blur' }],
+		fileName: [{ required: true, message: `${fileName.value}不能为空`, trigger: 'blur' }],
+		templateType: [{ required: true, message: '模板类型不能为空', trigger: 'blur' }],
+		binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '文件不能为空', trigger: 'blur' }]
+	}
+	return constRules
 })
 
 const fileList = ref([] as File[])

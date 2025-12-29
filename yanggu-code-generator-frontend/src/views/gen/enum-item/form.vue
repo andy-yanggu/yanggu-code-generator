@@ -57,6 +57,7 @@ const state = reactive({
 	// 详情API
 	detailApi: genEnumItemApi.detail,
 	initFormData,
+	dataForm: initFormData(),
 	emit
 } as FormOptions<GenEnumItemEntity>)
 

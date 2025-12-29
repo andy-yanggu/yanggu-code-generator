@@ -76,4 +76,10 @@ public class TemplateEntity extends BaseEntity implements Serializable {
     @TableField(value = "binary_original_file_name")
     private String binaryOriginalFileName;
 
+    /**
+     * 条件表达式
+     */
+    @TableField(value = "condition_expression")
+    private String conditionExpression;
+
 }

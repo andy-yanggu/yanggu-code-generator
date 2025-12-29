@@ -99,6 +99,12 @@ public class TemplateVO extends BaseVO implements Serializable {
     private String binaryOriginalFileName;
 
     /**
+     * 条件表达式
+     */
+    @Schema(description = "条件表达式")
+    private String conditionExpression;
+
+    /**
      * 子节点列表
      */
     @Schema(description = "子节点列表")

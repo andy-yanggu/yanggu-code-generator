@@ -22,6 +22,7 @@ import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.enums.BusinessResultError;
 import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
@@ -29,6 +30,7 @@ import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
 import com.yanggu.code.generator.service.*;
+import com.yanggu.code.generator.util.AviatorUtil;
 import com.yanggu.code.generator.util.GenUtil;
 import com.yanggu.code.generator.util.NameUtil;
 import com.yanggu.code.generator.util.TemplateUtil;
@@ -248,16 +250,28 @@ public class GeneratorServiceImpl implements GeneratorService {
         switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
             case PROJECT -> {
                 ProjectModel projectModel = buildProjectDataModel(project, datasourceService.get(project.getDatasourceId()));
+                boolean executionResult = executionExpression(templateVO.getConditionExpression(), projectModel);
+                if (!executionResult) {
+                    throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
+                }
                 return getTemplateContentVO(templateGroup, templateVO, projectModel);
             }
             case TABLE -> {
                 TableEntity table = tableService.getById(templateTestQuery.getTestId());
                 TableModel tableModel = buildTableDataModel(table, project);
+                boolean executionResult = executionExpression(templateVO.getConditionExpression(), tableModel);
+                if (!executionResult) {
+                    throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
+                }
                 return getTemplateContentVO(templateGroup, templateVO, tableModel);
             }
             case ENUM -> {
                 EnumEntity enumEntity = enumService.getById(templateTestQuery.getTestId());
                 EnumModel enumModel = buildEnumDataModel(enumEntity, project);
+                boolean executionResult = executionExpression(templateVO.getConditionExpression(), enumModel);
+                if (!executionResult) {
+                    throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
+                }
                 return getTemplateContentVO(templateGroup, templateVO, enumModel);
             }
             default ->
@@ -321,6 +335,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //渲染模板并输出
         return templateList.stream()
+                .filter(template -> executionExpression(template.getConditionExpression(), tableModel))
                 .map(template -> {
                     TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, tableModel);
                     templateContentVO.setTableId(tableId);
@@ -333,6 +348,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         Long enumId = enumQuery.getEnumIdList().getFirst();
         EnumEntity enumEntity = enumService.getById(enumId);
         ProjectEntity project = projectService.getById(enumEntity.getProjectId());
+        EnumModel enumModel = buildEnumDataModel(enumEntity, project);
         List<Long> templateIdList = enumQuery.getTemplateIdList();
 
         //查询项目对应的枚举模板
@@ -341,8 +357,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TemplateContentVO> list = new ArrayList<>();
         templateList.stream()
                 .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
+                .filter(template -> executionExpression(template.getConditionExpression(), enumModel))
                 .forEach(template -> {
-                    EnumModel enumModel = buildEnumDataModel(enumEntity, project);
                     TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumModel);
                     templateContentVO.setEnumId(enumId);
                     list.add(templateContentVO);
@@ -365,6 +381,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectModel projectModel = buildProjectDataModel(project, dataSource);
         return projecTemplateList.stream()
                 .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
+                .filter(template -> executionExpression(template.getConditionExpression(), projectModel))
                 .map(template -> getTemplateContentVO(templateGroup, template, projectModel))
                 .toList();
     }
@@ -401,6 +418,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .toList();
         return enumModelList.stream()
                 .flatMap(enumModel -> templateList.stream()
+                        .filter(template -> executionExpression(template.getConditionExpression(), enumModel))
                         .map(template -> {
                             TemplateContentVO templateContentVO = getTemplateContentVO(templateGroup, template, enumModel);
                             templateContentVO.setEnumId(enumModel.getEnumId());
@@ -438,7 +456,6 @@ public class GeneratorServiceImpl implements GeneratorService {
             projectModel.setDatabaseUrl(dataSource.getConnUrl());
             projectModel.setDatabaseUsername(dataSource.getUsername());
             projectModel.setDatabasePassword(dataSource.getPassword());
-
         }
 
         // 项目模板属性数据
@@ -550,6 +567,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //生成方式
         tableModel.setGeneratorType(project.getGeneratorType());
+
+        //项目模板属性数据
+        tableModel.setProjectTemplatePropertyData(projectTemplateGroupPropertyValueService.getData(project.getId(), project.getProjectTemplateGroupId()));
         return tableModel;
     }
 
@@ -761,6 +781,13 @@ public class GeneratorServiceImpl implements GeneratorService {
                 default -> throw new BusinessException("未知模板类型：" + templateType);
             }
         }
+    }
+
+    private boolean executionExpression(String expression, Object dataModel) {
+        if (StrUtil.isBlank(expression)) {
+            return true;
+        }
+        return (Boolean) AviatorUtil.execute(AviatorUtil.compile(expression), dataModel);
     }
 
     private List<TemplateVO> buildTemplateTreeWithPaths(List<TemplateEntity> templateList) {

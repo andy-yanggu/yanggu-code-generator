@@ -22,6 +22,8 @@ export interface GenTemplateEntity {
 	templateType: number
 	// 二进制原始文件名
 	binaryOriginalFileName: string
+	// 条件表达式
+	conditionExpression: string
 	// 模板路径
 	templatePath?: string
 }

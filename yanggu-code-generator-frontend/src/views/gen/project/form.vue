@@ -151,7 +151,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
@@ -168,10 +168,6 @@ defineOptions({
 })
 
 const emit = defineEmits(['refreshDataList'])
-
-onMounted(() => {
-	getList()
-})
 
 const getList = () => {
 	// 数据源下拉
@@ -216,7 +212,9 @@ const initFormData = (): GenProjectEntity => ({
 const state = reactive({
 	submitApi: genProjectApi.submit,
 	detailApi: genProjectApi.detail,
+	initBefore: getList,
 	initFormData,
+	dataForm: initFormData(),
 	submitBefore: () => {
 		if (formType.value === 'add' && state.dataForm.datasourceId) {
 			state.message = '新增成功，已经导入该项目引用数据源下的所有表，请到表管理中进行查看'

@@ -2,7 +2,6 @@ package com.yanggu.code.generator.domain.dto;
 
 import com.yanggu.code.generator.common.validation.code.EnumCode;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
-import com.yanggu.code.generator.common.validation.path.UnixPath;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -82,5 +81,11 @@ public class TemplateDTO implements Serializable {
      */
     @Schema(description = "二进制原始文件名")
     private String binaryOriginalFileName;
+
+    /**
+     * 条件表达式
+     */
+    @Schema(description = "条件表达式")
+    private String conditionExpression;
 
 }

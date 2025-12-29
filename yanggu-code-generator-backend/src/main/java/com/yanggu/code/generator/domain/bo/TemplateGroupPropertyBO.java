@@ -47,6 +47,11 @@ public class TemplateGroupPropertyBO implements Serializable {
     private Integer required;
 
     /**
+     * 字段布局方式（1-独占一行，2-一行两个字段）
+     */
+    private Integer columnSpan;
+
+    /**
      * 排序
      */
     private Integer propOrder;

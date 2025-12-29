@@ -62,6 +62,7 @@ const state = reactive({
 	detailApi: genEnumApi.detail,
 	initBefore: getProjectList,
 	initFormData,
+	dataForm: initFormData(),
 	emit
 } as FormOptions<GenEnumEntity>)
 

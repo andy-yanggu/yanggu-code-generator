@@ -117,7 +117,7 @@ const handleBusinessError = (result: Result, config: any) => {
 		if (!config.noErrorMessage) {
 			ElMessage.error(result.message || '请求错误')
 		}
-		return Promise.reject(new Error(result.message || '请求错误'))
+		return Promise.reject(result)
 	}
 }
 
