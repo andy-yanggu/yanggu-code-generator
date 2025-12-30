@@ -44,8 +44,8 @@ import { useAppStore, useSystemSettingStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
-import { useEventListener } from '@vueuse/core'
-import { isEmpty } from '@/utils/tool'
+import { useDebounceFn, useEventListener } from '@vueuse/core'
+import { isEmpty, isNotBlank } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
@@ -76,6 +76,15 @@ const defaultMenu = computed(() => systemSettingStore.menu.menuDefault)
 // 标签页元素
 const tabNavEl = computed(() => tagWrapperRef.value?.tabNavRef?.tabListRef)
 
+const draggedTagPath = ref('')
+const tabActive = useDebounceFn(() => {
+	// console.log('判断函数被执行了', draggedTagPath.value)
+	if (isNotBlank(draggedTagPath.value)) {
+		router.push(draggedTagPath.value)
+		draggedTagPath.value = ''
+	}
+}, 500)
+
 // 实现标签页的拖拽效果
 onMounted(() => {
 	nextTick(() => {
@@ -83,15 +92,31 @@ onMounted(() => {
 			animation: 200,
 			handle: '.el-tabs__item',
 
+			onStart: evt => {
+				const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
+
+				const draggedIndex = items.indexOf(evt.item)
+				if (draggedIndex === -1) {
+					return
+				}
+
+				const draggedTag = appStore.tagList[draggedIndex]
+
+				// 激活被拖拽的标签页
+				if (systemSettingStore.tag.isOpenTagDragActivated && appStore.activeTabPath !== draggedTag.fullPath) {
+					draggedTagPath.value = draggedTag.fullPath
+				}
+			},
+
 			// 固定标签之间拖拽，非固定标签页之前拖拽，不能互相拖拽
 			onMove: evt => {
 				const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
 
 				const draggedIndex = items.indexOf(evt.dragged)
 				const targetIndex = items.indexOf(evt.related)
-				const tags = [...appStore.tagList]
-
+				const tags = appStore.tagList
 				const draggedTag = tags[draggedIndex]
+
 				const pinnedCount = tags.filter(t => t.pinned).length
 
 				// 固定 → 禁止拖出固定区
@@ -100,7 +125,13 @@ onMounted(() => {
 				}
 
 				// 普通 → 禁止拖入固定区
-				return !(!draggedTag.pinned && targetIndex < pinnedCount)
+				if (!draggedTag.pinned && targetIndex < pinnedCount) {
+					return false
+				}
+
+				tabActive()
+
+				return true
 			},
 
 			onEnd: evt => {
@@ -116,10 +147,6 @@ onMounted(() => {
 				tags.splice(newIndex, 0, movedTag)
 
 				appStore.addAllTags(appStore.sortTags(tags))
-
-				if (systemSettingStore.tag.isOpenTagDragActivated && route.fullPath !== movedTag.fullPath) {
-					router.push(movedTag.fullPath)
-				}
 			}
 		})
 	})

@@ -38,7 +38,7 @@ const defaultTagSetting = (): TagBarSetting => ({
 	isOpenTag: true,
 	isOpenTagIcon: true,
 	isOpenTagCache: true,
-	isOpenTagDragActivated: false
+	isOpenTagDragActivated: true
 })
 
 // 其他设置默认值
