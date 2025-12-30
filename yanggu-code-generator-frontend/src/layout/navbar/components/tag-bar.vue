@@ -5,10 +5,12 @@
 			v-for="tag in appStore.tagList"
 			:key="tag.fullPath"
 			:name="tag.fullPath"
-			:closable="tag.fullPath != defaultMenu || appStore.tagLength > 1"
+			:closable="!tag.pinned && (tag.fullPath != defaultMenu || appStore.tagLength > 1)"
 		>
 			<template #label>
 				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" :title="tag.title"></icon-text-tooltip>
+				<!-- 固定标签显示 pin icon -->
+				<svg-icon v-if="tag.pinned" icon="icon-pin" class="pin-icon" @click.stop="togglePin(tag)"></svg-icon>
 			</template>
 		</el-tab-pane>
 	</el-tabs>
@@ -27,6 +29,7 @@
 			@close-all-tags="closeAllTags()"
 			@open-new-window="openNewWindow()"
 			@full-screen="fullScreen()"
+			@toggle-pin="togglePin(currentMenuTag)"
 		></tag-menu>
 	</div>
 </template>
@@ -43,6 +46,7 @@ import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
 import { useEventListener } from '@vueuse/core'
 import { isEmpty } from '@/utils/tool'
+import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
 	name: 'TagBar'
@@ -77,22 +81,44 @@ onMounted(() => {
 	nextTick(() => {
 		new Sortable(tabNavEl.value, {
 			animation: 200,
-			handle: '.el-tabs__item', // 拖拽手柄
+			handle: '.el-tabs__item',
+
+			// 固定标签之间拖拽，非固定标签页之前拖拽，不能互相拖拽
+			onMove: evt => {
+				const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
+
+				const draggedIndex = items.indexOf(evt.dragged)
+				const targetIndex = items.indexOf(evt.related)
+				const tags = [...appStore.tagList]
+
+				const draggedTag = tags[draggedIndex]
+				const pinnedCount = tags.filter(t => t.pinned).length
+
+				// 固定 → 禁止拖出固定区
+				if (draggedTag.pinned && targetIndex >= pinnedCount) {
+					return false
+				}
+
+				// 普通 → 禁止拖入固定区
+				return !(!draggedTag.pinned && targetIndex < pinnedCount)
+			},
+
 			onEnd: evt => {
 				const oldIndex = evt.oldIndex!
 				const newIndex = evt.newIndex!
-				// console.log('oldIndex:', oldIndex, 'newIndex:', newIndex)
-				if (oldIndex !== null && newIndex !== null && oldIndex !== newIndex) {
-					const newTags = [...appStore.tagList]
-					const movedTag = newTags.splice(oldIndex!, 1)[0]
-					newTags.splice(newIndex!, 0, movedTag)
-					appStore.addAllTags(newTags)
-					// 激活被移动的标签
-					if (systemSettingStore.tag.isOpenTagDragActivated) {
-						if (route.fullPath != movedTag.fullPath) {
-							router.push(movedTag.fullPath)
-						}
-					}
+
+				if (oldIndex === newIndex) {
+					return
+				}
+
+				const tags = [...appStore.tagList]
+				const movedTag = tags.splice(oldIndex, 1)[0]
+				tags.splice(newIndex, 0, movedTag)
+
+				appStore.addAllTags(appStore.sortTags(tags))
+
+				if (systemSettingStore.tag.isOpenTagDragActivated && route.fullPath !== movedTag.fullPath) {
+					router.push(movedTag.fullPath)
 				}
 			}
 		})
@@ -117,59 +143,6 @@ const onTabContextMenu = (e: MouseEvent) => {
 	showTagMenu(e, appStore.tagList[index], index)
 }
 
-useEventListener(tabNavEl, 'contextmenu', onTabContextMenu)
-
-// 关闭标签菜单
-const closeTagMenu = () => {
-	tagMenuVisible.value = false
-}
-
-// 点击页面任意位置关闭右键菜单
-useEventListener(document, 'click', closeTagMenu)
-
-// 处理点击标签
-const handleTabClick = (tab: TabsPaneContext, _: Event) => {
-	const fullPath = tab.paneName as string
-	if (fullPath != route.fullPath) {
-		router.push(fullPath)
-	}
-}
-
-// 处理标签删除
-const handleTabRemove = (fullPath: string) => {
-	const index = appStore.tagList.findIndex(tag => tag.fullPath === fullPath)
-	handleClose(index, appStore.tagList[index])
-}
-
-// 处理关闭单个标签
-const handleClose = (index: number, tag: NavbarTag) => {
-	// 新增：首页保护逻辑（当只有一个标签且是首页时不允许关闭）
-	if (appStore.tagLength === 1 && tag.fullPath === defaultMenu.value) {
-		return // 直接返回，不执行关闭操作
-	}
-
-	// 删除对应的缓存组件和标签
-	deleteCacheAndTag([tag])
-
-	// 判断当前标签页是否为当前路由
-	if (tag.fullPath === route.fullPath) {
-		let to = defaultMenu.value // 默认跳转首页
-
-		// 关闭后如果还有标签页
-		if (appStore.tagLength > 0) {
-			// 优先尝试右侧标签
-			if (index < appStore.tagLength) {
-				to = appStore.tagList[index].fullPath
-			} else if (index > 0) {
-				// 右侧无标签时选择左侧
-				to = appStore.tagList[index - 1].fullPath
-			}
-		}
-		// 跳转到对应路由
-		router.push(to)
-	}
-}
-
 // 显示标签右键菜单
 const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	e.preventDefault()
@@ -192,6 +165,109 @@ const showTagMenu = (e: MouseEvent, tag: NavbarTag, index: number) => {
 	tagMenuVisible.value = true
 }
 
+useEventListener(tabNavEl, 'contextmenu', onTabContextMenu)
+
+// 关闭标签菜单
+const closeTagMenu = () => {
+	tagMenuVisible.value = false
+}
+
+// 点击页面任意位置关闭右键菜单
+useEventListener(document, 'click', closeTagMenu)
+
+// 处理点击标签
+const handleTabClick = (tab: TabsPaneContext, _: Event) => {
+	const fullPath = tab.paneName as string
+	if (fullPath != route.fullPath) {
+		router.push(fullPath)
+	}
+}
+
+// 统一关闭入口
+const canCloseTag = (tag: NavbarTag) => {
+	// 首页保护
+	if (appStore.tagLength === 1 && tag.fullPath === defaultMenu.value) {
+		return false
+	}
+
+	// 固定标签不能被关闭（必须先取消固定）
+	return !tag.pinned
+}
+
+// 计算删除后的跳转目标
+const resolveNextRouteAfterClose = (index: number, removedTag: NavbarTag) => {
+	// 如果删的不是当前激活页，不需要跳转
+	if (removedTag.fullPath !== route.fullPath) {
+		return null
+	}
+
+	const tags = appStore.tagList
+	const lastIndex = tags.length - 1
+
+	// 优先右侧
+	if (index < lastIndex) {
+		return tags[index + 1]?.fullPath
+	}
+
+	// 其次左侧
+	if (index > 0) {
+		return tags[index - 1]?.fullPath
+	}
+
+	// 兜底：首页
+	return defaultMenu.value
+}
+
+// 统一删除函数
+const closeTags = (tagsToClose: NavbarTag[]) => {
+	if (isEmpty(tagsToClose)) {
+		return
+	}
+
+	// 过滤掉不能关闭的标签
+	const closableTags = tagsToClose.filter(canCloseTag)
+	if (isEmpty(closableTags)) {
+		return
+	}
+
+	const nameList = closableTags.map(tag => tag.name)
+
+	// 删除缓存
+	appStore.removeCacheComponentList(nameList)
+	appStore.removeIframeCacheList(nameList)
+
+	// 删除标签
+	appStore.removeTags(closableTags)
+}
+
+// 关闭单个标签
+const closeSingleTag = (tag: NavbarTag) => {
+	if (!canCloseTag(tag)) {
+		return
+	}
+
+	const index = appStore.tagList.findIndex(t => t.fullPath === tag.fullPath)
+	if (index === -1) {
+		return
+	}
+
+	const nextRoute = resolveNextRouteAfterClose(index, tag)
+
+	closeTags([tag])
+
+	if (nextRoute) {
+		router.push(nextRoute)
+	}
+}
+
+// 处理标签删除
+const handleTabRemove = (fullPath: string) => {
+	const tag = appStore.tagList.find(t => t.fullPath === fullPath)
+	if (tag) {
+		closeSingleTag(tag)
+	}
+}
+
 // 刷新当前标签页
 const refreshCurrentTag = () => {
 	if (route.fullPath != currentMenuTag.fullPath) {
@@ -205,72 +281,54 @@ const refreshCurrentTag = () => {
 
 // 关闭当前标签
 const closeCurrentTag = () => {
-	handleClose(currentMenuTagIndex.value, currentMenuTag)
+	closeSingleTag(currentMenuTag)
 	closeTagMenu()
 }
 
 // 关闭其他标签
 const closeOtherTags = () => {
 	const currentPath = currentMenuTag.fullPath
-	// 保留当前标签，关闭其他所有标签
-	const deleteTagList = appStore.tagList.filter(tag => tag.fullPath !== currentPath)
-	deleteCacheAndTag(deleteTagList)
+	const deleteTags = appStore.tagList.filter(tag => tag.fullPath !== currentPath)
+	closeTags(deleteTags)
 	router.push(currentPath)
 	closeTagMenu()
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
-	deleteCacheAndTag(appStore.tagList.filter(item => item.fullPath !== defaultMenu.value))
-	closeTagMenu()
-	// 回到首页
+	const deleteTags = appStore.tagList.filter(tag => tag.fullPath !== defaultMenu.value)
+
+	closeTags(deleteTags)
+
 	if (route.fullPath !== defaultMenu.value) {
 		router.push(defaultMenu.value)
 	}
+
+	closeTagMenu()
 }
 
 // 关闭左侧标签
 const closeLeftTag = () => {
-	// 激活的标签索引
-	const activeTagIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
-	const deleteTagList = appStore.tagList.filter((_, index) => index < currentMenuTagIndex.value)
-	deleteCacheAndTag(deleteTagList)
-	// 检查当前激活的标签是否在被关闭的标签中
-	if (activeTagIndex < currentMenuTagIndex.value) {
-		// 当前激活标签在被关闭范围内，切换到右键点击的标签
+	const deleteTags = appStore.tagList.filter((_, index) => index < currentMenuTagIndex.value)
+
+	closeTags(deleteTags)
+
+	// 如果当前激活页被关了，切换到右测标签
+	if (!appStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
 		router.push(currentMenuTag.fullPath)
 	}
-	closeTagMenu()
 }
 
 // 关闭右侧标签
 const closeRightTag = () => {
-	// 激活的标签索引
-	const activeTagIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
-	// 保留当前标签及其左侧所有标签
-	const deleteTagList = appStore.tagList.filter((_, index) => index > currentMenuTagIndex.value)
-	deleteCacheAndTag(deleteTagList)
-	// 检查当前激活的标签是否在被关闭的标签中
-	if (activeTagIndex > currentMenuTagIndex.value) {
-		// 当前激活标签在被关闭范围内，切换到右键点击的标签
+	const deleteTags = appStore.tagList.filter((_, index) => index > currentMenuTagIndex.value)
+
+	closeTags(deleteTags)
+
+	if (!appStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
 		router.push(currentMenuTag.fullPath)
 	}
 	closeTagMenu()
-}
-
-// 删除缓存和标签
-const deleteCacheAndTag = (tagList: NavbarTag[]) => {
-	if (isEmpty(tagList)) {
-		return
-	}
-	const nameList = tagList.map(item => item.name)
-
-	// 删除缓存
-	appStore.removeCacheComponentList(nameList)
-	appStore.removeIframeCacheList(nameList)
-
-	// 删除标签
-	appStore.removeTags(tagList)
 }
 
 // 打开新窗口
@@ -286,12 +344,35 @@ const fullScreen = () => {
 	appStore.toolFullscreen()
 }
 
+// 切换固定
+const togglePin = (tag: NavbarTag) => {
+	appStore.togglePinTag(tag)
+}
+
 const { refreshPage } = usePageRefresher()
 </script>
 
 <style scoped>
 :deep(.el-tabs__header) {
 	margin-bottom: 0;
+}
+/* Pin 图标基础样式 */
+.pin-icon {
+	border-radius: 50%; /* 圆形背景 */
+	text-align: center;
+	transition: all 0.3s ease; /* 背景和颜色过渡 */
+	margin-left: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: inherit;
+}
+
+/* Hover 高亮样式 */
+.pin-icon:hover {
+	color: rgb(248, 251, 255); /* 图标高亮颜色 */
+	background-color: rgba(168, 171, 178, 0.96); /* 背景高亮 */
 }
 
 .tag-context-menu {

@@ -8,6 +8,10 @@ export interface NavbarTag {
 	title: string
 	// 图标
 	icon: string
+	// 是否固定
+	pinned?: boolean
+	// 固定时间（用于排序）
+	pinnedAt?: number | null
 }
 
 // iframe数据

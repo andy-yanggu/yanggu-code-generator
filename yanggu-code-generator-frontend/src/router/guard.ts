@@ -77,7 +77,8 @@ export const routeGuard = (router: Router) => {
 		if (routeMetaData.type !== 4 && systemSettingStore.tag.isOpenTag) {
 			// 添加标签
 			appStore.addTag({
-				...routeMetaData
+				...routeMetaData,
+				pinned: false
 			})
 		}
 

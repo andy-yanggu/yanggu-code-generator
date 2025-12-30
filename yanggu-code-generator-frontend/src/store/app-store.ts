@@ -114,6 +114,32 @@ export const useAppStore = defineStore(
 			tagList.value = []
 		}
 
+		// 添加固定标签相关方法
+		const togglePinTag = (tag: NavbarTag) => {
+			const targetTag = tagList.value.find(t => t.fullPath === tag.fullPath)
+			if (!targetTag) {
+				return
+			}
+
+			if (targetTag.pinned) {
+				targetTag.pinned = false
+				targetTag.pinnedAt = null
+			} else {
+				targetTag.pinned = true
+				targetTag.pinnedAt = Date.now()
+			}
+
+			// 排序固定标签置顶
+			addAllTags(sortTags(tagList.value))
+		}
+
+		// 标签排序：固定标签置顶 + 固定标签按 pinnedAt 顺序
+		const sortTags = (tags: NavbarTag[]) => {
+			const pinnedTags = tags.filter(t => t.pinned).sort((a, b) => a.pinnedAt! - b.pinnedAt!)
+			const normalTags = tags.filter(t => !t.pinned)
+			return [...pinnedTags, ...normalTags]
+		}
+
 		// 添加缓存路由
 		const addCacheComponent = (name: string) => {
 			if (!cacheList.value.includes(name)) {
@@ -200,6 +226,8 @@ export const useAppStore = defineStore(
 			addAllTags,
 			removeAllTags,
 			removeTags,
+			togglePinTag,
+			sortTags,
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
