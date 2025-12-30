@@ -1,10 +1,6 @@
 <template>
 	<div class="search-container">
-		<el-tooltip content="菜单搜索" effect="dark" placement="bottom">
-			<el-icon :size="18" class="search-icon" @click="openSearch">
-				<Search></Search>
-			</el-icon>
-		</el-tooltip>
+		<icon-button :el-icon="Search" content="菜单搜索" size="18px" @click="openSearch()"></icon-button>
 
 		<!-- 搜索框 -->
 		<el-dialog v-model="searchState.visible" title="菜单搜索" width="45%" destroy-on-close @opened="onDialogOpened">
@@ -38,6 +34,7 @@ import { MenuInfo } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
+import IconButton from '@/components/icon-button/index.vue'
 
 defineOptions({
 	name: 'MenuSearch'

@@ -19,7 +19,7 @@ const getPersistConfig = () => {
 		omit: (_: never) => {
 			const systemSettingStore = useSystemSettingStore()
 			// 忽略字段
-			const originOmitList: string[] = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef']
+			const originOmitList: string[] = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading']
 			const tagOmitList: string[] = ['tagList', 'activeTabPath']
 			if (!systemSettingStore.tag.isOpenTagCache) {
 				originOmitList.push(...tagOmitList)

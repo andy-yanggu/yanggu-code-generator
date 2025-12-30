@@ -1,9 +1,5 @@
 <template>
-	<el-tooltip content="系统设置" effect="dark" placement="bottom">
-		<el-icon size="18px" class="setting-icon" @click="visible = true">
-			<Setting></Setting>
-		</el-icon>
-	</el-tooltip>
+	<icon-button :el-icon="Setting" content="系统设置" size="18px" @click="visible = true"></icon-button>
 	<el-drawer
 		v-model="visible"
 		title="系统设置"
@@ -140,6 +136,7 @@ import { MenuInfo, NavbarTag } from '@/types'
 import { ElMessage, ElTreeSelect } from 'element-plus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
+import IconButton from '@/components/icon-button/index.vue'
 
 defineOptions({
 	name: 'SystemSetting'

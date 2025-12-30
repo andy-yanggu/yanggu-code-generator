@@ -1,20 +1,19 @@
 <template>
-	<el-tooltip :content="'刷新页面'" effect="dark" placement="bottom">
-		<el-button
-			link
-			:icon="Refresh"
-			:loading-icon="Refresh"
-			:loading="appStore.globalLoading"
-			style="font-size: 18px; color: inherit"
-			@click="refreshPage()"
-		></el-button>
-	</el-tooltip>
+	<icon-button
+		:el-icon="Refresh"
+		:loading-icon="Refresh"
+		:loading="appStore.globalLoading"
+		content="刷新页面"
+		size="18px"
+		@click="refreshPage()"
+	></icon-button>
 </template>
 
 <script setup lang="ts">
 import { Refresh } from '@element-plus/icons-vue'
 import { usePageRefresher } from '@/hooks'
 import { useAppStore } from '@/store'
+import IconButton from '@/components/icon-button/index.vue'
 
 defineOptions({
 	name: 'RefreshCurrentPage'

@@ -5,10 +5,7 @@
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
 			<div class="navbar-toolbar-left">
 				<!-- 折叠按钮 -->
-				<el-icon v-if="systemSettingStore.toolbar.isOpenMenuCollapseButton" :size="18" class="collapse-icon" @click="appStore.toggleCollapse()">
-					<Expand v-if="appStore.isCollapse"></Expand>
-					<Fold v-else></Fold>
-				</el-icon>
+				<toggle-collapse v-if="systemSettingStore.toolbar.isOpenMenuCollapseButton"></toggle-collapse>
 				<!-- 面包屑 -->
 				<breadcrumb v-if="systemSettingStore.toolbar.isOpenBreadcrumb"></breadcrumb>
 			</div>
@@ -22,14 +19,7 @@
 				<!-- 切换布局大小	-->
 				<layout-size v-if="systemSettingStore.toolbar.isOpenLayoutSetting"></layout-size>
 				<!-- 全屏按钮 -->
-				<el-tooltip
-					v-if="systemSettingStore.toolbar.isOpenFullscreen"
-					:content="isFullscreen ? '退出全屏' : '开启全屏'"
-					effect="dark"
-					placement="bottom"
-				>
-					<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" size="18px" is-pointer @click="toggle()"></svg-icon>
-				</el-tooltip>
+				<full-screen v-if="systemSettingStore.toolbar.isOpenFullscreen"></full-screen>
 				<!-- 日间/夜间模式切换  -->
 				<theme-switch v-if="systemSettingStore.toolbar.isOpenThemeSwitch"></theme-switch>
 				<!-- 用户下拉菜单 -->
@@ -44,25 +34,22 @@
 </template>
 
 <script setup lang="ts">
-import { Expand, Fold } from '@element-plus/icons-vue'
 import TagBar from '@/layout/navbar/components/tag-bar.vue'
 import Breadcrumb from '@/layout/navbar/components/breadcrumb.vue'
 import MenuSearch from '@/layout/navbar/components/menu-search.vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
 import SystemSetting from '@/layout/navbar/components/system-setting.vue'
 import RefreshCurrentPage from '@/layout/navbar/components/refresh-current-page.vue'
 import LayoutSize from '@/layout/navbar/components/layout-size.vue'
 import ThemeSwitch from '@/layout/navbar/components/theme-switch.vue'
 import UserDropdown from '@/layout/navbar/components/user-dropdown.vue'
-import { useFullscreen } from '@vueuse/core'
-import { useAppStore, useSystemSettingStore } from '@/store'
+import { useSystemSettingStore } from '@/store'
+import FullScreen from '@/layout/navbar/components/full-screen.vue'
+import ToggleCollapse from '@/layout/navbar/components/toggle-collapse.vue'
 
 defineOptions({
 	name: 'LayoutNavbar'
 })
 
-const { isFullscreen, toggle } = useFullscreen()
-const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
 </script>
 
@@ -87,9 +74,5 @@ const systemSettingStore = useSystemSettingStore()
 	display: flex;
 	align-items: center;
 	gap: 15px;
-}
-
-.collapse-icon {
-	cursor: pointer;
 }
 </style>

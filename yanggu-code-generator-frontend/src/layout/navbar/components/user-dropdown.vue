@@ -1,6 +1,6 @@
 <template>
 	<el-dropdown>
-		<div style="display: flex; align-items: center; cursor: pointer; gap: 5px">
+		<div class="icon-button">
 			<template v-if="userStore.userInfo.avatar">
 				<el-avatar :src="userStore.userInfo.avatar" :size="16"></el-avatar>
 			</template>
@@ -9,7 +9,7 @@
 					<Avatar></Avatar>
 				</el-icon>
 			</template>
-			<el-text>{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
+			<el-text style="color: inherit">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
 		</div>
 		<template #dropdown>
 			<el-dropdown-menu>
@@ -56,4 +56,14 @@ const logout = () => {
 	})
 }
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.icon-button {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	gap: 5px;
+}
+.icon-button:hover {
+	color: var(--el-color-primary) !important;
+}
+</style>
