@@ -68,6 +68,13 @@
 					align="center"
 				></el-table-column>
 				<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="groupPropertyCount" label="属性数量" show-overflow-tooltip header-align="center" align="center">
+					<template #default="scope">
+						<el-tooltip content="配置属性" placement="top">
+							<el-button type="primary" link @click="propertyHandler(scope.row)">{{ scope.row.groupPropertyCount }}个</el-button>
+						</el-tooltip>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"
@@ -157,7 +164,7 @@ defineOptions({
 })
 
 const state = reactive({
-	dataListApi: genTemplateGroupApi.entityPage,
+	dataListApi: genTemplateGroupApi.voPage,
 	deleteListApi: genTemplateGroupApi.deleteList,
 	exportApi: genTemplateGroupApi.export,
 	importApi: genTemplateGroupApi.import,

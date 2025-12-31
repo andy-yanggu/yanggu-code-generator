@@ -45,6 +45,12 @@ public class TemplateGroupVO extends BaseVO implements Serializable {
     private String groupDesc;
 
     /**
+     * 属性数量
+     */
+    @Schema(description = "属性数量")
+    private Integer groupPropertyCount;
+
+    /**
      * 属性列表
      */
     @Schema(description = "属性列表")

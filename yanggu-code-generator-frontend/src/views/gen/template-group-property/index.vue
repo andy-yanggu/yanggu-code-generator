@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" :title="`${templateGroupName} - 属性配置`" :close-on-click-modal="false" width="80%">
+	<el-dialog v-model="visible" :title="`属性配置（${templateGroupName}）`" :close-on-click-modal="false" width="80%">
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="属性标题" prop="propTitle">

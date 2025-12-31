@@ -65,9 +65,22 @@
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TemplateGroupVO">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            IFNULL(t.group_property_count, 0) AS group_property_count
         FROM
             gen_template_group
+        LEFT JOIN
+        (
+            SELECT
+                template_group_id,
+                COUNT(*) AS group_property_count
+            FROM
+                gen_template_group_property
+            WHERE
+                is_delete = 0
+            GROUP BY
+                template_group_id
+        ) AS t ON gen_template_group.id = t.template_group_id
         <where>
             is_delete = 0
             <include refid="whereSQL"/>

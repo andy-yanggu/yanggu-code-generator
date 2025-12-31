@@ -68,7 +68,7 @@
 				<el-table-column prop="enumItemCount" label="枚举项数量" header-align="center" align="center">
 					<template #default="scope">
 						<el-tooltip content="配置枚举项" placement="top">
-							<el-button type="primary" link @click="configEnumItemHandle(scope.row)"> {{ scope.row.enumItemCount }} 个 </el-button>
+							<el-button type="primary" link @click="configEnumItemHandle(scope.row)">{{ scope.row.enumItemCount }}个</el-button>
 						</el-tooltip>
 					</template>
 				</el-table-column>
