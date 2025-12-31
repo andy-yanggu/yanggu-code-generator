@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="testData.visible" :title="`${testData.templateName} - 模板测试`" size="100%" destroy-on-close :before-close="handleClose">
+	<el-drawer v-model="testData.visible" :title="`模板测试（${testData.templateName}）`" size="100%" destroy-on-close :before-close="handleClose">
 		<el-container class="full-height">
 			<!-- 左侧：选择面板（独立滚动） -->
 			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">

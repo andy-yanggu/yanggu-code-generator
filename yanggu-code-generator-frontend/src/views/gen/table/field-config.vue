@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" title="字段配置" width="80%" class="field-config-dialog" @close="visible = false">
+	<el-dialog v-model="visible" :title="`字段配置（${tableName}）`" width="80%" class="field-config-dialog" @close="visible = false">
 		<el-tabs v-model="activeName">
 			<el-tab-pane label="属性配置" name="field">
 				<el-table
@@ -174,7 +174,7 @@
 import { nextTick, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
-import { GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
+import { GenEnumEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 import { useSubmitHandler } from '@/hooks'
@@ -188,6 +188,7 @@ const fieldTable = ref()
 const formTable = ref()
 const gridTable = ref()
 const queryTable = ref()
+const tableName = ref('')
 
 const emit = defineEmits(['refreshDataList'])
 const visible = ref(false)
@@ -239,6 +240,7 @@ const init = async (row: any) => {
 	const id = row.id
 	projectIdRef.value = row.projectId
 	tableId.value = id
+	tableName.value = row.tableName
 
 	activeName.value = 'field'
 

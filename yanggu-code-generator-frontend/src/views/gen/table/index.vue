@@ -75,6 +75,13 @@
 					width="100"
 				></el-table-column>
 				<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="fieldCount" label="字段数量" header-align="center" align="center" width="100">
+					<template #default="scope">
+						<el-tooltip content="配置字段" placement="top">
+							<el-button type="primary" link @click="editHandle(scope.row)">{{ scope.row.fieldCount }}个</el-button>
+						</el-tooltip>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"

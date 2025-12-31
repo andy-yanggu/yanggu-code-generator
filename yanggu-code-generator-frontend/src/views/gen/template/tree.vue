@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateGroupName} - 模板配置`" size="100%" :modal="false" :before-close="handleClose">
+	<el-drawer v-model="templateTreeData.visible" :title="`模板配置（${templateGroupName}）`" size="100%" :modal="false" :before-close="handleClose">
 		<el-splitter style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">

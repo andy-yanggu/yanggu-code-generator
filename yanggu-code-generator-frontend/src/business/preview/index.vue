@@ -1,6 +1,6 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`${templateTreeData.name} - 代码预览`" size="100%" destroy-on-close>
+	<el-drawer v-model="templateTreeData.visible" :title="`代码预览（${templateTreeData.name}）`" size="100%" destroy-on-close>
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
@@ -227,7 +227,7 @@ const initGeneratorStateArray = () => [
 		tooltip: '生成代码'
 	}
 ]
-const generatorState = reactive(initGeneratorStateArray()[0])
+const generatorState = shallowReactive(initGeneratorStateArray()[0])
 const initTemplateTreeData = () => ({
 	visible: false,
 	id: -1,

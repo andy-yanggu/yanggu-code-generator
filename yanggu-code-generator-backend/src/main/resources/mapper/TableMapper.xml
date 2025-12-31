@@ -103,10 +103,23 @@
             <include refid="allColumns"/>,
             p.project_name,
             p.table_template_group_id,
-            p.generator_type
+            p.generator_type,
+            IFNULL(f.field_count, 0) AS field_count
         FROM
             gen_table AS t
         JOIN gen_project AS p ON t.project_id = p.id AND p.is_delete = 0
+        LEFT JOIN
+        (
+            SELECT
+                table_id,
+                COUNT(*) AS field_count
+            FROM
+                gen_table_field
+            WHERE
+                is_delete = 0
+            GROUP BY
+                table_id
+        ) AS f ON t.id = f.table_id
         <where>
             t.is_delete = 0
             <include refid="whereSQL"/>

@@ -134,4 +134,10 @@ public class TableVO extends BaseVO implements Serializable {
     @Schema(description = "VO基类ID")
     private Long voBaseClassId;
 
+    /**
+     * 字段数量
+     */
+    @Schema(description = "字段数量")
+    private Integer fieldCount;
+
 }
