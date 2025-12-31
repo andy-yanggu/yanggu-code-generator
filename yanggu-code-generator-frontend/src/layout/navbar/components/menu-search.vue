@@ -21,7 +21,6 @@
 					<el-text>无匹配结果</el-text>
 				</div>
 			</el-scrollbar>
-			<template #footer></template>
 		</el-dialog>
 	</div>
 </template>

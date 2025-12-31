@@ -2,8 +2,10 @@
 	<el-dialog
 		v-model="dialogVisible"
 		:title="`生成代码（${projectReactive.projectName}）`"
+		top="10vh"
 		width="85%"
 		destroy-on-close
+		:close-on-click-modal="false"
 		@close="dialogVisible = false"
 	>
 		<el-container>
@@ -21,7 +23,7 @@
 				<template-index v-if="activeRef === 0" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
 				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
 				<enum-index v-if="activeRef === 2" ref="enumIndexRef" @select-change="enumSelectChange"></enum-index>
-				<generate-result v-if="activeRef === 3" ref="generateResultRef" v-model:dialog-visible="dialogVisible"></generate-result>
+				<generate-result v-if="activeRef === 3" ref="generateResultRef" v-model:finish="finish"></generate-result>
 			</el-main>
 		</el-container>
 		<!-- 操作按钮 -->
@@ -33,6 +35,7 @@
 					<el-icon class="el-icon--right"><ArrowRight></ArrowRight></el-icon>
 				</el-button>
 				<el-button v-if="activeRef === 2" type="success" :icon="DocumentAdd" @click="generateCode()">生成代码</el-button>
+				<el-button v-if="activeRef === 3" :disabled="!finish" :icon="Close" @click="dialogVisible = false">关闭</el-button>
 			</div>
 		</template>
 	</el-dialog>
@@ -44,7 +47,7 @@ import TemplateIndex from '@/views/gen/project/template-index.vue'
 import TableIndex from '@/views/gen/project/table-index.vue'
 import EnumIndex from '@/views/gen/project/enum-index.vue'
 import GenerateResult from '@/views/gen/project/generate-result.vue'
-import { ArrowLeft, ArrowRight, DocumentAdd } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Close, DocumentAdd } from '@element-plus/icons-vue'
 import { GenProjectEntity } from '@/types'
 
 defineOptions({
@@ -68,6 +71,7 @@ const projectReactive = reactive({
 const templateListRef = ref<any[]>([])
 const tableListRef = ref<any[]>([])
 const enumListRef = ref<any[]>([])
+const finish = ref(false)
 
 // 初始化方法
 const init = (projectItem: GenProjectEntity) => {
