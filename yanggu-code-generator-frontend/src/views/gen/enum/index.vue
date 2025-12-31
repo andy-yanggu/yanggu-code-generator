@@ -65,6 +65,13 @@
 					align="center"
 				></el-table-column>
 				<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
+				<el-table-column prop="enumItemCount" label="枚举项数量" header-align="center" align="center">
+					<template #default="scope">
+						<el-tooltip content="配置枚举项" placement="top">
+							<el-button type="primary" link @click="configEnumItemHandle(scope.row)"> {{ scope.row.enumItemCount }} 个 </el-button>
+						</el-tooltip>
+					</template>
+				</el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"
@@ -129,7 +136,7 @@
 
 			<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 
-			<preview ref="previewRef" :key="previewKey"></preview>
+			<preview ref="previewRef"></preview>
 
 			<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 		</el-card>
@@ -137,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'
@@ -174,7 +181,6 @@ const enumItemIndexRef = ref()
 const previewRef = ref()
 const templateIndexRef = ref()
 const projectList = ref([] as GenProjectEntity[])
-const previewKey = ref('')
 
 const getProjectList = () => {
 	genProjectApi.entityList().then(data => {
@@ -182,15 +188,12 @@ const getProjectList = () => {
 	})
 }
 
-const configEnumItemHandle = ({ id, enumName }) => {
+const configEnumItemHandle = ({ id, enumName }: { id: string; enumName: string }) => {
 	enumItemIndexRef.value.init(id, enumName)
 }
 
 const previewHandle = (row: any) => {
-	previewKey.value = `${Date.now()}`
-	nextTick(() => {
-		previewRef.value.init(row.id, row.enumName, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
-	})
+	previewRef.value.init(row.id, row.enumName, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
 }
 
 const generatorBatchHandler = () => {

@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="dialogVisible" :title="`${enumNameRef} - 枚举配置`" width="80%" @close="dialogVisible = false">
+	<el-dialog v-model="dialogVisible" :title="`枚举配置（${enumNameRef}）`" width="80%" @close="dialogVisible = false">
 		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="枚举项名称" prop="enumItemName">
@@ -114,9 +114,9 @@ const dialogVisible = ref(false)
 
 const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
-	resetQueryHandle()
 	enumNameRef.value = enumName
 	state.queryForm.enumId = enumId
+	resetQueryHandle()
 }
 
 const { formRef, formInitHandle } = useInitForm(() => ({ enumId: state.queryForm.enumId }))

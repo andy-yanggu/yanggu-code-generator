@@ -12,6 +12,8 @@ export interface GenEnumEntity {
 	enumDesc: string
 	// 项目ID
 	projectId: number | string
+	// 枚举项数量
+	enumItemCount: number
 }
 
 /**

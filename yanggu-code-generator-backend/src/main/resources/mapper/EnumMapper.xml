@@ -75,12 +75,25 @@
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
         SELECT
             <include refid="allColumns"/>,
+            IFNULL(c.enum_item_count, 0) AS enum_item_count,
             p.project_name,
             p.generator_type,
             p.enum_template_group_id
         FROM
             gen_enum AS e
         JOIN gen_project AS p ON e.project_id = p.id AND p.is_delete = 0
+        LEFT JOIN
+        (
+            SELECT
+                ei.enum_id,
+                COUNT(*) AS enum_item_count
+            FROM
+                gen_enum_item AS ei
+            WHERE
+                ei.is_delete = 0
+            GROUP BY
+                ei.enum_id
+        ) AS c ON e.id = c.enum_id
         <where>
             e.is_delete = 0
             <include refid="whereSQL"/>

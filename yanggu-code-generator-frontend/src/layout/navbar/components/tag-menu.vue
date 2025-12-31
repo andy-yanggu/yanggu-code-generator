@@ -14,7 +14,7 @@
 		</div>
 		<div class="icon-item" @click="emits('togglePin')">
 			<svg-icon :icon="props.currentMenuTag.pinned ? 'icon-cancel-pin' : 'icon-pin'" size="10px"></svg-icon>
-			<span>{{ props.currentMenuTag.pinned ? '取消固定' : '固定标签' }}</span>
+			<span>{{ props.currentMenuTag.pinned ? '取消固定' : '固定页面' }}</span>
 		</div>
 	</div>
 	<template v-if="!props.currentMenuTag.pinned">

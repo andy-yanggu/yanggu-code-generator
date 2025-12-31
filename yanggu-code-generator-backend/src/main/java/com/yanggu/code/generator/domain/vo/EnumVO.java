@@ -38,6 +38,12 @@ public class EnumVO extends BaseVO implements Serializable {
     private String enumDesc;
 
     /**
+     * 枚举项数量
+     */
+    @Schema(description = "枚举项数量")
+    private Integer enumItemCount;
+
+    /**
      * 项目ID
      */
     @Schema(description = "项目ID")

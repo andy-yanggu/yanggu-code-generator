@@ -3,7 +3,7 @@
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<el-form-item prop="enumItemName">
 				<template #label>
-					<form-label-tooltip label="枚举项名称" tooltip="使用英文大写字母，单词之间使用'_'拼接；该字段具有唯一性"></form-label-tooltip>
+					<form-label-tooltip label="枚举项名称" tooltip="使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性"></form-label-tooltip>
 				</template>
 				<el-input v-model="state.dataForm.enumItemName" clearable placeholder="请输入枚举项名称"></el-input>
 			</el-form-item>
