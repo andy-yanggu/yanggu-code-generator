@@ -32,7 +32,7 @@
 			<el-table-column prop="updateTime" label="更新时间" header-align="center" align="center"></el-table-column>
 			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 				<template #default="scope">
-					<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id)">查看枚举项</el-button>
+					<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id, scope.row.enumName)">查看枚举项</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -100,8 +100,8 @@ const toggleRowSelection = (rowList: any[]) => {
 	isManualSelection = true
 }
 
-const enumItemIndexShow = (enumId: number) => {
-	enumItemIndexRef.value.init(enumId)
+const enumItemIndexShow = (enumId: number, enumName: string) => {
+	enumItemIndexRef.value.init(enumId, enumName)
 }
 
 const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)

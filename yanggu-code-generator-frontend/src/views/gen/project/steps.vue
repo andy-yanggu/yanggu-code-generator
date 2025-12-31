@@ -23,7 +23,12 @@
 				<template-index v-if="activeRef === 0" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
 				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
 				<enum-index v-if="activeRef === 2" ref="enumIndexRef" @select-change="enumSelectChange"></enum-index>
-				<generate-result v-if="activeRef === 3" ref="generateResultRef" v-model:finish="finish"></generate-result>
+				<generate-result
+					v-if="activeRef === 3"
+					ref="generateResultRef"
+					v-model:dialog-visible="dialogVisible"
+					v-model:finish="finish"
+				></generate-result>
 			</el-main>
 		</el-container>
 		<!-- 操作按钮 -->
