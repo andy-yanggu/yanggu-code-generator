@@ -18,8 +18,8 @@ export const genGeneratorApi = {
 		return service.post(baseUrl + '/singleLocal', dataForm)
 	},
 	// 项目下载zip压缩包
-	projectDownloadZip: (dataForm: any) => {
-		return downloadFile(baseUrl + '/project/downloadZip', dataForm)
+	projectDownloadZip: (dataForm: any, noErrorMessage = false) => {
+		return downloadFile(baseUrl + '/project/downloadZip', dataForm, noErrorMessage)
 	},
 	// 项目下载到本地
 	projectDownloadLocal: (dataForm: any) => {

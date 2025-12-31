@@ -177,7 +177,7 @@ const initGeneratorStateArray = () => [
 		tooltip: '生成代码'
 	}
 ]
-const generatorState = reactive(initGeneratorStateArray()[0])
+const generatorState = shallowReactive(initGeneratorStateArray()[0])
 
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())

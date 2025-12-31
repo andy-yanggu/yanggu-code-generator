@@ -53,7 +53,17 @@ service.interceptors.response.use(
 
 		// 文件下载直接返回
 		if (config.responseType === 'blob') {
-			return response
+			const contentType = response.headers['content-type']
+			const disposition = response.headers['content-disposition']
+
+			const isJsonError = contentType?.includes('application/json') || !disposition
+			// 后端接口报错
+			if (isJsonError) {
+				return parseBlobError(response, config)
+			} else {
+				// 正常文件下载
+				return response
+			}
 		}
 
 		const result = data as Result
@@ -71,6 +81,36 @@ service.interceptors.response.use(
 		return handleNetworkError(error, config)
 	}
 )
+
+/**
+ * 解析 blob 中的 JSON 错误信息
+ * 适用于：下载接口 responseType=blob，但后端返回 application/json
+ */
+const parseBlobError = async (response: any, config: any) => {
+	try {
+		const blob = response.data
+
+		// 有些浏览器/场景下 blob 可能为空
+		if (!blob || blob.size === 0) {
+			if (!config.noErrorMessage) {
+				ElMessage.error('文件下载失败，返回内容为空')
+			}
+			return Promise.reject(new Error('Blob 内容为空'))
+		}
+
+		// blob → text → json
+		const text = await blob.text()
+		const result = JSON.parse(text) as Result
+
+		// 复用你现有的业务错误处理
+		return handleBusinessError(result, config)
+	} catch (e) {
+		if (!config.noErrorMessage) {
+			ElMessage.error('文件下载失败')
+		}
+		return Promise.reject(new Error('文件下载失败'))
+	}
+}
 
 /**
  * 处理HTTP状态码错误
@@ -217,15 +257,6 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 				resolve()
 			})
 			.catch(error => {
-				if (!noErrorMessage) {
-					let errorMessage = '导出失败，请稍后重试或联系管理员'
-					if (error.response) {
-						errorMessage = `导出失败，服务器返回状态码：${error.response.status}`
-					} else if (error.request) {
-						errorMessage = '导出失败，请检查网络连接或稍后重试'
-					}
-					ElMessage.error(errorMessage)
-				}
 				reject(error)
 			})
 	})
