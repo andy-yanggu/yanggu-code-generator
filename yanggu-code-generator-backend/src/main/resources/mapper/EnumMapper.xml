@@ -9,6 +9,7 @@
         e.enum_name,
         e.enum_desc,
         e.project_id,
+        e.template_group_property_data,
         e.create_time,
         e.update_time,
         e.is_delete
@@ -31,6 +32,7 @@
         <result property="enumName" column="enum_name"/>
         <result property="enumDesc" column="enum_desc"/>
         <result property="projectId" column="project_id"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

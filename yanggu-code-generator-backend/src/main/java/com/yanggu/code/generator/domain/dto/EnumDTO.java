@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 枚举DTO实体类
@@ -46,5 +47,11 @@ public class EnumDTO implements Serializable {
     @Schema(description = "项目ID")
     @NotNull(message = "项目ID不能为空")
     private Long projectId;
+
+    /**
+     * 模板组数据
+     */
+    @Schema(description = "模板组数据")
+    private Map<String, Object> templateGroupPropertyData;
 
 }

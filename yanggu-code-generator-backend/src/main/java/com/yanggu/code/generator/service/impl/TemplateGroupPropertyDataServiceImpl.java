@@ -1,7 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.json.JSONArray;
-import cn.hutool.v7.json.JSONUtil;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.service.TemplateGroupPropertyDataService;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
@@ -31,16 +29,7 @@ public class TemplateGroupPropertyDataServiceImpl implements TemplateGroupProper
         collectMap.putAll(data);
 
         return collectMap.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> handlerData(entry.getValue().toString())));
-    }
-
-    private Object handlerData(String value) {
-        Object object = GenUtil.convertStringToAppropriateType(value);
-        if (JSONUtil.isTypeJSONArray(object.toString())) {
-            JSONArray array = JSONUtil.parseArray(object);
-            return array.stream().map(item -> item.asJSONPrimitive().getValue()).toList();
-        }
-        return object;
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> GenUtil.handleData(entry.getValue().toString())));
     }
 
 }

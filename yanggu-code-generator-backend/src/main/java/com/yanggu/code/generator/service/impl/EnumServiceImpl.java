@@ -109,7 +109,10 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     @Override
     public EnumVO detail(Long id) {
         EnumEntity dbEntity = selectById(id);
-        return enumMapstruct.entityToVO(dbEntity);
+        EnumVO enumVO = enumMapstruct.entityToVO(dbEntity);
+        ProjectEntity project = projectService.getById(enumVO.getProjectId());
+        enumVO.setEnumTemplateGroupId(project.getEnumTemplateGroupId());
+        return enumVO;
     }
 
     /**

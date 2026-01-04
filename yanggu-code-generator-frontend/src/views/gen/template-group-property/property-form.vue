@@ -20,7 +20,9 @@ import { computed, nextTick, PropType } from 'vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/types'
 
-defineOptions({ name: 'GenTemplateGroupPropertyPropertyForm' })
+defineOptions({
+	name: 'GenTemplateGroupPropertyPropertyForm'
+})
 
 const props = defineProps({
 	propertyList: {
@@ -29,7 +31,7 @@ const props = defineProps({
 	},
 	modelValueProp: {
 		type: String,
-		default: 'modelValue'
+		default: 'templateGroupPropertyData'
 	}
 })
 

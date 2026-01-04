@@ -27,6 +27,15 @@ public abstract class AbstractListTypeHandler<T> extends BaseTypeHandler<List<T>
     //使用jackson序列化和反序列化
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    // 将json字符串转为对象，子类可以重写该方法
+    @SneakyThrows
+    protected List<T> toObject(Object o) {
+        if (o == null) {
+            return Collections.emptyList();
+        }
+        return OBJECT_MAPPER.readValue(o.toString(), getTypeReference());
+    }
+
     /**
      * 获取类型
      */
@@ -51,14 +60,6 @@ public abstract class AbstractListTypeHandler<T> extends BaseTypeHandler<List<T>
     @Override
     public List<T> getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
         return toObject(callableStatement.getObject(i));
-    }
-
-    @SneakyThrows
-    private List<T> toObject(Object o) {
-        if (o == null) {
-            return Collections.emptyList();
-        }
-        return OBJECT_MAPPER.readValue(o.toString(), getTypeReference());
     }
 
 }

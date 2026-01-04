@@ -459,7 +459,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         // 项目模板属性数据
-        projectModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
+        projectModel.setProjectTemplatePropertyData(templateGroupPropertyDataService.getData(project.getProjectTemplateGroupId(), project.getTemplateGroupPropertyData()));
 
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
@@ -568,8 +568,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         //生成方式
         tableModel.setGeneratorType(project.getGeneratorType());
 
-        //项目模板属性数据
+        //模板属性数据
         tableModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
+        tableModel.setTableTemplatePropertyData(templateGroupPropertyDataService.getData(project.getEnumTemplateGroupId(), table.getTemplateGroupPropertyData()));
         return tableModel;
     }
 

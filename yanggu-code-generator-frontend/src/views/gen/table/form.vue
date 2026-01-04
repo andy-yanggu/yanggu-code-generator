@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" title="修改" :close-on-click-modal="false" width="60%">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
@@ -115,7 +115,6 @@
 				<form-divider title="表模板组属性"></form-divider>
 				<template-group-property-form
 					v-model:form-data="state.dataForm.templateGroupPropertyData"
-					model-value-prop="templateGroupPropertyData"
 					:property-list="tableTemplateGroupPropertyList"
 				></template-group-property-form>
 			</template>
@@ -128,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
@@ -138,6 +137,7 @@ import FormDivider from '@/components/form/divider/index.vue'
 import OptionLabel from '@/components/option/label/index.vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import { isNotEmpty } from '@/utils/tool'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenTableForm'
@@ -194,16 +194,26 @@ const state = reactive({
 	emit
 } as FormOptions<GenTableEntity>)
 
-const dataRules = reactive({
-	projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	tableName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	popupType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	generatorFunction: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+const dataRules = computed(() => {
+	const rules: Record<string, FormItemRule[]> = {
+		projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		tableName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		popupType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		generatorFunction: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	}
+
+	// 模板组属性校验
+	tableTemplateGroupPropertyList.value.forEach(item => {
+		if (item.required === 1) {
+			rules[`templateGroupPropertyData.${item.propKey}`] = [{ required: true, message: `${item.propTitle}不能为空`, trigger: 'blur' }]
+		}
+	})
+	return rules
 })
 
 const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)

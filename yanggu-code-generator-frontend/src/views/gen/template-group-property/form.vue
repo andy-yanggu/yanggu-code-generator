@@ -141,6 +141,14 @@ const state = reactive({
 	// 初始化表单数据
 	initFormData,
 	dataForm: initFormData(),
+	initAfter: () => {
+		// 如果是开关类型
+		if (switchOptionFull.value) {
+			for (const componentOption of state.dataForm.componentOptions) {
+				componentOption.value = componentOption.value!.toString()
+			}
+		}
+	},
 	emit
 } as FormOptions<GenTemplateGroupPropertyEntity>)
 

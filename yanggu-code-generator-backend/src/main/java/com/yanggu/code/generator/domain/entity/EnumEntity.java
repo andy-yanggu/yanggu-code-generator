@@ -5,19 +5,21 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
+import com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 枚举Entity实体类
  */
 @Data
-@TableName(value = "gen_enum")
 @EqualsAndHashCode(callSuper = true)
+@TableName(value = "gen_enum", autoResultMap = true)
 public class EnumEntity extends BaseEntity implements Serializable {
 
     @Serial
@@ -46,6 +48,12 @@ public class EnumEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "project_id")
     private Long projectId;
+
+    /**
+     * 模板组数据
+     */
+    @TableField(value = "template_group_property_data", typeHandler = MapDataTypeHandler.class)
+    private Map<String, Object> templateGroupPropertyData;
 
     /**
      * 枚举项列表

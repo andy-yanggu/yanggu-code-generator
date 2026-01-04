@@ -1,6 +1,7 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="140px" @keyup.enter="submitHandle()">
+			<form-divider v-if="isNotEmpty(enumTemplateGroupPropertyList)" title="基础属性"></form-divider>
 			<el-form-item label="项目" prop="projectId">
 				<el-select
 					v-model="state.dataForm.projectId"
@@ -20,6 +21,14 @@
 			<el-form-item label="枚举描述" prop="enumDesc">
 				<el-input v-model="state.dataForm.enumDesc" clearable placeholder="请输入枚举描述"></el-input>
 			</el-form-item>
+			<!-- 枚举模板组属性表单 -->
+			<template v-if="isNotEmpty(enumTemplateGroupPropertyList)">
+				<form-divider title="枚举模板组属性"></form-divider>
+				<template-group-property-form
+					v-model:form-data="state.dataForm.templateGroupPropertyData"
+					:property-list="enumTemplateGroupPropertyList"
+				></template-group-property-form>
+			</template>
 		</el-form>
 		<template #footer>
 			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
@@ -30,39 +39,48 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { genEnumApi, genProjectApi } from '@/api'
-import { FormOptions, GenEnumEntity, GenProjectEntity } from '@/types'
+import { genEnumApi, genProjectApi, genTemplateGroupPropertyApi } from '@/api'
+import { FormOptions, GenEnumEntity, GenProjectEntity, GenTemplateGroupPropertyEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
-import { isNotBlank } from '@/utils/tool'
+import { isNotBlank, isNotEmpty } from '@/utils/tool'
+import FormDivider from '@/components/form/divider/index.vue'
+import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 
 defineOptions({
 	name: 'GenEnumForm'
 })
 
 const projectList = ref([] as GenProjectEntity[])
-const getProjectList = () => {
-	genProjectApi.entityList().then(data => {
-		projectList.value = data
-	})
-}
+const enumTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
 // 初始化表单数据
 const initFormData = (): GenEnumEntity => ({
-	id: null,
+	id: '',
 	projectId: '',
 	enumName: '',
-	enumDesc: ''
+	enumTemplateGroupId: '',
+	enumDesc: '',
+	templateGroupPropertyData: {}
 })
 
 const emit = defineEmits(['refreshDataList'])
 const state = reactive({
 	submitApi: genEnumApi.submit,
 	detailApi: genEnumApi.detail,
-	initBefore: getProjectList,
+	initBefore: () => {
+		genProjectApi.entityList().then(data => {
+			projectList.value = data
+		})
+	},
 	initFormData,
 	dataForm: initFormData(),
+	initAfter: () => {
+		genTemplateGroupPropertyApi.entityList({ templateGroupId: state.dataForm.enumTemplateGroupId }).then(data => {
+			enumTemplateGroupPropertyList.value = data
+		})
+	},
 	emit
 } as FormOptions<GenEnumEntity>)
 

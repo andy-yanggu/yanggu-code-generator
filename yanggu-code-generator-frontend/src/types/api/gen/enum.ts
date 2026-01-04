@@ -12,8 +12,12 @@ export interface GenEnumEntity {
 	enumDesc: string
 	// 项目ID
 	projectId: number | string
+	// 枚举模板组ID
+	enumTemplateGroupId: number | string
 	// 枚举项数量
-	enumItemCount: number
+	enumItemCount?: number
+	// 枚举模板组属性数据
+	templateGroupPropertyData: object
 }
 
 /**

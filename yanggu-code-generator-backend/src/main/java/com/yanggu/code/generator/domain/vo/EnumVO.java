@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 枚举VO实体类
@@ -66,5 +67,11 @@ public class EnumVO extends BaseVO implements Serializable {
      */
     @Schema(description = "生成方式（0-zip压缩包，1-服务器本地）")
     private Integer generatorType;
+
+    /**
+     * 模板组数据
+     */
+    @Schema(description = "模板组数据")
+    private Map<String, Object> templateGroupPropertyData;
 
 }
