@@ -19,10 +19,7 @@ import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
 import com.yanggu.code.generator.mapstruct.ProjectMapstruct;
-import com.yanggu.code.generator.service.DatasourceService;
-import com.yanggu.code.generator.service.EnumService;
-import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.service.TableService;
+import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.DbUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +51,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
     @Autowired
     private EnumService enumService;
+
+    @Autowired
+    private TemplateGroupPropertyDataService templateGroupPropertyDataService;
 
     /**
      * 新增
@@ -130,7 +130,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     @Override
     public ProjectVO detail(Long id) {
         ProjectEntity dbEntity = selectById(id);
-        return projectMapstruct.entityToVO(dbEntity);
+        ProjectVO projectVO = projectMapstruct.entityToVO(dbEntity);
+        projectVO.setTemplateGroupPropertyData(templateGroupPropertyDataService.getData(projectVO.getProjectTemplateGroupId(), projectVO.getTemplateGroupPropertyData()));
+        return projectVO;
     }
 
     /**

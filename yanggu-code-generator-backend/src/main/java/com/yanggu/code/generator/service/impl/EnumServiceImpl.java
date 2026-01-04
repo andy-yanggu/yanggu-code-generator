@@ -18,10 +18,7 @@ import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.mapper.EnumMapper;
 import com.yanggu.code.generator.mapstruct.EnumMapstruct;
-import com.yanggu.code.generator.service.EnumItemService;
-import com.yanggu.code.generator.service.EnumService;
-import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.service.TableFieldService;
+import com.yanggu.code.generator.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +48,9 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     @Autowired
     private TableFieldService tableFieldService;
+
+    @Autowired
+    private TemplateGroupPropertyDataService templateGroupPropertyDataService;
 
     /**
      * 新增
@@ -112,6 +112,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         EnumVO enumVO = enumMapstruct.entityToVO(dbEntity);
         ProjectEntity project = projectService.getById(enumVO.getProjectId());
         enumVO.setEnumTemplateGroupId(project.getEnumTemplateGroupId());
+        enumVO.setTemplateGroupPropertyData(templateGroupPropertyDataService.getData(project.getEnumTemplateGroupId(), dbEntity.getTemplateGroupPropertyData()));
         return enumVO;
     }
 

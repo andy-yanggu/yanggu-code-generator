@@ -6,6 +6,7 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.util.List;
@@ -18,6 +19,10 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Named("templateGroupPropertyMapstruct")
 @Mapper(componentModel = SPRING, implementationName = "CodeGeneratorGenTemplateGroupPropertyMapstructImpl")
 public interface TemplateGroupPropertyMapstruct extends BaseMapstruct<TemplateGroupPropertyEntity, TemplateGroupPropertyVO, TemplateGroupPropertyDTO> {
+
+    @Override
+    @Mapping(target = "propDefaultValue", expression = "java(com.yanggu.code.generator.util.GenUtil.handleData(entity.getPropDefaultValue()))")
+    TemplateGroupPropertyVO entityToVO(TemplateGroupPropertyEntity entity);
 
     List<TemplateGroupPropertyBO> entityToBO(List<TemplateGroupPropertyEntity> list);
 

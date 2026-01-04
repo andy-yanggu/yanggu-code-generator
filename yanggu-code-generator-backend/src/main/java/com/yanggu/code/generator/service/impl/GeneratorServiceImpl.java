@@ -601,6 +601,9 @@ public class GeneratorServiceImpl implements GeneratorService {
                 }).toList();
         enumModel.setEnumItemList(list);
         enumModel.setEnumCodeType(getEnumCodeType(list));
+
+        enumModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
+        enumModel.setEnumTemplatePropertyData(templateGroupPropertyDataService.getData(project.getEnumTemplateGroupId(), enumEntity.getTemplateGroupPropertyData()));
         return enumModel;
     }
 

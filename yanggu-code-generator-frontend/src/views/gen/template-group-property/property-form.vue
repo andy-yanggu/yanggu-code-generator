@@ -16,7 +16,7 @@
 	</template>
 </template>
 <script setup lang="ts">
-import { computed, nextTick, PropType } from 'vue'
+import { computed, PropType } from 'vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/types'
 
@@ -178,13 +178,4 @@ const getComponentProps = (item: GenTemplateGroupPropertyEntity) => {
 			return {}
 	}
 }
-
-// -------- 默认值填充 --------
-nextTick(() => {
-	props.propertyList!.forEach(item => {
-		if (!(item.propKey in formData.value)) {
-			formData.value[item.propKey] = item.propDefaultValue
-		}
-	})
-})
 </script>
