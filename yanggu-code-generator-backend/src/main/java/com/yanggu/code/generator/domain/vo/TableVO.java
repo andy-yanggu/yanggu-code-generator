@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 表VO实体类
@@ -133,6 +134,12 @@ public class TableVO extends BaseVO implements Serializable {
      */
     @Schema(description = "VO基类ID")
     private Long voBaseClassId;
+
+    /**
+     * 模板组数据
+     */
+    @Schema(description = "模板组数据")
+    private Map<String, Object> templateGroupPropertyData;
 
     /**
      * 字段数量

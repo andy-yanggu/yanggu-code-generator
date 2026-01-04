@@ -110,7 +110,10 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     @Override
     public TableVO detail(Long id) {
         TableEntity dbEntity = selectById(id);
-        return tableMapstruct.entityToVO(dbEntity);
+        TableVO tableVO = tableMapstruct.entityToVO(dbEntity);
+        ProjectEntity project = projectService.getById(tableVO.getProjectId());
+        tableVO.setTableTemplateGroupId(project.getTableTemplateGroupId());
+        return tableVO;
     }
 
     /**
@@ -338,6 +341,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setFunctionName(getFunctionName(table.getModuleName(), tableName));
         table.setPermissionFlag(table.getModuleName() + ":" + NamingCase.toKebabCase(table.getFunctionName()));
         table.setGeneratorFunction(List.of(0, 1, 2, 3, 4, 5));
+        table.setTemplateGroupPropertyData(Map.of());
         this.save(table);
 
         // 获取原生字段数据

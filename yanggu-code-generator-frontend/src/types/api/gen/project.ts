@@ -35,7 +35,7 @@ export interface GenProjectEntity {
 	// 生成方式（0-zip压缩包，1-服务器本地）
 	generatorType: number | string
 	// 项目模板组属性值
-	projectTemplateGroupPropValue: object
+	templateGroupPropertyData: object
 }
 
 /**

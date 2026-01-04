@@ -32,6 +32,17 @@ public abstract class AbstractMapBaseTypeHandler<K, V> extends BaseTypeHandler<M
      */
     protected abstract TypeReference<Map<K, V>> getTypeReference();
 
+    /**
+     * 将对象转为Map，子类可以重写该方法
+     */
+    @SneakyThrows
+    protected Map<K, V> toObject(Object o) {
+        if (Objects.isNull(o)) {
+            return Map.of();
+        }
+        return OBJECT_MAPPER.readValue(o.toString(), getTypeReference());
+    }
+
     @Override
     @SneakyThrows
     public void setNonNullParameter(PreparedStatement ps, int i, Map<K, V> t, JdbcType jdbcType) {
@@ -51,14 +62,6 @@ public abstract class AbstractMapBaseTypeHandler<K, V> extends BaseTypeHandler<M
     @Override
     public Map<K, V> getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
         return toObject(callableStatement.getObject(i));
-    }
-
-    @SneakyThrows
-    private Map<K, V> toObject(Object o) {
-        if (Objects.isNull(o)) {
-            return Map.of();
-        }
-        return OBJECT_MAPPER.readValue(o.toString(), getTypeReference());
     }
 
 }

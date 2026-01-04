@@ -94,7 +94,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     private EnumService enumService;
 
     @Autowired
-    private ProjectTemplateGroupPropertyValueService projectTemplateGroupPropertyValueService;
+    private TemplateGroupPropertyDataService templateGroupPropertyDataService;
 
     @Override
     public List<PreviewTemplateVO> preview(CodePreviewQuery codePreviewQuery) throws Exception {
@@ -459,7 +459,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         // 项目模板属性数据
-        projectModel.setProjectTemplatePropertyData(projectTemplateGroupPropertyValueService.getData(project.getId(), project.getProjectTemplateGroupId()));
+        projectModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
 
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
@@ -569,7 +569,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         tableModel.setGeneratorType(project.getGeneratorType());
 
         //项目模板属性数据
-        tableModel.setProjectTemplatePropertyData(projectTemplateGroupPropertyValueService.getData(project.getId(), project.getProjectTemplateGroupId()));
+        tableModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
         return tableModel;
     }
 

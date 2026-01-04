@@ -129,8 +129,8 @@
 				<form-divider title="项目模板组属性"></form-divider>
 				<template-group-property-form
 					:key="state.dataForm.projectTemplateGroupId"
-					v-model:form-data="state.dataForm.projectTemplateGroupPropValue"
-					model-value-prop="projectTemplateGroupPropValue"
+					v-model:form-data="state.dataForm.templateGroupPropertyData"
+					model-value-prop="templateGroupPropertyData"
 					:property-list="projectTemplateGroupPropertyList!"
 				></template-group-property-form>
 			</template>
@@ -205,7 +205,7 @@ const initFormData = (): GenProjectEntity => ({
 	datasourceId: '',
 	moduleList: [emptyModule()],
 	projectTemplateGroupId: '',
-	projectTemplateGroupPropValue: {},
+	templateGroupPropertyData: {},
 	tableTemplateGroupId: '',
 	enumTemplateGroupId: '',
 	backendPath: '',
@@ -258,7 +258,7 @@ const dataRules = computed(() => {
 	// 模板组属性校验
 	projectTemplateGroupPropertyList.value?.forEach(item => {
 		if (item.required === 1) {
-			rules[`projectTemplateGroupPropValue.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+			rules[`templateGroupPropertyData.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 		}
 	})
 

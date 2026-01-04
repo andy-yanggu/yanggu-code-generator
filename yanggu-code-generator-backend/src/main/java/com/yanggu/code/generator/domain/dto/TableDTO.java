@@ -11,6 +11,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 表DTO实体类
@@ -123,5 +124,11 @@ public class TableDTO implements Serializable {
      */
     @Schema(description = "VO基类ID")
     private Long voBaseClassId;
+
+    /**
+     * 模板组数据
+     */
+    @Schema(description = "模板组数据")
+    private Map<String, Object> templateGroupPropertyData;
 
 }

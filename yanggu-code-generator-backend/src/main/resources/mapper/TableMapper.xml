@@ -21,6 +21,7 @@
         t.permission_flag,
         t.entity_base_class_id,
         t.vo_base_class_id,
+        t.template_group_property_data,
         t.create_time,
         t.update_time,
         t.is_delete
@@ -64,6 +65,7 @@
         <result property="popupType" column="popup_type"/>
         <result property="entityBaseClassId" column="entity_base_class_id"/>
         <result property="voBaseClassId" column="vo_base_class_id"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>

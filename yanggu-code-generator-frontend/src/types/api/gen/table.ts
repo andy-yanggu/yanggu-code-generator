@@ -28,6 +28,8 @@ export interface GenTableEntity {
 	formLayout: number | string
 	// 弹窗方式（0-对话框，1-抽屉）
 	popupType: number | string
+	// 表项目模板组数据
+	templateGroupPropertyData: object
 	// 生成方式
 	generatorFunction: number[]
 	// Entity基类ID
@@ -38,6 +40,8 @@ export interface GenTableEntity {
 	projectName?: string
 	// 权限标识
 	permissionFlag: string
+	// 表项目模板组ID
+	tableTemplateGroupId: number | string
 }
 
 /**

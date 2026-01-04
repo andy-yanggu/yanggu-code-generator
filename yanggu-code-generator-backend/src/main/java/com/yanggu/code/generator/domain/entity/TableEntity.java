@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
 import com.yanggu.code.generator.common.mybatis.typehandler.list.ListIntegerTypeHandler;
+import com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import static com.baomidou.mybatisplus.annotation.FieldStrategy.ALWAYS;
 
@@ -121,5 +123,11 @@ public class TableEntity extends BaseEntity implements Serializable {
      */
     @TableField(value = "vo_base_class_id")
     private Long voBaseClassId;
+
+    /**
+     * 模板组数据
+     */
+    @TableField(value = "template_group_property_data", typeHandler = MapDataTypeHandler.class)
+    private Map<String, Object> templateGroupPropertyData;
 
 }

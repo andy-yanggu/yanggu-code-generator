@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" title="修改" :close-on-click-modal="false" width="60%">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="100px" @keyup.enter="submitHandle()">
+		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="120px" @keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
@@ -109,6 +109,16 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+
+			<!-- 表模板组属性表单 -->
+			<template v-if="isNotEmpty(tableTemplateGroupPropertyList)">
+				<form-divider title="表模板组属性"></form-divider>
+				<template-group-property-form
+					v-model:form-data="state.dataForm.templateGroupPropertyData"
+					model-value-prop="templateGroupPropertyData"
+					:property-list="tableTemplateGroupPropertyList"
+				></template-group-property-form>
+			</template>
 		</el-form>
 		<template #footer>
 			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
@@ -122,18 +132,18 @@ import { reactive, ref } from 'vue'
 import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
-import { genBaseClassApi, genProjectApi, genTableApi } from '@/api'
-import { FormOptions, GenBaseClassEntity, GenProjectEntity, GenTableEntity } from '@/types'
+import { genBaseClassApi, genProjectApi, genTableApi, genTemplateGroupPropertyApi } from '@/api'
+import { FormOptions, GenBaseClassEntity, GenProjectEntity, GenTableEntity, GenTemplateGroupPropertyEntity } from '@/types'
 import FormDivider from '@/components/form/divider/index.vue'
 import OptionLabel from '@/components/option/label/index.vue'
+import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
+import { isNotEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenTableForm'
 })
 
 const emit = defineEmits(['refreshDataList'])
-
-const projectList = ref([] as GenProjectEntity[])
 
 // 初始化表单数据
 const initFormData = (): GenTableEntity => ({
@@ -152,15 +162,20 @@ const initFormData = (): GenTableEntity => ({
 	permissionFlag: '',
 	formLayout: '',
 	popupType: '',
+	tableTemplateGroupId: '',
+	templateGroupPropertyData: {},
 	generatorFunction: [0, 1, 2, 3, 4, 5]
 })
 
+const projectList = ref([] as GenProjectEntity[])
 const baseClassList = ref([] as GenBaseClassEntity[])
+const tableTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
 const state = reactive({
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
 	initBefore: () => {
+		// 项目下拉
 		genProjectApi.entityList().then(data => {
 			projectList.value = data
 		})
@@ -171,6 +186,11 @@ const state = reactive({
 	},
 	initFormData,
 	dataForm: initFormData(),
+	initAfter: () => {
+		genTemplateGroupPropertyApi.entityList({ templateGroupId: state.dataForm.tableTemplateGroupId }).then(data => {
+			tableTemplateGroupPropertyList.value = data
+		})
+	},
 	emit
 } as FormOptions<GenTableEntity>)
 

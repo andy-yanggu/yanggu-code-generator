@@ -67,7 +67,7 @@ public class ProjectVO extends BaseVO implements Serializable {
      * 项目模板属性数据
      */
     @Schema(description = "项目模板属性数据")
-    private Map<String, Object> projectTemplateGroupPropValue;
+    private Map<String, Object> templateGroupPropertyData;
 
     /**
      * 表模板组ID

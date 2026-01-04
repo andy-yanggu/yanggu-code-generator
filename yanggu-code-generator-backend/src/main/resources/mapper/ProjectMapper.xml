@@ -14,6 +14,7 @@
         project_template_group_id,
         table_template_group_id,
         enum_template_group_id,
+        template_group_property_data,
         backend_path,
         frontend_path,
         project_desc,
@@ -50,6 +51,7 @@
         <result property="author" column="author"/>
         <result property="generatorType" column="generator_type"/>
         <result property="moduleList" column="module_list" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
