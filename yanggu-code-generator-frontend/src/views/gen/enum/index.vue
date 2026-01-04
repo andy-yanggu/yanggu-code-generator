@@ -132,9 +132,9 @@
 			</el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
-			<enum-form ref="formRef" @refresh-data-list="getDataList"></enum-form>
+			<enum-form ref="formRef" @refresh-data-list="getDataList()"></enum-form>
 
-			<enum-item-index ref="enumItemIndexRef"></enum-item-index>
+			<enum-item-index ref="enumItemIndexRef" @refresh-data-list="getDataList()"></enum-item-index>
 
 			<preview ref="previewRef"></preview>
 

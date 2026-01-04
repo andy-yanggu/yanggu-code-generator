@@ -335,9 +335,9 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         table.setFormLayout(FormLayoutEnum.ONE.getCode());
         table.setClassName(NamingCase.toPascalCase(tableName));
         table.setModuleName(getModuleName(tableName));
-        table.setFunctionName(StrUtil.toCamelCase(tableName));
-        table.setPermissionFlag(table.getModuleName() + ":" + table.getFunctionName());
-        table.setGeneratorFunction(List.of(0, 1, 2, 3, 4, 5, 6, 7));
+        table.setFunctionName(getFunctionName(table.getModuleName(), tableName));
+        table.setPermissionFlag(table.getModuleName() + ":" + NamingCase.toKebabCase(table.getFunctionName()));
+        table.setGeneratorFunction(List.of(0, 1, 2, 3, 4, 5));
         this.save(table);
 
         // 获取原生字段数据
@@ -353,6 +353,14 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         String[] split = tableName.split("_");
         if (split.length > 1) {
             return split[0];
+        }
+        return tableName;
+    }
+
+    private String getFunctionName(String moduleName, String tableName) {
+        // 如果tableName包含moduleName，例如sys_user，则取user
+        if (tableName.contains(moduleName + "_")) {
+            return StrUtil.toCamelCase(tableName.substring(moduleName.length() + 1));
         }
         return tableName;
     }

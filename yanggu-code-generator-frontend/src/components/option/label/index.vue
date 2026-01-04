@@ -1,11 +1,13 @@
 <template>
 	<div class="option-label">
 		<span class="label">{{ label }}</span>
-		<span v-if="desc && desc.trim()" class="desc">（{{ desc }}）</span>
+		<span v-if="isNotBlank(desc)" class="desc">（{{ desc }}）</span>
 	</div>
 </template>
 
 <script setup>
+import { isNotBlank } from '@/utils/tool.ts'
+
 defineProps({
 	label: {
 		type: String,

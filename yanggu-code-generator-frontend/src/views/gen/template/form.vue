@@ -18,7 +18,10 @@
 				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES" disabled></el-radio-group>
 			</el-form-item>
 			<template v-if="state.dataForm.templateType === 0">
-				<el-form-item label="条件表达式" prop="conditionExpression">
+				<el-form-item prop="conditionExpression">
+					<template #label>
+						<form-label-tooltip tooltip="使用Aviator表达式，需要返回布尔值" label="条件表达式"></form-label-tooltip>
+					</template>
 					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
 				</el-form-item>
 			</template>
@@ -26,7 +29,10 @@
 				<el-form-item label="模板名称" prop="templateName">
 					<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
 				</el-form-item>
-				<el-form-item label="条件表达式" prop="conditionExpression">
+				<el-form-item prop="conditionExpression">
+					<template #label>
+						<form-label-tooltip tooltip="使用Aviator表达式，需要返回布尔值" label="条件表达式"></form-label-tooltip>
+					</template>
 					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
 				</el-form-item>
 			</template>
@@ -58,6 +64,7 @@ import { Check, Close, Upload } from '@element-plus/icons-vue'
 import { FormItemRule, UploadProps } from 'element-plus'
 import { genTemplateApi } from '@/api'
 import { FormOptions, GenTemplateEntity, Key } from '@/types'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'GenTemplateForm'

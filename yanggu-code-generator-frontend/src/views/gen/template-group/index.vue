@@ -142,6 +142,7 @@
 			ref="propertyRef"
 			:template-group-id="currentTemplateGroup.id"
 			:template-group-name="currentTemplateGroup.groupName"
+			@refresh-data-list="getDataList"
 		></template-group-property>
 	</div>
 </template>

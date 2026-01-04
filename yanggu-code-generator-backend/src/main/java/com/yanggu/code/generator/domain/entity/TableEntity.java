@@ -75,16 +75,16 @@ public class TableEntity extends BaseEntity implements Serializable {
     private String version;
 
     /**
-     * 功能名
-     */
-    @TableField(value = "function_name")
-    private String functionName;
-
-    /**
      * 模块名
      */
     @TableField(value = "module_name")
     private String moduleName;
+
+    /**
+     * 功能名
+     */
+    @TableField(value = "function_name")
+    private String functionName;
 
     /**
      * 权限标识
