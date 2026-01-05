@@ -61,7 +61,7 @@
 			</el-splitter-panel>
 
 			<!-- 右侧：代码预览区 -->
-			<el-splitter-panel v-if="templateTreeData.tabList.length > 0" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-splitter-panel v-if="isNotEmpty(templateTreeData.tabList)" :class="{ 'full-screen-mode': isFullscreen }">
 				<el-container style="height: 100%">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; margin-bottom: 10px">
@@ -69,12 +69,12 @@
 							<el-col :span="16">
 								<div class="path-container">
 									<text-tooltip
-										:title="'路径：' + templateTreeData.item.filePath"
-										:tooltip-content="templateTreeData.item.filePath"
+										:title="'路径：' + activeTabItem.filePath"
+										:tooltip-content="activeTabItem.filePath"
 										:max-width="'100%'"
 									></text-tooltip>
 									<el-tooltip :disabled="copyIconState === Check" content="复制文件路径" placement="top">
-										<el-icon class="copy-icon" @click="copyPath(templateTreeData.item.filePath)">
+										<el-icon class="copy-icon" @click="copyPath(activeTabItem.filePath)">
 											<component :is="copyIconState"></component>
 										</el-icon>
 									</el-tooltip>
@@ -83,11 +83,11 @@
 							<el-col :span="8" style="text-align: right">
 								<el-tooltip content="复制代码" placement="top">
 									<el-button
-										v-if="templateTreeData.item.templateType === 1"
+										v-if="activeTabItem.templateType === 1"
 										type="primary"
 										size="small"
 										:icon="CopyDocument"
-										@click="handleCopy(templateTreeData.item.templateContent!)"
+										@click="handleCopy(activeTabItem.templateContent)"
 									>
 										复制
 									</el-button>
@@ -98,7 +98,7 @@
 										size="small"
 										:loading="submitLoading"
 										:icon="generatorState.icon"
-										@click="downloadTemplateData(templateTreeData.item)"
+										@click="downloadTemplateData(activeTabItem)"
 									>
 										{{ generatorState.text }}
 									</el-button>
@@ -134,15 +134,15 @@
 
 					<!-- 代码区域 -->
 					<el-main style="padding: 10px; overflow: hidden">
-						<template v-if="templateTreeData.item.templateType === 1">
+						<template v-if="activeTabItem.templateType === 1">
 							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
-								<code-mirror v-model="templateTreeData.item.templateContent" :read-only="true"></code-mirror>
+								<code-mirror v-model="activeTabItem.templateContent" :read-only="true"></code-mirror>
 							</el-scrollbar>
 						</template>
-						<template v-else-if="templateTreeData.item.templateType === 2">
+						<template v-else-if="activeTabItem.templateType === 2">
 							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-								<template v-if="imageTypeList.some(tempType => templateTreeData.item.fileName.endsWith(tempType))">
-									<el-image :src="templateTreeData.item.templateContent" fit="fill"></el-image>
+								<template v-if="imageTypeList.some(tempType => activeTabItem.fileName.endsWith(tempType))">
+									<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
 								</template>
 								<template v-else>
 									<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
@@ -170,13 +170,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
+import { computed, nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
-import { copyToClipboard } from '@/utils/tool'
+import { copyToClipboard, isNotEmpty } from '@/utils/tool'
 import { useDebounceFn, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 import { useSubmitHandler } from '@/hooks'
@@ -199,7 +199,7 @@ interface Tree {
 	// 文件路径
 	filePath: string
 	// 模板组类型（0-项目，1-表，2-枚举）
-	templateGroupType: number
+	templateGroupType?: number
 	// 模板类型（0-目录，1-模板文件，2-二进制文件）
 	templateType: number
 	// 模板内容
@@ -237,7 +237,6 @@ const initTemplateTreeData = () => ({
 	generatorProductType: -1,
 	treeList: [] as Tree[],
 	dataList: [] as Tree[],
-	item: {} as Tree,
 	tabList: [] as Tree[],
 	tabActiveName: ''
 })
@@ -245,6 +244,15 @@ const templateTreeData = reactive(initTemplateTreeData())
 const treeSearchText = ref('')
 const { isFullscreen, toggle } = useFullscreen()
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
+
+const activeTabItem = computed(() => {
+	const treeData = templateTreeData.tabList.find(item => item.filePath === templateTreeData.tabActiveName)
+	if (!treeData) {
+		return { templateId: -1, templateContent: '', templateType: -1 } as Tree
+	} else {
+		return treeData
+	}
+})
 
 // 初始化方法
 const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
@@ -275,7 +283,6 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 		templateTreeData.dataList = templateContentList
 		await nextTick()
 		if (templateContentList.length > 0 && templateTreeData.tabActiveName === '') {
-			templateTreeData.item = templateContentList[0]
 			currentNodeKey.value = templateContentList[0].filePath
 			treeRef.value.setCurrentKey(currentNodeKey.value)
 			templateTreeData.tabActiveName = templateContentList[0].filePath
@@ -290,7 +297,7 @@ const codeScrollbarRef = ref()
 
 // 监听树节点变化，实现节点自动滚动到可视区域内
 watch(
-	() => templateTreeData.item.filePath,
+	() => activeTabItem.value.filePath,
 	filePath => {
 		// 等待 el-tree 渲染完成
 		nextTick(() => {
@@ -328,7 +335,7 @@ const buildFileList = (treeList: Tree[]) => {
 
 // 防抖过滤
 const debouncedFilter = useDebounceFn(val => {
-	treeRef.value!.filter(val)
+	treeRef.value.filter(val)
 }, 300)
 
 watch(treeSearchText, val => {
@@ -339,7 +346,6 @@ watch(treeSearchText, val => {
 const handleTreeNodeClick = (data: Tree) => {
 	// 只有是文件才可以预览
 	if (data.templateType != 0) {
-		templateTreeData.item = data
 		tabPush(data)
 		templateTreeData.tabActiveName = data.filePath
 	}
@@ -350,7 +356,6 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 	const filePath = tab.paneName as string
 	const matchedItem = templateTreeData.tabList.find(item => item.filePath === filePath)
 	if (matchedItem) {
-		templateTreeData.item = matchedItem
 		currentNodeKey.value = matchedItem.filePath
 		treeRef.value.setCurrentKey(currentNodeKey.value)
 	}
@@ -378,10 +383,6 @@ const handleTabRemove = (filePath: string) => {
 	}
 	if (templateTreeData.tabList.length > 0) {
 		// 设置新的激活项
-		const activeTab = templateTreeData.tabList.find(tab => tab.filePath === newTabActiveName)
-		if (activeTab) {
-			templateTreeData.item = activeTab
-		}
 		templateTreeData.tabActiveName = newTabActiveName
 		currentNodeKey.value = newTabActiveName
 		treeRef.value?.setCurrentKey(currentNodeKey.value)

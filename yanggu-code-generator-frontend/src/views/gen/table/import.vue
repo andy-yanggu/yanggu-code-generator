@@ -4,7 +4,13 @@
 			<el-form ref="queryRef" :model="state.queryForm" :inline="true" :rules="dataRules" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
 					<el-select v-model="state.queryForm.projectId" style="width: 180px" placeholder="请选择项目" clearable filterable>
-						<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
+						<el-option
+							v-for="projectItem in projectList"
+							:key="projectItem.id"
+							:label="projectItem.projectName"
+							:value="projectItem.id"
+							:disabled="isBlank(projectItem.datasourceId)"
+						>
 							<option-label :label="projectItem.projectName" :desc="projectItem.projectDesc"></option-label>
 						</el-option>
 					</el-select>
@@ -55,7 +61,7 @@ import OptionLabel from '@/components/option/label/index.vue'
 import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genProjectApi, genTableApi } from '@/api'
 import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, SubmitOptions } from '@/types'
-import { isEmpty } from '@/utils/tool'
+import { isBlank, isEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenTableImport'

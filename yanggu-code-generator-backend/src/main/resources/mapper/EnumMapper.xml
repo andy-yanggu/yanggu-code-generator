@@ -38,7 +38,7 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
-    <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.entity.EnumEntity" autoMapping="true">
+    <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.entity.EnumEntity" autoMapping="true" extends="enumMap">
         <id property="id" column="id"/>
         <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.entity.EnumItemEntity" autoMapping="true">
             <id property="id" column="enum_item_id"/>
@@ -120,9 +120,7 @@
 
     <select id="selectEnumList" resultMap="enumModelMap">
         SELECT
-            e.id,
-            e.enum_name,
-            e.enum_desc,
+            <include refid="allColumns"/>,
             ei.id AS enum_item_id,
             ei.enum_item_name,
             ei.enum_item_code,
@@ -130,7 +128,7 @@
         FROM
             gen_project AS p
         JOIN gen_enum AS e ON e.project_id = p.id AND e.is_delete = 0
-        JOIN gen_enum_item AS ei ON ei.enum_id = e.id AND ei.is_delete = 0
+        LEFT JOIN gen_enum_item AS ei ON ei.enum_id = e.id AND ei.is_delete = 0
         WHERE
             p.id = #{projectId} AND p.is_delete = 0
     </select>

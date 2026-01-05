@@ -165,11 +165,11 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         wrapper.ne(Objects.nonNull(dto.getId()), BaseClassEntity::getId, dto.getId());
         wrapper.and(temp -> temp
                 .and(inner -> inner
-                        .eq(BaseClassEntity::getPackageName, dto.getPackageName())
-                        .eq(BaseClassEntity::getClassName, dto.getClassName()))
+                        .apply("CONCAT(package_name, '.', class_name) = CONCAT({0}, '.', {1})",
+                                dto.getPackageName(), dto.getClassName())
                 .or()
                 .eq(BaseClassEntity::getBaseClassName, dto.getBaseClassName())
-        );
+        ));
 
         boolean exists = baseClassMapper.exists(wrapper);
         if (exists) {

@@ -570,7 +570,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //模板属性数据
         tableModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
-        tableModel.setTableTemplatePropertyData(templateGroupPropertyDataService.getData(project.getEnumTemplateGroupId(), table.getTemplateGroupPropertyData()));
+        tableModel.setTableTemplatePropertyData(templateGroupPropertyDataService.getData(project.getTableTemplateGroupId(), table.getTemplateGroupPropertyData()));
         return tableModel;
     }
 

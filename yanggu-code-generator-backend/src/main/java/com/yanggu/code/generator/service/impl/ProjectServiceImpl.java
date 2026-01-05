@@ -66,8 +66,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         projectMapper.insert(entity);
 
-        Long projectId = entity.getId();
-
         //默认导入项目对应数据库下的所有表
         Long datasourceId = entity.getDatasourceId();
         if (datasourceId != null) {
@@ -80,8 +78,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
 
             TableImportDTO tableImportDTO = new TableImportDTO();
             tableImportDTO.setProjectId(entity.getId());
-
             tableImportDTO.setTableNameList(tableNameList);
+
             tableService.importTable(tableImportDTO);
         }
     }
