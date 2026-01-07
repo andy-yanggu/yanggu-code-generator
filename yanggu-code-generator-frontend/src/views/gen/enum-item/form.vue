@@ -52,6 +52,8 @@ const initFormData = (ctx?: Record<string, any>): GenEnumItemEntity => ({
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '枚举项',
 	// 提交API
 	submitApi: genEnumItemApi.submit,
 	// 详情API

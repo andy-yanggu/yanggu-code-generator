@@ -44,6 +44,8 @@ const initFormData = (): GenFieldTypeEntity => ({
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '字段类型',
 	submitApi: genFieldTypeApi.submit,
 	detailApi: genFieldTypeApi.detail,
 	initFormData,

@@ -18,6 +18,10 @@ export interface FormInitOptions {
 
 // 表单参数
 export interface FormOptions<VO> {
+	// 标题主体，如：用户、订单
+	titleSubject?: string
+	// 完整标题
+	fullTitle?: string
 	// 提交API
 	submitApi: (data: VO) => Promise<any>
 	// 详情API

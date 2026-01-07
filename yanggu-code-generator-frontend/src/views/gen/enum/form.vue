@@ -67,6 +67,8 @@ const initFormData = (): GenEnumEntity => ({
 
 const emit = defineEmits(['refreshDataList'])
 const state = reactive({
+	// 标题主体
+	titleSubject: '枚举',
 	submitApi: genEnumApi.submit,
 	detailApi: genEnumApi.detail,
 	initBefore: () => {

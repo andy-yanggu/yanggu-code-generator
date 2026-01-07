@@ -134,6 +134,8 @@ const initFormData = (ctx?: Record<string, any>): GenTemplateGroupPropertyEntity
 })
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '模板组属性',
 	// 提交API
 	submitApi: genTemplateGroupPropertyApi.submit,
 	// 详情API

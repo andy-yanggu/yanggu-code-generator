@@ -57,6 +57,8 @@ const initFormData = (): GenDatasourceEntity => ({
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '数据源',
 	submitApi: genDatasourceApi.submit,
 	detailApi: genDatasourceApi.detail,
 	initFormData,

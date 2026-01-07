@@ -76,6 +76,8 @@ const initFormData = (): GenBaseClassEntity => ({
 
 const emit = defineEmits(['refreshDataList'])
 const state = reactive({
+	// 标题主体
+	titleSubject: '基类',
 	// 提交API
 	submitApi: genBaseClassApi.submit,
 	// 详情API

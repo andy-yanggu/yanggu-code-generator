@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="visible" title="修改" :close-on-click-modal="false" width="60%">
+	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="60%">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
@@ -172,6 +172,8 @@ const baseClassList = ref([] as GenBaseClassEntity[])
 const tableTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '表',
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
 	initBefore: () => {
@@ -216,7 +218,7 @@ const dataRules = computed(() => {
 	return rules
 })
 
-const { visible, dataFormRef, init, submitHandle, submitLoading } = useSubmitForm(state)
+const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 defineExpose({
 	init

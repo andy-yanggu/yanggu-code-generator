@@ -216,6 +216,8 @@ const initFormData = (): GenProjectEntity => ({
 })
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '项目',
 	submitApi: genProjectApi.submit,
 	detailApi: genProjectApi.detail,
 	initBefore: getList,

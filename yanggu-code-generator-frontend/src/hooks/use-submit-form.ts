@@ -1,6 +1,7 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { FormInitOptions, FormOptions, FormType, Key } from '@/types'
+import { isNotBlank } from '@/utils/tool'
 
 // 提交表单
 export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>) => {
@@ -21,6 +22,8 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		submitApi: (_: VO) => Promise.resolve(),
 		detailApi: (_: Key) => Promise.resolve({} as VO),
 		initFormData: () => ({}) as VO,
+		titleSubject: '',
+		fullTitle: '',
 		dataForm: {} as VO & { id?: Key },
 		duration: 500
 	} as const
@@ -33,34 +36,38 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		Object.assign(options.dataForm, options.initFormData())
 	}
 
+	const titleMap: Record<string, string> = {
+		add: '新增',
+		update: '修改',
+		copy: '复制',
+		detail: '详情',
+		operate: '操作'
+	}
+
 	// 对话框标题
 	const dialogTitle = () => {
-		switch (formType.value) {
-			case 'add':
-				return '新增'
-			case 'update':
-				return '修改'
-			case 'copy':
-				return '复制'
-			case 'detail':
-				return '详情'
-			default:
-				return '操作'
+		// ✅ 1. 特殊场景，完全自定义
+		if (isNotBlank(options.fullTitle)) {
+			return options.fullTitle
 		}
+		// ✅ 2. 通用规则：动作 + 名词
+		const action = titleMap[formType.value] ?? '操作'
+
+		if (options.titleSubject) {
+			// 特例：详情更符合中文习惯
+			if (formType.value === 'detail') {
+				return `${options.titleSubject}详情`
+			}
+			return `${action}${options.titleSubject}`
+		}
+
+		// ✅ 3. 兜底
+		return action
 	}
 
 	// 获取提示消息
 	const getMessage = () => {
-		switch (formType.value) {
-			case 'add':
-				return '新增成功'
-			case 'update':
-				return '修改成功'
-			case 'copy':
-				return '复制成功'
-			default:
-				return '操作成功'
-		}
+		return options.message || `${titleMap[formType.value]}${options.titleSubject}成功`
 	}
 
 	// 初始化表单
@@ -116,7 +123,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 			submitLoading.value = true
 
 			// 提示消息
-			const message = options.message || getMessage()
+			const message = getMessage()
 			options
 				// 提交表单
 				.submitApi(options.dataForm)

@@ -125,7 +125,8 @@ const initFormData = (): GenTemplateEntity => ({
 })
 
 const state = reactive({
-	visible: false,
+	// 标题主体
+	titleSubject: '模板',
 	submitApi: genTemplateApi.submit,
 	detailApi: (id: Key) => genTemplateApi.detailData({ id }),
 	initFormData,

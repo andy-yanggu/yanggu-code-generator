@@ -53,6 +53,8 @@ const initFormData = (): GenTemplateGroupEntity => ({
 const emit = defineEmits(['refreshDataList'])
 
 const state = reactive({
+	// 标题主体
+	titleSubject: '模板组',
 	// 提交API
 	submitApi: genTemplateGroupApi.submit,
 	// 详情API

@@ -13,7 +13,7 @@ export interface GenEnumEntity {
 	// 项目ID
 	projectId: number | string
 	// 枚举模板组ID
-	enumTemplateGroupId: number | string
+	enumTemplateGroupId?: number | string
 	// 枚举项数量
 	enumItemCount?: number
 	// 枚举模板组属性数据
