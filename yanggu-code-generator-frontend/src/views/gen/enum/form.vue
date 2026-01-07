@@ -1,16 +1,20 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="140px" @keyup.enter="submitHandle()">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:rules="dataRules"
+			label-width="140px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<form-divider v-if="isNotEmpty(enumTemplateGroupPropertyList)" title="基础属性"></form-divider>
 			<el-form-item label="项目" prop="projectId">
-				<el-select
-					v-model="state.dataForm.projectId"
-					:options="projectList"
-					:props="{ label: 'projectName', value: 'id' }"
-					clearable
-					:disabled="isNotBlank(state.dataForm.id)"
-					placeholder="请选择项目"
-				></el-select>
+				<el-select v-model="state.dataForm.projectId" clearable :disabled="isNotBlank(state.dataForm.id)" placeholder="请选择项目">
+					<el-option v-for="projectItem in projectList" :key="projectItem.id" :label="projectItem.projectName" :value="projectItem.id">
+						<option-label :label="projectItem.projectName" :desc="projectItem.projectDesc"></option-label>
+					</el-option>
+				</el-select>
 			</el-form-item>
 			<el-form-item prop="enumName">
 				<template #label>
@@ -25,6 +29,7 @@
 			<template v-if="isNotEmpty(enumTemplateGroupPropertyList)">
 				<form-divider title="枚举模板组属性"></form-divider>
 				<template-group-property-form
+					:key="state.dataForm.projectId"
 					v-model:form-data="state.dataForm.templateGroupPropertyData"
 					:property-list="enumTemplateGroupPropertyList"
 				></template-group-property-form>
@@ -38,15 +43,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { genEnumApi, genProjectApi, genTemplateGroupPropertyApi } from '@/api'
 import { FormOptions, GenEnumEntity, GenProjectEntity, GenTemplateGroupPropertyEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
-import { isNotBlank, isNotEmpty } from '@/utils/tool'
+import { isBlank, isNotBlank, isNotEmpty } from '@/utils/tool'
 import FormDivider from '@/components/form/divider/index.vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
+import OptionLabel from '@/components/option/label/index.vue'
 
 defineOptions({
 	name: 'GenEnumForm'
@@ -60,7 +66,6 @@ const initFormData = (): GenEnumEntity => ({
 	id: '',
 	projectId: '',
 	enumName: '',
-	enumTemplateGroupId: '',
 	enumDesc: '',
 	templateGroupPropertyData: {}
 })
@@ -78,13 +83,32 @@ const state = reactive({
 	},
 	initFormData,
 	dataForm: initFormData(),
-	initAfter: () => {
-		genTemplateGroupPropertyApi.entityList({ templateGroupId: state.dataForm.enumTemplateGroupId }).then(data => {
-			enumTemplateGroupPropertyList.value = data
-		})
-	},
 	emit
 } as FormOptions<GenEnumEntity>)
+
+watch(
+	() => state.dataForm.projectId,
+	projectId => {
+		enumTemplateGroupPropertyList.value = []
+		if (!projectId) {
+			return
+		}
+
+		const project = projectList.value.find(item => item.id === projectId)
+		if (!project || isBlank(project.enumTemplateGroupId)) {
+			return
+		}
+
+		genTemplateGroupPropertyApi
+			.entityList({
+				templateGroupId: project.enumTemplateGroupId
+			})
+			.then(data => {
+				enumTemplateGroupPropertyList.value = data
+			})
+	},
+	{ immediate: true }
+)
 
 const dataRules = reactive({
 	enumName: [{ required: true, message: '枚举名称不能为空', trigger: 'blur' }],
