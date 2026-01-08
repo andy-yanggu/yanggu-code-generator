@@ -75,23 +75,18 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		const { type, id, ctx = {} } = initOptions
 
 		formType.value = type
-		visible.value = true
-
-		formType.value = type
-		visible.value = true
 		options.dataForm.id = id
+		visible.value = true
 
 		nextTick(() => {
-			// 清空表单校验和重置表单数据
-			dataFormRef.value.clearValidate()
-			dataFormRef.value.resetFields()
+			// 重置表单数据
 			Object.assign(options.dataForm, options.initFormData(ctx))
 
 			// 初始化之前调用
 			options.initBefore?.()
 
 			if (id) {
-				// 调用详细接口
+				// 调用详情接口
 				options.detailApi(id).then(data => {
 					// 赋值给表单数据
 					Object.assign(options.dataForm, data)
@@ -122,14 +117,14 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 
 			submitLoading.value = true
 
-			// 提示消息
-			const message = getMessage()
 			options
 				// 提交表单
 				.submitApi(options.dataForm)
 				.then(data => {
 					ElMessage.success({
-						message,
+						// 提示消息
+						message: getMessage(),
+						// 提示时长
 						duration: options.duration
 					})
 					visible.value = false

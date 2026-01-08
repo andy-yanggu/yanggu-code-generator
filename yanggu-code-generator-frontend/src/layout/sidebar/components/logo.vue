@@ -1,11 +1,12 @@
 <template>
-	<div class="logo-container">
+	<div class="logo-container" @click="clickHandler()">
 		<el-avatar src="./favicon.ico" size="small" class="logo-avatar"></el-avatar>
 		<el-text v-if="!appStore.isCollapse" tag="b">{{ appTitle }}</el-text>
 	</div>
 </template>
 <script setup lang="ts">
-import { useAppStore } from '@/store'
+import { useAppStore, useSystemSettingStore } from '@/store'
+import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
 	name: 'Logo'
@@ -13,10 +14,20 @@ defineOptions({
 
 const appTitle = import.meta.env.VITE_APP_TITLE
 const appStore = useAppStore()
+const systemConfigStore = useSystemSettingStore()
+const router = useRouter()
+const route = useRoute()
+
+const clickHandler = () => {
+	if (route.fullPath !== systemConfigStore.menu.menuDefault) {
+		router.push(systemConfigStore.menu.menuDefault)
+	}
+}
 </script>
 
 <style scoped>
 .logo-container {
+	cursor: pointer;
 	margin-left: 7px;
 	display: flex;
 	align-items: center;

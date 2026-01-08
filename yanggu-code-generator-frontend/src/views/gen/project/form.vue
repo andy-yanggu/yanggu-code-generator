@@ -246,8 +246,8 @@ const projectTemplateGroupPropertyList = computed(() => {
 
 const dataRules = computed(() => {
 	const rules: Record<string, FormItemRule[]> = {
-		projectName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		projectVersion: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+		projectName: [{ required: true, message: '项目名称不能为空', trigger: 'blur' }],
+		projectVersion: [{ required: true, message: '项目版本不能为空', trigger: 'blur' }],
 		projectPort: [
 			{ required: true, message: '项目端口不能为空', trigger: 'blur' },
 			{ type: 'number', message: '项目端口必须为数字', trigger: 'change' }
@@ -260,7 +260,7 @@ const dataRules = computed(() => {
 	// 模板组属性校验
 	projectTemplateGroupPropertyList.value?.forEach(item => {
 		if (item.required === 1) {
-			rules[`templateGroupPropertyData.${item.propKey}`] = [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+			rules[`templateGroupPropertyData.${item.propKey}`] = [{ required: true, message: `${item.propTitle}不能为空`, trigger: 'blur' }]
 		}
 	})
 

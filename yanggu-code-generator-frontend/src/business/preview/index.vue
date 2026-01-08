@@ -81,15 +81,15 @@
 								</div>
 							</el-col>
 							<el-col :span="8" style="text-align: right">
-								<el-tooltip content="复制代码" placement="top">
+								<el-tooltip content="复制代码" :disabled="copyCodeState.icon === Check" placement="top">
 									<el-button
 										v-if="activeTabItem.templateType === 1"
 										type="primary"
 										size="small"
-										:icon="CopyDocument"
+										:icon="copyCodeState.icon"
 										@click="handleCopy(activeTabItem.templateContent)"
 									>
-										复制
+										{{ copyCodeState.text }}
 									</el-button>
 								</el-tooltip>
 								<el-tooltip :content="generatorState.tooltip" placement="top">
@@ -215,6 +215,23 @@ const { start: startTimer } = useTimeoutFn(() => {
 	copyIconState.value = CopyDocument
 }, 2000)
 
+const initCopyCodeStateArray = () => [
+	{
+		icon: CopyDocument,
+		text: '复制'
+	},
+	{
+		icon: Check,
+		text: '已复制'
+	}
+]
+
+const copyCodeState = shallowReactive(initCopyCodeStateArray()[0])
+
+const { start: startCopyCode } = useTimeoutFn(() => {
+	Object.assign(copyCodeState, initCopyCodeStateArray()[0])
+}, 2000)
+
 const initGeneratorStateArray = () => [
 	{
 		icon: Download,
@@ -262,6 +279,7 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
 	templateTreeData.generatorType = generatorType
+	Object.assign(copyCodeState, initCopyCodeStateArray()[0])
 	if (generatorType === 0) {
 		Object.assign(generatorState, initGeneratorStateArray()[0])
 	} else {
@@ -399,8 +417,13 @@ const tabPush = (tree: Tree) => {
 
 // 代码复制到剪切板
 const handleCopy = (content: string) => {
+	if (copyCodeState.icon === Check) {
+		return
+	}
+	Object.assign(copyCodeState, initCopyCodeStateArray()[1])
 	copyToClipboard(content).then(() => {
 		ElMessage.success('代码已复制到剪贴板')
+		startCopyCode()
 	})
 }
 
