@@ -90,5 +90,6 @@ const handleClick = (e: MouseEvent) => {
 <style scoped lang="scss">
 .icon-button:not(.is-disabled):hover {
 	color: var(--el-color-primary) !important;
+	transform: scale(1.1) translateY(-1px);
 }
 </style>

@@ -2,10 +2,10 @@
 	<el-dropdown>
 		<div class="icon-button">
 			<template v-if="userStore.userInfo.avatar">
-				<el-avatar :src="userStore.userInfo.avatar" :size="16"></el-avatar>
+				<el-avatar :src="userStore.userInfo.avatar" class="user-avatar"></el-avatar>
 			</template>
 			<template v-else>
-				<el-icon size="16px">
+				<el-icon class="user-avatar">
 					<Avatar></Avatar>
 				</el-icon>
 			</template>
@@ -65,5 +65,11 @@ const logout = () => {
 }
 .icon-button:hover {
 	color: var(--el-color-primary) !important;
+}
+.icon-button:hover .user-avatar {
+	transform: scale(1.1) translateY(-1px);
+}
+.user-avatar {
+	font-size: 16px;
 }
 </style>

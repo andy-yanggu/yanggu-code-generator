@@ -42,5 +42,6 @@ const sizeOptions = ref([
 }
 .icon-button:hover {
 	color: var(--el-color-primary) !important;
+	transform: scale(1.1) translateY(-1px);
 }
 </style>

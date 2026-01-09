@@ -5,10 +5,8 @@
 			<el-row :gutter="20">
 				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
 					<div class="icon-item" @click="selectIcon(iconName)">
-						<div class="icon-wrapper">
-							<svg-icon :icon="iconName" class="large-icon" is-pointer></svg-icon>
-							<el-text size="small" truncated>{{ iconName }}</el-text>
-						</div>
+						<svg-icon :icon="iconName" class="large-icon" is-pointer></svg-icon>
+						<el-text size="small" truncated>{{ iconName }}</el-text>
 					</div>
 				</el-col>
 			</el-row>
@@ -117,15 +115,6 @@ onMounted(() => {
 	background-color: #ecf5ff;
 	transform: translateY(-4px);
 	box-shadow: 0 4px 8px rgba(64, 158, 255, 0.2);
-}
-
-.icon-wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
 }
 
 .large-icon {

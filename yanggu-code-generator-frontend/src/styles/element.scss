@@ -76,6 +76,7 @@
 .el-menu-item:hover .svg-icon,
 .el-sub-menu__title:hover .svg-icon {
   color: var(--theme-menu-hover-color) !important;
+  transform: scale(1.1) translateY(-1px); /* 添加悬浮缩放效果 */
 }
 
 /* 子菜单悬浮状态：不添加背景色 */

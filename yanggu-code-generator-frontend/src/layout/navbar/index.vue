@@ -3,15 +3,15 @@
 		<!-- 工具栏 -->
 		<div class="navbar-toolbar">
 			<!-- 左侧区域：折叠按钮 + 面包屑 -->
-			<div class="navbar-toolbar-left">
+			<el-space :size="15">
 				<!-- 折叠按钮 -->
 				<toggle-collapse v-if="systemSettingStore.toolbar.isOpenMenuCollapseButton"></toggle-collapse>
 				<!-- 面包屑 -->
 				<breadcrumb v-if="systemSettingStore.toolbar.isOpenBreadcrumb"></breadcrumb>
-			</div>
+			</el-space>
 
 			<!-- 右侧区域 -->
-			<div class="navbar-toolbar-right">
+			<el-space :size="15">
 				<!-- 菜单搜索 -->
 				<menu-search v-if="systemSettingStore.toolbar.isOpenMenuSearch"></menu-search>
 				<!-- 刷新当前页 -->
@@ -26,7 +26,7 @@
 				<user-dropdown></user-dropdown>
 				<!-- 系统设置 -->
 				<system-setting></system-setting>
-			</div>
+			</el-space>
 		</div>
 		<!-- 标签栏 -->
 		<tag-bar v-if="systemSettingStore.tag.isOpenTag"></tag-bar>
@@ -62,17 +62,5 @@ const systemSettingStore = useSystemSettingStore()
 	padding: 0 10px;
 	margin-top: 6px;
 	border-bottom: 1px solid var(--el-border-color);
-}
-
-.navbar-toolbar-left {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-}
-
-.navbar-toolbar-right {
-	display: flex;
-	align-items: center;
-	gap: 15px;
 }
 </style>
