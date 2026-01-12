@@ -7,7 +7,7 @@
 			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 			:collapse="appStore.isCollapse"
 		>
-			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" :ref-map="menuRefs"></menu-item>
+			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" @register-ref="registerMenuRef"></menu-item>
 		</el-menu>
 	</el-scrollbar>
 </template>
@@ -56,6 +56,12 @@ onMounted(() => {
 		router.push(activeMenuPath)
 	}
 })
+
+const registerMenuRef = (path: string, refInstance: any) => {
+	if (refInstance) {
+		menuRefs.value.set(path, refInstance)
+	}
+}
 
 // 激活的菜单滚动到可视区域中
 const scrollToMenu = (path: string) => {

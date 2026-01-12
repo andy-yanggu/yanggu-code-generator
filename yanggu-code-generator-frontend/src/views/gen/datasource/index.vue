@@ -92,7 +92,7 @@
 								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
 							</el-col>
 						</el-row>
 					</template>
@@ -107,8 +107,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<gen-datasource-form ref="formRef" @refresh-data-list="getDataList()"></gen-datasource-form>
@@ -133,6 +132,8 @@ defineOptions({
 })
 
 const state = reactive({
+	tableSubject: '数据源',
+	deleteNameKey: 'connName',
 	dataListApi: genDatasourceApi.entityPage,
 	deleteListApi: genDatasourceApi.deleteList,
 	queryForm: {

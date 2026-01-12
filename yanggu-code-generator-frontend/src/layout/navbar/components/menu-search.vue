@@ -17,7 +17,7 @@
 			<!-- 树形结构展示 -->
 			<el-scrollbar ref="scrollbarRef" max-height="400px" class="search-results">
 				<MenuTreeNode v-for="node in searchState.matchItemList" :key="node.title" :node="node" :level="0" :on-select="handleSelect"></MenuTreeNode>
-				<div v-if="!searchState.matchItemList.length" class="no-results">
+				<div v-if="isEmpty(searchState.matchItemList)" class="no-results">
 					<el-text>无匹配结果</el-text>
 				</div>
 			</el-scrollbar>
@@ -34,6 +34,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
 import IconButton from '@/components/icon-button/index.vue'
+import { isEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'MenuSearch'

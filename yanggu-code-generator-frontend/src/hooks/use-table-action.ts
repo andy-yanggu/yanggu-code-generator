@@ -1,7 +1,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { IHooksOptions, Key, KeyArray, PageQuery, PageVO } from '@/types'
-import { isEmpty, isNotEmpty } from '@/utils/tool'
+import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
 // 提供分页、批量删除、导出功能
 export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<VO, Query>) => {
@@ -13,6 +13,8 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	const tableCardRef = ref()
 	// 表格引用
 	const tableRef = ref()
+	// 勾选的表格数据
+	const tableRowsRef = ref([] as VO[])
 
 	// 默认值
 	const defaultOptions: IHooksOptions<VO, Query> = {
@@ -23,7 +25,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		deleteListApi: undefined,
 		exportApi: undefined,
 		importApi: undefined,
-		primaryKey: 'id',
+		primaryKey: 'id' as keyof VO,
 		queryForm: {} as Query,
 		dataList: [] as VO[],
 		order: '',
@@ -36,7 +38,6 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		exportLoading: false,
 		deleteLoading: false,
 		dataListSelections: [] as KeyArray,
-		deleteConfirmMessage: '确定进行删除操作吗？',
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
 	}
@@ -173,6 +174,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 	// 多选
 	const selectionChangeHandle = (selections: VO[]) => {
+		tableRowsRef.value = selections
 		if (!state.primaryKey) {
 			console.error('未配置主键')
 			return
@@ -185,6 +187,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		if (isNotEmpty(state.dataListSelections)) {
 			nextTick(() => {
 				state.dataListSelections = []
+				tableRowsRef.value = []
 				tableRef.value.clearSelection()
 			})
 		}
@@ -204,36 +207,100 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		getDataList()
 	}
 
+	// 处理删除上下文
+	const resolveDeleteContext = (arg?: Key | VO) => {
+		// 行内删除（row）
+		if (arg && typeof arg === 'object') {
+			const row = arg as VO
+			return {
+				rows: [row],
+				idList: [row[state.primaryKey!] as Key]
+			}
+		}
+
+		// 行内删除（id）
+		if (arg !== undefined) {
+			return {
+				rows: [],
+				idList: [arg as Key]
+			}
+		}
+
+		// 批量删除
+		const rows = (tableRowsRef.value as VO[]) ?? ([] as VO[])
+		return {
+			rows,
+			idList: rows.map(row => row[state.primaryKey!] as Key)
+		}
+	}
+
+	const getSubject = () => {
+		return state.tableSubject ?? '数据'
+	}
+
+	// 构建删除文案
+	const buildDeleteConfirmMessage = (rows: VO[], idList: KeyArray) => {
+		// 1️⃣ 完全自定义文案
+		if (isNotBlank(state.deleteConfirmMessage)) {
+			return state.deleteConfirmMessage
+		}
+
+		const subject = getSubject()
+
+		// 2️⃣ 没有行数据（只有 id）
+		if (isEmpty(rows)) {
+			return idList.length === 1 ? `确认删除该${subject}吗？` : `确认删除 ${idList.length} 个${subject}吗？`
+		}
+
+		// 3️⃣ 有行数据，提取名称
+		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]).filter(isNotBlank) as string[]) : []
+
+		let targetText: string
+
+		if (names.length === 0) {
+			targetText = subject
+		} else if (names.length > 3) {
+			targetText = `【${names.slice(0, 3).join('、')}…】等${names.length}个${subject}`
+		} else {
+			targetText = `${subject}【${names.join('、')}】`
+		}
+
+		return `确认删除${targetText}吗？`
+	}
+
 	// 批量删除
-	const deleteBatchHandle = (id?: Key) => {
+	const deleteBatchHandle = (arg?: Key | VO) => {
 		if (!state.deleteListApi) {
 			ElMessage.warning('未配置删除接口，请检查')
 			return
 		}
-		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
+		const { idList, rows } = resolveDeleteContext(arg)
+
+		const subject = getSubject()
 		if (isEmpty(idList)) {
-			ElMessage.warning('请选择要删除的数据')
+			ElMessage.warning(`请选择要删除的${subject}`)
 			return
 		}
 
-		ElMessageBox.confirm(state.deleteConfirmMessage, '提示', {
+		ElMessageBox.confirm(buildDeleteConfirmMessage(rows, idList), '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
-		}).then(() => {
-			state.deleteLoading = true
-			state.deleteListApi!(idList)
-				.then(() => {
-					ElMessage.success('删除成功')
-					// 删除勾选数据
-					clearSelectionHandle()
-					getDataList()
-				})
-				.finally(() => {
-					state.deleteLoading = false
-				})
 		})
+			.then(() => {
+				state.deleteLoading = true
+				state.deleteListApi!(idList)
+					.then(() => {
+						ElMessage.success(`${subject}删除成功`)
+						clearSelectionHandle()
+						getDataList()
+					})
+					.finally(() => {
+						state.deleteLoading = false
+					})
+			})
+			.catch(() => {})
 	}
 
 	// 表格序号列计算

@@ -100,11 +100,12 @@ onMounted(() => {
 					return
 				}
 
-				const draggedTag = appStore.tagList[draggedIndex]
+				const fullPath = evt.item.id.replace(/^tab-/, '')
 
 				// 激活被拖拽的标签页
-				if (systemSettingStore.tag.isOpenTagDragActivated && appStore.activeTabPath !== draggedTag.fullPath) {
-					draggedTagPath.value = draggedTag.fullPath
+				if (systemSettingStore.tag.isOpenTagDragActivated && appStore.activeTabPath !== fullPath) {
+					// console.log('item:', evt.item.id, 'fullPath', fullPath)
+					draggedTagPath.value = fullPath
 				}
 			},
 

@@ -6,7 +6,13 @@
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="isNotEmpty(menu.children)">
-			<menu-item v-for="sub in menu.children" :key="getSubMenuKey(sub)" :menu="sub" :ref-map="refMap" :parent-paths="submenuParentPaths"></menu-item>
+			<menu-item
+				v-for="sub in menu.children"
+				:key="getSubMenuKey(sub)"
+				:menu="sub"
+				:parent-paths="submenuParentPaths"
+				@register-ref="(path, tempRef) => emit('register-ref', path, tempRef)"
+			></menu-item>
 		</template>
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
@@ -34,22 +40,22 @@ const props = defineProps({
 		type: Object as PropType<MenuInfo>,
 		required: true
 	},
-	refMap: {
-		type: Map as PropType<Map<string, any>>,
-		required: true
-	},
 	parentPaths: {
 		type: Array as PropType<string[]>,
 		default: [] as string[]
 	}
 })
 
+const emit = defineEmits<{
+	(e: 'register-ref', path: string, ref: any): void
+}>()
+
 const rootRef = ref()
 
 // 添加ref引用到refMap中
 onMounted(() => {
 	if (rootRef.value) {
-		props.refMap.set(menuIndexPath.value, rootRef.value)
+		emit('register-ref', menuIndexPath.value, rootRef.value)
 	}
 })
 

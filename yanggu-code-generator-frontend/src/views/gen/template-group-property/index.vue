@@ -101,7 +101,7 @@
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -114,8 +114,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<template-group-property-form ref="formRef" @refresh-data-list="getDataList()"></template-group-property-form>
@@ -155,6 +154,8 @@ const props = defineProps({
 const visible = ref(false)
 
 const state = reactive({
+	tableSubject: '模板组属性',
+	deleteNameKey: 'propTitle',
 	dataListApi: genTemplateGroupPropertyApi.entityPage,
 	deleteListApi: genTemplateGroupPropertyApi.deleteList,
 	exportApi: genTemplateGroupPropertyApi.export,

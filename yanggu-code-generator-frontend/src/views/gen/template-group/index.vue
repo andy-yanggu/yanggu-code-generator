@@ -165,6 +165,8 @@ defineOptions({
 })
 
 const state = reactive({
+	tableSubject: '模板组',
+	deleteNameKey: 'groupName',
 	dataListApi: genTemplateGroupApi.voPage,
 	deleteListApi: genTemplateGroupApi.deleteList,
 	exportApi: genTemplateGroupApi.export,

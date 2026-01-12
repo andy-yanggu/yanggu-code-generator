@@ -96,7 +96,7 @@
 								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
 							</el-col>
 						</el-row>
 					</template>
@@ -134,6 +134,8 @@ defineOptions({
 })
 
 const state = reactive({
+	tableSubject: '基类',
+	deleteNameKey: 'baseClassName',
 	dataListApi: genBaseClassApi.entityPage,
 	deleteListApi: genBaseClassApi.deleteList,
 	queryForm: {

@@ -11,6 +11,8 @@ type ImportApi = (formData: FormData) => Promise<void>
 
 // 表格操作
 export interface IHooksOptions<VO = any, Query extends PageQuery = PageQuery> {
+	// 表格主体，如：用户、订单
+	tableSubject?: string
 	// 否在创建页面时，调用数据列表接口
 	mountedGetData?: boolean
 	// 重置后是否查询
@@ -26,7 +28,9 @@ export interface IHooksOptions<VO = any, Query extends PageQuery = PageQuery> {
 	// 导入接口
 	importApi?: ImportApi
 	// 主键key，用于删除场景
-	primaryKey?: string
+	primaryKey?: keyof VO
+	// 删除确认时用于展示的名称字段
+	deleteNameKey?: keyof VO
 	// 查询条件
 	queryForm: Query
 	// 数据列表

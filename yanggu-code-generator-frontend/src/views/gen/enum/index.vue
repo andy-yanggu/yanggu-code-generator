@@ -110,7 +110,7 @@
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(scope.row)">生成</el-dropdown-item>
-											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
+											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>
 								</el-dropdown>
@@ -128,8 +128,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<enum-form ref="formRef" @refresh-data-list="getDataList()"></enum-form>
@@ -169,6 +168,8 @@ onMounted(() => {
 })
 
 const state = reactive({
+	tableSubject: '枚举',
+	deleteNameKey: 'enumName',
 	dataListApi: genEnumApi.voPage,
 	deleteListApi: genEnumApi.deleteList,
 	queryForm: {

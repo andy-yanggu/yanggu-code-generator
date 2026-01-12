@@ -1221,7 +1221,7 @@ const joinFileName = (editTabs: Tree[]): string => {
 			editTabs
 				.slice(0, 3)
 				.map(tab => tab.fileName)
-				.join('、') + `等${editTabs.length}个模板文件`
+				.join('、') + `...等${editTabs.length}个模板文件`
 		)
 	} else {
 		return editTabs.map(tab => tab.fileName).join('、') + '模板文件'

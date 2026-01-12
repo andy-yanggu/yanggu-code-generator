@@ -87,7 +87,7 @@
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -100,8 +100,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 		</el-card>
 		<!-- 弹窗表单 -->
 		<field-type-form ref="formRef" @refresh-data-list="getDataList()"></field-type-form>
@@ -124,6 +123,8 @@ defineOptions({
 })
 
 const state = reactive({
+	tableSubject: '字段类型',
+	deleteNameKey: 'columnType',
 	dataListApi: genFieldTypeApi.entityPage,
 	deleteListApi: genFieldTypeApi.deleteList,
 	queryForm: {

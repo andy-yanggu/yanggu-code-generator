@@ -45,7 +45,7 @@
 				header-cell-class-name="layout-table-header"
 				@selection-change="selectionChangeHandle"
 				@sort-change="sortChangeHandle"
-				>>
+			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -64,7 +64,7 @@
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-button>
+						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -100,6 +100,8 @@ defineOptions({
 const emit = defineEmits(['refresh-data-list'])
 
 const state = reactive({
+	tableSubject: '枚举项',
+	deleteNameKey: 'enumItemName',
 	dataListApi: genEnumItemApi.entityPage,
 	deleteListApi: genEnumItemApi.deleteList,
 	mountedGetData: false,

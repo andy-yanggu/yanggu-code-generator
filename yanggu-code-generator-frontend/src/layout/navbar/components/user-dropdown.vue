@@ -1,6 +1,6 @@
 <template>
 	<el-dropdown>
-		<div class="icon-button">
+		<div class="user-dropdown">
 			<template v-if="userStore.userInfo.avatar">
 				<el-avatar :src="userStore.userInfo.avatar" class="user-avatar"></el-avatar>
 			</template>
@@ -57,17 +57,17 @@ const logout = () => {
 }
 </script>
 <style scoped lang="scss">
-.icon-button {
+.user-dropdown {
 	display: flex;
 	align-items: center;
 	cursor: pointer;
 	gap: 5px;
 }
-.icon-button:hover {
+.user-dropdown:hover {
 	color: var(--el-color-primary) !important;
 }
-.icon-button:hover .user-avatar {
-	transform: scale(1.1) translateY(-1px);
+.user-dropdown:hover .user-avatar {
+	transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y));
 }
 .user-avatar {
 	font-size: 16px;

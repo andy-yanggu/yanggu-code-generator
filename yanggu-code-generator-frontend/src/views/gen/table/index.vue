@@ -121,7 +121,7 @@
 										<el-dropdown-menu>
 											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
 											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">同步</el-dropdown-item>
-											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row.id)">删除</el-dropdown-item>
+											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>
 								</el-dropdown>
@@ -186,6 +186,8 @@ onMounted(() => {
 })
 
 const state = reactive({
+	tableSubject: '表',
+	deleteNameKey: 'tableName',
 	dataListApi: genTableApi.voPage,
 	deleteListApi: genTableApi.deleteList,
 	queryForm: {
