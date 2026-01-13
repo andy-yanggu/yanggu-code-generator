@@ -164,6 +164,12 @@ defineOptions({
 	name: 'GenTemplateGroup'
 })
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenTemplateGroupQuery => ({
+	groupName: '',
+	type: ''
+})
+
 const state = reactive({
 	tableSubject: '模板组',
 	deleteNameKey: 'groupName',
@@ -171,10 +177,8 @@ const state = reactive({
 	deleteListApi: genTemplateGroupApi.deleteList,
 	exportApi: genTemplateGroupApi.export,
 	importApi: genTemplateGroupApi.import,
-	queryForm: {
-		groupName: '',
-		type: ''
-	},
+	initQueryFormData,
+	queryForm: initQueryFormData(),
 	deleteMessage: '删除模板组，模板组下面的所有模板、属性都会删除',
 	importSuccessMessage: '模板组导入成功'
 } as IHooksOptions<GenTemplateGroupEntity, GenTemplateGroupQuery>)

@@ -185,16 +185,20 @@ onMounted(() => {
 	getProjectList()
 })
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenTableQuery => ({
+	tableName: '',
+	projectId: '',
+	databaseName: ''
+})
+
 const state = reactive({
 	tableSubject: '表',
 	deleteNameKey: 'tableName',
 	dataListApi: genTableApi.voPage,
 	deleteListApi: genTableApi.deleteList,
-	queryForm: {
-		tableName: '',
-		projectId: '',
-		databaseName: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const importRef = ref()

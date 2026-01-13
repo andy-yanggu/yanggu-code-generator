@@ -31,6 +31,10 @@ export interface IHooksOptions<VO = any, Query extends PageQuery = PageQuery> {
 	primaryKey?: keyof VO
 	// 删除确认时用于展示的名称字段
 	deleteNameKey?: keyof VO
+	// 页面级固定查询上下文（不会被 reset）
+	queryContext?: Record<string, any>
+	// 初始化 / 重置查询条件
+	initQueryFormData: () => Query
 	// 查询条件
 	queryForm: Query
 	// 数据列表

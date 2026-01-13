@@ -153,6 +153,12 @@ const props = defineProps({
 
 const visible = ref(false)
 
+const initQueryFormData = (): GenTemplateGroupPropertyQuery => ({
+	templateGroupId: '',
+	propTitle: '',
+	propKey: ''
+})
+
 const state = reactive({
 	tableSubject: '模板组属性',
 	deleteNameKey: 'propTitle',
@@ -161,11 +167,11 @@ const state = reactive({
 	exportApi: genTemplateGroupPropertyApi.export,
 	importApi: genTemplateGroupPropertyApi.import,
 	mountedGetData: false,
-	queryForm: {
-		templateGroupId: '',
-		propTitle: '',
-		propKey: ''
+	queryContext: {
+		templateGroupId: -1
 	},
+	initQueryFormData,
+	queryForm: initQueryFormData(),
 	order: 'propOrder',
 	asc: true
 } as IHooksOptions<GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery>)
@@ -189,7 +195,7 @@ const {
 
 const init = () => {
 	visible.value = true
-	state.queryForm.templateGroupId = props.templateGroupId
+	state.queryContext!.templateGroupId = props.templateGroupId
 	getDataList()
 }
 

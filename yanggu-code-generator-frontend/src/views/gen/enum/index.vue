@@ -167,15 +167,19 @@ onMounted(() => {
 	getProjectList()
 })
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenEnumQuery => ({
+	enumName: '',
+	projectId: ''
+})
+
 const state = reactive({
 	tableSubject: '枚举',
 	deleteNameKey: 'enumName',
 	dataListApi: genEnumApi.voPage,
 	deleteListApi: genEnumApi.deleteList,
-	queryForm: {
-		enumName: '',
-		projectId: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenEnumEntity, GenEnumQuery>)
 
 const enumItemIndexRef = ref()

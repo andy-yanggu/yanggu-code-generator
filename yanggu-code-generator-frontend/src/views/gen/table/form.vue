@@ -197,7 +197,7 @@ const state = reactive({
 } as FormOptions<GenTableEntity>)
 
 const dataRules = computed(() => {
-	const rules: Record<string, FormItemRule[]> = {
+	const rules: Record<keyof GenTableEntity | string, FormItemRule[]> = {
 		projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		tableName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

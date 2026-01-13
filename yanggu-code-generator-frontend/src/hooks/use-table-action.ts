@@ -26,6 +26,8 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		exportApi: undefined,
 		importApi: undefined,
 		primaryKey: 'id' as keyof VO,
+		queryContext: {} as Query,
+		initQueryFormData: () => ({}) as Query,
 		queryForm: {} as Query,
 		dataList: [] as VO[],
 		order: '',
@@ -45,13 +47,25 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	// 合并默认值
 	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions).filter(([key]) => !Object.hasOwn(state, key))))
 
+	// 初始化 queryForm
+	if (isEmpty(state.queryForm)) {
+		Object.assign(state.queryForm, state.initQueryFormData())
+	}
+
 	// 重置后查询
 	const resetQueryHandle = () => {
-		if (queryRef.value) {
-			queryRef.value.clearValidate()
-			queryRef.value.resetFields()
+		// 1️⃣ 先重建查询表单
+		Object.assign(state.queryForm, state.initQueryFormData())
+
+		// 2️⃣ 自动合并上下文（无条件）
+		if (state.queryContext) {
+			Object.assign(state.queryForm, state.queryContext)
 		}
-		// 查询数据
+
+		// 3️⃣ 清校验（UI 行为）
+		queryRef.value.clearValidate()
+
+		// 4️⃣ 是否查询
 		if (state.resetQueryGetData) {
 			getDataList()
 		}
@@ -89,7 +103,10 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	const buildQueryForm = (): Query => {
 		// 解构查询条件
 		const queryForm: Query = {
-			...state.queryForm
+			// 查询条件
+			...(state.queryForm ?? {}),
+			// 查询上下文
+			...(state.queryContext ?? {})
 		}
 		// 如果queryForm包含dateRange
 		if (queryForm.hasOwnProperty('dateRange')) {

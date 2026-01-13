@@ -94,11 +94,11 @@ const state = reactive({
 } as FormOptions<GenBaseClassEntity>)
 
 const dataRules = computed(() => {
-	const rules: Record<string, FormItemRule[]> = {}
+	const rules: Record<keyof GenBaseClassEntity | string, FormItemRule[]> = {}
 	if (formType.value === 'detail') {
 		return rules
 	}
-	const constRules: Record<string, FormItemRule[]> = {
+	const constRules: Record<keyof GenBaseClassEntity | string, FormItemRule[]> = {
 		baseClassName: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }],
 		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
 		packageName: [{ required: true, message: '基类包名不能为空', trigger: 'blur' }],

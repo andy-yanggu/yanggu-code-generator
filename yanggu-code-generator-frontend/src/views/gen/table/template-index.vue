@@ -81,14 +81,21 @@ defineOptions({
 
 const emit = defineEmits(['clearSelection'])
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenTemplateQuery => ({
+	templateGroupId: -1,
+	templateName: '',
+	templateType: ''
+})
+
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
 	mountedGetData: false,
-	queryForm: {
-		templateGroupId: -1,
-		templateName: '',
-		templateType: ''
-	}
+	queryContext: {
+		templateGroupId: -1
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 const generatorTypeRef = ref()
 const tableIdRef = ref()
@@ -96,11 +103,11 @@ const dialogVisible = ref(false)
 
 const init = (templateGroupId: number, generatorType: number, tableIdList: number[]) => {
 	dialogVisible.value = true
-	state.queryForm.templateGroupId = templateGroupId
 	generatorTypeRef.value = generatorType
 	tableIdRef.value = tableIdList
 
 	//重置查询表单数据，并且进行分页查询
+	state.queryContext = { templateGroupId }
 	resetQueryHandle()
 }
 

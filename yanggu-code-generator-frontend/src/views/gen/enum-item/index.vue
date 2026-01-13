@@ -99,40 +99,25 @@ defineOptions({
 
 const emit = defineEmits(['refresh-data-list'])
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenEnumItemQuery => ({
+	enumItemName: '',
+	enumItemCode: '',
+	enumId: -1
+})
+
 const state = reactive({
 	tableSubject: '枚举项',
 	deleteNameKey: 'enumItemName',
 	dataListApi: genEnumItemApi.entityPage,
 	deleteListApi: genEnumItemApi.deleteList,
 	mountedGetData: false,
-	queryForm: {
-		enumItemName: '',
-		enumItemCode: '',
+	queryContext: {
 		enumId: -1
-	}
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
-
-const enumNameRef = ref('')
-
-const dialogVisible = ref(false)
-
-const init = (enumId: number, enumName: string) => {
-	dialogVisible.value = true
-	enumNameRef.value = enumName
-	state.queryForm.enumId = enumId
-	resetQueryHandle()
-}
-
-const { formRef, formInitHandle } = useInitForm(() => ({ enumId: state.queryForm.enumId }))
-
-const closeHandler = () => {
-	dialogVisible.value = false
-	emit('refresh-data-list')
-}
-
-defineExpose({
-	init
-})
 
 const {
 	getDataList,
@@ -148,4 +133,26 @@ const {
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)
+
+const enumNameRef = ref('')
+
+const dialogVisible = ref(false)
+
+const init = (enumId: number, enumName: string) => {
+	dialogVisible.value = true
+	enumNameRef.value = enumName
+	state.queryContext!.enumId = enumId
+	resetQueryHandle()
+}
+
+const { formRef, formInitHandle } = useInitForm(() => ({ enumId: state.queryForm.enumId }))
+
+const closeHandler = () => {
+	dialogVisible.value = false
+	emit('refresh-data-list')
+}
+
+defineExpose({
+	init
+})
 </script>

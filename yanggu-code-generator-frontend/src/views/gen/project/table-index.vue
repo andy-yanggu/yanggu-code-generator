@@ -62,21 +62,28 @@ defineOptions({
 })
 const emit = defineEmits(['selectChange'])
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenTableQuery => ({
+	tableName: '',
+	className: '',
+	projectId: -1
+})
+
 const state = reactive({
 	dataListApi: genTableApi.entityPage,
 	mountedGetData: false,
-	queryForm: {
-		tableName: '',
-		className: '',
+	queryContext: {
 		projectId: -1
-	}
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const tableRef = ref()
 let isManualSelection = true
 
 const init = (projectId: number) => {
-	state.queryForm.projectId = projectId
+	state.queryContext!.projectId = projectId
 
 	//重置表单查询
 	resetQueryHandle()

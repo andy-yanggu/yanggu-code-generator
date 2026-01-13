@@ -29,6 +29,7 @@ import { ATTR_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenFieldTypeForm'
@@ -54,9 +55,9 @@ const state = reactive({
 } as FormOptions<GenFieldTypeEntity>)
 
 const dataRules = reactive({
-	columnType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	attrType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
-})
+	columnType: [{ required: true, message: '字段类型不能为空', trigger: 'blur' }],
+	attrType: [{ required: true, message: '属性类型不能为空', trigger: 'blur' }]
+} as Record<keyof GenFieldTypeEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, init, submitHandle, dialogTitle, submitLoading } = useSubmitForm(state)
 

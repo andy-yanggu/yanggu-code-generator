@@ -114,22 +114,29 @@ defineOptions({
 	name: 'GenProjectTemplate'
 })
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenTemplateQuery => ({
+	templateGroupIdList: [],
+	templateGroupName: '',
+	fileName: '',
+	templateGroupType: '',
+	templateType: ''
+})
+
 const emit = defineEmits(['selectChange'])
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
 	mountedGetData: false,
-	queryForm: {
-		templateGroupIdList: [],
-		templateGroupName: '',
-		fileName: '',
-		templateGroupType: '',
-		templateType: ''
-	}
+	queryContext: {
+		templateGroupIdList: []
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 let isManualSelection = true
 
 const init = (templateGroupIdList: number[]) => {
-	state.queryForm.templateGroupIdList = templateGroupIdList
+	state.queryContext = { templateGroupIdList }
 
 	//重置查询表单并且查询数据
 	resetQueryHandle()

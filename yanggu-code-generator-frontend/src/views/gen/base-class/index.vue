@@ -133,16 +133,20 @@ defineOptions({
 	name: 'GenBaseClass'
 })
 
+// 初始化表单查询数据
+const initQueryFormData = (): GenBaseClassQuery => ({
+	baseClassName: '',
+	packageName: '',
+	className: ''
+})
+
 const state = reactive({
 	tableSubject: '基类',
 	deleteNameKey: 'baseClassName',
 	dataListApi: genBaseClassApi.entityPage,
 	deleteListApi: genBaseClassApi.deleteList,
-	queryForm: {
-		baseClassName: '',
-		packageName: '',
-		className: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenBaseClassEntity, GenBaseClassQuery>)
 
 const {

@@ -56,8 +56,7 @@
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
 				@current-change="currentChangeHandle"
-			>
-			</el-pagination>
+			></el-pagination>
 		</el-card>
 	</el-dialog>
 </template>
@@ -73,13 +72,20 @@ defineOptions({
 	name: 'ProjectEnumItem'
 })
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenEnumItemQuery => ({
+	enumItemName: '',
+	enumId: -1
+})
+
 const state = reactive({
 	dataListApi: genEnumItemApi.entityPage,
 	mountedGetData: false,
-	queryForm: {
-		enumItemName: '',
+	queryContext: {
 		enumId: -1
-	}
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
 
 const dialogVisible = ref(false)
@@ -88,7 +94,7 @@ const enumNameRef = ref('')
 const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
 	enumNameRef.value = enumName
-	state.queryForm.enumId = enumId
+	state.queryContext!.enumId = enumId
 	resetQueryHandle()
 }
 

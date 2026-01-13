@@ -131,27 +131,20 @@ defineOptions({
 	name: 'GenDatasource'
 })
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenDatasourceQuery => ({
+	dbType: '',
+	connName: ''
+})
+
 const state = reactive({
 	tableSubject: '数据源',
 	deleteNameKey: 'connName',
 	dataListApi: genDatasourceApi.entityPage,
 	deleteListApi: genDatasourceApi.deleteList,
-	queryForm: {
-		dbType: '',
-		connName: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenDatasourceEntity, GenDatasourceQuery>)
-
-const datasourceTestHandle = (id: number) => {
-	genDatasourceApi.test(id).then(data => {
-		const { result, errorMessage, databaseName } = data
-		if (result) {
-			ElMessage.success(`测试成功，数据库为：${databaseName}`)
-		} else {
-			ElMessage.error(`测试失败，异常信息：${errorMessage}`)
-		}
-	})
-}
 
 const {
 	getDataList,
@@ -167,6 +160,17 @@ const {
 	resetQueryHandle,
 	tableIndex
 } = useTableAction(state)
+
+const datasourceTestHandle = (id: number) => {
+	genDatasourceApi.test(id).then(data => {
+		const { result, errorMessage, databaseName } = data
+		if (result) {
+			ElMessage.success(`测试成功，数据库为：${databaseName}`)
+		} else {
+			ElMessage.error(`测试失败，异常信息：${errorMessage}`)
+		}
+	})
+}
 
 const { formRef, formInitHandle } = useInitForm()
 </script>

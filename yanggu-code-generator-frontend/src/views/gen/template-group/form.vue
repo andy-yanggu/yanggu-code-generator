@@ -37,6 +37,7 @@ import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { genTemplateGroupApi } from '@/api'
 import { FormOptions, GenTemplateGroupEntity } from '@/types'
 import { isNotBlank } from '@/utils/tool'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenTemplateGroupForm'
@@ -80,7 +81,7 @@ const state = reactive({
 const dataRules = reactive({
 	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
-})
+} as Record<keyof GenTemplateGroupEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 

@@ -245,7 +245,7 @@ const projectTemplateGroupPropertyList = computed(() => {
 })
 
 const dataRules = computed(() => {
-	const rules: Record<string, FormItemRule[]> = {
+	const rules: Record<keyof GenProjectEntity | string, FormItemRule[]> = {
 		projectName: [{ required: true, message: '项目名称不能为空', trigger: 'blur' }],
 		projectVersion: [{ required: true, message: '项目版本不能为空', trigger: 'blur' }],
 		projectPort: [

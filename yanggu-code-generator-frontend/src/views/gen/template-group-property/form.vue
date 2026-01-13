@@ -170,7 +170,7 @@ const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(state.dataForm.
 const switchOptionFull = computed(() => state.dataForm.componentType === 5 && state.dataForm.componentOptions.length === 2)
 
 const dataRules = computed(() => {
-	const rules: Record<string, FormItemRule[]> = {
+	const rules: Record<keyof GenTemplateGroupPropertyEntity | string, FormItemRule[]> = {
 		propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 		required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],

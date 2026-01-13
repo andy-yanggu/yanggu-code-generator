@@ -38,6 +38,7 @@ import { DB_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenDatasourceForm'
@@ -78,7 +79,7 @@ const dataRules = reactive({
 	connUrl: [{ required: true, message: 'URL不能为空', trigger: 'blur' }],
 	username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
 	password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
-})
+} as Record<keyof GenDatasourceEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)
 

@@ -149,16 +149,20 @@ defineOptions({
 	name: 'GenProject'
 })
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenProjectQuery => ({
+	projectName: '',
+	generatorType: '',
+	dateTimeRange: [] as string[]
+})
+
 const state = reactive({
 	tableSubject: '项目',
 	deleteNameKey: 'projectName',
 	dataListApi: genProjectApi.entityPage,
 	deleteListApi: genProjectApi.deleteList,
-	queryForm: {
-		projectName: '',
-		generatorType: '',
-		dateTimeRange: [] as string[]
-	},
+	initQueryFormData,
+	queryForm: initQueryFormData(),
 	deleteMessage: '删除项目会删除项目下的所有表，是否继续？'
 } as IHooksOptions<GenProjectEntity, GenProjectQuery>)
 

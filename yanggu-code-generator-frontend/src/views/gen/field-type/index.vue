@@ -122,15 +122,19 @@ defineOptions({
 	name: 'GenFieldType'
 })
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenFieldTypeQuery => ({
+	columnType: '',
+	attrType: ''
+})
+
 const state = reactive({
 	tableSubject: '字段类型',
 	deleteNameKey: 'columnType',
 	dataListApi: genFieldTypeApi.entityPage,
 	deleteListApi: genFieldTypeApi.deleteList,
-	queryForm: {
-		columnType: '',
-		attrType: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenFieldTypeEntity, GenFieldTypeQuery>)
 
 const {

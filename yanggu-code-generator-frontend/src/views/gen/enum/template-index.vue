@@ -86,14 +86,21 @@ defineOptions({
 
 const emit = defineEmits(['clearSelection'])
 
+// 初始化查询表单数据
+const initQueryFormData = (): GenTemplateQuery => ({
+	templateGroupId: '',
+	templateName: '',
+	templateType: ''
+})
+
 const state = reactive({
 	dataListApi: genTemplateApi.voPage,
 	mountedGetData: false,
-	queryForm: {
-		templateGroupId: '',
-		templateName: '',
-		templateType: ''
-	}
+	queryContext: {
+		templateGroupId: ''
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
 
 const initData = reactive({
@@ -105,9 +112,9 @@ const dialogVisible = ref(false)
 
 const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: []) => {
 	dialogVisible.value = true
-	state.queryForm.templateGroupId = enumTemplateGroupId
 	initData.enumIdList = enumIdList
 	initData.generatorType = generatorType
+	state.queryContext!.templateGroupId = enumTemplateGroupId
 
 	//重置查询表单数据
 	resetQueryHandle()

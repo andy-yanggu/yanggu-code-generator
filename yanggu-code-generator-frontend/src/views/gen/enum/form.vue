@@ -53,6 +53,7 @@ import { isBlank, isNotBlank, isNotEmpty } from '@/utils/tool'
 import FormDivider from '@/components/form/divider/index.vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/property-form.vue'
 import OptionLabel from '@/components/option/label/index.vue'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenEnumForm'
@@ -114,7 +115,7 @@ const dataRules = reactive({
 	enumName: [{ required: true, message: '枚举名称不能为空', trigger: 'blur' }],
 	enumDesc: [{ required: true, message: '枚举描述不能为空', trigger: 'blur' }],
 	projectId: [{ required: true, message: '项目不能为空', trigger: 'blur' }]
-})
+} as Record<keyof GenEnumEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 

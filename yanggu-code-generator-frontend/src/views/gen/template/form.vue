@@ -160,7 +160,7 @@ const fileName = computed(() => {
 })
 
 const dataRules = computed(() => {
-	const constRules: Record<string, FormItemRule[]> = {
+	const constRules: Partial<Record<keyof GenTemplateEntity, FormItemRule[]>> = {
 		templateName: [{ required: true, validator: validateTemplateName, message: '模板名称不能为空', trigger: 'blur' }],
 		fileName: [{ required: true, message: `${fileName.value}不能为空`, trigger: 'blur' }],
 		templateType: [{ required: true, message: '模板类型不能为空', trigger: 'blur' }],

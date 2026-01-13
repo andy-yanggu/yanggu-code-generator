@@ -69,16 +69,20 @@ defineOptions({
 
 const emit = defineEmits(['refreshDataList'])
 
+// 初始化表单查询参数
+const initQueryFormData = (): GenTableQuery => ({
+	projectId: '',
+	tableName: ''
+})
+
 const state = reactive({
 	primaryKey: 'tableName',
 	mountedGetData: false,
 	resetQueryGetData: false,
 	isPage: false,
 	dataListApi: genProjectApi.tableList,
-	queryForm: {
-		projectId: '',
-		tableName: ''
-	}
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const visible = ref(false)

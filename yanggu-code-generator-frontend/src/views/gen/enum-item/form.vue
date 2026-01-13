@@ -34,6 +34,7 @@ import { FormOptions, GenEnumItemEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { FormItemRule } from 'element-plus'
 
 defineOptions({
 	name: 'GenEnumItemForm'
@@ -68,7 +69,7 @@ const dataRules = reactive({
 	enumItemCode: [{ required: true, message: '枚举项编码不能为空', trigger: 'blur' }],
 	enumItemDesc: [{ required: true, message: '枚举项描述不能为空', trigger: 'blur' }],
 	enumItemOrder: [{ required: true, message: '枚举项排序不能为空', trigger: 'blur' }]
-})
+} as Record<keyof GenEnumItemEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 

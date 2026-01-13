@@ -45,8 +45,7 @@
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
 			@current-change="currentChangeHandle"
-		>
-		</el-pagination>
+		></el-pagination>
 	</el-card>
 
 	<enum-item-index ref="enumItemIndexRef"></enum-item-index>
@@ -65,20 +64,28 @@ defineOptions({
 })
 
 const emit = defineEmits(['selectChange'])
+
+// 初始化查询表单数据
+const initQueryFormData = (): GenEnumQuery => ({
+	enumName: '',
+	projectId: ''
+})
+
 const state = reactive({
 	dataListApi: genEnumApi.entityPage,
 	mountedGetData: false,
-	queryForm: {
-		enumName: '',
+	queryContext: {
 		projectId: ''
-	}
+	},
+	initQueryFormData,
+	queryForm: initQueryFormData()
 } as IHooksOptions<GenEnumEntity, GenEnumQuery>)
 let isManualSelection = true
 
 const tableRef = ref()
 const enumItemIndexRef = ref()
 const init = (projectId: number) => {
-	state.queryForm.projectId = projectId
+	state.queryContext!.projectId = projectId
 	//重置表单查询
 	resetQueryHandle()
 }
