@@ -1,9 +1,23 @@
 <template>
-	<el-drawer v-model="testData.visible" :title="`模板测试（${testData.templateName}）`" size="100%" destroy-on-close :before-close="handleClose">
-		<el-container class="full-height">
+	<el-drawer v-model="testData.visible" size="100%" class="template-test-drawer" destroy-on-close :before-close="handleClose">
+		<template #header>
+			<span class="el-drawer__title">{{ `模板测试（${testData.templateName}）` }}</span>
+			<el-tree-select
+				v-model="testData.templateId"
+				:data="treeList"
+				node-key="id"
+				:current-node-key="testData.templateId"
+				highlight-current
+				:props="{ label: 'fileName' }"
+				filterable
+				style="width: 300px"
+				placeholder="请选择模板"
+			></el-tree-select>
+		</template>
+		<el-splitter>
 			<!-- 左侧：选择面板（独立滚动） -->
-			<el-aside v-show="!testData.asideCollapsed" class="aside-scroll">
-				<div class="aside-header">
+			<el-splitter-panel collapsible size="25%">
+				<el-row justify="center" style="margin: 0 0 20px 0">
 					<el-tooltip content="刷新级联数据" placement="top">
 						<el-button :icon="Refresh" size="small" type="primary" :loading="loading" @click="refreshCascaderData()">刷新</el-button>
 					</el-tooltip>
@@ -11,118 +25,115 @@
 						<el-button
 							:icon="Document"
 							size="small"
-							:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
+							:disabled="isEmpty(testData.cascaderValue)"
 							@click="handleCascaderChange(testData.cascaderValue)"
 						>
 							渲染
 						</el-button>
 					</el-tooltip>
-				</div>
-				<el-cascader
-					v-model="testData.cascaderValue"
-					:options="testData.cascaderData"
-					filterable
-					clearable
-					placeholder="请选择项目、表或者枚举"
-					@change="handleCascaderChange"
-				></el-cascader>
-			</el-aside>
+				</el-row>
+				<el-row justify="center">
+					<el-cascader
+						v-model="testData.cascaderValue"
+						:options="testData.cascaderData"
+						filterable
+						clearable
+						placeholder="请选择项目、表或者枚举"
+						@change="handleCascaderChange"
+					></el-cascader>
+				</el-row>
+			</el-splitter-panel>
 
 			<!-- 右侧：内容区 -->
-			<el-container direction="vertical" class="right-container">
-				<!-- 顶部工具栏（固定） -->
-				<el-header class="header-fixed">
-					<el-row>
-						<!-- 展开折叠按钮 -->
-						<el-col :span="1">
-							<el-icon :size="20" class="collapse-icon" @click="testData.asideCollapsed = !testData.asideCollapsed">
-								<Expand v-if="testData.asideCollapsed"></Expand>
-								<Fold v-else></Fold>
-							</el-icon>
-						</el-col>
-						<!-- 文件路径	-->
-						<el-col :span="19">
-							<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
-						</el-col>
-						<el-col :span="4" style="text-align: right">
-							<template v-if="testData.activeName === 'template'">
-								<el-button
-									:icon="Document"
-									size="small"
-									:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
-									@click="handleCascaderChange(testData.cascaderValue)"
-								>
-									渲染
-								</el-button>
-								<el-button
-									size="small"
-									type="primary"
-									:icon="Edit"
-									:loading="loading"
-									:disabled="testData.editTemplateContent === testData.originalTemplateContent"
-									@click="saveTemplateContent()"
-								>
-									保存
-								</el-button>
-							</template>
-							<template v-else>
-								<el-tooltip content="复制代码" placement="top">
+			<el-splitter-panel>
+				<el-container direction="vertical" class="right-container">
+					<!-- 顶部工具栏（固定） -->
+					<el-header class="header-fixed">
+						<el-row>
+							<!-- 文件路径	-->
+							<el-col :span="19">
+								<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
+							</el-col>
+							<el-col :span="5" style="text-align: right">
+								<template v-if="testData.activeName === 'template'">
+									<el-button
+										:icon="Document"
+										size="small"
+										:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
+										@click="handleCascaderChange(testData.cascaderValue)"
+									>
+										渲染
+									</el-button>
 									<el-button
 										size="small"
 										type="primary"
-										:icon="CopyDocument"
-										:disabled="!testData.renderedTemplateContent"
-										@click="copyTemplateContent()"
+										:icon="Edit"
+										:loading="loading"
+										:disabled="testData.editTemplateContent === testData.originalTemplateContent"
+										@click="saveTemplateContent()"
 									>
-										复制
+										保存
 									</el-button>
-								</el-tooltip>
-								<el-tooltip :content="generatorState.tooltip" placement="top">
-									<el-button
-										size="small"
-										:icon="generatorState.icon"
-										:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
-										type="success"
-										:loading="submitLoading"
-										@click="generatorHandler()"
-									>
-										{{ generatorState.text }}
-									</el-button>
-								</el-tooltip>
-							</template>
-						</el-col>
-					</el-row>
+								</template>
+								<template v-else>
+									<el-tooltip content="复制代码" placement="top">
+										<el-button
+											size="small"
+											type="primary"
+											:icon="CopyDocument"
+											:disabled="!testData.renderedTemplateContent"
+											@click="copyTemplateContent()"
+										>
+											复制
+										</el-button>
+									</el-tooltip>
+									<el-tooltip :content="generatorState.tooltip" placement="top">
+										<el-button
+											size="small"
+											:icon="generatorState.icon"
+											:disabled="isEmpty(testData.cascaderValue)"
+											type="success"
+											:loading="submitLoading"
+											@click="generatorHandler()"
+										>
+											{{ generatorState.text }}
+										</el-button>
+									</el-tooltip>
+								</template>
+							</el-col>
+						</el-row>
 
-					<el-tabs v-model="testData.activeName">
-						<el-tab-pane name="template">
-							<template #label>
-								<el-badge is-dot :hidden="!isEdit">原始模板</el-badge>
-							</template>
-						</el-tab-pane>
-						<el-tab-pane name="render" label="渲染结果"></el-tab-pane>
-					</el-tabs>
-				</el-header>
+						<el-tabs v-model="testData.activeName">
+							<el-tab-pane name="template">
+								<template #label>
+									<el-badge is-dot :hidden="!isEdit">原始模板</el-badge>
+								</template>
+							</el-tab-pane>
+							<el-tab-pane name="render" :disabled="isEmpty(testData.cascaderValue)" label="渲染结果"></el-tab-pane>
+						</el-tabs>
+					</el-header>
 
-				<!-- 主体内容（独立滚动） -->
-				<el-main class="main-scroll">
-					<el-scrollbar v-show="testData.activeName === 'template'">
-						<code-mirror v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
-					</el-scrollbar>
-					<el-scrollbar v-show="testData.activeName === 'render'">
-						<code-mirror v-model="testData.renderedTemplateContent" :read-only="true"></code-mirror>
-					</el-scrollbar>
-				</el-main>
-			</el-container>
-		</el-container>
+					<!-- 主体内容（独立滚动） -->
+					<el-main class="main-scroll">
+						<el-scrollbar v-show="testData.activeName === 'template'">
+							<code-mirror v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
+						</el-scrollbar>
+						<el-scrollbar v-show="testData.activeName === 'render'">
+							<code-mirror v-model="testData.renderedTemplateContent" :read-only="true"></code-mirror>
+						</el-scrollbar>
+					</el-main>
+				</el-container>
+			</el-splitter-panel>
+		</el-splitter>
 	</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, shallowReactive } from 'vue'
+import { computed, reactive, ref, shallowReactive, watch } from 'vue'
 import CodeMirror from '@/business/code-mirror/index.vue'
-import { Action, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
-import { CopyDocument, Document, DocumentAdd, Download, Edit, Expand, Fold, Refresh } from '@element-plus/icons-vue'
-import { copyToClipboard } from '@/utils/tool'
+import { Action, ElLoading, ElMessage, ElMessageBox, ElTreeSelect } from 'element-plus'
+import { CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
+import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { Result, SubmitOptions } from '@/types'
@@ -157,12 +168,13 @@ const initTestData = () => ({
 	fullFilePath: '',
 	renderedFileName: '',
 	renderedTemplateContent: '',
-	update: false,
 	cascaderValue: [] as string[],
 	cascaderData: [] as CascaderData[]
 })
 
 const testData = reactive(initTestData())
+const editTemplateList = ref(new Set<number>())
+const treeList = ref([] as any[])
 
 const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
 const initGeneratorStateArray = () => [
@@ -182,14 +194,45 @@ const generatorState = shallowReactive(initGeneratorStateArray()[0])
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())
 	testData.visible = true
+	editTemplateList.value = new Set<number>()
+	treeList.value = [] as any[]
 	testData.templateGroupId = templateGroupId
 	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
 	testData.editTemplateContent = templateContent
 
+	// 获取树形数据
+	await setTreeListData()
+
 	// 获取级联数据
 	await refreshCascaderData()
 }
+
+// 当选中的模板ID变化时，变更模板详情
+watch(
+	() => testData.templateId,
+	async (_, oldValue) => {
+		// console.log('templateId changed', value, oldValue)
+		// 获取模板详情
+		await setTemplateData()
+		if (oldValue !== 0) {
+			testData.editTemplateContent = testData.originalTemplateContent
+		}
+	},
+	{
+		immediate: false
+	}
+)
+
+// 监听级联选择器变化
+watch(
+	() => testData.cascaderValue,
+	newValue => {
+		if (isEmpty(newValue)) {
+			testData.activeName = 'template'
+		}
+	}
+)
 
 const loading = ref(false)
 
@@ -211,8 +254,9 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 				message: '保存成功',
 				duration: 500
 			})
+			editTemplateList.value.add(testData.templateId)
+			// console.log('保存成功', editTemplateList.value)
 			testData.originalTemplateContent = testData.editTemplateContent
-			testData.update = true
 			callBack?.()
 		})
 		.finally(() => {
@@ -283,6 +327,10 @@ const handleCascaderChange = async (val: string[]) => {
 	}
 }
 
+const setTreeListData = async () => {
+	treeList.value = await genTemplateApi.treeData(testData.templateGroupId)
+}
+
 const refreshCascaderData = async () => {
 	testData.activeName = 'template'
 	// 获取级联数据
@@ -306,16 +354,20 @@ const refreshCascaderData = async () => {
 	testData.cascaderData = data
 
 	// 获取模板详情
+	await setTemplateData()
+}
+
+const setTemplateData = async () => {
+	// 获取模板详情
 	const detailQueryForm = {
 		id: testData.templateId,
 		setPath: true
 	}
-	genTemplateApi.detailData(detailQueryForm).then(data => {
-		testData.templateName = data.templateName
-		testData.originalFileName = data.fileName
-		testData.originalTemplateContent = data.templateContent
-		testData.fullFilePath = data.generatorPath
-	})
+	const data = await genTemplateApi.detailData(detailQueryForm)
+	testData.templateName = data.templateName
+	testData.originalFileName = data.fileName
+	testData.originalTemplateContent = data.templateContent
+	testData.fullFilePath = data.generatorPath
 }
 
 const generatorHandler = () => {
@@ -363,9 +415,11 @@ const copyTemplateContent = () => {
 
 // 关闭抽屉方法。确认保存修改
 const handleClose = (done: () => void) => {
+	const editIdList = [...editTemplateList.value]
+	// console.log('关闭抽屉方法。确认保存修改', editIdList, isEdit.value)
 	if (!isEdit.value) {
 		done()
-		emit('refreshDataList', testData.update)
+		emit('refreshDataList', editIdList)
 		return
 	}
 	const message = `${testData.originalFileName}已修改未保存，是否保存后再关闭？`
@@ -379,48 +433,40 @@ const handleClose = (done: () => void) => {
 			// 保存修改后关闭
 			saveTemplateContent(() => {
 				done()
-				emit('refreshDataList', true)
+				emit('refreshDataList', editIdList)
 			})
 		})
 		.catch((action: Action) => {
 			// 丢弃修改直接关闭
 			if (action === 'cancel') {
 				done()
+				emit('refreshDataList', editIdList)
 			}
 		})
 }
 
-defineExpose({ init })
+defineExpose({
+	init
+})
 </script>
 
-<style scoped>
-.full-height {
-	height: 100%;
-}
-
-.aside-header {
-	width: 100%;
+<style>
+.template-test-drawer .el-drawer__header {
 	display: flex;
-	justify-content: center; /* 水平居中 */
-	align-items: center; /* 垂直居中 */
-	margin: 0 0 20px 0; /* 去掉左外边距，只保留下边距 */
-}
-
-.aside-scroll {
-	height: 100%;
-	overflow: auto;
-	border-right: 1px solid #e5e5e5;
-	padding: 16px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
 	align-items: center;
 }
 
-.collapse-icon {
-	cursor: pointer;
+.template-test-drawer .el-drawer__title {
+	flex: none;
+	white-space: nowrap;
+	margin-right: 12px;
 }
 
+.template-test-drawer .el-drawer__close-btn {
+	margin-left: auto;
+}
+</style>
+<style scoped>
 .right-container {
 	display: flex;
 	flex-direction: column;

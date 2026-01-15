@@ -255,6 +255,7 @@ import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 import { useInitForm } from '@/hooks/use-init-form'
 import { genTemplateApi } from '@/api'
+import { isEmpty } from '@/utils/tool'
 
 defineOptions({
 	name: 'GenTemplateTree'
@@ -827,20 +828,23 @@ const testTemplateContent = () => {
 }
 
 // 刷新当前模板内容
-const refreshActiveItemContent = (update: boolean) => {
-	if (!update) {
+const refreshActiveItemContent = (editTemplateIdList: number[]) => {
+	// console.log('刷新当前模板内容', editTemplateIdList)
+	if (isEmpty(editTemplateIdList)) {
 		return
 	}
-	const queryForm = {
-		id: templateTreeData.activeItemId
-	}
-	genTemplateApi.detailData(queryForm).then(detailData => {
-		const tempTree = findByIdFromTree(templateTreeData.activeItemId, templateTreeData.treeList)
-		if (tempTree) {
-			tempTree.templateContent = detailData.templateContent
-			tempTree.originalTemplateContent = detailData.templateContent
-			tempTree.isEdited = false
+	editTemplateIdList.forEach(tempId => {
+		const queryForm = {
+			id: tempId
 		}
+		genTemplateApi.detailData(queryForm).then(detailData => {
+			const tempTree = findByIdFromTree(tempId, templateTreeData.treeList)
+			if (tempTree) {
+				tempTree.templateContent = detailData.templateContent
+				tempTree.originalTemplateContent = detailData.templateContent
+				tempTree.isEdited = false
+			}
+		})
 	})
 }
 

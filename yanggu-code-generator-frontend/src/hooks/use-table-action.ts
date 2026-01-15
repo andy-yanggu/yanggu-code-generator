@@ -54,21 +54,23 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 	// 重置后查询
 	const resetQueryHandle = () => {
-		// 1️⃣ 先重建查询表单
-		Object.assign(state.queryForm, state.initQueryFormData())
+		nextTick(() => {
+			// 1️⃣ 先重建查询表单
+			Object.assign(state.queryForm, state.initQueryFormData())
 
-		// 2️⃣ 自动合并上下文（无条件）
-		if (state.queryContext) {
-			Object.assign(state.queryForm, state.queryContext)
-		}
+			// 2️⃣ 自动合并上下文（无条件）
+			if (state.queryContext) {
+				Object.assign(state.queryForm, state.queryContext)
+			}
 
-		// 3️⃣ 清校验（UI 行为）
-		queryRef.value.clearValidate()
+			// 3️⃣ 清校验（UI 行为）
+			queryRef.value.clearValidate()
 
-		// 4️⃣ 是否查询
-		if (state.resetQueryGetData) {
-			getDataList()
-		}
+			// 4️⃣ 是否查询
+			if (state.resetQueryGetData) {
+				getDataList()
+			}
+		})
 	}
 
 	// 异步验证表单
