@@ -7,7 +7,7 @@
 
 		<!-- 右侧：通用工具 -->
 		<div class="table-tool-bar-right">
-			<el-space>
+			<el-space size="default">
 				<!-- 搜索 -->
 				<el-tooltip v-if="useSearch && searchInner" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" :teleported="teleported">
 					<el-button circle :icon="Search" @click="toggleSearch()"></el-button>
