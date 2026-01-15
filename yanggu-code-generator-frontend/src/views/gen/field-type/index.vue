@@ -35,7 +35,7 @@
 					@get-data-list="getDataList()"
 				>
 					<template #left>
-						<el-space>
+						<el-space size="default">
 							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
 							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
 						</el-space>
