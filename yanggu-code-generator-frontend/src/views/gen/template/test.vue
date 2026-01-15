@@ -59,19 +59,12 @@
 									<el-button
 										:icon="Document"
 										size="small"
-										:disabled="!testData.cascaderValue || testData.cascaderValue.length === 0"
+										:disabled="isEmpty(testData.cascaderValue)"
 										@click="handleCascaderChange(testData.cascaderValue)"
 									>
 										渲染
 									</el-button>
-									<el-button
-										size="small"
-										type="primary"
-										:icon="Edit"
-										:loading="loading"
-										:disabled="testData.editTemplateContent === testData.originalTemplateContent"
-										@click="saveTemplateContent()"
-									>
+									<el-button size="small" type="primary" :icon="Edit" :loading="loading" :disabled="!isEdit" @click="saveTemplateContent()">
 										保存
 									</el-button>
 								</template>
@@ -119,7 +112,7 @@
 							<code-mirror v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
 						</el-scrollbar>
 						<el-scrollbar v-show="testData.activeName === 'render'">
-							<code-mirror v-model="testData.renderedTemplateContent" :read-only="true"></code-mirror>
+							<code-mirror v-model="testData.renderedTemplateContent" read-only></code-mirror>
 						</el-scrollbar>
 					</el-main>
 				</el-container>
@@ -176,7 +169,7 @@ const testData = reactive(initTestData())
 const editTemplateList = ref(new Set<number>())
 const treeList = ref([] as any[])
 
-const isEdit = computed(() => testData.editTemplateContent != testData.originalTemplateContent)
+const isEdit = computed(() => testData.editTemplateContent !== testData.originalTemplateContent)
 const initGeneratorStateArray = () => [
 	{
 		icon: Download,
@@ -266,7 +259,7 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 
 // 处理选中值变化
 const handleCascaderChange = async (val: string[]) => {
-	if (!val || val.length === 0) {
+	if (isEmpty(val)) {
 		return
 	}
 	// val 是选中节点的值数组

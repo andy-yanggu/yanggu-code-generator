@@ -8,6 +8,10 @@
 <script setup>
 import { isNotBlank } from '@/utils/tool.ts'
 
+defineOptions({
+	name: 'OptionLabel'
+})
+
 defineProps({
 	label: {
 		type: String,

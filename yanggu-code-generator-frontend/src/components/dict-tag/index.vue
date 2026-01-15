@@ -1,11 +1,12 @@
 <template>
-	<el-tag v-if="value !== null && value !== undefined && value !== ''" :type="enumItem.type" :color="enumItem.color">{{ enumItem.label }}</el-tag>
+	<el-tag v-if="isNotBlank(value)" :type="enumItem.type" :color="enumItem.color">{{ enumItem.label }}</el-tag>
 </template>
 
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { getEnumByValue } from '@/utils/enum'
 import { EnumItem, EnumValueType } from '@/types'
+import { isNotBlank } from '@/utils/tool'
 
 defineOptions({
 	name: 'DictTag'

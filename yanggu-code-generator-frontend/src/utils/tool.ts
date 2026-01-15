@@ -69,7 +69,10 @@ export const setDefaultTitle = () => {
 // 导出非空函数
 export { isEmpty, isObject } from 'lodash-unified'
 
-// isNotEmpty，针对聚合量（对象和数组）
+/**
+ * 仅适用于 Array / Object / Map / Set
+ * ❌ 不可用于 number / boolean / Blob
+ */
 export const isNotEmpty = (value: any): boolean => {
 	return !isEmpty(value)
 }

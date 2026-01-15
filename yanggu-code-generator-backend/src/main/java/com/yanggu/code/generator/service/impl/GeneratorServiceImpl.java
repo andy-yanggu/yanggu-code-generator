@@ -249,7 +249,12 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
         switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
             case PROJECT -> {
-                ProjectModel projectModel = buildProjectDataModel(project, datasourceService.get(project.getDatasourceId()));
+                Long datasourceId = project.getDatasourceId();
+                DataSourceBO dataSource = null;
+                if (datasourceId != null) {
+                    dataSource = datasourceService.get(datasourceId);
+                }
+                ProjectModel projectModel = buildProjectDataModel(project, dataSource);
                 boolean executionResult = executionExpression(templateVO.getConditionExpression(), projectModel);
                 if (!executionResult) {
                     throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);

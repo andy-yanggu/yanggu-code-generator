@@ -30,7 +30,7 @@ const route = useRoute()
 const router = useRouter()
 
 // 存储所有菜单项引用的Map，格式为 <path, ref>
-const menuRefs = ref<Map<string, any>>(new Map())
+const menuRefs = ref(new Map<string, any>())
 
 // 监听路由变化，菜单自动滚动
 watch(

@@ -6,7 +6,7 @@
 					:enable-icon="systemSettingStore.toolbar.isOpenBreadcrumbIcon"
 					:icon="item.icon"
 					:title="item.title"
-					:placement="'bottom'"
+					placement="bottom"
 				></icon-text-tooltip>
 			</template>
 		</el-breadcrumb-item>
@@ -36,7 +36,7 @@ const router = useRouter()
 const systemSettingStore = useSystemSettingStore()
 
 // 面包屑列表
-const breadcrumbList = ref<Breadcrumb[]>([])
+const breadcrumbList = ref([] as Breadcrumb[])
 
 // 挂载时设置面包屑
 onMounted(() => {
