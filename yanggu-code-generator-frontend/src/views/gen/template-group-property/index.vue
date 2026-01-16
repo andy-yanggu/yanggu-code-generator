@@ -68,12 +68,13 @@
 					<template #default="scope">
 						<el-switch
 							v-model="scope.row.required"
-							:active-value="requiredSwitch.activeValue"
-							:inactive-value="requiredSwitch.inactiveValue"
-							:active-text="requiredSwitch.activeText"
-							:inactive-text="requiredSwitch.inactiveText"
+							:loading="switchSubmitLoading"
+							:active-value="activeValue"
+							:inactive-value="inactiveValue"
+							:active-text="activeText"
+							:inactive-text="inactiveText"
 							inline-prompt
-							@change="(val: number) => requiredChangeHandle(val, scope.row)"
+							@change="(val: number) => switchSubmitHandler(val, scope.row)"
 						></el-switch>
 					</template>
 				</el-table-column>
@@ -129,7 +130,7 @@ import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-
 import { getLabel } from '@/utils/enum'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
-import { useInitForm, useSwitchChangeHandler, useSwitchState, useTableAction } from '@/hooks'
+import { useInitForm, useSwitchChangeHandler, useTableAction } from '@/hooks'
 import { ElMessage } from 'element-plus'
 import { genTemplateGroupPropertyApi } from '@/api'
 import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions, SwitchUpdateConfig } from '@/types'
@@ -199,21 +200,18 @@ const init = () => {
 	getDataList()
 }
 
-const requiredSwitch = useSwitchState({
-	field: 'required',
+const switchUpdateConfig = {
+	switchField: 'required',
+	confirmField: 'propTitle',
 	states: [
 		{ value: 1, text: '是', isActive: true },
 		{ value: 0, text: '否', isActive: false }
-	]
-})
-
-const switchUpdateConfig = {
-	switchState: requiredSwitch,
+	],
 	apiFn: (val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
 	afterSuccess: getDataList
 } as SwitchUpdateConfig
 
-const requiredChangeHandle = useSwitchChangeHandler(switchUpdateConfig)
+const { activeValue, inactiveValue, activeText, inactiveText, switchSubmitLoading, switchSubmitHandler } = useSwitchChangeHandler(switchUpdateConfig)
 
 const orderChangeHandle = (currentValue: number, oldValue: number, row: GenTemplateGroupPropertyEntity) => {
 	// 如果没变化，直接返回

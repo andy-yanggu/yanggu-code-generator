@@ -17,7 +17,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	const tableRowsRef = ref([] as VO[])
 
 	// 默认值
-	const defaultOptions: IHooksOptions<VO, Query> = {
+	const defaultOptions = (): IHooksOptions<VO, Query> => ({
 		mountedGetData: true,
 		resetQueryGetData: true,
 		isPage: true,
@@ -42,10 +42,10 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		dataListSelections: [] as KeyArray,
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
-	}
+	})
 
 	// 合并默认值
-	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions).filter(([key]) => !Object.hasOwn(state, key))))
+	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions()).filter(([key]) => !Object.hasOwn(state, key))))
 
 	// 初始化 queryForm
 	if (isEmpty(state.queryForm)) {
@@ -96,9 +96,11 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	// 查询
 	const query = () => {
 		// 先进行表单验证，验证通过后再执行查询
-		validateQueryForm().then(() => {
-			executeQuery()
-		})
+		validateQueryForm()
+			.then(() => {
+				executeQuery()
+			})
+			.catch(() => {})
 	}
 
 	// 构建查询条件
