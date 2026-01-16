@@ -69,15 +69,15 @@
 									</el-button>
 								</template>
 								<template v-else>
-									<el-tooltip content="复制代码" placement="top">
+									<el-tooltip content="复制代码" :disabled="copyCodeState.icon === Check" placement="top">
 										<el-button
 											size="small"
 											type="primary"
-											:icon="CopyDocument"
+											:icon="copyCodeState.icon"
 											:disabled="!testData.renderedTemplateContent"
 											@click="copyTemplateContent()"
 										>
-											复制
+											{{ copyCodeState.text }}
 										</el-button>
 									</el-tooltip>
 									<el-tooltip :content="generatorState.tooltip" placement="top">
@@ -125,12 +125,13 @@
 import { computed, reactive, ref, shallowReactive, watch } from 'vue'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, ElLoading, ElMessage, ElMessageBox, ElTreeSelect } from 'element-plus'
-import { CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
+import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { Result, SubmitOptions } from '@/types'
 import { useSubmitHandler } from '@/hooks'
+import { useTimeoutFn } from '@vueuse/core'
 
 defineOptions({
 	name: 'GenTemplateTest'
@@ -183,6 +184,23 @@ const initGeneratorStateArray = () => [
 	}
 ]
 const generatorState = shallowReactive(initGeneratorStateArray()[0])
+
+const initCopyCodeStateArray = () => [
+	{
+		icon: CopyDocument,
+		text: '复制'
+	},
+	{
+		icon: Check,
+		text: '已复制'
+	}
+]
+
+const copyCodeState = shallowReactive(initCopyCodeStateArray()[0])
+
+const { start: startCopyCode } = useTimeoutFn(() => {
+	Object.assign(copyCodeState, initCopyCodeStateArray()[0])
+}, 2000)
 
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())
@@ -401,8 +419,13 @@ const submitState = shallowReactive({
 const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 const copyTemplateContent = () => {
+	if (copyCodeState.icon === Check) {
+		return
+	}
+	Object.assign(copyCodeState, initCopyCodeStateArray()[1])
 	copyToClipboard(testData.renderedTemplateContent).then(() => {
 		ElMessage.success('代码已复制到剪贴板')
+		startCopyCode()
 	})
 }
 

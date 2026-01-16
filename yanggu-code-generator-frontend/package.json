@@ -1,6 +1,7 @@
 {
 	"name": "yanggu-code-generator-frontend",
 	"version": "1.0.0",
+	"description": "代码生成器前端项目",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",

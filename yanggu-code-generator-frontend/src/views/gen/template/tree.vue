@@ -1,7 +1,7 @@
 <template>
 	<!-- 预览界面 -->
 	<el-drawer v-model="templateTreeData.visible" :title="`模板配置（${templateGroupName}）`" size="100%" :modal="false" :before-close="handleClose">
-		<el-splitter style="height: 100%">
+		<el-splitter clas="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
 				<el-row style="margin-bottom: 10px" :gutter="10">
@@ -226,12 +226,7 @@
 						</template>
 					</el-main>
 				</el-container>
-				<el-main v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
-					<el-row>
-						<el-col :span="24" style="text-align: right">
-							<el-button size="small" @click="toggle()">{{ isFullscreen ? '退出全屏' : '全屏展示' }}</el-button>
-						</el-col>
-					</el-row>
+				<el-main v-else style="display: flex; flex-direction: column; height: 100%">
 					<div style="flex: 1; display: flex; align-items: center; justify-content: center">
 						<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
 					</div>
@@ -249,7 +244,7 @@ import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
-import { useEventListener, useFullscreen } from '@vueuse/core'
+import { useEventListener, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
@@ -458,7 +453,7 @@ const handleNodeCollapse = (data: Tree) => {
 
 // 初始化方法
 const init = async () => {
-	const loadingInstance = ElLoading.service({ fullscreen: true })
+	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中' })
 	try {
 		const data = await genTemplateApi.treeData(props.templateGroupId)
 		templateTreeData.treeList = data
@@ -483,7 +478,7 @@ const init = async () => {
 		// 更新一下tab中的数据，已新加载数据为准
 		refreshTabData(templateContentList)
 	} finally {
-		loadingInstance.close()
+		useTimeoutFn(() => loadingInstance.close(), 500)
 	}
 }
 

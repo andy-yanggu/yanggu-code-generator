@@ -16,7 +16,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="表名" prop="tableName" :label-width="80">
-					<el-input v-model="state.queryForm.tableName" placeholder="请输入表名" clearable style="width: 100%"></el-input>
+					<el-input v-model="state.queryForm.tableName" placeholder="请输入表名" clearable style="width: 180px"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
