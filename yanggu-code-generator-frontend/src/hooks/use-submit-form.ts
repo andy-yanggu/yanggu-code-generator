@@ -25,7 +25,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		titleSubject: '',
 		fullTitle: '',
 		dataForm: {} as VO & { id?: Key },
-		duration: 500
+		duration: 1000
 	} as const
 
 	// 合并默认值

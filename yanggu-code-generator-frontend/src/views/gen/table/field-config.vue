@@ -130,7 +130,7 @@
 					</el-table-column>
 					<el-table-column prop="formValidator" label="表单效验" header-align="center" align="center">
 						<template #default="{ row }">
-							<el-select v-model="row.formValidator" :options="formValidatorList" filterable></el-select>
+							<el-select v-model="row.formValidator" :options="formValidatorList" filterable clearable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="formType" label="表单类型" header-align="center" align="center">
@@ -174,7 +174,7 @@
 import { nextTick, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
-import { GenEnumEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
+import { GenEnumEntity, GenTableEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 import { useSubmitHandler } from '@/hooks'
@@ -235,7 +235,7 @@ const formTypeList = ref([
 
 const enumList = ref([] as GenEnumEntity[])
 
-const init = async (row: any) => {
+const init = async (row: GenTableEntity) => {
 	visible.value = true
 	const id = row.id
 	projectIdRef.value = row.projectId
@@ -256,7 +256,7 @@ const init = async (row: any) => {
 	try {
 		// 并行执行所有异步请求
 		const [fieldRes, enumRes, fieldTypeRes] = await Promise.all([
-			getTableFieldList(id),
+			genTableFieldApi.entityList({ tableId: id as number }),
 			genEnumApi.entityList({ projectId: projectIdRef.value }),
 			genFieldTypeApi.list()
 		])
@@ -275,13 +275,6 @@ const init = async (row: any) => {
 	} finally {
 		loadingInstance.close()
 	}
-}
-
-const getTableFieldList = (id: number) => {
-	const queryForm = {
-		tableId: id
-	}
-	return genTableFieldApi.entityList(queryForm)
 }
 
 const getFieldListData = (type: number) => {

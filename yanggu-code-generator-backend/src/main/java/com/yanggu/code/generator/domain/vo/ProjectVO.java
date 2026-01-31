@@ -64,6 +64,12 @@ public class ProjectVO extends BaseVO implements Serializable {
     private Long projectTemplateGroupId;
 
     /**
+     * 项目模板组名称
+     */
+    @Schema(description = "项目模板组名称")
+    private String projectTemplateGroupName;
+
+    /**
      * 项目模板属性数据
      */
     @Schema(description = "项目模板属性数据")

@@ -4,24 +4,26 @@
 		<el-splitter clas="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
-				<el-row style="margin-bottom: 10px" :gutter="10">
-					<el-col :span="14">
-						<el-input
-							v-model="treeSearchText"
-							placeholder="请输入目录/文件名称"
-							size="small"
-							clearable
-							prefix-icon="Search"
-							style="width: 100%"
-						></el-input>
-					</el-col>
-					<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
-						<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
-						<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()">
-							删除
-						</el-button>
-					</el-col>
-				</el-row>
+				<el-affix :offset="20">
+					<el-row style="margin-bottom: 10px" :gutter="10">
+						<el-col :span="14">
+							<el-input
+								v-model="treeSearchText"
+								placeholder="请输入目录/文件名称"
+								size="small"
+								clearable
+								prefix-icon="Search"
+								style="width: 100%"
+							></el-input>
+						</el-col>
+						<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
+							<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
+							<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()">
+								删除
+							</el-button>
+						</el-col>
+					</el-row>
+				</el-affix>
 				<el-scrollbar style="height: calc(100% - 40px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree

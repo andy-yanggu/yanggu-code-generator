@@ -79,6 +79,13 @@
 				></el-table-column>
 				<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
+					prop="projectTemplateGroupName"
+					label="项目模板组"
+					show-overflow-tooltip
+					header-align="center"
+					align="center"
+				></el-table-column>
+				<el-table-column
 					prop="createTime"
 					label="创建时间"
 					show-overflow-tooltip
@@ -159,7 +166,7 @@ const initQueryFormData = (): GenProjectQuery => ({
 const state = reactive({
 	tableSubject: '项目',
 	deleteNameKey: 'projectName',
-	dataListApi: genProjectApi.entityPage,
+	dataListApi: genProjectApi.voPage,
 	deleteListApi: genProjectApi.deleteList,
 	initQueryFormData,
 	queryForm: initQueryFormData(),

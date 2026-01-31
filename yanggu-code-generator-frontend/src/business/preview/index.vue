@@ -4,38 +4,40 @@
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
-				<el-row style="margin-bottom: 10px" :gutter="10">
-					<el-col :span="16">
-						<el-input
-							v-model="treeSearchText"
-							placeholder="请输入目录/文件名称"
-							size="small"
-							clearable
-							:prefix-icon="Search"
-							style="width: 100%"
-						></el-input>
-					</el-col>
-					<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
-						<el-tooltip content="重新渲染" placement="top">
-							<el-button
+				<el-affix :offset="20">
+					<el-row style="margin-bottom: 10px" :gutter="10">
+						<el-col :span="16">
+							<el-input
+								v-model="treeSearchText"
+								placeholder="请输入目录/文件名称"
 								size="small"
-								type="primary"
-								:icon="Refresh"
-								@click="
-									init(
-										templateTreeData.id,
-										templateTreeData.name,
-										templateTreeData.projectId,
-										templateTreeData.generatorType,
-										templateTreeData.generatorProductType
-									)
-								"
-							>
-								刷新
-							</el-button>
-						</el-tooltip>
-					</el-col>
-				</el-row>
+								clearable
+								:prefix-icon="Search"
+								style="width: 100%"
+							></el-input>
+						</el-col>
+						<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
+							<el-tooltip content="重新渲染" placement="top">
+								<el-button
+									size="small"
+									type="primary"
+									:icon="Refresh"
+									@click="
+										init(
+											templateTreeData.id,
+											templateTreeData.name,
+											templateTreeData.projectId,
+											templateTreeData.generatorType,
+											templateTreeData.generatorProductType
+										)
+									"
+								>
+									刷新
+								</el-button>
+							</el-tooltip>
+						</el-col>
+					</el-row>
+				</el-affix>
 				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree

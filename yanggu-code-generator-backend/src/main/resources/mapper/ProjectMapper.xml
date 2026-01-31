@@ -5,32 +5,32 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id,
-        project_name,
-        project_package,
-        project_port,
-        project_version,
-        datasource_id,
-        project_template_group_id,
-        table_template_group_id,
-        enum_template_group_id,
-        template_group_property_data,
-        backend_path,
-        frontend_path,
-        project_desc,
-        author,
-        generator_type,
-        module_list,
-        create_time,
-        update_time,
-        is_delete
+        gp.id,
+        gp.project_name,
+        gp.project_package,
+        gp.project_port,
+        gp.project_version,
+        gp.datasource_id,
+        gp.project_template_group_id,
+        gp.table_template_group_id,
+        gp.enum_template_group_id,
+        gp.template_group_property_data,
+        gp.backend_path,
+        gp.frontend_path,
+        gp.project_desc,
+        gp.author,
+        gp.generator_type,
+        gp.module_list,
+        gp.create_time,
+        gp.update_time,
+        gp.is_delete
     </sql>
 
     <!-- 过滤SQL -->
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'projectName')">
-            AND project_name LIKE CONCAT('%', #{query.projectName}, '%')
+            AND gp.project_name LIKE CONCAT('%', #{query.projectName}, '%')
         </if>
     </sql>
 
@@ -50,8 +50,10 @@
         <result property="projectDesc" column="project_desc"/>
         <result property="author" column="author"/>
         <result property="generatorType" column="generator_type"/>
-        <result property="moduleList" column="module_list" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler"/>
-        <result property="templateGroupPropertyData" column="template_group_property_data" typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
+        <result property="moduleList" column="module_list"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
@@ -62,12 +64,13 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_project
+            gen_project AS gp
         <where>
-            is_delete = 0
+            gp.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'gp'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- Entity列表 -->
@@ -75,25 +78,29 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_project
+            gen_project AS gp
         <where>
-            is_delete = 0
+            gp.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'gp'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO分页 -->
     <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.ProjectVO">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            gtp.group_name AS project_template_group_name
         FROM
-            gen_project
+            gen_project AS gp
+        LEFT JOIN gen_template_group AS gtp ON gp.project_template_group_id = gtp.id AND gtp.is_delete = 0
         <where>
-            is_delete = 0
+            gp.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'gp'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
     <!-- VO列表 -->
@@ -103,10 +110,11 @@
         FROM
             gen_project
         <where>
-            is_delete = 0
+            gp.is_delete = 0
             <include refid="whereSQL"/>
         </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
+        <bind name="columnPrefix" value="'gp'"/>
+        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
     </select>
 
 </mapper>

@@ -396,6 +396,10 @@ const { refreshPage } = usePageRefresher()
 	cursor: pointer;
 	color: inherit;
 }
+:deep(.el-tabs__item:hover .icon-text-tooltip .svg-icon) {
+	color: var(--el-color-primary) !important;
+	transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y));
+}
 
 /* Hover 高亮样式 */
 .pin-icon:hover {

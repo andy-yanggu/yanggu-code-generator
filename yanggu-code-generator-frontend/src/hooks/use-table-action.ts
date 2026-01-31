@@ -259,34 +259,69 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		return state.tableSubject ?? '数据'
 	}
 
-	// 构建删除文案
+	const buildDeleteTextContext = (rows: VO[], idList: KeyArray) => {
+		const subject = getSubject()
+		const count = idList.length
+
+		// 提取名称
+		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]).filter(isNotBlank) as string[]) : []
+
+		// 没有名称
+		if (isEmpty(names)) {
+			return {
+				subject,
+				count,
+				hasNames: false,
+				nameText: ''
+			}
+		} else if (names.length > 3) {
+			// 如果名称大于3个，则只显示前3个名称
+			return {
+				subject,
+				count,
+				hasNames: true,
+				nameText: `【${names.slice(0, 3).join('、')}…】等${count}个`
+			}
+		} else {
+			return {
+				subject,
+				count,
+				hasNames: true,
+				nameText: `【${names.join('、')}】`
+			}
+		}
+	}
+
+	// 构建删除确认文案
 	const buildDeleteConfirmMessage = (rows: VO[], idList: KeyArray) => {
-		// 1️⃣ 完全自定义文案
 		if (isNotBlank(state.deleteConfirmMessage)) {
 			return state.deleteConfirmMessage
 		}
 
-		const subject = getSubject()
+		const ctx = buildDeleteTextContext(rows, idList)
 
-		// 2️⃣ 没有行数据（只有 id）
-		if (isEmpty(rows)) {
-			return idList.length === 1 ? `确认删除该${subject}吗？` : `确认删除 ${idList.length} 个${subject}吗？`
-		}
-
-		// 3️⃣ 有行数据，提取名称
-		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]).filter(isNotBlank) as string[]) : []
-
-		let targetText: string
-
-		if (names.length === 0) {
-			targetText = subject
-		} else if (names.length > 3) {
-			targetText = `【${names.slice(0, 3).join('、')}…】等${names.length}个${subject}`
+		// 只有 id（没有名称）
+		if (!ctx.hasNames) {
+			return ctx.count === 1 ? `确认删除该${ctx.subject}吗？` : `确认删除这${ctx.count}条${ctx.subject}吗？`
+		} else if (ctx.count <= 3) {
+			return `确认删除${ctx.subject}${ctx.nameText}吗？`
 		} else {
-			targetText = `${subject}【${names.join('、')}】`
+			return `确认删除${ctx.nameText}${ctx.subject}吗？`
 		}
+	}
 
-		return `确认删除${targetText}吗？`
+	// 构建删除成功文案
+	const buildDeleteSuccessMessage = (rows: VO[], idList: KeyArray) => {
+		const ctx = buildDeleteTextContext(rows, idList)
+
+		// 只有 id（没有名称）
+		if (!ctx.hasNames) {
+			return ctx.count === 1 ? `${ctx.subject}删除成功` : `${ctx.count}条${ctx.subject}删除成功`
+		} else if (ctx.count <= 3) {
+			return `${ctx.subject}${ctx.nameText}删除成功`
+		} else {
+			return `${ctx.nameText}${ctx.subject}删除成功`
+		}
 	}
 
 	// 批量删除
@@ -313,7 +348,10 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 				state.deleteLoading = true
 				state.deleteListApi!(idList)
 					.then(() => {
-						ElMessage.success(`${subject}删除成功`)
+						ElMessage.success({
+							message: buildDeleteSuccessMessage(rows, idList),
+							duration: 1000
+						})
 						clearSelectionHandle()
 						getDataList()
 					})

@@ -1,12 +1,14 @@
 <template>
 	<div>
-		<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable @input="filterIcons()"></el-input>
-		<div v-loading="loading" class="icon-grid">
+		<el-affix :offset="100">
+			<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable @input="debouncedFilterIcons()"></el-input>
+		</el-affix>
+		<div class="icon-grid">
 			<el-row :gutter="20">
 				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
 					<div class="icon-item" @click="selectIcon(iconName)">
 						<svg-icon :icon="iconName" class="large-icon" is-pointer></svg-icon>
-						<el-text size="small" truncated>{{ iconName }}</el-text>
+						<text-tooltip :title="iconName"></text-tooltip>
 					</div>
 				</el-col>
 			</el-row>
@@ -21,40 +23,31 @@ import { ElMessage } from 'element-plus'
 import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
 import { useDebounceFn } from '@vueuse/core'
+import TextTooltip from '@/components/text-tooltip/index.vue'
 
 defineOptions({
 	name: 'IconSearch'
 })
 
-const loading = ref(true)
 const allIcons = ref<string[]>([])
 const allOriginIcons = ref<string[]>([])
 const searchText = ref('')
 
 // 从iconfont.js文件中提取图标
-const loadIcons = async () => {
-	try {
-		// 使用setTimeout确保iconfont.js已经加载完成
-		setTimeout(() => {
-			// 查找所有已注入的图标
-			const symbols = document.querySelectorAll('symbol[id^="icon-"]')
-			const iconNames: string[] = []
+const loadIcons = () => {
+	// 查找所有已注入的图标
+	const symbols = document.querySelectorAll('symbol[id^="icon-"]')
+	const iconNames: string[] = []
 
-			symbols.forEach(symbol => {
-				const id = symbol.getAttribute('id')
-				if (id) {
-					iconNames.push(id)
-				}
-			})
+	symbols.forEach(symbol => {
+		const id = symbol.getAttribute('id')
+		if (id) {
+			iconNames.push(id)
+		}
+	})
 
-			allOriginIcons.value = iconNames
-			allIcons.value = iconNames
-			loading.value = false
-		}, 100)
-	} catch (error) {
-		console.error('提取图标失败:', error)
-		loading.value = false
-	}
+	allOriginIcons.value = iconNames
+	allIcons.value = iconNames
 }
 
 // 使用防抖优化搜索过滤
@@ -65,11 +58,6 @@ const debouncedFilterIcons = useDebounceFn(() => {
 		allIcons.value = allOriginIcons.value
 	}
 }, 300) // 300ms 防抖延迟
-
-// 根据搜索文本过滤图标
-const filterIcons = () => {
-	debouncedFilterIcons()
-}
 
 // 选择图标时的回调
 const selectIcon = (iconName: string) => {
@@ -111,12 +99,12 @@ onMounted(() => {
 }
 
 .icon-item:hover {
-	border-color: #409eff;
-	background-color: #ecf5ff;
+	border-color: var(--el-color-primary);
 	transform: translateY(-4px);
-	box-shadow: 0 4px 8px rgba(64, 158, 255, 0.2);
 }
-
+:deep(.icon-item:hover .text-tooltip-title) {
+	color: var(--el-color-primary);
+}
 .large-icon {
 	font-size: 40px;
 	color: #606266;
@@ -125,7 +113,7 @@ onMounted(() => {
 }
 
 .icon-item:hover .large-icon {
-	color: #409eff;
+	color: var(--el-color-primary);
 	transform: scale(1.1);
 }
 </style>
