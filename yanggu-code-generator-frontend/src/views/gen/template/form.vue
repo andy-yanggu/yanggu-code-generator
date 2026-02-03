@@ -4,6 +4,7 @@
 			ref="dataFormRef"
 			:model="state.dataForm"
 			:rules="dataRules"
+			:disabled="formType === 'detail'"
 			label-width="110px"
 			:validate-on-rule-change="false"
 			@keyup.enter="submitHandle()"
@@ -50,7 +51,7 @@
 		</el-form>
 
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
+			<el-button v-if="formType !== 'detail'" type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
@@ -171,7 +172,7 @@ const dataRules = computed(() => {
 
 const fileList = ref([] as File[])
 
-const { visible, dataFormRef, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
+const { visible, dataFormRef, formType, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
 
 // 统一的文件处理方法
 const processFile = (file: File) => {

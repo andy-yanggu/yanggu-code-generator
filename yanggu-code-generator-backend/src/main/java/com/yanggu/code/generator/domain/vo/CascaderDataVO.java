@@ -13,6 +13,8 @@ public class CascaderDataVO {
 
     private String value;
 
+    private String description;
+
     private String type;
 
     private Integer generatorType;

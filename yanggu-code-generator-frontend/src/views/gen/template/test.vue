@@ -1,7 +1,15 @@
 <template>
 	<el-drawer v-model="testData.visible" size="100%" class="template-test-drawer" destroy-on-close :before-close="handleClose">
 		<template #header>
-			<span class="el-drawer__title">{{ `模板测试（${testData.templateName}）` }}</span>
+			<el-link
+				type="primary"
+				class="el-drawer__title"
+				style="font-size: 16px"
+				underline="never"
+				@click="formInitHandle({ type: 'detail', id: testData.templateId })"
+			>
+				{{ `模板测试（${testData.templateName}）` }}
+			</el-link>
 			<el-tree-select
 				v-model="testData.templateId"
 				:data="treeList"
@@ -12,7 +20,11 @@
 				filterable
 				style="width: 300px"
 				placeholder="请选择模板"
-			></el-tree-select>
+			>
+				<template #default="{ data }">
+					<text-tooltip :title="data.fileName" max-width="100%"> </text-tooltip>
+				</template>
+			</el-tree-select>
 		</template>
 		<el-splitter>
 			<!-- 左侧：选择面板（独立滚动） -->
@@ -39,8 +51,13 @@
 						filterable
 						clearable
 						placeholder="请选择项目、表或者枚举"
+						style="width: 300px"
 						@change="handleCascaderChange"
-					></el-cascader>
+					>
+						<template #default="{ data }">
+							<option-label :label="data.label" :desc="data.description"></option-label>
+						</template>
+					</el-cascader>
 				</el-row>
 			</el-splitter-panel>
 
@@ -52,7 +69,14 @@
 						<el-row>
 							<!-- 文件路径	-->
 							<el-col :span="19">
-								<text-tooltip :title="'路径：' + fullFilePath" max-width="100%"></text-tooltip>
+								<div class="path-container">
+									<text-tooltip :title="'路径：' + fullFilePath" max-width="100%" :tooltip-content="fullFilePath"></text-tooltip>
+									<el-tooltip v-if="testData.activeName === 'render'" :disabled="copyIconState === Check" content="复制文件路径" placement="top">
+										<el-icon style="cursor: pointer" @click="copyPath(fullFilePath)">
+											<component :is="copyIconState"></component>
+										</el-icon>
+									</el-tooltip>
+								</div>
 							</el-col>
 							<el-col :span="5" style="text-align: right">
 								<template v-if="testData.activeName === 'template'">
@@ -118,11 +142,18 @@
 				</el-container>
 			</el-splitter-panel>
 		</el-splitter>
+		<gen-template-form
+			ref="formRef"
+			:template-path="testData.fullFilePath"
+			:template-type="testData.templateType"
+			:parent-id="testData.parentId"
+			:template-group-id="testData.templateGroupId"
+		></gen-template-form>
 	</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, shallowReactive, watch } from 'vue'
+import { computed, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, ElLoading, ElMessage, ElMessageBox, ElTreeSelect } from 'element-plus'
 import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
@@ -130,8 +161,10 @@ import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { Result, SubmitOptions } from '@/types'
-import { useSubmitHandler } from '@/hooks'
+import { useInitForm, useSubmitHandler } from '@/hooks'
 import { useTimeoutFn } from '@vueuse/core'
+import OptionLabel from '@/components/option/label/index.vue'
+import GenTemplateForm from '@/views/gen/template/form.vue'
 
 defineOptions({
 	name: 'GenTemplateTest'
@@ -155,6 +188,8 @@ const initTestData = () => ({
 	templateGroupId: 0,
 	templateGroupType: 0,
 	templateId: 0,
+	templateType: -1,
+	parentId: 0,
 	templateName: '',
 	originalFileName: '',
 	originalTemplateContent: '',
@@ -202,15 +237,21 @@ const { start: startCopyCode } = useTimeoutFn(() => {
 	Object.assign(copyCodeState, initCopyCodeStateArray()[0])
 }, 2000)
 
-const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
+const copyIconState = shallowRef(CopyDocument)
+const { start: startTimer } = useTimeoutFn(() => {
+	copyIconState.value = CopyDocument
+}, 2000)
+
+const init = async (templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())
 	testData.visible = true
 	editTemplateList.value = new Set<number>()
 	treeList.value = [] as any[]
-	testData.templateGroupId = templateGroupId
-	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
 	testData.editTemplateContent = templateContent
+
+	// 获取模板详情数据
+	await setTemplateData()
 
 	// 获取树形数据
 	await setTreeListData()
@@ -229,9 +270,6 @@ watch(
 		if (oldValue !== 0) {
 			testData.editTemplateContent = testData.originalTemplateContent
 		}
-	},
-	{
-		immediate: false
 	}
 )
 
@@ -298,7 +336,6 @@ const handleCascaderChange = async (val: string[]) => {
 	}
 	testData.activeName = 'render'
 	const loadingInstance = ElLoading.service({
-		target: '.main-scroll',
 		text: '模板渲染中...'
 	})
 	try {
@@ -376,6 +413,9 @@ const setTemplateData = async () => {
 	}
 	const data = await genTemplateApi.detailData(detailQueryForm)
 	testData.templateName = data.templateName
+	testData.templateType = data.templateType
+	testData.templateGroupId = data.templateGroupId
+	testData.parentId = data.parentId
 	testData.originalFileName = data.fileName
 	testData.originalTemplateContent = data.templateContent
 	testData.fullFilePath = data.generatorPath
@@ -429,6 +469,29 @@ const copyTemplateContent = () => {
 	})
 }
 
+// 文件路径复制到剪切板
+const copyPath = (path: string) => {
+	// 如果当前是Check状态，则不处理点击事件（防止重复点击）
+	if (copyIconState.value === Check) {
+		return
+	}
+
+	// 切换图标为Check
+	copyIconState.value = Check
+
+	copyToClipboard(path)
+		.then(() => {
+			ElMessage.success('文件路径已复制到剪贴板')
+
+			// 2秒后恢复为CopyDocument图标
+			startTimer()
+		})
+		.catch(() => {
+			// 如果复制失败也恢复图标
+			copyIconState.value = CopyDocument
+		})
+}
+
 // 关闭抽屉方法。确认保存修改
 const handleClose = (done: () => void) => {
 	const editIdList = [...editTemplateList.value]
@@ -461,6 +524,8 @@ const handleClose = (done: () => void) => {
 		})
 }
 
+const { formRef, formInitHandle } = useInitForm()
+
 defineExpose({
 	init
 })
@@ -492,6 +557,11 @@ defineExpose({
 .header-fixed {
 	height: auto;
 	flex-shrink: 0;
+}
+.path-container {
+	display: inline-flex; /* 改为 inline-flex 保持内容紧密排列 */
+	align-items: center;
+	max-width: 100%;
 }
 
 .main-scroll {

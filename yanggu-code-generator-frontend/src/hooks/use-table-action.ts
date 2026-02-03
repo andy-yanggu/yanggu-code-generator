@@ -302,11 +302,11 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 		// 只有 id（没有名称）
 		if (!ctx.hasNames) {
-			return ctx.count === 1 ? `确认删除该${ctx.subject}吗？` : `确认删除这${ctx.count}条${ctx.subject}吗？`
+			return ctx.count === 1 ? `确认要删除${ctx.subject}吗？` : `确认要删除这${ctx.count}条${ctx.subject}吗？`
 		} else if (ctx.count <= 3) {
-			return `确认删除${ctx.subject}${ctx.nameText}吗？`
+			return `确认要删除${ctx.subject}${ctx.nameText}吗？`
 		} else {
-			return `确认删除${ctx.nameText}${ctx.subject}吗？`
+			return `确认要删除${ctx.nameText}${ctx.subject}吗？`
 		}
 	}
 
@@ -316,11 +316,11 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 
 		// 只有 id（没有名称）
 		if (!ctx.hasNames) {
-			return ctx.count === 1 ? `${ctx.subject}删除成功` : `${ctx.count}条${ctx.subject}删除成功`
+			return ctx.count === 1 ? `${ctx.subject}已删除` : `${ctx.count}条${ctx.subject}已删除`
 		} else if (ctx.count <= 3) {
-			return `${ctx.subject}${ctx.nameText}删除成功`
+			return `${ctx.subject}${ctx.nameText}已删除`
 		} else {
-			return `${ctx.nameText}${ctx.subject}删除成功`
+			return `${ctx.nameText}${ctx.subject}已删除`
 		}
 	}
 
