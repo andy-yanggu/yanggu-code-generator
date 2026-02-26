@@ -22,10 +22,10 @@
 				<full-screen v-if="systemSettingStore.toolbar.isOpenFullscreen"></full-screen>
 				<!-- 日间/夜间模式切换  -->
 				<theme-switch v-if="systemSettingStore.toolbar.isOpenThemeSwitch"></theme-switch>
-				<!-- 用户下拉菜单 -->
-				<user-dropdown></user-dropdown>
 				<!-- 系统设置 -->
 				<system-setting></system-setting>
+				<!-- 用户下拉菜单 -->
+				<user-dropdown></user-dropdown>
 			</el-space>
 		</div>
 		<!-- 标签栏 -->

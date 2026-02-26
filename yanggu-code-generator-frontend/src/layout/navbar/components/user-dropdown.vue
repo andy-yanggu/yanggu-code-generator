@@ -1,5 +1,11 @@
 <template>
-	<el-dropdown>
+	<el-dropdown
+		@visible-change="
+			(val: boolean) => {
+				visible = val
+			}
+		"
+	>
 		<div class="user-dropdown">
 			<template v-if="userStore.userInfo.avatar">
 				<el-avatar :src="userStore.userInfo.avatar" class="user-avatar"></el-avatar>
@@ -9,7 +15,10 @@
 					<Avatar></Avatar>
 				</el-icon>
 			</template>
-			<el-text style="color: inherit">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
+			<el-text style="color: inherit; margin-left: 5px">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
+			<el-icon class="el-icon--right arrow-icon" :class="{ 'is-open': visible }">
+				<ArrowDown></ArrowDown>
+			</el-icon>
 		</div>
 		<template #dropdown>
 			<el-dropdown-menu>
@@ -27,7 +36,10 @@ import { useUserStore } from '@/store'
 import { authApi } from '@/api'
 import { ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
-import { Avatar, SwitchButton, User } from '@element-plus/icons-vue'
+import { ArrowDown, Avatar, SwitchButton, User } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+
+const visible = ref(false)
 
 defineOptions({
 	name: 'UserDropdown'
@@ -61,7 +73,6 @@ const logout = () => {
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	gap: 5px;
 }
 .user-dropdown:hover {
 	color: var(--el-color-primary) !important;
@@ -71,5 +82,12 @@ const logout = () => {
 }
 .user-avatar {
 	font-size: 16px;
+}
+.arrow-icon {
+	transition: transform 0.25s ease;
+}
+
+.arrow-icon.is-open {
+	transform: rotate(180deg);
 }
 </style>
