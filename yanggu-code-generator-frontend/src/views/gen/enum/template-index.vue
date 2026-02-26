@@ -57,8 +57,7 @@
 					layout="total, sizes, prev, pager, next, jumper"
 					@size-change="sizeChangeHandle"
 					@current-change="currentChangeHandle"
-				>
-				</el-pagination>
+				></el-pagination>
 			</el-card>
 			<template #footer>
 				<div class="footer-buttons">
