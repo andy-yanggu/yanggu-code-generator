@@ -6,6 +6,10 @@ export interface SwitchUpdateConfig<T = any> {
 	 * 绑定字段名（如status）
 	 */
 	switchField: string
+	/**
+	 * 确定字段中文名
+	 */
+	confirmFieldText: string
 
 	/**
 	 * 确定字段名

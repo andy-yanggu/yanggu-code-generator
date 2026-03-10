@@ -377,7 +377,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
 
 		if (isEmpty(idList)) {
-			ElMessage.warning('请选择要导出的数据')
+			ElMessage.warning(`请选择要导出的${getSubject()}`)
 			return
 		}
 

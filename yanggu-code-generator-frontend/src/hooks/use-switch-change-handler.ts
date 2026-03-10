@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import type { SwitchUpdateConfig } from '@/types'
 
 export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) => {
-	const { switchField, confirmField, states, apiFn, afterSuccess, confirmText, successText } = config
+	const { switchField, confirmFieldText, confirmField, states, apiFn, afterSuccess, confirmText, successText } = config
 
 	if (states.length !== 2) {
 		throw new Error('Switch states must contain exactly two items')
@@ -16,9 +16,15 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 
 	const getOldValue = (newValue: T): T => (newValue === activeState.value ? inactiveState.value : activeState.value)
 
-	const getConfirmMessage = confirmText ?? ((confirmValue: string, newText: string) => `确认要将【${confirmValue}】修改为【${newText}】吗？`)
+	const getConfirmMessage =
+		confirmText ??
+		((confirmValue: string, confirmFieldText: string, newText: string) =>
+			`确认要将【${confirmValue}】的【${confirmFieldText}】修改为【${newText}】吗？`)
 
-	const getSuccessMessage = successText ?? ((confirmValue: string, _: string, newText: string) => `【${confirmValue}】修改为【${newText}】成功`)
+	const getSuccessMessage =
+		successText ??
+		((confirmValue: string, confirmFieldText: string, _: string, newText: string) =>
+			`【${confirmValue}】的【${confirmFieldText}】修改为【${newText}】成功`)
 
 	const switchSubmitLoading = ref(false)
 
@@ -28,7 +34,7 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 		const newText = textMap[newValue]
 		const confirmValue: string = String(row[confirmField])
 
-		ElMessageBox.confirm(getConfirmMessage(confirmValue, newText), '提示', {
+		ElMessageBox.confirm(getConfirmMessage(confirmValue, confirmFieldText, newText), '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'primary'
@@ -38,7 +44,7 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 				return apiFn(newValue, row)
 			})
 			.then(() => {
-				ElMessage.success(getSuccessMessage(confirmValue, oldText, newText))
+				ElMessage.success(getSuccessMessage(confirmValue, confirmFieldText, oldText, newText))
 				afterSuccess?.()
 			})
 			.catch(() => {

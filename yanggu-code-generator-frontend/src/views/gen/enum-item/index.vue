@@ -142,6 +142,7 @@ const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
 	enumNameRef.value = enumName
 	state.queryContext!.enumId = enumId
+	state.dataList = []
 	resetQueryHandle()
 }
 

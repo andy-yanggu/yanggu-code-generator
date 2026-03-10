@@ -108,7 +108,16 @@
 								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-button>
+								<el-dropdown>
+									<el-button type="primary" link :icon="More">更多</el-button>
+									<template #dropdown>
+										<el-dropdown-menu>
+											<el-dropdown-item :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-dropdown-item>
+											<el-dropdown-item :icon="Download" @click="exportHandle(scope.row.id)">导出</el-dropdown-item>
+											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-dropdown-item>
+										</el-dropdown-menu>
+									</template>
+								</el-dropdown>
 							</el-col>
 						</el-row>
 					</template>
@@ -153,7 +162,7 @@ import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
-import { CopyDocument, Delete, Download, Edit, Files, List, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
+import { CopyDocument, Delete, Download, Edit, Files, List, More, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { useInitForm, useTableAction } from '@/hooks'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genTemplateGroupApi } from '@/api'
@@ -225,4 +234,8 @@ const {
 
 const { formRef, formInitHandle } = useInitForm()
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.el-dropdown) {
+	vertical-align: middle; /* 行内对齐中线 */
+}
+</style>

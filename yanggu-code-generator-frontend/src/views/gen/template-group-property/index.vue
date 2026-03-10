@@ -197,11 +197,13 @@ const {
 const init = () => {
 	visible.value = true
 	state.queryContext!.templateGroupId = props.templateGroupId
-	getDataList()
+	state.dataList = []
+	resetQueryHandle()
 }
 
 const switchUpdateConfig = {
 	switchField: 'required',
+	confirmFieldText: '是否必填',
 	confirmField: 'propTitle',
 	states: [
 		{ value: 1, text: '是', isActive: true },
