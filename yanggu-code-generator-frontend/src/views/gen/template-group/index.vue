@@ -140,7 +140,6 @@
 
 		<template-tree
 			ref="treeUpdateRef"
-			:key="key"
 			:template-group-id="currentTemplateGroup.id"
 			:template-group-name="currentTemplateGroup.groupName"
 			:template-group-type="currentTemplateGroup.type"
@@ -192,7 +191,6 @@ const state = reactive({
 } as IHooksOptions<GenTemplateGroupEntity, GenTemplateGroupQuery>)
 
 const propertyRef = ref()
-const key = ref()
 const currentTemplateGroup = reactive({
 	id: -1,
 	groupName: '',
@@ -201,7 +199,6 @@ const currentTemplateGroup = reactive({
 const treeUpdateRef = ref()
 
 const treeData = (row: any) => {
-	key.value = Date.now()
 	Object.assign(currentTemplateGroup, row)
 	nextTick(() => {
 		treeUpdateRef.value.init(row.id)

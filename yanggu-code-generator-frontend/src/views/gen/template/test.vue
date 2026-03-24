@@ -72,7 +72,7 @@
 								<div class="path-container">
 									<text-tooltip :title="'路径：' + fullFilePath" max-width="100%" :tooltip-content="fullFilePath"></text-tooltip>
 									<el-tooltip v-if="testData.activeName === 'render'" :disabled="copyIconState === Check" content="复制文件路径" placement="top">
-										<el-icon style="cursor: pointer" @click="copyPath(fullFilePath)">
+										<el-icon style="cursor: pointer; margin-left: 5px" @click="copyPath(fullFilePath)">
 											<component :is="copyIconState"></component>
 										</el-icon>
 									</el-tooltip>
