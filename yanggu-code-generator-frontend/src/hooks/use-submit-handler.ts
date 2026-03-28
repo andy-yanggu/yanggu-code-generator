@@ -54,10 +54,12 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 				options.onError?.(err)
 			} else {
 				// 默认错误处理
-				ElMessage.error({
-					message: options.errorMessage,
-					duration: options.errorDuration
-				})
+				if (options.errorMessage) {
+					ElMessage.error({
+						message: options.errorMessage,
+						duration: options.errorDuration
+					})
+				}
 			}
 		} finally {
 			submitLoading.value = false

@@ -1,9 +1,15 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`代码预览（${templateTreeData.name}）`" size="100%" destroy-on-close>
+	<el-drawer
+		v-model="templateTreeData.visible"
+		:title="`代码预览（${templateTreeData.name}）`"
+		size="100%"
+		body-class="preview-drawer-body"
+		destroy-on-close
+	>
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
+			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
 				<el-affix :offset="20">
 					<el-row style="margin-bottom: 10px" :gutter="10">
 						<el-col :span="16">
@@ -13,7 +19,7 @@
 								size="small"
 								clearable
 								:prefix-icon="Search"
-								style="width: 100%"
+								style="width: 100%; margin-left: 10px"
 							></el-input>
 						</el-col>
 						<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
@@ -38,6 +44,7 @@
 						</el-col>
 					</el-row>
 				</el-affix>
+				<el-divider style="margin: 5px 0"></el-divider>
 				<el-scrollbar style="height: calc(100% - 30px); overflow-x: auto">
 					<div class="tree-scroll-wrapper">
 						<el-tree
@@ -113,6 +120,7 @@
 								</el-tooltip>
 							</el-col>
 						</el-row>
+						<el-divider style="margin: 5px 0"></el-divider>
 						<el-tabs
 							v-model="templateTreeData.tabActiveName"
 							tab-position="top"
@@ -517,7 +525,11 @@ defineExpose({
 	init
 })
 </script>
-
+<style>
+.preview-drawer-body {
+	padding: 10px 20px 20px;
+}
+</style>
 <style scoped>
 .tree-scroll-wrapper {
 	min-width: max-content;

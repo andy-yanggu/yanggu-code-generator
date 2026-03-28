@@ -1,9 +1,16 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer v-model="templateTreeData.visible" :title="`模板配置（${templateGroupName}）`" size="100%" :modal="false" :before-close="handleClose">
+	<el-drawer
+		v-model="templateTreeData.visible"
+		:title="`模板配置（${templateGroupName}）`"
+		size="100%"
+		:modal="false"
+		body-class="template-tree-drawer-body"
+		:before-close="handleClose"
+	>
 		<el-splitter clas="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
-			<el-splitter-panel collapsible size="30%" style="overflow: hidden">
+			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
 				<el-affix :offset="20">
 					<el-row style="margin-bottom: 10px" :gutter="10">
 						<el-col :span="14">
@@ -13,7 +20,7 @@
 								size="small"
 								clearable
 								prefix-icon="Search"
-								style="width: 100%"
+								style="width: 100%; margin-left: 10px"
 							></el-input>
 						</el-col>
 						<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
@@ -24,6 +31,7 @@
 						</el-col>
 					</el-row>
 				</el-affix>
+				<el-divider style="margin: 5px 0"></el-divider>
 				<el-scrollbar style="height: calc(100% - 40px); overflow-x: auto" @contextmenu.prevent.stop="handleScrollWrapperRightClick">
 					<div class="tree-scroll-wrapper">
 						<el-tree
@@ -152,6 +160,7 @@
 								</el-button>
 							</el-col>
 						</el-row>
+						<el-divider style="margin: 5px 0"></el-divider>
 						<el-tabs
 							ref="tabsRef"
 							v-model="templateTreeData.activeItemId"
@@ -1282,7 +1291,11 @@ defineExpose({
 	init
 })
 </script>
-
+<style>
+.template-tree-drawer-body {
+	padding: 10px 20px 20px;
+}
+</style>
 <style scoped>
 .tree-scroll-wrapper {
 	min-width: max-content;
