@@ -71,9 +71,9 @@
 
 			<!-- 右侧：代码预览区 -->
 			<el-splitter-panel v-if="isNotEmpty(templateTreeData.tabList)" :class="{ 'full-screen-mode': isFullscreen }">
-				<el-container style="height: 100%">
+				<el-container style="height: 100%; padding: 5px">
 					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; margin-bottom: 10px">
+					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
 							<el-col :span="16">
 								<div class="path-container">
@@ -143,7 +143,7 @@
 					</el-header>
 
 					<!-- 代码区域 -->
-					<el-main style="padding: 10px; overflow: hidden">
+					<el-main style="padding: 5px; margin-top: 10px; overflow: hidden">
 						<template v-if="activeTabItem.templateType === 1">
 							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
 								<code-mirror v-model="activeTabItem.templateContent" :read-only="true"></code-mirror>
