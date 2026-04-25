@@ -11,3 +11,6 @@ export interface LabelData {
 	// 值
 	value: string | number | boolean | null
 }
+
+// 标量类型
+export type scalar = string | number | boolean | null | undefined

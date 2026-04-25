@@ -1,7 +1,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { IHooksOptions, Key, KeyArray, PageQuery, PageVO } from '@/types'
-import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
+import { defaultsDeep, isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
 // 提供分页、批量删除、导出功能
 export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<VO, Query>) => {
@@ -44,8 +44,8 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		importSuccessMessage: '导入成功，请查看数据'
 	})
 
-	// 合并默认值
-	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions()).filter(([key]) => !Object.hasOwn(state, key))))
+	// 合并默认值：用默认值填充 state 中缺失的属性，不覆盖已有属性
+	defaultsDeep(state, defaultOptions())
 
 	// 初始化 queryForm
 	if (isEmpty(state.queryForm)) {
@@ -394,7 +394,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	}
 
 	// 导入数据
-	const importHandle = (file: File, params: Record<string, any> = {}) => {
+	const importHandle = (file: File, params: Record<string, never> = {}) => {
 		if (!file) {
 			ElMessage.warning('请选择要导入的文件')
 			return

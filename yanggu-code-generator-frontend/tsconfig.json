@@ -15,12 +15,9 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"lib": ["esnext", "dom"],
-		"types": ["web-bluetooth", "vite/client"],
+		"types": ["web-bluetooth", "vite/client", "vite-plugin-svg-icons/client"],
 		"paths": {
 			"@/*": ["./src/*"]
-		},
-		"compilerOptions": {
-			"types": ["vite-plugin-svg-icons/client"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

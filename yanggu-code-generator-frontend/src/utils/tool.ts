@@ -1,7 +1,8 @@
 import { App, Component, Plugin } from 'vue'
 import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
-import { isEmpty, isNil, isString } from 'lodash-unified'
+import { isEmpty, isNil, isString } from 'lodash-es'
+import { scalar } from '@/types'
 
 const { copy, isSupported } = useClipboard()
 
@@ -66,8 +67,8 @@ export const setDefaultTitle = () => {
 	title.value = originalTitle
 }
 
-// 导出非空函数
-export { isEmpty, isObject } from 'lodash-unified'
+// 导出相关函数
+export { isEmpty, isObject, defaultsDeep } from 'lodash-es'
 
 /**
  * 仅适用于 Array / Object / Map / Set
@@ -77,19 +78,22 @@ export const isNotEmpty = (value: any): boolean => {
 	return !isEmpty(value)
 }
 
-// isBlank，针对标量场景
-export const isBlank = (val: any): boolean => {
-	if (isNil(val)) {
+/**
+ * isBlank，针对标量场景
+ * number / boolean / Blob
+ */
+export const isBlank = (value: scalar): boolean => {
+	if (isNil(value)) {
 		return true
 	}
-	if (isString(val)) {
-		return val.trim() === ''
+	if (isString(value)) {
+		return value.trim() === ''
 	}
 	return false
 }
 
 // isNotBlank，针对标量场景
-export const isNotBlank = (value: any): boolean => {
+export const isNotBlank = (value: scalar): boolean => {
 	return !isBlank(value)
 }
 

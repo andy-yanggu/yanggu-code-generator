@@ -1,13 +1,5 @@
 html.light {
-  --el-color-primary: #409eff;
-  --el-color-success: #67c23a;
-  --el-color-warning: #e6a23c;
-  --el-color-danger: #f56c6c;
-  --el-color-info: #909399;
-
-  --el-tag-bg-color: #ffffff;
-  --el-tag-text-color: #606266;
-  --el-tag-border-color: #dcdfe6;
+  --el-text-color-regular: #606266;
 
   /* 主体颜色 */
   --theme-main-bg-color: #f5f5f5;
@@ -30,10 +22,6 @@ html.dark {
   --el-color-warning: #d49a45;
   --el-color-danger: #e06262;
   --el-color-info: #8a8c91;
-
-  --el-tag-bg-color: #2a2a2a;
-  --el-tag-text-color: #e0e0e0;
-  --el-tag-border-color: #3a3a3a;
 
   /* 主体颜色 */
   --theme-main-bg-color: #121212;

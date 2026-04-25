@@ -92,7 +92,8 @@
 
 // 表单
 .el-form .el-form-item__label {
-  font-weight: 700;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
 }
 
 .el-form--inline .el-form-item {
@@ -107,7 +108,8 @@
 .el-dialog__header {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
   justify-content: space-between;
   padding: 10px 30px 5px;
   border-bottom: 1px solid var(--el-border-color);
@@ -134,6 +136,7 @@
 .el-drawer .el-drawer__header {
   display: flex;
   align-items: center;
+  font-weight: 500;
   height: 50px;
   padding: 0 15px;
   margin-bottom: 0 !important;

@@ -4,7 +4,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { Result } from '@/types/api/common'
-import { useRoute } from 'vue-router'
 
 // axios实例
 export const service = axios.create({
@@ -136,12 +135,11 @@ const handleBusinessError = (result: Result, config: any) => {
 		}).then(() => {
 			const userStore = useUserStore()
 			userStore.clearAll()
-			// 使用 useRoute 获取当前路由信息，保持与其他组件一致
-			const route = useRoute()
+			const currentRoute = router.currentRoute.value
 			router.replace({
 				path: '/auth/login',
 				query: {
-					redirect: encodeURIComponent(route.fullPath || '/')
+					redirect: encodeURIComponent(currentRoute.fullPath || '/')
 				}
 			})
 		})

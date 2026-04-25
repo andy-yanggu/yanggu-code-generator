@@ -1,7 +1,7 @@
 import { nextTick, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { FormInitOptions, FormOptions, FormType, Key } from '@/types'
-import { isNotBlank } from '@/utils/tool'
+import { defaultsDeep, isNotBlank } from '@/utils/tool'
 
 // 提交表单
 export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>) => {
@@ -18,7 +18,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 	const formType = ref<FormType>('add')
 
 	// 默认值
-	const defaultFormOptions: FormOptions<VO> = {
+	const defaultFormOptions = (): FormOptions<VO> => ({
 		submitApi: (_: VO) => Promise.resolve(),
 		detailApi: (_: Key) => Promise.resolve({} as VO),
 		initFormData: () => ({}) as VO,
@@ -26,10 +26,10 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		fullTitle: '',
 		dataForm: {} as VO & { id?: Key },
 		duration: 1000
-	} as const
+	})
 
-	// 合并默认值
-	Object.assign(options, Object.fromEntries(Object.entries(defaultFormOptions).filter(([key]) => !Object.hasOwn(options, key))))
+	// 合并默认值：用默认值填充 options 中缺失的属性，不覆盖已有属性
+	defaultsDeep(options, defaultFormOptions())
 
 	// 表单字段进行初始化
 	if (!options.dataForm) {
@@ -81,6 +81,9 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		nextTick(() => {
 			// 重置表单数据
 			Object.assign(options.dataForm, options.initFormData(ctx))
+
+			// 重置表单验证
+			dataFormRef.value.resetFields()
 
 			// 初始化之前调用
 			options.initBefore?.()
