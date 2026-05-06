@@ -143,7 +143,7 @@
 					</el-header>
 
 					<!-- 代码区域 -->
-					<el-main style="padding: 5px; margin-top: 10px; overflow: hidden">
+					<el-main style="padding: 5px; margin-top: 15px; overflow: hidden">
 						<template v-if="activeTabItem.templateType === 1">
 							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
 								<code-mirror v-model="activeTabItem.templateContent" :read-only="true"></code-mirror>
@@ -587,7 +587,7 @@ defineExpose({
 	width: 100vw;
 	height: 100vh;
 	z-index: 3000;
-	background: var(--theme-main-bg-color);
+	background: var(--el-bg-color-page);
 	margin: 0 !important;
 	padding: 20px;
 }

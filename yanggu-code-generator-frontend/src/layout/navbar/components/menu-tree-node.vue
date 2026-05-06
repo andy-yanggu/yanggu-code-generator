@@ -51,8 +51,8 @@ const getTreePrefix = (level: number, hasChildren: boolean): string => {
 	cursor: pointer;
 }
 .tree-node:hover {
-	background-color: var(--theme-menu-hover-bg-color);
-	color: var(--theme-menu-hover-color);
+	background-color: var(--el-color-primary-light-9);
+	color: var(--el-color-primary);
 }
 .tree-prefix {
 	font-family: monospace;

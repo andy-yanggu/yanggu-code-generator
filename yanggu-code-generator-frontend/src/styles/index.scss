@@ -1,10 +1,12 @@
 /* 全局变量样式 */
-@import './variables.scss';
-/* 主题样式 */
-@import './theme.scss';
+@use './variables.scss';
+/* 全局重置样式 */
+@use './reset.scss';
 /* 布局样式 */
-@import './layout.scss';
-/* element样式 */
-@import './element.scss';
+@use './layout.scss';
+/* 过渡动画样式 */
+@use './transition.scss';
+/* Element Plus 覆盖样式 */
+@use './element.scss';
 /* 自定义样式 */
-@import './customer.scss';
+@use './custom.scss';

@@ -1,5 +1,6 @@
-// 覆盖 element-plus 样式
-/* 基础菜单样式 */
+// 覆盖 Element Plus 样式
+
+/* ==================== 菜单 ==================== */
 .el-menu {
   border-right: none !important;
 }
@@ -8,7 +9,7 @@
 .el-sub-menu__title {
   display: flex;
   align-items: center; /* 图标+文字垂直居中 */
-  color: var(--theme-menu-text-color) !important;
+  color: var(--el-text-color-primary) !important;
   height: 48px !important;
   line-height: 48px !important;
   overflow: hidden;
@@ -19,7 +20,7 @@
   border-bottom: none !important;
 }
 
-/* 图标样式 */
+/* 菜单图标 */
 .el-menu-item .svg-icon,
 .el-sub-menu__title .svg-icon {
   font-size: 16px !important;
@@ -28,8 +29,8 @@
   margin-right: 8px;
   flex-shrink: 0;
   text-align: center;
-  color: var(--theme-menu-text-color) !important;
-  transition: color 0.3s; /* 添加过渡效果 */
+  color: var(--el-text-color-primary) !important;
+  transition: color 0.3s;
 }
 
 /* 折叠时隐藏文字 */
@@ -38,59 +39,62 @@
   overflow: hidden;
 }
 
-/* 选中状态：文字和图标都高亮 */
+/* 菜单选中状态 */
 .el-menu-item.is-active {
-  box-shadow: inset 3px 0 0 var(--theme-menu-border-color), inset -3px 0 0 var(--theme-menu-border-color);
-  background-color: var(--theme-menu-hover-bg-color) !important;
+  box-shadow: inset 3px 0 0 var(--el-color-primary), inset -3px 0 0 var(--el-color-primary);
+  background-color: var(--el-color-primary-light-9) !important;
 }
 
-/* 文字高亮 */
 .el-menu-item.is-active .menu-title {
-  color: var(--theme-menu-hover-color) !important;
+  color: var(--el-color-primary) !important;
 }
 
-/* 图标高亮 */
 .el-menu-item.is-active .svg-icon {
-  color: var(--theme-menu-hover-color) !important;
+  color: var(--el-color-primary) !important;
 }
 
 /* 子菜单选中状态：只高亮文字和图标，不添加背景色 */
 .el-sub-menu.is-active > .el-sub-menu__title .menu-title {
-  color: var(--theme-menu-hover-color) !important;
+  color: var(--el-color-primary) !important;
 }
 
 .el-sub-menu.is-active > .el-sub-menu__title .svg-icon {
-  color: var(--theme-menu-hover-color) !important;
+  color: var(--el-color-primary) !important;
 }
 
-/* 悬浮状态：只高亮文字和图标，不更改背景颜色 */
+/* 菜单悬浮状态：只高亮文字和图标，不更改背景颜色 */
 .el-menu-item:hover {
-  background-color: transparent !important; /* 移除背景色 */
+  background-color: transparent !important;
 }
 
 .el-menu-item:hover .menu-title,
 .el-sub-menu__title:hover .menu-title {
-  color: var(--theme-menu-hover-color) !important;
+  color: var(--el-color-primary) !important;
 }
 
 .el-menu-item:hover .svg-icon,
 .el-sub-menu__title:hover .svg-icon {
-  color: var(--theme-menu-hover-color) !important;
-  transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y)); /* 添加悬浮缩放效果 */
+  color: var(--el-color-primary) !important;
+  transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y));
 }
 
-/* 子菜单悬浮状态：不添加背景色 */
 .el-sub-menu__title:hover {
-  background-color: transparent !important; /* 移除背景色 */
+  background-color: transparent !important;
 }
 
-// 分页
+/* ==================== 表格 ==================== */
+.el-table {
+  --el-table-header-bg-color: var(--el-fill-color-light);
+  --el-table-header-text-color: var(--el-text-color-regular);
+}
+
+/* ==================== 分页 ==================== */
 .el-pagination {
   margin-top: 15px;
   justify-content: flex-end;
 }
 
-// 表单
+/* ==================== 表单 ==================== */
 .el-form .el-form-item__label {
   font-weight: 500;
   color: var(--el-text-color-primary);
@@ -100,7 +104,7 @@
   margin-right: 16px !important;
 }
 
-// 对话框
+/* ==================== 对话框 ==================== */
 .el-dialog {
   padding: 0;
 }
@@ -132,7 +136,7 @@
   border-top: 1px solid var(--el-border-color);
 }
 
-// 抽屉
+/* ==================== 抽屉 ==================== */
 .el-drawer .el-drawer__header {
   display: flex;
   align-items: center;
@@ -145,7 +149,7 @@
   color: var(--el-text-color-primary);
 }
 
-// 卡片
+/* ==================== 卡片 ==================== */
 .el-card {
   &:not(:first-child) {
     margin-top: 10px;
@@ -156,7 +160,8 @@
   box-shadow: none !important;
 }
 
-// 消息弹出框，确定在前，取消在后
+/* ==================== 消息弹出框 ==================== */
+/* 确定在前，取消在后 */
 .el-message-box__btns {
   display: flex;
   justify-content: flex-end;
@@ -164,7 +169,7 @@
 }
 
 .el-message-box__btns .el-button--primary {
-  order: -1; /* 让“是(Y)”排到最前 */
+  order: -1; /* 让"是(Y)"排到最前 */
 }
 
 .el-message-box__btns .el-button + .el-button {
