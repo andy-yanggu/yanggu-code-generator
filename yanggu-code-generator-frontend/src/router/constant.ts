@@ -1,12 +1,17 @@
 import { RouteRecordRaw } from 'vue-router'
 
-// 常量路由
+/**
+ * 静态路由配置
+ * 包含：布局、认证、用户中心、重定向、错误页等基础路由
+ */
 export const constantRoutes: RouteRecordRaw[] = [
+	// 根路径 - 主布局
 	{
 		path: '/',
 		name: 'Layout',
 		component: () => import('@/layout/index.vue')
 	},
+	// 认证模块（登录/注册）
 	{
 		path: '/auth',
 		name: 'Auth',
@@ -33,6 +38,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 			}
 		]
 	},
+	// 用户中心
 	{
 		path: '/user',
 		name: 'User',
@@ -57,6 +63,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 			}
 		]
 	},
+	// 重定向路由（用于刷新页面）
 	{
 		path: '/redirect',
 		name: 'Redirect',
@@ -74,6 +81,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 			}
 		]
 	},
+	// 错误页面集合
 	{
 		path: '/error',
 		name: 'Error',
@@ -141,6 +149,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 			}
 		]
 	},
+	// 404 兜底路由（必须放在最后）
 	{
 		path: '/:pathMatch(.*)*',
 		component: () => import('@/layout/index.vue'),
