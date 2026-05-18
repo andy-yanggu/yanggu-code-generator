@@ -52,15 +52,3 @@ defineOptions({
 
 const systemSettingStore = useSystemSettingStore()
 </script>
-
-<style scoped>
-.navbar-toolbar {
-	height: 35px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 10px;
-	margin-top: 6px;
-	border-bottom: 1px solid var(--el-border-color);
-}
-</style>

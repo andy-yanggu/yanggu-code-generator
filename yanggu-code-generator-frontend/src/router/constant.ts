@@ -9,7 +9,12 @@ export const constantRoutes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		name: 'Layout',
-		component: () => import('@/layout/index.vue')
+		component: () => import('@/layout/index.vue'),
+		meta: {
+			title: '首页',
+			icon: 'icon-home',
+			type: 1
+		}
 	},
 	// 认证模块（登录/注册）
 	{

@@ -1,5 +1,5 @@
 <template>
-	<el-scrollbar>
+	<el-scrollbar ref="scrollbarRef">
 		<el-menu
 			:default-active="userStore.activeMenuPath"
 			mode="vertical"
@@ -7,7 +7,7 @@
 			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 			:collapse="appStore.isCollapse"
 		>
-			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu" @register-ref="registerMenuRef"></menu-item>
+			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu"></menu-item>
 		</el-menu>
 	</el-scrollbar>
 </template>
@@ -18,6 +18,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
 import { findMenuByPath } from '@/store/user-store'
+import type { ElScrollbar } from 'element-plus'
+import { useElementVisibility } from '@vueuse/core'
 
 defineOptions({
 	name: 'MenuIndex'
@@ -29,15 +31,17 @@ const systemSettingStore = useSystemSettingStore()
 const route = useRoute()
 const router = useRouter()
 
-// 存储所有菜单项引用的Map，格式为 <path, ref>
-const menuRefs = ref(new Map<string, any>())
+// el-scrollbar 引用
+const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 
 // 监听路由变化，菜单自动滚动
 watch(
 	() => route.path,
 	newPath => {
 		nextTick(() => {
-			userStore.setActiveMenuPath(newPath)
+			if (userStore.activeMenuPath !== newPath) {
+				userStore.setActiveMenuPath(newPath)
+			}
 			scrollToMenu(newPath)
 		})
 	},
@@ -57,25 +61,44 @@ onMounted(() => {
 	}
 })
 
-const registerMenuRef = (path: string, refInstance: any) => {
-	if (refInstance) {
-		menuRefs.value.set(path, refInstance)
-	}
-}
-
-// 激活的菜单滚动到可视区域中
+/**
+ * 激活的菜单滚动到可视区域中
+ * 使用 @vueuse/core 的 useElementVisibility 简化可视区域判断
+ */
 const scrollToMenu = (path: string) => {
-	// 查找当前激活菜单的 DOM
-	// console.log('menuRefs.value', menuRefs.value)
-	const menuDom = menuRefs.value.get(path)?.$el
+	nextTick(() => {
+		if (!scrollbarRef.value) {
+			return
+		}
+		// 通过 ID 查找菜单项（格式为: menu-/path/converted-to-dashes）
+		const menuId = `menu-${path.replace(/\//g, '-')}`
+		const menuElement = document.getElementById(menuId)
 
-	if (!menuDom) {
-		return
-	}
+		if (!menuElement) {
+			console.warn(`[MenuScroll] 未找到菜单元素: ${menuId}`)
+			return
+		}
 
-	menuDom.scrollIntoView({
-		behavior: 'smooth',
-		block: 'nearest'
+		// 使用 VueUse 的 useElementVisibility 判断是否在可视区域内
+		const scrollbarWrap = scrollbarRef.value?.wrapRef
+		if (!scrollbarWrap) {
+			return
+		}
+
+		const isVisible = useElementVisibility(menuElement, { scrollTarget: scrollbarWrap })
+
+		// 只有当菜单项不在可视区域内时才滚动
+		if (!isVisible.value) {
+			// 计算菜单项相对于滚动容器的位置
+			const containerRect = scrollbarWrap.getBoundingClientRect()
+			const menuRect = menuElement.getBoundingClientRect()
+			const offsetTop = menuRect.top - containerRect.top + scrollbarWrap.scrollTop
+
+			scrollbarRef.value?.scrollTo({
+				top: offsetTop,
+				behavior: 'smooth'
+			})
+		}
 	})
 }
 </script>

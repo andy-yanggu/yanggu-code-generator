@@ -22,6 +22,16 @@
     padding: 0;
     width: 100%;
     height: auto;
+
+    .navbar-toolbar {
+      height: var(--navbar-toolbar-height, 35px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--navbar-toolbar-padding-x, 10px);
+      margin-top: var(--navbar-toolbar-margin-top, 6px);
+      border-bottom: 1px solid var(--el-border-color);
+    }
   }
 
   .layout-main {
