@@ -38,14 +38,12 @@ const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 watch(
 	() => route.path,
 	newPath => {
-		nextTick(() => {
-			if (userStore.activeMenuPath !== newPath) {
-				userStore.setActiveMenuPath(newPath)
-			}
-			scrollToMenu(newPath)
-		})
+		if (userStore.activeMenuPath !== newPath) {
+			userStore.setActiveMenuPath(newPath)
+		}
+		scrollToMenu(newPath)
 	},
-	{ immediate: true }
+	{ immediate: false }
 )
 
 // 初始化激活菜单

@@ -14,10 +14,10 @@
 					<el-divider>菜单设置</el-divider>
 					<setting-item v-model="systemSettingStore.menu.isOpenLogo" label="展示logo"></setting-item>
 					<el-row class="setting-row">
-						<el-text style="margin-right: 5px">折叠宽度</el-text>
-						<div style="display: flex; align-items: center">
+						<el-text class="setting-label">折叠宽度</el-text>
+						<div class="setting-control">
 							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menu.menuFoldWidth" size="small" clearable style="width: 90px">
+							<el-select v-model="systemSettingStore.menu.menuFoldWidth" size="small" clearable class="setting-select">
 								<el-option
 									v-for="value in menuFoldWidthList"
 									:key="value"
@@ -29,10 +29,10 @@
 						</div>
 					</el-row>
 					<el-row class="setting-row">
-						<el-text style="margin-right: 5px">展开宽度</el-text>
-						<div style="display: flex; align-items: center">
+						<el-text class="setting-label">展开宽度</el-text>
+						<div class="setting-control">
 							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menu.menuExpandWidth" size="small" clearable style="width: 90px">
+							<el-select v-model="systemSettingStore.menu.menuExpandWidth" size="small" clearable class="setting-select">
 								<el-option
 									v-for="value in menuExpandWidthList"
 									:key="value"
@@ -256,6 +256,23 @@ const handlerResetSystemSetting = () => {
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
+}
+
+.setting-label {
+	margin-right: 5px;
+}
+
+.setting-control {
+	display: flex;
+	align-items: center;
+}
+
+.setting-select {
+	width: 90px;
+}
+
+.setting-tree-select {
+	width: 180px;
 }
 
 .drawer-content {

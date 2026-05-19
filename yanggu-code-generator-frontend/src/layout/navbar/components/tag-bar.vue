@@ -403,15 +403,17 @@ const { refreshPage } = usePageRefresher()
 
 /* Hover 高亮样式 */
 .pin-icon:hover {
-	color: rgb(248, 251, 255); /* 图标高亮颜色 */
-	background-color: rgba(168, 171, 178, 0.96); /* 背景高亮 */
+	color: var(--el-bg-color, #ffffff);
+	background-color: var(--el-text-color-secondary, rgba(168, 171, 178, 0.96));
 }
 
 .tag-context-menu {
 	position: fixed;
 	align-items: center;
-	background: var(--el-tag-bg-color);
-	border: 1px solid var(--el-border-color);
+	background: var(--el-bg-color-overlay, #ffffff);
+	border: 1px solid var(--el-border-color-light, #e4e7ed);
+	border-radius: 8px;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	z-index: 1000;
 	min-width: 100px;
 }

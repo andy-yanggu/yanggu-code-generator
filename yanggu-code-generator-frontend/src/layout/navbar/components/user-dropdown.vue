@@ -15,7 +15,7 @@
 					<Avatar></Avatar>
 				</el-icon>
 			</template>
-			<el-text style="color: inherit; margin-left: 5px">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
+			<el-text class="user-name">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</el-text>
 			<el-icon class="el-icon--right arrow-icon" :class="{ 'is-open': visible }">
 				<ArrowDown></ArrowDown>
 			</el-icon>
@@ -82,6 +82,10 @@ const logout = () => {
 }
 .user-avatar {
 	font-size: 16px;
+}
+.user-name {
+	color: inherit;
+	margin-left: 5px;
 }
 .arrow-icon {
 	transition: transform 0.25s ease;

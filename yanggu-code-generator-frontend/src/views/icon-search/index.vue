@@ -94,7 +94,7 @@ onMounted(() => {
 	cursor: pointer;
 	transition: all 0.3s;
 	height: 100px; /* 增加高度以容纳图标和文字 */
-	background-color: #fff;
+	background-color: var(--el-bg-color-overlay, #ffffff);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -107,7 +107,7 @@ onMounted(() => {
 }
 .large-icon {
 	font-size: 40px;
-	color: #606266;
+	color: var(--el-text-color-primary);
 	transition: all 0.3s;
 	margin-bottom: 10px;
 }

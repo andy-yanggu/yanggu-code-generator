@@ -61,7 +61,7 @@ watch(
 	() => {
 		// 如果全局页面缓存关闭 或者 页面本身不缓存，则滚动到顶部
 		if (!systemSettingStore.other.isOpenPageCache || !route.meta.cache) {
-			layoutScrollbarRef.value.scrollTo({ top: 0, left: 0 })
+			layoutScrollbarRef.value?.scrollTo({ top: 0, left: 0 })
 		}
 	}
 )

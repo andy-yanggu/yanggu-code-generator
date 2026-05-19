@@ -113,6 +113,7 @@ const emits = defineEmits([
 	cursor: pointer;
 	padding: 5px 10px;
 	text-align: left;
+	border-radius: 4px;
 	transition:
 		background-color 0.2s ease,
 		color 0.2s ease;
@@ -120,14 +121,14 @@ const emits = defineEmits([
 
 /* 悬停效果 - 亮色模式 */
 .icon-item:hover {
-	background-color: #f0f0f0;
-	color: #333;
+	background-color: var(--el-fill-color-light, #f5f7fa);
+	color: var(--el-color-primary, #409eff);
 }
 
 /* 暗黑模式样式 */
 html.dark .icon-item:hover {
-	background-color: #3a3a3a;
-	color: #e0e0e0;
+	background-color: var(--el-fill-color-light, #363637);
+	color: var(--el-color-primary, #66b1ff);
 }
 .el-divider--horizontal {
 	margin: 0 0;
