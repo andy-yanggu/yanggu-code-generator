@@ -12,27 +12,31 @@ const getPersistConfig = () => {
 	// if (import.meta.env.PROD) {
 	//
 	// }
+	// 始终忽略的字段（DOM 引用和加载状态，不应持久化）
+	const alwaysOmitList = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading']
+	// 标签相关字段
+	const tagOmitList = ['tagList', 'activeTabPath']
+
 	return {
 		key,
 		storage: localStorage,
-		// 支持动态配置忽略字段
-		omit: (_: never) => {
-			const systemSettingStore = useSystemSettingStore()
-			// 忽略字段
-			const originOmitList: string[] = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading']
-			const tagOmitList: string[] = ['tagList', 'activeTabPath']
-			if (!systemSettingStore.tag.isOpenTagCache) {
-				originOmitList.push(...tagOmitList)
-			} else {
-				for (let i = originOmitList.length - 1; i >= 0; i--) {
-					if (tagOmitList.includes(originOmitList[i])) {
-						originOmitList.splice(i, 1)
-					}
+		// omit 保持静态：仅包含始终需要忽略的字段
+		omit: alwaysOmitList,
+		// 利用 serializer 在每次保存时动态过滤
+		// 这是实现「动态字段过滤」的正确姿势，每次保存都会重新评估
+		serializer: {
+			serialize: (state: Record<string, any>) => {
+				const filteredState = { ...state }
+				const systemSettingStore = useSystemSettingStore()
+				// 如果关闭标签缓存，运行时移除标签相关字段
+				if (!systemSettingStore.tag.isOpenTagCache) {
+					tagOmitList.forEach(field => delete filteredState[field])
 				}
-			}
-			return originOmitList
+				return JSON.stringify(filteredState)
+			},
+			deserialize: JSON.parse
 		}
-	} as unknown as PersistenceOptions
+	} as PersistenceOptions
 }
 
 export const useAppStore = defineStore(

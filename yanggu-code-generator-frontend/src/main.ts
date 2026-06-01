@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { dynamicPersistPlugin } from '@/plugins/dynamic-persist-plugin'
 import ElementPlus from 'element-plus'
 import App from '@/App.vue'
 import { router } from '@/router'
@@ -20,7 +19,6 @@ const app = createApp(App)
 // 创建和注册pinia实例
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
-pinia.use(dynamicPersistPlugin)
 app.use(pinia)
 
 // 注册echarts
