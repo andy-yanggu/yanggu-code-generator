@@ -19,7 +19,7 @@
 							<!-- 下拉推荐值 -->
 							<el-select v-model="systemSettingStore.menu.menuFoldWidth" size="small" clearable class="setting-select">
 								<el-option
-									v-for="value in menuFoldWidthList"
+									v-for="value in MENU_FOLD_WIDTH_LIST"
 									:key="value"
 									:label="`${value}px`"
 									:value="value"
@@ -34,7 +34,7 @@
 							<!-- 下拉推荐值 -->
 							<el-select v-model="systemSettingStore.menu.menuExpandWidth" size="small" clearable class="setting-select">
 								<el-option
-									v-for="value in menuExpandWidthList"
+									v-for="value in MENU_EXPAND_WIDTH_LIST"
 									:key="value"
 									:label="`${value}px`"
 									:value="value"
@@ -131,7 +131,8 @@ import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
-import { menuExpandWidthList, menuFoldWidthList, useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { MENU_EXPAND_WIDTH_LIST, MENU_FOLD_WIDTH_LIST } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'
 import { ElMessage, ElTreeSelect } from 'element-plus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'

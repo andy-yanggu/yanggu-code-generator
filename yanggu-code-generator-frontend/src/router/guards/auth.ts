@@ -2,7 +2,7 @@ import { RouteLocationNormalized, Router, RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/store'
 import type { MenuInfo } from '@/types'
 import { buildRouteList } from './loaders'
-import { DEFAULT_LAYOUT_NAME, ENABLE_AUTH_CHECK, ROUTE_WHITE_LIST } from '@/router/config'
+import { DEFAULT_LAYOUT_NAME, ENABLE_AUTH_CHECK, ROUTE_WHITE_LIST } from '@/config/router'
 import { isNotEmpty } from '@/utils/tool'
 
 /**

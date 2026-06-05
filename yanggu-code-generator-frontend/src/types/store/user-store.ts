@@ -37,3 +37,16 @@ export interface MenuInfo {
 	// 子菜单
 	children?: MenuInfo[]
 }
+// 登录返回数据
+export interface LoginVO {
+	// 用户信息
+	userInfo: UserInfo
+	// 令牌信息
+	tokenInfo: TokenInfo
+	// 菜单列表
+	menuList?: MenuInfo[]
+	// 权限列表
+	permissionList?: string[]
+	// 角色列表
+	roleList?: string[]
+}

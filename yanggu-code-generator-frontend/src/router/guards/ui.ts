@@ -5,7 +5,7 @@ import { RouteMetaData } from '@/types'
 import { useTimeoutFn } from '@vueuse/core'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { DEFAULT_HOME_PATH, PROGRESS_DELAY } from '@/router/config'
+import { DEFAULT_HOME_PATH, PROGRESS_DELAY } from '@/config/router'
 
 /**
  * UI 相关的路由守卫

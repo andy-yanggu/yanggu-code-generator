@@ -1,11 +1,12 @@
 ### 项目模板
 
 #### 1. index.html.ftl
+
 ${frontendPath}/index.html
 
-#### 2. vite.config.ts.ftl
+#### 2. vite.router.ts.ftl
 
-${frontendPath}/vite.config.ts
+${frontendPath}/vite.router.ts
 
 #### 3. tsconfig.json.ftl
 
@@ -204,11 +205,11 @@ ${frontendPath}/src/components/svg-icon/index.vue
 ${frontendPath}/public/favicon.ico
 
 #### 52. enum.ts
+
 ${frontendPath}/src/constant/enum.ts
 
-
-
 ### 表模板
+
 #### 1. api.ftl
 
 ${frontendPath}/src/api/${functionNameKebabCase}.ts

@@ -4,21 +4,17 @@ import { useSystemSettingStore } from '@/store'
 import { useDark, useEventListener, useFullscreen, useToggle } from '@vueuse/core'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
+import { isEmpty } from '@/utils/tool'
 
 // 持久化配置
 const getPersistConfig = () => {
-	const key = 'appStore'
-	// 根据环境设置持久化配置
-	// if (import.meta.env.PROD) {
-	//
-	// }
 	// 始终忽略的字段（DOM 引用和加载状态，不应持久化）
 	const alwaysOmitList = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading']
 	// 标签相关字段
 	const tagOmitList = ['tagList', 'activeTabPath']
 
 	return {
-		key,
+		key: 'appStore',
 		storage: localStorage,
 		// omit 保持静态：仅包含始终需要忽略的字段
 		omit: alwaysOmitList,
@@ -161,7 +157,7 @@ export const useAppStore = defineStore(
 
 		// 批量删除缓存路由
 		const removeCacheComponentList = (nameList: string[]) => {
-			if (!nameList || nameList.length === 0) {
+			if (isEmpty(nameList)) {
 				return
 			}
 			for (const name of nameList) {

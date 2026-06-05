@@ -2,12 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuSetting, OtherSetting, TagBarSetting, ToolbarSetting } from '@/types'
-
-// 菜单展开宽度
-export const menuExpandWidthList = [180, 210, 240]
-
-// 菜单折叠宽度
-export const menuFoldWidthList = [50, 60, 70]
+import { MENU_EXPAND_WIDTH_LIST, MENU_FOLD_WIDTH_LIST } from '@/config'
 
 // 默认配置
 // 菜单相关默认设置
@@ -16,8 +11,8 @@ const defaultMenuSetting = (): MenuSetting => ({
 	isOpenMenuCollapseAnimation: true,
 	isOpenMenuUniqueOpened: false,
 	isOpenMenuCollapseButton: true,
-	menuExpandWidth: menuExpandWidthList.length >= 3 ? menuExpandWidthList[1] : menuExpandWidthList[0],
-	menuFoldWidth: menuFoldWidthList.length >= 3 ? menuFoldWidthList[1] : menuFoldWidthList[0],
+	menuExpandWidth: MENU_EXPAND_WIDTH_LIST.length >= 3 ? MENU_EXPAND_WIDTH_LIST[1] : MENU_EXPAND_WIDTH_LIST[0],
+	menuFoldWidth: MENU_FOLD_WIDTH_LIST.length >= 3 ? MENU_FOLD_WIDTH_LIST[1] : MENU_FOLD_WIDTH_LIST[0],
 	menuDefault: '/index'
 })
 
@@ -50,12 +45,8 @@ const defaultOtherSetting = (): OtherSetting => ({
 
 // 持久化配置
 const getPersistConfig = () => {
-	const key = 'systemSettingStore'
-	// 根据环境设置
-	// if (import.meta.env.PROD) {
-	// }
 	return {
-		key,
+		key: 'systemSettingStore',
 		storage: localStorage
 	} as PersistenceOptions
 }

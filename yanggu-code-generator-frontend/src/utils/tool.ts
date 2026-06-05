@@ -74,7 +74,7 @@ export { isEmpty, isObject, defaultsDeep } from 'lodash-es'
  * 仅适用于 Array / Object / Map / Set
  * ❌ 不可用于 number / boolean / Blob
  */
-export const isNotEmpty = (value: any): boolean => {
+export const isNotEmpty = <T>(value: T | null | undefined | [] | ''): value is T => {
 	return !isEmpty(value)
 }
 

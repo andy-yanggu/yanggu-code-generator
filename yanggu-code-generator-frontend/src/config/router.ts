@@ -25,6 +25,7 @@ export const PROGRESS_DELAY = 500
 
 /**
  * 是否需要登录校验
- * 生产环境应设置为 true
+ * 开发环境：false（不需要登录，方便调试）
+ * 生产环境：true（需要登录，保证安全）
  */
-export const ENABLE_AUTH_CHECK = false
+export const ENABLE_AUTH_CHECK = !import.meta.env.DEV

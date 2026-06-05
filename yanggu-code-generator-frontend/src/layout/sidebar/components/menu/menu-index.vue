@@ -17,7 +17,7 @@ import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
-import { findMenuByPath } from '@/store/user-store'
+import { findMenuByPath } from '@/utils/menu'
 import type { ElScrollbar } from 'element-plus'
 import { useElementVisibility } from '@vueuse/core'
 
