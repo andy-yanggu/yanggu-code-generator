@@ -1,5 +1,5 @@
 <template>
-	<icon-button :el-icon="Setting" content="系统设置" size="18px" @click="visible = true"></icon-button>
+	<icon-button :el-icon="Setting" tooltip="系统设置" size="18px" @click="visible = true"></icon-button>
 	<el-drawer
 		v-model="visible"
 		title="系统设置"

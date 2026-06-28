@@ -19,7 +19,6 @@ const getPersistConfig = () => {
 		// omit 保持静态：仅包含始终需要忽略的字段
 		omit: alwaysOmitList,
 		// 利用 serializer 在每次保存时动态过滤
-		// 这是实现「动态字段过滤」的正确姿势，每次保存都会重新评估
 		serializer: {
 			serialize: (state: Record<string, any>) => {
 				const filteredState = { ...state }

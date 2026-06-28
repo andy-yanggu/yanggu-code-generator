@@ -1,5 +1,5 @@
 <template>
-	<el-tooltip :content="content" placement="top" :disabled="disabled || isBlank(content)">
+	<el-tooltip :content="tooltip" placement="top" :disabled="disabled || isBlank(tooltip)">
 		<!-- 1️⃣ icon-only：完全没有 slot，DOM 最干净 -->
 		<el-button
 			v-if="elIcon && !svgIcon && !slots.default"
@@ -58,7 +58,7 @@ const props = defineProps({
 		default: false
 	},
 	// 提示信息
-	content: {
+	tooltip: {
 		type: String,
 		default: ''
 	}

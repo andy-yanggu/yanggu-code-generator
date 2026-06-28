@@ -3,7 +3,7 @@
 		:el-icon="Refresh"
 		:loading-icon="Refresh"
 		:loading="appStore.globalLoading"
-		content="刷新页面"
+		tooltip="刷新页面"
 		size="18px"
 		@click="refreshPage()"
 	></icon-button>

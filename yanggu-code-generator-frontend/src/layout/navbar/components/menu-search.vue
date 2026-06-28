@@ -1,6 +1,6 @@
 <template>
 	<div class="search-container">
-		<icon-button :el-icon="Search" content="菜单搜索" size="18px" @click="openSearch()"></icon-button>
+		<icon-button :el-icon="Search" tooltip="菜单搜索" size="18px" @click="openSearch()"></icon-button>
 
 		<!-- 搜索框 -->
 		<el-dialog v-model="searchState.visible" title="菜单搜索" width="45%" destroy-on-close @opened="onDialogOpened">

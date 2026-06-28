@@ -1,7 +1,7 @@
 <template>
 	<icon-button
 		:svg-icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'"
-		:content="isFullscreen ? '退出全屏' : '开启全屏'"
+		:tooltip="isFullscreen ? '退出全屏' : '开启全屏'"
 		size="18px"
 		@click="toggle()"
 	></icon-button>
