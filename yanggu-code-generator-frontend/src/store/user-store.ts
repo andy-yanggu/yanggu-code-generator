@@ -50,9 +50,9 @@ export const useUserStore = defineStore(
 		// 激活菜单
 		const activeMenuPath = ref('')
 		// 权限列表
-		const permissionList = ref([] as string[])
+		const permissionList = ref<string[]>([] as string[])
 		// 角色列表
-		const roleList = ref([] as string[])
+		const roleList = ref<string[]>([] as string[])
 		// 登录用户信息
 		// reactive每次初始化，必须传入一个全新的对象
 		const userInfo = reactive(initialUserInfo())

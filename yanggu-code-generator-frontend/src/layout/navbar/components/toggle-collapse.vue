@@ -12,5 +12,3 @@ defineOptions({
 
 const appStore = useAppStore()
 </script>
-
-<style scoped></style>

@@ -39,12 +39,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { ArrowDown, Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
-const visible = ref(false)
-
 defineOptions({
 	name: 'UserDropdown'
 })
 
+const visible = ref(false)
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()

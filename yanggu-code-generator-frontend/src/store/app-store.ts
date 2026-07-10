@@ -159,9 +159,8 @@ export const useAppStore = defineStore(
 			if (isEmpty(nameList)) {
 				return
 			}
-			for (const name of nameList) {
-				removeCacheComponent(name)
-			}
+			const removeSet = new Set(nameList)
+			cacheList.value = cacheList.value.filter(name => !removeSet.has(name))
 		}
 
 		// 删除所有缓存
@@ -184,12 +183,11 @@ export const useAppStore = defineStore(
 
 		// 批量删除iframe路由
 		const removeIframeCacheList = (nameList: string[]) => {
-			if (!nameList || nameList.length === 0) {
+			if (isEmpty(nameList)) {
 				return
 			}
-			for (const name of nameList) {
-				removeIframeCache(name)
-			}
+			const removeSet = new Set(nameList)
+			iframeCacheList.value = iframeCacheList.value.filter(item => !removeSet.has(item.name))
 		}
 
 		// 删除全部iframe路由

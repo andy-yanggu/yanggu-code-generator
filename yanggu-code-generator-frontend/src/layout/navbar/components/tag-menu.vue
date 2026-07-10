@@ -119,16 +119,10 @@ const emits = defineEmits([
 		color 0.2s ease;
 }
 
-/* 悬停效果 - 亮色模式 */
+/* 悬停效果 - CSS 变量自动适配亮色/暗黑模式 */
 .icon-item:hover {
-	background-color: var(--el-fill-color-light, #f5f7fa);
-	color: var(--el-color-primary, #409eff);
-}
-
-/* 暗黑模式样式 */
-html.dark .icon-item:hover {
-	background-color: var(--el-fill-color-light, #363637);
-	color: var(--el-color-primary, #66b1ff);
+	background-color: var(--el-fill-color-light);
+	color: var(--el-color-primary);
 }
 .el-divider--horizontal {
 	margin: 0 0;
