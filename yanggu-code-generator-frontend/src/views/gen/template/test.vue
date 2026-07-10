@@ -242,11 +242,13 @@ const { start: startTimer } = useTimeoutFn(() => {
 	copyIconState.value = CopyDocument
 }, 2000)
 
-const init = async (templateId: number, templateContent: string) => {
+const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())
 	testData.visible = true
 	editTemplateList.value = new Set<number>()
 	treeList.value = [] as any[]
+	testData.templateGroupId = templateGroupId
+	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
 	testData.editTemplateContent = templateContent
 
@@ -414,6 +416,7 @@ const setTemplateData = async () => {
 	const data = await genTemplateApi.detailData(detailQueryForm)
 	testData.templateName = data.templateName
 	testData.templateType = data.templateType
+	testData.templateGroupType = data.templateGroupType
 	testData.templateGroupId = data.templateGroupId
 	testData.parentId = data.parentId
 	testData.originalFileName = data.fileName

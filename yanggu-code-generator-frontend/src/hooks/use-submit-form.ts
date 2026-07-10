@@ -25,7 +25,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		titleSubject: '',
 		fullTitle: '',
 		dataForm: {} as VO & { id?: Key },
-		duration: 1000
+		duration: 1500
 	})
 
 	// 合并默认值：用默认值填充 options 中缺失的属性，不覆盖已有属性
@@ -67,7 +67,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 
 	// 获取提示消息
 	const getMessage = () => {
-		return options.message || `${titleMap[formType.value]}${options.titleSubject}成功`
+		return options.message || `${options.titleSubject}${titleMap[formType.value]}成功`
 	}
 
 	// 初始化表单

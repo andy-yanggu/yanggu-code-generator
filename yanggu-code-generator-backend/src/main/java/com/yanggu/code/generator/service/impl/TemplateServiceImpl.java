@@ -14,10 +14,12 @@ import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
 import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
 import com.yanggu.code.generator.domain.query.TemplateVOQuery;
+import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapper.TemplateMapper;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
+import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.TemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
 
     @Autowired
     private TemplateMapper templateMapper;
+
+    @Autowired
+    private TemplateGroupService templateGroupService;
 
     @Autowired
     private TemplateMapstruct templateMapstruct;
@@ -109,6 +114,14 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
             String generatorPath = buildGeneratorPath(templateVO);
             templateVO.setGeneratorPath(generatorPath);
         }
+        // 查询模板组
+        TemplateGroupVO templateGroupVO = templateGroupService.detail(templateVO.getTemplateGroupId());
+        if (templateGroupVO == null) {
+            throw new BusinessException("模板组不存在, 模板组id: {}", templateVO.getTemplateGroupId());
+        }
+        templateVO.setTemplateGroupType(templateGroupVO.getType());
+        templateVO.setTemplateGroupName(templateGroupVO.getGroupName());
+
         return templateVO;
     }
 
