@@ -16,31 +16,31 @@
 					<el-row class="setting-row">
 						<el-text class="setting-label">折叠宽度</el-text>
 						<div class="setting-control">
-							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menu.menuFoldWidth" size="small" clearable class="setting-select">
-								<el-option
-									v-for="value in MENU_FOLD_WIDTH_LIST"
-									:key="value"
-									:label="`${value}px`"
-									:value="value"
-									:disabled="systemSettingStore.menu.menuFoldWidth === value"
-								></el-option>
-							</el-select>
+							<el-text class="setting-range">{{ MENU_FOLD_WIDTH.min }}px</el-text>
+							<el-slider
+								v-model="systemSettingStore.menu.menuFoldWidth"
+								:min="MENU_FOLD_WIDTH.min"
+								:max="MENU_FOLD_WIDTH.max"
+								:format-tooltip="(val: number) => val + 'px'"
+								class="setting-slider"
+							></el-slider>
+							<el-text class="setting-range">{{ MENU_FOLD_WIDTH.max }}px</el-text>
+							<el-text class="setting-value">{{ systemSettingStore.menu.menuFoldWidth }}px</el-text>
 						</div>
 					</el-row>
 					<el-row class="setting-row">
 						<el-text class="setting-label">展开宽度</el-text>
 						<div class="setting-control">
-							<!-- 下拉推荐值 -->
-							<el-select v-model="systemSettingStore.menu.menuExpandWidth" size="small" clearable class="setting-select">
-								<el-option
-									v-for="value in MENU_EXPAND_WIDTH_LIST"
-									:key="value"
-									:label="`${value}px`"
-									:value="value"
-									:disabled="systemSettingStore.menu.menuExpandWidth === value"
-								></el-option>
-							</el-select>
+							<el-text class="setting-range">{{ MENU_EXPAND_WIDTH.min }}px</el-text>
+							<el-slider
+								v-model="systemSettingStore.menu.menuExpandWidth"
+								:min="MENU_EXPAND_WIDTH.min"
+								:max="MENU_EXPAND_WIDTH.max"
+								:format-tooltip="(val: number) => val + 'px'"
+								class="setting-slider"
+							></el-slider>
+							<el-text class="setting-range">{{ MENU_EXPAND_WIDTH.max }}px</el-text>
+							<el-text class="setting-value">{{ systemSettingStore.menu.menuExpandWidth }}px</el-text>
 						</div>
 					</el-row>
 					<setting-item
@@ -131,8 +131,8 @@ import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
-import { useTagStore, useCacheStore, useSystemSettingStore, useUserStore } from '@/store'
-import { MENU_EXPAND_WIDTH_LIST, MENU_FOLD_WIDTH_LIST } from '@/config'
+import { useCacheStore, useSystemSettingStore, useTagStore, useUserStore } from '@/store'
+import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'
 import { ElMessage, ElTreeSelect } from 'element-plus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
@@ -269,8 +269,24 @@ const handlerResetSystemSetting = () => {
 	align-items: center;
 }
 
-.setting-select {
-	width: 90px;
+.setting-slider {
+	min-width: 100px;
+	flex: 1;
+	margin: 0 6px;
+	padding-left: 5px;
+	padding-right: 5px;
+	--el-slider-button-size: 15px;
+}
+
+.setting-range {
+	font-size: 12px;
+	color: var(--el-text-color-secondary);
+}
+
+.setting-value {
+	min-width: 40px;
+	text-align: right;
+	margin-left: 6px;
 }
 
 .setting-tree-select {

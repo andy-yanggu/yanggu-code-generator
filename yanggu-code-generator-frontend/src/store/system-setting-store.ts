@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, toRefs } from 'vue'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuSetting, OtherSetting, TagBarSetting, ToolbarSetting } from '@/types'
-import { MENU_EXPAND_WIDTH_LIST, MENU_FOLD_WIDTH_LIST } from '@/config'
+import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'
 
 // 默认配置
 // 菜单相关默认设置
@@ -11,8 +11,8 @@ const defaultMenuSetting = (): MenuSetting => ({
 	isOpenMenuCollapseAnimation: true,
 	isOpenMenuUniqueOpened: false,
 	isOpenMenuCollapseButton: true,
-	menuExpandWidth: MENU_EXPAND_WIDTH_LIST.length >= 3 ? MENU_EXPAND_WIDTH_LIST[1] : MENU_EXPAND_WIDTH_LIST[0],
-	menuFoldWidth: MENU_FOLD_WIDTH_LIST.length >= 3 ? MENU_FOLD_WIDTH_LIST[1] : MENU_FOLD_WIDTH_LIST[0],
+	menuExpandWidth: MENU_EXPAND_WIDTH.default,
+	menuFoldWidth: MENU_FOLD_WIDTH.default,
 	menuDefault: '/index'
 })
 
