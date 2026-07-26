@@ -3,7 +3,7 @@
 		<div class="setting-label">
 			<el-text style="margin-right: 5px">{{ label }}</el-text>
 			<el-tooltip v-if="tooltip" :content="tooltip" effect="dark" placement="top">
-				<el-icon class="setting-icon"><InfoFilled></InfoFilled></el-icon>
+				<el-icon class="setting-icon"><QuestionFilled></QuestionFilled></el-icon>
 			</el-tooltip>
 		</div>
 		<el-switch v-model="localValue" inline-prompt active-text="开" inactive-text="关"></el-switch>
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { InfoFilled } from '@element-plus/icons-vue'
+import { QuestionFilled } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'SystemSettingItem'
@@ -48,5 +48,9 @@ defineProps({
 }
 .setting-icon {
 	cursor: pointer;
+}
+:deep(.el-switch) {
+	--el-switch-on-color: var(--el-color-primary);
+	--el-switch-off-color: var(--el-color-danger);
 }
 </style>
