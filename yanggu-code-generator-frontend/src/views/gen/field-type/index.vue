@@ -44,7 +44,7 @@
 			</template>
 			<el-table
 				ref="tableRef"
-				v-loading="state.dataListLoading"
+				v-loading="state.dataListLoading!"
 				:data="state.dataList"
 				border
 				row-key="id"

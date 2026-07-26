@@ -28,7 +28,7 @@
 		</el-card>
 		<el-card shadow="hover">
 			<el-table
-				v-loading="state.dataListLoading"
+				v-loading="state.dataListLoading!"
 				:data="state.dataList"
 				border
 				style="width: 100%"

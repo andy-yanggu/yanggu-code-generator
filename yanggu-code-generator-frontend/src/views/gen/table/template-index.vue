@@ -26,7 +26,7 @@
 
 		<el-card shadow="hover">
 			<el-table
-				v-loading="state.dataListLoading"
+				v-loading="state.dataListLoading!"
 				:data="state.dataList"
 				row-key="id"
 				border

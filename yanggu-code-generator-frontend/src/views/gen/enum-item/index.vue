@@ -37,7 +37,7 @@
 			</template>
 			<el-table
 				ref="tableRef"
-				v-loading="state.dataListLoading"
+				v-loading="state.dataListLoading!"
 				:data="state.dataList"
 				border
 				max-height="60vh"
