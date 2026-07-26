@@ -50,16 +50,15 @@
 
 <script setup lang="ts">
 import { Back, CloseBold, Refresh, Right } from '@element-plus/icons-vue'
-import { useAppStore } from '@/store'
+import { useTagStore } from '@/store'
 import { NavbarTag } from '@/types'
-import { computed, defineEmits, defineProps, PropType } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
 	name: 'TagMenu'
 })
 
-const appStore = useAppStore()
+const tagStore = useTagStore()
 
 const props = defineProps({
 	defaultMenu: {
@@ -76,7 +75,7 @@ const props = defineProps({
 	}
 })
 
-const unpinnedTags = computed(() => appStore.tagList.filter(tag => !tag.pinned))
+const unpinnedTags = computed(() => tagStore.tagList.filter(tag => !tag.pinned))
 
 const unpinnedLength = computed(() => unpinnedTags.value.length)
 

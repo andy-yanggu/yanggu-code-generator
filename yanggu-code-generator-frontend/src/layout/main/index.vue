@@ -6,7 +6,7 @@
 				<router-view v-slot="{ Component }">
 					<transition name="slide" mode="out-in">
 						<!-- 内置|业务菜单和非缓存的iframe页面 -->
-						<keep-alive :include="appStore.cacheList" :exclude="['RouterRedirect']">
+						<keep-alive :include="cacheStore.cacheList" :exclude="['RouterRedirect']">
 							<component
 								:is="Component"
 								v-if="route.meta.type === 1 || (route.meta.type === 3 && !route.meta.cache)"
@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useRoute } from 'vue-router'
-import { useAppStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useCacheStore, useSystemSettingStore } from '@/store'
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import SvgIcon from '@/components/svg-icon/index.vue'
@@ -52,6 +52,7 @@ defineOptions({
 
 const route = useRoute()
 const appStore = useAppStore()
+const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
 const { layoutScrollbarRef } = storeToRefs(appStore)
 

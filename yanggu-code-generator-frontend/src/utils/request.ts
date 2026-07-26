@@ -103,7 +103,7 @@ const parseBlobError = async (response: any, config: any) => {
 
 		// 复用你现有的业务错误处理
 		return handleBusinessError(result, config)
-	} catch (e) {
+	} catch (_e) {
 		if (!config.noErrorMessage) {
 			ElMessage.error('文件下载失败')
 		}
@@ -114,7 +114,7 @@ const parseBlobError = async (response: any, config: any) => {
 /**
  * 处理HTTP状态码错误
  */
-const handleHttpStatusError = (status: number, statusText: string, config: any) => {
+const handleHttpStatusError = (_status: number, statusText: string, config: any) => {
 	if (!config.noErrorMessage) {
 		ElMessage.error(statusText || '网络错误')
 	}

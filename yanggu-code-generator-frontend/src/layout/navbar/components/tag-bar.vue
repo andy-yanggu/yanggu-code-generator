@@ -1,11 +1,11 @@
 <template>
-	<el-tabs ref="tagWrapperRef" v-model="appStore.activeTabPath" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+	<el-tabs ref="tagWrapperRef" v-model="tagStore.activeTabPath" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 		<!-- 标签 -->
 		<el-tab-pane
-			v-for="tag in appStore.tagList"
+			v-for="tag in tagStore.tagList"
 			:key="tag.fullPath"
 			:name="tag.fullPath"
-			:closable="!tag.pinned && (tag.fullPath != defaultMenu || appStore.tagLength > 1)"
+			:closable="!tag.pinned && (tag.fullPath != defaultMenu || tagStore.tagLength > 1)"
 		>
 			<template #label>
 				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" :title="tag.title"></icon-text-tooltip>
@@ -40,7 +40,7 @@ import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks'
-import { useAppStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useTagStore, useCacheStore, useSystemSettingStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
@@ -62,12 +62,14 @@ const menuPosition = reactive({
 const currentMenuTag = reactive({} as NavbarTag)
 const currentMenuTagIndex = ref(0)
 const appStore = useAppStore()
+const tagStore = useTagStore()
+const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
 const tagWrapperRef = ref()
 
 watch(
 	() => route.fullPath,
-	() => (appStore.activeTabPath = route.fullPath)
+	() => (tagStore.activeTabPath = route.fullPath)
 )
 
 // 默认菜单
@@ -103,7 +105,7 @@ onMounted(() => {
 				const fullPath = evt.item.id.replace(/^tab-/, '')
 
 				// 激活被拖拽的标签页
-				if (systemSettingStore.tag.isOpenTagDragActivated && appStore.activeTabPath !== fullPath) {
+				if (systemSettingStore.tag.isOpenTagDragActivated && tagStore.activeTabPath !== fullPath) {
 					// console.log('item:', evt.item.id, 'fullPath', fullPath)
 					draggedTagPath.value = fullPath
 				}
@@ -115,7 +117,7 @@ onMounted(() => {
 
 				const draggedIndex = items.indexOf(evt.dragged)
 				const targetIndex = items.indexOf(evt.related)
-				const tags = appStore.tagList
+				const tags = tagStore.tagList
 				const draggedTag = tags[draggedIndex]
 
 				const pinnedCount = tags.filter(t => t.pinned).length
@@ -143,11 +145,11 @@ onMounted(() => {
 					return
 				}
 
-				const tags = [...appStore.tagList]
+				const tags = [...tagStore.tagList]
 				const movedTag = tags.splice(oldIndex, 1)[0]
 				tags.splice(newIndex, 0, movedTag)
 
-				appStore.addAllTags(appStore.sortTags(tags))
+				tagStore.addAllTags(tagStore.sortTags(tags))
 			}
 		})
 	})
@@ -163,12 +165,12 @@ const onTabContextMenu = (e: MouseEvent) => {
 	e.preventDefault()
 
 	const fullPath = item.id.replace(/^tab-/, '')
-	const index = appStore.tagList.findIndex(t => t.fullPath === fullPath)
+	const index = tagStore.tagList.findIndex(t => t.fullPath === fullPath)
 	if (index === -1) {
 		return
 	}
 
-	showTagMenu(e, appStore.tagList[index], index)
+	showTagMenu(e, tagStore.tagList[index], index)
 }
 
 // 显示标签右键菜单
@@ -214,7 +216,7 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 // 统一关闭入口
 const canCloseTag = (tag: NavbarTag) => {
 	// 首页保护
-	if (appStore.tagLength === 1 && tag.fullPath === defaultMenu.value) {
+	if (tagStore.tagLength === 1 && tag.fullPath === defaultMenu.value) {
 		return false
 	}
 
@@ -229,7 +231,7 @@ const resolveNextRouteAfterClose = (index: number, removedTag: NavbarTag) => {
 		return null
 	}
 
-	const tags = appStore.tagList
+	const tags = tagStore.tagList
 	const lastIndex = tags.length - 1
 
 	// 优先右侧
@@ -261,11 +263,11 @@ const closeTags = (tagsToClose: NavbarTag[]) => {
 	const nameList = closableTags.map(tag => tag.name)
 
 	// 删除缓存
-	appStore.removeCacheComponentList(nameList)
-	appStore.removeIframeCacheList(nameList)
+	cacheStore.removeCacheComponentList(nameList)
+	cacheStore.removeIframeCacheList(nameList)
 
 	// 删除标签
-	appStore.removeTags(closableTags)
+	tagStore.removeTags(closableTags)
 }
 
 // 关闭单个标签
@@ -274,7 +276,7 @@ const closeSingleTag = (tag: NavbarTag) => {
 		return
 	}
 
-	const index = appStore.tagList.findIndex(t => t.fullPath === tag.fullPath)
+	const index = tagStore.tagList.findIndex(t => t.fullPath === tag.fullPath)
 	if (index === -1) {
 		return
 	}
@@ -290,7 +292,7 @@ const closeSingleTag = (tag: NavbarTag) => {
 
 // 处理标签删除
 const handleTabRemove = (fullPath: string) => {
-	const tag = appStore.tagList.find(t => t.fullPath === fullPath)
+	const tag = tagStore.tagList.find(t => t.fullPath === fullPath)
 	if (tag) {
 		closeSingleTag(tag)
 	}
@@ -316,7 +318,7 @@ const closeCurrentTag = () => {
 // 关闭其他标签
 const closeOtherTags = () => {
 	const currentPath = currentMenuTag.fullPath
-	const deleteTags = appStore.tagList.filter(tag => tag.fullPath !== currentPath)
+	const deleteTags = tagStore.tagList.filter(tag => tag.fullPath !== currentPath)
 	closeTags(deleteTags)
 	router.push(currentPath)
 	closeTagMenu()
@@ -324,7 +326,7 @@ const closeOtherTags = () => {
 
 // 关闭所有标签
 const closeAllTags = () => {
-	const deleteTags = appStore.tagList.filter(tag => tag.fullPath !== defaultMenu.value)
+	const deleteTags = tagStore.tagList.filter(tag => tag.fullPath !== defaultMenu.value)
 
 	closeTags(deleteTags)
 
@@ -337,23 +339,23 @@ const closeAllTags = () => {
 
 // 关闭左侧标签
 const closeLeftTag = () => {
-	const deleteTags = appStore.tagList.filter((_, index) => index < currentMenuTagIndex.value)
+	const deleteTags = tagStore.tagList.filter((_, index) => index < currentMenuTagIndex.value)
 
 	closeTags(deleteTags)
 
 	// 如果当前激活页被关了，切换到右测标签
-	if (!appStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
+	if (!tagStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
 		router.push(currentMenuTag.fullPath)
 	}
 }
 
 // 关闭右侧标签
 const closeRightTag = () => {
-	const deleteTags = appStore.tagList.filter((_, index) => index > currentMenuTagIndex.value)
+	const deleteTags = tagStore.tagList.filter((_, index) => index > currentMenuTagIndex.value)
 
 	closeTags(deleteTags)
 
-	if (!appStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
+	if (!tagStore.tagList.some(tag => tag.fullPath === route.fullPath)) {
 		router.push(currentMenuTag.fullPath)
 	}
 	closeTagMenu()
@@ -374,7 +376,7 @@ const fullScreen = () => {
 
 // 切换固定
 const togglePin = (tag: NavbarTag) => {
-	appStore.togglePinTag(tag)
+	tagStore.togglePinTag(tag)
 }
 
 const { refreshPage } = usePageRefresher()

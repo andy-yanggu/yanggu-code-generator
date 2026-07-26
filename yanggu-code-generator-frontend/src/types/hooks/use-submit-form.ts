@@ -32,6 +32,8 @@ export interface FormOptions<VO> {
 	initBefore?: () => void
 	// 表单数据
 	dataForm: VO & { id?: Key }
+	// 数据赋值前调用
+	dataAssignBefore?: (data: VO) => void
 	// 初始化之后调用
 	initAfter?: () => void
 	// 提交之前操作

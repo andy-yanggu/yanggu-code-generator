@@ -1,9 +1,9 @@
-import { useAppStore, useSystemSettingStore } from '@/store'
+import { useCacheStore, useSystemSettingStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
 
 // 刷新当前页面
 export const usePageRefresher = () => {
-	const appStore = useAppStore()
+	const cacheStore = useCacheStore()
 	const systemSettingStore = useSystemSettingStore()
 	const route = useRoute()
 	const router = useRouter()
@@ -25,7 +25,7 @@ export const usePageRefresher = () => {
 			if (type === 1) {
 				// 如果是缓存，删除缓存
 				if (cache) {
-					appStore.removeCacheComponent(name)
+					cacheStore.removeCacheComponent(name)
 				}
 
 				// 使用路由跳转实现刷新
@@ -42,9 +42,9 @@ export const usePageRefresher = () => {
 				})
 			} else {
 				// iframe菜单，缓存
-				const idx = appStore.iframeCacheList.findIndex(i => i.fullPath === route.fullPath)
+				const idx = cacheStore.iframeCacheList.findIndex(i => i.fullPath === route.fullPath)
 				if (idx !== -1) {
-					const old = appStore.iframeCacheList[idx]
+					const old = cacheStore.iframeCacheList[idx]
 					// 修改src的值，会触发刷新
 					old.src = `${old.src.split('?')[0]}?t=${Date.now()}`
 				}

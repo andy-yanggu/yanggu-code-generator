@@ -131,7 +131,7 @@ import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
 import { useRoute } from 'vue-router'
-import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
+import { useTagStore, useCacheStore, useSystemSettingStore, useUserStore } from '@/store'
 import { MENU_EXPAND_WIDTH_LIST, MENU_FOLD_WIDTH_LIST } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'
 import { ElMessage, ElTreeSelect } from 'element-plus'
@@ -143,7 +143,8 @@ defineOptions({
 	name: 'SystemSetting'
 })
 
-const appStore = useAppStore()
+const tagStore = useTagStore()
+const cacheStore = useCacheStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
 
@@ -156,7 +157,7 @@ watch(
 	newValue => {
 		// 为false的情况
 		if (!newValue) {
-			appStore.removeAllTags()
+			tagStore.removeAllTags()
 		} else {
 			const tag: NavbarTag = {
 				fullPath: route.fullPath,
@@ -164,7 +165,7 @@ watch(
 				title: route.meta.title as string,
 				icon: route.meta.icon as string
 			}
-			appStore.addTag(tag)
+			tagStore.addTag(tag)
 		}
 	}
 )
@@ -173,22 +174,22 @@ watch(
 watch(
 	() => systemSettingStore.tag.isOpenTagCache,
 	newValue => {
-		// console.log('标签页缓存', newValue, appStore.tagList)
+		// console.log('标签页缓存', newValue, tagStore.tagList)
 
 		if (newValue) {
 			// 开启标签页缓存时，强制触发一次标签页状态保存
 			// 通过临时修改标签name来触发持久化
-			const name = appStore.tagList[0].name
-			appStore.tagList[0].name = name + '_temp'
+			const name = tagStore.tagList[0].name
+			tagStore.tagList[0].name = name + '_temp'
 			setTimeout(() => {
-				appStore.tagList[0].name = name
+				tagStore.tagList[0].name = name
 			}, 0)
 		} else {
 			// 关闭标签页缓存时，强制触发一次标签页状态保存
 			// 先删除后添加
-			const findIndex = appStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
-			const tempTag = appStore.tagList.splice(findIndex, 1)[0]
-			appStore.tagList.splice(findIndex, 0, tempTag)
+			const findIndex = tagStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
+			const tempTag = tagStore.tagList.splice(findIndex, 1)[0]
+			tagStore.tagList.splice(findIndex, 0, tempTag)
 		}
 	}
 )
@@ -199,8 +200,8 @@ watch(
 	newValue => {
 		// 为false的情况
 		if (!newValue) {
-			appStore.removeAllCache()
-			appStore.removeAllIframeCache()
+			cacheStore.removeAllCache()
+			cacheStore.removeAllIframeCache()
 		}
 	}
 )

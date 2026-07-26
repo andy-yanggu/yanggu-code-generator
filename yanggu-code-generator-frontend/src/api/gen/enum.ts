@@ -9,9 +9,9 @@ interface CustomApi {
 }
 
 // 禁用的api
-const disabled = [] as const
+const _disabled = [] as const
 
-type ApiType = EnabledCrudApi<GenEnumEntity, GenEnumQuery, typeof disabled> & CustomApi
+type ApiType = EnabledCrudApi<GenEnumEntity, GenEnumQuery, typeof _disabled> & CustomApi
 
 const baseUrl: string = '/gen/enum'
 

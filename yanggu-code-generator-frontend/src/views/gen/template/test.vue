@@ -48,6 +48,9 @@
 					<el-cascader
 						v-model="testData.cascaderValue"
 						:options="testData.cascaderData"
+						:props="{
+							expandTrigger: 'hover'
+						}"
 						filterable
 						clearable
 						placeholder="请选择项目、表或者枚举"

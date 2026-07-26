@@ -1,7 +1,7 @@
 <template>
 	<!-- 缓存池化（v-show控制展示和隐藏） -->
 	<transition-group name="slide" tag="div">
-		<div v-for="item in appStore.iframeCacheList" v-show="route.fullPath === item.fullPath" :key="`iframe-${item.fullPath}`">
+		<div v-for="item in cacheStore.iframeCacheList" v-show="route.fullPath === item.fullPath" :key="`iframe-${item.fullPath}`">
 			<router-view v-slot="{ Component }">
 				<component :is="Component" :iframe-src="item.src" :cache="true"></component>
 			</router-view>
@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from '@/store'
+import { useCacheStore } from '@/store'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 
-const appStore = useAppStore()
+const cacheStore = useCacheStore()
 const route = useRoute()
 
 defineOptions({
@@ -34,7 +34,7 @@ watch(
 		const newRouteName = route.name as string
 
 		// 缓存模式：加入池子
-		appStore.addIframeCache({ name: newRouteName, src: externalUrl, fullPath: newFullPath as string })
+		cacheStore.addIframeCache({ name: newRouteName, src: externalUrl, fullPath: newFullPath as string })
 	},
 	{ immediate: true }
 )

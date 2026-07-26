@@ -35,7 +35,7 @@
 				<el-col :span="12">
 					<el-form-item label="是否必填" prop="required">
 						<el-switch
-							v-model="state.dataForm.required"
+							v-model="state.dataForm.required as number"
 							:active-value="1"
 							:inactive-value="0"
 							inline-prompt
@@ -48,7 +48,7 @@
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="布局方式" prop="columnSpan">
-						<el-radio-group v-model="state.dataForm.columnSpan" :options="COLUMN_SPAN_TYPES"></el-radio-group>
+						<el-radio-group v-model="state.dataForm.columnSpan as number" :options="COLUMN_SPAN_TYPES"></el-radio-group>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -58,7 +58,7 @@
 				</el-col>
 			</el-row>
 			<el-form-item label="属性默认值" prop="propDefaultValue">
-				<el-input v-model="state.dataForm.propDefaultValue" clearable placeholder="请输入属性默认值"></el-input>
+				<el-input v-model="state.dataForm.propDefaultValue as string" clearable placeholder="请输入属性默认值"></el-input>
 			</el-form-item>
 			<el-form-item label="组件类型" prop="componentType">
 				<el-radio-group v-model="state.dataForm.componentType" :options="COMPONENT_TYPES"></el-radio-group>
@@ -77,7 +77,7 @@
 					</el-col>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions[${index}].value`">
-							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 220px"></el-input>
+							<el-input v-model="item.value as string" clearable placeholder="请输入选项值" style="width: 220px"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
@@ -143,11 +143,17 @@ const state = reactive({
 	// 初始化表单数据
 	initFormData,
 	dataForm: initFormData(),
-	initAfter: () => {
-		// 如果是开关类型
-		if (switchOptionFull.value) {
-			for (const componentOption of state.dataForm.componentOptions) {
-				componentOption.value = componentOption.value!.toString()
+	dataAssignBefore: (data) => {
+		// 将布尔类型的默认值转为字符串，避免 el-input 绑定 Boolean 报错
+		if (typeof data.propDefaultValue === 'boolean') {
+			data.propDefaultValue = data.propDefaultValue.toString()
+		}
+		// 将组件选项中的布尔值转为字符串
+		if (Array.isArray(data.componentOptions)) {
+			for (const option of data.componentOptions) {
+				if (typeof option.value === 'boolean') {
+					option.value = option.value.toString()
+				}
 			}
 		}
 	},

@@ -7,7 +7,7 @@
 					<component :is="icon"></component>
 				</template>
 				<template v-else>
-					<InfoFilled></InfoFilled>
+					<QuestionFilled></QuestionFilled>
 				</template>
 			</el-icon>
 		</el-tooltip>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { InfoFilled } from '@element-plus/icons-vue'
+import { QuestionFilled } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'FormLabelTooltip'
@@ -33,7 +33,7 @@ defineProps({
 	},
 	icon: {
 		type: Object,
-		default: InfoFilled,
+		default: QuestionFilled,
 		required: false
 	}
 })

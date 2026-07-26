@@ -726,7 +726,7 @@ const deleteCheckedNode = () => {
 }
 
 // 判断树节点能否被拖拽
-const treeAllowDrag = (draggingNode: any) => {
+const treeAllowDrag = (_draggingNode: any) => {
 	// console.log('节点允许被拖拽:', draggingNode.data)
 	// 可以根据需要设置哪些节点可以拖拽
 	// 这里允许所有节点拖拽
@@ -755,7 +755,7 @@ const treeAllowDrop = (draggingNode: any, dropNode: any, type: 'prev' | 'next' |
 }
 
 // 处理节点拖拽完成事件
-const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | 'after' | 'inner', ev: Event) => {
+const handleNodeDrop = (draggingNode: any, dropNode: any, dropType: 'before' | 'after' | 'inner', _ev: Event) => {
 	const dragData = draggingNode.data
 	const dropData = dropNode.data
 	// console.log('节点拖拽完成:', dragData, dropData, dropType, ev)

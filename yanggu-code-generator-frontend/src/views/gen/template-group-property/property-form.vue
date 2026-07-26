@@ -1,7 +1,7 @@
 <template>
 	<template v-for="(row, rowIndex) in rows" :key="rowIndex">
 		<el-row>
-			<el-col v-for="item in row" :key="item.id" :span="item.columnSpan === 1 ? 24 : 12">
+			<el-col v-for="item in row" :key="item.id as number" :span="item.columnSpan === 1 ? 24 : 12">
 				<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
 					<!-- label -->
 					<template #label>
@@ -17,6 +17,7 @@
 </template>
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
+import { ElInput, ElInputNumber, ElSelect, ElRadioGroup, ElCheckboxGroup, ElSwitch } from 'element-plus'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/types'
 
@@ -121,23 +122,19 @@ const rows = computed(() => {
 })
 
 // -------- 动态渲染组件 --------
+// 注意：必须返回组件对象而非字符串，因为 <component :is> 使用函数返回的字符串时，
+// unplugin-vue-components 无法在编译时静态分析，导致组件未被解析，props 被当作 HTML 属性
+const componentMap: Record<number, object> = {
+	0: ElInput,
+	1: ElInputNumber,
+	2: ElSelect,
+	3: ElRadioGroup,
+	4: ElCheckboxGroup,
+	5: ElSwitch
+}
+
 const getComponentType = (item: GenTemplateGroupPropertyEntity) => {
-	switch (item.componentType) {
-		case 0:
-			return 'el-input'
-		case 1:
-			return 'el-input-number'
-		case 2:
-			return 'el-select'
-		case 3:
-			return 'el-radio-group'
-		case 4:
-			return 'el-checkbox-group'
-		case 5:
-			return 'el-switch'
-		default:
-			return 'el-input'
-	}
+	return componentMap[Number(item.componentType)] ?? ElInput
 }
 
 const getComponentProps = (item: GenTemplateGroupPropertyEntity) => {

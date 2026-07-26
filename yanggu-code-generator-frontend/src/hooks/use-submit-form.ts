@@ -75,15 +75,15 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 		const { type, id, ctx = {} } = initOptions
 
 		formType.value = type
-		options.dataForm.id = id
 		visible.value = true
 
 		nextTick(() => {
 			// 重置表单数据
 			Object.assign(options.dataForm, options.initFormData(ctx))
+			options.dataForm.id = id
 
 			// 重置表单验证
-			dataFormRef.value.resetFields()
+			dataFormRef.value.clearValidate()
 
 			// 初始化之前调用
 			options.initBefore?.()
@@ -91,6 +91,7 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 			if (id) {
 				// 调用详情接口
 				options.detailApi(id).then(data => {
+					options.dataAssignBefore?.(data)
 					// 赋值给表单数据
 					Object.assign(options.dataForm, data)
 					// 初始化之后调用

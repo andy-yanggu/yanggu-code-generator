@@ -45,7 +45,7 @@
 				<el-col :span="12">
 					<el-form-item label="数据源" prop="datasourceId">
 						<el-select v-model="state.dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
-							<el-option v-for="item in datasourceList" :key="item.id" :label="item.connName" :value="item.id">
+							<el-option v-for="item in datasourceList" :key="item.id as number" :label="item.connName" :value="item.id as number">
 								<option-label :label="item.connName" :desc="item.datasourceDesc"></option-label>
 							</el-option>
 						</el-select>
@@ -104,21 +104,21 @@
 			<form-divider title="模板组配置"></form-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in tableTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+					<el-option v-for="item in tableTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in enumTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+					<el-option v-for="item in enumTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
 				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in projectTemplateGroupList" :key="item.id" :label="item.groupName" :value="item.id">
+					<el-option v-for="item in projectTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>

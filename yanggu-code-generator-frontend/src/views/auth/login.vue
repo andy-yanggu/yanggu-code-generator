@@ -44,7 +44,6 @@ watch(
 
 const userStore = useUserStore()
 
-const appTitle = import.meta.env.VITE_APP_TITLE
 const form = reactive({
 	username: '',
 	password: ''

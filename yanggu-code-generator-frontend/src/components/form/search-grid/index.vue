@@ -8,7 +8,7 @@
 		<!-- 操作区 -->
 		<el-col v-if="row.hasAction" :span="colSpan" :offset="row.actionOffset">
 			<slot name="actions"></slot>
-			<toggle-more v-if="row.showToggle" v-model:showMore="showMore"></toggle-more>
+			<toggle-more v-if="row.showToggle" v-model:show-more="showMore"></toggle-more>
 		</el-col>
 	</el-row>
 </template>

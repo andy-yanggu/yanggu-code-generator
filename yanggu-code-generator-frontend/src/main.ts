@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import ElementPlus from 'element-plus'
 import App from '@/App.vue'
 import { router } from '@/router'
 import 'virtual:svg-icons-register'
@@ -10,7 +9,6 @@ import '@/icons/iconfont/iconfont'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 css
 import '@/styles/index.scss'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import directive from '@/directive'
 import { setupEcharts } from '@/components/echarts'
 
@@ -24,17 +22,11 @@ app.use(pinia)
 // 注册echarts
 setupEcharts(app)
 
-//使用element-plus图标
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-	app.component(key, component)
-}
-
 // 自定义指令
 directive(app)
 
 app.use(router)
 app.use(SvgIcon)
-app.use(ElementPlus)
 
 // 挂载应用
 app.mount('#app')

@@ -1,5 +1,5 @@
 import { RouteLocationNormalized, Router } from 'vue-router'
-import { useAppStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useTagStore, useCacheStore, useSystemSettingStore } from '@/store'
 import { setTitle } from '@/utils/tool'
 import { RouteMetaData } from '@/types'
 import { useTimeoutFn } from '@vueuse/core'
@@ -46,12 +46,12 @@ const handleProgressStart = (): void => {
  * 处理标签页添加
  */
 const handleTagAdd = (routeMeta: RouteMetaData): void => {
-	const appStore = useAppStore()
+	const tagStore = useTagStore()
 	const systemSettingStore = useSystemSettingStore()
 
 	// 不是新窗口且标签页功能开启时，添加标签
 	if (routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
-		appStore.addTag({
+		tagStore.addTag({
 			...routeMeta,
 			pinned: false
 		})
@@ -62,12 +62,12 @@ const handleTagAdd = (routeMeta: RouteMetaData): void => {
  * 处理页面缓存
  */
 const handlePageCache = (routeMeta: RouteMetaData): void => {
-	const appStore = useAppStore()
+	const cacheStore = useCacheStore()
 	const systemSettingStore = useSystemSettingStore()
 
 	// 有名称、是菜单、需要缓存且页面缓存功能开启时，添加到缓存
 	if (routeMeta.cache && routeMeta.name && routeMeta.type === 1 && systemSettingStore.other.isOpenPageCache) {
-		appStore.addCacheComponent(routeMeta.name)
+		cacheStore.addCacheComponent(routeMeta.name)
 	}
 }
 
