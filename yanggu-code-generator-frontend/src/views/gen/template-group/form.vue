@@ -79,8 +79,8 @@ const state = reactive({
 } as FormOptions<GenTemplateGroupEntity>)
 
 const dataRules = reactive({
-	groupName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	groupName: [{ required: true, message: '模板组名称不能为空', trigger: 'blur' }],
+	type: [{ required: true, message: '模板组类型不能为空', trigger: 'blur' }]
 } as Record<keyof GenTemplateGroupEntity, FormItemRule[]>)
 
 const { visible, dataFormRef, formType, dialogTitle, init, submitHandle, submitLoading } = useSubmitForm(state)

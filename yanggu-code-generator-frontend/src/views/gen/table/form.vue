@@ -1,6 +1,13 @@
 <template>
 	<el-dialog v-model="visible" :title="dialogTitle()" :close-on-click-modal="false" width="60%">
-		<el-form ref="dataFormRef" :model="state.dataForm" :rules="dataRules" label-width="130px" @keyup.enter="submitHandle()">
+		<el-form
+			ref="dataFormRef"
+			:model="state.dataForm"
+			:rules="dataRules"
+			label-width="130px"
+			:validate-on-rule-change="false"
+			@keyup.enter="submitHandle()"
+		>
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
@@ -97,14 +104,14 @@
 			<form-divider title="基类配置"></form-divider>
 			<el-form-item prop="entityBaseClassId" label="Entity基类">
 				<el-select v-model="state.dataForm.entityBaseClassId" placeholder="请选择Entity基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+					<el-option v-for="item in baseClassList" :key="item.id!" :label="`${item.packageName}.${item.className}`" :value="item.id!">
 						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item prop="voBaseClassId" label="VO基类">
 				<el-select v-model="state.dataForm.voBaseClassId" placeholder="请选择VO基类" style="width: 100%" clearable filterable>
-					<el-option v-for="item in baseClassList" :key="item.id" :label="`${item.packageName}.${item.className}`" :value="item.id">
+					<el-option v-for="item in baseClassList" :key="item.id!" :label="`${item.packageName}.${item.className}`" :value="!item.id">
 						<option-label :label="`${item.packageName}.${item.className}`" :desc="item.remark"></option-label>
 					</el-option>
 				</el-select>
@@ -198,15 +205,15 @@ const state = reactive({
 
 const dataRules = computed(() => {
 	const rules: Record<keyof GenTableEntity | string, FormItemRule[]> = {
-		projectId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		tableName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		databaseName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		className: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		tableComment: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		functionName: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		formLayout: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		popupType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		generatorFunction: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+		projectId: [{ required: true, message: '所属项目不能为空', trigger: 'blur' }],
+		tableName: [{ required: true, message: '表名不能为空', trigger: 'blur' }],
+		databaseName: [{ required: true, message: '数据库名不能为空', trigger: 'blur' }],
+		className: [{ required: true, message: '类名不能为空', trigger: 'blur' }],
+		tableComment: [{ required: true, message: '注释不能为空', trigger: 'blur' }],
+		functionName: [{ required: true, message: '功能名不能为空', trigger: 'blur' }],
+		formLayout: [{ required: true, message: '表单布局不能为空', trigger: 'blur' }],
+		popupType: [{ required: true, message: '弹窗方式不能为空', trigger: 'blur' }],
+		generatorFunction: [{ required: true, message: '生成功能不能为空', trigger: 'blur' }]
 	}
 
 	// 模板组属性校验

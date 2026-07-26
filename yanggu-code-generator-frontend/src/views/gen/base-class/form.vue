@@ -100,7 +100,7 @@ const dataRules = computed(() => {
 	}
 	const constRules: Record<keyof GenBaseClassEntity | string, FormItemRule[]> = {
 		baseClassName: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }],
-		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '必填项不能为空', trigger: 'blur' }],
+		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '基类全类名不能为空', trigger: 'blur' }],
 		packageName: [{ required: true, message: '基类包名不能为空', trigger: 'blur' }],
 		className: [{ required: true, message: '基类类名不能为空', trigger: 'blur' }],
 		fieldList: [{ required: true, message: '基类字段不能为空', trigger: 'blur' }]

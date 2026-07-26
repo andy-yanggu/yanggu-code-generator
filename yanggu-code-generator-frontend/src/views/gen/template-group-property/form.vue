@@ -177,14 +177,14 @@ const switchOptionFull = computed(() => state.dataForm.componentType === 5 && st
 
 const dataRules = computed(() => {
 	const rules: Record<keyof GenTemplateGroupPropertyEntity | string, FormItemRule[]> = {
-		propTitle: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		propKey: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		required: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		propDefaultValue: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		componentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		propOrder: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		columnSpan: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		componentOptions: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+		propTitle: [{ required: true, message: '属性标题不能为空', trigger: 'blur' }],
+		propKey: [{ required: true, message: '属性键不能为空', trigger: 'blur' }],
+		required: [{ required: true, message: '是否必填不能为空', trigger: 'blur' }],
+		propDefaultValue: [{ required: true, message: '属性默认值不能为空', trigger: 'blur' }],
+		componentType: [{ required: true, message: '组件类型不能为空', trigger: 'blur' }],
+		propOrder: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
+		columnSpan: [{ required: true, message: '布局方式不能为空', trigger: 'blur' }],
+		componentOptions: [{ required: true, message: '组件选项不能为空', trigger: 'blur' }]
 	}
 
 	// 动态模块校验

@@ -4,7 +4,7 @@
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
 				<el-form-item label="项目" prop="projectId">
 					<el-select v-model="state.queryForm.projectId" style="width: 140px" placeholder="请选择项目" filterable clearable>
-						<el-option v-for="item in projectList" :key="item.id" :label="item.projectName" :value="item.id">
+						<el-option v-for="item in projectList" :key="item.id!" :label="item.projectName" :value="item.id!">
 							<option-label :label="item.projectName" :desc="item.projectDesc"></option-label>
 						</el-option>
 					</el-select>
@@ -45,7 +45,7 @@
 			</template>
 			<el-table
 				ref="tableRef"
-				v-loading="state.dataListLoading"
+				v-loading="state.dataListLoading!"
 				:data="state.dataList"
 				border
 				max-height="60vh"

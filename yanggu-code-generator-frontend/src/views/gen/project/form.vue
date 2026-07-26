@@ -45,7 +45,7 @@
 				<el-col :span="12">
 					<el-form-item label="数据源" prop="datasourceId">
 						<el-select v-model="state.dataForm.datasourceId" clearable filterable placeholder="请选择数据源" style="width: 100%">
-							<el-option v-for="item in datasourceList" :key="item.id as number" :label="item.connName" :value="item.id as number">
+							<el-option v-for="item in datasourceList" :key="item.id!" :label="item.connName" :value="item.id!">
 								<option-label :label="item.connName" :desc="item.datasourceDesc"></option-label>
 							</el-option>
 						</el-select>
@@ -104,21 +104,21 @@
 			<form-divider title="模板组配置"></form-divider>
 			<el-form-item label="表模板组" prop="tableTemplateGroupId">
 				<el-select v-model="state.dataForm.tableTemplateGroupId" placeholder="请选择表模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in tableTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
+					<el-option v-for="item in tableTemplateGroupList" :key="item.id!" :label="item.groupName" :value="item.id!">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="枚举模板组" prop="enumTemplateGroupId">
 				<el-select v-model="state.dataForm.enumTemplateGroupId" placeholder="请选择枚举模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in enumTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
+					<el-option v-for="item in enumTemplateGroupList" :key="item.id!" :label="item.groupName" :value="item.id!">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="项目模板组" prop="projectTemplateGroupId">
 				<el-select v-model="state.dataForm.projectTemplateGroupId" placeholder="请选择项目模板组" style="width: 100%" clearable filterable>
-					<el-option v-for="item in projectTemplateGroupList" :key="item.id as number" :label="item.groupName" :value="item.id as number">
+					<el-option v-for="item in projectTemplateGroupList" :key="item.id!" :label="item.groupName" :value="item.id!">
 						<option-label :label="item.groupName" :desc="item.groupDesc"></option-label>
 					</el-option>
 				</el-select>
@@ -252,8 +252,8 @@ const dataRules = computed(() => {
 			{ required: true, message: '项目端口不能为空', trigger: 'blur' },
 			{ type: 'number', message: '项目端口必须为数字', trigger: 'change' }
 		],
-		projectTemplateGroupId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
-		generatorType: [{ required: true, message: '请选择生成类型', trigger: 'blur' }]
+		projectTemplateGroupId: [{ required: true, message: '项目模板组不能为空', trigger: 'blur' }],
+		generatorType: [{ required: true, message: '生成类型不能为空', trigger: 'blur' }]
 		// moduleList 是否必填由外层 form-item 控制，若 required: true 则会出现在 rules['moduleList']
 	}
 
@@ -279,8 +279,13 @@ const dataRules = computed(() => {
 	}
 
 	// === 动态字段校验生成器 ===
+	const moduleFieldLabels: Record<string, string> = {
+		moduleName: '模块名称',
+		modulePath: '模块路径',
+		moduleDesc: '模块描述'
+	}
 	const makeValidator = (index: number) => {
-		return (_: string) => ({
+		return (field: string) => ({
 			validator(_: any, value: any, callback: any) {
 				const item = list[index]
 				const name = (item.moduleName || '').trim()
@@ -301,7 +306,7 @@ const dataRules = computed(() => {
 
 					// 当前行非空 → 所有字段必须填写
 					if (!value || !value.trim()) {
-						callback(new Error('必填项不能为空'))
+						callback(new Error(`${moduleFieldLabels[field]}不能为空`))
 						return
 					}
 
@@ -320,7 +325,7 @@ const dataRules = computed(() => {
 
 				// 当前字段为空 → 报错
 				if (!value || !value.trim()) {
-					callback(new Error('必填项不能为空'))
+					callback(new Error(`${moduleFieldLabels[field]}不能为空`))
 					return
 				}
 

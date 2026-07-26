@@ -1,7 +1,7 @@
 <template>
 	<template v-for="(row, rowIndex) in rows" :key="rowIndex">
 		<el-row>
-			<el-col v-for="item in row" :key="item.id as number" :span="item.columnSpan === 1 ? 24 : 12">
+			<el-col v-for="item in row" :key="item.id!" :span="item.columnSpan === 1 ? 24 : 12">
 				<el-form-item :prop="`${modelValueProp}.${item.propKey}`">
 					<!-- label -->
 					<template #label>
@@ -17,7 +17,7 @@
 </template>
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
-import { ElInput, ElInputNumber, ElSelect, ElRadioGroup, ElCheckboxGroup, ElSwitch } from 'element-plus'
+import { ElCheckboxGroup, ElInput, ElInputNumber, ElRadioGroup, ElSelect, ElSwitch } from 'element-plus'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/types'
 
