@@ -4,7 +4,7 @@ import { isNotEmpty } from '@/utils/tool'
 import { processMenuList } from '@/utils/menu'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { LoginVO, MenuInfo, TokenInfo, UserInfo } from '@/types'
-import { CONSTANT_MENUS, DEFAULT_BUSINESS_MENUS } from '@/config'
+import { CONSTANT_MENUS, DEFAULT_BUSINESS_MENUS, env } from '@/config'
 
 const initialUserInfo = (): UserInfo => ({
 	username: 'admin',
@@ -24,7 +24,7 @@ const initialTokenInfo = (): TokenInfo => ({
 // 持久化配置
 const getPersistConfig = () => {
 	const key = 'userStore'
-	if (import.meta.env.PROD) {
+	if (env.isProd) {
 		return {
 			key,
 			omit: ['isAddRoutes'],

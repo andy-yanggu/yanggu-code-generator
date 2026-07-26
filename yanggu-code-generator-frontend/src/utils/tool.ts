@@ -3,6 +3,7 @@ import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import { isEmpty, isNil, isString } from 'lodash-es'
 import { scalar } from '@/types'
+import { env } from '@/config'
 
 const { copy, isSupported } = useClipboard()
 
@@ -54,7 +55,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 const title = useTitle()
 
 // 默认标题
-const originalTitle = import.meta.env.VITE_APP_TITLE
+const originalTitle = env.appTitle
 title.value = originalTitle
 
 // 设置标题

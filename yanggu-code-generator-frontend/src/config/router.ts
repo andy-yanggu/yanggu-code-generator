@@ -3,6 +3,8 @@
  * 集中管理路由相关的常量配置
  */
 
+import { env } from '@/config'
+
 /**
  * 路由白名单（无需登录即可访问的路由名称）
  */
@@ -28,4 +30,4 @@ export const PROGRESS_DELAY = 500
  * 开发环境：false（不需要登录，方便调试）
  * 生产环境：true（需要登录，保证安全）
  */
-export const ENABLE_AUTH_CHECK = !import.meta.env.DEV
+export const ENABLE_AUTH_CHECK = !env.isDev

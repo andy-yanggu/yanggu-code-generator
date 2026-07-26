@@ -4,10 +4,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { Result } from '@/types/api/common'
+import { env } from '@/config'
 
 // axios实例
 export const service = axios.create({
-	baseURL: import.meta.env.VITE_API_URL,
+	baseURL: env.apiUrl,
 	timeout: 60000,
 	headers: { 'Content-Type': 'application/json;charset=UTF-8' },
 	paramsSerializer: params => qs.stringify(params, { indices: false }), // 使用qs.stringify进行序列化
@@ -273,7 +274,7 @@ export const downloadBigFile = (url: string, params?: Record<string, any>) => {
 		const requestParam = { ...(params ?? {}), [tokenName]: tokenValue }
 
 		// 拼接完整 URL
-		const baseURL = import.meta.env.VITE_API_URL as string
+		const baseURL = env.apiUrl
 		const downloadUrl = `${baseURL}${url}?${qs.stringify(requestParam, { indices: false })}`
 
 		// 创建隐藏的 a 标签

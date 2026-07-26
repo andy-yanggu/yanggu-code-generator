@@ -5,6 +5,7 @@
  * import { CONSTANT_MENUS, DEV_TEST_MENUS } from '@/config'
  */
 
+export * from '@/config/env'
 export * from '@/config/menu'
 export * from '@/config/layout'
 export * from '@/config/router'

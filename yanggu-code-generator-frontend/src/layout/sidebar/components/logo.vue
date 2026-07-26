@@ -7,12 +7,13 @@
 <script setup lang="ts">
 import { useAppStore, useSystemSettingStore } from '@/store'
 import { useRoute, useRouter } from 'vue-router'
+import { env } from '@/config'
 
 defineOptions({
 	name: 'Logo'
 })
 
-const appTitle = import.meta.env.VITE_APP_TITLE
+const appTitle = env.appTitle
 const appStore = useAppStore()
 const systemConfigStore = useSystemSettingStore()
 const router = useRouter()
