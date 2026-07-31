@@ -89,14 +89,14 @@
 					<setting-item v-model="systemSettingStore.tag.isOpenTag" label="启用"></setting-item>
 					<setting-item v-model="systemSettingStore.tag.isOpenTagIcon" label="图标"></setting-item>
 					<setting-item
-						v-model="systemSettingStore.tag.isOpenTagDragActivated"
-						label="拖拽后激活标签"
-						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
-					></setting-item>
-					<setting-item
 						v-model="systemSettingStore.tag.isOpenTagCache"
 						label="持久化"
 						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"
+					></setting-item>
+					<setting-item
+						v-model="systemSettingStore.tag.isOpenTagDragActivated"
+						label="拖拽后激活标签"
+						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
 					></setting-item>
 				</div>
 				<div>
@@ -173,24 +173,10 @@ watch(
 // 标签页缓存
 watch(
 	() => systemSettingStore.tag.isOpenTagCache,
-	newValue => {
-		// console.log('标签页缓存', newValue, tagStore.tagList)
-
-		if (newValue) {
-			// 开启标签页缓存时，强制触发一次标签页状态保存
-			// 通过临时修改标签name来触发持久化
-			const name = tagStore.tagList[0].name
-			tagStore.tagList[0].name = name + '_temp'
-			setTimeout(() => {
-				tagStore.tagList[0].name = name
-			}, 0)
-		} else {
-			// 关闭标签页缓存时，强制触发一次标签页状态保存
-			// 先删除后添加
-			const findIndex = tagStore.tagList.findIndex(tag => tag.fullPath === route.fullPath)
-			const tempTag = tagStore.tagList.splice(findIndex, 1)[0]
-			tagStore.tagList.splice(findIndex, 0, tempTag)
-		}
+	() => {
+		// 开关切换时，强制触发一次 tagStore 持久化
+		// serializer 会根据最新的 isOpenTagCache 决定写入内容
+		tagStore.forcePersist()
 	}
 )
 

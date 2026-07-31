@@ -90,6 +90,11 @@ export const useTagStore = defineStore(
 			return [...pinnedTags, ...normalTags]
 		}
 
+		// 强制触发持久化写入（通过深拷贝重建 tagList 引用，数据不变但触发响应式更新）
+		const forcePersist = () => {
+			tagList.value = JSON.parse(JSON.stringify(tagList.value))
+		}
+
 		return {
 			activeTabPath,
 			tagList,
@@ -100,7 +105,8 @@ export const useTagStore = defineStore(
 			addAllTags,
 			removeAllTags,
 			togglePinTag,
-			sortTags
+			sortTags,
+			forcePersist
 		}
 	},
 	{

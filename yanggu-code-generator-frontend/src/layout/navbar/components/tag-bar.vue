@@ -36,11 +36,11 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks'
-import { useAppStore, useTagStore, useCacheStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { TabsPaneContext } from 'element-plus'
@@ -69,7 +69,8 @@ const tagWrapperRef = ref()
 
 watch(
 	() => route.fullPath,
-	() => (tagStore.activeTabPath = route.fullPath)
+	() => (tagStore.activeTabPath = route.fullPath),
+	{ immediate: true }
 )
 
 // 默认菜单
@@ -79,6 +80,8 @@ const defaultMenu = computed(() => systemSettingStore.menu.menuDefault)
 const tabNavEl = computed(() => tagWrapperRef.value?.tabNavRef?.tabListRef)
 
 const draggedTagPath = ref('')
+const sortableInstance = ref<Sortable | null>(null)
+
 const tabActive = useDebounceFn(() => {
 	// console.log('判断函数被执行了', draggedTagPath.value)
 	if (isNotBlank(draggedTagPath.value)) {
@@ -87,72 +90,97 @@ const tabActive = useDebounceFn(() => {
 	}
 }, 500)
 
-// 实现标签页的拖拽效果
-onMounted(() => {
-	nextTick(() => {
-		new Sortable(tabNavEl.value, {
-			animation: 200,
-			handle: '.el-tabs__item',
+// 初始化标签页拖拽
+const initSortable = () => {
+	const el = tabNavEl.value
+	if (!el) {
+		return
+	}
 
-			onStart: evt => {
-				const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
+	// 先销毁旧实例，避免重复绑定
+	if (sortableInstance.value) {
+		sortableInstance.value.destroy()
+		sortableInstance.value = null
+	}
 
-				const draggedIndex = items.indexOf(evt.item)
-				if (draggedIndex === -1) {
-					return
-				}
+	sortableInstance.value = new Sortable(el, {
+		animation: 200,
+		handle: '.el-tabs__item',
 
-				const fullPath = evt.item.id.replace(/^tab-/, '')
+		onStart: evt => {
+			const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
 
-				// 激活被拖拽的标签页
-				if (systemSettingStore.tag.isOpenTagDragActivated && tagStore.activeTabPath !== fullPath) {
-					// console.log('item:', evt.item.id, 'fullPath', fullPath)
-					draggedTagPath.value = fullPath
-				}
-			},
-
-			// 固定标签之间拖拽，非固定标签页之前拖拽，不能互相拖拽
-			onMove: evt => {
-				const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
-
-				const draggedIndex = items.indexOf(evt.dragged)
-				const targetIndex = items.indexOf(evt.related)
-				const tags = tagStore.tagList
-				const draggedTag = tags[draggedIndex]
-
-				const pinnedCount = tags.filter(t => t.pinned).length
-
-				// 固定 → 禁止拖出固定区
-				if (draggedTag.pinned && targetIndex >= pinnedCount) {
-					return false
-				}
-
-				// 普通 → 禁止拖入固定区
-				if (!draggedTag.pinned && targetIndex < pinnedCount) {
-					return false
-				}
-
-				tabActive()
-
-				return true
-			},
-
-			onEnd: evt => {
-				const oldIndex = evt.oldIndex!
-				const newIndex = evt.newIndex!
-
-				if (oldIndex === newIndex) {
-					return
-				}
-
-				const tags = [...tagStore.tagList]
-				const movedTag = tags.splice(oldIndex, 1)[0]
-				tags.splice(newIndex, 0, movedTag)
-
-				tagStore.addAllTags(tagStore.sortTags(tags))
+			const draggedIndex = items.indexOf(evt.item)
+			if (draggedIndex === -1) {
+				return
 			}
-		})
+
+			const fullPath = evt.item.id.replace(/^tab-/, '')
+
+			// 激活被拖拽的标签页
+			if (systemSettingStore.tag.isOpenTagDragActivated && tagStore.activeTabPath !== fullPath) {
+				// console.log('item:', evt.item.id, 'fullPath', fullPath)
+				draggedTagPath.value = fullPath
+			}
+		},
+
+		// 固定标签之间拖拽，非固定标签页之前拖拽，不能互相拖拽
+		onMove: evt => {
+			const items = Array.from(evt.from.querySelectorAll('.el-tabs__item'))
+
+			const draggedIndex = items.indexOf(evt.dragged)
+			const targetIndex = items.indexOf(evt.related)
+			const tags = tagStore.tagList
+			const draggedTag = tags[draggedIndex]
+
+			const pinnedCount = tags.filter(t => t.pinned).length
+
+			// 固定 → 禁止拖出固定区
+			if (draggedTag.pinned && targetIndex >= pinnedCount) {
+				return false
+			}
+
+			// 普通 → 禁止拖入固定区
+			if (!draggedTag.pinned && targetIndex < pinnedCount) {
+				return false
+			}
+
+			tabActive()
+
+			return true
+		},
+
+		onEnd: evt => {
+			const oldIndex = evt.oldIndex!
+			const newIndex = evt.newIndex!
+
+			if (oldIndex === newIndex) {
+				return
+			}
+
+			const tags = [...tagStore.tagList]
+			const movedTag = tags.splice(oldIndex, 1)[0]
+			tags.splice(newIndex, 0, movedTag)
+
+			tagStore.addAllTags(tagStore.sortTags(tags))
+		}
 	})
+}
+
+// 监听 tabNavEl 变化，在 DOM 就绪后初始化拖拽
+watch(
+	tabNavEl,
+	el => {
+		if (el) {
+			nextTick(() => initSortable())
+		}
+	},
+	{ immediate: true }
+)
+
+onUnmounted(() => {
+	sortableInstance.value?.destroy()
+	sortableInstance.value = null
 })
 
 // tab右键菜单

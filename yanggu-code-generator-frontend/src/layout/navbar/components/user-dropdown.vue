@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/store'
 import { authApi } from '@/api'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowDown, Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 import { ref } from 'vue'
@@ -55,15 +55,20 @@ const logout = () => {
 		cancelButtonText: '取消',
 		type: 'warning'
 	}).then(() => {
-		authApi.logout().then(() => {
-			userStore.clearAll()
-			router.push({
-				path: '/auth/login',
-				query: {
-					redirect: encodeURIComponent(route.fullPath || '/')
-				}
+		authApi
+			.logout()
+			.then(() => {
+				userStore.clearAll()
+				router.push({
+					path: '/auth/login',
+					query: {
+						redirect: encodeURIComponent(route.fullPath || '/')
+					}
+				})
 			})
-		})
+			.catch(() => {
+				ElMessage.error('退出登录失败')
+			})
 	})
 }
 </script>
