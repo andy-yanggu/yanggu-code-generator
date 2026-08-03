@@ -43,7 +43,7 @@ import { usePageRefresher } from '@/hooks'
 import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
-import { TabsPaneContext } from 'element-plus'
+import { ElMessage, TabPaneName, TabsPaneContext } from 'element-plus'
 import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { isEmpty, isNotBlank } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
@@ -319,7 +319,8 @@ const closeSingleTag = (tag: NavbarTag) => {
 }
 
 // 处理标签删除
-const handleTabRemove = (fullPath: string) => {
+// (name: TabPaneName) => name is string | number;
+const handleTabRemove = (fullPath: TabPaneName) => {
 	const tag = tagStore.tagList.find(t => t.fullPath === fullPath)
 	if (tag) {
 		closeSingleTag(tag)
@@ -327,13 +328,17 @@ const handleTabRemove = (fullPath: string) => {
 }
 
 // 刷新当前标签页
-const refreshCurrentTag = () => {
-	if (route.fullPath != currentMenuTag.fullPath) {
-		router.push(currentMenuTag.fullPath)
-		setTimeout(() => refreshPage(), 10)
-	} else {
-		refreshPage()
+const refreshCurrentTag = async () => {
+	if (route.fullPath !== currentMenuTag.fullPath) {
+		try {
+			await router.push(currentMenuTag.fullPath)
+		} catch {
+			// 导航被取消或失败，不执行刷新
+			closeTagMenu()
+			return
+		}
 	}
+	refreshPage()
 	closeTagMenu()
 }
 
@@ -400,6 +405,7 @@ const openNewWindow = () => {
 // 窗口最大化
 const fullScreen = () => {
 	appStore.toolFullscreen()
+	ElMessage.primary('右上角点击退出全屏')
 }
 
 // 切换固定

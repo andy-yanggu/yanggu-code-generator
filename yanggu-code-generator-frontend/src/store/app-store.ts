@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useDark, useEventListener, useFullscreen, useToggle } from '@vueuse/core'
+import { useDark, useEventListener, useToggle } from '@vueuse/core'
 import { LayOutSize } from '@/types'
 
 export const useAppStore = defineStore('app', () => {
@@ -33,8 +33,11 @@ export const useAppStore = defineStore('app', () => {
 		isCollapse.value = !isCollapse.value
 	}
 
-	// 全屏切换
-	const { toggle: toolFullscreen } = useFullscreen(layoutMainRef)
+	// 内容区最大化（CSS 方式，不影响 Fullscreen API，避免 teleport 弹出层被遮挡）
+	const isFullscreen = ref(false)
+	const toolFullscreen = () => {
+		isFullscreen.value = !isFullscreen.value
+	}
 
 	// 设置布局大小
 	const setLayoutSize = (size: LayOutSize) => {
@@ -51,6 +54,7 @@ export const useAppStore = defineStore('app', () => {
 		layoutMainRef,
 		layoutScrollbarRef,
 		currentFullscreenElement,
+		isFullscreen,
 		isDark,
 		toggleCollapse,
 		toolFullscreen,
@@ -58,4 +62,3 @@ export const useAppStore = defineStore('app', () => {
 		toggleDark
 	}
 })
-// appStore 不需要持久化（DOM 引用和 loading 不应持久化）

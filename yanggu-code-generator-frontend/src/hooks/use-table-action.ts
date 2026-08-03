@@ -359,7 +359,9 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 						state.deleteLoading = false
 					})
 			})
-			.catch(() => {})
+			.catch(() => {
+				ElMessage.info('删除已取消')
+			})
 	}
 
 	// 表格序号列计算

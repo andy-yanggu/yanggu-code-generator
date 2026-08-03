@@ -39,10 +39,8 @@
 			<!-- 表格工具栏 -->
 			<template #header>
 				<table-tool-bar
-					v-if="tableCardRef"
 					v-model:show-search="queryShow"
 					v-model:query-loading="state.dataListLoading"
-					:table-card-ref="tableCardRef"
 					@get-data-list="getDataList()"
 				>
 					<template #left>
