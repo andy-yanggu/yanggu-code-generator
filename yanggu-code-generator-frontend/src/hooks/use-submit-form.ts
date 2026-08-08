@@ -31,11 +31,6 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 	// 合并默认值：用默认值填充 options 中缺失的属性，不覆盖已有属性
 	defaultsDeep(options, defaultFormOptions())
 
-	// 表单字段进行初始化
-	if (!options.dataForm) {
-		Object.assign(options.dataForm, options.initFormData())
-	}
-
 	const titleMap: Record<string, string> = {
 		add: '新增',
 		update: '修改',

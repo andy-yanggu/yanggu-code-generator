@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { SubmitOptions } from '@/types'
+import { defaultsDeep } from '@/utils/tool'
 
 // 提交处理
 export const useSubmitHandler = (options: SubmitOptions) => {
@@ -15,7 +16,7 @@ export const useSubmitHandler = (options: SubmitOptions) => {
 	}
 
 	// 合并默认值
-	Object.assign(defaultOptions, Object.fromEntries(Object.entries(defaultOptions).filter(([key]) => !Object.hasOwn(options, key))))
+	defaultsDeep(options, defaultOptions)
 
 	// 提交方法
 	const submitHandle = async (dataForm?: any) => {

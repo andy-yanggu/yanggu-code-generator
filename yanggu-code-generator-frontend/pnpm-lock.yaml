@@ -21,8 +21,8 @@ importers:
         specifier: 2.3.1
         version: 2.3.1(vue@3.5.33(typescript@5.4.2))
       '@vueuse/core':
-        specifier: ^9.1.1
-        version: 9.13.0(vue@3.5.33(typescript@5.4.2))
+        specifier: ^14.4.0
+        version: 14.4.0(vue@3.5.33(typescript@5.4.2))
       axios:
         specifier: 1.15.0
         version: 1.15.0
@@ -134,7 +134,7 @@ importers:
         version: 5.4.2
       unplugin-auto-import:
         specifier: ^21.0.0
-        version: 21.0.0(@vueuse/core@9.13.0(vue@3.5.33(typescript@5.4.2)))
+        version: 21.0.0(@vueuse/core@14.4.0(vue@3.5.33(typescript@5.4.2)))
       unplugin-vue-components:
         specifier: ^32.1.0
         version: 32.1.0(esbuild@0.25.12)(rollup@4.60.2)(vite@7.1.11(@types/node@20.11.28)(sass@1.72.0))(vue@3.5.33(typescript@5.4.2))
@@ -679,6 +679,9 @@ packages:
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
 
+  '@types/web-bluetooth@0.0.21':
+    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
   '@typescript-eslint/eslint-plugin@8.59.0':
     resolution: {integrity: sha512-HyAZtpdkgZwpq8Sz3FSUvCR4c+ScbuWa9AksK2Jweub7w4M3yTz4O11AqVJzLYjy/B9ZWPyc81I+mOdJU/bDQw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -821,11 +824,24 @@ packages:
   '@vue/tsconfig@0.5.1':
     resolution: {integrity: sha512-VcZK7MvpjuTPx2w6blwnwZAu5/LgBUtejFOi3pPGQFXQN5Ela03FUtd2Qtg4yWGGissVL0dr6Ro1LfOFh+PCuQ==}
 
+  '@vueuse/core@14.4.0':
+    resolution: {integrity: sha512-X4WHz1HlCzCBoYXesUkifzzWBAcZgXG8Fi5iNPQg/epdzOB3gu8Fawj3hvuwYR1nGcXGnvxwYYcUC/71++svtQ==}
+    peerDependencies:
+      vue: ^3.5.0
+
   '@vueuse/core@9.13.0':
     resolution: {integrity: sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==}
 
+  '@vueuse/metadata@14.4.0':
+    resolution: {integrity: sha512-swx/255R6JyHZFJhx845iz5CRWDZdCfvkZOpACWc5+c5WHcG24mv8gUT1WIdFQaHt6dq79rvILd9QnCWiyVm9g==}
+
   '@vueuse/metadata@9.13.0':
     resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==}
+
+  '@vueuse/shared@14.4.0':
+    resolution: {integrity: sha512-JRgY90Sz8DDtPMsaDflvPMp9xYk69JZAmbuDvAquUVXKr2gEjqtzGNTTthLfckH0BzBqvnu31gb4a8TGLRe79g==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@vueuse/shared@9.13.0':
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
@@ -3358,6 +3374,8 @@ snapshots:
 
   '@types/web-bluetooth@0.0.16': {}
 
+  '@types/web-bluetooth@0.0.21': {}
+
   '@typescript-eslint/eslint-plugin@8.59.0(@typescript-eslint/parser@8.59.0(eslint@9.26.0)(typescript@5.4.2))(eslint@9.26.0)(typescript@5.4.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
@@ -3587,6 +3605,13 @@ snapshots:
 
   '@vue/tsconfig@0.5.1': {}
 
+  '@vueuse/core@14.4.0(vue@3.5.33(typescript@5.4.2))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 14.4.0
+      '@vueuse/shared': 14.4.0(vue@3.5.33(typescript@5.4.2))
+      vue: 3.5.33(typescript@5.4.2)
+
   '@vueuse/core@9.13.0(vue@3.5.33(typescript@5.4.2))':
     dependencies:
       '@types/web-bluetooth': 0.0.16
@@ -3597,7 +3622,13 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  '@vueuse/metadata@14.4.0': {}
+
   '@vueuse/metadata@9.13.0': {}
+
+  '@vueuse/shared@14.4.0(vue@3.5.33(typescript@5.4.2))':
+    dependencies:
+      vue: 3.5.33(typescript@5.4.2)
 
   '@vueuse/shared@9.13.0(vue@3.5.33(typescript@5.4.2))':
     dependencies:
@@ -5748,7 +5779,7 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unplugin-auto-import@21.0.0(@vueuse/core@9.13.0(vue@3.5.33(typescript@5.4.2))):
+  unplugin-auto-import@21.0.0(@vueuse/core@14.4.0(vue@3.5.33(typescript@5.4.2))):
     dependencies:
       local-pkg: 1.2.1
       magic-string: 0.30.21
@@ -5757,7 +5788,7 @@ snapshots:
       unplugin: 2.3.11
       unplugin-utils: 0.3.2
     optionalDependencies:
-      '@vueuse/core': 9.13.0(vue@3.5.33(typescript@5.4.2))
+      '@vueuse/core': 14.4.0(vue@3.5.33(typescript@5.4.2))
 
   unplugin-utils@0.3.2:
     dependencies:

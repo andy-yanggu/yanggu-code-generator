@@ -47,7 +47,10 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 				ElMessage.success(getSuccessMessage(confirmValue, confirmFieldText, oldText, newText))
 				afterSuccess?.()
 			})
-			.catch(() => {
+			.catch(error => {
+				if (error === 'cancel') {
+					ElMessage.info('已取消修改')
+				}
 				// 用户取消 or 接口失败 → 回滚
 				row[switchField] = oldValue
 			})

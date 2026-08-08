@@ -1,14 +1,13 @@
 import { App, Component, Plugin } from 'vue'
-import { useClipboard, useTitle } from '@vueuse/core'
+import { createGlobalState, useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import { isEmpty, isNil, isString } from 'lodash-es'
 import { scalar } from '@/types'
 import { env } from '@/config'
 
-const { copy, isSupported } = useClipboard()
-
 // 复制到剪切板
 export const copyToClipboard = (text: string): Promise<void> => {
+	const { copy, isSupported } = useClipboard()
 	return new Promise((resolve, reject) => {
 		if (isSupported) {
 			copy(text)
@@ -18,7 +17,7 @@ export const copyToClipboard = (text: string): Promise<void> => {
 				.catch(err => {
 					console.error('复制失败:', err)
 					ElMessage.error('复制失败')
-					reject()
+					reject(new Error('复制失败'))
 				})
 		} else {
 			// ⚙️ 降级处理：使用 document.execCommand('copy')
@@ -51,21 +50,28 @@ export const copyToClipboard = (text: string): Promise<void> => {
 	})
 }
 
-// 浏览器tab的标题
-const title = useTitle()
+// 全局标题（懒初始化，避免模块顶层调用 composable）
+const useTitleState = createGlobalState(() => useTitle())
+let titleRef: ReturnType<typeof useTitle> | null = null
+
+const getTitleRef = () => {
+	if (!titleRef) {
+		titleRef = useTitleState()
+	}
+	return titleRef
+}
 
 // 默认标题
 const originalTitle = env.appTitle
-title.value = originalTitle
 
 // 设置标题
 export const setTitle = (newTitle: string) => {
-	title.value = newTitle + ' - ' + originalTitle
+	getTitleRef().value = newTitle + ' - ' + originalTitle
 }
 
 // 设置原始标题
 export const setDefaultTitle = () => {
-	title.value = originalTitle
+	getTitleRef().value = originalTitle
 }
 
 // 导出相关函数
