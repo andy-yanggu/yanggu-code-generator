@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { EditorView } from '@codemirror/view'

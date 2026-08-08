@@ -1,5 +1,4 @@
 import { useCacheStore, useSystemSettingStore } from '@/store'
-import { useRoute, useRouter } from 'vue-router'
 
 // 刷新当前页面
 export const usePageRefresher = () => {

@@ -128,9 +128,7 @@
 
 <script setup lang="ts">
 import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
-import { ref, watch } from 'vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
-import { useRoute } from 'vue-router'
 import { useCacheStore, useSystemSettingStore, useTagStore, useUserStore } from '@/store'
 import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'

@@ -35,9 +35,7 @@
 import { useUserStore } from '@/store'
 import { authApi } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
 import { ArrowDown, Avatar, SwitchButton, User } from '@element-plus/icons-vue'
-import { ref } from 'vue'
 
 defineOptions({
 	name: 'UserDropdown'

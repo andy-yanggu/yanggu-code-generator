@@ -28,8 +28,6 @@ import LayoutSidebar from '@/layout/sidebar/index.vue'
 import LayoutNavbar from '@/layout/navbar/index.vue'
 import LayoutMain from '@/layout/main/index.vue'
 import { useAppStore, useSystemSettingStore } from '@/store'
-import { computed, onMounted, onUnmounted } from 'vue'
-import { storeToRefs } from 'pinia'
 
 import SvgIcon from '@/components/svg-icon/index.vue'
 

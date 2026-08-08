@@ -35,8 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { computed, nextTick, onUnmounted, reactive, ref, watch } from 'vue'
 import TagMenu from '@/layout/navbar/components/tag-menu.vue'
 import Sortable from 'sortablejs'
 import { usePageRefresher } from '@/hooks'
@@ -44,7 +42,6 @@ import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { ElMessage, TabPaneName, TabsPaneContext } from 'element-plus'
-import { useDebounceFn, useEventListener } from '@vueuse/core'
 import { isEmpty, isNotBlank } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
 

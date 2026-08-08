@@ -1,5 +1,4 @@
-import { nextTick, onMounted, Ref, ref, watch } from 'vue'
-import { useResizeObserver } from '@vueuse/core'
+import type { Ref } from 'vue'
 
 /**
  * 文本溢出检测hook

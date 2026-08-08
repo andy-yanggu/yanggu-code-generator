@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import NProgress from 'nprogress'
 import { useAppStore, useSystemSettingStore } from '@/store'
 

@@ -24,7 +24,6 @@
 
 <script setup lang="ts">
 import { Refresh, Search } from '@element-plus/icons-vue'
-import { useToggle } from '@vueuse/core'
 
 defineOptions({
 	name: 'TableToolBar'

@@ -1,5 +1,4 @@
 import { App, Component, Plugin } from 'vue'
-import { createGlobalState, useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
 import { isEmpty, isNil, isString } from 'lodash-es'
 import { scalar } from '@/types'

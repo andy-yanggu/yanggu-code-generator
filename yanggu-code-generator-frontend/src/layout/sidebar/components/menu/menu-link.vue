@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
 import { useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
 

@@ -6,7 +6,6 @@
 </template>
 <script setup lang="ts">
 import { useAppStore, useSystemSettingStore } from '@/store'
-import { useRoute, useRouter } from 'vue-router'
 import { env } from '@/config'
 
 defineOptions({

@@ -165,7 +165,6 @@ import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { Result, SubmitOptions } from '@/types'
 import { useInitForm, useSubmitHandler } from '@/hooks'
-import { useTimeoutFn } from '@vueuse/core'
 import OptionLabel from '@/components/option/label/index.vue'
 import GenTemplateForm from '@/views/gen/template/form.vue'
 

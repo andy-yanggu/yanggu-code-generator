@@ -15,11 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
 import { authApi } from '@/api'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store'
-import { useRoute, useRouter } from 'vue-router'
 import { Lock, User } from '@element-plus/icons-vue'
 
 defineOptions({

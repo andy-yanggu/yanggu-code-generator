@@ -10,9 +10,7 @@
 	<el-result v-else-if="status === 'loading'" icon="primary" title="生成代码生成中" sub-title="请稍等"></el-result>
 </template>
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
 import { genGeneratorApi } from '@/api'
-import { useIntervalFn } from '@vueuse/core'
 
 const dialogVisible = defineModel('dialogVisible', {
 	type: Boolean,

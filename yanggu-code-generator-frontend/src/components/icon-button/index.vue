@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { type Component, computed, PropType, useSlots } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ElButton } from 'element-plus'
 import { isBlank } from '@/utils/tool'

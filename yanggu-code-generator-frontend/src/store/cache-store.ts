@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import { isEmpty } from '@/utils/tool'
 import { IframeInfo } from '@/types'
 

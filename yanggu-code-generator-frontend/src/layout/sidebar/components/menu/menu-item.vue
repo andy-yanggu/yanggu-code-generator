@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
 import { MenuInfo } from '@/types'

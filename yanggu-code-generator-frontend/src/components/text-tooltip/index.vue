@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, toRefs } from 'vue'
 import { useTextOverflow } from '@/hooks/use-text-overflow'
 
 defineOptions({

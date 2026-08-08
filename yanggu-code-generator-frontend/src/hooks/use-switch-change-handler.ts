@@ -1,5 +1,4 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref } from 'vue'
 import type { SwitchUpdateConfig } from '@/types'
 
 export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) => {

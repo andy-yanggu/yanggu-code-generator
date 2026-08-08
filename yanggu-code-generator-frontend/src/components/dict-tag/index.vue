@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
 import { getEnumByValue } from '@/utils/enum'
 import { EnumItem, EnumValueType } from '@/types'
 import { isNotBlank } from '@/utils/tool'

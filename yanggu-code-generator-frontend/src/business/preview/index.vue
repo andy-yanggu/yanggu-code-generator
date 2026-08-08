@@ -180,14 +180,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
 import { copyToClipboard, isNotEmpty } from '@/utils/tool'
-import { useDebounceFn, useFullscreen, useTimeoutFn } from '@vueuse/core'
 import SvgIcon from '@/components/svg-icon/index'
 import { useSubmitHandler } from '@/hooks'
 import { SubmitOptions } from '@/types'

@@ -3,8 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-
 defineOptions({
 	name: 'RouterRedirect'
 })

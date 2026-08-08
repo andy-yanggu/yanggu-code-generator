@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useSlots } from 'vue'
 import ToggleMore from '@/components/form/search-grid/toggle-more.vue'
 
 const props = defineProps({

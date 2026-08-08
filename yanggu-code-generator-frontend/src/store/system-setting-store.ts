@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-import { reactive, toRefs } from 'vue'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { MenuSetting, OtherSetting, TagBarSetting, ToolbarSetting } from '@/types'
 import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'

@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { useDark, useEventListener, useToggle } from '@vueuse/core'
 import { LayOutSize } from '@/types'
 
 export const useAppStore = defineStore('app', () => {

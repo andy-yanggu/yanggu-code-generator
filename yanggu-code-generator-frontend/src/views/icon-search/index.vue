@@ -17,12 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { ElMessage } from 'element-plus'
 import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
-import { useDebounceFn } from '@vueuse/core'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 
 defineOptions({

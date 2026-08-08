@@ -8,7 +8,6 @@
 </template>
 <script setup lang="ts">
 import IconButton from '@/components/icon-button/index.vue'
-import { useFullscreen } from '@vueuse/core'
 
 defineOptions({
 	name: 'FullScreen'

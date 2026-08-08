@@ -11,8 +11,6 @@
 
 <script setup lang="ts">
 import { useCacheStore } from '@/store'
-import { useRoute } from 'vue-router'
-import { watch } from 'vue'
 
 const cacheStore = useCacheStore()
 const route = useRoute()

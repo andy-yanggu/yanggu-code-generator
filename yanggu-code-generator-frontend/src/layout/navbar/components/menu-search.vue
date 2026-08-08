@@ -27,11 +27,8 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
-import { nextTick, reactive, ref } from 'vue'
 import { useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
-import { useRoute, useRouter } from 'vue-router'
-import { useDebounceFn } from '@vueuse/core'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
 import IconButton from '@/components/icon-button/index.vue'
 import { isEmpty } from '@/utils/tool'

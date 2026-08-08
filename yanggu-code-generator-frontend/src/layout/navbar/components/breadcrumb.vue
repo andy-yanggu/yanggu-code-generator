@@ -16,8 +16,6 @@
 <script setup lang="ts">
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { useSystemSettingStore } from '@/store'
-import { onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
 	name: 'Breadcrumb'

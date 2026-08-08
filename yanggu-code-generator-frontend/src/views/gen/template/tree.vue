@@ -248,15 +248,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, Ref, ref, watch } from 'vue'
 import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index'
 import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
-import { useEventListener, useFullscreen, useTimeoutFn } from '@vueuse/core'
-import { ElMessage } from 'element-plus/es'
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 import { useInitForm } from '@/hooks/use-init-form'

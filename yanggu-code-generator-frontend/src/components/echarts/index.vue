@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 const props = defineProps({

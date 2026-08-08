@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { NavbarTag } from '@/types'
 import { useSystemSettingStore } from '@/store'

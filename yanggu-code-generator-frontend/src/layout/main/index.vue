@@ -40,10 +40,7 @@
 
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
-import { useRoute } from 'vue-router'
 import { useAppStore, useCacheStore, useSystemSettingStore } from '@/store'
-import { watch } from 'vue'
-import { storeToRefs } from 'pinia'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
