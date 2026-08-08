@@ -413,13 +413,10 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		Object.keys(params).forEach(key => formData.append(key, params[key]))
 
 		// 调用导入接口
-		state.importApi!(formData)
-			.then(() => {
-				ElMessage.success(state.importSuccessMessage)
-			})
-			.then(() => {
-				getDataList()
-			})
+		state.importApi!(formData).then(() => {
+			ElMessage.success(state.importSuccessMessage)
+			getDataList()
+		})
 	}
 
 	// 生命周期函数

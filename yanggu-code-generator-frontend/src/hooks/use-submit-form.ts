@@ -84,13 +84,19 @@ export const useSubmitForm = <VO extends { id?: Key }>(options: FormOptions<VO>)
 
 			if (id) {
 				// 调用详情接口
-				options.detailApi(id).then(data => {
-					options.dataAssignBefore?.(data)
-					// 赋值给表单数据
-					Object.assign(options.dataForm, data)
-					// 初始化之后调用
-					options.initAfter?.()
-				})
+				options
+					.detailApi(id)
+					.then(data => {
+						options.dataAssignBefore?.(data)
+						// 赋值给表单数据
+						Object.assign(options.dataForm, data)
+						// 初始化之后调用
+						options.initAfter?.()
+					})
+					.catch(error => {
+						// 详情接口失败时的处理
+						options.detailError?.(error)
+					})
 			} else {
 				// 初始化之后调用
 				options.initAfter?.()

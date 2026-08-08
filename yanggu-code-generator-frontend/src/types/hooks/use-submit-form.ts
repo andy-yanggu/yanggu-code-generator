@@ -36,6 +36,8 @@ export interface FormOptions<VO> {
 	dataAssignBefore?: (data: VO) => void
 	// 初始化之后调用
 	initAfter?: () => void
+	// 详情接口失败时调用
+	detailError?: (error: any) => void
 	// 提交之前操作
 	submitBefore?: () => void
 	// 表单提交成功后调用
