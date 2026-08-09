@@ -26,10 +26,17 @@ export default defineConfig({
 		Components({
 			resolvers: [ElementPlusResolver({ importStyle: false })]
 		}),
-		// Vue/VueRouter/Pinia API 自动导入
+		// Vue/VueRouter/Pinia/ElementPlus API 自动导入
 		AutoImport({
-			imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
-			resolvers: [ElementPlusResolver({ importStyle: false })]
+			imports: [
+				'vue',
+				'vue-router',
+				'pinia',
+				'@vueuse/core',
+				{
+					'element-plus/es': ['ElMessage', 'ElMessageBox', 'ElNotification', 'ElMessageBox', 'ElLoading']
+				}
+			]
 		})
 	],
 	server: {

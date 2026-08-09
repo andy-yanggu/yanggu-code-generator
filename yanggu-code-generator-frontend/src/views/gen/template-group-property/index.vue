@@ -122,7 +122,6 @@ import { getLabel } from '@/utils/enum'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { useInitForm, useSwitchChangeHandler, useTableAction } from '@/hooks'
-import { ElMessage } from 'element-plus'
 import { genTemplateGroupPropertyApi } from '@/api'
 import { GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, IHooksOptions, SwitchUpdateConfig } from '@/types'
 

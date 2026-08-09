@@ -8,7 +8,7 @@
 		body-class="template-tree-drawer-body"
 		:before-close="handleClose"
 	>
-		<el-splitter clas="tree-splitter" style="height: 100%">
+		<el-splitter class="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
 				<el-affix :offset="20">
@@ -248,7 +248,7 @@
 </template>
 
 <script setup lang="ts">
-import { Action, ElLoading, ElMessageBox, TabsPaneContext } from 'element-plus'
+import { Action, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'

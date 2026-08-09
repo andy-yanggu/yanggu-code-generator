@@ -16,7 +16,6 @@
 
 <script setup lang="ts">
 import { authApi } from '@/api'
-import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store'
 import { Lock, User } from '@element-plus/icons-vue'
 
@@ -90,7 +89,7 @@ const loginHandle = () => {
 	.input-icon {
 		height: 39px;
 		width: 14px;
-		margin-left: 0px;
+		margin-left: 0;
 	}
 }
 </style>

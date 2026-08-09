@@ -16,7 +16,6 @@
 
 <script setup lang="ts">
 import { authApi } from '@/api'
-import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store'
 import { Lock, User } from '@element-plus/icons-vue'
 

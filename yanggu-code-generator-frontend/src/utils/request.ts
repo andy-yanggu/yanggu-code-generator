@@ -1,6 +1,5 @@
 import axios from 'axios'
 import qs from 'qs'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store'
 import { router } from '@/router'
 import { Result } from '@/types/api/common'

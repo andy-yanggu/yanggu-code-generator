@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElLoading, ElMessage, TabsPaneContext } from 'element-plus'
+import { TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'

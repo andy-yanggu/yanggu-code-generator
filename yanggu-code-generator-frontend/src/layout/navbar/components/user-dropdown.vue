@@ -34,7 +34,6 @@
 <script setup lang="ts">
 import { useUserStore } from '@/store'
 import { authApi } from '@/api'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown, Avatar, SwitchButton, User } from '@element-plus/icons-vue'
 
 defineOptions({

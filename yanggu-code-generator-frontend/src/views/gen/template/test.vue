@@ -157,7 +157,7 @@
 
 <script setup lang="ts">
 import CodeMirror from '@/business/code-mirror/index.vue'
-import { Action, ElLoading, ElMessage, ElMessageBox, ElTreeSelect } from 'element-plus'
+import { Action } from 'element-plus'
 import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'

@@ -162,11 +162,9 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus/es'
 import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
 import { GenEnumEntity, GenTableEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
-import { ElLoading } from 'element-plus'
 import { useSubmitHandler } from '@/hooks'
 
 defineOptions({

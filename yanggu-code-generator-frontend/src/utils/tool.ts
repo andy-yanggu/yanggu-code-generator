@@ -1,7 +1,6 @@
 import { App, Component, Plugin } from 'vue'
-import { ElMessage } from 'element-plus/es'
 import { isEmpty, isNil, isString } from 'lodash-es'
-import { scalar } from '@/types'
+import { Scalar } from '@/types'
 import { env } from '@/config'
 
 // 复制到剪切板
@@ -88,7 +87,7 @@ export const isNotEmpty = <T>(value: T | null | undefined | [] | ''): value is T
  * isBlank，针对标量场景
  * number / boolean / Blob
  */
-export const isBlank = (value: scalar): boolean => {
+export const isBlank = (value: Scalar): boolean => {
 	if (isNil(value)) {
 		return true
 	}
@@ -99,7 +98,7 @@ export const isBlank = (value: scalar): boolean => {
 }
 
 // isNotBlank，针对标量场景
-export const isNotBlank = (value: scalar): boolean => {
+export const isNotBlank = (value: Scalar): boolean => {
 	return !isBlank(value)
 }
 

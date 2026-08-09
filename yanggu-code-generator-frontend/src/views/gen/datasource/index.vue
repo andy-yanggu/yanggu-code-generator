@@ -114,7 +114,6 @@
 <script setup lang="ts">
 import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
-import { ElMessage } from 'element-plus'
 import { genDatasourceApi } from '@/api'
 import { GenDatasourceEntity, GenDatasourceQuery, IHooksOptions } from '@/types'
 import { useInitForm, useTableAction } from '@/hooks'

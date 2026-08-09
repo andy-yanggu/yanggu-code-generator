@@ -41,7 +41,7 @@ import { usePageRefresher } from '@/hooks'
 import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '@/store'
 import { NavbarTag } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
-import { ElMessage, TabPaneName, TabsPaneContext } from 'element-plus'
+import { TabPaneName, TabsPaneContext } from 'element-plus'
 import { isEmpty, isNotBlank } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
 

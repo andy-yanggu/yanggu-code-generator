@@ -65,7 +65,6 @@
 
 <script setup lang="ts">
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { ElMessage } from 'element-plus'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { useSubmitHandler, useTableAction } from '@/hooks'
