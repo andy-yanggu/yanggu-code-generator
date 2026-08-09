@@ -101,7 +101,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'

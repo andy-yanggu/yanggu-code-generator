@@ -99,7 +99,6 @@
 
 <script setup lang="ts">
 import { useTableAction } from '@/hooks'
-import { reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'

@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { genDatasourceApi } from '@/api'
 import { FormOptions, GenDatasourceEntity } from '@/types'
 import { DB_TYPES } from '@/constant/enum'

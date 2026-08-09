@@ -58,7 +58,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Upload } from '@element-plus/icons-vue'

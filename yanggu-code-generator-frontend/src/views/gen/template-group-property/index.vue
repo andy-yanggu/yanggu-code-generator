@@ -116,7 +116,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
 import TemplateGroupPropertyForm from '@/views/gen/template-group-property/form.vue'
 import { Delete, Download, Edit, Plus, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'

@@ -117,7 +117,6 @@
 
 <script setup lang="ts">
 import { useInitForm, useTableAction } from '@/hooks'
-import { reactive } from 'vue'
 import BaseClassForm from '@/views/gen/base-class/form.vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import PopoverList from '@/components/popover/list/index.vue'

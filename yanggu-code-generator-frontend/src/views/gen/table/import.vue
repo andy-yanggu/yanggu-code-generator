@@ -52,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { Close, Refresh, Search, Upload } from '@element-plus/icons-vue'
 import OptionLabel from '@/components/option/label/index.vue'

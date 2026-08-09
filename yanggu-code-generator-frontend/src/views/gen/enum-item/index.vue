@@ -82,7 +82,6 @@
 
 <script setup lang="ts">
 import { useInitForm, useTableAction } from '@/hooks'
-import { reactive, ref } from 'vue'
 import EnumItemForm from '@/views/gen/enum-item/form.vue'
 import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'

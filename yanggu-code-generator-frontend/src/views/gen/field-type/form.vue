@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { genFieldTypeApi } from '@/api'
 import { FormOptions, GenFieldTypeEntity } from '@/types'
 import { ATTR_TYPES } from '@/constant/enum'

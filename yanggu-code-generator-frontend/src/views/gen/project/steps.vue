@@ -47,7 +47,6 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, reactive, ref } from 'vue'
 import TemplateIndex from '@/views/gen/project/template-index.vue'
 import TableIndex from '@/views/gen/project/table-index.vue'
 import EnumIndex from '@/views/gen/project/enum-index.vue'

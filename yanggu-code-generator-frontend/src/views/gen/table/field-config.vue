@@ -162,7 +162,6 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, shallowReactive } from 'vue'
 import { ElMessage } from 'element-plus/es'
 import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
 import { GenEnumEntity, GenTableEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'

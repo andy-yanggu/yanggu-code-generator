@@ -105,7 +105,6 @@
 
 <script setup lang="ts">
 import { useInitForm, useTableAction } from '@/hooks'
-import { reactive } from 'vue'
 import FieldTypeForm from '@/views/gen/field-type/form.vue'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'

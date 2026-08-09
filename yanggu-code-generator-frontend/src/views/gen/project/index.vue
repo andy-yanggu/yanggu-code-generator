@@ -136,7 +136,6 @@
 
 <script setup lang="ts">
 import { useTableAction } from '@/hooks'
-import { reactive, ref } from 'vue'
 import Preview from '@/business/preview/index.vue'
 import { genProjectApi } from '@/api'
 import { GenProjectEntity, GenProjectQuery, IHooksOptions } from '@/types'

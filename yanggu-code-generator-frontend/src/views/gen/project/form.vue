@@ -157,7 +157,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close, Delete, Plus } from '@element-plus/icons-vue'

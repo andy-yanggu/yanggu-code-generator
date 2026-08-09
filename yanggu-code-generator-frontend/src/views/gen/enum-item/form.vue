@@ -28,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { genEnumItemApi } from '@/api'
 import { FormOptions, GenEnumItemEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'

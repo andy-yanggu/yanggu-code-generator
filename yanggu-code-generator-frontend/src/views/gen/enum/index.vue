@@ -139,7 +139,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
 import EnumForm from '@/views/gen/enum/form.vue'
 import EnumItemIndex from '@/views/gen/enum-item/index.vue'
 import TemplateIndex from '@/views/gen/enum/template-index.vue'

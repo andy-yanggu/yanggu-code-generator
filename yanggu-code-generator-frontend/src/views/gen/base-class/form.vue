@@ -52,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
 import { genBaseClassApi } from '@/api'
 import { FormOptions, GenBaseClassEntity } from '@/types'
 import { useSubmitForm } from '@/hooks'

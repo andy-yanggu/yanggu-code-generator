@@ -31,7 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
 import BaseChart from '@/components/echarts/index.vue'
 import type { EChartsOption } from 'echarts/types/dist/shared.d.ts'
 

@@ -49,7 +49,6 @@
 
 <script setup lang="ts">
 import { useTableAction } from '@/hooks'
-import { reactive, ref } from 'vue'
 import { genTableApi } from '@/api'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { GenTableEntity, GenTableQuery, IHooksOptions } from '@/types'

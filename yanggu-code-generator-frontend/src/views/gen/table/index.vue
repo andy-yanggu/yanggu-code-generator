@@ -156,7 +156,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
 import Import from '@/views/gen/table/import.vue'
 import GenTableForm from '@/views/gen/table/form.vue'
 import Preview from '@/business/preview/index.vue'

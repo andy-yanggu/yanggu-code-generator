@@ -112,7 +112,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import GenDatasourceForm from '@/views/gen/datasource/form.vue'
 import { DB_TYPES } from '@/constant/enum'
 import { ElMessage } from 'element-plus'

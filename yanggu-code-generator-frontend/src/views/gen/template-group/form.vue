@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'

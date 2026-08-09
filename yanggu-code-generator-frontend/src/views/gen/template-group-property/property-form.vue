@@ -16,7 +16,6 @@
 	</template>
 </template>
 <script setup lang="ts">
-import { computed, PropType } from 'vue'
 import { ElCheckboxGroup, ElInput, ElInputNumber, ElRadioGroup, ElSelect, ElSwitch } from 'element-plus'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import { GenTemplateGroupPropertyEntity } from '@/types'

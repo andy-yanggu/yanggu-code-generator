@@ -152,7 +152,6 @@
 
 <script setup lang="ts">
 import { getLabel } from '@/utils/enum'
-import { nextTick, reactive, ref } from 'vue'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import TemplateGroupForm from '@/views/gen/template-group/form.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
