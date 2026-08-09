@@ -12,8 +12,7 @@ export default defineConfig({
 	resolve: {
 		// 配置别名
 		alias: {
-			'@': resolve(__dirname, './src'),
-			'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
+			'@': resolve(__dirname, './src')
 		}
 	},
 	plugins: [
@@ -34,11 +33,25 @@ export default defineConfig({
 				'pinia',
 				'@vueuse/core',
 				{
-					'element-plus/es': ['ElMessage', 'ElMessageBox', 'ElNotification', 'ElMessageBox', 'ElLoading']
+					'element-plus/es': ['ElMessage', 'ElMessageBox', 'ElNotification', 'ElLoading']
 				}
 			]
 		})
 	],
+	build: {
+		rollupOptions: {
+			output: {
+				// 依赖与业务代码分离，大依赖独立 chunk 提升缓存命中率
+				manualChunks(id: string) {
+					if (id.includes('node_modules')) {
+						if (id.includes('element-plus')) return 'element-plus'
+						if (id.includes('echarts') || id.includes('zrender')) return 'echarts'
+						return 'vendor'
+					}
+				}
+			}
+		}
+	},
 	server: {
 		host: '0.0.0.0',
 		port: 5000, // 端口号

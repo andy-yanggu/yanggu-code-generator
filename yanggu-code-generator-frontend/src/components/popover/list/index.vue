@@ -33,7 +33,6 @@
 	</el-popover>
 </template>
 <script setup lang="ts">
-import { ElPopover } from 'element-plus'
 import { useAppStore } from '@/store'
 
 defineOptions({

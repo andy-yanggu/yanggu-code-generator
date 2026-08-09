@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { ElButton } from 'element-plus'
 import { isBlank } from '@/utils/tool'
 
 defineOptions({

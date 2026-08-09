@@ -13,4 +13,4 @@ export interface LabelData {
 }
 
 // 标量类型
-export type scalar = string | number | boolean | null | undefined
+export type Scalar = string | number | boolean | null | undefined

@@ -70,6 +70,8 @@ export const useUserStore = defineStore(
 
 		// 清空数据
 		const clearAll = () => {
+			isAddRoutes.value = false
+			activeMenuPath.value = ''
 			menuList.value = []
 			roleList.value = []
 			permissionList.value = []

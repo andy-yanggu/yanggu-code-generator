@@ -1,6 +1,6 @@
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { NavbarTag } from '@/types'
-import { useSystemSettingStore } from '@/store'
+import { useSystemSettingStore } from '@/store/system-setting-store'
 
 // 持久化配置
 const getPersistConfig = () => {
