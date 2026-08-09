@@ -14,7 +14,7 @@
 				<layout-main></layout-main>
 				<!-- 全屏退出按钮 -->
 				<div v-if="appStore.isFullscreen" class="layout-fullscreen-exit" @click="appStore.toolFullscreen()">
-					<el-tooltip content="退出全屏 (Esc)" placement="left">
+					<el-tooltip content="退出全屏 (ESC)" placement="left">
 						<svg-icon icon="icon-fullscreen-exit" size="18px"></svg-icon>
 					</el-tooltip>
 				</div>

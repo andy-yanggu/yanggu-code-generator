@@ -402,7 +402,7 @@ const openNewWindow = () => {
 // 窗口最大化
 const fullScreen = () => {
 	appStore.toolFullscreen()
-	ElMessage.primary('右上角点击退出全屏')
+	ElMessage.info('右上角点击退出全屏')
 }
 
 // 切换固定
