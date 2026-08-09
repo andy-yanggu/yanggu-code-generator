@@ -15,7 +15,7 @@ import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { EditorView } from '@codemirror/view'
 import { oneDarkTheme } from '@codemirror/theme-one-dark'
-import { useAppStore } from '@/store/app-store'
+import { useAppStore } from '@/store'
 
 defineOptions({
 	name: 'CodeMirror'
