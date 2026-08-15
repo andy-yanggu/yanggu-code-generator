@@ -107,6 +107,7 @@ export const useUserStore = defineStore(
 			menuList,
 			activeMenuPath,
 			permissionList,
+			roleList,
 			userInfo,
 			tokenInfo,
 			clearAll,

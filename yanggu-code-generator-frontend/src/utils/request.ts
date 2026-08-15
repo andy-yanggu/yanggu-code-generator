@@ -262,29 +262,30 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 
 /**
  * 下载大文件（通过 a 标签 + token 拼接）
+ *
+ * 注意：此函数仅触发浏览器下载动作，不等待下载完成。
+ * 如需感知下载完成，请使用 downloadFile（基于 XHR blob）。
+ *
  * @param url 请求地址
  * @param params 请求参数
  */
-export const downloadBigFile = (url: string, params?: Record<string, any>) => {
-	return new Promise<void>(resolve => {
-		const userStore = useUserStore()
-		const tokenName = userStore.tokenInfo.tokenName
-		const tokenValue = userStore.tokenInfo.accessToken
-		const requestParam = { ...(params ?? {}), [tokenName]: tokenValue }
+export const downloadBigFile = (url: string, params?: Record<string, any>): void => {
+	const userStore = useUserStore()
+	const tokenName = userStore.tokenInfo.tokenName
+	const tokenValue = userStore.tokenInfo.accessToken
+	const requestParam = { ...(params ?? {}), [tokenName]: tokenValue }
 
-		// 拼接完整 URL
-		const baseURL = env.apiUrl
-		const downloadUrl = `${baseURL}${url}?${qs.stringify(requestParam, { indices: false })}`
+	// 拼接完整 URL
+	const baseURL = env.apiUrl
+	const downloadUrl = `${baseURL}${url}?${qs.stringify(requestParam, { indices: false })}`
 
-		// 创建隐藏的 a 标签
-		const a = document.createElement('a')
-		a.href = downloadUrl
-		a.style.display = 'none'
-		document.body.appendChild(a)
-		a.click()
-		document.body.removeChild(a)
-		resolve()
-	})
+	// 创建隐藏的 a 标签触发下载
+	const a = document.createElement('a')
+	a.href = downloadUrl
+	a.style.display = 'none'
+	document.body.appendChild(a)
+	a.click()
+	document.body.removeChild(a)
 }
 
 /**
