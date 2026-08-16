@@ -15,7 +15,7 @@ const props = defineProps({
 	value: {
 		type: [String, Number, Boolean] as PropType<EnumValueType>,
 		default: null,
-		required: true
+		required: false
 	},
 	enumItemList: {
 		type: Array as PropType<EnumItem[]>,

@@ -103,7 +103,7 @@ const parseBlobError = async (response: any, config: any) => {
 
 		// 复用你现有的业务错误处理
 		return handleBusinessError(result, config)
-	} catch (_e) {
+	} catch {
 		if (!config.noErrorMessage) {
 			ElMessage.error('文件下载失败')
 		}
