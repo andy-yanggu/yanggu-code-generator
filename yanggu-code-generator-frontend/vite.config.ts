@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons-ng'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -12,13 +12,13 @@ export default defineConfig({
 	resolve: {
 		// 配置别名
 		alias: {
-			'@': resolve(__dirname, './src')
+			'@': resolve(import.meta.dirname, './src')
 		}
 	},
 	plugins: [
 		vue(),
 		createSvgIconsPlugin({
-			iconDirs: [resolve(__dirname, 'src/icons/svg')],
+			iconDirs: [resolve(import.meta.dirname, 'src/icons/svg')],
 			symbolId: 'icon-[dir]-[name]'
 		}),
 		// Element Plus 组件按需引入（样式已在 main.ts 全量导入，无需按需导入）
@@ -39,15 +39,15 @@ export default defineConfig({
 		})
 	],
 	build: {
-		rollupOptions: {
+		rolldownOptions: {
 			output: {
 				// 依赖与业务代码分离，大依赖独立 chunk 提升缓存命中率
-				manualChunks(id: string) {
-					if (id.includes('node_modules')) {
-						if (id.includes('element-plus')) return 'element-plus'
-						if (id.includes('echarts') || id.includes('zrender')) return 'echarts'
-						return 'vendor'
-					}
+				codeSplitting: {
+					groups: [
+						{ test: /node_modules[\\/]element-plus/, name: 'element-plus' },
+						{ test: /node_modules[\\/](echarts|zrender)/, name: 'echarts' },
+						{ test: /node_modules[\\/]/, name: 'vendor' }
+					]
 				}
 			}
 		}
