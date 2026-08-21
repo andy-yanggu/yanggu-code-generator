@@ -7,16 +7,21 @@
 
 		<!-- 右侧：通用工具 -->
 		<div class="table-tool-bar-right">
-			<el-space size="default">
+			<el-space size="small" :spacer="spacer">
 				<!-- 搜索 -->
-				<el-tooltip v-if="useSearch" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-					<el-button circle :icon="Search" @click="toggleSearch()"></el-button>
-				</el-tooltip>
+				<icon-button v-if="useSearch" size="16px" :el-icon="Search" :tooltip="showSearch ? '隐藏搜索' : '显示搜索'" @click="toggleSearch()">
+				</icon-button>
 
 				<!-- 刷新 -->
-				<el-tooltip v-if="useRefresh" content="刷新表格" placement="top">
-					<el-button circle :icon="Refresh" :loading-icon="Refresh" :loading="queryLoading" @click="emit('getDataList')"></el-button>
-				</el-tooltip>
+				<icon-button
+					v-if="useRefresh"
+					size="16px"
+					:el-icon="Refresh"
+					tooltip="刷新表格"
+					:loading="queryLoading"
+					:loading-icon="Refresh"
+					@click="emit('getDataList')">
+				</icon-button>
 			</el-space>
 		</div>
 	</div>
@@ -24,6 +29,8 @@
 
 <script setup lang="ts">
 import { Refresh, Search } from '@element-plus/icons-vue'
+import IconButton from '@/components/icon-button/index.vue'
+import { ElDivider } from 'element-plus'
 
 defineOptions({
 	name: 'TableToolBar'
@@ -50,6 +57,8 @@ defineProps({
 	}
 })
 
+const spacer = h(ElDivider, { direction: 'vertical' })
+
 const emit = defineEmits(['getDataList'])
 
 const toggleSearch = useToggle(showSearch)
@@ -65,5 +74,8 @@ const toggleSearch = useToggle(showSearch)
 .table-tool-bar-right {
 	display: flex;
 	align-items: center;
+}
+:deep(.el-divider--vertical) {
+	margin: 0 0;
 }
 </style>

@@ -23,6 +23,7 @@ export default defineConfig({
 		}),
 		// Element Plus 组件按需引入（样式已在 main.ts 全量导入，无需按需导入）
 		Components({
+			dirs: [],
 			resolvers: [ElementPlusResolver({ importStyle: false })]
 		}),
 		// Vue/VueRouter/Pinia/ElementPlus API 自动导入

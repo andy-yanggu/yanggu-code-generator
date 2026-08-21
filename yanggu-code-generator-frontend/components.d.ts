@@ -11,9 +11,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    DictTag: typeof import('./src/components/dict-tag/index.vue')['default']
-    Divider: typeof import('./src/components/form/divider/index.vue')['default']
-    Echarts: typeof import('./src/components/echarts/index.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -75,20 +72,8 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    IconButton: typeof import('./src/components/icon-button/index.vue')['default']
-    IconTextTooltip: typeof import('./src/components/icon-text-tooltip/index.vue')['default']
-    IframePage: typeof import('./src/components/router/iframe-page.vue')['default']
-    Label: typeof import('./src/components/option/label/index.vue')['default']
-    LabelTooltip: typeof import('./src/components/form/label-tooltip/index.vue')['default']
-    List: typeof import('./src/components/popover/list/index.vue')['default']
-    Redirect: typeof import('./src/components/router/redirect.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SearchGrid: typeof import('./src/components/form/search-grid/index.vue')['default']
-    SvgIcon: typeof import('./src/components/svg-icon/index.vue')['default']
-    TextTooltip: typeof import('./src/components/text-tooltip/index.vue')['default']
-    ToggleMore: typeof import('./src/components/form/search-grid/toggle-more.vue')['default']
-    ToolBar: typeof import('./src/components/table/tool-bar/index.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
