@@ -7,8 +7,7 @@
 			:disabled="formType === 'detail'"
 			label-width="110px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
-		>
+			@keyup.enter="submitHandle()">
 			<el-form-item label="路径" prop="templatePath">
 				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
 			</el-form-item>

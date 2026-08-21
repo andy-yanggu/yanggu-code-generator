@@ -3,8 +3,7 @@
 		:el-icon="appStore.isDark ? Moon : Sunny"
 		:tooltip="appStore.isDark ? '切换到日间模式' : '切换到夜间模式'"
 		size="18px"
-		@click="handleThemeToggle"
-	></icon-button>
+		@click="handleThemeToggle"></icon-button>
 </template>
 
 <script setup lang="ts">

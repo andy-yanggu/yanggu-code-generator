@@ -5,8 +5,7 @@
 			mode="vertical"
 			:unique-opened="systemSettingStore.menu.isOpenMenuUniqueOpened"
 			:collapse-transition="systemSettingStore.menu.isOpenMenuCollapseAnimation"
-			:collapse="appStore.isCollapse"
-		>
+			:collapse="appStore.isCollapse">
 			<menu-item v-for="menu in userStore.menuList" :key="menu.path" :menu="menu"></menu-item>
 		</el-menu>
 	</el-scrollbar>

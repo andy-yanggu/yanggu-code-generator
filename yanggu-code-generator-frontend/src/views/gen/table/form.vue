@@ -6,8 +6,7 @@
 			:rules="dataRules"
 			label-width="130px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
-		>
+			@keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
@@ -18,8 +17,7 @@
 							:props="{ label: 'projectName', value: 'id' }"
 							clearable
 							placeholder="请选择项目"
-							disabled
-						></el-select>
+							disabled></el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
@@ -29,8 +27,7 @@
 								v-for="item in projectList.find(temp => temp.id === state.dataForm.projectId)?.moduleList"
 								:key="item.moduleName"
 								:label="item.moduleName"
-								:value="item.moduleName"
-							>
+								:value="item.moduleName">
 								<option-label :label="item.moduleName" :desc="item.moduleDesc"></option-label>
 							</el-option>
 						</el-select>
@@ -122,8 +119,7 @@
 				<form-divider title="表模板组属性"></form-divider>
 				<template-group-property-form
 					v-model:form-data="state.dataForm.templateGroupPropertyData"
-					:property-list="tableTemplateGroupPropertyList"
-				></template-group-property-form>
+					:property-list="tableTemplateGroupPropertyList"></template-group-property-form>
 			</template>
 		</el-form>
 		<template #footer>

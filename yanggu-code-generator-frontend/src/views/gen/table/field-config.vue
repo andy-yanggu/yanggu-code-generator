@@ -46,8 +46,7 @@
 								:props="{ label: 'enumName', value: 'id' }"
 								filterable
 								placeholder="请选择枚举"
-								clearable
-							></el-select>
+								clearable></el-select>
 						</template>
 					</el-table-column>
 					<el-table-column prop="uniqueField" label="唯一性" width="110" header-align="center" align="center">

@@ -12,8 +12,7 @@
 						style="width: 150px"
 						filterable
 						clearable
-						placeholder="请选择生成方式"
-					></el-select>
+						placeholder="请选择生成方式"></el-select>
 				</el-form-item>
 				<el-form-item label="创建时间" prop="dateTimeRange" style="width: 340px">
 					<el-date-picker
@@ -23,8 +22,7 @@
 						range-separator="-"
 						start-placeholder="开始时间"
 						end-placeholder="结束时间"
-						:default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-					></el-date-picker>
+						:default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"></el-date-picker>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
@@ -38,11 +36,7 @@
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					@get-data-list="getDataList()"
-				>
+				<table-tool-bar v-model:show-search="queryShow" v-model:query-loading="state.dataListLoading" @get-data-list="getDataList()">
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
@@ -58,8 +52,7 @@
 				border
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
+				@sort-change="sortChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -71,16 +64,14 @@
 					label="生成方式"
 					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
 					header-align="center"
-					align="center"
-				></el-table-column>
+					align="center"></el-table-column>
 				<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="projectTemplateGroupName"
 					label="项目模板组"
 					show-overflow-tooltip
 					header-align="center"
-					align="center"
-				></el-table-column>
+					align="center"></el-table-column>
 				<el-table-column
 					prop="createTime"
 					label="创建时间"
@@ -88,8 +79,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 					<template #default="scope">
 						<el-row>
@@ -119,8 +109,7 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<project-form ref="formRef" @refresh-data-list="getDataList"></project-form>

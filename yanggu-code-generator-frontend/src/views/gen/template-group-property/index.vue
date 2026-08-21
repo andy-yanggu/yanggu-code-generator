@@ -40,8 +40,7 @@
 				row-key="id"
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
+				@sort-change="sortChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="propTitle" label="属性标题" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -54,8 +53,7 @@
 					header-align="center"
 					align="center"
 					:formatter="getLabel(COMPONENT_TYPES)"
-					min-width="70"
-				></el-table-column>
+					min-width="70"></el-table-column>
 				<el-table-column prop="required" label="是否必填" show-overflow-tooltip header-align="center" align="center">
 					<template #default="scope">
 						<el-switch
@@ -66,8 +64,7 @@
 							:active-text="activeText"
 							:inactive-text="inactiveText"
 							inline-prompt
-							@change="(val: number) => switchSubmitHandler(val, scope.row)"
-						></el-switch>
+							@change="(val: number) => switchSubmitHandler(val, scope.row)"></el-switch>
 					</template>
 				</el-table-column>
 				<el-table-column prop="propOrder" label="排序" header-align="center" align="center" sortable="custom" :min-width="100">
@@ -78,8 +75,7 @@
 							:min="0"
 							size="small"
 							@focus="scope.row._oldPropOrder = scope.row.propOrder"
-							@change="(currentValue: number, oldValue: number) => orderChangeHandle(currentValue, oldValue, scope.row)"
-						></el-input-number>
+							@change="(currentValue: number, oldValue: number) => orderChangeHandle(currentValue, oldValue, scope.row)"></el-input-number>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -88,8 +84,7 @@
 					show-overflow-tooltip
 					header-align="center"
 					align="center"
-					:formatter="getLabel(COLUMN_SPAN_TYPES)"
-				></el-table-column>
+					:formatter="getLabel(COLUMN_SPAN_TYPES)"></el-table-column>
 				<el-table-column prop="remark" label="备注" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
@@ -106,8 +101,7 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<template-group-property-form ref="formRef" @refresh-data-list="getDataList()"></template-group-property-form>

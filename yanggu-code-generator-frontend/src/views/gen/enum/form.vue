@@ -6,8 +6,7 @@
 			:rules="dataRules"
 			label-width="140px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
-		>
+			@keyup.enter="submitHandle()">
 			<form-divider v-if="isNotEmpty(enumTemplateGroupPropertyList)" title="基础属性"></form-divider>
 			<el-form-item label="项目" prop="projectId">
 				<el-select v-model="state.dataForm.projectId" clearable :disabled="isNotBlank(state.dataForm.id)" placeholder="请选择项目">
@@ -31,8 +30,7 @@
 				<template-group-property-form
 					:key="state.dataForm.projectId"
 					v-model:form-data="state.dataForm.templateGroupPropertyData"
-					:property-list="enumTemplateGroupPropertyList"
-				></template-group-property-form>
+					:property-list="enumTemplateGroupPropertyList"></template-group-property-form>
 			</template>
 		</el-form>
 		<template #footer>

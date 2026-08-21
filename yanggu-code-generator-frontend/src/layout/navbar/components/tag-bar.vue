@@ -5,8 +5,7 @@
 			v-for="tag in tagStore.tagList"
 			:key="tag.fullPath"
 			:name="tag.fullPath"
-			:closable="!tag.pinned && (tag.fullPath != defaultMenu || tagStore.tagLength > 1)"
-		>
+			:closable="!tag.pinned && (tag.fullPath != defaultMenu || tagStore.tagLength > 1)">
 			<template #label>
 				<icon-text-tooltip :enable-icon="systemSettingStore.tag.isOpenTagIcon" :icon="tag.icon" :title="tag.title"></icon-text-tooltip>
 				<!-- 固定标签显示 pin icon -->
@@ -29,8 +28,7 @@
 			@close-all-tags="closeAllTags()"
 			@open-new-window="openNewWindow()"
 			@full-screen="fullScreen()"
-			@toggle-pin="togglePin(currentMenuTag)"
-		></tag-menu>
+			@toggle-pin="togglePin(currentMenuTag)"></tag-menu>
 	</div>
 </template>
 

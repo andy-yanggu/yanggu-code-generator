@@ -6,8 +6,7 @@
 			:disabled="formType === 'detail'"
 			:rules="dataRules"
 			label-width="130px"
-			:validate-on-rule-change="false"
-		>
+			:validate-on-rule-change="false">
 			<el-form-item prop="baseClassName">
 				<template #label>
 					<form-label-tooltip label="基类名称" tooltip="基类名称具有唯一性，不能重复"></form-label-tooltip>
@@ -36,8 +35,7 @@
 					:max-collapse-tags="5"
 					draggable
 					clearable
-					placeholder="请输入基类字段"
-				></el-input-tag>
+					placeholder="请输入基类字段"></el-input-tag>
 			</el-form-item>
 			<el-form-item label="备注" prop="remark">
 				<el-input v-model="state.dataForm.remark" clearable placeholder="请输入备注"></el-input>

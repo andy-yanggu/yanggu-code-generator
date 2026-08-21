@@ -16,8 +16,7 @@
 							style="width: 160px"
 							filterable
 							clearable
-							placeholder="请选择模板组类型"
-						></el-select>
+							placeholder="请选择模板组类型"></el-select>
 					</el-form-item>
 				</template>
 				<template #item-2>
@@ -35,8 +34,7 @@
 							style="width: 150px"
 							filterable
 							clearable
-							placeholder="请选择模板类型"
-						></el-select>
+							placeholder="请选择模板类型"></el-select>
 					</el-form-item>
 				</template>
 
@@ -60,8 +58,7 @@
 			:data="state.dataList"
 			border
 			max-height="60vh"
-			@selection-change="selectionChangeHandle"
-		>
+			@selection-change="selectionChangeHandle">
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="templateGroupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
@@ -71,16 +68,14 @@
 				show-overflow-tooltip
 				header-align="center"
 				align="center"
-				:formatter="getLabel(TEMPLATE_GROUP_TYPES)"
-			></el-table-column>
+				:formatter="getLabel(TEMPLATE_GROUP_TYPES)"></el-table-column>
 			<el-table-column prop="fileName" label="目录/文件名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column
 				prop="templateType"
 				label="模板类型"
 				header-align="center"
 				align="center"
-				:formatter="getLabel(TEMPLATE_TYPES)"
-			></el-table-column>
+				:formatter="getLabel(TEMPLATE_TYPES)"></el-table-column>
 			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 		</el-table>
@@ -92,8 +87,7 @@
 			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
-			@current-change="currentChangeHandle"
-		></el-pagination>
+			@current-change="currentChangeHandle"></el-pagination>
 	</el-card>
 </template>
 

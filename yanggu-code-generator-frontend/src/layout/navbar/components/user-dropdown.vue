@@ -4,8 +4,7 @@
 			(val: boolean) => {
 				visible = val
 			}
-		"
-	>
+		">
 		<div class="user-dropdown">
 			<template v-if="userStore.userInfo.avatar">
 				<el-avatar :src="userStore.userInfo.avatar" class="user-avatar"></el-avatar>

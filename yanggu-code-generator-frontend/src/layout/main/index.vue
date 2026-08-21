@@ -10,8 +10,7 @@
 							<component
 								:is="Component"
 								v-if="route.meta.type === 1 || (route.meta.type === 3 && !route.meta.cache)"
-								:key="route.fullPath"
-							></component>
+								:key="route.fullPath"></component>
 						</keep-alive>
 					</transition>
 				</router-view>

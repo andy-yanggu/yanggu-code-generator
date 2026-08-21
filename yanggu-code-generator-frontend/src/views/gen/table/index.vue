@@ -27,11 +27,7 @@
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					@get-data-list="getDataList()"
-				>
+				<table-tool-bar v-model:show-search="queryShow" v-model:query-loading="state.dataListLoading" @get-data-list="getDataList()">
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
@@ -48,8 +44,7 @@
 				border
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
+				@sort-change="sortChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -59,8 +54,7 @@
 					show-overflow-tooltip
 					header-align="center"
 					align="center"
-					width="100"
-				></el-table-column>
+					width="100"></el-table-column>
 				<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="generatorType"
@@ -68,8 +62,7 @@
 					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
 					header-align="center"
 					align="center"
-					width="100"
-				></el-table-column>
+					width="100"></el-table-column>
 				<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="fieldCount" label="字段数量" header-align="center" align="center" width="100">
 					<template #default="scope">
@@ -85,8 +78,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column
 					prop="updateTime"
 					label="修改时间"
@@ -94,8 +86,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 					<template #default="scope">
 						<el-row>
@@ -134,8 +125,7 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<gen-table-form ref="formRef" @refresh-data-list="getDataList"></gen-table-form>

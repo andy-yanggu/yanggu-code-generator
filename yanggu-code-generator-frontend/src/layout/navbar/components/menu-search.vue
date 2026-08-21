@@ -11,8 +11,7 @@
 				clearable
 				:prefix-icon="Search"
 				class="search-input"
-				@input="querySearch"
-			></el-input>
+				@input="querySearch"></el-input>
 
 			<!-- 树形结构展示 -->
 			<el-scrollbar ref="scrollbarRef" max-height="400px" class="search-results">

@@ -6,8 +6,7 @@
 				class="el-drawer__title"
 				style="font-size: 16px"
 				underline="never"
-				@click="formInitHandle({ type: 'detail', id: testData.templateId })"
-			>
+				@click="formInitHandle({ type: 'detail', id: testData.templateId })">
 				{{ `模板测试（${testData.templateName}）` }}
 			</el-link>
 			<el-tree-select
@@ -19,8 +18,7 @@
 				:props="{ label: 'fileName' }"
 				filterable
 				style="width: 300px"
-				placeholder="请选择模板"
-			>
+				placeholder="请选择模板">
 				<template #default="{ data }">
 					<text-tooltip :title="data.fileName" max-width="100%"> </text-tooltip>
 				</template>
@@ -38,8 +36,7 @@
 							:icon="Document"
 							size="small"
 							:disabled="isEmpty(testData.cascaderValue)"
-							@click="handleCascaderChange(testData.cascaderValue)"
-						>
+							@click="handleCascaderChange(testData.cascaderValue)">
 							渲染
 						</el-button>
 					</el-tooltip>
@@ -55,8 +52,7 @@
 						clearable
 						placeholder="请选择项目、表或者枚举"
 						style="width: 300px"
-						@change="handleCascaderChange"
-					>
+						@change="handleCascaderChange">
 						<template #default="{ data }">
 							<option-label :label="data.label" :desc="data.description"></option-label>
 						</template>
@@ -87,8 +83,7 @@
 										:icon="Document"
 										size="small"
 										:disabled="isEmpty(testData.cascaderValue)"
-										@click="handleCascaderChange(testData.cascaderValue)"
-									>
+										@click="handleCascaderChange(testData.cascaderValue)">
 										渲染
 									</el-button>
 									<el-button size="small" type="primary" :icon="Edit" :loading="loading" :disabled="!isEdit" @click="saveTemplateContent()">
@@ -102,8 +97,7 @@
 											type="primary"
 											:icon="copyCodeState.icon"
 											:disabled="!testData.renderedTemplateContent"
-											@click="copyTemplateContent()"
-										>
+											@click="copyTemplateContent()">
 											{{ copyCodeState.text }}
 										</el-button>
 									</el-tooltip>
@@ -114,8 +108,7 @@
 											:disabled="isEmpty(testData.cascaderValue)"
 											type="success"
 											:loading="submitLoading"
-											@click="generatorHandler()"
-										>
+											@click="generatorHandler()">
 											{{ generatorState.text }}
 										</el-button>
 									</el-tooltip>
@@ -150,8 +143,7 @@
 			:template-path="testData.fullFilePath"
 			:template-type="testData.templateType"
 			:parent-id="testData.parentId"
-			:template-group-id="testData.templateGroupId"
-		></gen-template-form>
+			:template-group-id="testData.templateGroupId"></gen-template-form>
 	</el-drawer>
 </template>
 

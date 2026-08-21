@@ -3,8 +3,7 @@
 		:svg-icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'"
 		:tooltip="isFullscreen ? '退出全屏' : '开启全屏'"
 		size="18px"
-		@click="toggle()"
-	></icon-button>
+		@click="toggle()"></icon-button>
 </template>
 <script setup lang="ts">
 import IconButton from '@/components/icon-button/index.vue'

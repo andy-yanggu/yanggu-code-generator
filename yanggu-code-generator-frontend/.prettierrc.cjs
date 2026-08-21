@@ -17,7 +17,7 @@ module.exports = {
 	// 在对象，数组括号与代码之间加空格 "{ foo: bar }"
 	bracketSpacing: true,
 	// 将多行 JSX 元素的 > 放置于最后一行的末尾，而非换行
-	jsxBracketSameLine: true,
+	bracketSameLine: true,
 	//(x) => {} 箭头函数参数只有一个时是否要有小括号，可选值"[always：(x) => x | avoid：x => x]
 	arrowParens: 'avoid',
 	// 使用默认的折行标准，可选值"[always|never|preserve]"

@@ -6,8 +6,7 @@
 		width="85%"
 		destroy-on-close
 		:close-on-click-modal="false"
-		@close="dialogVisible = false"
-	>
+		@close="dialogVisible = false">
 		<el-container>
 			<!-- 步骤条 -->
 			<el-header height="60px">
@@ -27,8 +26,7 @@
 					v-if="activeRef === 3"
 					ref="generateResultRef"
 					v-model:dialog-visible="dialogVisible"
-					v-model:finish="finish"
-				></generate-result>
+					v-model:finish="finish"></generate-result>
 			</el-main>
 		</el-container>
 		<!-- 操作按钮 -->

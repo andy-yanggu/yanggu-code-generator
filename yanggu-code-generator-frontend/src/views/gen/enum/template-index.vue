@@ -13,8 +13,7 @@
 							style="width: 160px"
 							filterable
 							clearable
-							placeholder="请选择模板类型"
-						></el-select>
+							placeholder="请选择模板类型"></el-select>
 					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
@@ -32,8 +31,7 @@
 					row-key="id"
 					border
 					max-height="60vh"
-					@selection-change="selectionChangeHandle"
-				>
+					@selection-change="selectionChangeHandle">
 					<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 					<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 					<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -43,8 +41,7 @@
 						label="模板类型"
 						header-align="center"
 						align="center"
-						:formatter="getLabel(TEMPLATE_TYPES)"
-					></el-table-column>
+						:formatter="getLabel(TEMPLATE_TYPES)"></el-table-column>
 					<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				</el-table>
 				<el-pagination
@@ -54,8 +51,7 @@
 					:total="state.total"
 					layout="total, sizes, prev, pager, next, jumper"
 					@size-change="sizeChangeHandle"
-					@current-change="currentChangeHandle"
-				></el-pagination>
+					@current-change="currentChangeHandle"></el-pagination>
 			</el-card>
 			<template #footer>
 				<div class="footer-buttons">

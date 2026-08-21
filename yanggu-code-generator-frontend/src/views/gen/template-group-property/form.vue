@@ -6,8 +6,7 @@
 			:rules="dataRules"
 			label-width="130px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
-		>
+			@keyup.enter="submitHandle()">
 			<el-row>
 				<el-col :span="12">
 					<el-form-item prop="propTitle">
@@ -40,8 +39,7 @@
 							:inactive-value="0"
 							inline-prompt
 							active-text="是"
-							inactive-text="否"
-						></el-switch>
+							inactive-text="否"></el-switch>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -68,8 +66,7 @@
 					v-for="(item, index) in state.dataForm.componentOptions"
 					:key="index"
 					:gutter="10"
-					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '18px' : '0' }"
-				>
+					:style="{ marginBottom: index < state.dataForm.componentOptions.length - 1 ? '18px' : '0' }">
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions[${index}].label`">
 							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 220px"></el-input>
@@ -86,8 +83,7 @@
 							type="primary"
 							:icon="Plus"
 							:disabled="switchOptionFull"
-							@click="() => state.dataForm.componentOptions.splice(index + 1, 0, emptyLabelData())"
-						></el-button>
+							@click="() => state.dataForm.componentOptions.splice(index + 1, 0, emptyLabelData())"></el-button>
 						<el-button circle type="danger" :icon="Delete" @click="() => state.dataForm.componentOptions.splice(index, 1)"></el-button>
 					</div>
 				</el-row>
@@ -142,7 +138,7 @@ const state = reactive({
 	// 初始化表单数据
 	initFormData,
 	dataForm: initFormData(),
-	dataAssignBefore: (data) => {
+	dataAssignBefore: data => {
 		// 将布尔类型的默认值转为字符串，避免 el-input 绑定 Boolean 报错
 		if (typeof data.propDefaultValue === 'boolean') {
 			data.propDefaultValue = data.propDefaultValue.toString()

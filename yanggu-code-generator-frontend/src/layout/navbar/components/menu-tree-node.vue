@@ -1,6 +1,6 @@
 <template>
 	<div class="tree-node" @click.stop="handleClick">
-		<span class="tree-prefix" v-html="getTreePrefix(level, !!node.children)"></span>
+		<span class="tree-prefix" :style="{ marginLeft: level * 16 + 'px' }">{{ hasChildren ? '├─' : '│' }}</span>
 		<icon-text-tooltip :icon="node.icon ?? ''" :title="node.title" :max-width="'300px'"></icon-text-tooltip>
 	</div>
 
@@ -35,11 +35,7 @@ const handleClick = (_: Event) => {
 		props.onSelect(props.node)
 	}
 }
-const getTreePrefix = (level: number, hasChildren: boolean): string => {
-	const indent = '&nbsp;&nbsp;'.repeat(level)
-	const prefix = hasChildren ? '├─' : '│&nbsp;&nbsp;'
-	return indent + prefix
-}
+const hasChildren = computed(() => !!(props.node.children && props.node.children.length))
 </script>
 <style scoped>
 /* 树节点样式 */
@@ -57,6 +53,7 @@ const getTreePrefix = (level: number, hasChildren: boolean): string => {
 .tree-prefix {
 	font-family: monospace;
 	white-space: pre;
+	flex-shrink: 0;
 }
 .tree-children {
 	margin-left: 16px;

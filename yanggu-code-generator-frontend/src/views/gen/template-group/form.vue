@@ -14,8 +14,7 @@
 					:disabled="isNotBlank(state.dataForm.id)"
 					clearable
 					filterable
-					placeholder="请选择模板组类型"
-				></el-select>
+					placeholder="请选择模板组类型"></el-select>
 			</el-form-item>
 			<el-form-item label="模板组描述" prop="groupDesc">
 				<el-input v-model="state.dataForm.groupDesc" clearable placeholder="请输入模板组描述"></el-input>

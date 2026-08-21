@@ -6,8 +6,7 @@
 			:rules="dataRules"
 			label-width="120px"
 			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()"
-		>
+			@keyup.enter="submitHandle()">
 			<form-divider title="基础信息"></form-divider>
 			<el-row>
 				<el-col :span="12">
@@ -69,8 +68,7 @@
 					v-for="(item, index) in state.dataForm.moduleList"
 					:key="index"
 					:gutter="10"
-					:style="{ marginBottom: index < state.dataForm.moduleList.length - 1 ? '18px' : '0' }"
-				>
+					:style="{ marginBottom: index < state.dataForm.moduleList.length - 1 ? '18px' : '0' }">
 					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].moduleName`">
 							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 180px"></el-input>
@@ -94,8 +92,7 @@
 								type="danger"
 								circle
 								:icon="Delete"
-								@click="() => state.dataForm.moduleList.splice(index, 1)"
-							></el-button>
+								@click="() => state.dataForm.moduleList.splice(index, 1)"></el-button>
 						</el-space>
 					</div>
 				</el-row>
@@ -131,8 +128,7 @@
 					:key="state.dataForm.projectTemplateGroupId"
 					v-model:form-data="state.dataForm.templateGroupPropertyData"
 					model-value-prop="templateGroupPropertyData"
-					:property-list="projectTemplateGroupPropertyList!"
-				></template-group-property-form>
+					:property-list="projectTemplateGroupPropertyList!"></template-group-property-form>
 			</template>
 
 			<form-divider title="其他配置"></form-divider>

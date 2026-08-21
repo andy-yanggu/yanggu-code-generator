@@ -5,8 +5,7 @@
 		:loading="appStore.globalLoading"
 		tooltip="刷新页面"
 		size="18px"
-		@click="refreshPage()"
-	></icon-button>
+		@click="refreshPage()"></icon-button>
 </template>
 
 <script setup lang="ts">

@@ -23,8 +23,7 @@
 			<div
 				v-if="!props.currentMenuTag.pinned && (props.currentMenuTag.fullPath !== defaultMenu || unpinnedLength > 1)"
 				class="icon-item"
-				@click="emits('closeCurrentTag')"
-			>
+				@click="emits('closeCurrentTag')">
 				<el-icon size="10"><CloseBold></CloseBold></el-icon>
 				<span>关闭当前</span>
 			</div>

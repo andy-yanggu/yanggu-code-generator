@@ -28,8 +28,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column
 					prop="updateTime"
 					label="修改时间"
@@ -37,8 +36,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 			</el-table>
 			<el-pagination
 				:current-page="state.pageNum"
@@ -47,8 +45,7 @@
 				:total="state.total"
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 		</el-card>
 	</el-dialog>
 </template>

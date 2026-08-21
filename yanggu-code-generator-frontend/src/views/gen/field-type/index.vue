@@ -12,8 +12,7 @@
 						style="width: 160px"
 						filterable
 						clearable
-						placeholder="请选择属性类型"
-					></el-select>
+						placeholder="请选择属性类型"></el-select>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
@@ -27,11 +26,7 @@
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					@get-data-list="getDataList()"
-				>
+				<table-tool-bar v-model:show-search="queryShow" v-model:query-loading="state.dataListLoading" @get-data-list="getDataList()">
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
@@ -48,8 +43,7 @@
 				row-key="id"
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
+				@sort-change="sortChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="columnType" label="字段类型" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -59,8 +53,7 @@
 					header-align="center"
 					show-overflow-tooltip
 					align="center"
-					:formatter="getLabel(ATTR_TYPES)"
-				></el-table-column>
+					:formatter="getLabel(ATTR_TYPES)"></el-table-column>
 				<el-table-column prop="packageName" label="包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="createTime"
@@ -69,8 +62,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column
 					prop="updateTime"
 					label="修改时间"
@@ -78,8 +70,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
@@ -95,8 +86,7 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 		</el-card>
 		<!-- 弹窗表单 -->
 		<field-type-form ref="formRef" @refresh-data-list="getDataList()"></field-type-form>

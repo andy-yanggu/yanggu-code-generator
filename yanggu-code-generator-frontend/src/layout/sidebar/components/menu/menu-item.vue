@@ -5,8 +5,7 @@
 		:id="`menu-${menuIndexPath.replace(/\//g, '-')}`"
 		ref="rootRef"
 		:key="'sub-menu-' + menuIndexPath"
-		:index="menuIndexPath"
-	>
+		:index="menuIndexPath">
 		<template #title>
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
 		</template>
@@ -21,8 +20,7 @@
 		:id="`menu-${menuIndexPath.replace(/\//g, '-')}`"
 		ref="rootRef"
 		:key="'menu-item-' + menuIndexPath"
-		:index="menuIndexPath"
-	>
+		:index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
 		<menu-link :menu="menu" :path="menuIndexPath">
 			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>

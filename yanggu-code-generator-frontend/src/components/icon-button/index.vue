@@ -10,8 +10,7 @@
 			:icon="elIcon"
 			:disabled="disabled"
 			v-bind="$attrs"
-			@click="handleClick"
-		></el-button>
+			@click="handleClick"></el-button>
 
 		<!-- 2️⃣ 有 slot / svg-icon：允许 span -->
 		<el-button v-else link class="icon-button" :class="className" :style="computedStyle" :disabled="disabled" v-bind="$attrs" @click="handleClick">

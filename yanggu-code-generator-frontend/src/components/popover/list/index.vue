@@ -15,8 +15,7 @@
 					}
 				}
 			]
-		}"
-	>
+		}">
 		<template #default>
 			<el-space :size="5" wrap spacer="、">
 				<template v-for="item in list" :key="item">

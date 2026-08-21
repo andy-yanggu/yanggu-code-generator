@@ -12,8 +12,7 @@
 						style="width: 170px"
 						placeholder="请选择模板组类型"
 						filterable
-						clearable
-					></el-select>
+						clearable></el-select>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
@@ -27,11 +26,7 @@
 		<el-card ref="tableCardRef" class="layout-table-card" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					@get-data-list="getDataList()"
-				>
+				<table-tool-bar v-model:show-search="queryShow" v-model:query-loading="state.dataListLoading" @get-data-list="getDataList()">
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
@@ -51,8 +46,7 @@
 				border
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
+				@sort-change="sortChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="groupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -61,8 +55,7 @@
 					label="模板组类型"
 					:formatter="getLabel(TEMPLATE_GROUP_TYPES)"
 					header-align="center"
-					align="center"
-				></el-table-column>
+					align="center"></el-table-column>
 				<el-table-column prop="groupDesc" label="模板组描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="groupPropertyCount" label="属性数量" show-overflow-tooltip header-align="center" align="center">
 					<template #default="scope">
@@ -78,8 +71,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column
 					prop="updateTime"
 					label="修改时间"
@@ -87,8 +79,7 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"
-				></el-table-column>
+					sortable="custom"></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
 					<template #default="scope">
 						<el-row :gutter="5">
@@ -127,8 +118,7 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
+				@current-change="currentChangeHandle"></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<template-group-form ref="formRef" @refresh-data-list="getDataList"></template-group-form>
@@ -138,15 +128,13 @@
 			ref="treeUpdateRef"
 			:template-group-id="currentTemplateGroup.id"
 			:template-group-name="currentTemplateGroup.groupName"
-			:template-group-type="currentTemplateGroup.type"
-		></template-tree>
+			:template-group-type="currentTemplateGroup.type"></template-tree>
 
 		<template-group-property
 			ref="propertyRef"
 			:template-group-id="currentTemplateGroup.id"
 			:template-group-name="currentTemplateGroup.groupName"
-			@refresh-data-list="getDataList"
-		></template-group-property>
+			@refresh-data-list="getDataList"></template-group-property>
 	</div>
 </template>
 

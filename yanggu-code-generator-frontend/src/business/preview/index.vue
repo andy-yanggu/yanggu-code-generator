@@ -5,8 +5,7 @@
 		:title="`代码预览（${templateTreeData.name}）`"
 		size="100%"
 		body-class="preview-drawer-body"
-		destroy-on-close
-	>
+		destroy-on-close>
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
@@ -19,8 +18,7 @@
 								size="small"
 								clearable
 								:prefix-icon="Search"
-								style="width: 100%; margin-left: 10px"
-							></el-input>
+								style="width: 100%; margin-left: 10px"></el-input>
 						</el-col>
 						<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
 							<el-tooltip content="重新渲染" placement="top">
@@ -36,8 +34,7 @@
 											templateTreeData.generatorType,
 											templateTreeData.generatorProductType
 										)
-									"
-								>
+									">
 									刷新
 								</el-button>
 							</el-tooltip>
@@ -56,8 +53,7 @@
 							class="custom-tree"
 							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"
-							@node-click="handleTreeNodeClick"
-						>
+							@node-click="handleTreeNodeClick">
 							<template #default="{ node, data }">
 								<div class="custom-tree-node">
 									<svg-icon :icon="getIcon(node, data)"></svg-icon>
@@ -80,8 +76,7 @@
 									<text-tooltip
 										:title="'路径：' + activeTabItem.filePath"
 										:tooltip-content="activeTabItem.filePath"
-										:max-width="'100%'"
-									></text-tooltip>
+										:max-width="'100%'"></text-tooltip>
 									<el-tooltip :disabled="copyIconState === Check" content="复制文件路径" placement="top">
 										<el-icon class="copy-icon" @click="copyPath(activeTabItem.filePath)">
 											<component :is="copyIconState"></component>
@@ -96,8 +91,7 @@
 										type="primary"
 										size="small"
 										:icon="copyCodeState.icon"
-										@click="handleCopy(activeTabItem.templateContent)"
-									>
+										@click="handleCopy(activeTabItem.templateContent)">
 										{{ copyCodeState.text }}
 									</el-button>
 								</el-tooltip>
@@ -107,8 +101,7 @@
 										size="small"
 										:loading="submitLoading"
 										:icon="generatorState.icon"
-										@click="downloadTemplateData(activeTabItem)"
-									>
+										@click="downloadTemplateData(activeTabItem)">
 										{{ generatorState.text }}
 									</el-button>
 								</el-tooltip>
@@ -126,15 +119,13 @@
 							tab-position="top"
 							type="card"
 							@tab-click="handleTabClick"
-							@tab-remove="handleTabRemove"
-						>
+							@tab-remove="handleTabRemove">
 							<el-tab-pane
 								v-for="tabItem in templateTreeData.tabList"
 								:key="tabItem.filePath"
 								:name="tabItem.filePath"
 								:label="tabItem.fileName"
-								closable
-							>
+								closable>
 								<template #label>
 									<icon-text-tooltip :title="tabItem.fileName" :icon="getIcon({ expanded: false }, tabItem)"></icon-text-tooltip>
 								</template>

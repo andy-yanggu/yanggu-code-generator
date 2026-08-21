@@ -23,8 +23,7 @@
 			:data="state.dataList"
 			border
 			max-height="60vh"
-			@selection-change="selectionChangeHandle"
-		>
+			@selection-change="selectionChangeHandle">
 			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
 			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 			<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -42,8 +41,7 @@
 			background
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="sizeChangeHandle"
-			@current-change="currentChangeHandle"
-		></el-pagination>
+			@current-change="currentChangeHandle"></el-pagination>
 	</el-card>
 </template>
 

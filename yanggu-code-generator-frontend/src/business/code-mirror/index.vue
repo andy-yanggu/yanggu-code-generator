@@ -6,8 +6,7 @@
 		:indent-with-tab="true"
 		:tab-size="2"
 		:extensions="extensions"
-		@ready="handleReady"
-	></Codemirror>
+		@ready="handleReady"></Codemirror>
 </template>
 
 <script setup lang="ts">

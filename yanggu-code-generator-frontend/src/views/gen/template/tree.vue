@@ -6,8 +6,7 @@
 		size="100%"
 		:modal="false"
 		body-class="template-tree-drawer-body"
-		:before-close="handleClose"
-	>
+		:before-close="handleClose">
 		<el-splitter class="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
@@ -20,8 +19,7 @@
 								size="small"
 								clearable
 								prefix-icon="Search"
-								style="width: 100%; margin-left: 10px"
-							></el-input>
+								style="width: 100%; margin-left: 10px"></el-input>
 						</el-col>
 						<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
 							<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
@@ -53,8 +51,7 @@
 							@node-contextmenu="handleNodeRightClick"
 							@node-drop="handleNodeDrop"
 							@node-expand="handleNodeExpand"
-							@node-collapse="handleNodeCollapse"
-						>
+							@node-collapse="handleNodeCollapse">
 							<template #default="{ node, data }">
 								<el-tooltip :content="data.templateDesc" placement="top" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
@@ -117,8 +114,7 @@
 					:parent-id="contextMenu.parentId"
 					:template-type="contextMenu.templateType"
 					:template-path="contextMenu.templatePath"
-					@refresh-data-list="initAfterHandler"
-				></template-form>
+					@refresh-data-list="initAfterHandler"></template-form>
 			</el-splitter-panel>
 			<!-- 右侧：模板编辑 -->
 			<el-splitter-panel>
@@ -126,8 +122,7 @@
 					v-if="templateTreeData.tabList.length > 0"
 					ref="templateContainerRef"
 					style="height: 100%"
-					:class="{ 'full-screen-mode': isFullscreen }"
-				>
+					:class="{ 'full-screen-mode': isFullscreen }">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
@@ -140,8 +135,7 @@
 									size="small"
 									type="warning"
 									:icon="DocumentChecked"
-									@click="testTemplateContent"
-								>
+									@click="testTemplateContent">
 									测试
 								</el-button>
 								<el-button
@@ -150,8 +144,7 @@
 									type="primary"
 									:icon="Edit"
 									:loading="submitLoading"
-									@click="saveTemplateContent"
-								>
+									@click="saveTemplateContent">
 									保存
 								</el-button>
 								<el-button size="small" @click="toggle()">
@@ -167,8 +160,7 @@
 							tab-position="top"
 							type="card"
 							@tab-click="handleTabClick"
-							@tab-remove="handleTabRemove"
-						>
+							@tab-remove="handleTabRemove">
 							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">

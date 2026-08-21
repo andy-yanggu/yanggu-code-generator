@@ -6,8 +6,7 @@
 					:enable-icon="systemSettingStore.toolbar.isOpenBreadcrumbIcon"
 					:icon="item.icon"
 					:title="item.title"
-					placement="bottom"
-				></icon-text-tooltip>
+					placement="bottom"></icon-text-tooltip>
 			</template>
 		</el-breadcrumb-item>
 	</el-breadcrumb>

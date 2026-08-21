@@ -9,8 +9,7 @@
 							:key="projectItem.id"
 							:label="projectItem.projectName"
 							:value="projectItem.id"
-							:disabled="isBlank(projectItem.datasourceId)"
-						>
+							:disabled="isBlank(projectItem.datasourceId)">
 							<option-label :label="projectItem.projectName" :desc="projectItem.projectDesc"></option-label>
 						</el-option>
 					</el-select>
@@ -33,8 +32,7 @@
 				border
 				style="width: 100%"
 				:max-height="450"
-				@selection-change="selectionChangeHandle"
-			>
+				@selection-change="selectionChangeHandle">
 				<el-table-column type="selection" header-align="center" align="center" width="60" :selectable="(row: any) => !row.exist"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="databaseName" label="数据库名称" header-align="center" align="center"></el-table-column>
