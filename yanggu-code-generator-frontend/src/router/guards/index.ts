@@ -22,12 +22,10 @@ export const routeGuard = (router: Router): void => {
 	registerUIAfterGuard(router)
 
 	// 注册默认首页跳转逻辑（嵌入到 beforeEach）
-	router.beforeEach((to, _from, next) => {
+	router.beforeEach(to => {
 		const redirectPath = handleDefaultRedirect(to)
 		if (redirectPath) {
-			next(redirectPath)
-			return
+			return redirectPath
 		}
-		next()
 	})
 }

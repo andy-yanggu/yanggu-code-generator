@@ -74,7 +74,7 @@ const handlePageCache = (routeMeta: RouteMetaData): void => {
  * 注册前置守卫（UI 相关）
  */
 export const registerUIBeforeGuard = (router: Router): void => {
-	router.beforeEach((to, _from, next) => {
+	router.beforeEach(to => {
 		const appStore = useAppStore()
 
 		// 设置全局加载状态
@@ -91,8 +91,6 @@ export const registerUIBeforeGuard = (router: Router): void => {
 
 		// 处理页面缓存
 		handlePageCache(routeMeta)
-
-		next()
 	})
 }
 

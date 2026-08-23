@@ -98,30 +98,24 @@ const handleDynamicRoutes = async (
  * 注册权限守卫
  */
 export const registerAuthGuard = (router: Router): void => {
-	router.beforeEach(async (to, _from, next) => {
+	router.beforeEach(async (to, _from) => {
 		const userStore = useUserStore()
 
 		// 1. 检查白名单
 		if (isInWhiteList(to.name)) {
-			next()
 			return
 		}
 
 		// 2. 登录校验
 		const authResult = handleAuthCheck(to, userStore)
 		if (authResult.shouldRedirect && authResult.redirectPath) {
-			next(authResult.redirectPath)
-			return
+			return authResult.redirectPath
 		}
 
 		// 3. 动态路由加载
 		const routeResult = await handleDynamicRoutes(to, router, userStore)
 		if (routeResult.shouldReplace) {
-			next({ ...to, replace: true })
-			return
+			return { ...to, replace: true }
 		}
-
-		// 4. 放行
-		next()
 	})
 }
