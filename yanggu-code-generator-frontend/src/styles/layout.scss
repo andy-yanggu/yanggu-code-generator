@@ -49,3 +49,24 @@
     }
   }
 }
+
+/* ==================== 表格卡片最大化 ==================== */
+.layout-table-card {
+  transition: all 0.3s ease;
+}
+
+.layout-table-card.is-maximized {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  margin: 0;
+  border-radius: 0;
+  overflow: auto;
+}
+
+.layout-table-card.is-maximized .el-table {
+  max-height: calc(100vh - 200px) !important;
+}

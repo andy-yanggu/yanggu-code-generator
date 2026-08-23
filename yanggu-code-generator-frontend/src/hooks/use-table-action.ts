@@ -9,6 +9,8 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 	const queryShow = ref(true)
 	// 表格卡片引用
 	const tableCardRef = ref()
+	// 表格卡片是否最大化
+	const tableCardMaximized = ref(false)
 	// 表格引用
 	const tableRef = ref()
 	// 勾选的表格数据
@@ -438,6 +440,7 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		queryRef,
 		queryShow,
 		tableCardRef,
+		tableCardMaximized,
 		tableRef,
 		resetQueryHandle,
 		tableIndex,
