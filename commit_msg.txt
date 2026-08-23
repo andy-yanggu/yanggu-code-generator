@@ -1,6 +1,0 @@
-feat: 添加表格卡片最大化功能
-
-- tool-bar 组件新增最大化/还原按钮，支持 ESC 快捷键退出
-- useTableAction hook 新增 tableCardMaximized 状态
-- layout.scss 添加最大化卡片全屏定位样式与过渡动画
-- 9个表格页面统一接入最大化状态绑定

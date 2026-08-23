@@ -36,7 +36,11 @@
 		<el-card ref="tableCardRef" class="layout-table-card" :class="{ 'is-maximized': tableCardMaximized }" shadow="hover">
 			<!-- 表格工具栏 -->
 			<template #header>
-				<table-tool-bar v-model:show-search="queryShow" v-model:query-loading="state.dataListLoading" v-model:maximized="tableCardMaximized" @get-data-list="getDataList()">
+				<table-tool-bar
+					v-model:show-search="queryShow"
+					v-model:query-loading="state.dataListLoading"
+					v-model:maximized="tableCardMaximized"
+					@get-data-list="getDataList()">
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>

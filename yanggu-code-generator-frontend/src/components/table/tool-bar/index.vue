@@ -9,11 +9,7 @@
 		<div class="table-tool-bar-right">
 			<el-space size="small" :spacer="spacer">
 				<!-- 搜索 -->
-				<icon-button
-					v-if="useSearch" size="16px"
-					:el-icon="Search"
-					:tooltip="showSearch ? '隐藏搜索' : '显示搜索'"
-					@click="toggleSearch()">
+				<icon-button v-if="useSearch" size="16px" :el-icon="Search" :tooltip="showSearch ? '隐藏搜索' : '显示搜索'" @click="toggleSearch()">
 				</icon-button>
 
 				<!-- 刷新 -->
@@ -31,16 +27,17 @@
 				<icon-button
 					v-if="useMaximize"
 					size="16px"
-					:el-icon="FullScreen"
-					:tooltip="maximized ? '还原表格' : '最大化表格'"
-					@click="handleToggleMaximized()"></icon-button>
+					:svg-icon="maximized ? 'icon-fullscreen-exit' : 'icon-fullscreen'"
+					:tooltip="maximized ? '退出全屏' : '表格全屏'"
+					@click="handleToggleMaximized()">
+				</icon-button>
 			</el-space>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { FullScreen, Refresh, Search } from '@element-plus/icons-vue'
+import { Refresh, Search } from '@element-plus/icons-vue'
 import IconButton from '@/components/icon-button/index.vue'
 import { ElDivider } from 'element-plus'
 
@@ -117,6 +114,14 @@ onKeyStroke('Escape', () => {
 .table-tool-bar-right {
 	display: flex;
 	align-items: center;
+}
+.table-tool-bar-right :deep(.icon-button) {
+	background-color: var(--el-fill-color);
+	border-radius: 6px;
+	padding: 6px;
+}
+.table-tool-bar-right :deep(.icon-button:not(.is-disabled):hover) {
+	background-color: var(--el-fill-color-dark);
 }
 :deep(.el-divider--vertical) {
 	margin: 0 0;
