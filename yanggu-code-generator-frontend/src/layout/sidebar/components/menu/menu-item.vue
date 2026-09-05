@@ -16,7 +16,7 @@
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
 	<el-menu-item
-		v-else-if="menu.meta.type != 2 && !menu.meta.hideMenu"
+		v-else-if="menu.meta.type != 2 && !effectiveHideMenu"
 		:id="`menu-${menuIndexPath.replace(/\//g, '-')}`"
 		ref="rootRef"
 		:key="'menu-item-' + menuIndexPath"
@@ -31,6 +31,7 @@
 <script setup lang="ts">
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
+import { useMenuPreferenceStore } from '@/store'
 import { MenuInfo } from '@/types'
 import { isNotEmpty } from '@/utils/tool'
 
@@ -48,6 +49,13 @@ const props = defineProps({
 		default: [] as string[]
 	}
 })
+
+const menuPreferenceStore = useMenuPreferenceStore()
+
+// 计算有效的 hideMenu（用户偏好 > 服务端默认）
+const effectiveHideMenu = computed(() =>
+	menuPreferenceStore.getEffectiveHideMenu(props.menu.path, props.menu.meta.hideMenu ?? false)
+)
 
 // 计算菜单项的完整路径索引
 const menuIndexPath = computed(() => {

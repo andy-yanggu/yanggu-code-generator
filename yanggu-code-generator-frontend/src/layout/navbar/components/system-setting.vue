@@ -106,6 +106,10 @@
 						label="载入进度条"
 						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"></setting-item>
 				</div>
+				<div>
+					<el-divider>菜单偏好</el-divider>
+					<menu-preference-section></menu-preference-section>
+				</div>
 			</div>
 		</el-scrollbar>
 		<template #footer>
@@ -122,6 +126,7 @@ import { useCacheStore, useSystemSettingStore, useTagStore, useUserStore } from 
 import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
+import MenuPreferenceSection from '@/layout/navbar/components/menu-preference-section.vue'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import IconButton from '@/components/icon-button/index.vue'
 

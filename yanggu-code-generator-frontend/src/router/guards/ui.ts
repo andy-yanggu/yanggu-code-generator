@@ -1,5 +1,5 @@
 import { RouteLocationNormalized, Router } from 'vue-router'
-import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '@/store'
+import { useAppStore, useCacheStore, useMenuPreferenceStore, useSystemSettingStore, useTagStore } from '@/store'
 import { setTitle } from '@/utils/tool'
 import { RouteMetaData } from '@/types'
 import NProgress from 'nprogress'
@@ -48,9 +48,13 @@ const handleProgressStart = (): void => {
 const handleTagAdd = (routeMeta: RouteMetaData): void => {
 	const tagStore = useTagStore()
 	const systemSettingStore = useSystemSettingStore()
+	const menuPreferenceStore = useMenuPreferenceStore()
+
+	// 使用用户偏好覆盖的 hideTab 值
+	const effectiveHideTab = menuPreferenceStore.getEffectiveHideTab(routeMeta.path, routeMeta.hideTab)
 
 	// 隐藏标签、新窗口、标签页功能未开启时，不添加标签
-	if (!routeMeta.hideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
+	if (!effectiveHideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
 		tagStore.addTag({
 			...routeMeta,
 			pinned: false
@@ -64,9 +68,13 @@ const handleTagAdd = (routeMeta: RouteMetaData): void => {
 const handlePageCache = (routeMeta: RouteMetaData): void => {
 	const cacheStore = useCacheStore()
 	const systemSettingStore = useSystemSettingStore()
+	const menuPreferenceStore = useMenuPreferenceStore()
+
+	// 使用用户偏好覆盖的 cache 值
+	const effectiveCache = menuPreferenceStore.getEffectiveCache(routeMeta.path, routeMeta.cache)
 
 	// 有名称、是菜单、需要缓存且页面缓存功能开启时，添加到缓存
-	if (routeMeta.cache && routeMeta.name && routeMeta.type === 1 && systemSettingStore.other.isOpenPageCache) {
+	if (effectiveCache && routeMeta.name && routeMeta.type === 1 && systemSettingStore.other.isOpenPageCache) {
 		cacheStore.addCacheComponent(routeMeta.name)
 	}
 }
