@@ -12,5 +12,7 @@ export const env = {
 	/** API 基础地址 */
 	apiUrl: import.meta.env.VITE_API_URL as string,
 	/** 应用标题 */
-	appTitle: import.meta.env.VITE_APP_TITLE as string
+	appTitle: import.meta.env.VITE_APP_TITLE as string,
+	/** 是否启用 Mock */
+	enableMock: import.meta.env.VITE_ENABLE_MOCK === 'true'
 } as const
