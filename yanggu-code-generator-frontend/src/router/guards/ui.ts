@@ -1,5 +1,5 @@
 import { RouteLocationNormalized, Router } from 'vue-router'
-import { useAppStore, useTagStore, useCacheStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useCacheStore, useSystemSettingStore, useTagStore } from '@/store'
 import { setTitle } from '@/utils/tool'
 import { RouteMetaData } from '@/types'
 import NProgress from 'nprogress'
@@ -26,7 +26,8 @@ const extractRouteMetaData = (to: RouteLocationNormalized): RouteMetaData => {
 		icon: (to.meta?.icon as string) || '',
 		cache: (to.meta?.cache as boolean) || false,
 		type: (to.meta?.type as number) || 0,
-		hidden: (to.meta?.hidden as boolean) || false,
+		hideMenu: (to.meta?.hideMenu as boolean) || false,
+		hideTab: (to.meta?.hideTab as boolean) || false,
 		externalUrl: (to.meta?.externalUrl as string) || ''
 	}
 }
@@ -48,8 +49,8 @@ const handleTagAdd = (routeMeta: RouteMetaData): void => {
 	const tagStore = useTagStore()
 	const systemSettingStore = useSystemSettingStore()
 
-	// 不是新窗口且标签页功能开启时，添加标签
-	if (routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
+	// 隐藏标签、新窗口、标签页功能未开启时，不添加标签
+	if (!routeMeta.hideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
 		tagStore.addTag({
 			...routeMeta,
 			pinned: false

@@ -13,6 +13,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 		meta: {
 			title: '首页',
 			icon: 'icon-home',
+			hideTab: true,
 			type: 1
 		}
 	},
@@ -28,6 +29,8 @@ export const constantRoutes: RouteRecordRaw[] = [
 				meta: {
 					title: '登录',
 					cache: false,
+					hideMenu: true,
+					hideTab: true,
 					type: 1
 				}
 			},
@@ -38,6 +41,8 @@ export const constantRoutes: RouteRecordRaw[] = [
 				meta: {
 					title: '注册',
 					cache: false,
+					hideMenu: true,
+					hideTab: true,
 					type: 1
 				}
 			}
@@ -61,7 +66,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				meta: {
 					title: '个人信息',
 					icon: 'icon-user-profile',
-					hidden: true,
+					hideMenu: true,
 					cache: false,
 					type: 1
 				}
@@ -81,6 +86,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 				meta: {
 					title: '重定向',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			}
@@ -105,6 +111,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '400',
 					icon: 'icon-error-400',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			},
@@ -116,6 +123,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '401',
 					icon: 'icon-error-401',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			},
@@ -127,6 +135,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '403',
 					icon: 'icon-error-403',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			},
@@ -138,6 +147,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '404',
 					icon: 'icon-error-404',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			},
@@ -149,6 +159,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '500',
 					icon: 'icon-error-500',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			}
@@ -166,6 +177,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 					title: '404',
 					icon: 'icon-error-404',
 					cache: false,
+					hideTab: true,
 					type: 1
 				}
 			}

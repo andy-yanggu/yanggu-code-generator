@@ -55,7 +55,7 @@ const router = useRouter()
 const buildMenuTree = (menuList: MenuInfo[]): TreeNode[] => {
 	const build = (items: MenuInfo[], parentPath: string = ''): TreeNode[] => {
 		return items
-			.filter(item => !item.meta.hidden && item.meta.type !== 2)
+			.filter(item => !item.meta.hideMenu && item.meta.type !== 2)
 			.map(item => {
 				// 处理路径拼接逻辑
 				let fullPath: string

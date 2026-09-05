@@ -15,8 +15,10 @@ declare module 'vue-router' {
 		externalUrl?: string
 		// 缓存
 		cache?: boolean
-		// 隐藏
-		hidden?: boolean
+		// 隐藏菜单（不显示在侧边栏）
+		hideMenu?: boolean
+		// 隐藏标签（不显示在标签栏）
+		hideTab?: boolean
 	}
 }
 
@@ -37,8 +39,10 @@ export interface RouteMetaData {
 	icon: string
 	/** 缓存 */
 	cache: boolean
-	/** 隐藏 */
-	hidden: boolean
+	/** 隐藏菜单（不显示在侧边栏） */
+	hideMenu: boolean
+	/** 隐藏标签（不显示在标签栏） */
+	hideTab: boolean
 	/** 类型 */
 	type: RouteType
 	/** 外链地址 */

@@ -16,7 +16,7 @@
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
 	<el-menu-item
-		v-else-if="menu.meta.type != 2 && !menu.meta.hidden"
+		v-else-if="menu.meta.type != 2 && !menu.meta.hideMenu"
 		:id="`menu-${menuIndexPath.replace(/\//g, '-')}`"
 		ref="rootRef"
 		:key="'menu-item-' + menuIndexPath"
