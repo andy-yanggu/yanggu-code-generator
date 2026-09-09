@@ -10,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { useCacheStore } from '@/store'
+import { useCacheStore, useMenuPreferenceStore } from '@/store'
 
 const cacheStore = useCacheStore()
+const menuPreferenceStore = useMenuPreferenceStore()
 const route = useRoute()
 
 defineOptions({
@@ -22,17 +23,20 @@ defineOptions({
 // 监听路由切换
 watch(
 	() => [route.fullPath, route.meta.type, route.meta.cache],
-	([newFullPath, newType, newCache]) => {
+	() => {
 		// 只处理 iframe 类型的路由 (type === 3)
 		const externalUrl = route.meta.externalUrl as string
-		if (newType !== 3 || newCache === false || !externalUrl) {
+		const serverCache = (route.meta.cache as boolean) || false
+		// 使用用户偏好覆盖的 cache 值
+		const effectiveCache = menuPreferenceStore.getEffectiveCache(route.path, serverCache)
+		if (route.meta.type !== 3 || !effectiveCache || !externalUrl) {
 			return
 		}
 
 		const newRouteName = route.name as string
 
 		// 缓存模式：加入池子
-		cacheStore.addIframeCache({ name: newRouteName, src: externalUrl, fullPath: newFullPath as string })
+		cacheStore.addIframeCache({ name: newRouteName, src: externalUrl, fullPath: route.fullPath })
 	},
 	{ immediate: true }
 )

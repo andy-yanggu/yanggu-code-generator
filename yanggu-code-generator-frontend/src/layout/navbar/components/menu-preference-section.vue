@@ -15,6 +15,7 @@
 							<template #title>
 								<div class="dir-title">
 									<icon-text-tooltip :icon="node.icon ?? ''" :title="node.title" :max-width="'300px'"></icon-text-tooltip>
+									<el-tag v-if="hasAnyDescendantModified(node)" size="small" type="warning">已修改</el-tag>
 								</div>
 							</template>
 							<!-- 渲染子项 -->
@@ -26,6 +27,7 @@
 											<div class="dir-title">
 												<svg-icon v-if="child.icon" :icon="child.icon"></svg-icon>
 												<el-text>{{ child.title }}</el-text>
+												<el-tag v-if="hasAnyDescendantModified(child)" size="small" type="warning">已修改</el-tag>
 											</div>
 										</template>
 										<menu-preference-item
@@ -185,6 +187,15 @@ const handleReset = () => {
 	menuPreferenceStore.resetAll()
 	ElMessage.success('菜单偏好已恢复默认')
 }
+
+// 递归检查节点自身或任意后代是否有实际生效的偏好记录
+const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
+	const pref = menuPreferenceStore.getPreference(node.path)
+	if (pref && Object.values(pref).some(v => v !== undefined)) {
+		return true
+	}
+	return node.children.some(child => hasAnyDescendantModified(child))
+}
 </script>
 
 <style scoped>
@@ -208,6 +219,11 @@ const handleReset = () => {
 	line-height: 40px;
 	background-color: var(--el-fill-color-lighter);
 	border-radius: 6px 6px 0 0;
+	transition: color 0.2s;
+}
+
+:deep(.el-collapse-item__header:hover .el-collapse-item__title) {
+	color: var(--el-color-primary);
 }
 
 :deep(.el-collapse-item__wrap) {

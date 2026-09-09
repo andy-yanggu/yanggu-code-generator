@@ -14,7 +14,8 @@
 
 <script setup lang="ts">
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
-import { useSystemSettingStore } from '@/store'
+import { useMenuPreferenceStore, useSystemSettingStore } from '@/store'
+import { titleChangeBus } from '@/utils/event-bus'
 
 defineOptions({
 	name: 'Breadcrumb'
@@ -31,6 +32,7 @@ interface Breadcrumb {
 const route = useRoute()
 const router = useRouter()
 const systemSettingStore = useSystemSettingStore()
+const menuPreferenceStore = useMenuPreferenceStore()
 
 // 面包屑列表
 const breadcrumbList = ref([] as Breadcrumb[])
@@ -50,6 +52,17 @@ watch(
 		setBreadcrumb(newPath)
 	}
 )
+
+// 监听 title 偏好变更，实时刷新面包屑
+const stopTitleListener = titleChangeBus.on(() => {
+	if (!route.fullPath.startsWith('/redirect')) {
+		setBreadcrumb(route.fullPath)
+	}
+})
+
+onUnmounted(() => {
+	stopTitleListener()
+})
 
 // 设置面包屑
 const setBreadcrumb = (fullPath: string) => {
@@ -75,8 +88,10 @@ const findRouteByPath = (targetPath: string): Breadcrumb => {
 	const matchedRoute = router.resolve(targetPath)
 
 	if (matchedRoute?.meta?.title) {
+		const serverTitle = matchedRoute.meta.title as string
+		const effectiveTitle = menuPreferenceStore.getEffectiveTitle(targetPath, serverTitle)
 		return {
-			title: matchedRoute.meta.title as string,
+			title: effectiveTitle,
 			icon: matchedRoute.meta.icon as string
 		}
 	} else {

@@ -15,20 +15,21 @@ import { DEFAULT_HOME_PATH, PROGRESS_DELAY } from '@/config/router'
 NProgress.configure({ showSpinner: false })
 
 /**
- * 提取路由元数据
+ * 提取路由元数据（只取最深层子路由的 meta，避免父路由 meta 传播）
  */
 const extractRouteMetaData = (to: RouteLocationNormalized): RouteMetaData => {
+	const meta = to.matched.at(-1)?.meta ?? ({} as RouteMetaData)
 	return {
 		name: to.name as string,
 		path: to.path,
 		fullPath: to.fullPath,
-		title: (to.meta?.title as string) || '',
-		icon: (to.meta?.icon as string) || '',
-		cache: (to.meta?.cache as boolean) || false,
-		type: (to.meta?.type as number) || 0,
-		hideMenu: (to.meta?.hideMenu as boolean) || false,
-		hideTab: (to.meta?.hideTab as boolean) || false,
-		externalUrl: (to.meta?.externalUrl as string) || ''
+		title: (meta.title as string) || '',
+		icon: (meta.icon as string) || '',
+		cache: (meta.cache as boolean) || false,
+		type: (meta.type as number) || 0,
+		hideMenu: (meta.hideMenu as boolean) || false,
+		hideTab: (meta.hideTab as boolean) || false,
+		externalUrl: (meta.externalUrl as string) || ''
 	}
 }
 
@@ -55,8 +56,10 @@ const handleTagAdd = (routeMeta: RouteMetaData): void => {
 
 	// 隐藏标签、新窗口、标签页功能未开启时，不添加标签
 	if (!effectiveHideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
+		const effectiveTitle = menuPreferenceStore.getEffectiveTitle(routeMeta.path, routeMeta.title)
 		tagStore.addTag({
 			...routeMeta,
+			title: effectiveTitle,
 			pinned: false
 		})
 	}
@@ -109,10 +112,14 @@ export const registerUIBeforeGuard = (router: Router): void => {
 export const registerUIAfterGuard = (router: Router): void => {
 	router.afterEach(to => {
 		const systemSettingStore = useSystemSettingStore()
+		const menuPreferenceStore = useMenuPreferenceStore()
 
-		// 设置动态标题
+		// 设置动态标题（只取最深层子路由的 meta）
 		if (systemSettingStore.other.isOpenDynamicTitle) {
-			setTitle((to.meta.title as string) || '')
+			const meta = to.matched.at(-1)?.meta ?? ({} as RouteMetaData)
+			const serverTitle = (meta.title as string) || ''
+			const effectiveTitle = menuPreferenceStore.getEffectiveTitle(to.path, serverTitle)
+			setTitle(effectiveTitle)
 		}
 
 		// 延迟关闭全局加载状态

@@ -7,7 +7,7 @@
 		:key="'sub-menu-' + menuIndexPath"
 		:index="menuIndexPath">
 		<template #title>
-			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
+			<menu-item-content :title="effectiveTitle" :icon="menu.meta.icon"></menu-item-content>
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="isNotEmpty(menu.children)">
@@ -23,7 +23,7 @@
 		:index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
 		<menu-link :menu="menu" :path="menuIndexPath">
-			<menu-item-content :title="menu.meta.title" :icon="menu.meta.icon"></menu-item-content>
+			<menu-item-content :title="effectiveTitle" :icon="menu.meta.icon"></menu-item-content>
 		</menu-link>
 	</el-menu-item>
 </template>
@@ -55,6 +55,11 @@ const menuPreferenceStore = useMenuPreferenceStore()
 // 计算有效的 hideMenu（用户偏好 > 服务端默认）
 const effectiveHideMenu = computed(() =>
 	menuPreferenceStore.getEffectiveHideMenu(props.menu.path, props.menu.meta.hideMenu ?? false)
+)
+
+// 计算有效标题（用户偏好 > 服务端默认）
+const effectiveTitle = computed(() =>
+	menuPreferenceStore.getEffectiveTitle(props.menu.path, props.menu.meta.title)
 )
 
 // 计算菜单项的完整路径索引

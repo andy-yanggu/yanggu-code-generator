@@ -1,3 +1,4 @@
+import { toRaw } from 'vue'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 import { NavbarTag } from '@/types'
 import { useSystemSettingStore } from '@/store/system-setting-store'
@@ -90,7 +91,7 @@ export const useTagStore = defineStore(
 
 		// 强制触发持久化写入（通过深拷贝重建 tagList 引用，数据不变但触发响应式更新）
 		const forcePersist = () => {
-			tagList.value = structuredClone(tagList.value)
+			tagList.value = structuredClone(tagList.value.map(toRaw))
 		}
 
 		return {

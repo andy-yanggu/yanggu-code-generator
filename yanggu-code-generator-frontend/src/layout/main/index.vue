@@ -9,7 +9,7 @@
 						<keep-alive :include="cacheStore.cacheList" :exclude="['RouterRedirect']">
 							<component
 								:is="Component"
-								v-if="route.meta.type === 1 || (route.meta.type === 3 && !route.meta.cache)"
+								v-if="route.meta.type === 1 || (route.meta.type === 3 && !isIframeCached(route.path, (route.meta.cache as boolean) || false))"
 								:key="route.fullPath"></component>
 						</keep-alive>
 					</transition>
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
-import { useAppStore, useCacheStore, useSystemSettingStore } from '@/store'
+import { useAppStore, useCacheStore, useMenuPreferenceStore, useSystemSettingStore } from '@/store'
 import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
@@ -50,14 +50,22 @@ const route = useRoute()
 const appStore = useAppStore()
 const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
+const menuPreferenceStore = useMenuPreferenceStore()
 const { layoutScrollbarRef } = storeToRefs(appStore)
+
+// 判断 iframe 是否开启缓存（考虑用户偏好）
+const isIframeCached = (path: string, serverCache: boolean): boolean => {
+	return menuPreferenceStore.getEffectiveCache(path, serverCache)
+}
 
 // 路由切换时滚动到顶部
 watch(
 	() => route.fullPath,
 	() => {
+		const serverCache = (route.meta.cache as boolean) || false
+		const effectiveCache = menuPreferenceStore.getEffectiveCache(route.path, serverCache)
 		// 如果全局页面缓存关闭 或者 页面本身不缓存，则滚动到顶部
-		if (!systemSettingStore.other.isOpenPageCache || !route.meta.cache) {
+		if (!systemSettingStore.other.isOpenPageCache || !effectiveCache) {
 			layoutScrollbarRef.value?.scrollTo({ top: 0, left: 0 })
 		}
 	}

@@ -1,5 +1,6 @@
 // 单个菜单项的偏好覆盖（所有字段可选，仅存储用户修改过的）
 export interface MenuPreferenceItem {
+	title?: string
 	cache?: boolean
 	hideMenu?: boolean
 	hideTab?: boolean

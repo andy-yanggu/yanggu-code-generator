@@ -107,7 +107,7 @@
 						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"></setting-item>
 				</div>
 				<div>
-					<el-divider>菜单偏好</el-divider>
+					<el-divider>菜单偏好设置</el-divider>
 					<menu-preference-section></menu-preference-section>
 				</div>
 			</div>
@@ -122,9 +122,10 @@
 <script setup lang="ts">
 import { CopyDocument, Refresh, Setting } from '@element-plus/icons-vue'
 import { copyToClipboard, setDefaultTitle, setTitle } from '@/utils/tool'
-import { useCacheStore, useSystemSettingStore, useTagStore, useUserStore } from '@/store'
+import { useCacheStore, useMenuPreferenceStore, useSystemSettingStore, useTagStore, useUserStore } from '@/store'
 import { MENU_EXPAND_WIDTH, MENU_FOLD_WIDTH } from '@/config'
 import { MenuInfo, NavbarTag } from '@/types'
+import { cacheChangeBus, hideTabChangeBus, titleChangeBus } from '@/utils/event-bus'
 import SettingItem from '@/layout/navbar/components/system-setting-item.vue'
 import MenuPreferenceSection from '@/layout/navbar/components/menu-preference-section.vue'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
@@ -138,9 +139,97 @@ const tagStore = useTagStore()
 const cacheStore = useCacheStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
+const menuPreferenceStore = useMenuPreferenceStore()
+const router = useRouter()
 
 const visible = ref(false)
 const route = useRoute()
+
+// 递归查找菜单标题
+const findMenuTitle = (menuList: MenuInfo[], targetPath: string): string | null => {
+	for (const item of menuList) {
+		const fullPath = item.path?.startsWith('/') ? item.path : ''
+		if (fullPath === targetPath || item.path === targetPath) {
+			return item.meta.title
+		}
+		if (item.children?.length) {
+			const found = findMenuTitle(item.children, targetPath)
+			if (found) return found
+		}
+	}
+	return null
+}
+
+// 监听 hideTab 偏好变更
+const stopHideTabListener = hideTabChangeBus.on(event => {
+	console.log('hideTabChangeBus', event)
+	if (event.after === true) {
+		// hideTab → true：删除对应标签
+		const tag = tagStore.tagList.find(t => t.fullPath === event.path)
+		if (tag) tagStore.removeTag(tag)
+	} else if (!event.after && systemSettingStore.tag.isOpenTag) {
+		// hideTab → false 或 undefined（偏好已清除，回退到服务端默认）：重新添加标签
+		const resolved = router.resolve(event.path)
+		if (resolved) {
+			tagStore.addTag({
+				fullPath: event.path,
+				name: resolved.name as string,
+				title: menuPreferenceStore.getEffectiveTitle(event.path, (resolved.meta.title as string) || ''),
+				icon: (resolved.meta.icon as string) || ''
+			})
+		}
+	}
+	tagStore.forcePersist()
+})
+
+// 监听 title 偏好变更
+const stopTitleListener = titleChangeBus.on(event => {
+	console.log('titleChangeBus', event)
+	const tag = tagStore.tagList.find(t => t.fullPath === event.path)
+	if (tag) {
+		tag.title = event.after || findMenuTitle(userStore.menuList, event.path) || tag.title
+		tagStore.forcePersist()
+	}
+})
+
+// 监听 cache 偏好变更 → 立即同步缓存
+const stopCacheListener = cacheChangeBus.on(event => {
+	console.log('cacheChangeBus', event)
+	// event.after 是偏好值（可能为 undefined，表示回退到服务端默认）
+	// 必须计算 effective value（偏好 + 服务端默认）来判断实际缓存状态
+	const resolved = router.resolve(event.path)
+	const serverCache = (resolved.meta.cache as boolean) || false
+	const effectiveCache = menuPreferenceStore.getEffectiveCache(event.path, serverCache)
+	const routeName = resolved.name as string
+
+	if (effectiveCache && systemSettingStore.other.isOpenPageCache) {
+		// 有效缓存开启：添加到对应缓存
+		const type = (resolved.meta.type as number) || 0
+		if (type === 3) {
+			// iframe 缓存：需要 externalUrl 和 routeName
+			const externalUrl = resolved.meta.externalUrl as string
+			if (externalUrl && routeName) {
+				cacheStore.addIframeCache({ name: routeName, src: externalUrl, fullPath: event.path })
+			}
+		} else if (type === 1 && routeName) {
+			// 普通菜单缓存
+			cacheStore.addCacheComponent(routeName)
+		}
+	} else {
+		// 有效缓存关闭：立即从缓存中删除
+		// iframe 缓存按 name 匹配，组件缓存也按 name 匹配
+		if (routeName) {
+			cacheStore.removeIframeCacheList([routeName])
+			cacheStore.removeCacheComponent(routeName)
+		}
+	}
+})
+
+onUnmounted(() => {
+	stopHideTabListener()
+	stopTitleListener()
+	stopCacheListener()
+})
 
 // 标签是否开启
 watch(
@@ -202,7 +291,8 @@ const copySystemSetting = () => {
 		menu: systemSettingStore.menu,
 		toolbar: systemSettingStore.toolbar,
 		tag: systemSettingStore.tag,
-		other: systemSettingStore.other
+		other: systemSettingStore.other,
+		menuPreference: menuPreferenceStore.preferenceMap
 	}
 	copyToClipboard(JSON.stringify(stateData, null, 2)).then(() => {
 		ElMessage.success('系统设置已复制到剪贴板')
@@ -212,6 +302,7 @@ const copySystemSetting = () => {
 // 重置系统设置
 const handlerResetSystemSetting = () => {
 	systemSettingStore.resetSetting()
+	menuPreferenceStore.resetAll()
 	ElMessage.success('系统设置重置成功')
 }
 </script>

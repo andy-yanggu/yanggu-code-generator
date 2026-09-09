@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
-import { useUserStore } from '@/store'
+import { useMenuPreferenceStore, useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
 import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
 import IconButton from '@/components/icon-button/index.vue'
@@ -48,6 +48,7 @@ const searchState = reactive(initState())
 const searchInputRef = ref()
 const scrollbarRef = ref()
 const userStore = useUserStore()
+const menuPreferenceStore = useMenuPreferenceStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -69,7 +70,7 @@ const buildMenuTree = (menuList: MenuInfo[]): TreeNode[] => {
 				}
 
 				const node: TreeNode = {
-					title: item.meta.title,
+					title: menuPreferenceStore.getEffectiveTitle(fullPath, item.meta.title),
 					icon: item.meta.icon,
 					type: item.meta.type,
 					path: fullPath,

@@ -6,16 +6,24 @@
 			<icon-text-tooltip :icon="icon ?? ''" :title="title" :max-width="'300px'"></icon-text-tooltip>
 			<el-tag v-if="hasAnyModified" size="small" type="warning" class="header-modified-tag">已修改</el-tag>
 		</div>
-		<!-- 三个开关（可折叠） -->
+		<!-- 重命名 + 三个开关（可折叠） -->
 		<el-collapse-transition>
 			<div v-show="expanded" class="item-toggles">
+				<div class="toggle-row">
+					<div class="toggle-label">
+						<el-text size="small">重命名</el-text>
+						<el-tag v-if="isTitleModified" size="small" type="warning" class="modified-tag">已修改</el-tag>
+						<el-text size="small" type="info" class="default-hint">默认: {{ title }}</el-text>
+					</div>
+					<el-input v-model="customTitle" placeholder="请输入自定义标题" clearable size="small" style="flex: 1; margin-left: 8px"></el-input>
+				</div>
 				<div class="toggle-row">
 					<div class="toggle-label">
 						<el-text size="small">页面缓存</el-text>
 						<el-tag v-if="isModified('cache')" size="small" type="warning" class="modified-tag">已修改</el-tag>
 						<el-text size="small" type="info" class="default-hint">默认: {{ serverCache ? '开' : '关' }}</el-text>
 					</div>
-					<el-switch v-model="effectiveCache" inline-prompt active-text="开" inactive-text="关" @change="onCacheChange"></el-switch>
+					<el-switch v-model="effectiveCache" inline-prompt active-text="开" inactive-text="关"></el-switch>
 				</div>
 				<div class="toggle-row">
 					<div class="toggle-label">
@@ -91,36 +99,42 @@ const isModified = (field: 'cache' | 'hideMenu' | 'hideTab'): boolean => {
 	}
 }
 
+// 重命名相关
+const customTitle = computed({
+	get: () => menuPreferenceStore.getPreference(props.path)?.title || '',
+	set: (val: string) => {
+		const trimmed = val.trim()
+		menuPreferenceStore.setPreference(props.path, { title: trimmed || undefined })
+	}
+})
+
+const isTitleModified = computed(() => {
+	const custom = menuPreferenceStore.getPreference(props.path)?.title
+	return !!custom && custom !== props.title
+})
+
 // 是否有任何已修改的偏好
-const hasAnyModified = computed(() => isModified('cache') || isModified('hideMenu') || isModified('hideTab'))
+const hasAnyModified = computed(() => isTitleModified.value || isModified('cache') || isModified('hideMenu') || isModified('hideTab'))
 
 // 有效值（用户偏好 > 服务端默认）
-const effectiveCache = ref(menuPreferenceStore.getEffectiveCache(props.path, props.serverCache))
+const effectiveCache = computed({
+	get: () => menuPreferenceStore.getEffectiveCache(props.path, props.serverCache),
+	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { cache: val }, { cache: props.serverCache })
+})
 
 // 显示在菜单/标签栏（反转 hideMenu/hideTab，让开关语义与标签一致：ON=显示）
 const showMenu = computed({
 	get: () => !menuPreferenceStore.getEffectiveHideMenu(props.path, props.serverHideMenu),
-	set: (val: boolean) => menuPreferenceStore.setPreference(props.path, { hideMenu: !val })
+	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { hideMenu: !val }, { hideMenu: props.serverHideMenu })
 })
 
 const showTab = computed({
 	get: () => !menuPreferenceStore.getEffectiveHideTab(props.path, props.serverHideTab),
-	set: (val: boolean) => menuPreferenceStore.setPreference(props.path, { hideTab: !val })
+	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { hideTab: !val }, { hideTab: props.serverHideTab })
 })
 
-// 监听 store 变化（其他组件可能修改了同一个偏好）
-watch(
-	() => menuPreferenceStore.preferenceMap,
-	() => {
-		effectiveCache.value = menuPreferenceStore.getEffectiveCache(props.path, props.serverCache)
-	},
-	{ deep: true }
-)
-
-// 缓存开关变化处理
-const onCacheChange = (val: string | number | boolean) => {
-	menuPreferenceStore.setPreference(props.path, { cache: val as boolean })
-}
+// 监听 cache 字段变更事件（其他组件可能修改了同一个偏好，computed 会自动同步）
+// 无需额外 listener，computed getter 每次读取最新 store 状态
 </script>
 
 <style scoped>
