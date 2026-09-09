@@ -32,6 +32,15 @@
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'projectName')">
             AND gp.project_name LIKE CONCAT('%', #{query.projectName}, '%')
         </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'generatorType')">
+            AND gp.generator_type = #{query.generatorType}
+        </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'startTime')">
+            AND gp.create_time &gt;= #{query.startTime}
+        </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'endTime')">
+            AND gp.create_time &lt;= #{query.endTime}
+        </if>
     </sql>
 
     <!-- Entity类字段映射 -->
@@ -108,7 +117,7 @@
         SELECT
             <include refid="allColumns"/>
         FROM
-            gen_project
+            gen_project AS gp
         <where>
             gp.is_delete = 0
             <include refid="whereSQL"/>
