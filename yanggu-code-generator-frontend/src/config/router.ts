@@ -31,3 +31,13 @@ export const PROGRESS_DELAY = 500
  * 生产环境：true（需要登录，保证安全）
  */
 export const ENABLE_AUTH_CHECK = !env.isDev
+
+/**
+ * 路由元数据默认值
+ * 当服务端未配置时，使用这些默认值
+ */
+export const ROUTE_META_DEFAULTS = {
+	cache: true,
+	hideMenu: false,
+	hideTab: false
+} as const

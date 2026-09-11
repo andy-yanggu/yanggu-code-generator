@@ -7,7 +7,7 @@
 		:key="'sub-menu-' + menuIndexPath"
 		:index="menuIndexPath">
 		<template #title>
-			<menu-item-content :title="effectiveTitle" :icon="menu.meta.icon"></menu-item-content>
+			<menu-item-content :title="effective.title" :icon="menu.meta.icon"></menu-item-content>
 		</template>
 		<!-- 递归渲染目录或者菜单 -->
 		<template v-if="isNotEmpty(menu.children)">
@@ -16,14 +16,14 @@
 	</el-sub-menu>
 	<!-- 渲染菜单、iframe、外链 -->
 	<el-menu-item
-		v-else-if="menu.meta.type != 2 && !effectiveHideMenu"
+		v-else-if="menu.meta.type != 2 && !effective.hideMenu"
 		:id="`menu-${menuIndexPath.replace(/\//g, '-')}`"
 		ref="rootRef"
 		:key="'menu-item-' + menuIndexPath"
 		:index="menuIndexPath">
 		<!-- 处理内联和外链（内嵌iframe和新窗口） -->
 		<menu-link :menu="menu" :path="menuIndexPath">
-			<menu-item-content :title="effectiveTitle" :icon="menu.meta.icon"></menu-item-content>
+			<menu-item-content :title="effective.title" :icon="menu.meta.icon"></menu-item-content>
 		</menu-link>
 	</el-menu-item>
 </template>
@@ -52,14 +52,9 @@ const props = defineProps({
 
 const menuPreferenceStore = useMenuPreferenceStore()
 
-// 计算有效的 hideMenu（用户偏好 > 服务端默认）
-const effectiveHideMenu = computed(() =>
-	menuPreferenceStore.getEffectiveHideMenu(props.menu.path, props.menu.meta.hideMenu ?? false)
-)
-
-// 计算有效标题（用户偏好 > 服务端默认）
-const effectiveTitle = computed(() =>
-	menuPreferenceStore.getEffectiveTitle(props.menu.path, props.menu.meta.title)
+// 计算有效值（用户偏好 > 服务端默认，一次调用拿到全部）
+const effective = computed(() =>
+	menuPreferenceStore.getEffective(props.menu.path, props.menu.meta)
 )
 
 // 计算菜单项的完整路径索引

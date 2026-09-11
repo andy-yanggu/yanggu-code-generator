@@ -54,14 +54,14 @@
 							<el-tree-select
 								v-model="systemSettingStore.menu.menuDefault"
 								:data="userStore.menuList"
-								:props="{ label: (data: MenuInfo) => data.meta.title, value: 'path' }"
-								node-key="id"
+								:props="{ label: (data: MenuInfo) => menuPreferenceStore.getEffective(data.path, data.meta).title, value: 'path' }"
+								node-key="path"
 								filterable
 								default-expand-all
 								placeholder="请选择默认菜单"
 								style="width: 180px">
 								<template #default="{ data }">
-									<icon-text-tooltip :icon="data.meta.icon" :title="data.meta.title"></icon-text-tooltip>
+									<icon-text-tooltip :icon="data.meta.icon" :title="menuPreferenceStore.getEffective(data.path, data.meta).title"></icon-text-tooltip>
 								</template>
 							</el-tree-select>
 						</div>
@@ -162,7 +162,7 @@ const findMenuTitle = (menuList: MenuInfo[], targetPath: string): string | null 
 
 // 监听 hideTab 偏好变更
 const stopHideTabListener = hideTabChangeBus.on(event => {
-	console.log('hideTabChangeBus', event)
+	// console.log('hideTabChangeBus', event)
 	if (event.after === true) {
 		// hideTab → true：删除对应标签
 		const tag = tagStore.tagList.find(t => t.fullPath === event.path)
@@ -171,10 +171,11 @@ const stopHideTabListener = hideTabChangeBus.on(event => {
 		// hideTab → false 或 undefined（偏好已清除，回退到服务端默认）：重新添加标签
 		const resolved = router.resolve(event.path)
 		if (resolved) {
+			const { title } = menuPreferenceStore.getEffective(event.path, resolved.meta)
 			tagStore.addTag({
 				fullPath: event.path,
 				name: resolved.name as string,
-				title: menuPreferenceStore.getEffectiveTitle(event.path, (resolved.meta.title as string) || ''),
+				title,
 				icon: (resolved.meta.icon as string) || ''
 			})
 		}
@@ -184,7 +185,7 @@ const stopHideTabListener = hideTabChangeBus.on(event => {
 
 // 监听 title 偏好变更
 const stopTitleListener = titleChangeBus.on(event => {
-	console.log('titleChangeBus', event)
+	// console.log('titleChangeBus', event)
 	const tag = tagStore.tagList.find(t => t.fullPath === event.path)
 	if (tag) {
 		tag.title = event.after || findMenuTitle(userStore.menuList, event.path) || tag.title
@@ -194,12 +195,11 @@ const stopTitleListener = titleChangeBus.on(event => {
 
 // 监听 cache 偏好变更 → 立即同步缓存
 const stopCacheListener = cacheChangeBus.on(event => {
-	console.log('cacheChangeBus', event)
+	// console.log('cacheChangeBus', event)
 	// event.after 是偏好值（可能为 undefined，表示回退到服务端默认）
 	// 必须计算 effective value（偏好 + 服务端默认）来判断实际缓存状态
 	const resolved = router.resolve(event.path)
-	const serverCache = (resolved.meta.cache as boolean) || false
-	const effectiveCache = menuPreferenceStore.getEffectiveCache(event.path, serverCache)
+	const { cache: effectiveCache } = menuPreferenceStore.getEffective(event.path, resolved.meta)
 	const routeName = resolved.name as string
 
 	if (effectiveCache && systemSettingStore.other.isOpenPageCache) {

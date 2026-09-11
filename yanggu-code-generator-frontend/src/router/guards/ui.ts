@@ -4,7 +4,7 @@ import { setTitle } from '@/utils/tool'
 import { RouteMetaData } from '@/types'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { DEFAULT_HOME_PATH, PROGRESS_DELAY } from '@/config/router'
+import { DEFAULT_HOME_PATH, PROGRESS_DELAY, ROUTE_META_DEFAULTS } from '@/config/router'
 
 /**
  * UI 相关的路由守卫
@@ -25,10 +25,10 @@ const extractRouteMetaData = (to: RouteLocationNormalized): RouteMetaData => {
 		fullPath: to.fullPath,
 		title: (meta.title as string) || '',
 		icon: (meta.icon as string) || '',
-		cache: (meta.cache as boolean) || false,
+		cache: (meta.cache as boolean) || ROUTE_META_DEFAULTS.cache,
 		type: (meta.type as number) || 0,
-		hideMenu: (meta.hideMenu as boolean) || false,
-		hideTab: (meta.hideTab as boolean) || false,
+		hideMenu: (meta.hideMenu as boolean) || ROUTE_META_DEFAULTS.hideMenu,
+		hideTab: (meta.hideTab as boolean) || ROUTE_META_DEFAULTS.hideTab,
 		externalUrl: (meta.externalUrl as string) || ''
 	}
 }
@@ -51,15 +51,14 @@ const handleTagAdd = (routeMeta: RouteMetaData): void => {
 	const systemSettingStore = useSystemSettingStore()
 	const menuPreferenceStore = useMenuPreferenceStore()
 
-	// 使用用户偏好覆盖的 hideTab 值
-	const effectiveHideTab = menuPreferenceStore.getEffectiveHideTab(routeMeta.path, routeMeta.hideTab)
+	// 一次调用拿到全部有效值
+	const effective = menuPreferenceStore.getEffective(routeMeta.path, routeMeta)
 
 	// 隐藏标签、新窗口、标签页功能未开启时，不添加标签
-	if (!effectiveHideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
-		const effectiveTitle = menuPreferenceStore.getEffectiveTitle(routeMeta.path, routeMeta.title)
+	if (!effective.hideTab && routeMeta.type !== 4 && systemSettingStore.tag.isOpenTag) {
 		tagStore.addTag({
 			...routeMeta,
-			title: effectiveTitle,
+			title: effective.title,
 			pinned: false
 		})
 	}
@@ -73,8 +72,8 @@ const handlePageCache = (routeMeta: RouteMetaData): void => {
 	const systemSettingStore = useSystemSettingStore()
 	const menuPreferenceStore = useMenuPreferenceStore()
 
-	// 使用用户偏好覆盖的 cache 值
-	const effectiveCache = menuPreferenceStore.getEffectiveCache(routeMeta.path, routeMeta.cache)
+	// 一次调用拿到全部有效值
+	const { cache: effectiveCache } = menuPreferenceStore.getEffective(routeMeta.path, routeMeta)
 
 	// 有名称、是菜单、需要缓存且页面缓存功能开启时，添加到缓存
 	if (effectiveCache && routeMeta.name && routeMeta.type === 1 && systemSettingStore.other.isOpenPageCache) {
@@ -117,8 +116,7 @@ export const registerUIAfterGuard = (router: Router): void => {
 		// 设置动态标题（只取最深层子路由的 meta）
 		if (systemSettingStore.other.isOpenDynamicTitle) {
 			const meta = to.matched.at(-1)?.meta ?? ({} as RouteMetaData)
-			const serverTitle = (meta.title as string) || ''
-			const effectiveTitle = menuPreferenceStore.getEffectiveTitle(to.path, serverTitle)
+			const { title: effectiveTitle } = menuPreferenceStore.getEffective(to.path, { title: (meta.title as string) || '' })
 			setTitle(effectiveTitle)
 		}
 

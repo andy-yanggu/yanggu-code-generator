@@ -33,11 +33,13 @@ const clickHandler = () => {
 	align-items: center;
 	padding: 8px;
 	margin-top: 5px;
+	margin-bottom: 4px;
+	border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
 .logo-avatar {
 	margin-right: 9px;
-	color: #2c3e50;
+	color: var(--el-color-primary);
 	font-size: 18px;
 	font-weight: 550;
 }

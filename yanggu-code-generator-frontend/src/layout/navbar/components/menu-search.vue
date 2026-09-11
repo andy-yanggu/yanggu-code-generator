@@ -69,8 +69,9 @@ const buildMenuTree = (menuList: MenuInfo[]): TreeNode[] => {
 					fullPath = cleanParentPath + '/' + (item.path || '')
 				}
 
+				const { title } = menuPreferenceStore.getEffective(fullPath, item.meta)
 				const node: TreeNode = {
-					title: menuPreferenceStore.getEffectiveTitle(fullPath, item.meta.title),
+					title,
 					icon: item.meta.icon,
 					type: item.meta.type,
 					path: fullPath,

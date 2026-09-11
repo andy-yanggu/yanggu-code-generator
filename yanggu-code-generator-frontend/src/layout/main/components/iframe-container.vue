@@ -26,9 +26,7 @@ watch(
 	() => {
 		// 只处理 iframe 类型的路由 (type === 3)
 		const externalUrl = route.meta.externalUrl as string
-		const serverCache = (route.meta.cache as boolean) || false
-		// 使用用户偏好覆盖的 cache 值
-		const effectiveCache = menuPreferenceStore.getEffectiveCache(route.path, serverCache)
+		const { cache: effectiveCache } = menuPreferenceStore.getEffective(route.path, route.meta)
 		if (route.meta.type !== 3 || !effectiveCache || !externalUrl) {
 			return
 		}

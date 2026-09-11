@@ -2,25 +2,42 @@
 	<div class="preference-item">
 		<!-- 菜单标题（可点击折叠/展开） -->
 		<div class="item-header" @click="expanded = !expanded">
-			<el-icon class="expand-arrow" :class="{ 'is-expanded': expanded }"><CaretRight /></el-icon>
-			<icon-text-tooltip :icon="icon ?? ''" :title="title" :max-width="'300px'"></icon-text-tooltip>
-			<el-tag v-if="hasAnyModified" size="small" type="warning" class="header-modified-tag">已修改</el-tag>
+			<template v-if="editing">
+				<el-icon class="expand-arrow"><CaretRight /></el-icon>
+				<el-input
+					v-model="editingTitle"
+					placeholder="请输入自定义标题"
+					clearable
+					size="small"
+					class="item-edit-input"
+					@click.stop
+					@keydown.enter="saveEdit()"
+					@keydown.escape="cancelEdit()"></el-input>
+				<div class="item-edit-btns">
+					<el-button type="primary" :icon="Check" link size="small" @click.stop="saveEdit()"></el-button>
+					<el-button :icon="Close" link size="small" @click.stop="cancelEdit()"></el-button>
+				</div>
+			</template>
+			<template v-else>
+				<el-icon class="expand-arrow" :class="{ 'is-expanded': expanded }"><CaretRight /></el-icon>
+				<icon-text-tooltip :icon="icon ?? ''" :title="title" :max-width="'300px'"></icon-text-tooltip>
+				<template v-if="customTitle">
+					<el-text type="info">→</el-text>
+					<el-text type="primary">{{ customTitle }}</el-text>
+				</template>
+				<el-tooltip content="修改名称" placement="top">
+					<el-button :icon="Edit" type="primary" link size="small" class="item-edit-btn" @click.stop="startEdit()"></el-button>
+				</el-tooltip>
+				<el-tag v-if="hasAnyModified" size="small" type="warning" class="header-modified-tag">已修改</el-tag>
+			</template>
 		</div>
-		<!-- 重命名 + 三个开关（可折叠） -->
+		<!-- 三个开关（可折叠） -->
 		<el-collapse-transition>
 			<div v-show="expanded" class="item-toggles">
 				<div class="toggle-row">
 					<div class="toggle-label">
-						<el-text size="small">重命名</el-text>
-						<el-tag v-if="isTitleModified" size="small" type="warning" class="modified-tag">已修改</el-tag>
-						<el-text size="small" type="info" class="default-hint">默认: {{ title }}</el-text>
-					</div>
-					<el-input v-model="customTitle" placeholder="请输入自定义标题" clearable size="small" style="flex: 1; margin-left: 8px"></el-input>
-				</div>
-				<div class="toggle-row">
-					<div class="toggle-label">
 						<el-text size="small">页面缓存</el-text>
-						<el-tag v-if="isModified('cache')" size="small" type="warning" class="modified-tag">已修改</el-tag>
+						<el-tag v-if="isFieldModified(effectiveCache, serverCache)" size="small" type="warning" class="modified-tag">已修改</el-tag>
 						<el-text size="small" type="info" class="default-hint">默认: {{ serverCache ? '开' : '关' }}</el-text>
 					</div>
 					<el-switch v-model="effectiveCache" inline-prompt active-text="开" inactive-text="关"></el-switch>
@@ -28,7 +45,7 @@
 				<div class="toggle-row">
 					<div class="toggle-label">
 						<el-text size="small">显示在菜单</el-text>
-						<el-tag v-if="isModified('hideMenu')" size="small" type="warning" class="modified-tag">已修改</el-tag>
+						<el-tag v-if="isFieldModified(showMenu, !serverHideMenu)" size="small" type="warning" class="modified-tag">已修改</el-tag>
 						<el-text size="small" type="info" class="default-hint">默认: {{ serverHideMenu ? '关' : '开' }}</el-text>
 					</div>
 					<el-switch v-model="showMenu" inline-prompt active-text="开" inactive-text="关"></el-switch>
@@ -36,7 +53,7 @@
 				<div class="toggle-row">
 					<div class="toggle-label">
 						<el-text size="small">显示在标签栏</el-text>
-						<el-tag v-if="isModified('hideTab')" size="small" type="warning" class="modified-tag">已修改</el-tag>
+						<el-tag v-if="isFieldModified(showTab, !serverHideTab)" size="small" type="warning" class="modified-tag">已修改</el-tag>
 						<el-text size="small" type="info" class="default-hint">默认: {{ serverHideTab ? '关' : '开' }}</el-text>
 					</div>
 					<el-switch v-model="showTab" inline-prompt active-text="开" inactive-text="关"></el-switch>
@@ -47,8 +64,9 @@
 </template>
 
 <script setup lang="ts">
-import { CaretRight } from '@element-plus/icons-vue'
+import { CaretRight, Check, Close, Edit } from '@element-plus/icons-vue'
 import { useMenuPreferenceStore } from '@/store'
+import { MenuPreferenceItem } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
@@ -87,54 +105,69 @@ const menuPreferenceStore = useMenuPreferenceStore()
 // 折叠状态（默认折叠）
 const expanded = ref(false)
 
-// 判断某个字段的有效值是否与服务端默认值不同
-const isModified = (field: 'cache' | 'hideMenu' | 'hideTab'): boolean => {
-	switch (field) {
-		case 'cache':
-			return menuPreferenceStore.getEffectiveCache(props.path, props.serverCache) !== props.serverCache
-		case 'hideMenu':
-			return menuPreferenceStore.getEffectiveHideMenu(props.path, props.serverHideMenu) !== props.serverHideMenu
-		case 'hideTab':
-			return menuPreferenceStore.getEffectiveHideTab(props.path, props.serverHideTab) !== props.serverHideTab
-	}
+// 单一数据源：当前路径的原始偏好
+const preference = computed(() => menuPreferenceStore.getPreference(props.path))
+
+// 统一写入路径：所有字段（包括 title）都走 syncPreference
+const saveField = (field: keyof MenuPreferenceItem, value: any, serverDefault: any) => {
+	menuPreferenceStore.syncPreference(props.path, { [field]: value }, { [field]: serverDefault })
 }
 
-// 重命名相关
+// 统一判断：有效值是否与服务端默认值不同
+const isFieldModified = (effectiveValue: any, serverDefault: any): boolean => {
+	return effectiveValue !== serverDefault
+}
+
+// 重命名
 const customTitle = computed({
-	get: () => menuPreferenceStore.getPreference(props.path)?.title || '',
-	set: (val: string) => {
-		const trimmed = val.trim()
-		menuPreferenceStore.setPreference(props.path, { title: trimmed || undefined })
-	}
+	get: () => preference.value?.title || '',
+	set: (val: string) => saveField('title', val.trim() || undefined, '')
 })
 
-const isTitleModified = computed(() => {
-	const custom = menuPreferenceStore.getPreference(props.path)?.title
-	return !!custom && custom !== props.title
-})
+// 编辑状态
+const editing = ref(false)
+const editingTitle = ref('')
+
+const startEdit = () => {
+	editing.value = true
+	editingTitle.value = customTitle.value || props.title
+}
+
+const saveEdit = () => {
+	const trimmed = editingTitle.value.trim()
+	saveField('title', trimmed || undefined, '')
+	editing.value = false
+}
+
+const cancelEdit = () => {
+	editing.value = false
+}
 
 // 是否有任何已修改的偏好
-const hasAnyModified = computed(() => isTitleModified.value || isModified('cache') || isModified('hideMenu') || isModified('hideTab'))
+const hasAnyModified = computed(
+	() =>
+		isFieldModified(customTitle.value, '') ||
+		isFieldModified(effectiveCache.value, props.serverCache) ||
+		isFieldModified(showMenu.value, !props.serverHideMenu) ||
+		isFieldModified(showTab.value, !props.serverHideTab)
+)
 
 // 有效值（用户偏好 > 服务端默认）
 const effectiveCache = computed({
-	get: () => menuPreferenceStore.getEffectiveCache(props.path, props.serverCache),
-	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { cache: val }, { cache: props.serverCache })
+	get: () => preference.value?.cache ?? props.serverCache,
+	set: (val: boolean) => saveField('cache', val, props.serverCache)
 })
 
 // 显示在菜单/标签栏（反转 hideMenu/hideTab，让开关语义与标签一致：ON=显示）
 const showMenu = computed({
-	get: () => !menuPreferenceStore.getEffectiveHideMenu(props.path, props.serverHideMenu),
-	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { hideMenu: !val }, { hideMenu: props.serverHideMenu })
+	get: () => !(preference.value?.hideMenu ?? props.serverHideMenu),
+	set: (val: boolean) => saveField('hideMenu', !val, props.serverHideMenu)
 })
 
 const showTab = computed({
-	get: () => !menuPreferenceStore.getEffectiveHideTab(props.path, props.serverHideTab),
-	set: (val: boolean) => menuPreferenceStore.syncPreference(props.path, { hideTab: !val }, { hideTab: props.serverHideTab })
+	get: () => !(preference.value?.hideTab ?? props.serverHideTab),
+	set: (val: boolean) => saveField('hideTab', !val, props.serverHideTab)
 })
-
-// 监听 cache 字段变更事件（其他组件可能修改了同一个偏好，computed 会自动同步）
-// 无需额外 listener，computed getter 每次读取最新 store 状态
 </script>
 
 <style scoped>
@@ -173,6 +206,24 @@ const showTab = computed({
 	margin-left: auto;
 	transform: scale(0.8);
 	transform-origin: right center;
+}
+
+.item-edit-input {
+	width: 160px;
+}
+
+.item-edit-btns {
+	display: flex;
+	gap: 2px;
+}
+
+.item-edit-btn {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+
+.item-header:hover .item-edit-btn {
+	opacity: 1;
 }
 
 .item-toggles {

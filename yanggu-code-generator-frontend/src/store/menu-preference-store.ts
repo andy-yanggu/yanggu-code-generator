@@ -67,21 +67,6 @@ export const useMenuPreferenceStore = defineStore(
 			emitFieldChanges(path, before, preferenceMap.value[path])
 		}
 
-		// 设置指定路径的偏好（合并更新，不做默认值清洗，用于 title 等无服务端默认值的字段）
-		const setPreference = (path: string, item: MenuPreferenceItem) => {
-			const before = { ...(preferenceMap.value[path] || {}) }
-			const existing = preferenceMap.value[path] || {}
-			const merged = { ...existing, ...item }
-			// 合并后如果所有字段都是 undefined，直接删除条目，避免留下空壳
-			const hasAnyValue = Object.values(merged).some(v => v !== undefined)
-			if (hasAnyValue) {
-				preferenceMap.value[path] = merged
-			} else {
-				delete preferenceMap.value[path]
-			}
-			emitFieldChanges(path, before, preferenceMap.value[path])
-		}
-
 		// 移除指定路径的偏好
 		const removePreference = (path: string) => {
 			const before = { ...(preferenceMap.value[path] || {}) }
@@ -98,35 +83,28 @@ export const useMenuPreferenceStore = defineStore(
 			}
 		}
 
-		// 便捷方法：获取有效标题（用户偏好 > 服务端默认）
-		const getEffectiveTitle = (path: string, serverDefault: string): string => {
-			return preferenceMap.value[path]?.title || serverDefault
-		}
-
-		// 便捷方法：获取有效值（用户偏好 > 服务端默认）
-		const getEffectiveCache = (path: string, serverDefault: boolean): boolean => {
-			return preferenceMap.value[path]?.cache ?? serverDefault
-		}
-
-		const getEffectiveHideMenu = (path: string, serverDefault: boolean): boolean => {
-			return preferenceMap.value[path]?.hideMenu ?? serverDefault
-		}
-
-		const getEffectiveHideTab = (path: string, serverDefault: boolean): boolean => {
-			return preferenceMap.value[path]?.hideTab ?? serverDefault
+		// 统一获取指定路径的所有有效值（用户偏好 > 服务端默认）
+		// 一次调用拿到全部 4 个字段的最终值，避免消费方多次调用
+		const getEffective = (
+			path: string,
+			serverDefaults: { title?: string; cache?: boolean; hideMenu?: boolean; hideTab?: boolean }
+		) => {
+			const pref = preferenceMap.value[path]
+			return {
+				title: pref?.title || serverDefaults.title || '',
+				cache: pref?.cache ?? serverDefaults.cache ?? false,
+				hideMenu: pref?.hideMenu ?? serverDefaults.hideMenu ?? false,
+				hideTab: pref?.hideTab ?? serverDefaults.hideTab ?? false
+			}
 		}
 
 		return {
 			preferenceMap,
 			getPreference,
-			setPreference,
 			syncPreference,
 			removePreference,
 			resetAll,
-			getEffectiveTitle,
-			getEffectiveCache,
-			getEffectiveHideMenu,
-			getEffectiveHideTab
+			getEffective
 		}
 	},
 	{

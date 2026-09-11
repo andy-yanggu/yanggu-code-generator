@@ -4,6 +4,7 @@
 
 		<!-- 搜索过滤 -->
 		<el-input v-model="keyword" placeholder="请输入菜单名称" clearable :prefix-icon="Search" class="search-input" size="small"></el-input>
+		<el-text size="small" type="info" class="edit-hint">点击编辑图标可修改目录/菜单名称</el-text>
 
 		<!-- 菜单树 -->
 		<el-scrollbar max-height="500px">
@@ -13,8 +14,30 @@
 					<el-collapse v-if="node.children.length > 0" v-model="expandedDirs" expand-icon-position="left" class="dir-collapse">
 						<el-collapse-item :title="node.title" :name="node.path">
 							<template #title>
-								<div class="dir-title">
-									<icon-text-tooltip :icon="node.icon ?? ''" :title="node.title" :max-width="'300px'"></icon-text-tooltip>
+								<div v-if="editingDirPath === node.path" class="dir-title" @click.stop>
+									<el-input
+										v-model="editingTitle"
+										size="small"
+										placeholder="请输入自定义标题"
+										class="dir-edit-input"
+										clearable
+										@keydown.enter="saveDirEdit()"
+										@keydown.escape="cancelDirEdit()"></el-input>
+									<div class="dir-edit-btns">
+										<el-button type="primary" :icon="Check" link size="small" @click="saveDirEdit()"></el-button>
+										<el-button :icon="Close" link size="small" @click="cancelDirEdit()"></el-button>
+									</div>
+								</div>
+								<div v-else class="dir-title">
+									<svg-icon v-if="node.icon" :icon="node.icon"></svg-icon>
+									<el-text>{{ node.title }}</el-text>
+									<template v-if="getDirCustomTitle(node)">
+										<el-text type="info" size="small">→</el-text>
+										<el-text type="primary" size="small">{{ getDirCustomTitle(node) }}</el-text>
+									</template>
+									<el-tooltip content="修改目录名称" placement="top">
+										<el-button :icon="Edit" type="primary" link size="small" class="dir-edit-btn" @click.stop="startDirEdit(node)"></el-button>
+									</el-tooltip>
 									<el-tag v-if="hasAnyDescendantModified(node)" size="small" type="warning">已修改</el-tag>
 								</div>
 							</template>
@@ -24,9 +47,30 @@
 								<el-collapse v-if="child.children.length > 0" v-model="expandedDirs" class="dir-collapse sub-dir">
 									<el-collapse-item :title="child.title" :name="child.path">
 										<template #title>
-											<div class="dir-title">
+											<div v-if="editingDirPath === child.path" class="dir-title" @click.stop>
+												<el-input
+													v-model="editingTitle"
+													size="small"
+													placeholder="请输入自定义标题"
+													clearable
+													class="dir-edit-input"
+													@keydown.enter="saveDirEdit()"
+													@keydown.escape="cancelDirEdit()"></el-input>
+												<div class="dir-edit-btns">
+													<el-button type="primary" :icon="Check" link size="small" @click="saveDirEdit()"></el-button>
+													<el-button :icon="Close" link size="small" @click="cancelDirEdit()"></el-button>
+												</div>
+											</div>
+											<div v-else class="dir-title">
 												<svg-icon v-if="child.icon" :icon="child.icon"></svg-icon>
 												<el-text>{{ child.title }}</el-text>
+												<template v-if="getDirCustomTitle(child)">
+													<el-text type="info" size="small">→</el-text>
+													<el-text type="primary" size="small">{{ getDirCustomTitle(child) }}</el-text>
+												</template>
+												<el-tooltip content="修改目录名称" placement="top">
+													<el-button :icon="Edit" type="primary" link size="small" class="dir-edit-btn" @click.stop="startDirEdit(child)"></el-button>
+												</el-tooltip>
 												<el-tag v-if="hasAnyDescendantModified(child)" size="small" type="warning">已修改</el-tag>
 											</div>
 										</template>
@@ -77,12 +121,12 @@
 </template>
 
 <script setup lang="ts">
-import { RefreshLeft, Search } from '@element-plus/icons-vue'
+import { Check, Close, Edit, RefreshLeft, Search } from '@element-plus/icons-vue'
 import { useMenuPreferenceStore, useUserStore } from '@/store'
 import { MenuInfo } from '@/types'
+import { ROUTE_META_DEFAULTS } from '@/config/router'
 import MenuPreferenceItem from '@/layout/navbar/components/menu-preference-item.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
 	name: 'MenuPreferenceSection'
@@ -124,9 +168,9 @@ const buildPreferenceTree = (menuList: MenuInfo[], parentPath: string = ''): Pre
 				title: item.meta.title,
 				icon: item.meta.icon || '',
 				type: item.meta.type,
-				serverCache: item.meta.cache ?? false,
-				serverHideMenu: item.meta.hideMenu ?? false,
-				serverHideTab: item.meta.hideTab ?? false,
+				serverCache: item.meta.cache ?? ROUTE_META_DEFAULTS.cache,
+				serverHideMenu: item.meta.hideMenu ?? ROUTE_META_DEFAULTS.hideMenu,
+				serverHideTab: item.meta.hideTab ?? ROUTE_META_DEFAULTS.hideTab,
 				children: []
 			}
 
@@ -188,11 +232,48 @@ const handleReset = () => {
 	ElMessage.success('菜单偏好已恢复默认')
 }
 
+// 目录重命名
+const editingDirPath = ref<string | null>(null)
+const editingTitle = ref('')
+
+const startDirEdit = (node: PreferenceTreeNode) => {
+	editingDirPath.value = node.path
+	editingTitle.value = menuPreferenceStore.getEffective(node.path, { title: node.title }).title
+}
+
+const saveDirEdit = () => {
+	if (editingDirPath.value) {
+		const trimmed = editingTitle.value.trim()
+		menuPreferenceStore.syncPreference(editingDirPath.value, { title: trimmed || undefined }, { title: '' })
+	}
+	editingDirPath.value = null
+}
+
+const cancelDirEdit = () => {
+	editingDirPath.value = null
+}
+
+// 获取目录的自定义标题（如果有且与原始标题不同则返回）
+const getDirCustomTitle = (node: PreferenceTreeNode): string | null => {
+	const pref = menuPreferenceStore.getPreference(node.path)
+	if (pref?.title && pref.title !== node.title) {
+		return pref.title
+	}
+	return null
+}
+
+// 目录自身标题是否被修改
+const isDirTitleModified = (node: PreferenceTreeNode): boolean => {
+	return getDirCustomTitle(node) !== null
+}
+
 // 递归检查节点自身或任意后代是否有实际生效的偏好记录
 const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
+	if (isDirTitleModified(node)) return true
 	const pref = menuPreferenceStore.getPreference(node.path)
-	if (pref && Object.values(pref).some(v => v !== undefined)) {
-		return true
+	if (pref) {
+		const otherFields = (['cache', 'hideMenu', 'hideTab'] as const).some(f => pref[f] !== undefined)
+		if (otherFields) return true
 	}
 	return node.children.some(child => hasAnyDescendantModified(child))
 }
@@ -205,6 +286,12 @@ const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
 
 .search-input {
 	margin: 10px 0;
+}
+
+.edit-hint {
+	display: block;
+	margin-top: -4px;
+	margin-bottom: 6px;
 }
 
 .dir-collapse {
@@ -241,6 +328,24 @@ const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
 	display: flex;
 	align-items: center;
 	gap: 6px;
+}
+
+.dir-edit-input {
+	width: 160px;
+}
+
+.dir-edit-btns {
+	display: flex;
+	gap: 2px;
+}
+
+.dir-edit-btn {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+
+.dir-title:hover .dir-edit-btn {
+	opacity: 1;
 }
 
 .sub-dir {

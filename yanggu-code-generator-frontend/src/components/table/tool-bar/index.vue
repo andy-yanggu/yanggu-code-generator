@@ -92,7 +92,7 @@ const toggleMaximized = useToggle(maximized)
 const handleToggleMaximized = () => {
 	toggleMaximized()
 	if (!maximized.value) {
-		ElMessage.info('按 ESC 可退出最大化')
+		ElMessage.info({ message: '按 ESC 可退出最大化', duration: 1000 })
 	}
 }
 

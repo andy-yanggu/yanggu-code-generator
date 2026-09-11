@@ -1,0 +1,8 @@
+feat: 菜单偏好系统增强 - 统一读写入口、目录/菜单重命名、ROUTE_META_DEFAULTS集中化
+
+- store: 新增 getEffective 统一读取，删除 4 个 getEffective* 和 setPreference
+- router: 新增 ROUTE_META_DEFAULTS 常量集中 cache/hideMenu/hideTab 默认值
+- preference-item: header 内联编辑，原名称到自定义名称展示，展开区移除重命名行
+- preference-section: 目录支持重命名，原名称到自定义名称展示，提示文字
+- 7 个消费方统一使用 getEffective 替代散乱调用
+- system-setting: el-tree-select 使用偏好标题，修复 node-key

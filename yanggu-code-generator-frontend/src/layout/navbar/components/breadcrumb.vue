@@ -88,8 +88,9 @@ const findRouteByPath = (targetPath: string): Breadcrumb => {
 	const matchedRoute = router.resolve(targetPath)
 
 	if (matchedRoute?.meta?.title) {
-		const serverTitle = matchedRoute.meta.title as string
-		const effectiveTitle = menuPreferenceStore.getEffectiveTitle(targetPath, serverTitle)
+		const { title: effectiveTitle } = menuPreferenceStore.getEffective(targetPath, {
+			title: matchedRoute.meta.title as string
+		})
 		return {
 			title: effectiveTitle,
 			icon: matchedRoute.meta.icon as string
