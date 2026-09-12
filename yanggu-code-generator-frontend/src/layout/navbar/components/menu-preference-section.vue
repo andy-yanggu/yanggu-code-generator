@@ -115,7 +115,7 @@
 
 		<!-- 重置按钮 -->
 		<div class="reset-area">
-			<el-button :icon="RefreshLeft" size="small" @click="handleReset">恢复所有默认</el-button>
+			<el-button :icon="RefreshLeft" size="small" @click="handleReset">重置菜单设置</el-button>
 		</div>
 	</div>
 </template>
@@ -232,6 +232,16 @@ const handleReset = () => {
 	ElMessage.success('菜单偏好已恢复默认')
 }
 
+// 根据路径查找节点原始标题
+const findNodeTitle = (nodes: PreferenceTreeNode[], path: string): string => {
+	for (const node of nodes) {
+		if (node.path === path) return node.title
+		const found = findNodeTitle(node.children, path)
+		if (found) return found
+	}
+	return ''
+}
+
 // 目录重命名
 const editingDirPath = ref<string | null>(null)
 const editingTitle = ref('')
@@ -244,7 +254,12 @@ const startDirEdit = (node: PreferenceTreeNode) => {
 const saveDirEdit = () => {
 	if (editingDirPath.value) {
 		const trimmed = editingTitle.value.trim()
-		menuPreferenceStore.syncPreference(editingDirPath.value, { title: trimmed || undefined }, { title: '' })
+		const serverTitle = findNodeTitle(fullTree.value, editingDirPath.value)
+		menuPreferenceStore.syncPreference(
+			editingDirPath.value,
+			{ title: trimmed !== serverTitle ? trimmed || undefined : undefined },
+			{ title: serverTitle }
+		)
 	}
 	editingDirPath.value = null
 }
@@ -309,7 +324,8 @@ const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
 	transition: color 0.2s;
 }
 
-:deep(.el-collapse-item__header:hover .el-collapse-item__title) {
+:deep(.el-collapse-item__header:hover .dir-title > .el-text),
+:deep(.el-collapse-item__header:hover .dir-title > .svg-icon) {
 	color: var(--el-color-primary);
 }
 
@@ -321,7 +337,7 @@ const hasAnyDescendantModified = (node: PreferenceTreeNode): boolean => {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	padding-bottom: 0px;
+	padding-bottom: 0;
 }
 
 .dir-title {

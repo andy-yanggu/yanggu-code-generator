@@ -21,11 +21,11 @@
 			<template v-else>
 				<el-icon class="expand-arrow" :class="{ 'is-expanded': expanded }"><CaretRight /></el-icon>
 				<icon-text-tooltip :icon="icon ?? ''" :title="title" :max-width="'300px'"></icon-text-tooltip>
-				<template v-if="customTitle">
+				<template v-if="customTitle !== title">
 					<el-text type="info">→</el-text>
 					<el-text type="primary">{{ customTitle }}</el-text>
 				</template>
-				<el-tooltip content="修改名称" placement="top">
+				<el-tooltip content="修改标题" placement="top">
 					<el-button :icon="Edit" type="primary" link size="small" class="item-edit-btn" @click.stop="startEdit()"></el-button>
 				</el-tooltip>
 				<el-tag v-if="hasAnyModified" size="small" type="warning" class="header-modified-tag">已修改</el-tag>
@@ -120,8 +120,8 @@ const isFieldModified = (effectiveValue: any, serverDefault: any): boolean => {
 
 // 重命名
 const customTitle = computed({
-	get: () => preference.value?.title || '',
-	set: (val: string) => saveField('title', val.trim() || undefined, '')
+	get: () => preference.value?.title || props.title,
+	set: (val: string) => saveField('title', val.trim() !== props.title ? val.trim() || undefined : undefined, props.title)
 })
 
 // 编辑状态
@@ -130,12 +130,12 @@ const editingTitle = ref('')
 
 const startEdit = () => {
 	editing.value = true
-	editingTitle.value = customTitle.value || props.title
+	editingTitle.value = customTitle.value
 }
 
 const saveEdit = () => {
 	const trimmed = editingTitle.value.trim()
-	saveField('title', trimmed || undefined, '')
+	saveField('title', trimmed !== props.title ? trimmed || undefined : undefined, props.title)
 	editing.value = false
 }
 
@@ -146,7 +146,7 @@ const cancelEdit = () => {
 // 是否有任何已修改的偏好
 const hasAnyModified = computed(
 	() =>
-		isFieldModified(customTitle.value, '') ||
+		isFieldModified(customTitle.value, props.title) ||
 		isFieldModified(effectiveCache.value, props.serverCache) ||
 		isFieldModified(showMenu.value, !props.serverHideMenu) ||
 		isFieldModified(showTab.value, !props.serverHideTab)
