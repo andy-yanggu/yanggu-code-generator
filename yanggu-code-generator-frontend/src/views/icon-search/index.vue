@@ -2,7 +2,7 @@
 	<el-container class="icon-search" direction="vertical">
 		<!-- 顶部搜索栏 -->
 		<div class="search-bar">
-			<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable size="large" />
+			<el-input v-model="searchText" placeholder="请输入图标名称或分类名称" :prefix-icon="Search" clearable size="large" />
 			<span class="search-stats">{{ filteredCount }} / {{ totalCount }}</span>
 		</div>
 
@@ -18,9 +18,9 @@
 					v-for="cat in sidebarCategories"
 					:key="cat.key"
 					class="sidebar-item"
-					:class="{ active: selectedKey === cat.key }"
+					:class="{ active: selectedKey === cat.key, 'name-match': keyword && cat.label.toLowerCase().includes(keyword) }"
 					@click="selectedKey = cat.key">
-					<span class="sidebar-label">{{ cat.label }}</span>
+					<text-tooltip :title="cat.label" max-width="120px" />
 					<span class="sidebar-count">{{ cat.icons.length }}</span>
 				</div>
 			</el-aside>
@@ -33,7 +33,8 @@
 				</div>
 
 				<div v-if="pagedIcons.length > 0" class="icon-list">
-					<div v-for="iconName in pagedIcons" :key="iconName" class="icon-item" @click="selectIcon(iconName)">
+					<div v-for="(iconName, index) in pagedIcons" :key="iconName" class="icon-item" @click="selectIcon(iconName)">
+						<span class="item-index">{{ (currentPage - 1) * pageSize + index + 1 }}</span>
 						<svg-icon :icon="iconName" class="item-icon" />
 						<text-tooltip :title="iconName" />
 					</div>
@@ -60,7 +61,7 @@ import SvgIcon from '@/components/svg-icon/index.vue'
 import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
-import { iconCategories } from '@/icons/iconfont/modules'
+import { iconCategories as dataIconCategories } from '@/icons/iconfont/modules'
 
 /** 图标分类 */
 interface IconCategory {
@@ -77,26 +78,34 @@ const searchText = ref('')
 const selectedKey = ref('all')
 const currentPage = ref(1)
 const pageSize = 48 // 8 列 × 6 行
-const totalCount = iconCategories.reduce((sum, c) => sum + c.icons.length, 0)
+
+const iconCategories = computed(() => {
+	return dataIconCategories
+})
+
+/** 图标总数 */
+const totalCount = computed(() => iconCategories.value.reduce((sum, c) => sum + c.icons.length, 0))
 
 /** 搜索关键词 */
 const keyword = computed(() => searchText.value.trim().toLowerCase())
 
-/** 搜索时自动筛选有结果的分类，无搜索时返回全部分类 */
+/** 搜索时自动筛选有结果的分类，无搜索时返回全部分类。支持按分类名称匹配 */
 const displayedCategories = computed<IconCategory[]>(() => {
-	if (!keyword.value) return iconCategories
-	return iconCategories
-		.map(cat => ({ ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)).sort() }))
+	if (!keyword.value) return iconCategories.value
+	return iconCategories.value
+		.map(cat => {
+			/** 分类名称匹配 → 保留该分类下所有图标 */
+			if (cat.label.toLowerCase().includes(keyword.value)) {
+				return { ...cat, icons: [...cat.icons].sort() }
+			}
+			/** 否则只保留图标名称匹配的图标 */
+			return { ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)).sort() }
+		})
 		.filter(cat => cat.icons.length > 0)
 })
 
-/** 左侧导航栏的分类（带搜索过滤后的数量） */
-const sidebarCategories = computed(() => {
-	if (!keyword.value) return iconCategories
-	return iconCategories
-		.map(cat => ({ ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)) }))
-		.filter(cat => cat.icons.length > 0)
-})
+/** 左侧导航栏的分类（复用 displayedCategories 的过滤结果） */
+const sidebarCategories = computed(() => displayedCategories.value)
 
 /** 当前选中分类的数据 */
 const currentCategory = computed<IconCategory | null>(() => {
@@ -130,6 +139,18 @@ watch([selectedKey, keyword], () => {
 	currentPage.value = 1
 })
 
+/** 搜索词变化时：分类名匹配则自动选中第一个，清空则回退到全部 */
+watch(keyword, () => {
+	if (keyword.value) {
+		const firstMatch = displayedCategories.value.find(cat => cat.label.toLowerCase().includes(keyword.value))
+		if (firstMatch) {
+			selectedKey.value = firstMatch.key
+		}
+	} else {
+		selectedKey.value = 'all'
+	}
+})
+
 /** 选中分类变化时，如果该分类无结果则回退到“全部” */
 watch(selectedKey, key => {
 	if (key !== 'all' && !sidebarCategories.value.find(c => c.key === key)) {
@@ -144,7 +165,6 @@ const selectIcon = (iconName: string) => {
 	})
 }
 </script>
-
 <style scoped>
 /* ─── 根容器 ─── */
 .icon-search {
@@ -177,14 +197,15 @@ const selectIcon = (iconName: string) => {
 .main-layout {
 	flex: 1;
 	min-height: 0;
+	gap: 12px;
 }
 
 /* ─── 左侧分类导航 ─── */
 .category-sidebar {
 	overflow-y: auto;
 	border-right: 1px solid var(--el-border-color-lighter);
-	background: var(--el-bg-color-overlay, #fff);
-	padding: 6px;
+	background: var(--el-bg-color-overlay);
+	padding: 6px 6px 16px;
 }
 
 .sidebar-item {
@@ -209,10 +230,9 @@ const selectIcon = (iconName: string) => {
 	font-weight: 500;
 }
 
-.sidebar-label {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+/** 搜索时分类名称匹配关键词 → 高亮 */
+.sidebar-item.name-match {
+	border-left: 2px solid var(--el-color-primary);
 }
 
 .sidebar-count {
@@ -230,8 +250,9 @@ const selectIcon = (iconName: string) => {
 /* ─── 右侧图标网格 ─── */
 .icon-grid {
 	min-width: 0;
+	min-height: 0;
 	overflow-y: auto;
-	background: var(--el-bg-color-overlay, #fff);
+	background: var(--el-bg-color-overlay);
 	padding: 16px;
 	--el-main-padding: 16px;
 }
@@ -262,22 +283,42 @@ const selectIcon = (iconName: string) => {
 }
 
 .icon-item {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
 	padding: 16px 4px 12px;
-	border: 1px solid var(--el-border-color-lighter);
+	border: 1px solid var(--el-border-color-light);
 	border-radius: 8px;
 	cursor: pointer;
 	transition: all 0.25s ease;
 	background: var(--el-bg-color);
 }
 
+.item-index {
+	position: absolute;
+	top: 4px;
+	left: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	border: 1px solid var(--el-border-color);
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+	color: var(--el-text-color);
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+}
+
 .icon-item:hover {
 	border-color: var(--el-color-primary);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 4px 12px var(--el-border-color-lighter);
 	transform: translateY(-2px);
 }
 
@@ -295,7 +336,7 @@ const selectIcon = (iconName: string) => {
 .pagination-bar {
 	display: flex;
 	justify-content: center;
-	padding-top: 16px;
+	padding-bottom: 16px;
 	margin-top: 8px;
 	border-top: 1px solid var(--el-border-color-extra-light);
 }

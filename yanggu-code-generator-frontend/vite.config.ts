@@ -17,6 +17,16 @@ export default defineConfig({
 		}
 	},
 	plugins: [
+		// 修复 Vite import.meta.glob 文件监听缺失：
+		// glob 展开后的模块文件未被加入文件监听列表
+		// 手动添加目录后，Vite 原生 HMR 即可正常工作
+		{
+			name: 'icon-module-watcher',
+			configureServer(server) {
+				const modulesDir = resolve(import.meta.dirname, 'src/icons/iconfont/modules')
+				server.watcher.add(modulesDir)
+			}
+		},
 		vue(),
 		createSvgIconsPlugin({
 			iconDirs: [resolve(import.meta.dirname, 'src/icons/svg')],
