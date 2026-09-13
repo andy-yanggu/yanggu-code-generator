@@ -1,19 +1,58 @@
 <template>
-	<div>
-		<el-affix :offset="100">
-			<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable @input="debouncedFilterIcons()"></el-input>
-		</el-affix>
-		<div class="icon-grid">
-			<el-row :gutter="20">
-				<el-col v-for="iconName in allIcons.sort()" :key="iconName" :span="3" class="icon-col">
-					<div class="icon-item" @click="selectIcon(iconName)">
-						<svg-icon :icon="iconName" class="large-icon" is-pointer></svg-icon>
-						<text-tooltip :title="iconName"></text-tooltip>
-					</div>
-				</el-col>
-			</el-row>
+	<el-container class="icon-search" direction="vertical">
+		<!-- 顶部搜索栏 -->
+		<div class="search-bar">
+			<el-input v-model="searchText" placeholder="请输入图标名称" :prefix-icon="Search" clearable size="large" />
+			<span class="search-stats">{{ filteredCount }} / {{ totalCount }}</span>
 		</div>
-	</div>
+
+		<!-- 主体：左侧分类 + 右侧网格 -->
+		<el-container class="main-layout">
+			<!-- 左侧分类导航 -->
+			<el-aside width="200px" class="category-sidebar">
+				<div class="sidebar-item" :class="{ active: selectedKey === 'all' }" @click="selectedKey = 'all'">
+					<span class="sidebar-label">全部图标</span>
+					<span class="sidebar-count">{{ totalCount }}</span>
+				</div>
+				<div
+					v-for="cat in sidebarCategories"
+					:key="cat.key"
+					class="sidebar-item"
+					:class="{ active: selectedKey === cat.key }"
+					@click="selectedKey = cat.key">
+					<span class="sidebar-label">{{ cat.label }}</span>
+					<span class="sidebar-count">{{ cat.icons.length }}</span>
+				</div>
+			</el-aside>
+
+			<!-- 右侧图标网格 -->
+			<el-main class="icon-grid">
+				<div v-if="currentCategory && currentIcons.length > 0" class="section-header">
+					<span class="section-title">{{ currentCategory.label }}</span>
+					<el-tag size="small" round type="info">{{ currentCategory.icons.length }}</el-tag>
+				</div>
+
+				<div v-if="pagedIcons.length > 0" class="icon-list">
+					<div v-for="iconName in pagedIcons" :key="iconName" class="icon-item" @click="selectIcon(iconName)">
+						<svg-icon :icon="iconName" class="item-icon" />
+						<text-tooltip :title="iconName" />
+					</div>
+				</div>
+
+				<el-empty v-if="currentIcons.length === 0" description="未找到匹配的图标" />
+
+				<div v-if="totalPages > 1" class="pagination-bar">
+					<el-pagination
+						v-model:current-page="currentPage"
+						:page-size="pageSize"
+						:total="currentIcons.length"
+						layout="total, prev, pager, next"
+						background
+						size="default" />
+				</div>
+			</el-main>
+		</el-container>
+	</el-container>
 </template>
 
 <script setup lang="ts">
@@ -21,64 +60,205 @@ import SvgIcon from '@/components/svg-icon/index.vue'
 import { copyToClipboard } from '@/utils/tool'
 import { Search } from '@element-plus/icons-vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
+import { iconCategories } from '@/icons/iconfont/modules'
+
+/** 图标分类 */
+interface IconCategory {
+	key: string
+	label: string
+	icons: string[]
+}
 
 defineOptions({
 	name: 'IconSearch'
 })
 
-const allIcons = ref<string[]>([])
-const allOriginIcons = ref<string[]>([])
 const searchText = ref('')
+const selectedKey = ref('all')
+const currentPage = ref(1)
+const pageSize = 48 // 8 列 × 6 行
+const totalCount = iconCategories.reduce((sum, c) => sum + c.icons.length, 0)
 
-// 从iconfont.js文件中提取图标
-const loadIcons = () => {
-	// 查找所有已注入的图标
-	const symbols = document.querySelectorAll('symbol[id^="icon-"]')
-	const iconNames: string[] = []
+/** 搜索关键词 */
+const keyword = computed(() => searchText.value.trim().toLowerCase())
 
-	symbols.forEach(symbol => {
-		const id = symbol.getAttribute('id')
-		if (id) {
-			iconNames.push(id)
-		}
-	})
+/** 搜索时自动筛选有结果的分类，无搜索时返回全部分类 */
+const displayedCategories = computed<IconCategory[]>(() => {
+	if (!keyword.value) return iconCategories
+	return iconCategories
+		.map(cat => ({ ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)).sort() }))
+		.filter(cat => cat.icons.length > 0)
+})
 
-	allOriginIcons.value = iconNames
-	allIcons.value = iconNames
-}
+/** 左侧导航栏的分类（带搜索过滤后的数量） */
+const sidebarCategories = computed(() => {
+	if (!keyword.value) return iconCategories
+	return iconCategories
+		.map(cat => ({ ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)) }))
+		.filter(cat => cat.icons.length > 0)
+})
 
-// 使用防抖优化搜索过滤
-const debouncedFilterIcons = useDebounceFn(() => {
-	if (searchText.value && searchText.value.trim()) {
-		allIcons.value = allOriginIcons.value.filter(icon => icon.toLowerCase().includes(searchText.value.toLowerCase()))
-	} else {
-		allIcons.value = allOriginIcons.value
+/** 当前选中分类的数据 */
+const currentCategory = computed<IconCategory | null>(() => {
+	if (selectedKey.value === 'all') return null
+	return displayedCategories.value.find(c => c.key === selectedKey.value) ?? null
+})
+
+/** 当前要展示的图标列表 */
+const currentIcons = computed<string[]>(() => {
+	// 搜索模式或选中“全部”：展示所有匹配分类的图标
+	if (selectedKey.value === 'all') {
+		return displayedCategories.value.flatMap(c => c.icons)
 	}
-}, 300) // 300ms 防抖延迟
+	return currentCategory.value?.icons ?? []
+})
 
-// 选择图标时的回调
+/** 筛选后的图标总数 */
+const filteredCount = computed(() => currentIcons.value.length)
+
+/** 总页数 */
+const totalPages = computed(() => Math.ceil(currentIcons.value.length / pageSize))
+
+/** 当前页的图标 */
+const pagedIcons = computed(() => {
+	const start = (currentPage.value - 1) * pageSize
+	return currentIcons.value.slice(start, start + pageSize)
+})
+
+/** 切换分类或搜索时重置到第 1 页 */
+watch([selectedKey, keyword], () => {
+	currentPage.value = 1
+})
+
+/** 选中分类变化时，如果该分类无结果则回退到“全部” */
+watch(selectedKey, key => {
+	if (key !== 'all' && !sidebarCategories.value.find(c => c.key === key)) {
+		selectedKey.value = 'all'
+	}
+})
+
+/** 选择图标时复制到剪贴板 */
 const selectIcon = (iconName: string) => {
 	copyToClipboard(iconName).then(() => {
-		// 可以添加成功提示
-		ElMessage.success(`图标名称: ${iconName}已经复制到剪切板`)
+		ElMessage.success(`${iconName} 已复制到剪贴板`)
 	})
 }
-
-onMounted(() => {
-	loadIcons()
-})
 </script>
 
 <style scoped>
-.icon-grid {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	padding: 10px;
+/* ─── 根容器 ─── */
+.icon-search {
+	height: 100%;
+	gap: 12px;
+	--el-aside-width: 200px;
 }
 
-.icon-col {
-	margin-bottom: 20px;
+/* ─── 搜索栏 ─── */
+.search-bar {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-shrink: 0;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background: var(--el-bg-color-page);
+	padding: 8px 0;
+}
+
+.search-stats {
+	white-space: nowrap;
+	color: var(--el-text-color-secondary);
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ─── 主体布局 ─── */
+.main-layout {
+	flex: 1;
+	min-height: 0;
+}
+
+/* ─── 左侧分类导航 ─── */
+.category-sidebar {
+	overflow-y: auto;
+	border-right: 1px solid var(--el-border-color-lighter);
+	background: var(--el-bg-color-overlay, #fff);
+	padding: 6px;
+}
+
+.sidebar-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-radius: 6px;
 	cursor: pointer;
+	transition: all 0.2s;
+	font-size: 13px;
+	color: var(--el-text-color-regular);
+}
+
+.sidebar-item:hover {
+	background: var(--el-fill-color-light);
+}
+
+.sidebar-item.active {
+	background: var(--el-color-primary-light-9);
+	color: var(--el-color-primary);
+	font-weight: 500;
+}
+
+.sidebar-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sidebar-count {
+	flex-shrink: 0;
+	margin-left: 8px;
+	font-size: 12px;
+	color: var(--el-text-color-placeholder);
+	font-variant-numeric: tabular-nums;
+}
+
+.sidebar-item.active .sidebar-count {
+	color: var(--el-color-primary-light-3);
+}
+
+/* ─── 右侧图标网格 ─── */
+.icon-grid {
+	min-width: 0;
+	overflow-y: auto;
+	background: var(--el-bg-color-overlay, #fff);
+	padding: 16px;
+	--el-main-padding: 16px;
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--el-border-color-extra-light);
+}
+
+.section-header ~ .icon-list {
+	margin-bottom: 20px;
+}
+
+.section-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--el-text-color-primary);
+}
+
+.icon-list {
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	gap: 12px;
 }
 
 .icon-item {
@@ -86,31 +266,42 @@ onMounted(() => {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	border: 2px solid #ebeef5;
+	gap: 8px;
+	padding: 16px 4px 12px;
+	border: 1px solid var(--el-border-color-lighter);
 	border-radius: 8px;
 	cursor: pointer;
-	transition: all 0.3s;
-	height: 100px; /* 增加高度以容纳图标和文字 */
-	background-color: var(--el-bg-color-overlay, #ffffff);
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: all 0.25s ease;
+	background: var(--el-bg-color);
 }
 
 .icon-item:hover {
 	border-color: var(--el-color-primary);
-	transform: translateY(-4px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	transform: translateY(-2px);
 }
+
 :deep(.icon-item:hover .text-tooltip-title) {
 	color: var(--el-color-primary);
 }
-.large-icon {
-	font-size: 40px;
+
+.item-icon {
+	font-size: 36px;
 	color: var(--el-text-color-primary);
-	transition: all 0.3s;
-	margin-bottom: 10px;
+	transition: all 0.25s ease;
 }
 
-.icon-item:hover .large-icon {
+/* ─── 分页栏 ─── */
+.pagination-bar {
+	display: flex;
+	justify-content: center;
+	padding-top: 16px;
+	margin-top: 8px;
+	border-top: 1px solid var(--el-border-color-extra-light);
+}
+
+.icon-item:hover .item-icon {
 	color: var(--el-color-primary);
-	transform: scale(1.1);
+	transform: scale(1.15);
 }
 </style>

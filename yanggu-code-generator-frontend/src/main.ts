@@ -3,7 +3,7 @@ import App from '@/App.vue'
 import { router } from '@/router'
 import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/svg-icon'
-import '@/icons/iconfont/iconfont'
+import '@/icons/iconfont/modules'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 css
 import '@/styles/index.scss'
