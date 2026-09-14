@@ -1,10 +1,9 @@
 /**
  * 文件与文件夹 (39 个图标)
- * 图标列表: icon-folder-view, icon-file-GIF, icon-file-exclamation-fil, icon-file-add-fill, icon-file-fill, icon-file-excel-fill, icon-file-markdown-fill, icon-file-text-fill, icon-filedone, icon-file-ppt-fill, icon-file-unknown-fill, icon-file-exception, icon-file-word-fill, icon-filesync, icon-file-zip-fill, icon-filesearch, icon-file-pdf-fill, icon-file-image-fill, icon-fileprotect, icon-file-add, icon-file-copy-fill, icon-file-excel, icon-file-exclamation, icon-file-pdf, icon-file-image, icon-folder-add-fill, icon-file-markdown, icon-folder-fill, icon-file-unknown, icon-folder-open-fill, icon-file-ppt, icon-file-word, icon-file, icon-file-zip, icon-file-text, icon-file-copy, icon-folder, icon-folder-open, icon-folder-add
  */
 
 export const key = 'file'
-export const sort = 4
+export const sort = 3
 export const label = '文件与文件夹'
 
 export const svg = `<svg>
@@ -47,4 +46,5 @@ export const svg = `<svg>
 <symbol id="icon-folder" viewBox="0 0 1024 1024"><path d="M880 298.4H521L403.7 186.2c-1.5-1.4-3.5-2.2-5.5-2.2H144c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V330.4c0-17.7-14.3-32-32-32zM840 768H184V256h188.5l119.6 114.4H840V768z"  ></path></symbol>
 <symbol id="icon-folder-open" viewBox="0 0 1024 1024"><path d="M928 444H820V330.4c0-17.7-14.3-32-32-32H473L355.7 186.2c-1.5-1.4-3.5-2.2-5.5-2.2H96c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h698c13 0 24.8-7.9 29.7-20l134-332c1.5-3.8 2.3-7.9 2.3-12 0-17.7-14.3-32-32-32zM136 256h188.5l119.6 114.4H748V444H238c-13 0-24.8 7.9-29.7 20L136 643.2V256z m635.3 512H159l103.3-256h612.4L771.3 768z"  ></path></symbol>
 <symbol id="icon-folder-add" viewBox="0 0 1024 1024"><path d="M484 443.1V528h-84.5c-4.1 0-7.5 3.1-7.5 7v42c0 3.8 3.4 7 7.5 7H484v84.9c0 3.9 3.2 7.1 7 7.1h42c3.9 0 7-3.2 7-7.1V584h84.5c4.1 0 7.5-3.2 7.5-7v-42c0-3.9-3.4-7-7.5-7H540v-84.9c0-3.9-3.1-7.1-7-7.1h-42c-3.8 0-7 3.2-7 7.1z"  ></path><path d="M880 298.4H521L403.7 186.2c-1.5-1.4-3.5-2.2-5.5-2.2H144c-17.7 0-32 14.3-32 32v592c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V330.4c0-17.7-14.3-32-32-32zM840 768H184V256h188.5l119.6 114.4H840V768z"  ></path></symbol>
-</svg>`
+</svg>
+`

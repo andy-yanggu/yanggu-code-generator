@@ -9,7 +9,7 @@
  * 3. 支持 Vite HMR 重复执行时自动替换旧 SVG
  */
 
-export function injectSvg(svgContent: string, moduleName?: string) {
+export const injectSvg = (svgContent: string, moduleName?: string) => {
 	// SSR 环境没有 document
 	if (typeof document === 'undefined') {
 		return
@@ -51,7 +51,6 @@ export function injectSvg(svgContent: string, moduleName?: string) {
 
 	if (!svg) {
 		console.warn(`[SVG] 未找到 SVG 根节点: ${moduleName ?? 'unknown'}`)
-
 		return
 	}
 

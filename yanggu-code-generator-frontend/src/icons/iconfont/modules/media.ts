@@ -1,10 +1,9 @@
 /**
  * 媒体与播放 (17 个图标)
- * 图标列表: icon-stop-fill, icon-play-square, icon-play-square-fill, icon-video-fill, icon-sound-fill, icon-camera-fill, icon-camera, icon-video, icon-sound, icon-audio, icon-audio-fill, icon-play-circle, icon-audiostatic, icon-pause, icon-videocameraadd, icon-stop, icon-play-circle-fill
  */
 
 export const key = 'media'
-export const sort = 7
+export const sort = 6
 export const label = '媒体与播放'
 
 export const svg = `<svg>
@@ -25,4 +24,5 @@ export const svg = `<svg>
 <symbol id="icon-videocameraadd" viewBox="0 0 1024 1024"><path d="M368 724H252V608c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v116H72c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h116v116c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V788h116c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8z"  ></path><path d="M912 302.3L784 376V224c0-35.3-28.7-64-64-64H128c-35.3 0-64 28.7-64 64v352h72V232h576v560H448v72h272c35.3 0 64-28.7 64-64V648l128 73.7c21.3 12.3 48-3.1 48-27.6V330c0-24.6-26.7-40-48-27.7zM888 625l-104-59.8V458.9L888 399v226z"  ></path><path d="M320 360c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H208c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h112z"  ></path></symbol>
 <symbol id="icon-stop" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m0 820c-205.4 0-372-166.6-372-372 0-89 31.3-170.8 83.5-234.8l523.3 523.3C682.8 852.7 601 884 512 884z m288.5-137.2L277.2 223.5C341.2 171.3 423 140 512 140c205.4 0 372 166.6 372 372 0 89-31.3 170.8-83.5 234.8z"  ></path></symbol>
 <symbol id="icon-play-circle-fill" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m144.1 454.9L437.7 677.8c-1.4 1-3 1.5-4.7 1.5-4.4 0-8-3.6-8-8V353.7c0-1.7 0.5-3.3 1.5-4.7 2.6-3.6 7.6-4.4 11.2-1.8L656.1 506c0.7 0.5 1.3 1.1 1.8 1.8 2.6 3.5 1.8 8.5-1.8 11.1z"  ></path></symbol>
-</svg>`
+</svg>
+`

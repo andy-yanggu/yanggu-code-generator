@@ -1,58 +1,60 @@
 <template>
-	<el-container class="icon-search" direction="vertical">
-		<!-- 顶部搜索栏 -->
-		<div class="search-bar">
-			<el-input v-model="searchText" placeholder="请输入图标名称或分类名称" :prefix-icon="Search" clearable size="large" />
-			<span class="search-stats">{{ filteredCount }} / {{ totalCount }}</span>
-		</div>
-
-		<!-- 主体：左侧分类 + 右侧网格 -->
-		<el-container class="main-layout">
-			<!-- 左侧分类导航 -->
-			<el-aside width="200px" class="category-sidebar">
-				<div class="sidebar-item" :class="{ active: selectedKey === 'all' }" @click="selectedKey = 'all'">
+	<el-container class="main-layout">
+		<!-- 左侧分类面板：分类搜索 + 分类列表 -->
+		<el-aside width="200px" class="category-sidebar">
+			<div class="sidebar-header">
+				<el-input v-model="categorySearch" placeholder="请输入分类名称" :prefix-icon="Search" clearable></el-input>
+				<el-divider style="margin: 10px 0 6px"></el-divider>
+			</div>
+			<el-scrollbar class="sidebar-scrollbar">
+				<div v-show="!categoryKeyword" class="sidebar-item" :class="{ active: selectedKey === 'all' }" @click="selectedKey = 'all'">
 					<span class="sidebar-label">全部图标</span>
 					<span class="sidebar-count">{{ totalCount }}</span>
 				</div>
 				<div
-					v-for="cat in sidebarCategories"
+					v-for="cat in filteredCategories"
 					:key="cat.key"
 					class="sidebar-item"
-					:class="{ active: selectedKey === cat.key, 'name-match': keyword && cat.label.toLowerCase().includes(keyword) }"
+					:class="{ active: selectedKey === cat.key }"
 					@click="selectedKey = cat.key">
 					<text-tooltip :title="cat.label" max-width="120px" />
 					<span class="sidebar-count">{{ cat.icons.length }}</span>
 				</div>
-			</el-aside>
+				<el-empty v-if="categoryKeyword && filteredCategories.length === 0" description="未找到匹配的分类" :image-size="150"></el-empty>
+			</el-scrollbar>
+		</el-aside>
 
-			<!-- 右侧图标网格 -->
-			<el-main class="icon-grid">
-				<div v-if="currentCategory && currentIcons.length > 0" class="section-header">
-					<span class="section-title">{{ currentCategory.label }}</span>
-					<el-tag size="small" round type="info">{{ currentCategory.icons.length }}</el-tag>
-				</div>
+		<!-- 右侧图标面板：图标搜索 + 图标网格 -->
+		<el-main class="icon-grid">
+			<el-input v-model="iconSearch" placeholder="请输入图标名称" :prefix-icon="Search" clearable></el-input>
+			<el-divider style="margin: 10px 0 6px"></el-divider>
+			<div v-if="currentIcons.length > 0" class="section-header">
+				<span class="section-title">{{ selectedKey === 'all' ? '全部图标' : currentCategory?.label }}</span>
+				<el-tag size="small" round type="info">{{ selectedKey === 'all' ? totalCount : currentCategory?.icons.length }}</el-tag>
+			</div>
 
-				<div v-if="pagedIcons.length > 0" class="icon-list">
-					<div v-for="(iconName, index) in pagedIcons" :key="iconName" class="icon-item" @click="selectIcon(iconName)">
+			<el-row v-if="pagedIcons.length > 0" :gutter="12" class="icon-list">
+				<el-col v-for="(iconName, index) in pagedIcons" :key="iconName" :span="3">
+					<div class="icon-item" @click="selectIcon(iconName)">
 						<span class="item-index">{{ (currentPage - 1) * pageSize + index + 1 }}</span>
 						<svg-icon :icon="iconName" class="item-icon" />
 						<text-tooltip :title="iconName" />
 					</div>
-				</div>
+				</el-col>
+			</el-row>
 
-				<el-empty v-if="currentIcons.length === 0" description="未找到匹配的图标" />
+			<el-empty v-if="currentIcons.length === 0" description="未找到匹配的图标" />
 
-				<div v-if="totalPages > 1" class="pagination-bar">
-					<el-pagination
-						v-model:current-page="currentPage"
-						:page-size="pageSize"
-						:total="currentIcons.length"
-						layout="total, prev, pager, next"
-						background
-						size="default" />
-				</div>
-			</el-main>
-		</el-container>
+			<div v-if="totalPages > 1" class="pagination-bar">
+				<el-pagination
+					v-model:current-page="currentPage"
+					:page-size="pageSize"
+					:total="currentIcons.length"
+					layout="total, prev, pager, next"
+					background
+					size="default" />
+			</div>
+		</el-main>
 	</el-container>
 </template>
 
@@ -74,56 +76,47 @@ defineOptions({
 	name: 'IconSearch'
 })
 
-const searchText = ref('')
+const categorySearch = ref('')
+const iconSearch = ref('')
 const selectedKey = ref('all')
 const currentPage = ref(1)
-const pageSize = 48 // 8 列 × 6 行
+const pageSize = 40
 
-const iconCategories = computed(() => {
-	return dataIconCategories
-})
+const iconCategories = computed(() => dataIconCategories)
 
 /** 图标总数 */
 const totalCount = computed(() => iconCategories.value.reduce((sum, c) => sum + c.icons.length, 0))
 
-/** 搜索关键词 */
-const keyword = computed(() => searchText.value.trim().toLowerCase())
+/** 分类搜索关键词 */
+const categoryKeyword = computed(() => categorySearch.value.trim().toLowerCase())
 
-/** 搜索时自动筛选有结果的分类，无搜索时返回全部分类。支持按分类名称匹配 */
-const displayedCategories = computed<IconCategory[]>(() => {
-	if (!keyword.value) return iconCategories.value
-	return iconCategories.value
-		.map(cat => {
-			/** 分类名称匹配 → 保留该分类下所有图标 */
-			if (cat.label.toLowerCase().includes(keyword.value)) {
-				return { ...cat, icons: [...cat.icons].sort() }
-			}
-			/** 否则只保留图标名称匹配的图标 */
-			return { ...cat, icons: cat.icons.filter(icon => icon.toLowerCase().includes(keyword.value)).sort() }
-		})
-		.filter(cat => cat.icons.length > 0)
+/** 图标搜索关键词 */
+const iconKeyword = computed(() => iconSearch.value.trim().toLowerCase())
+
+/** 按分类名称过滤后的分类列表 */
+const filteredCategories = computed<IconCategory[]>(() => {
+	if (!categoryKeyword.value) {
+		return iconCategories.value
+	} else {
+		return iconCategories.value.filter(cat => cat.label.toLowerCase().includes(categoryKeyword.value))
+	}
 })
-
-/** 左侧导航栏的分类（复用 displayedCategories 的过滤结果） */
-const sidebarCategories = computed(() => displayedCategories.value)
 
 /** 当前选中分类的数据 */
 const currentCategory = computed<IconCategory | null>(() => {
-	if (selectedKey.value === 'all') return null
-	return displayedCategories.value.find(c => c.key === selectedKey.value) ?? null
-})
-
-/** 当前要展示的图标列表 */
-const currentIcons = computed<string[]>(() => {
-	// 搜索模式或选中“全部”：展示所有匹配分类的图标
 	if (selectedKey.value === 'all') {
-		return displayedCategories.value.flatMap(c => c.icons)
+		return null
+	} else {
+		return iconCategories.value.find(c => c.key === selectedKey.value) ?? null
 	}
-	return currentCategory.value?.icons ?? []
 })
 
-/** 筛选后的图标总数 */
-const filteredCount = computed(() => currentIcons.value.length)
+/** 当前要展示的图标列表：先按分类筛选，再按图标名称搜索 */
+const currentIcons = computed<string[]>(() => {
+	const icons = selectedKey.value === 'all' ? iconCategories.value.flatMap(c => c.icons) : (currentCategory.value?.icons ?? [])
+	if (!iconKeyword.value) return icons
+	return icons.filter(icon => icon.toLowerCase().includes(iconKeyword.value))
+})
 
 /** 总页数 */
 const totalPages = computed(() => Math.ceil(currentIcons.value.length / pageSize))
@@ -135,25 +128,18 @@ const pagedIcons = computed(() => {
 })
 
 /** 切换分类或搜索时重置到第 1 页 */
-watch([selectedKey, keyword], () => {
+watch([selectedKey, categoryKeyword, iconKeyword], () => {
 	currentPage.value = 1
 })
 
-/** 搜索词变化时：分类名匹配则自动选中第一个，清空则回退到全部 */
-watch(keyword, () => {
-	if (keyword.value) {
-		const firstMatch = displayedCategories.value.find(cat => cat.label.toLowerCase().includes(keyword.value))
-		if (firstMatch) {
-			selectedKey.value = firstMatch.key
-		}
-	} else {
-		selectedKey.value = 'all'
+/** 分类过滤结果变化时，自动同步选中状态 */
+watch(filteredCategories, cats => {
+	if (!categoryKeyword.value) {
+		return
 	}
-})
-
-/** 选中分类变化时，如果该分类无结果则回退到“全部” */
-watch(selectedKey, key => {
-	if (key !== 'all' && !sidebarCategories.value.find(c => c.key === key)) {
+	if (cats.length > 0) {
+		selectedKey.value = cats[0].key
+	} else {
 		selectedKey.value = 'all'
 	}
 })
@@ -166,46 +152,25 @@ const selectIcon = (iconName: string) => {
 }
 </script>
 <style scoped>
-/* ─── 根容器 ─── */
-.icon-search {
-	height: 100%;
-	gap: 12px;
-	--el-aside-width: 200px;
-}
-
-/* ─── 搜索栏 ─── */
-.search-bar {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	flex-shrink: 0;
-	position: sticky;
-	top: 0;
-	z-index: 10;
-	background: var(--el-bg-color-page);
-	padding: 8px 0;
-}
-
-.search-stats {
-	white-space: nowrap;
-	color: var(--el-text-color-secondary);
-	font-size: 13px;
-	font-variant-numeric: tabular-nums;
-}
-
 /* ─── 主体布局 ─── */
 .main-layout {
-	flex: 1;
+	height: 100%;
 	min-height: 0;
 	gap: 12px;
 }
 
 /* ─── 左侧分类导航 ─── */
 .category-sidebar {
-	overflow-y: auto;
 	border-right: 1px solid var(--el-border-color-lighter);
 	background: var(--el-bg-color-overlay);
-	padding: 6px 6px 16px;
+	padding: 10px 10px 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebar-header {
+	flex-shrink: 0;
 }
 
 .sidebar-item {
@@ -230,11 +195,6 @@ const selectIcon = (iconName: string) => {
 	font-weight: 500;
 }
 
-/** 搜索时分类名称匹配关键词 → 高亮 */
-.sidebar-item.name-match {
-	border-left: 2px solid var(--el-color-primary);
-}
-
 .sidebar-count {
 	flex-shrink: 0;
 	margin-left: 8px;
@@ -247,14 +207,18 @@ const selectIcon = (iconName: string) => {
 	color: var(--el-color-primary-light-3);
 }
 
+.sidebar-scrollbar {
+	flex: 1;
+	min-height: 0;
+}
+
 /* ─── 右侧图标网格 ─── */
 .icon-grid {
 	min-width: 0;
 	min-height: 0;
 	overflow-y: auto;
 	background: var(--el-bg-color-overlay);
-	padding: 16px;
-	--el-main-padding: 16px;
+	padding-top: 10px;
 }
 
 .section-header {
@@ -266,10 +230,6 @@ const selectIcon = (iconName: string) => {
 	border-bottom: 1px solid var(--el-border-color-extra-light);
 }
 
-.section-header ~ .icon-list {
-	margin-bottom: 20px;
-}
-
 .section-title {
 	font-size: 14px;
 	font-weight: 600;
@@ -277,9 +237,7 @@ const selectIcon = (iconName: string) => {
 }
 
 .icon-list {
-	display: grid;
-	grid-template-columns: repeat(8, 1fr);
-	gap: 12px;
+	row-gap: 12px;
 }
 
 .icon-item {
