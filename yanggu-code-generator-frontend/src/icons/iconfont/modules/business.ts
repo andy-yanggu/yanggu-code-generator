@@ -2,7 +2,6 @@
  * 商务与办公 (96 个图标)
  */
 
-export const key = 'business'
 export const sort = 11
 export const label = '商务与办公'
 

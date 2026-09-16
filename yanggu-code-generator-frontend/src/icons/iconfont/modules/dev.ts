@@ -2,7 +2,6 @@
  * 开发与技术 (32 个图标)
  */
 
-export const key = 'dev'
 export const sort = 12
 export const label = '开发与技术'
 

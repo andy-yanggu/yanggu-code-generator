@@ -2,7 +2,6 @@
  * 提示与操作 (45 个图标)
  */
 
-export const key = 'alert'
 export const sort = 10
 export const label = '提示与操作'
 

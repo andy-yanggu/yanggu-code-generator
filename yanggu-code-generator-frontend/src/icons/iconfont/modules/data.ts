@@ -2,7 +2,6 @@
  * 数据与表格 (33 个图标)
  */
 
-export const key = 'data'
 export const sort = 8
 export const label = '数据与表格'
 

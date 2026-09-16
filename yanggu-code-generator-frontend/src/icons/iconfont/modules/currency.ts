@@ -2,7 +2,6 @@
  * 货币与金融 (28 个图标)
  */
 
-export const key = 'currency'
 export const sort = 14
 export const label = '货币与金融'
 

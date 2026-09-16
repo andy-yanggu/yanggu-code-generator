@@ -2,7 +2,6 @@
  * 导航与箭头 (77 个图标)
  */
 
-export const key = 'navigation'
 export const sort = 1
 export const label = '导航与箭头'
 

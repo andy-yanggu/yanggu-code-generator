@@ -2,7 +2,6 @@
  * UI核心组件 (36 个图标)
  */
 
-export const key = 'ui-core'
 export const sort = 15
 export const label = 'UI核心组件'
 

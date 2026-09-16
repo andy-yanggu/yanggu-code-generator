@@ -2,7 +2,6 @@
  * 其他 (10 个图标)
  */
 
-export const key = 'misc'
 export const sort = 18
 export const label = '其他'
 

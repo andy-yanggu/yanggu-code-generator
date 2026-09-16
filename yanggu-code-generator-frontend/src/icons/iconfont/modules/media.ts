@@ -2,7 +2,6 @@
  * 媒体与播放 (17 个图标)
  */
 
-export const key = 'media'
 export const sort = 6
 export const label = '媒体与播放'
 

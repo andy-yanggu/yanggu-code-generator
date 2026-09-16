@@ -2,7 +2,6 @@
  * 文件与文件夹 (39 个图标)
  */
 
-export const key = 'file'
 export const sort = 3
 export const label = '文件与文件夹'
 

@@ -14,6 +14,33 @@
 import { injectSvg } from './inject-svg'
 
 /**
+ * 图标模块接口。
+ *
+ * key 由 index.ts 从文件名自动提取，模块文件只需导出以下三个具名常量：
+ *
+ *   sort  - 排序权重，值越小越靠前
+ *   label - 分类显示名称
+ *   svg   - SVG sprite 字符串
+ */
+export interface IconModule {
+	key: string
+	sort: number
+	label: string
+	svg: string
+}
+
+/**
+ * 图标分类。
+ *
+ * 由 IconModule 的元数据 + 从 SVG 中自动提取的图标名称组成。
+ */
+export interface IconCategory {
+	key: string
+	label: string
+	icons: string[]
+}
+
+/**
  * 从 SVG sprite 中提取所有 symbol 的 id。
  *
  * 注意：
@@ -47,10 +74,33 @@ const rawModules = import.meta.glob(['./*.ts', '!./index.ts', '!./inject-svg.ts'
 /**
  * 所有图标模块。
  *
- * 按每个模块导出的 sort 字段自动排序，
- * sort 值决定图标分类的展示顺序。
+ * key 从文件路径自动提取（文件名即模块名），
+ * 无需模块手动导出。
+ *
+ * 按 sort 字段自动排序，sort 值决定图标分类的展示顺序。
  */
-const modules = (Object.values(rawModules) as { key: string; label: string; sort: number; svg: string }[]).sort((a, b) => a.sort - b.sort)
+const modules: IconModule[] = Object.entries(rawModules)
+	.map(([filePath, module]) => {
+		// ./alert.ts → alert
+		const key = filePath.replace(/^\.\//, '').replace(/\.ts$/, '')
+		return { ...(module as Omit<IconModule, 'key'>), key }
+	})
+	.sort((a, b) => a.sort - b.sort)
+
+/**
+ * 校验模块 label 唯一性。
+ *
+ * key 由文件名保证唯一，无需校验。
+ * 但 label 是手动定义的显示名称，
+ * 重复会导致用户看到的分类名一样，无法区分。
+ */
+const seenLabels = new Set<string>()
+for (const m of modules) {
+	if (seenLabels.has(m.label)) {
+		console.error(`[icon-modules] label 冲突: "${m.label}" 被多个模块使用`)
+	}
+	seenLabels.add(m.label)
+}
 
 /** 将所有模块的 SVG 注入 DOM */
 modules.forEach(m => injectSvg(m.svg, m.key))
@@ -58,16 +108,9 @@ modules.forEach(m => injectSvg(m.svg, m.key))
 /**
  * 所有图标分类。
  *
- * 每个模块的：
- *
- *   key
- *   label
- *
- * 来自模块自身。
- *
- * icons 则从 svg 中自动提取。
+ * key 从文件名自动提取，label 来自模块自身，icons 从 svg 中自动提取。
  */
-export const iconCategories = modules.map(module => ({
+export const iconCategories: IconCategory[] = modules.map(module => ({
 	key: module.key,
 	label: module.label,
 	icons: extractIcons(module.svg)

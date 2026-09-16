@@ -2,7 +2,6 @@
  * 通讯与消息 (13 个图标)
  */
 
-export const key = 'communication'
 export const sort = 5
 export const label = '通讯与消息'
 

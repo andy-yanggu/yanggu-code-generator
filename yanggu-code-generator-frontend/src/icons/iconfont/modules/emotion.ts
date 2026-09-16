@@ -2,7 +2,6 @@
  * 情感与社交 (28 个图标)
  */
 
-export const key = 'emotion'
 export const sort = 9
 export const label = '情感与社交'
 

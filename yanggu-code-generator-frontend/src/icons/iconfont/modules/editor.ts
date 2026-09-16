@@ -2,7 +2,6 @@
  * 编辑与文本格式 (21 个图标)
  */
 
-export const key = 'editor'
 export const sort = 7
 export const label = '编辑与文本格式'
 

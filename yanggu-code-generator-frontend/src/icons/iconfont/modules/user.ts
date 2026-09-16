@@ -2,7 +2,6 @@
  * 用户与人员 (9 个图标)
  */
 
-export const key = 'user'
 export const sort = 4
 export const label = '用户与人员'
 

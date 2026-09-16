@@ -2,7 +2,6 @@
  * 硬件与设备 (14 个图标)
  */
 
-export const key = 'hardware'
 export const sort = 13
 export const label = '硬件与设备'
 

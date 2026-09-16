@@ -2,7 +2,6 @@
  * 品牌与社交 (89 个图标)
  */
 
-export const key = 'brand'
 export const sort = 2
 export const label = '品牌与社交'
 

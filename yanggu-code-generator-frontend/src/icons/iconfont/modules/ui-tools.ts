@@ -2,7 +2,6 @@
  * UI工具与操作 (25 个图标)
  */
 
-export const key = 'ui-tools'
 export const sort = 16
 export const label = 'UI工具与操作'
 

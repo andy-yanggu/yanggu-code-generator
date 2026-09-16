@@ -2,7 +2,6 @@
  * 错误页面 (6 个图标)
  */
 
-export const key = 'error'
 export const sort = 17
 export const label = '错误页面'
 
