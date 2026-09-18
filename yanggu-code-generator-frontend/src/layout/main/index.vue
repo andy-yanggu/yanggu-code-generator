@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
 import { useAppStore, useCacheStore, useMenuPreferenceStore, useSystemSettingStore } from '@/store'
+import { useLayout } from '@/hooks/use-layout'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ROUTE_META_DEFAULTS } from '@/config/router'
 
@@ -52,7 +53,7 @@ const appStore = useAppStore()
 const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
 const menuPreferenceStore = useMenuPreferenceStore()
-const { layoutScrollbarRef } = storeToRefs(appStore)
+const { layoutScrollbarRef } = useLayout()
 
 // 判断 iframe 是否开启缓存（考虑用户偏好）
 const isIframeCached = (path: string, serverCache: boolean): boolean => {

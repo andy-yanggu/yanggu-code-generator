@@ -2,6 +2,7 @@
  * hooks统一导出
  */
 export * from '@/hooks/use-init-form'
+export * from '@/hooks/use-layout'
 export * from '@/hooks/use-refresh-current-page'
 export * from '@/hooks/use-submit-form'
 export * from '@/hooks/use-submit-handler'

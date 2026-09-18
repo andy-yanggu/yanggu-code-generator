@@ -3,8 +3,8 @@ import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 
 // 持久化配置
 const getPersistConfig = () => {
-	// 始终忽略的字段（DOM 引用和加载状态，不应持久化）
-	const alwaysOmitList = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading', 'isDark', 'isFullscreen']
+	// 始终忽略的字段（加载状态和响应式主题，不应持久化）
+	const alwaysOmitList = ['globalLoading', 'isDark', 'isFullscreen']
 
 	return {
 		key: 'appStore',
@@ -23,22 +23,12 @@ export const useAppStore = defineStore(
 		const globalLoading = ref(false)
 		// 布局大小
 		const layoutSize = ref<LayOutSize>('default')
-		// Layout Main Ref
-		const layoutMainRef = ref()
-		// Layout Main 滚动条 ref
-		const layoutScrollbarRef = ref()
-		// 全屏元素
-		const currentFullscreenElement = ref<HTMLElement | null>(null)
 		// 主题模式
 		const isDark = useDark({
 			selector: 'html',
 			attribute: 'class',
 			valueDark: 'dark',
 			valueLight: 'light'
-		})
-
-		useEventListener(document, 'fullscreenchange', () => {
-			currentFullscreenElement.value = document.fullscreenElement as HTMLElement | null
 		})
 
 		// 切换折叠状态
@@ -64,9 +54,6 @@ export const useAppStore = defineStore(
 			isCollapse,
 			globalLoading,
 			layoutSize,
-			layoutMainRef,
-			layoutScrollbarRef,
-			currentFullscreenElement,
 			isFullscreen,
 			isDark,
 			toggleCollapse,

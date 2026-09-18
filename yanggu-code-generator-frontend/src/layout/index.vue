@@ -28,6 +28,7 @@ import LayoutSidebar from '@/layout/sidebar/index.vue'
 import LayoutNavbar from '@/layout/navbar/index.vue'
 import LayoutMain from '@/layout/main/index.vue'
 import { useAppStore, useSystemSettingStore } from '@/store'
+import { useLayout } from '@/hooks/use-layout'
 
 import SvgIcon from '@/components/svg-icon/index.vue'
 
@@ -37,7 +38,7 @@ defineOptions({
 
 const appStore = useAppStore()
 const systemSettingStore = useSystemSettingStore()
-const { layoutMainRef } = storeToRefs(appStore)
+const { layoutMainRef } = useLayout()
 
 // 计算布局宽度
 const calculateLayoutSidebarWidth = computed(() => {

@@ -2,7 +2,7 @@
 	<el-popover
 		:disabled="list.length <= previewCount"
 		teleported
-		:append-to="appStore.currentFullscreenElement || body"
+		:append-to="currentFullscreenElement || body"
 		trigger="hover"
 		placement="top"
 		:width="width"
@@ -32,7 +32,7 @@
 	</el-popover>
 </template>
 <script setup lang="ts">
-import { useAppStore } from '@/store'
+import { useLayout } from '@/hooks/use-layout'
 
 defineOptions({
 	name: 'PopoverList'
@@ -63,5 +63,5 @@ defineProps({
 
 const body = document.body
 
-const appStore = useAppStore()
+const { currentFullscreenElement } = useLayout()
 </script>
