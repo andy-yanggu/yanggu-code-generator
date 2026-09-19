@@ -1,23 +1,23 @@
 <template>
 	<el-scrollbar ref="layoutScrollbarRef" class="layout-scrollbar">
 		<div class="layout-card">
-			<!-- 开启了全局缓存 -->
+			<!-- 开启了全局缓存：keep-alive 缓存组件 + iframe 池化缓存 -->
 			<template v-if="systemSettingStore.other.isOpenPageCache">
 				<router-view v-slot="{ Component }">
 					<transition name="slide" mode="out-in">
-						<!-- 内置|业务菜单和非缓存的iframe页面 -->
+						<!--
+							keep-alive 负责缓存业务菜单组件
+							非缓存的 iframe 也经过此处渲染，但不在 cacheList 中，不会被缓存
+							缓存的 iframe 由下方 iframe-container 池化管理
+						-->
 						<keep-alive :include="cacheStore.cacheList" :exclude="['RouterRedirect']">
-							<component
-								:is="Component"
-								v-if="route.meta.type === 1 || (route.meta.type === 3 && !isIframeCached(route.path, (route.meta.cache as boolean) || ROUTE_META_DEFAULTS.cache))"
-								:key="route.fullPath"></component>
+							<component :is="Component" v-if="shouldCachePage" :key="route.fullPath"></component>
 						</keep-alive>
 					</transition>
 				</router-view>
-				<!-- 缓存的iframe页面 -->
 				<iframe-container></iframe-container>
 			</template>
-			<!-- 关闭全局缓存，只用component -->
+			<!-- 关闭全局缓存：纯 component 渲染，无缓存 -->
 			<template v-else>
 				<router-view v-slot="{ Component }">
 					<transition name="slide" mode="out-in">
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
-import { useAppStore, useCacheStore, useMenuPreferenceStore, useSystemSettingStore } from '@/store'
+import { useCacheStore, useMenuPreferenceStore, useSystemSettingStore } from '@/store'
 import { useLayout } from '@/hooks/use-layout'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { ROUTE_META_DEFAULTS } from '@/config/router'
@@ -49,7 +49,6 @@ defineOptions({
 })
 
 const route = useRoute()
-const appStore = useAppStore()
 const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
 const menuPreferenceStore = useMenuPreferenceStore()
@@ -60,6 +59,25 @@ const isIframeCached = (path: string, serverCache: boolean): boolean => {
 	const { cache } = menuPreferenceStore.getEffective(path, { cache: serverCache })
 	return cache
 }
+
+/**
+ * 当前路由页面是否应该被 keep-alive 缓存
+ * - 业务菜单(type=1)：始终走 keep-alive（是否真正缓存由 cacheList 决定）
+ * - 非缓存 iframe(type=3)：经过 keep-alive 但不在 cacheList 中，不会被缓存
+ * - 缓存 iframe(type=3)：不走 keep-alive，由 iframe-container 池化管理
+ */
+const shouldCachePage = computed(() => {
+	const { type, cache } = route.meta
+	// 业务菜单
+	if (type === 1) {
+		return true
+	}
+	// 非缓存的 iframe（缓存的 iframe 交给 iframe-container 处理）
+	if (type === 3) {
+		return !isIframeCached(route.path, (cache as boolean) || ROUTE_META_DEFAULTS.cache)
+	}
+	return false
+})
 
 // 路由切换时滚动到顶部
 watch(

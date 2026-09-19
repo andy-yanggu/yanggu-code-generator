@@ -52,8 +52,8 @@ service.interceptors.response.use(
 
 		// 文件下载直接返回
 		if (config.responseType === 'blob') {
-			const contentType = response.headers['content-type']
-			const disposition = response.headers['content-disposition']
+			const contentType = response.headers['content-type'] as string | undefined
+			const disposition = response.headers['content-disposition'] as string | undefined
 
 			const isJsonError = contentType?.includes('application/json') || !disposition
 			// 后端接口报错
@@ -159,55 +159,37 @@ const handleBusinessError = (result: Result, config: any) => {
 	}
 }
 
+// HTTP 状态码 → 错误消息映射
+const HTTP_STATUS_MESSAGES: Record<number, string> = {
+	400: '请求参数错误',
+	401: '未授权，请重新登录',
+	403: '拒绝访问',
+	404: '请求资源不存在',
+	408: '请求超时',
+	500: '服务器内部错误',
+	501: '服务未实现',
+	502: '网关错误',
+	503: '服务不可用',
+	504: '网关超时'
+}
+
 /**
  * 处理网络请求错误
  */
 const handleNetworkError = (error: any, config: any) => {
 	if (!config.noErrorMessage) {
-		// 根据错误类型提供更具体的错误信息
 		let errorMessage = '请求失败'
+
 		if (error.code === 'ECONNABORTED') {
 			errorMessage = '请求超时，请稍后重试'
 		} else if (error.message === 'Network Error') {
 			errorMessage = '网络连接失败，请检查网络设置'
 		} else if (error.response) {
-			switch (error.response.status) {
-				case 400:
-					errorMessage = '请求参数错误'
-					break
-				case 401:
-					errorMessage = '未授权，请重新登录'
-					break
-				case 403:
-					errorMessage = '拒绝访问'
-					break
-				case 404:
-					errorMessage = '请求资源不存在'
-					break
-				case 408:
-					errorMessage = '请求超时'
-					break
-				case 500:
-					errorMessage = '服务器内部错误'
-					break
-				case 501:
-					errorMessage = '服务未实现'
-					break
-				case 502:
-					errorMessage = '网关错误'
-					break
-				case 503:
-					errorMessage = '服务不可用'
-					break
-				case 504:
-					errorMessage = '网关超时'
-					break
-				default:
-					errorMessage = `连接错误${error.response.status}`
-			}
+			errorMessage = HTTP_STATUS_MESSAGES[error.response.status] ?? `连接错误${error.response.status}`
 		} else if (error.request) {
 			errorMessage = '服务器无响应，请稍后重试'
 		}
+
 		ElMessage.error(errorMessage)
 	}
 	return Promise.reject(error)
@@ -229,7 +211,7 @@ export const downloadFile = (url: string, params?: any, noErrorMessage = false):
 				noErrorMessage
 			})
 			.then(response => {
-				const contentDisposition = response.headers['content-disposition']
+				const contentDisposition = response.headers['content-disposition'] as string | undefined
 				let filename = 'download'
 
 				// 获取下载的文件名
