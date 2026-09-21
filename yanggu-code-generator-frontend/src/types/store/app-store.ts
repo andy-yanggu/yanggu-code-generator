@@ -23,6 +23,3 @@ export interface IframeInfo {
 	// 全路径
 	fullPath: string
 }
-
-// 布局大小
-export type LayOutSize = 'large' | 'default' | 'small'

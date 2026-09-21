@@ -8,7 +8,7 @@
 				<el-form-item label="数据库类型" prop="dbType">
 					<el-select
 						v-model="state.queryForm.dbType"
-						:options="DB_TYPES"
+						:options="DB_TYPES.items"
 						style="width: 160px"
 						filterable
 						clearable

@@ -155,7 +155,7 @@ import GenTableForm from '@/views/gen/table/form.vue'
 import Preview from '@/business/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
-import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import { useInitForm, useTableAction } from '@/hooks'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
@@ -205,7 +205,7 @@ const importHandle = () => {
 }
 
 const previewHandle = (tableItem: any) => {
-	previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GeneratorProductTypeEnum.TABLE)
+	previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GENERATOR_PRODUCT_TYPES.Table)
 }
 
 const editHandle = (row: any) => {

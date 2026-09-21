@@ -8,7 +8,7 @@
 				<el-form-item label="生成方式" prop="generatorType">
 					<el-select
 						v-model="state.queryForm.generatorType"
-						:options="PROJECT_GENERATE_TYPES"
+						:options="PROJECT_GENERATE_TYPES.items"
 						style="width: 150px"
 						filterable
 						clearable
@@ -134,7 +134,7 @@ import { genProjectApi } from '@/api'
 import { GenProjectEntity, GenProjectQuery, IHooksOptions } from '@/types'
 import Steps from '@/views/gen/project/steps.vue'
 import ProjectForm from '@/views/gen/project/form.vue'
-import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { getLabel } from '@/utils/enum'
 import { Delete, DocumentAdd, Edit, Plus, Refresh, Search, View } from '@element-plus/icons-vue'
@@ -165,7 +165,7 @@ const previewRef = ref()
 const stepsRef = ref()
 
 const previewHandle = (projectItem: GenProjectEntity) => {
-	previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GeneratorProductTypeEnum.PROJECT)
+	previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GENERATOR_PRODUCT_TYPES.Project)
 }
 
 const generatorCode = (item: GenProjectEntity) => {

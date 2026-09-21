@@ -12,7 +12,7 @@
 					<el-form-item label="模板组类型" prop="templateGroupType">
 						<el-select
 							v-model="state.queryForm.templateGroupType"
-							:options="TEMPLATE_GROUP_TYPES"
+							:options="TEMPLATE_GROUP_TYPES.items"
 							style="width: 160px"
 							filterable
 							clearable
@@ -30,7 +30,7 @@
 					<el-form-item label="模板类型" prop="templateType">
 						<el-select
 							v-model="state.queryForm.templateType"
-							:options="TEMPLATE_TYPES"
+							:options="TEMPLATE_TYPES.items"
 							style="width: 150px"
 							filterable
 							clearable

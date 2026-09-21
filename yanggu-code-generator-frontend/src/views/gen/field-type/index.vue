@@ -8,7 +8,7 @@
 				<el-form-item label="属性类型" prop="attrType">
 					<el-select
 						v-model="state.queryForm.attrType"
-						:options="ATTR_TYPES"
+						:options="ATTR_TYPES.items"
 						style="width: 160px"
 						filterable
 						clearable

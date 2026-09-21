@@ -85,17 +85,17 @@
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="表单布局" prop="formLayout">
-						<el-radio-group v-model="state.dataForm.formLayout" :options="FORM_LAYOUT_TYPES"></el-radio-group>
+						<el-radio-group v-model="state.dataForm.formLayout" :options="FORM_LAYOUT_TYPES.items"></el-radio-group>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="弹窗方式" prop="popupType">
-						<el-radio-group v-model="state.dataForm.popupType" :options="TABLE_POPUP_TYPE_TYPES"></el-radio-group>
+						<el-radio-group v-model="state.dataForm.popupType" :options="TABLE_POPUP_TYPE_TYPES.items"></el-radio-group>
 					</el-form-item>
 				</el-col>
 			</el-row>
 			<el-form-item label="生成功能" prop="generatorFunction">
-				<el-checkbox-group v-model="state.dataForm.generatorFunction" :options="TABLE_GENERATOR_FUNCTION_TYPES"></el-checkbox-group>
+				<el-checkbox-group v-model="state.dataForm.generatorFunction" :options="TABLE_GENERATOR_FUNCTION_TYPES.items"></el-checkbox-group>
 			</el-form-item>
 
 			<form-divider title="基类配置"></form-divider>

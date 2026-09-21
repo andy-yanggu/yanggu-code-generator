@@ -15,7 +15,7 @@
 				<el-input v-model="state.dataForm.fileName" clearable :placeholder="`请输入${fileName}`"></el-input>
 			</el-form-item>
 			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES" disabled></el-radio-group>
+				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES.items" disabled></el-radio-group>
 			</el-form-item>
 			<template v-if="state.dataForm.templateType === 0">
 				<el-form-item prop="conditionExpression">

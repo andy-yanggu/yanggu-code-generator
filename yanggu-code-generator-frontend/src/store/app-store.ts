@@ -1,4 +1,4 @@
-import { LayOutSize } from '@/types'
+import { type LayoutSize } from '@/constant/enum'
 import { PersistenceOptions } from 'pinia-plugin-persistedstate'
 
 // 持久化配置
@@ -22,7 +22,7 @@ export const useAppStore = defineStore(
 		// 全局 loading
 		const globalLoading = ref(false)
 		// 布局大小
-		const layoutSize = ref<LayOutSize>('default')
+		const layoutSize = ref<LayoutSize>('default')
 		// 主题模式
 		const isDark = useDark({
 			selector: 'html',
@@ -43,7 +43,7 @@ export const useAppStore = defineStore(
 		}
 
 		// 设置布局大小
-		const setLayoutSize = (size: LayOutSize) => {
+		const setLayoutSize = (size: LayoutSize) => {
 			layoutSize.value = size
 		}
 

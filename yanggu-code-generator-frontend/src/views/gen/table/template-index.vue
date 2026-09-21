@@ -8,7 +8,7 @@
 				<el-form-item label="模板类型" prop="templateType">
 					<el-select
 						v-model="state.queryForm.templateType"
-						:options="TEMPLATE_TYPES"
+						:options="TEMPLATE_TYPES.items"
 						style="width: 160px"
 						filterable
 						clearable

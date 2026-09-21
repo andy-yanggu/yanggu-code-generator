@@ -26,7 +26,7 @@
 			<el-row>
 				<el-col :span="12">
 					<el-form-item label="生成方式" prop="generatorType">
-						<el-radio-group v-model="state.dataForm.generatorType" :options="PROJECT_GENERATE_TYPES"></el-radio-group>
+						<el-radio-group v-model="state.dataForm.generatorType" :options="PROJECT_GENERATE_TYPES.items"></el-radio-group>
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">

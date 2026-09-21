@@ -142,7 +142,7 @@ import { genEnumApi, genProjectApi } from '@/api'
 import { useTableAction } from '@/hooks/use-table-action'
 import { GenEnumEntity, GenEnumQuery, GenProjectEntity, IHooksOptions } from '@/types'
 import { getLabel } from '@/utils/enum'
-import { GeneratorProductTypeEnum, PROJECT_GENERATE_TYPES } from '@/constant/enum'
+import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
 import { Delete, DocumentAdd, Edit, More, Plus, Refresh, Search, Setting, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
@@ -187,7 +187,7 @@ const configEnumItemHandle = ({ id, enumName }: { id: string; enumName: string }
 }
 
 const previewHandle = (row: any) => {
-	previewRef.value.init(row.id, row.enumName, row.projectId, row.generatorType, GeneratorProductTypeEnum.ENUM)
+	previewRef.value.init(row.id, row.enumName, row.projectId, row.generatorType, GENERATOR_PRODUCT_TYPES.Enum)
 }
 
 const generatorBatchHandler = () => {

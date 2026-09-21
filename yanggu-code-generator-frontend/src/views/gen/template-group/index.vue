@@ -8,7 +8,7 @@
 				<el-form-item label="模板组类型" prop="type">
 					<el-select
 						v-model="state.queryForm.type"
-						:options="TEMPLATE_GROUP_TYPES"
+						:options="TEMPLATE_GROUP_TYPES.items"
 						style="width: 170px"
 						placeholder="请选择模板组类型"
 						filterable

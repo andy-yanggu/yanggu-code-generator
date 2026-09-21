@@ -10,7 +10,7 @@
 			<el-form-item label="模板组类型" prop="type">
 				<el-select
 					v-model="state.dataForm.type"
-					:options="TEMPLATE_GROUP_TYPES"
+					:options="TEMPLATE_GROUP_TYPES.items"
 					:disabled="isNotBlank(state.dataForm.id)"
 					clearable
 					filterable
