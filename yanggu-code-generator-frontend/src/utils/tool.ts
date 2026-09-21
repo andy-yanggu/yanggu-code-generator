@@ -1,4 +1,3 @@
-import { App, Component, Plugin } from 'vue'
 import { isEmpty, isNil, isString } from 'lodash-es'
 import { Scalar } from '@/types'
 import { env } from '@/config'
@@ -102,14 +101,3 @@ export const isNotBlank = (value: Scalar): boolean => {
 	return !isBlank(value)
 }
 
-// 修改泛型约束为 Component
-export const withInstall = <T extends Component>(component: T, alias?: string) => {
-	const comp = component as any
-	comp.install = (app: App) => {
-		app.component(comp.__name || comp.displayName, component)
-		if (alias) {
-			app.config.globalProperties[alias] = component
-		}
-	}
-	return component as T & Plugin
-}

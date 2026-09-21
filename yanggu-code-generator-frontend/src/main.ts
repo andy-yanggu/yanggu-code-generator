@@ -2,7 +2,6 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from '@/App.vue'
 import { router } from '@/router'
 import 'virtual:svg-icons-register'
-import SvgIcon from '@/components/svg-icon'
 import '@/icons/iconfont/modules'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 css
@@ -24,7 +23,6 @@ setupEcharts(app)
 directive(app)
 
 app.use(router)
-app.use(SvgIcon)
 
 // 挂载应用
 app.mount('#app')

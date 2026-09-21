@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import SvgIcon from '@/components/svg-icon/index'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { useAppStore } from '@/store'
 import { LayOutSize } from '@/types'
 
