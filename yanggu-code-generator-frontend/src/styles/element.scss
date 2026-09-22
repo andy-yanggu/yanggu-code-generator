@@ -10,10 +10,10 @@
   display: flex;
   align-items: center; /* 图标+文字垂直居中 */
   color: var(--el-text-color-primary) !important;
-  height: 48px !important;
-  line-height: 48px !important;
+  height: var(--menu-item-height) !important;
+  line-height: var(--menu-item-height) !important;
   overflow: hidden;
-  transition: color 0.3s, background-color 0.3s;
+  transition: color var(--transition-duration-base), background-color var(--transition-duration-base);
 }
 
 .el-menu.el-menu--horizontal {
@@ -23,14 +23,14 @@
 /* 菜单图标 */
 .el-menu-item .svg-icon,
 .el-sub-menu__title .svg-icon {
-  font-size: 16px !important;
+  font-size: var(--menu-icon-font-size) !important;
   display: inline-block;
-  width: 20px; /* 固定宽度，保证对齐 */
-  margin-right: 8px;
+  width: var(--menu-icon-width); /* 固定宽度，保证对齐 */
+  margin-right: var(--menu-icon-gap);
   flex-shrink: 0;
   text-align: center;
   color: var(--el-text-color-primary) !important;
-  transition: color 0.3s;
+  transition: color var(--transition-duration-base);
 }
 
 /* 折叠时隐藏文字 */
@@ -41,7 +41,7 @@
 
 /* 菜单选中状态 */
 .el-menu-item.is-active {
-  box-shadow: inset 3px 0 0 var(--el-color-primary), inset -3px 0 0 var(--el-color-primary);
+  box-shadow: inset var(--menu-active-indicator-width) 0 0 var(--el-color-primary), inset calc(var(--menu-active-indicator-width) * -1) 0 0 var(--el-color-primary);
   background-color: var(--el-color-primary-light-9) !important;
 }
 
@@ -90,18 +90,18 @@
 
 /* ==================== 分页 ==================== */
 .el-pagination {
-  margin-top: 15px;
+  margin-top: var(--pagination-margin-top);
   justify-content: flex-end;
 }
 
 /* ==================== 表单 ==================== */
 .el-form .el-form-item__label {
-  font-weight: 500;
+  font-weight: var(--form-label-font-weight);
   color: var(--el-text-color-primary);
 }
 
 .el-form--inline .el-form-item {
-  margin-right: 16px !important;
+  margin-right: var(--form-inline-item-gap) !important;
 }
 
 /* ==================== 对话框 ==================== */
@@ -112,10 +112,10 @@
 .el-dialog__header {
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: var(--form-label-font-weight);
   color: var(--el-text-color-primary);
   justify-content: space-between;
-  padding: 10px 30px 5px;
+  padding: var(--dialog-header-padding);
   border-bottom: 1px solid var(--el-border-color);
 }
 
@@ -128,11 +128,11 @@
 }
 
 .el-dialog__body {
-  padding: 20px 20px 15px;
+  padding: var(--dialog-body-padding);
 }
 
 .el-dialog__footer {
-  padding: 15px 25px 15px 15px;
+  padding: var(--dialog-footer-padding);
   border-top: 1px solid var(--el-border-color);
 }
 
@@ -140,11 +140,11 @@
 .el-drawer .el-drawer__header {
   display: flex;
   align-items: center;
-  font-weight: 500;
-  height: 50px;
-  padding: 0 15px;
+  font-weight: var(--form-label-font-weight);
+  height: var(--drawer-header-height);
+  padding: var(--drawer-header-padding);
   margin-bottom: 0 !important;
-  font-size: 15px;
+  font-size: var(--drawer-header-font-size);
   border-bottom: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
 }
@@ -152,7 +152,7 @@
 /* ==================== 卡片 ==================== */
 .el-card {
   &:not(:first-child) {
-    margin-top: 10px;
+    margin-top: var(--card-gap);
   }
 }
 
@@ -165,7 +165,7 @@
 .el-message-box__btns {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: var(--message-box-btn-gap);
 }
 
 .el-message-box__btns .el-button--primary {

@@ -80,7 +80,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 	background: var(--el-bg-color-overlay, #fff);
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	cursor: pointer;
-	transition: background 0.2s;
+	transition: background var(--transition-duration-base);
 }
 
 .layout-fullscreen-exit:hover {

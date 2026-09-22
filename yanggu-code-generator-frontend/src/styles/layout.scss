@@ -5,7 +5,7 @@
   .layout-sidebar {
     background: var(--el-bg-color);
     position: relative;
-    transition: width 0.3s ease;
+    transition: width var(--transition-duration-base) ease;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -43,16 +43,13 @@
     .layout-scrollbar {
       height: 100%;
       padding: var(--layout-content-padding, 15px);
-
-      .layout-card {
-      }
     }
   }
 }
 
 /* ==================== 表格卡片最大化 ==================== */
 .layout-table-card {
-  transition: all 0.3s ease;
+  transition: transform var(--transition-duration-base) ease, box-shadow var(--transition-duration-base) ease;
 }
 
 .layout-table-card.is-maximized {

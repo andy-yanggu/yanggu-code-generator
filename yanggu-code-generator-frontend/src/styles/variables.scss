@@ -1,7 +1,41 @@
 :root {
-  /* Icon hover 动画效果 */
+  /* ==================== 过渡动画 ==================== */
+  --transition-duration-fast: 0.15s;
+  --transition-duration-base: 0.3s;
+
+  /* ==================== 图标交互 ==================== */
   --icon-hover-transform-scale: 1.1;
   --icon-hover-transform-translate-y: -1px;
+
+  /* ==================== 菜单 ==================== */
+  --menu-item-height: 48px;
+  --menu-icon-font-size: 16px;
+  --menu-icon-width: 20px;
+  --menu-icon-gap: 8px;
+  --menu-active-indicator-width: 3px;
+
+  /* ==================== 分页 ==================== */
+  --pagination-margin-top: 15px;
+
+  /* ==================== 表单 ==================== */
+  --form-label-font-weight: 500;
+  --form-inline-item-gap: 16px;
+
+  /* ==================== 对话框 ==================== */
+  --dialog-header-padding: 10px 30px 5px;
+  --dialog-body-padding: 20px 20px 15px;
+  --dialog-footer-padding: 15px 25px 15px 15px;
+
+  /* ==================== 抽屉 ==================== */
+  --drawer-header-height: 50px;
+  --drawer-header-padding: 0 15px;
+  --drawer-header-font-size: 15px;
+
+  /* ==================== 卡片 ==================== */
+  --card-gap: 10px;
+
+  /* ==================== 消息弹出框 ==================== */
+  --message-box-btn-gap: 12px;
 }
 
 /* 日间模式 */
