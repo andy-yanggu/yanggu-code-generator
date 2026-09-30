@@ -1,0 +1,7 @@
+refactor(styles): 建立 CSS 变量体系，消除硬编码魔法数字
+
+- variables.scss: 新增过渡时长、菜单、分页、表单、对话框、抽屉、卡片等 CSS 变量
+- element.scss: 所有硬编码尺寸/时长替换为 CSS 变量引用
+- layout.scss: 侧边栏过渡和卡片最大化过渡使用变量，移除空 .layout-card 规则
+- transition.scss: 过渡时长统一使用变量，transition: all 替换为显式属性提升性能
+- layout/index.vue: 全屏退出按钮过渡时长使用变量

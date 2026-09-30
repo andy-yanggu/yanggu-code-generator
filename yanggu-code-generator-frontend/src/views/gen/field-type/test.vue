@@ -20,6 +20,7 @@ import { genFieldTypeApi } from '@/api'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
 import type { SearchFieldSchema, FormFieldSchema, TableColumnSchema } from '@/types/schema'
+import CrudPage from '@/components/crud/CrudPage.vue'
 
 defineOptions({
 	name: 'GenFieldTypeTest'

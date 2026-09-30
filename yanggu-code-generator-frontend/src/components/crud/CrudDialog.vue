@@ -37,12 +37,12 @@ defineOptions({
 })
 
 const visible = defineModel<boolean>('visible', { default: false })
+const formData = defineModel<Record<string, any>>('formData', { required: true })
 
 const props = withDefaults(
 	defineProps<{
 		mode: FormMode
 		formSchema: FormFieldSchema[]
-		formData: Record<string, any>
 		rules?: Record<string, FormItemRule[]>
 		labelWidth?: string
 		subject?: string

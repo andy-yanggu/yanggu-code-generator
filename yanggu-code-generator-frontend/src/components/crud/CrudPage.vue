@@ -41,7 +41,7 @@
 		v-model:visible="form.dialog.visible"
 		:mode="form.dialog.mode"
 		:form-schema="formSchema"
-		:form-data="form.form.data"
+		v-model:form-data="form.form.data"
 		:rules="form.form.rules"
 		:label-width="form.form.labelWidth"
 		:subject="subject"
