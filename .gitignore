@@ -27,3 +27,4 @@ replay_pid*
 .idea/**
 /**/target/**
 /**/logs/**
+/**/node_modules/**
