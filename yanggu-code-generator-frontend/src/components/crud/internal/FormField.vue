@@ -7,7 +7,7 @@
 				{{ field.detailFormatter ? field.detailFormatter(model[field.prop]) : model[field.prop] }}
 			</span>
 			<!-- 编辑模式：动态字段 -->
-			<dynamic-field v-else v-model="model[field.prop]" :field="field" />
+			<dynamic-field v-else v-model="model[field.prop]" :field="field"></dynamic-field>
 		</slot>
 	</el-form-item>
 </template>

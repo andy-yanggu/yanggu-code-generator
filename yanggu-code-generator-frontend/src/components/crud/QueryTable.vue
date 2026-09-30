@@ -1,7 +1,14 @@
 <template>
 	<div>
 		<!-- 搜索表单 -->
-		<search-form :fields="searchFields" :visible="showSearch" :loading="tableLoading" v-model="queryForm" @search="emit('getDataList')" @reset="emit('resetQuery')">
+		<search-form
+			v-model="queryForm"
+			:fields="searchFields"
+			:visible="showSearch"
+			:loading="tableLoading"
+			@search="emit('getDataList')"
+			@reset="emit('resetQuery')"
+		>
 			<!-- 透传搜索字段插槽 -->
 			<template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
 				<slot :name="name" v-bind="slotData ?? {}" />
@@ -42,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SearchFieldSchema, TableColumnSchema, Pagination } from '@/types/schema'
+import type { Pagination, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 import SearchForm from './SearchForm.vue'
 import DataTable from './DataTable.vue'
 

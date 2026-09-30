@@ -1,80 +1,91 @@
 <template>
-	<!-- textarea -->
-	<el-input
-		v-if="field.component === 'textarea'"
-		v-model="model"
-		type="textarea"
-		:rows="3"
-		:placeholder="field.placeholder"
-		clearable
-	/>
-	<!-- input（默认） -->
-	<el-input
-		v-else-if="field.component === 'input' || !field.component"
-		v-model="model"
-		:placeholder="field.placeholder"
-		clearable
-	/>
-	<!-- select -->
-	<el-select
-		v-else-if="field.component === 'select'"
-		v-model="model"
-		:placeholder="field.placeholder"
-		:filterable="field.filterable"
-		clearable
-	>
-		<el-option v-for="opt in field.options" :key="opt.value" :label="opt.label" :value="opt.value" />
-	</el-select>
-	<!-- radio -->
-	<el-radio-group v-else-if="field.component === 'radio'" v-model="model">
-		<el-radio v-for="opt in field.options" :key="opt.value" :value="opt.value">{{ opt.label }}</el-radio>
-	</el-radio-group>
-	<!-- checkbox -->
-	<el-checkbox-group v-else-if="field.component === 'checkbox'" v-model="model">
-		<el-checkbox v-for="opt in field.options" :key="opt.value" :value="opt.value" :label="opt.label" />
-	</el-checkbox-group>
-	<!-- switch -->
-	<el-switch v-else-if="field.component === 'switch'" v-model="model" />
-	<!-- date-picker -->
-	<el-date-picker
-		v-else-if="field.component === 'date-picker'"
-		v-model="model"
-		type="date"
-		:placeholder="field.placeholder"
-		value-format="YYYY-MM-DD"
-		clearable
-	/>
-	<!-- input-number -->
-	<el-input-number v-else-if="field.component === 'input-number'" v-model="model" />
-	<!-- tree-select -->
-	<el-tree-select
-		v-else-if="field.component === 'tree-select'"
-		v-model="model"
-		:data="field.options"
-		:placeholder="field.placeholder"
-		check-strictly
-		clearable
-	/>
-	<!-- cascader -->
-	<el-cascader
-		v-else-if="field.component === 'cascader'"
-		v-model="model"
-		:options="field.options"
-		:placeholder="field.placeholder"
-		clearable
-	/>
+	<component :is="getComponent()" v-model="model" v-bind="getComponentProps"></component>
 </template>
-
 <script setup lang="ts">
-import type { FormFieldSchema } from '@/types/schema'
+import { computed } from 'vue'
+import { ElCascader, ElCheckboxGroup, ElDatePicker, ElInput, ElInputNumber, ElRadioGroup, ElSelect, ElSwitch, ElTreeSelect } from 'element-plus'
+import type { ComponentType, FormFieldSchema } from '@/types/schema'
 
 defineOptions({
 	name: 'DynamicField'
 })
 
 const model = defineModel<any>()
-
-defineProps<{
+const props = defineProps<{
 	field: FormFieldSchema
 }>()
+
+// 选择类组件用"请选择"，其他用"请输入"
+const SELECT_TYPES = new Set(['select', 'radio', 'checkbox', 'tree-select', 'cascader'])
+
+const computedPlaceholder = computed(() => {
+	if (props.field.placeholder) return props.field.placeholder
+	const component = props.field.component ?? 'input'
+	const prefix = SELECT_TYPES.has(component) ? '请选择' : '请输入'
+	return `${prefix}${props.field.label}`
+})
+
+defineExpose({ placeholder: computedPlaceholder })
+
+// 获取组件对象
+const getComponent = () => {
+	const component = (props.field.component ?? 'input') as ComponentType
+	switch (component) {
+		case 'textarea':
+		case 'input':
+			return ElInput
+		case 'select':
+			return ElSelect
+		case 'radio':
+			return ElRadioGroup
+		case 'checkbox':
+			return ElCheckboxGroup
+		case 'switch':
+			return ElSwitch
+		case 'date-picker':
+		case 'datetime-picker':
+			return ElDatePicker
+		case 'input-number':
+			return ElInputNumber
+		case 'tree-select':
+			return ElTreeSelect
+		case 'cascader':
+			return ElCascader
+		default:
+			return ElInput
+	}
+}
+
+// 获取组件 props
+const getComponentProps = computed(() => {
+	const component = (props.field.component ?? 'input') as ComponentType
+	const placeholder = computedPlaceholder.value
+	const { options, filterable } = props.field
+
+	const baseProps: Record<string, any> = {
+		placeholder,
+		clearable: true,
+		filterable
+	}
+
+	switch (component) {
+		case 'textarea':
+			return { ...baseProps, type: 'textarea', rows: 3 }
+		case 'select':
+			return { ...baseProps, options }
+		case 'radio':
+		case 'checkbox':
+			return { options }
+		case 'date-picker':
+			return { ...baseProps, type: 'date', valueFormat: 'YYYY-MM-DD' }
+		case 'datetime-picker':
+			return { ...baseProps, type: 'datetime', valueFormat: 'YYYY-MM-DD HH:mm:ss' }
+		case 'tree-select':
+			return { ...baseProps, data: options, checkStrictly: true }
+		case 'cascader':
+			return { ...baseProps, options }
+		default:
+			return baseProps
+	}
+})
 </script>

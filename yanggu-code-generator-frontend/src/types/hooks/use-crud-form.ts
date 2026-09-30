@@ -4,13 +4,13 @@ import type { FormItemRule } from 'element-plus'
 /**
  * useCrudForm 配置选项
  */
-export interface UseCrudFormOptions {
+export interface UseCrudFormOptions<DTO = any, VO = any> {
 	/** 提交接口 */
-	submitApi: (data: any) => Promise<any>
+	submitApi: (data: DTO) => Promise<any>
 	/** 详情接口 */
-	detailApi?: (id: Key) => Promise<any>
+	detailApi?: (id: Key) => Promise<VO>
 	/** 表单数据初始值工厂 */
-	initFormData: () => any
+	initFormData: () => DTO
 	/** 弹窗标题主体 */
 	subject?: string
 	/** 表单校验规则 */

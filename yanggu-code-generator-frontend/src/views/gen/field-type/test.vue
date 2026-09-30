@@ -1,30 +1,34 @@
 <template>
 	<crud-page
+		subject="字段类型"
+		delete-name-key="columnType"
+		table-key="gen-field-type-test"
 		:search-schema="searchSchema"
 		:form-schema="formSchema"
 		:columns="columns"
+		:init-form-data="initFormData"
+		:init-query-form="initQueryForm"
 		:data-list-api="genFieldTypeApi.entityPage"
 		:delete-api="genFieldTypeApi.deleteList"
 		:submit-api="genFieldTypeApi.submit"
 		:detail-api="genFieldTypeApi.detail"
-		:init-query-form="() => ({ columnType: '', attrType: '' })"
-		:init-form-data="() => ({ id: null, columnType: '', attrType: '', packageName: '' })"
-		subject="字段类型"
-		delete-name-key="columnType"
-		table-key="gen-field-type-test"
-	/>
+	></crud-page>
 </template>
 
 <script setup lang="ts">
 import { genFieldTypeApi } from '@/api'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import type { SearchFieldSchema, FormFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { GenFieldTypeEntity, GenFieldTypeQuery } from '@/types'
 import CrudPage from '@/components/crud/CrudPage.vue'
 
 defineOptions({
 	name: 'GenFieldTypeTest'
 })
+
+const initQueryForm = (): GenFieldTypeQuery => ({ columnType: '', attrType: '' })
+const initFormData = (): GenFieldTypeEntity => ({ id: null, columnType: '', attrType: '', packageName: '' })
 
 const searchSchema: SearchFieldSchema[] = [
 	{ prop: 'columnType', label: '字段类型' },
@@ -33,7 +37,14 @@ const searchSchema: SearchFieldSchema[] = [
 
 const formSchema: FormFieldSchema[] = [
 	{ prop: 'columnType', label: '字段类型', ruleList: [{ required: true, message: '请输入字段类型', trigger: 'blur' }] },
-	{ prop: 'attrType', label: '属性类型', component: 'select', options: ATTR_TYPES.items, filterable: true, ruleList: [{ required: true, message: '请选择属性类型', trigger: 'change' }] },
+	{
+		prop: 'attrType',
+		label: '属性类型',
+		component: 'select',
+		options: ATTR_TYPES.items,
+		filterable: true,
+		ruleList: [{ required: true, message: '请选择属性类型', trigger: 'change' }]
+	},
 	{ prop: 'packageName', label: '包名' }
 ]
 

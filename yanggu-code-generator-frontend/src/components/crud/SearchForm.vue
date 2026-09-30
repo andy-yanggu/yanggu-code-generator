@@ -1,6 +1,6 @@
 <template>
 	<el-card v-if="visible" class="layout-query-card" shadow="hover">
-		<el-form ref="formRef" :inline="true" :model="model" @keyup.enter="handleSearch">
+		<el-form ref="formRef" :inline="true" :model="model" :rules="fieldRules" @keyup.enter="handleSearch">
 			<el-form-item v-for="field in normalizedFields" :key="field.prop" :label="field.label" :prop="field.prop">
 				<!-- 插槽覆盖 -->
 				<slot :name="field.prop" :field="field" :form="model">
@@ -21,6 +21,7 @@
 import { Search, Refresh } from '@element-plus/icons-vue'
 import type { SearchFieldSchema, FormFieldSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
+import type { FormItemRule } from 'element-plus'
 import DynamicField from './internal/DynamicField.vue'
 
 defineOptions({
@@ -44,6 +45,17 @@ const formRef = ref()
 
 // 归一化搜索字段
 const normalizedFields = computed(() => props.fields.map(normalizeSearchField))
+
+// 从字段 schema 收集校验规则
+const fieldRules = computed<Record<string, FormItemRule[]>>(() => {
+	const rules: Record<string, FormItemRule[]> = {}
+	for (const field of props.fields) {
+		if (field.ruleList?.length) {
+			rules[field.prop] = [...field.ruleList]
+		}
+	}
+	return rules
+})
 
 // SearchFieldSchema → FormFieldSchema（DynamicField 接收 FormFieldSchema）
 const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({

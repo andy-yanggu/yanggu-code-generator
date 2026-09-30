@@ -3,15 +3,16 @@ import type { FormItemRule } from 'element-plus'
 // 组件类型（无 el- 前缀，渲染层通过 COMPONENT_MAP 映射）
 export type ComponentType =
 	| 'input'
-	| 'select'
 	| 'textarea'
+	| 'input-number'
+	| 'select'
+	| 'switch'
 	| 'radio'
 	| 'checkbox'
-	| 'switch'
 	| 'date-picker'
+	| 'datetime-picker'
 	| 'date-range'
 	| 'datetime-range'
-	| 'input-number'
 	| 'tree-select'
 	| 'cascader'
 
@@ -35,6 +36,8 @@ export interface SearchFieldSchema {
 	options?: { label: string; value: any }[]
 	filterable?: boolean
 	rangeFields?: [string, string]
+	/** 字段级校验规则 */
+	ruleList?: FormItemRule[]
 }
 
 // 表单字段 schema
@@ -70,7 +73,9 @@ export interface TableColumnSchema {
 }
 
 // 归一化搜索字段（补全默认值）
-export const normalizeSearchField = (field: SearchFieldSchema): SearchFieldSchema & { component: ComponentType; placeholder: string; width: number | string } => {
+export const normalizeSearchField = (
+	field: SearchFieldSchema
+): SearchFieldSchema & { component: ComponentType; placeholder: string; width: number | string } => {
 	const component = field.component ?? 'input'
 	const placeholder = field.placeholder ?? (component === 'select' ? `请选择${field.label}` : `请输入${field.label}`)
 	return {

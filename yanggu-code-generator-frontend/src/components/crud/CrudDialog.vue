@@ -1,16 +1,10 @@
 <template>
 	<el-dialog v-model="visible" :title="title" :close-on-click-modal="false">
-		<el-form ref="formRef" :model="formData" :rules="mergedRules" :label-width="labelWidth" @keyup.enter="handleSubmit">
-			<form-field
-				v-for="field in formSchema"
-				:key="field.prop"
-				v-model="formData"
-				:field="field"
-				:mode="mode"
-			>
+		<el-form :ref="formRef" :model="formData" :rules="mergedRules" :label-width="labelWidth" @keyup.enter="handleSubmit">
+			<form-field v-for="field in formSchema" :key="field.prop" v-model="formData" :field="field" :mode="mode">
 				<!-- 透传插槽（用户用字段 prop 名作为插槽名，如 #columnType） -->
 				<template v-for="(_, name) in passthroughSlots" :key="name" #[name]="slotData">
-					<slot :name="name" v-bind="slotData ?? {}" />
+					<slot :name="name" v-bind="slotData ?? {}"></slot>
 				</template>
 			</form-field>
 		</el-form>
@@ -43,6 +37,7 @@ const props = withDefaults(
 	defineProps<{
 		mode: FormMode
 		formSchema: FormFieldSchema[]
+		formRef: any
 		rules?: Record<string, FormItemRule[]>
 		labelWidth?: string
 		subject?: string
@@ -58,8 +53,6 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(e: 'submit'): void
 }>()
-
-const formRef = ref()
 
 // 标题
 const titleMap: Record<string, string> = { add: '新增', update: '修改', detail: '' }
@@ -88,15 +81,12 @@ const mergedRules = computed<Record<string, FormItemRule[]>>(() => {
 
 // 提交（内部校验，通过后才 emit）
 const handleSubmit = () => {
-	formRef.value?.validate((valid: boolean) => {
+	props.formRef?.value?.validate((valid: boolean) => {
 		if (valid) {
 			emit('submit')
 		}
 	})
 }
-
-// 暴露 formRef
-defineExpose({ formRef })
 
 // 透传插槽（排除保留插槽，直接转发给 FormField）
 const reservedSlotNames = new Set(['toolbar-left', 'action-column'])

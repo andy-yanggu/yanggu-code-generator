@@ -6,7 +6,7 @@ import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
 import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
-export const useCrudTable = <VO = any>(options: UseCrudTableOptions<VO>) => {
+export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions<VO, Query>) => {
 	// ====== 配置解构 ======
 	const primaryKey = options.primaryKey ?? 'id'
 	const subject = options.subject ?? '数据'
@@ -15,7 +15,7 @@ export const useCrudTable = <VO = any>(options: UseCrudTableOptions<VO>) => {
 	const resetQueryGetData = options.resetQueryGetData !== false
 
 	// ====== 1. 查询/分页 ======
-	const queryForm = reactive({ ...options.initQueryForm() })
+	const queryForm = reactive({ ...(options.initQueryForm() as object) })
 	const dataList = ref([] as VO[])
 	const loading = ref(false)
 	const pageNum = ref(1)
@@ -63,7 +63,7 @@ export const useCrudTable = <VO = any>(options: UseCrudTableOptions<VO>) => {
 	const executeQuery = () => {
 		loading.value = true
 		options
-			.dataListApi(buildQueryForm())
+			.dataListApi(buildQueryForm() as Query)
 			.then((data: PageVO<VO>) => {
 				dataList.value = data.records
 				total.value = data.total

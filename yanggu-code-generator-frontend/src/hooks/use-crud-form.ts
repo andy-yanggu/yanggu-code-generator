@@ -2,7 +2,7 @@ import type { UseCrudFormOptions } from '@/types/hooks/use-crud-form'
 import type { Key } from '@/types/common'
 import type { FormMode } from '@/types/schema'
 
-export const useCrudForm = (options: UseCrudFormOptions) => {
+export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>) => {
 	const subject = options.subject ?? '数据'
 	const labelWidth = options.labelWidth ?? '100px'
 
@@ -12,7 +12,7 @@ export const useCrudForm = (options: UseCrudFormOptions) => {
 	const currentId = ref<Key>(null)
 
 	// ====== 表单状态 ======
-	const formData = reactive({ ...options.initFormData() })
+	const formData = reactive({ ...(options.initFormData() as object) }) as any
 	const formRef = ref()
 
 	// ====== 提交状态 ======
@@ -22,7 +22,7 @@ export const useCrudForm = (options: UseCrudFormOptions) => {
 	const titleMap: Record<string, string> = {
 		add: '新增',
 		update: '修改',
-		detail: ''
+		detail: '详情'
 	}
 
 	const dialogTitle = computed(() => {
@@ -65,7 +65,7 @@ export const useCrudForm = (options: UseCrudFormOptions) => {
 
 		submitLoading.value = true
 		options
-			.submitApi(formData)
+			.submitApi(formData as DTO)
 			.then(data => {
 				ElMessage.success(`${subject}${titleMap[mode.value]}成功`)
 				visible.value = false

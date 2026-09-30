@@ -3,19 +3,19 @@ import type { PageVO } from '@/types/api/common'
 import type { TableColumnSchema, SearchFieldSchema } from '@/types/schema'
 
 // 数据列表接口
-type DataListApi<VO> = (query: any) => Promise<PageVO<VO>>
+type DataListApi<VO, Query> = (query: Query) => Promise<PageVO<VO>>
 // 批量删除接口
 type DeleteListApi = (idList: Key[]) => Promise<void>
 
 /**
  * useCrudTable 配置选项
  */
-export interface UseCrudTableOptions<VO = any> {
+export interface UseCrudTableOptions<VO = any, Query = any> {
 	// ---- 必填 ----
 	/** 分页查询接口 */
-	dataListApi: DataListApi<VO>
+	dataListApi: DataListApi<VO, Query>
 	/** 查询表单初始值工厂 */
-	initQueryForm: () => any
+	initQueryForm: () => Query
 	/** 表格列配置 */
 	columns: TableColumnSchema[]
 

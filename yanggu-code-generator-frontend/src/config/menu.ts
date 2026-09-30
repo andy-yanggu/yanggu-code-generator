@@ -214,7 +214,18 @@ export const DEFAULT_BUSINESS_MENUS: MenuInfo[] = [
 					title: '字段类型管理',
 					icon: 'icon-menu',
 					type: 1,
-					cache: false
+					cache: true
+				}
+			},
+			{
+				path: 'field-type-test',
+				name: 'GenFieldTypeTest',
+				component: 'gen/field-type/test',
+				meta: {
+					title: '字段类型（测试）',
+					icon: 'icon-menu',
+					type: 1,
+					cache: true
 				}
 			}
 		]

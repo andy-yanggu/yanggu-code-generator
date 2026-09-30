@@ -41,7 +41,7 @@
 
 /* 菜单选中状态 */
 .el-menu-item.is-active {
-  box-shadow: inset var(--menu-active-indicator-width) 0 0 var(--el-color-primary), inset calc(var(--menu-active-indicator-width) * -1) 0 0 var(--el-color-primary);
+  box-shadow: inset calc(var(--menu-active-indicator-width) + var(--menu-active-indicator-offset)) 0 0 var(--el-color-primary), inset calc((var(--menu-active-indicator-width) + var(--menu-active-indicator-offset)) * -1) 0 0 var(--el-color-primary);
   background-color: var(--el-color-primary-light-9) !important;
 }
 
