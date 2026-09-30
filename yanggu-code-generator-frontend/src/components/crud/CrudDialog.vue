@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="visible" :title="title" :close-on-click-modal="false">
-		<el-form ref="formRef" :model="formData" :rules="rules" :label-width="labelWidth" @keyup.enter="handleSubmit">
+		<el-form ref="formRef" :model="formData" :rules="mergedRules" :label-width="labelWidth" @keyup.enter="handleSubmit">
 			<form-field
 				v-for="field in formSchema"
 				:key="field.prop"
@@ -66,6 +66,24 @@ const titleMap: Record<string, string> = { add: '新增', update: '修改', deta
 const title = computed(() => {
 	if (props.mode === 'detail') return `${props.subject}详情`
 	return `${titleMap[props.mode] ?? '操作'}${props.subject}`
+})
+
+// 合并规则：schema 字段级 ruleList + 顶层 rules（顶层优先覆盖）
+const mergedRules = computed<Record<string, FormItemRule[]>>(() => {
+	const result: Record<string, FormItemRule[]> = {}
+	// 先收集 schema 中的 ruleList
+	for (const field of props.formSchema) {
+		if (field.ruleList?.length) {
+			result[field.prop] = [...field.ruleList]
+		}
+	}
+	// 顶层 rules 覆盖/补充
+	if (props.rules) {
+		for (const [key, val] of Object.entries(props.rules)) {
+			result[key] = val
+		}
+	}
+	return result
 })
 
 // 提交（内部校验，通过后才 emit）

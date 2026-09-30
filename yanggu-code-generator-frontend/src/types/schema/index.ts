@@ -1,3 +1,5 @@
+import type { FormItemRule } from 'element-plus'
+
 // 组件类型（无 el- 前缀，渲染层通过 COMPONENT_MAP 映射）
 export type ComponentType =
 	| 'input'
@@ -45,6 +47,8 @@ export interface FormFieldSchema {
 	filterable?: boolean
 	span?: number
 	detailFormatter?: (value: any) => string
+	/** 字段级校验规则 */
+	ruleList?: FormItemRule[]
 }
 
 // 表格列 schema
