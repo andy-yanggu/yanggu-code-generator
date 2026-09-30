@@ -19,3 +19,6 @@ export * from '@/types/store'
 
 // 工具类型
 export * from '@/types/utils'
+
+// Schema 类型
+export * from '@/types/schema'
