@@ -1,7 +1,7 @@
 import type { UseCrudTableOptions } from '@/types/hooks/use-crud-table'
 import type { TableColumnSchema, Pagination } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
-import type { KeyArray } from '@/types/common'
+import type { Key, KeyArray } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
 import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
@@ -177,7 +177,7 @@ export const useCrudTable = <VO = any>(options: UseCrudTableOptions<VO>) => {
 			return
 		}
 
-		ElMessageBox.confirm(buildDeleteConfirmMessage(rows, idList), '提示', {
+		ElMessageBox.confirm(buildDeleteConfirmMessage(rows as VO[], idList), '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'

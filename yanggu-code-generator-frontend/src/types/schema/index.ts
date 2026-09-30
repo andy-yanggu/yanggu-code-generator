@@ -7,6 +7,8 @@ export type ComponentType =
 	| 'checkbox'
 	| 'switch'
 	| 'date-picker'
+	| 'date-range'
+	| 'datetime-range'
 	| 'input-number'
 	| 'tree-select'
 	| 'cascader'
