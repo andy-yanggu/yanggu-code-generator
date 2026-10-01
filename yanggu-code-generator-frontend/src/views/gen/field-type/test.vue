@@ -36,14 +36,14 @@ const searchSchema: SearchFieldSchema[] = [
 ]
 
 const formSchema: FormFieldSchema[] = [
-	{ prop: 'columnType', label: '字段类型', ruleList: [{ required: true, message: '请输入字段类型', trigger: 'blur' }] },
+	{ prop: 'columnType', label: '字段类型', ruleList: [{ required: true, message: '字段类型不能为空', trigger: 'blur' }] },
 	{
 		prop: 'attrType',
 		label: '属性类型',
 		component: 'select',
 		options: ATTR_TYPES.items,
 		filterable: true,
-		ruleList: [{ required: true, message: '请选择属性类型', trigger: 'change' }]
+		ruleList: [{ required: true, message: '属性类型不能为空', trigger: 'change' }]
 	},
 	{ prop: 'packageName', label: '包名' }
 ]

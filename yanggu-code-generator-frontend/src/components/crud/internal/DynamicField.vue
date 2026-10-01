@@ -1,5 +1,8 @@
 <template>
-	<component :is="getComponent()" v-model="model" v-bind="getComponentProps"></component>
+	<!-- 包裹 div 用于消除 el-dialog Transition 的动态组件警告，display: contents 不影响布局 -->
+	<div style="display: contents">
+		<component :is="currentComponent" v-model="model" v-bind="getComponentProps"></component>
+	</div>
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
@@ -28,7 +31,7 @@ const computedPlaceholder = computed(() => {
 defineExpose({ placeholder: computedPlaceholder })
 
 // 获取组件对象
-const getComponent = () => {
+const currentComponent = computed(() => {
 	const component = (props.field.component ?? 'input') as ComponentType
 	switch (component) {
 		case 'textarea':
@@ -54,7 +57,7 @@ const getComponent = () => {
 		default:
 			return ElInput
 	}
-}
+})
 
 // 获取组件 props
 const getComponentProps = computed(() => {

@@ -1,0 +1,62 @@
+﻿src/business/preview/index.vue(55,9): error TS2322: Type '(value: string, data: Tree) => boolean' is not assignable to type 'FilterNodeMethodFunction'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Type 'TreeNodeData' is missing the following properties from type 'Tree': templateId, fileName, filePath, templateType, templateContent
+src/business/preview/index.vue(122,9): error TS2322: Type '(filePath: string) => void' is not assignable to type '(name: TabPaneName) => any'.
+  Types of parameters 'filePath' and 'name' are incompatible.
+    Type 'TabPaneName' is not assignable to type 'string'.
+      Type 'number' is not assignable to type 'string'.
+src/components/popover/list/index.vue(22,15): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "primary" | "success" | "warning" | "danger" | "info", unknown> | undefined'.
+src/components/popover/list/index.vue(22,31): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "" | "small" | "default" | "large", unknown> | undefined'.
+src/components/popover/list/index.vue(28,70): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "primary" | "success" | "warning" | "danger" | "info", unknown> | undefined'.
+src/components/popover/list/index.vue(28,86): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "" | "small" | "default" | "large", unknown> | undefined'.
+src/components/popover/list/index.vue(29,48): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "primary" | "success" | "warning" | "danger" | "info", unknown> | undefined'.
+src/components/popover/list/index.vue(29,64): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, "" | "small" | "default" | "large", unknown> | undefined'.
+src/components/text-tooltip/index.vue(2,58): error TS2322: Type 'string' is not assignable to type 'EpPropMergeType<StringConstructor, Placement, unknown> | undefined'.
+src/hooks/use-crud-form.ts(15,28): error TS2345: Argument of type 'DTO' is not assignable to parameter of type 'object'.
+src/hooks/use-crud-table.ts(18,29): error TS2345: Argument of type 'Query' is not assignable to parameter of type 'object'.
+src/hooks/use-switch-change-handler.ts(13,83): error TS2344: Type 'T' does not satisfy the constraint 'string | number | symbol'.
+src/hooks/use-table-action.ts(203,3): error TS2322: Type 'VO[keyof VO][]' is not assignable to type 'Key[]'.
+  Type 'VO[keyof VO]' is not assignable to type 'Key'.
+    Type 'VO[string] | VO[number] | VO[symbol]' is not assignable to type 'Key'.
+      Type 'VO[string]' is not assignable to type 'Key'.
+src/hooks/use-table-action.ts(267,100): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: VO[keyof VO], index: number, array: VO[keyof VO][]) => value is VO[keyof VO], thisArg?: any): VO[keyof VO][]', gave the following error.
+    Argument of type '(value: Scalar) => boolean' is not assignable to parameter of type '(value: VO[keyof VO], index: number, array: VO[keyof VO][]) => value is VO[keyof VO]'.
+      Types of parameters 'value' and 'value' are incompatible.
+        Type 'VO[keyof VO]' is not assignable to type 'Scalar'.
+          Type 'VO[string] | VO[number] | VO[symbol]' is not assignable to type 'Scalar'.
+            Type 'VO[string]' is not assignable to type 'Scalar'.
+  Overload 2 of 2, '(predicate: (value: VO[keyof VO], index: number, array: VO[keyof VO][]) => unknown, thisArg?: any): VO[keyof VO][]', gave the following error.
+    Argument of type '(value: Scalar) => boolean' is not assignable to parameter of type '(value: VO[keyof VO], index: number, array: VO[keyof VO][]) => unknown'.
+      Types of parameters 'value' and 'value' are incompatible.
+        Type 'VO[keyof VO]' is not assignable to type 'Scalar'.
+          Type 'VO[string] | VO[number] | VO[symbol]' is not assignable to type 'Scalar'.
+            Type 'VO[string]' is not assignable to type 'Scalar'.
+src/views/auth/login.vue(60,22): error TS2345: Argument of type 'AxiosResponse<any, any, {}, any>' is not assignable to parameter of type 'LoginVO'.
+  Type 'AxiosResponse<any, any, {}, any>' is missing the following properties from type 'LoginVO': userInfo, tokenInfo
+src/views/auth/register.vue(55,21): error TS2345: Argument of type 'AxiosResponse<any, any, {}, any>' is not assignable to parameter of type 'LoginVO'.
+  Type 'AxiosResponse<any, any, {}, any>' is missing the following properties from type 'LoginVO': userInfo, tokenInfo
+src/views/gen/template-group-property/index.vue(31,55): error TS2322: Type '({ file }: UploadRequestOptions) => void' is not assignable to type 'UploadRequestHandler'.
+  Type 'void' is not assignable to type 'Promise<unknown> | XMLHttpRequest'.
+src/views/gen/template-group-property/index.vue(31,104): error TS2322: Type 'number' is not assignable to type 'never'.
+src/views/gen/template-group-property/index.vue(71,9): error TS2322: Type '(val: number) => void' is not assignable to type '(val: string | number | boolean) => any'.
+  Types of parameters 'val' and 'val' are incompatible.
+    Type 'string | number | boolean' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.
+src/views/gen/template-group-property/index.vue(82,9): error TS2322: Type '(currentValue: number, oldValue: number) => void' is not assignable to type '(cur: number | undefined, prev: number | undefined) => any'.
+  Types of parameters 'currentValue' and 'cur' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/views/gen/template-group/index.vue(38,55): error TS2322: Type '({ file }: UploadRequestOptions) => void' is not assignable to type 'UploadRequestHandler'.
+  Type 'void' is not assignable to type 'Promise<unknown> | XMLHttpRequest'.
+src/views/gen/template/test.vue(55,8): error TS2322: Type '(val: string[]) => Promise<void>' is not assignable to type '(value: CascaderValue | null | undefined) => any'.
+  Types of parameters 'val' and 'value' are incompatible.
+    Type 'CascaderValue | null | undefined' is not assignable to type 'string[]'.
+      Type 'undefined' is not assignable to type 'string[]'.
+src/views/gen/template/tree.vue(45,9): error TS2322: Type '(value: string, data: Tree) => boolean' is not assignable to type 'FilterNodeMethodFunction'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Type 'TreeNodeData' is missing the following properties from type 'Tree': id, parentId, templateName, fileName, templateType
+src/views/gen/template/tree.vue(163,9): error TS2322: Type '(id: number) => void' is not assignable to type '(name: TabPaneName) => any'.
+  Types of parameters 'id' and 'name' are incompatible.
+    Type 'TabPaneName' is not assignable to type 'number'.
+      Type 'string' is not assignable to type 'number'.

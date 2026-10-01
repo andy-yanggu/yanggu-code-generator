@@ -1,4 +1,5 @@
 import type { FormItemRule } from 'element-plus'
+export type { FormItemRule }
 
 // 组件类型（无 el- 前缀，渲染层通过 COMPONENT_MAP 映射）
 export type ComponentType =

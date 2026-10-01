@@ -1,68 +1,38 @@
 <template>
-	<query-table
-		v-model:query-form="tableHooks.search.form"
-		v-model:show-search="tableHooks.search.visible"
-		v-model:maximized="tableHooks.refs.cardMaximized"
-		v-model:columns="tableHooks.columnConfig.list"
-		:search-fields="tableHooks.search.fields"
-		:data="tableHooks.table.data"
-		:loading="tableHooks.table.loading"
-		:table-loading="tableHooks.table.loading"
-		:pagination="tableHooks.table.pagination"
-		:page-sizes="pageSizes"
-		@get-data-list="tableHooks.query.getDataList()"
-		@reset-query="tableHooks.query.reset()"
-		@selection-change="tableHooks.selection.onChange"
-		@sort-change="tableHooks.query.onSortChange"
-		@page-change="tableHooks.query.onPageChange"
-		@size-change="tableHooks.query.onSizeChange"
-		@reset-columns="tableHooks.columnConfig.reset()"
-	>
-		<!-- 工具栏左侧：默认新增+批量删除 -->
-		<template #toolbar-left>
-			<slot name="toolbar-left" :table="tableHooks" :form="formHooks">
-				<el-space size="default">
-					<el-button type="primary" :icon="Plus" @click="formHooks.dialog.open('add')">新增</el-button>
-					<el-button type="danger" :loading="tableHooks.delete.loading" :icon="Delete" @click="tableHooks.delete.execute()">删除</el-button>
-				</el-space>
-			</slot>
-		</template>
-		<!-- 操作列：默认修改+行删除 -->
-		<template #operation="{ row }">
-			<slot name="action-column" :row="row" :table="tableHooks" :form="formHooks">
-				<el-button type="primary" link :icon="Edit" @click="formHooks.dialog.open('update', row[primaryKey])">修改</el-button>
-				<el-button type="primary" link :icon="Delete" @click="tableHooks.delete.execute(row)">删除</el-button>
-			</slot>
-		</template>
-	</query-table>
+	<div>
+		<query-table ref="queryTableRef" v-bind="tableDialogProps">
+			<!-- 工具栏左侧：默认新增+批量删除 -->
+			<template #toolbar-left="{ table }">
+				<slot name="toolbar-left" :table="table" :dialog="crudDialogRef">
+					<el-space size="default">
+						<el-button type="primary" :icon="Plus" @click="crudDialogRef?.open('add')">新增</el-button>
+						<el-button type="danger" :loading="table.delete.loading" :icon="Delete" @click="table.delete.execute()">删除</el-button>
+					</el-space>
+				</slot>
+			</template>
+			<!-- 操作列：默认修改+行删除 -->
+			<template #operation="{ row, table }">
+				<slot name="action-column" :row="row" :table="table" :dialog="crudDialogRef">
+					<el-button type="primary" link :icon="Edit" @click="crudDialogRef?.open('update', row[primaryKey])">修改</el-button>
+					<el-button type="primary" link :icon="Delete" @click="table.delete.execute(row)">删除</el-button>
+				</slot>
+			</template>
+		</query-table>
 
-	<!-- 弹窗表单 -->
-	<crud-dialog
-		v-model:visible="formHooks.dialog.visible"
-		v-model:form-data="formHooks.form.data"
-		:mode="formHooks.dialog.mode"
-		:form-schema="formSchema"
-		:form-ref="formHooks.form.formRef"
-		:rules="formHooks.form.rules"
-		:label-width="formHooks.form.labelWidth"
-		:subject="subject"
-		:submit-loading="formHooks.submit.loading"
-		@submit="formHooks.submit.execute()"
-	>
-		<!-- 透传所有插槽（用户用字段 prop 名作为插槽名，如 #columnType） -->
-		<template v-for="(_, name) in dialogSlots" :key="name" #[name]="slotData">
-			<slot :name="name" v-bind="slotData ?? {}"></slot>
-		</template>
-	</crud-dialog>
+		<!-- 弹窗表单 -->
+		<crud-dialog ref="crudDialogRef" v-bind="formDialogProps">
+			<!-- 透传所有插槽（用户用字段 prop 名作为插槽名，如 #columnType） -->
+			<template v-for="(_, name) in dialogSlots" :key="name" #[name]="slotData">
+				<slot :name="name" v-bind="slotData ?? {}"></slot>
+			</template>
+		</crud-dialog>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { Delete, Edit, Plus } from '@element-plus/icons-vue'
-import type { FormItemRule } from 'element-plus'
-import type { FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
-import type { Key, PageVO } from '@/types'
-import { useCrudTable } from '@/hooks/use-crud-table'
-import { useCrudForm } from '@/hooks/use-crud-form'
+import type { UseCrudFormOptions } from '@/types/hooks/use-crud-form'
+import type { UseCrudTableOptions } from '@/types/hooks/use-crud-table'
 import QueryTable from './QueryTable.vue'
 import CrudDialog from './CrudDialog.vue'
 
@@ -72,25 +42,8 @@ defineOptions({
 })
 
 // ====== Props ======
-interface CrudPageProps<VO = any, Query = any, DTO = any> {
-	searchSchema?: SearchFieldSchema[]
-	formSchema: FormFieldSchema[]
-	columns: TableColumnSchema[]
-	dataListApi: (query: Query) => Promise<PageVO<VO>>
-	deleteApi?: (ids: Key[]) => Promise<void>
-	submitApi: (data: DTO) => Promise<any>
-	detailApi?: (id: Key) => Promise<VO>
-	initQueryForm: () => Query
-	initFormData: () => DTO
-	pageSize?: number
-	pageSizes?: number[]
-	subject?: string
-	deleteNameKey?: string
-	primaryKey?: string
-	labelWidth?: string
-	rules?: Record<string, FormItemRule[]>
-	tableKey?: string
-	submitAfter?: (data: any) => void
+interface CrudPageProps<VO = any, Query = any, DTO = any> extends UseCrudFormOptions<DTO, VO>, UseCrudTableOptions<VO, Query> {
+	// 无额外属性，只是合并两个接口
 }
 
 const props = withDefaults(defineProps<CrudPageProps>(), {
@@ -102,29 +55,65 @@ const props = withDefaults(defineProps<CrudPageProps>(), {
 	labelWidth: '100px'
 })
 
-// ====== Hooks ======
-const tableHooks = useCrudTable({
-	dataListApi: props.dataListApi,
-	deleteApi: props.deleteApi,
-	initQueryForm: props.initQueryForm,
-	columns: props.columns,
-	searchSchema: props.searchSchema,
-	pageSize: props.pageSize,
-	pageSizes: props.pageSizes,
-	primaryKey: props.primaryKey,
-	subject: props.subject,
-	deleteNameKey: props.deleteNameKey,
-	tableKey: props.tableKey
+// ====== 引用 ======
+const queryTableRef = ref<InstanceType<typeof QueryTable>>()
+const crudDialogRef = ref<InstanceType<typeof CrudDialog>>()
+
+// ====== 表格配置透传 ======
+const tableOptionKeys: (keyof UseCrudTableOptions)[] = [
+	'dataListApi',
+	'deleteApi',
+	'initQueryForm',
+	'columns',
+	'searchSchema',
+	'pageSize',
+	'pageSizes',
+	'primaryKey',
+	'subject',
+	'deleteNameKey',
+	'tableKey'
+]
+
+const tableDialogProps = computed((): UseCrudTableOptions => {
+	const result: Record<string, any> = {}
+	for (const key of tableOptionKeys) {
+		if (props[key] !== undefined) {
+			result[key] = props[key]
+		}
+	}
+	return result as UseCrudTableOptions
 })
 
-const formHooks = useCrudForm({
-	submitApi: props.submitApi,
-	detailApi: props.detailApi,
-	initFormData: props.initFormData,
-	subject: props.subject,
-	rules: props.rules,
-	labelWidth: props.labelWidth,
-	submitAfter: props.submitAfter ?? (() => tableHooks.query.getDataList())
+// ====== 表单配置透传 ======
+const formOptionKeys: (keyof UseCrudFormOptions)[] = [
+	'formSchema',
+	'submitApi',
+	'detailApi',
+	'initFormData',
+	'subject',
+	'title',
+	'rules',
+	'labelWidth',
+	'successMessage',
+	'beforeOpen',
+	'afterOpen',
+	'beforeDataAssign',
+	'beforeSubmit',
+	'afterSubmit',
+	'onDetailError',
+	'onSubmitError'
+]
+
+const formDialogProps = computed((): UseCrudFormOptions => {
+	const result: Record<string, any> = {}
+	for (const key of formOptionKeys) {
+		if (props[key] !== undefined) {
+			result[key] = props[key]
+		}
+	}
+	// 默认提交后刷新表格
+	result.afterSubmit = props.afterSubmit ?? (() => queryTableRef.value?.tableHooks.query.getDataList())
+	return result as UseCrudFormOptions
 })
 
 // ====== 插槽透传计算 ======

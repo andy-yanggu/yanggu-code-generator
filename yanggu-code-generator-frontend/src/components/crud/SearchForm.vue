@@ -4,7 +4,7 @@
 			<el-form-item v-for="field in normalizedFields" :key="field.prop" :label="field.label" :prop="field.prop">
 				<!-- 插槽覆盖 -->
 				<slot :name="field.prop" :field="field" :form="model">
-					<dynamic-field v-model="model[field.prop]" :field="searchToFormField(field)" />
+					<dynamic-field v-model="model[field.prop]" :field="searchToFormField(field)"></dynamic-field>
 				</slot>
 			</el-form-item>
 			<el-form-item>
@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Refresh } from '@element-plus/icons-vue'
-import type { SearchFieldSchema, FormFieldSchema } from '@/types/schema'
+import { Refresh, Search } from '@element-plus/icons-vue'
+import type { FormFieldSchema, SearchFieldSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
 import type { FormItemRule } from 'element-plus'
 import DynamicField from './internal/DynamicField.vue'

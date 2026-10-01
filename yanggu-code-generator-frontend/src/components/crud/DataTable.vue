@@ -4,7 +4,7 @@
 		<template #header>
 			<div class="table-tool-bar">
 				<div class="table-tool-bar-left">
-					<slot name="toolbar-left" />
+          <slot name="toolbar-left"></slot>
 				</div>
 				<div class="table-tool-bar-right">
 					<el-space size="small" :spacer="spacer">
