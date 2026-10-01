@@ -4,17 +4,12 @@
 		<template #header>
 			<div class="table-tool-bar">
 				<div class="table-tool-bar-left">
-          <slot name="toolbar-left"></slot>
+					<slot name="toolbar-left"></slot>
 				</div>
 				<div class="table-tool-bar-right">
 					<el-space size="small" :spacer="spacer">
 						<!-- 搜索 -->
-						<icon-button
-							size="16px"
-							:el-icon="Search"
-							:tooltip="showSearch ? '隐藏搜索' : '显示搜索'"
-							@click="toggleSearch()"
-						/>
+						<icon-button size="16px" :el-icon="Search" :tooltip="showSearch ? '隐藏搜索' : '显示搜索'" @click="toggleSearch()" />
 						<!-- 刷新 -->
 						<icon-button size="16px" :el-icon="Refresh" tooltip="刷新表格" @click="emit('getDataList')" />
 						<!-- 列设置 -->
@@ -29,12 +24,7 @@
 						>
 							<template #reference>
 								<span class="column-settings-trigger">
-									<icon-button
-										size="16px"
-										:el-icon="Setting"
-										tooltip="列设置"
-										@click="columnSettingsVisible = !columnSettingsVisible"
-									/>
+									<icon-button size="16px" :el-icon="Setting" tooltip="列设置" @click="columnSettingsVisible = !columnSettingsVisible" />
 								</span>
 							</template>
 							<div class="column-settings-panel">
@@ -51,7 +41,9 @@
 									>
 										<!-- 编辑模式 -->
 										<template v-if="editingKey === col.key">
-											<span class="drag-handle"><el-icon :size="14"><Lock /></el-icon></span>
+											<span class="drag-handle"
+												><el-icon :size="14"><Lock /></el-icon
+											></span>
 											<el-input
 												v-model="editingTitle"
 												size="small"
@@ -80,20 +72,10 @@
 												{{ col.label }}
 											</el-checkbox>
 											<template v-if="!col.disabled">
-												<button
-													class="pin-btn"
-													:class="{ 'is-active': col.fixed === 'left' }"
-													title="固定在左边"
-													@click="toggleFixed(col, 'left')"
-												>
+												<button class="pin-btn" :class="{ 'is-active': col.fixed === 'left' }" title="固定在左边" @click="toggleFixed(col, 'left')">
 													<el-icon :size="14"><ArrowLeft /></el-icon>
 												</button>
-												<button
-													class="pin-btn"
-													:class="{ 'is-active': col.fixed === 'right' }"
-													title="固定在右边"
-													@click="toggleFixed(col, 'right')"
-												>
+												<button class="pin-btn" :class="{ 'is-active': col.fixed === 'right' }" title="固定在右边" @click="toggleFixed(col, 'right')">
 													<el-icon :size="14"><ArrowRight /></el-icon>
 												</button>
 											</template>
@@ -113,12 +95,7 @@
 							</div>
 						</el-popover>
 						<!-- 最大化 -->
-						<icon-button
-							size="16px"
-							:el-icon="FullScreen"
-							:tooltip="maximized ? '退出全屏' : '表格全屏'"
-							@click="handleToggleMaximized()"
-						/>
+						<icon-button size="16px" :el-icon="FullScreen" :tooltip="maximized ? '退出全屏' : '表格全屏'" @click="handleToggleMaximized()" />
 					</el-space>
 				</div>
 			</div>
@@ -173,7 +150,7 @@ import { ArrowLeft, ArrowRight, Check, Close, Edit, FullScreen, Lock, Rank, Refr
 import Sortable from 'sortablejs'
 import { ElDivider } from 'element-plus'
 import IconButton from '@/components/icon-button/index.vue'
-import type { TableColumnSchema, Pagination } from '@/types/schema'
+import type { Pagination, TableColumnSchema } from '@/types/schema'
 
 defineOptions({
 	name: 'CrudDataTable',
