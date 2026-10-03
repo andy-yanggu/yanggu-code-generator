@@ -3,6 +3,7 @@ import type { Key } from '@/types/common'
 import type { FormMode, FormItemRule } from '@/types/schema'
 
 export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>) => {
+	const primaryKey = options.primaryKey ?? 'id'
 	const subject = options.subject ?? '数据'
 	const labelWidth = options.labelWidth ?? '100px'
 
@@ -38,6 +39,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 	const titleMap: Record<string, string> = {
 		add: '新增',
 		update: '修改',
+		copy: '复制',
 		detail: '详情'
 	}
 
@@ -84,6 +86,10 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 						// 赋值前回调（可预处理数据）
 						options.beforeDataAssign?.(data)
 						Object.assign(formData, data)
+						// 复制模式：清除主键，作为新记录提交
+						if (openMode === 'copy') {
+							;(formData as any)[primaryKey] = null
+						}
 					})
 					.catch(error => {
 						if (options.onDetailError) {
@@ -141,6 +147,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 
 	// ====== 返回值 ======
 	return {
+		formSchema: options.formSchema,
 		dialog: reactive({
 			visible,
 			mode,

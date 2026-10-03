@@ -1,37 +1,59 @@
 import type { UseCrudTableOptions } from '@/types/hooks/use-crud-table'
-import type { TableColumnSchema, Pagination } from '@/types/schema'
+import type { Pagination, TableColumnSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
 import type { Key, KeyArray } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
 import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
-export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions<VO, Query>) => {
+export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>) => {
+	// ====== 默认值（仅填充缺失属性，保留 reactive 响应性） ======
+	const defaults: Record<string, any> = {
+		primaryKey: 'id',
+		subject: '数据',
+		isPage: true,
+		pageSizes: [10, 20, 50, 100, 200],
+		pageSize: 10,
+		mountedGetData: true,
+		resetQueryGetData: true,
+		searchSchema: [],
+		columns: [],
+		queryContext: {},
+		exportSuccessMessage: '导出成功，请查看下载的文件',
+		importSuccessMessage: '导入成功，请查看数据'
+	}
+
+	for (const [key, value] of Object.entries(defaults)) {
+		if ((opts as any)[key] === undefined) {
+			;(opts as any)[key] = value
+		}
+	}
+
 	// ====== 配置解构 ======
-	const primaryKey = options.primaryKey ?? 'id'
-	const subject = options.subject ?? '数据'
-	const defaultPageSizes = options.pageSizes ?? [10, 20, 50, 100, 200]
-	const mountedGetData = options.mountedGetData !== false
-	const resetQueryGetData = options.resetQueryGetData !== false
+	const primaryKey = opts.primaryKey!
+	const subject = opts.subject!
+	const isPage = opts.isPage!
+	const mountedGetData = opts.mountedGetData!
+	const resetQueryGetData = opts.resetQueryGetData!
 
 	// ====== 1. 查询/分页 ======
-	const queryForm = reactive({ ...(options.initQueryForm() as object) })
+	const queryForm = reactive({ ...(opts.initQueryForm() as object) })
 	const dataList = ref([] as VO[])
 	const loading = ref(false)
 	const pageNum = ref(1)
-	const pageSize = ref(options.pageSize ?? defaultPageSizes[0])
+	const pageSize = ref(opts.pageSize!)
 	const total = ref(0)
 	const order = ref('')
 	const asc = ref(false)
 
 	// 归一化搜索字段
-	const searchFields = computed(() => (options.searchSchema ?? []).map(normalizeSearchField))
+	const searchFields = computed(() => opts.searchSchema!.map(normalizeSearchField))
 
 	// 构建查询条件
 	const buildQueryForm = () => {
 		const result: Record<string, any> = {
 			...queryForm,
-			...(options.queryContext ?? {})
+			...opts.queryContext
 		}
 
 		// searchSchema 中的 date-range / datetime-range 字段拆解
@@ -48,8 +70,10 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 		}
 
 		// 分页参数
-		result.pageNum = pageNum.value
-		result.pageSize = pageSize.value
+		if (isPage) {
+			result.pageNum = pageNum.value
+			result.pageSize = pageSize.value
+		}
 
 		// 排序参数
 		if (order.value) {
@@ -62,11 +86,20 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	// 执行查询
 	const executeQuery = () => {
 		loading.value = true
-		options
+		opts
 			.dataListApi(buildQueryForm() as Query)
-			.then((data: PageVO<VO>) => {
-				dataList.value = data.records
-				total.value = data.total
+			.then((data: PageVO<VO> | VO[]) => {
+				if (isPage) {
+					const pageVO = data as PageVO<VO>
+					dataList.value = pageVO.records
+					total.value = pageVO.total
+				} else {
+					const list = data as VO[]
+					dataList.value = list
+					total.value = list.length
+					pageNum.value = 1
+					pageSize.value = list.length
+				}
 			})
 			.finally(() => {
 				loading.value = false
@@ -82,9 +115,9 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	// 重置查询
 	const resetQueryHandle = () => {
 		nextTick(() => {
-			Object.assign(queryForm, options.initQueryForm())
-			if (options.queryContext) {
-				Object.assign(queryForm, options.queryContext)
+			Object.assign(queryForm, opts.initQueryForm())
+			if (opts.queryContext) {
+				Object.assign(queryForm, opts.queryContext)
 			}
 			if (resetQueryGetData) {
 				getDataList()
@@ -137,9 +170,11 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 		}
 	}
 
-	// ====== 3. 批量删除 ======
+	// ====== 3. 操作（删除 + 导出/导入） ======
 	const deleteLoading = ref(false)
+	const exportLoading = ref(false)
 
+	// --- 删除 ---
 	const resolveDeleteContext = (arg?: Key | VO) => {
 		if (arg && typeof arg === 'object') {
 			const row = arg as VO
@@ -152,10 +187,13 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	}
 
 	const buildDeleteConfirmMessage = (rows: VO[], idList: KeyArray) => {
+		// 自定义文案优先
+		if (isNotBlank(opts.deleteConfirmMessage)) {
+			return opts.deleteConfirmMessage
+		}
+
 		const count = idList.length
-		const names: string[] = options.deleteNameKey
-			? (rows.map(row => (row as any)[options.deleteNameKey!] as string).filter(isNotBlank) as string[])
-			: []
+		const names: string[] = opts.deleteNameKey ? (rows.map(row => (row as any)[opts.deleteNameKey!] as string).filter(isNotBlank) as string[]) : []
 
 		if (isEmpty(names)) {
 			return count === 1 ? `确认要删除${subject}吗？` : `确认要删除这${count}条${subject}吗？`
@@ -167,7 +205,7 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	}
 
 	const deleteExecute = (arg?: Key | VO) => {
-		if (!options.deleteApi) {
+		if (!opts.deleteApi) {
 			ElMessage.warning('未配置删除接口，请检查')
 			return
 		}
@@ -184,8 +222,7 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 		})
 			.then(() => {
 				deleteLoading.value = true
-				options
-					.deleteApi!(idList)
+				opts.deleteApi!(idList)
 					.then(() => {
 						ElMessage.success('删除成功')
 						clearSelection()
@@ -200,9 +237,54 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 			})
 	}
 
+	// --- 导出 ---
+	const exportExecute = (id?: Key) => {
+		if (!opts.exportApi) {
+			ElMessage.warning('未配置导出接口')
+			return
+		}
+
+		const idList = (id ? [id] : [...selectedIds.value]) as KeyArray
+		if (isEmpty(idList)) {
+			ElMessage.warning(`请选择要导出的${subject}`)
+			return
+		}
+
+		exportLoading.value = true
+		opts.exportApi!(idList)
+			.then(() => {
+				ElMessage.success(opts.exportSuccessMessage)
+				clearSelection()
+			})
+			.finally(() => {
+				exportLoading.value = false
+			})
+	}
+
+	// --- 导入 ---
+	const importExecute = (file: File, params: Record<string, any> = {}) => {
+		if (!file) {
+			ElMessage.warning('请选择要导入的文件')
+			return
+		}
+		if (!opts.importApi) {
+			ElMessage.warning('未配置导入接口')
+			return
+		}
+
+		const formData = new FormData()
+		formData.append('file', file)
+		Object.keys(params).forEach(key => formData.append(key, params[key]))
+
+		opts.importApi!(formData).then(() => {
+			ElMessage.success(opts.importSuccessMessage)
+			getDataList()
+		})
+	}
+
 	// ====== 4. 列配置管理 ======
 	const settingsStore = useTableSettingsStore()
-	const defaultColumns = options.columns ?? []
+	const defaultColumns = opts.tableColumns!
 
 	const cloneColumns = (cols: TableColumnSchema[]): TableColumnSchema[] => cols.map(col => ({ ...col }))
 
@@ -226,9 +308,9 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	}
 
 	const columns = ref<TableColumnSchema[]>(
-		options.tableKey
-			? settingsStore.getColumns(options.tableKey)
-				? mergeWithDefaults(settingsStore.getColumns(options.tableKey)!)
+		opts.tableKey
+			? settingsStore.getColumns(opts.tableKey)
+				? mergeWithDefaults(settingsStore.getColumns(opts.tableKey)!)
 				: cloneColumns(defaultColumns)
 			: cloneColumns(defaultColumns)
 	)
@@ -236,8 +318,8 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 	const visibleColumns = computed(() => columns.value.filter(col => col.visible !== false))
 
 	const persistColumns = () => {
-		if (options.tableKey) {
-			settingsStore.saveColumns(options.tableKey, toRaw(columns.value) as any)
+		if (opts.tableKey) {
+			settingsStore.saveColumns(opts.tableKey, toRaw(columns.value) as any)
 		}
 	}
 
@@ -265,11 +347,13 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 
 	// ====== 返回值：7 组 reactive 包裹 ======
 	return {
+		// 搜索区
 		search: reactive({
 			fields: searchFields,
 			form: queryForm,
 			visible: queryShow
 		}),
+		// 查询操作
 		query: reactive({
 			getDataList,
 			reset: resetQueryHandle,
@@ -277,29 +361,44 @@ export const useCrudTable = <VO = any, Query = any>(options: UseCrudTableOptions
 			onSizeChange,
 			onSortChange
 		}),
+		// 表格数据
 		table: reactive({
 			data: dataList,
 			loading,
 			pagination: computed<Pagination>(() => ({ current: pageNum.value, size: pageSize.value, total: total.value })),
 			index: tableIndex
 		}),
+		// 多选
 		selection: reactive({
 			rows: selectedRows,
 			ids: selectedIds,
 			onChange: onSelectionChange,
 			clear: clearSelection
 		}),
-		delete: reactive({
-			execute: deleteExecute,
-			loading: deleteLoading
+		// 操作（删除 + 导出/导入）
+		action: reactive({
+			delete: {
+				execute: deleteExecute,
+				loading: deleteLoading
+			},
+			export: {
+				execute: exportExecute,
+				loading: exportLoading
+			},
+			import: {
+				execute: importExecute
+			}
 		}),
+		// 列配置
 		columnConfig: reactive({
 			list: columns,
 			visible: visibleColumns,
 			reset: resetColumnSettings
 		}),
+		// UI 引用
 		refs: reactive({
-			cardMaximized
+			cardMaximized,
+			primaryKey
 		})
 	}
 }

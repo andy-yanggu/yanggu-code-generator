@@ -19,6 +19,8 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	initFormData: (ctx?: any) => DTO
 
 	// ---- 基础配置 ----
+	/** 主键字段名，默认 'id'。copy 模式下用于清除主键 */
+	primaryKey?: string
 	/** 弹窗标题主体，如「字段类型」 */
 	subject?: string
 	/** 完全自定义弹窗标题（优先级最高） */

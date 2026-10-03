@@ -1,13 +1,15 @@
 <template>
 	<div>
 		<!-- 搜索表单 -->
+		<!-- eslint-disable vue/no-mutating-props -->
+		<!-- v-model 绑定到 prop 的嵌套 reactive 属性是安全的（修改的是 hook 内部的 ref，不是 prop 引用本身） -->
 		<search-form
-			v-model="tableHooks.search.form"
-			:fields="tableHooks.search.fields"
-			:visible="tableHooks.search.visible"
-			:loading="tableHooks.table.loading"
-			@search="tableHooks.query.getDataList()"
-			@reset="tableHooks.query.reset()"
+			v-model="tableHook.search.form"
+			:fields="tableHook.search.fields"
+			:visible="tableHook.search.visible"
+			:loading="tableHook.table.loading"
+			@search="tableHook.query.getDataList()"
+			@reset="tableHook.query.reset()"
 		>
 			<!-- 透传搜索字段插槽 -->
 			<template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
@@ -17,28 +19,28 @@
 
 		<!-- 表格 -->
 		<data-table
-			v-model:show-search="tableHooks.search.visible"
-			v-model:maximized="tableHooks.refs.cardMaximized"
-			v-model:columns="tableHooks.columnConfig.list"
-			:data="tableHooks.table.data"
-			:loading="tableHooks.table.loading"
-			:pagination="tableHooks.table.pagination"
+			v-model:show-search="tableHook.search.visible"
+			v-model:maximized="tableHook.refs.cardMaximized"
+			v-model:columns="tableHook.columnConfig.list"
+			:data="tableHook.table.data"
+			:loading="tableHook.table.loading"
+			:pagination="tableHook.table.pagination"
 			:page-sizes="pageSizes"
 			:max-height="maxHeight"
-			@selection-change="tableHooks.selection.onChange"
-			@sort-change="tableHooks.query.onSortChange"
-			@page-change="tableHooks.query.onPageChange"
-			@size-change="tableHooks.query.onSizeChange"
-			@get-data-list="tableHooks.query.getDataList()"
-			@reset-columns="tableHooks.columnConfig.reset()"
+			@selection-change="tableHook.selection.onChange"
+			@sort-change="tableHook.query.onSortChange"
+			@page-change="tableHook.query.onPageChange"
+			@size-change="tableHook.query.onSizeChange"
+			@get-data-list="tableHook.query.getDataList()"
+			@reset-columns="tableHook.columnConfig.reset()"
 		>
 			<!-- 工具栏左侧 -->
 			<template #toolbar-left>
-				<slot name="toolbar-left" :table="tableHooks"></slot>
+				<slot name="toolbar-left" :table-hook="tableHook"></slot>
 			</template>
 			<!-- 操作列 -->
 			<template #operation="scope">
-				<slot name="operation" v-bind="scope" :table="tableHooks"></slot>
+				<slot name="operation" v-bind="scope" :table-hook="tableHook"></slot>
 			</template>
 			<!-- 透传表格列插槽 -->
 			<template v-for="(_, name) in columnSlots" :key="name" #[name]="scope">
@@ -49,8 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import type { UseCrudTableOptions } from '@/types/hooks/use-crud-table'
-import { useCrudTable } from '@/hooks/use-crud-table'
+import type { useCrudTable } from '@/hooks/use-crud-table'
 import SearchForm from './SearchForm.vue'
 import DataTable from './DataTable.vue'
 
@@ -58,20 +59,12 @@ defineOptions({
 	name: 'QueryTable'
 })
 
-const props = withDefaults(defineProps<UseCrudTableOptions & { maxHeight?: string }>(), {
-	pageSize: 10,
-	pageSizes: () => [10, 20, 50, 100, 200],
-	primaryKey: 'id',
-	subject: '数据'
-})
-
-// 内部创建表格 hook
-const tableHooks = useCrudTable(props)
-
-// 暴露 hook 供父组件使用
-defineExpose({
-	tableHooks
-})
+// 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
+defineProps<{
+	tableHook: ReturnType<typeof useCrudTable>
+	maxHeight?: string
+	pageSizes?: number[]
+}>()
 
 // 过滤出表格列插槽（排除已知非列插槽）
 const knownSlots = new Set(['toolbar-left', 'operation'])

@@ -18,7 +18,7 @@ export type ComponentType =
 	| 'cascader'
 
 // 表单模式
-export type FormMode = 'add' | 'update' | 'detail'
+export type FormMode = 'add' | 'update' | 'copy' | 'detail'
 
 // 分页参数
 export interface Pagination {
