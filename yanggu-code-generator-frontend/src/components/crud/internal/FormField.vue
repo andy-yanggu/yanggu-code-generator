@@ -1,5 +1,9 @@
 <template>
-	<el-form-item :label="field.label" :prop="field.prop">
+	<el-form-item :prop="field.prop">
+		<template #label>
+			<form-label-tooltip v-if="field.tooltip" :label="field.label" :tooltip="field.tooltip" />
+			<span v-else>{{ field.label }}</span>
+		</template>
 		<!-- 插槽覆盖（按 field.key 匹配，未填时回退到 field.prop） -->
 		<slot :name="`field-${field.key ?? field.prop}`" :model="model" :field="field">
 			<!-- 详情模式：纯文本展示 -->
@@ -15,6 +19,7 @@
 <script setup lang="ts">
 import type { FormFieldSchema, FormMode } from '@/types/schema'
 import DynamicField from './DynamicField.vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'FormField'

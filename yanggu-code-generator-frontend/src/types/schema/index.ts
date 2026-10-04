@@ -49,6 +49,8 @@ export interface FormFieldSchema {
 	key?: string
 	prop: string
 	label: string
+	/** label 旁的提示文字，有值时自动渲染问号图标 + tooltip */
+	tooltip?: string
 	component?: ComponentType
 	placeholder?: string
 	options?: { label: string; value: any }[]

@@ -216,17 +216,6 @@ export const DEFAULT_BUSINESS_MENUS: MenuInfo[] = [
 					type: 1,
 					cache: true
 				}
-			},
-			{
-				path: 'field-type-test',
-				name: 'GenFieldTypeTest',
-				component: 'gen/field-type/test',
-				meta: {
-					title: '字段类型（测试）',
-					icon: 'icon-menu',
-					type: 1,
-					cache: true
-				}
 			}
 		]
 	}
