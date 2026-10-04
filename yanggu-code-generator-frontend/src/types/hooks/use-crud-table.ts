@@ -21,11 +21,11 @@ export interface UseCrudTableOptions<VO = any, Query = any> {
 	// ======== 必填 ========
 	/** 分页/列表查询接口 */
 	dataListApi: DataListApi<VO, Query>
-	/** 查询表单初始值工厂 */
-	initQueryForm: () => Query
 	/** 表格列配置 */
 	tableColumns: TableColumnSchema[]
-	// ======== 搜索 ========
+	// ======== 查询 ========
+	/** 查询表单初始值工厂；无搜索表单时无需填写，默认 () => ({}) */
+	initQueryForm?: () => Query
 	/** 搜索字段配置 */
 	searchSchema?: SearchFieldSchema[]
 	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID） */

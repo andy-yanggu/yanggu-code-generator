@@ -4,11 +4,11 @@ import { normalizeSearchField } from '@/types/schema'
 import type { Key, KeyArray } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
-import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
+import { defaultsDeep, isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
 export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>) => {
 	// ====== 默认值（仅填充缺失属性，保留 reactive 响应性） ======
-	const defaults: Record<string, any> = {
+	const defaultOptions = (): Partial<UseCrudTableOptions<VO, Query>> => ({
 		primaryKey: 'id',
 		subject: '数据',
 		isPage: true,
@@ -16,18 +16,14 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		pageSize: 10,
 		mountedGetData: true,
 		resetQueryGetData: true,
+		initQueryForm: () => ({}) as Query,
 		searchSchema: [],
-		columns: [],
 		queryContext: {},
 		exportSuccessMessage: '导出成功，请查看下载的文件',
 		importSuccessMessage: '导入成功，请查看数据'
-	}
+	})
 
-	for (const [key, value] of Object.entries(defaults)) {
-		if ((opts as any)[key] === undefined) {
-			;(opts as any)[key] = value
-		}
-	}
+	defaultsDeep(opts, defaultOptions())
 
 	// ====== 配置解构 ======
 	const primaryKey = opts.primaryKey!
@@ -37,7 +33,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const resetQueryGetData = opts.resetQueryGetData!
 
 	// ====== 1. 查询/分页 ======
-	const queryForm = reactive({ ...(opts.initQueryForm() as object) })
+	const queryForm = reactive({ ...(opts.initQueryForm!() || {}) })
 	const dataList = ref([] as VO[])
 	const loading = ref(false)
 	const pageNum = ref(1)
@@ -115,7 +111,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	// 重置查询
 	const resetQueryHandle = () => {
 		nextTick(() => {
-			Object.assign(queryForm, opts.initQueryForm())
+			Object.assign(queryForm, opts.initQueryForm!())
 			if (opts.queryContext) {
 				Object.assign(queryForm, opts.queryContext)
 			}
