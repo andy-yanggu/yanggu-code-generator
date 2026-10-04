@@ -29,15 +29,15 @@
 <script setup lang="ts">
 import { Check, Close } from '@element-plus/icons-vue'
 import FormField from './internal/FormField.vue'
-import type { useCrudForm } from '@/hooks/use-crud-form'
 
 defineOptions({
 	name: 'CrudDialog'
 })
 
 // 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
+// 用 any 避免泛型 ReturnType 与页面具体实体类型之间的 TS2719 冲突
 const props = defineProps<{
-	formHook: ReturnType<typeof useCrudForm>
+	formHook: any
 }>()
 
 // 透传插槽（排除保留插槽，直接转发给 FormField）

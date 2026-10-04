@@ -1,7 +1,7 @@
 <template>
 	<el-form-item :label="field.label" :prop="field.prop">
-		<!-- 插槽覆盖 -->
-		<slot :name="`field-${field.prop}`" :model="model" :field="field">
+		<!-- 插槽覆盖（按 field.key 匹配，未填时回退到 field.prop） -->
+		<slot :name="`field-${field.key ?? field.prop}`" :model="model" :field="field">
 			<!-- 详情模式：纯文本展示 -->
 			<span v-if="mode === 'detail'" class="detail-text">
 				{{ field.detailFormatter ? field.detailFormatter(model[field.prop]) : model[field.prop] }}

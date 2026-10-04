@@ -11,9 +11,9 @@
 			@search="tableHook.query.getDataList()"
 			@reset="tableHook.query.reset()"
 		>
-			<!-- 透传搜索字段插槽 -->
-			<template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
-				<slot :name="name" v-bind="slotData ?? {}"></slot>
+			<!-- 透传搜索字段插槽（剥 query- 前缀） -->
+			<template v-for="(fn, name) in searchFieldSlots" :key="name" #[name]="slotData">
+				<component :is="() => fn(slotData ?? {})" />
 			</template>
 		</search-form>
 
@@ -42,16 +42,15 @@
 			<template #operation="scope">
 				<slot name="operation" v-bind="scope" :table-hook="tableHook"></slot>
 			</template>
-			<!-- 透传表格列插槽 -->
-			<template v-for="(_, name) in columnSlots" :key="name" #[name]="scope">
-				<slot :name="name" v-bind="scope"></slot>
+			<!-- 透传表格列插槽（剥 table- 前缀） -->
+			<template v-for="(fn, name) in tableColumnSlots" :key="name" #[name]="scope">
+				<component :is="() => fn(scope ?? {})" />
 			</template>
 		</data-table>
 	</div>
 </template>
 
 <script setup lang="ts">
-import type { useCrudTable } from '@/hooks/use-crud-table'
 import SearchForm from './SearchForm.vue'
 import DataTable from './DataTable.vue'
 
@@ -60,21 +59,36 @@ defineOptions({
 })
 
 // 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
+// 用 any 避免泛型 ReturnType 与页面具体实体类型之间的 TS2719 冲突
 defineProps<{
-	tableHook: ReturnType<typeof useCrudTable>
+	tableHook: any
 	maxHeight?: string
 	pageSizes?: number[]
 }>()
 
-// 过滤出表格列插槽（排除已知非列插槽）
-const knownSlots = new Set(['toolbar-left', 'operation'])
-const columnSlots = computed(() => {
-	const slots: Record<string, any> = {}
-	for (const name in useSlots()) {
-		if (!knownSlots.has(name)) {
-			slots[name] = true
+// 插槽分路由：按前缀分类 → 剥前缀 → 分发到对应子组件
+// table-* 剥 table- 给 DataTable，query-* 剥 query- 给 SearchForm
+const allSlots = useSlots()
+
+/** table-* 插槽：剥 table- 前缀，转发给 DataTable */
+const tableColumnSlots = computed(() => {
+	const result: Record<string, any> = {}
+	for (const name in allSlots) {
+		if (name.startsWith('table-')) {
+			result[name.slice(6)] = allSlots[name]
 		}
 	}
-	return slots
+	return result
+})
+
+/** query-* 插槽：剥 query- 前缀，转发给 SearchForm */
+const searchFieldSlots = computed(() => {
+	const result: Record<string, any> = {}
+	for (const name in allSlots) {
+		if (name.startsWith('query-')) {
+			result[name.slice(6)] = allSlots[name]
+		}
+	}
+	return result
 })
 </script>

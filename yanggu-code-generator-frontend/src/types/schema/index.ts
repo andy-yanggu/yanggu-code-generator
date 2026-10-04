@@ -29,6 +29,8 @@ export interface Pagination {
 
 // 搜索字段 schema
 export interface SearchFieldSchema {
+	/** 字段唯一标识，用于插槽命名和 v-model 绑定；未填时取 prop */
+	key?: string
 	prop: string
 	label: string
 	component?: ComponentType
@@ -43,6 +45,8 @@ export interface SearchFieldSchema {
 
 // 表单字段 schema
 export interface FormFieldSchema {
+	/** 字段唯一标识，用于插槽命名；未填时取 prop */
+	key?: string
 	prop: string
 	label: string
 	component?: ComponentType
@@ -76,11 +80,12 @@ export interface TableColumnSchema {
 // 归一化搜索字段（补全默认值）
 export const normalizeSearchField = (
 	field: SearchFieldSchema
-): SearchFieldSchema & { component: ComponentType; placeholder: string; width: number | string } => {
+): SearchFieldSchema & { key: string; component: ComponentType; placeholder: string; width: number | string } => {
 	const component = field.component ?? 'input'
 	const placeholder = field.placeholder ?? (component === 'select' ? `请选择${field.label}` : `请输入${field.label}`)
 	return {
 		...field,
+		key: field.key ?? field.prop,
 		component,
 		placeholder,
 		width: field.width ?? 160

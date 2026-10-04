@@ -1,9 +1,9 @@
 <template>
 	<el-card v-if="visible" class="layout-query-card" shadow="hover">
 		<el-form ref="formRef" :inline="true" :model="model" :rules="fieldRules" @keyup.enter="handleSearch">
-			<el-form-item v-for="field in normalizedFields" :key="field.prop" :label="field.label" :prop="field.prop">
-				<!-- 插槽覆盖 -->
-				<slot :name="field.prop" :field="field" :form="model">
+			<el-form-item v-for="field in normalizedFields" :key="field.key" :label="field.label" :prop="field.prop">
+				<!-- 插槽覆盖（按 field.key 匹配） -->
+				<slot :name="field.key" :field="field" :form="model">
 					<dynamic-field v-model="model[field.prop]" :field="searchToFormField(field)"></dynamic-field>
 				</slot>
 			</el-form-item>
