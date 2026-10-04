@@ -16,12 +16,7 @@ defineOptions({
 })
 
 // 初始化表单数据
-const initFormData = (): GenFieldTypeEntity => ({
-	id: null,
-	columnType: '',
-	attrType: '',
-	packageName: ''
-})
+const initFormData = (): GenFieldTypeEntity => ({ id: null, columnType: '', attrType: '', packageName: '' })
 
 // 表单字段
 const formSchema: FormFieldSchema[] = [
@@ -39,10 +34,7 @@ const formSchema: FormFieldSchema[] = [
 		filterable: true,
 		ruleList: [{ required: true, message: '属性类型不能为空', trigger: 'change' }]
 	},
-	{
-		key: 'packageName',
-		label: '包名'
-	}
+	{ key: 'packageName', label: '包名' }
 ]
 
 // 表单配置
@@ -55,81 +47,23 @@ const formConfig = reactive({
 
 // 查询表单 schema
 const searchSchema: SearchFieldSchema[] = [
-	{
-		key: 'columnType',
-		label: '字段类型'
-	},
-	{
-		key: 'attrType',
-		label: '属性类型',
-		component: 'select',
-		options: ATTR_TYPES.items,
-		filterable: true
-	}
+	{ key: 'columnType', label: '字段类型' },
+	{ key: 'attrType', label: '属性类型', component: 'select', options: ATTR_TYPES.items, filterable: true }
 ]
 
 // 初始化查询表单数据
-const initQueryForm = (): GenFieldTypeQuery => ({
-	columnType: '',
-	attrType: ''
-})
+const initQueryForm = (): GenFieldTypeQuery => ({ columnType: '', attrType: '' })
 
 // 表格字段
 const tableColumns: TableColumnSchema[] = [
-	{
-		key: 'selection',
-		type: 'selection',
-		label: '',
-		width: 50,
-		align: 'center',
-		fixed: 'left',
-		disabled: true
-	},
-	{
-		key: 'index',
-		type: 'index',
-		label: '序号',
-		width: 60,
-		align: 'center',
-		disabled: true
-	},
-	{
-		key: 'columnType',
-		label: '字段类型',
-		align: 'center'
-	},
-	{
-		key: 'attrType',
-		label: '属性类型',
-		align: 'center',
-		formatter: getLabel(ATTR_TYPES)
-	},
-	{
-		key: 'packageName',
-		label: '包名'
-	},
-	{
-		key: 'createTime',
-		label: '创建时间',
-		minWidth: 120,
-		sortable: 'custom' as const,
-		align: 'center'
-	},
-	{
-		key: 'updateTime',
-		label: '修改时间',
-		minWidth: 120,
-		sortable: 'custom' as const,
-		align: 'center'
-	},
-	{
-		key: 'operation',
-		label: '操作',
-		fixed: 'right' as const,
-		width: 150,
-		align: 'center',
-		disabled: true
-	}
+	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true },
+	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
+	{ key: 'columnType', label: '字段类型', align: 'center' },
+	{ key: 'attrType', label: '属性类型', align: 'center', formatter: getLabel(ATTR_TYPES) },
+	{ key: 'packageName', label: '包名' },
+	{ key: 'createTime', label: '创建时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
+	{ key: 'updateTime', label: '修改时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
+	{ key: 'operation', label: '操作', fixed: 'right' as const, width: 150, align: 'center', disabled: true }
 ]
 
 // 表格配置

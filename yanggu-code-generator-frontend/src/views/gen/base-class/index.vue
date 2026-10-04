@@ -67,14 +67,7 @@ defineOptions({
 })
 
 // 初始化表单数据
-const initFormData = (): GenBaseClassEntity => ({
-	id: '',
-	baseClassName: '',
-	packageName: '',
-	className: '',
-	fieldList: [],
-	remark: ''
-})
+const initFormData = (): GenBaseClassEntity => ({ id: '', baseClassName: '', packageName: '', className: '', fieldList: [], remark: '' })
 
 // 表单字段（packageName / className 合并为「基类全类名」组合布局，走 #form-fullClassName 插槽）
 const formSchema: FormFieldSchema[] = [
@@ -97,15 +90,8 @@ const formSchema: FormFieldSchema[] = [
 			}
 		]
 	},
-	{
-		key: 'fieldList',
-		label: '基类字段',
-		ruleList: [{ required: true, message: '基类字段不能为空', trigger: 'blur' }]
-	},
-	{
-		key: 'remark',
-		label: '备注'
-	}
+	{ key: 'fieldList', label: '基类字段', ruleList: [{ required: true, message: '基类字段不能为空', trigger: 'blur' }] },
+	{ key: 'remark', label: '备注' }
 ]
 
 // 表单配置
@@ -129,11 +115,7 @@ const searchSchema: SearchFieldSchema[] = [
 ]
 
 // 初始化查询表单数据
-const initQueryForm = (): GenBaseClassQuery => ({
-	baseClassName: '',
-	packageName: '',
-	className: ''
-})
+const initQueryForm = (): GenBaseClassQuery => ({ baseClassName: '', packageName: '', className: '' })
 
 // 表格列
 const tableColumns: TableColumnSchema[] = [
