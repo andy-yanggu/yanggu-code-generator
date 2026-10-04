@@ -49,9 +49,9 @@ const normalizedFields = computed(() => props.fields.map(normalizeSearchField))
 // 从字段 schema 收集校验规则
 const fieldRules = computed<Record<string, FormItemRule[]>>(() => {
 	const rules: Record<string, FormItemRule[]> = {}
-	for (const field of props.fields) {
+	for (const field of normalizedFields.value) {
 		if (field.ruleList?.length) {
-			rules[field.prop] = [...field.ruleList]
+			rules[field.prop!] = [...field.ruleList]
 		}
 	}
 	return rules

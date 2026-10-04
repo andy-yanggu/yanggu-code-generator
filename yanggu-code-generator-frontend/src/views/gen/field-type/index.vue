@@ -26,13 +26,13 @@ const initFormData = (): GenFieldTypeEntity => ({
 // 表单字段
 const formSchema: FormFieldSchema[] = [
 	{
-		prop: 'columnType',
+		key: 'columnType',
 		label: '字段类型',
 		tooltip: '数据库中的字段类型；字段类型具有唯一性，不能重复',
 		ruleList: [{ required: true, message: '字段类型不能为空', trigger: 'blur' }]
 	},
 	{
-		prop: 'attrType',
+		key: 'attrType',
 		label: '属性类型',
 		component: 'select',
 		options: ATTR_TYPES.items,
@@ -40,7 +40,7 @@ const formSchema: FormFieldSchema[] = [
 		ruleList: [{ required: true, message: '属性类型不能为空', trigger: 'change' }]
 	},
 	{
-		prop: 'packageName',
+		key: 'packageName',
 		label: '包名'
 	}
 ]
@@ -53,16 +53,14 @@ const formConfig = reactive({
 	initFormData
 } as UseCrudFormOptions)
 
-// 查询表单 schema（添加 key，统一用 key 作为插槽名第二段）
+// 查询表单 schema
 const searchSchema: SearchFieldSchema[] = [
 	{
 		key: 'columnType',
-		prop: 'columnType',
 		label: '字段类型'
 	},
 	{
 		key: 'attrType',
-		prop: 'attrType',
 		label: '属性类型',
 		component: 'select',
 		options: ATTR_TYPES.items,
@@ -97,25 +95,21 @@ const tableColumns: TableColumnSchema[] = [
 	},
 	{
 		key: 'columnType',
-		prop: 'columnType',
 		label: '字段类型',
 		align: 'center'
 	},
 	{
 		key: 'attrType',
-		prop: 'attrType',
 		label: '属性类型',
 		align: 'center',
 		formatter: getLabel(ATTR_TYPES)
 	},
 	{
 		key: 'packageName',
-		prop: 'packageName',
 		label: '包名'
 	},
 	{
 		key: 'createTime',
-		prop: 'createTime',
 		label: '创建时间',
 		minWidth: 120,
 		sortable: 'custom' as const,
@@ -123,7 +117,6 @@ const tableColumns: TableColumnSchema[] = [
 	},
 	{
 		key: 'updateTime',
-		prop: 'updateTime',
 		label: '修改时间',
 		minWidth: 120,
 		sortable: 'custom' as const,

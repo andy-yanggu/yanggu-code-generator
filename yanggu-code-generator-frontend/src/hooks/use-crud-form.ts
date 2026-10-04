@@ -1,18 +1,23 @@
 import type { UseCrudFormOptions } from '@/types/hooks/use-crud-form'
 import type { Key } from '@/types/common'
-import type { FormMode, FormItemRule } from '@/types/schema'
+import type { FormItemRule, FormMode } from '@/types/schema'
 
 export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>) => {
 	const primaryKey = options.primaryKey ?? 'id'
 	const subject = options.subject ?? '数据'
 	const labelWidth = options.labelWidth ?? '100px'
 
+	// 归一化表单字段（prop 未填时取 key，一次性处理）
+	const normalizedFormSchema = options.formSchema.map(field =>
+		field.prop ? field : { ...field, prop: field.key }
+	)
+
 	// 合并规则：schema 字段级 ruleList + 顶层 rules（顶层优先覆盖）
 	const mergedRules = computed<Record<string, FormItemRule[]>>(() => {
 		const result: Record<string, FormItemRule[]> = {}
-		for (const field of options.formSchema) {
+		for (const field of normalizedFormSchema) {
 			if (field.ruleList?.length) {
-				result[field.prop] = [...field.ruleList]
+				result[field.prop!] = [...field.ruleList]
 			}
 		}
 		if (options.rules) {
@@ -147,7 +152,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 
 	// ====== 返回值 ======
 	return {
-		formSchema: options.formSchema,
+		formSchema: normalizedFormSchema,
 		dialog: reactive({
 			visible,
 			mode,

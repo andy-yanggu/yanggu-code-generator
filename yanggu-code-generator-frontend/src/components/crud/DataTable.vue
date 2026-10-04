@@ -308,6 +308,7 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	const result: Record<string, any> = {}
 	if (col.type) result.type = col.type
 	if (col.prop) result.prop = col.prop
+	else if (col.key && !col.type) result.prop = col.key
 	if (col.label) result.label = col.label
 	if (col.width) result.width = col.width
 	if (col.minWidth) result.minWidth = col.minWidth

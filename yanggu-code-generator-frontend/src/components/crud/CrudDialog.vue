@@ -2,6 +2,7 @@
 	<el-dialog v-model="formHook.dialog.visible" :title="formHook.dialog.title" :close-on-click-modal="false">
 		<el-form
 			:ref="formHook.form.formRef"
+			:disabled="formHook.dialog.mode === 'detail'"
 			:model="formHook.form.data"
 			:rules="formHook.form.rules.value"
 			:label-width="formHook.form.labelWidth"
