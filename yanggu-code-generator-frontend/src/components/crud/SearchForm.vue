@@ -63,6 +63,7 @@ const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({
 	label: field.label,
 	component: field.component,
 	placeholder: field.placeholder,
+	width: field.width,
 	options: field.options,
 	filterable: field.filterable
 })

@@ -55,6 +55,7 @@ export interface FormFieldSchema {
 	tooltip?: string
 	component?: ComponentType
 	placeholder?: string
+	width?: number | string
 	options?: { label: string; value: any }[]
 	filterable?: boolean
 	span?: number
@@ -95,4 +96,54 @@ export const normalizeSearchField = (
 		placeholder,
 		width: field.width ?? 160
 	}
+}
+
+// 统一字段声明（一份 fields 派生 formSchema / searchSchema / tableColumns）
+export interface CrudField {
+	/** 字段唯一标识，用于插槽命名和 v-model 绑定 */
+	key: string
+	/** 数据字段名；未填时取 key */
+	prop?: string
+	/** 字段显示名称 */
+	label: string
+
+	// ====== 视图角色标记 ======
+	/** 是否出现在表单，默认 false */
+	inForm?: boolean
+	/** 是否出现在查询表单，默认 false */
+	inSearch?: boolean
+	/** 是否出现在表格列，默认 false */
+	inTable?: boolean
+
+	// ====== Form + Search 共享属性（派生时自动注入两个子对象） ======
+	/** 组件类型（无 el- 前缀） */
+	component?: ComponentType
+	/** 选项数据（select / radio / checkbox 等使用） */
+	options?: { label: string; value: any }[]
+	/** 是否可筛选（select 组件），默认 true */
+	filterable?: boolean
+	/** 是否可清空（input / select 等），默认 true */
+	clearable?: boolean
+
+	// ====== 视图专属子对象（各视图独立覆盖） ======
+	/** 表单专属配置（ruleList / tooltip / span 等） */
+	form?: Partial<FormFieldSchema>
+	/** 查询表单专属配置（width / rangeFields 等） */
+	search?: Partial<SearchFieldSchema>
+	/** 表格列专属配置（align / sortable / formatter / width 等） */
+	table?: Partial<TableColumnSchema>
+}
+
+// 内置列开关（全部默认 true）
+export interface BuiltinColumnOptions {
+	/** 多选列，默认 true */
+	showSelection?: boolean
+	/** 序号列，默认 true */
+	showIndex?: boolean
+	/** 操作列，默认 true */
+	showOperation?: boolean
+	/** 创建时间列，默认 true */
+	showCreateTime?: boolean
+	/** 修改时间列，默认 true */
+	showUpdateTime?: boolean
 }

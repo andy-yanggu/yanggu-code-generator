@@ -63,12 +63,13 @@ const currentComponent = computed(() => {
 const getComponentProps = computed(() => {
 	const component = (props.field.component ?? 'input') as ComponentType
 	const placeholder = computedPlaceholder.value
-	const { options, filterable } = props.field
+	const { options, filterable, width } = props.field
 
 	const baseProps: Record<string, any> = {
 		placeholder,
 		clearable: true,
-		filterable
+		filterable,
+		style: width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined
 	}
 
 	switch (component) {

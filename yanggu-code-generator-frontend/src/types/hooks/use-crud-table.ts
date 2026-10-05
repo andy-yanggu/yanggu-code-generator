@@ -1,6 +1,6 @@
 import type { Key } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
-import type { SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { BuiltinColumnOptions, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 
 // 数据列表接口
 type DataListApi<VO, Query> = (query: Query) => Promise<PageVO<VO>>
@@ -17,12 +17,13 @@ type ImportApi = (formData: FormData) => Promise<void>
  * 设计原则：配置只包含「声明式」内容（接口引用、字段定义、文案、开关），
  * 运行时状态（dataList、pageNum、loading 等）全部由 hook 内部管理。
  */
-export interface UseCrudTableOptions<VO = any, Query = any> {
+export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColumnOptions {
 	// ======== 必填 ========
 	/** 分页/列表查询接口 */
 	dataListApi: DataListApi<VO, Query>
+	// ======== 表格列（使用 fields 模式时可省略，由 useCrud 自动派生） ========
 	/** 表格列配置 */
-	tableColumns: TableColumnSchema[]
+	tableColumns?: TableColumnSchema[]
 	// ======== 查询 ========
 	/** 查询表单初始值工厂；无搜索表单时无需填写，默认 () => ({}) */
 	initQueryForm?: () => Query

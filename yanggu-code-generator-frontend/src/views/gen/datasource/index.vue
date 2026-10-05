@@ -1,156 +1,128 @@
 <template>
-	<div>
-		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
-			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item label="连接名称" prop="connName">
-					<el-input v-model="state.queryForm.connName" clearable placeholder="请输入连接名称"></el-input>
-				</el-form-item>
-				<el-form-item label="数据库类型" prop="dbType">
-					<el-select
-						v-model="state.queryForm.dbType"
-						:options="DB_TYPES.items"
-						style="width: 160px"
-						filterable
-						clearable
-						placeholder="请选择数据库类型"></el-select>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</el-card>
+	<crud-page :table-hook="tableHook" :form-hook="formHook">
+		<!-- 操作列：测试 + 修改 + 复制 + 删除（2×2 网格） -->
+		<template #table-action="{ row, tableHook: t, dialog }">
+			<el-row>
+				<el-col :span="12">
+					<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(row.id)">测试</el-button>
+				</el-col>
+				<el-col :span="12">
+					<el-button type="primary" link :icon="Edit" @click="dialog?.open('update', row[t.refs.primaryKey])">修改</el-button>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="12">
+					<el-button type="primary" link :icon="CopyDocument" @click="dialog?.open('copy', row[t.refs.primaryKey])">复制</el-button>
+				</el-col>
+				<el-col :span="12">
+					<el-button type="primary" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+				</el-col>
+			</el-row>
+		</template>
 
-		<el-card ref="tableCardRef" class="layout-table-card" :class="{ 'is-maximized': tableCardMaximized }" shadow="hover">
-			<!-- 表格工具栏 -->
-			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					v-model:maximized="tableCardMaximized"
-					@get-data-list="getDataList()">
-					<template #left>
-						<el-space size="default">
-							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-						</el-space>
-					</template>
-				</table-tool-bar>
-			</template>
-			<el-table
-				ref="tableRef"
-				v-loading="state.dataListLoading!"
-				:data="state.dataList"
-				border
-				max-height="60vh"
-				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle">
-				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-				<el-table-column prop="connName" label="连接名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="dbType" label="数据库类型" header-align="center" align="center" :formatter="getLabel(DB_TYPES)"></el-table-column>
-				<el-table-column prop="connUrl" label="URL" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="datasourceDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column
-					prop="createTime"
-					label="创建时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"></el-table-column>
-				<el-table-column
-					prop="updateTime"
-					label="修改时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"></el-table-column>
-				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
-					<template #default="scope">
-						<el-row>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(scope.row.id)">测试</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="CopyDocument" @click="formInitHandle({ type: 'copy', id: scope.row.id })">复制</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
-							</el-col>
-						</el-row>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				:current-page="state.pageNum"
-				:page-sizes="state.pageSizes"
-				:page-size="state.pageSize"
-				:total="state.total"
-				background
-				layout="total, sizes, prev, pager, next, jumper"
-				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"></el-pagination>
-
-			<!-- 弹窗, 新增 / 修改 -->
-			<gen-datasource-form ref="formRef" @refresh-data-list="getDataList()"></gen-datasource-form>
-		</el-card>
-	</div>
+		<!-- 表单字段 password：密码输入框 -->
+		<template #form-password="{ model }">
+			<el-input v-model="model.password" type="password" show-password clearable placeholder="请输入密码"></el-input>
+		</template>
+	</crud-page>
 </template>
 
 <script setup lang="ts">
-import GenDatasourceForm from '@/views/gen/datasource/form.vue'
-import { DB_TYPES } from '@/constant/enum'
 import { genDatasourceApi } from '@/api'
-import { GenDatasourceEntity, GenDatasourceQuery, IHooksOptions } from '@/types'
-import { useInitForm, useTableAction } from '@/hooks'
+import { DB_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import { Connection, CopyDocument, Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
-import TableToolBar from '@/components/table/tool-bar/index.vue'
+import type { FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { GenDatasourceEntity, GenDatasourceQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
+import { useCrud } from '@/hooks/use-crud'
+import CrudPage from '@/components/crud/CrudPage.vue'
+import { Connection, CopyDocument, Delete, Edit } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenDatasource'
 })
 
+// 初始化表单数据
+const initFormData = (): GenDatasourceEntity => ({ id: null, dbType: '', connName: '', connUrl: '', username: '', password: '', datasourceDesc: '' })
+
+// 表单字段
+const formSchema: FormFieldSchema[] = [
+	{
+		key: 'connName',
+		label: '连接名称',
+		tooltip: '连接名称具有唯一性',
+		ruleList: [{ required: true, message: '连接名称不能为空', trigger: 'blur' }]
+	},
+	{
+		key: 'dbType',
+		label: '数据库类型',
+		component: 'select',
+		options: DB_TYPES.items,
+		filterable: true,
+		ruleList: [{ required: true, message: '数据库类型不能为空', trigger: 'blur' }]
+	},
+	{ key: 'connUrl', label: 'URL', ruleList: [{ required: true, message: 'URL不能为空', trigger: 'blur' }] },
+	{ key: 'username', label: '用户名', ruleList: [{ required: true, message: '用户名不能为空', trigger: 'blur' }] },
+	{ key: 'password', label: '密码', ruleList: [{ required: true, message: '密码不能为空', trigger: 'blur' }] },
+	{ key: 'datasourceDesc', label: '描述' }
+]
+
+// 表单配置
+const formConfig = reactive({
+	formSchema,
+	submitApi: genDatasourceApi.submit,
+	detailApi: genDatasourceApi.detail,
+	initFormData
+} as UseCrudFormOptions)
+
+// 查询表单 schema
+const searchSchema: SearchFieldSchema[] = [
+	{ key: 'connName', label: '连接名称' },
+	{ key: 'dbType', label: '数据库类型', component: 'select', options: DB_TYPES.items, filterable: true }
+]
+
 // 初始化查询表单数据
-const initQueryFormData = (): GenDatasourceQuery => ({
-	dbType: '',
-	connName: ''
+const initQueryForm = (): GenDatasourceQuery => ({ dbType: '', connName: '' })
+
+// 表格字段
+const tableColumns: TableColumnSchema[] = [
+	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true },
+	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
+	{ key: 'connName', label: '连接名称', align: 'center', showOverflowTooltip: true },
+	{ key: 'dbType', label: '数据库类型', align: 'center', formatter: getLabel(DB_TYPES) },
+	{ key: 'connUrl', label: 'URL', align: 'center', showOverflowTooltip: true },
+	{ key: 'datasourceDesc', label: '描述', align: 'center', showOverflowTooltip: true },
+	{ key: 'createTime', label: '创建时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
+	{ key: 'updateTime', label: '修改时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
+	{ key: 'operation', label: '操作', fixed: 'right' as const, width: 150, align: 'center', disabled: true }
+]
+
+// 表格配置
+const tableConfig = reactive({
+	initQueryForm,
+	searchSchema,
+	tableColumns,
+	dataListApi: genDatasourceApi.entityPage,
+	deleteApi: genDatasourceApi.deleteList,
+	deleteNameKey: 'connName'
+} as UseCrudTableOptions)
+
+// 统一 hook
+const { tableHook, formHook } = useCrud<GenDatasourceEntity, GenDatasourceQuery, GenDatasourceEntity>({
+	primaryKey: 'id',
+	subject: '数据源',
+	tableConfig,
+	formConfig
 })
 
-const state = reactive({
-	tableSubject: '数据源',
-	deleteNameKey: 'connName',
-	dataListApi: genDatasourceApi.entityPage,
-	deleteListApi: genDatasourceApi.deleteList,
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenDatasourceEntity, GenDatasourceQuery>)
+// 复制模式：连接名称追加"_复制"，清除主键
+formConfig.afterOpen = () => {
+	if (formHook.dialog.mode === 'copy') {
+		formHook.form.data.connName += '_复制'
+		formHook.form.data.id = null
+	}
+}
 
-const {
-	getDataList,
-	selectionChangeHandle,
-	sizeChangeHandle,
-	currentChangeHandle,
-	deleteBatchHandle,
-	sortChangeHandle,
-	queryRef,
-	queryShow,
-	tableCardRef,
-	tableCardMaximized,
-	tableRef,
-	resetQueryHandle,
-	tableIndex
-} = useTableAction(state)
-
+// 测试数据源连接
 const datasourceTestHandle = (id: number) => {
 	genDatasourceApi.test(id).then(data => {
 		const { result, errorMessage, databaseName } = data
@@ -161,6 +133,4 @@ const datasourceTestHandle = (id: number) => {
 		}
 	})
 }
-
-const { formRef, formInitHandle } = useInitForm()
 </script>

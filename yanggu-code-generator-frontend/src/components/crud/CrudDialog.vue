@@ -6,6 +6,7 @@
 			:model="formHook.form.data"
 			:rules="formHook.form.rules.value"
 			:label-width="formHook.form.labelWidth"
+			:validate-on-rule-change="false"
 			@keyup.enter="formHook.submit.execute()"
 		>
 			<form-field v-for="field in formHook.formSchema" :key="field.prop" v-model="formHook.form.data" :field="field" :mode="formHook.dialog.mode">
