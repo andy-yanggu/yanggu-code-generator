@@ -1,4 +1,5 @@
 import type { FormItemRule } from 'element-plus'
+
 export type { FormItemRule }
 
 // 组件类型（无 el- 前缀，渲染层通过 COMPONENT_MAP 映射）
@@ -38,6 +39,7 @@ export interface SearchFieldSchema {
 	placeholder?: string
 	width?: number | string
 	options?: { label: string; value: any }[]
+	clearable?: boolean
 	filterable?: boolean
 	rangeFields?: [string, string]
 	/** 字段级校验规则 */
@@ -57,6 +59,7 @@ export interface FormFieldSchema {
 	placeholder?: string
 	width?: number | string
 	options?: { label: string; value: any }[]
+	clearable?: boolean
 	filterable?: boolean
 	span?: number
 	detailFormatter?: (value: any) => string

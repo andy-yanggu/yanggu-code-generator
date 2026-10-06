@@ -8,7 +8,7 @@ import type { FormFieldSchema } from '@/types/schema'
 export interface UseCrudFormOptions<DTO = any, VO = any> {
 	// ---- 表单字段 ----
 	/** 表单字段配置 */
-	formSchema: FormFieldSchema[]
+	formSchema?: FormFieldSchema[]
 
 	// ---- 接口 ----
 	/** 提交接口 */
@@ -37,6 +37,8 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	afterOpen?: () => void
 	/** 详情数据赋值前（可预处理接口返回数据） */
 	beforeDataAssign?: (data: VO) => void
+	/** 详情数据赋值后（可进行二次处理） */
+	afterDataAssign?: (data: VO) => void
 	/** 提交前（校验通过后、调接口之前） */
 	beforeSubmit?: () => void
 	/** 提交成功后（默认关闭弹窗 + 刷新表格） */

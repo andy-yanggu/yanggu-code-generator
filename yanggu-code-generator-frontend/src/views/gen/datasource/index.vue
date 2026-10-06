@@ -31,7 +31,7 @@
 import { genDatasourceApi } from '@/api'
 import { DB_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import type { FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { CrudField } from '@/types/schema'
 import type { GenDatasourceEntity, GenDatasourceQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
@@ -44,63 +44,68 @@ defineOptions({
 // 初始化表单数据
 const initFormData = (): GenDatasourceEntity => ({ id: null, dbType: '', connName: '', connUrl: '', username: '', password: '', datasourceDesc: '' })
 
-// 表单字段
-const formSchema: FormFieldSchema[] = [
+// 统一字段声明
+const fields: CrudField[] = [
 	{
 		key: 'connName',
 		label: '连接名称',
-		tooltip: '连接名称具有唯一性',
-		ruleList: [{ required: true, message: '连接名称不能为空', trigger: 'blur' }]
+		inForm: true,
+		inSearch: true,
+		inTable: true,
+		form: {
+			tooltip: '连接名称具有唯一性',
+			ruleList: [{ required: true, message: '连接名称不能为空', trigger: 'blur' }]
+		}
 	},
 	{
 		key: 'dbType',
 		label: '数据库类型',
 		component: 'select',
 		options: DB_TYPES.items,
-		filterable: true,
-		ruleList: [{ required: true, message: '数据库类型不能为空', trigger: 'blur' }]
+		inForm: true,
+		inSearch: true,
+		inTable: true,
+		form: {
+			ruleList: [{ required: true, message: '数据库类型不能为空', trigger: 'blur' }]
+		},
+		table: { formatter: getLabel(DB_TYPES) }
 	},
-	{ key: 'connUrl', label: 'URL', ruleList: [{ required: true, message: 'URL不能为空', trigger: 'blur' }] },
-	{ key: 'username', label: '用户名', ruleList: [{ required: true, message: '用户名不能为空', trigger: 'blur' }] },
-	{ key: 'password', label: '密码', ruleList: [{ required: true, message: '密码不能为空', trigger: 'blur' }] },
-	{ key: 'datasourceDesc', label: '描述' }
+	{
+		key: 'connUrl',
+		label: 'URL',
+		inForm: true,
+		inTable: true,
+		form: { ruleList: [{ required: true, message: 'URL不能为空', trigger: 'blur' }] }
+	},
+	{
+		key: 'username',
+		label: '用户名',
+		inForm: true,
+		inTable: true,
+		form: { ruleList: [{ required: true, message: '用户名不能为空', trigger: 'blur' }] }
+	},
+	{ key: 'password', label: '密码', inForm: true, form: { ruleList: [{ required: true, message: '密码不能为空', trigger: 'blur' }] } },
+	{ key: 'datasourceDesc', label: '描述', inForm: true, inTable: true }
 ]
 
 // 表单配置
 const formConfig = reactive({
-	formSchema,
+	initFormData,
+	afterDataAssign: () => {
+		if (formHook.dialog.mode === 'copy') {
+			formHook.form.data.connName += '_复制'
+		}
+	},
 	submitApi: genDatasourceApi.submit,
-	detailApi: genDatasourceApi.detail,
-	initFormData
+	detailApi: genDatasourceApi.detail
 } as UseCrudFormOptions)
-
-// 查询表单 schema
-const searchSchema: SearchFieldSchema[] = [
-	{ key: 'connName', label: '连接名称' },
-	{ key: 'dbType', label: '数据库类型', component: 'select', options: DB_TYPES.items, filterable: true }
-]
 
 // 初始化查询表单数据
 const initQueryForm = (): GenDatasourceQuery => ({ dbType: '', connName: '' })
 
-// 表格字段
-const tableColumns: TableColumnSchema[] = [
-	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true },
-	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
-	{ key: 'connName', label: '连接名称', align: 'center', showOverflowTooltip: true },
-	{ key: 'dbType', label: '数据库类型', align: 'center', formatter: getLabel(DB_TYPES) },
-	{ key: 'connUrl', label: 'URL', align: 'center', showOverflowTooltip: true },
-	{ key: 'datasourceDesc', label: '描述', align: 'center', showOverflowTooltip: true },
-	{ key: 'createTime', label: '创建时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
-	{ key: 'updateTime', label: '修改时间', minWidth: 120, sortable: 'custom' as const, align: 'center' },
-	{ key: 'operation', label: '操作', fixed: 'right' as const, width: 150, align: 'center', disabled: true }
-]
-
 // 表格配置
 const tableConfig = reactive({
 	initQueryForm,
-	searchSchema,
-	tableColumns,
 	dataListApi: genDatasourceApi.entityPage,
 	deleteApi: genDatasourceApi.deleteList,
 	deleteNameKey: 'connName'
@@ -108,19 +113,11 @@ const tableConfig = reactive({
 
 // 统一 hook
 const { tableHook, formHook } = useCrud<GenDatasourceEntity, GenDatasourceQuery, GenDatasourceEntity>({
-	primaryKey: 'id',
 	subject: '数据源',
-	tableConfig,
-	formConfig
+	fields,
+	formConfig,
+	tableConfig
 })
-
-// 复制模式：连接名称追加"_复制"，清除主键
-formConfig.afterOpen = () => {
-	if (formHook.dialog.mode === 'copy') {
-		formHook.form.data.connName += '_复制'
-		formHook.form.data.id = null
-	}
-}
 
 // 测试数据源连接
 const datasourceTestHandle = (id: number) => {

@@ -6,8 +6,7 @@
 import { genFieldTypeApi } from '@/api'
 import { ATTR_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
-import type { CrudField } from '@/types/schema'
-import type { GenFieldTypeEntity, GenFieldTypeQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
+import type { CrudField, GenFieldTypeEntity, GenFieldTypeQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 
@@ -68,7 +67,6 @@ const tableConfig = reactive({
 
 // 统一 hook：fields 自动派生 formSchema / searchSchema / tableColumns
 const { tableHook, formHook } = useCrud<GenFieldTypeEntity, GenFieldTypeQuery, GenFieldTypeEntity>({
-	primaryKey: 'id',
 	subject: '字段类型',
 	fields,
 	tableConfig,

@@ -8,9 +8,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 	const labelWidth = options.labelWidth ?? '100px'
 
 	// 归一化表单字段（prop 未填时取 key，一次性处理）
-	const normalizedFormSchema = options.formSchema.map(field =>
-		field.prop ? field : { ...field, prop: field.key }
-	)
+	const normalizedFormSchema = options.formSchema.map(field => (field.prop ? field : { ...field, prop: field.key }))
 
 	// 合并规则：schema 字段级 ruleList + 顶层 rules（顶层优先覆盖）
 	const mergedRules = computed<Record<string, FormItemRule[]>>(() => {
@@ -95,6 +93,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 						if (openMode === 'copy') {
 							;(formData as any)[primaryKey] = null
 						}
+						options.afterDataAssign?.(data)
 					})
 					.catch(error => {
 						if (options.onDetailError) {
