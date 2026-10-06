@@ -17,13 +17,20 @@
 			<template #table-required="{ row }">
 				<el-switch
 					v-model="row.required"
-					:loading="switchLoading"
-					:active-value="1"
-					:inactive-value="0"
-					active-text="是"
-					inactive-text="否"
+					:loading="switchSubmitLoading"
+					:active-value="activeValue"
+					:inactive-value="inactiveValue"
+					:active-text="activeText"
+					:inactive-text="inactiveText"
 					inline-prompt
-					@change="(val: number) => switchHandler(val, row)"
+					@change="
+						(val: number) => {
+							if (!row?.id || !row?.propTitle) {
+								return
+							}
+							switchSubmitHandler(val, row)
+						}
+					"
 				></el-switch>
 			</template>
 
@@ -81,8 +88,15 @@
 <script setup lang="ts">
 import { getLabel } from '@/utils/enum'
 import { COLUMN_SPAN_TYPES, COMPONENT_TYPES } from '@/constant/enum'
-import type { CrudField, GenTemplateGroupPropertyEntity, GenTemplateGroupPropertyQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
-import { useCrud } from '@/hooks'
+import type {
+	CrudField,
+	GenTemplateGroupPropertyEntity,
+	GenTemplateGroupPropertyQuery,
+	SwitchUpdateConfig,
+	UseCrudFormOptions,
+	UseCrudTableOptions
+} from '@/types'
+import { useCrud, useSwitchChangeHandler } from '@/hooks'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import { Delete, Download, Plus, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi } from '@/api'
@@ -238,26 +252,20 @@ const { tableHook, formHook } = useCrud<GenTemplateGroupPropertyEntity, GenTempl
 	tableConfig
 })
 
-// 必填开关处理
-const switchLoading = ref(false)
-const switchHandler = (val: number, row: GenTemplateGroupPropertyEntity) => {
-	ElMessageBox.confirm(`确认要修改${row.propTitle}的【是否必填】吗？`, '提示', { type: 'warning' })
-		.then(() => {
-			switchLoading.value = true
-			genTemplateGroupPropertyApi
-				.changeRequired(row.id, val)
-				.then(() => {
-					ElMessage.success('修改成功')
-					tableHook.query.getDataList()
-				})
-				.finally(() => {
-					switchLoading.value = false
-				})
-		})
-		.catch(() => {
-			tableHook.query.getDataList()
-		})
-}
+// 必填开关处理（取消/接口失败时回滚 row.required，不刷新表格，避免 @change 循环触发）
+const switchUpdateConfig = {
+	switchField: 'required',
+	confirmFieldText: '是否必填',
+	confirmField: 'propTitle',
+	states: [
+		{ value: 1, text: '是', isActive: true },
+		{ value: 0, text: '否', isActive: false }
+	],
+	apiFn: (val, row) => genTemplateGroupPropertyApi.changeRequired(row.id, val),
+	afterSuccess: () => tableHook.query.getDataList()
+} as SwitchUpdateConfig
+
+const { activeValue, inactiveValue, activeText, inactiveText, switchSubmitLoading, switchSubmitHandler } = useSwitchChangeHandler(switchUpdateConfig)
 
 // 排序修改处理
 const orderChangeHandle = (cur: number, old: number, row: GenTemplateGroupPropertyEntity) => {
