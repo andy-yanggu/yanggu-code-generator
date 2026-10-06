@@ -5,11 +5,33 @@ import { useCrudTable } from './use-crud-table'
 import { useCrudForm } from './use-crud-form'
 
 // ======== 内置固定列 ========
-const BUILTIN_SELECTION: TableColumnSchema = { key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true }
+const BUILTIN_SELECTION: TableColumnSchema = {
+	key: 'selection',
+	type: 'selection',
+	label: '',
+	width: 50,
+	align: 'center',
+	fixed: 'left',
+	disabled: true
+}
 const BUILTIN_INDEX: TableColumnSchema = { key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true }
 const BUILTIN_OPERATION: TableColumnSchema = { key: 'operation', label: '操作', fixed: 'right', width: 150, align: 'center', disabled: true }
-const BUILTIN_CREATE_TIME: TableColumnSchema = { key: 'createTime', label: '创建时间', minWidth: 120, sortable: 'custom', align: 'center' }
-const BUILTIN_UPDATE_TIME: TableColumnSchema = { key: 'updateTime', label: '修改时间', minWidth: 120, sortable: 'custom', align: 'center' }
+const BUILTIN_CREATE_TIME: TableColumnSchema = {
+	key: 'createTime',
+	label: '创建时间',
+	minWidth: 120,
+	sortable: 'custom',
+	align: 'center',
+	showOverflowTooltip: true
+}
+const BUILTIN_UPDATE_TIME: TableColumnSchema = {
+	key: 'updateTime',
+	label: '修改时间',
+	minWidth: 120,
+	sortable: 'custom',
+	align: 'center',
+	showOverflowTooltip: true
+}
 
 // ======== 表单字段默认值 ========
 const defaultFormFieldOptions = (): Partial<FormFieldSchema> => ({
@@ -58,7 +80,11 @@ const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConf
 	const cols: TableColumnSchema[] = []
 	if (opts?.showSelection !== false) cols.push(BUILTIN_SELECTION)
 	if (opts?.showIndex !== false) cols.push(BUILTIN_INDEX)
-	cols.push(...fields.filter(f => f.inTable).map(f => defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...f.table }, defaultTableColumnOptions())))
+	cols.push(
+		...fields
+			.filter(f => f.inTable)
+			.map(f => defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...f.table }, defaultTableColumnOptions()))
+	)
 	if (opts?.showCreateTime !== false) cols.push(BUILTIN_CREATE_TIME)
 	if (opts?.showUpdateTime !== false) cols.push(BUILTIN_UPDATE_TIME)
 	if (opts?.showOperation !== false) cols.push(BUILTIN_OPERATION)

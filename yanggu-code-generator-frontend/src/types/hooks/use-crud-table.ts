@@ -29,7 +29,7 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	initQueryForm?: () => Query
 	/** 搜索字段配置 */
 	searchSchema?: SearchFieldSchema[]
-	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID） */
+	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID）。支持响应式 */
 	queryContext?: Record<string, any>
 
 	// ======== 分页 ========

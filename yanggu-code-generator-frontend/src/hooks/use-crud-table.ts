@@ -111,10 +111,6 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	// 重置查询
 	const resetQueryHandle = () => {
 		nextTick(() => {
-			Object.assign(queryForm, opts.initQueryForm!())
-			if (opts.queryContext) {
-				Object.assign(queryForm, opts.queryContext)
-			}
 			if (resetQueryGetData) {
 				getDataList()
 			}
