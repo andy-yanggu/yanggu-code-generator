@@ -1,4 +1,5 @@
 import type { Key } from '@/types/common'
+import type { MaybeRefOrGetter } from 'vue'
 import type { PageVO } from '@/types/api/common'
 import type { BuiltinColumnOptions, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 
@@ -29,8 +30,8 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	initQueryForm?: () => Query
 	/** 搜索字段配置 */
 	searchSchema?: SearchFieldSchema[]
-	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID）。支持响应式 */
-	queryContext?: Record<string, any>
+	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID）。支持响应式（computed / ref / reactive） */
+	queryContext?: MaybeRefOrGetter<Record<string, any>>
 
 	// ======== 分页 ========
 	/** 是否需要分页，默认 true。false 时一次返回全部 */

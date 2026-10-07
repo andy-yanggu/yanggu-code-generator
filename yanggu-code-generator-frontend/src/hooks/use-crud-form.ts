@@ -1,6 +1,7 @@
 import type { UseCrudFormOptions } from '@/types/hooks/use-crud-form'
 import type { Key } from '@/types/common'
 import type { FormItemRule, FormMode } from '@/types/schema'
+import { toValue } from 'vue'
 
 export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>) => {
 	const primaryKey = options.primaryKey ?? 'id'
@@ -64,9 +65,12 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 	}
 
 	// 打开弹窗
-	const open = (openMode: FormMode, id?: Key, ctx?: any) => {
+	const open = (openMode: FormMode, id?: Key) => {
 		mode.value = openMode
 		currentId.value = id ?? null
+
+		// 从 formContext 读取上下文（支持 computed / ref / reactive，toValue 自动解包）
+		const ctx = toValue(options.formContext)
 
 		// 打开前回调
 		options.beforeOpen?.(ctx)
@@ -74,7 +78,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 		visible.value = true
 
 		nextTick(() => {
-			// 重置表单数据（支持上下文参数）
+			// 重置表单数据（注入 formContext）
 			Object.assign(formData, options.initFormData(ctx))
 			formRef.value?.clearValidate()
 

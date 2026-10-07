@@ -1,37 +1,8 @@
 import type { UseCrudOptions } from '@/types/hooks/use-crud'
 import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 import { defaultsDeep } from '@/utils/tool'
-import { useCrudTable } from './use-crud-table'
+import { BUILTIN_CREATE_TIME, BUILTIN_INDEX, BUILTIN_OPERATION, BUILTIN_SELECTION, BUILTIN_UPDATE_TIME, useCrudTable } from './use-crud-table'
 import { useCrudForm } from './use-crud-form'
-
-// ======== 内置固定列 ========
-const BUILTIN_SELECTION: TableColumnSchema = {
-	key: 'selection',
-	type: 'selection',
-	label: '',
-	width: 50,
-	align: 'center',
-	fixed: 'left',
-	disabled: true
-}
-const BUILTIN_INDEX: TableColumnSchema = { key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true }
-const BUILTIN_OPERATION: TableColumnSchema = { key: 'operation', label: '操作', fixed: 'right', width: 150, align: 'center', disabled: true }
-const BUILTIN_CREATE_TIME: TableColumnSchema = {
-	key: 'createTime',
-	label: '创建时间',
-	minWidth: 120,
-	sortable: 'custom',
-	align: 'center',
-	showOverflowTooltip: true
-}
-const BUILTIN_UPDATE_TIME: TableColumnSchema = {
-	key: 'updateTime',
-	label: '修改时间',
-	minWidth: 120,
-	sortable: 'custom',
-	align: 'center',
-	showOverflowTooltip: true
-}
 
 // ======== 表单字段默认值 ========
 const defaultFormFieldOptions = (): Partial<FormFieldSchema> => ({

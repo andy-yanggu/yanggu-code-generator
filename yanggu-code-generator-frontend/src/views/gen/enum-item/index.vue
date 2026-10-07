@@ -1,89 +1,19 @@
 <template>
-	<el-dialog v-model="dialogVisible" :title="`枚举项配置（${enumNameRef}）`" width="80%" @close="closeHandler()">
-		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
-			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item label="枚举项名称" prop="enumItemName">
-					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
-				</el-form-item>
-				<el-form-item label="枚举项编码" prop="enumItemCode">
-					<el-input v-model="state.queryForm.enumItemCode" placeholder="请输入枚举项编码" clearable></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</el-card>
-
-		<el-card ref="tableCardRef" class="layout-table-card" :class="{ 'is-maximized': tableCardMaximized }" shadow="hover">
-			<!-- 表格工具栏 -->
-			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					v-model:maximized="tableCardMaximized"
-					@get-data-list="getDataList()">
-					<template #left>
-						<el-space size="default">
-							<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-						</el-space>
-					</template>
-				</table-tool-bar>
+	<el-dialog v-model="dialogVisible" :title="`枚举项配置（${enumNameRef}）`" width="80%" @close="closeHandler">
+		<crud-page :table-hook="tableHook" :form-hook="formHook">
+			<!-- 表单字段 enumItemOrder：input-number 带 min=0 -->
+			<template #form-enumItemOrder="{ model, mode }">
+				<el-input-number v-model="model.enumItemOrder" :min="0" :disabled="mode === 'detail'" size="small"></el-input-number>
 			</template>
-			<el-table
-				ref="tableRef"
-				v-loading="state.dataListLoading!"
-				:data="state.dataList"
-				border
-				max-height="60vh"
-				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle">
-				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemOrder" label="枚举项排序" width="120" header-align="center" align="center" sortable="custom"></el-table-column>
-				<el-table-column
-					prop="updateTime"
-					label="修改时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"></el-table-column>
-				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
-					<template #default="scope">
-						<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				:current-page="state.pageNum"
-				:page-sizes="state.pageSizes"
-				:page-size="state.pageSize"
-				:total="state.total"
-				layout="total, sizes, prev, pager, next, jumper"
-				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"></el-pagination>
-
-			<!-- 弹窗, 新增 / 修改 -->
-			<enum-item-form ref="formRef" @refresh-data-list="getDataList()"></enum-item-form>
-		</el-card>
+		</crud-page>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { useInitForm, useTableAction } from '@/hooks'
-import EnumItemForm from '@/views/gen/enum-item/form.vue'
-import { Delete, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
-import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genEnumItemApi } from '@/api'
-import { GenEnumItemEntity, GenEnumItemQuery, IHooksOptions } from '@/types'
+import type { CrudField, GenEnumItemEntity, GenEnumItemQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
+import { useCrud } from '@/hooks/use-crud'
+import CrudPage from '@/components/crud/CrudPage.vue'
 
 defineOptions({
 	name: 'GenEnumItem'
@@ -91,55 +21,128 @@ defineOptions({
 
 const emit = defineEmits(['refresh-data-list'])
 
+// 统一字段声明
+const fields: CrudField[] = [
+	{
+		key: 'enumItemName',
+		label: '枚举项名称',
+		inForm: true,
+		inSearch: true,
+		inTable: true,
+		form: {
+			tooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
+			ruleList: [{ required: true, message: '枚举项名称不能为空', trigger: 'blur' }]
+		}
+	},
+	{
+		key: 'enumItemCode',
+		label: '枚举项编码',
+		inForm: true,
+		inSearch: true,
+		inTable: true,
+		form: {
+			tooltip: '枚举项编码具有唯一性',
+			ruleList: [{ required: true, message: '枚举项编码不能为空', trigger: 'blur' }]
+		}
+	},
+	{
+		key: 'enumItemDesc',
+		label: '枚举项描述',
+		inForm: true,
+		inTable: true,
+		form: {
+			ruleList: [{ required: true, message: '枚举项描述不能为空', trigger: 'blur' }]
+		}
+	},
+	{
+		key: 'enumItemOrder',
+		label: '枚举项排序',
+		inForm: true,
+		inTable: true,
+		component: 'input-number',
+		form: {
+			ruleList: [{ required: true, message: '枚举项排序不能为空', trigger: 'blur' }]
+		},
+		table: { width: 120, sortable: 'custom' }
+	}
+]
+
+// 枚举名称与对话框状态
+const enumNameRef = ref('')
+const dialogVisible = ref(false)
+
+// 表单上下文（响应式，init 时更新 enumId，自动注入到 initFormData / beforeOpen）
+const formContext = reactive({
+	enumId: -1
+})
+
+// 初始化表单数据
+const initFormData = (ctx?: Record<string, any>): GenEnumItemEntity => ({
+	id: '',
+	enumId: ctx?.enumId ?? -1,
+	enumItemName: '',
+	enumItemCode: '',
+	enumItemDesc: '',
+	enumItemOrder: 0
+})
+
+// 表单配置
+const formConfig = reactive({
+	initFormData,
+	submitApi: genEnumItemApi.submit,
+	detailApi: genEnumItemApi.detail,
+	afterDataAssign: () => {
+		// 确保 enumId 始终正确（编辑/复制/详情模式下从接口赋值后补回）
+		;(formHook.form.data as GenEnumItemEntity).enumId = formContext.enumId
+		if (formHook.dialog.mode === 'copy') {
+			formHook.form.data.enumItemName += '_复制'
+			formHook.form.data.id = ''
+		}
+	},
+	labelWidth: '120px',
+	formContext
+} as UseCrudFormOptions)
+
 // 初始化查询表单数据
-const initQueryFormData = (): GenEnumItemQuery => ({
+const initQueryForm = (): GenEnumItemQuery => ({
 	enumItemName: '',
 	enumItemCode: '',
 	enumId: -1
 })
 
-const state = reactive({
-	tableSubject: '枚举项',
-	deleteNameKey: 'enumItemName',
+// 查询上下文（响应式，init 时更新 enumId）
+const queryContext = reactive({
+	enumId: -1
+})
+
+// 表格配置
+const tableConfig = reactive({
+	initQueryForm,
 	dataListApi: genEnumItemApi.entityPage,
-	deleteListApi: genEnumItemApi.deleteList,
-	mountedGetData: false,
-	queryContext: {
-		enumId: -1
-	},
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
+	deleteApi: genEnumItemApi.deleteList,
+	deleteNameKey: 'enumItemName',
+	tableKey: 'gen-enum-item',
+	queryContext,
+	mountedGetData: false
+} as UseCrudTableOptions)
 
-const {
-	getDataList,
-	selectionChangeHandle,
-	sizeChangeHandle,
-	currentChangeHandle,
-	deleteBatchHandle,
-	sortChangeHandle,
-	queryRef,
-	queryShow,
-	tableCardRef,
-	tableCardMaximized,
-	tableRef,
-	resetQueryHandle,
-	tableIndex
-} = useTableAction(state)
+// 统一 hook
+const { tableHook, formHook } = useCrud<GenEnumItemEntity, GenEnumItemQuery, GenEnumItemEntity>({
+	subject: '枚举项',
+	fields,
+	tableConfig,
+	formConfig
+})
 
-const enumNameRef = ref('')
-
-const dialogVisible = ref(false)
-
+// 对外暴露的初始化方法
 const init = (enumId: number, enumName: string) => {
-	dialogVisible.value = true
+	formContext.enumId = enumId
 	enumNameRef.value = enumName
-	state.queryContext!.enumId = enumId
-	state.dataList = []
-	resetQueryHandle()
+	queryContext.enumId = enumId
+	dialogVisible.value = true
+	tableHook.table.data = []
+	tableHook.query.reset()
 }
-
-const { formRef, formInitHandle } = useInitForm(() => ({ enumId: state.queryForm.enumId }))
 
 const closeHandler = () => {
 	dialogVisible.value = false

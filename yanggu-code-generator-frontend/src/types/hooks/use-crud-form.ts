@@ -1,4 +1,5 @@
 import type { Key } from '@/types/common'
+import type { MaybeRefOrGetter } from 'vue'
 import type { FormItemRule } from 'element-plus'
 import type { FormFieldSchema } from '@/types/schema'
 
@@ -15,7 +16,7 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	submitApi: (data: DTO) => Promise<any>
 	/** 详情接口 */
 	detailApi?: (id: Key) => Promise<VO>
-	/** 表单数据初始值工厂（可接收上下文参数） */
+	/** 表单数据初始值工厂（接收 formContext 作为参数） */
 	initFormData: (ctx?: any) => DTO
 
 	// ---- 基础配置 ----
@@ -29,9 +30,11 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	rules?: Record<string, FormItemRule[]>
 	/** 表单标签宽度，默认 '100px' */
 	labelWidth?: string
+	/** 固定表单上下文（类似 queryContext），自动注入到 initFormData / beforeOpen。支持响应式（computed / ref / reactive） */
+	formContext?: MaybeRefOrGetter<Record<string, any>>
 
 	// ---- 生命周期回调 ----
-	/** 弹窗打开前（数据重置前触发，可接收上下文） */
+	/** 弹窗打开前（数据重置前触发，接收 formContext） */
 	beforeOpen?: (ctx?: any) => void
 	/** 弹窗打开后（数据重置完成触发） */
 	afterOpen?: () => void

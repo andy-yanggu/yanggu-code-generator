@@ -4,7 +4,7 @@
 			<!-- 工具栏：导入需传 templateGroupId -->
 			<template #table-toolbar-left="{ tableHook: t, dialog }">
 				<el-space size="default">
-					<el-button type="primary" :icon="Plus" @click="dialog?.open('add', undefined, { templateGroupId })">新增</el-button>
+					<el-button type="primary" :icon="Plus" @click="dialog?.open('add')">新增</el-button>
 					<el-button type="danger" :loading="t.action.delete.loading" :icon="Delete" @click="t.action.delete.execute()">删除</el-button>
 					<el-upload :limit="1" :show-file-list="false" :http-request="({ file }) => t.action.import.execute(file, { templateGroupId })">
 						<el-button type="success" :icon="Upload">导入</el-button>
@@ -193,6 +193,9 @@ const fields: CrudField[] = [
 	{ key: 'componentOptions', label: '组件选项', inForm: true, form: { ruleList: [{ required: true, message: '组件选项不能为空', trigger: 'blur' }] } }
 ]
 
+// 表单上下文（computed 自动解包，toValue 取最新值）
+const formContext = computed(() => ({ templateGroupId: props.templateGroupId }))
+
 // 表单配置
 const emptyLabelData = () => ({ label: '', value: '' })
 
@@ -225,7 +228,8 @@ const formConfig = reactive({
 		}
 	},
 	labelWidth: '130px',
-	subject: '模板组属性'
+	subject: '模板组属性',
+	formContext
 } as UseCrudFormOptions)
 
 // 表格配置
