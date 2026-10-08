@@ -3,7 +3,7 @@
 		<!-- 工具栏 -->
 		<template #header>
 			<div class="table-tool-bar">
-				<div class="table-tool-bar-left">
+				<div v-if="showToolbarLeft" class="table-tool-bar-left">
 					<slot name="toolbar-left"></slot>
 				</div>
 				<div class="table-tool-bar-right">
@@ -116,16 +116,16 @@
 			<el-table-column v-for="col in visibleColumns" :key="col.key" v-bind="toColumnProps(col)">
 				<!-- 操作列：使用 operation 插槽 -->
 				<template v-if="col.key === 'operation'" #default="scope">
-					<slot name="operation" v-bind="scope" />
+					<slot name="operation" v-bind="scope"></slot>
 				</template>
 				<!-- 其他列：透传命名插槽 -->
 				<template v-else-if="$slots[col.key]" #default="scope">
-					<slot :name="col.key" v-bind="scope" />
+					<slot :name="col.key" v-bind="scope"></slot>
 				</template>
 			</el-table-column>
 			<template #empty>
 				<slot name="empty">
-					<el-empty description="暂无数据" :image-size="120" />
+					<el-empty description="暂无数据" :image-size="120"></el-empty>
 				</slot>
 			</template>
 		</el-table>
@@ -141,7 +141,7 @@
 			layout="total, sizes, prev, pager, next, jumper"
 			@size-change="(s: number) => emit('sizeChange', s)"
 			@current-change="(p: number) => emit('pageChange', p)"
-		/>
+		></el-pagination>
 	</el-card>
 </template>
 
@@ -169,11 +169,14 @@ withDefaults(
 		pagination?: Pagination
 		pageSizes?: number[]
 		maxHeight?: string
+		/** 是否显示工具栏左侧（默认按钮或用户插槽）。默认 true */
+		showToolbarLeft?: boolean
 	}>(),
 	{
 		loading: false,
 		pageSizes: () => [10, 20, 50, 100, 200],
-		maxHeight: '60vh'
+		maxHeight: '60vh',
+		showToolbarLeft: true
 	}
 )
 
@@ -318,6 +321,7 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	if (col.sortable) result.sortable = col.sortable
 	if (col.showOverflowTooltip !== false) result.showOverflowTooltip = true
 	if (col.formatter) result.formatter = col.formatter
+	if (col.reserveSelection) result.reserveSelection = true
 	return result
 }
 
@@ -344,6 +348,7 @@ onUnmounted(() => {
 .table-tool-bar-right {
 	display: flex;
 	align-items: center;
+	margin-left: auto;
 }
 .table-tool-bar-right :deep(.icon-button) {
 	background-color: var(--el-fill-color);

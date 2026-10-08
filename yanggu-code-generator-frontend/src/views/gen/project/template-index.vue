@@ -1,111 +1,53 @@
 <template>
-	<el-card class="layout-query-card" shadow="hover">
-		<el-form ref="queryRef" :inline="true" :model="state.queryForm" label-position="right" label-width="auto" @keyup.enter="getDataList()">
-			<form-search-grid>
-				<!-- 第一行 -->
-				<template #item-0>
-					<el-form-item label="模板组名称" prop="templateGroupName">
-						<el-input v-model="state.queryForm.templateGroupName" style="width: 140px" clearable placeholder="请输入模板组名称"></el-input>
-					</el-form-item>
-				</template>
-				<template #item-1>
-					<el-form-item label="模板组类型" prop="templateGroupType">
-						<el-select
-							v-model="state.queryForm.templateGroupType"
-							:options="TEMPLATE_GROUP_TYPES.items"
-							style="width: 160px"
-							filterable
-							clearable
-							placeholder="请选择模板组类型"></el-select>
-					</el-form-item>
-				</template>
-				<template #item-2>
-					<el-form-item label="目录/文件名称" prop="fileName">
-						<el-input v-model="state.queryForm.fileName" style="width: 160px" clearable placeholder="请输入目录/文件名称"></el-input>
-					</el-form-item>
-				</template>
-
-				<!-- 第二行 -->
-				<template #item-3>
-					<el-form-item label="模板类型" prop="templateType">
-						<el-select
-							v-model="state.queryForm.templateType"
-							:options="TEMPLATE_TYPES.items"
-							style="width: 150px"
-							filterable
-							clearable
-							placeholder="请选择模板类型"></el-select>
-					</el-form-item>
-				</template>
-
-				<!-- 自定义操作区 -->
-				<template #actions>
-					<el-form-item>
-						<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-					</el-form-item>
-				</template>
-			</form-search-grid>
-		</el-form>
-	</el-card>
-	<el-card shadow="hover">
-		<el-table
-			ref="tableRef"
-			v-loading="state.dataListLoading!"
-			row-key="id"
-			:data="state.dataList"
-			border
-			max-height="60vh"
-			@selection-change="selectionChangeHandle">
-			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="templateGroupName" label="模板组名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>"
-			<el-table-column
-				prop="templateGroupType"
-				label="模板组类型"
-				show-overflow-tooltip
-				header-align="center"
-				align="center"
-				:formatter="getLabel(TEMPLATE_GROUP_TYPES)"></el-table-column>
-			<el-table-column prop="fileName" label="目录/文件名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column
-				prop="templateType"
-				label="模板类型"
-				header-align="center"
-				align="center"
-				:formatter="getLabel(TEMPLATE_TYPES)"></el-table-column>
-			<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-		</el-table>
-		<el-pagination
-			:current-page="state.pageNum"
-			:page-sizes="state.pageSizes"
-			:page-size="state.pageSize"
-			:total="state.total"
-			background
-			layout="total, sizes, prev, pager, next, jumper"
-			@size-change="sizeChangeHandle"
-			@current-change="currentChangeHandle"></el-pagination>
-	</el-card>
+	<query-table ref="queryTableRef" :table-hook="tableHook" :show-toolbar-left="false" @selection-change="onSelectionChange"></query-table>
 </template>
 
 <script setup lang="ts">
-import { useTableAction } from '@/hooks'
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
-import { Refresh, Search } from '@element-plus/icons-vue'
 import { getLabel } from '@/utils/enum'
 import { genTemplateApi } from '@/api'
-import { GenTemplateEntity, GenTemplateQuery, IHooksOptions } from '@/types'
-import FormSearchGrid from '@/components/form/search-grid/index.vue'
+import type { GenTemplateEntity, GenTemplateQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import { useCrudTable } from '@/hooks'
+import QueryTable from '@/components/crud/QueryTable.vue'
 
 defineOptions({
 	name: 'GenProjectTemplate'
 })
 
-// 初始化表单查询参数
-const initQueryFormData = (): GenTemplateQuery => ({
+const props = defineProps<{
+	selectedIds?: number[]
+}>()
+
+const emit = defineEmits(['selectChange'])
+const queryTableRef = ref()
+
+// 搜索字段
+const searchFields: SearchFieldSchema[] = [
+	{ key: 'templateGroupName', label: '模板组名称' },
+	{ key: 'templateGroupType', label: '模板组类型', component: 'select', options: TEMPLATE_GROUP_TYPES.items },
+	{ key: 'fileName', label: '目录/文件名称' },
+	{ key: 'templateType', label: '模板类型', component: 'select', options: TEMPLATE_TYPES.items }
+]
+
+// 表格列配置
+const tableColumns: TableColumnSchema[] = [
+	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true, reserveSelection: true },
+	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
+	{ key: 'templateGroupName', label: '模板组名称' },
+	{ key: 'templateGroupType', label: '模板组类型', formatter: getLabel(TEMPLATE_GROUP_TYPES) },
+	{ key: 'fileName', label: '目录/文件名称' },
+	{ key: 'templateType', label: '模板类型', formatter: getLabel(TEMPLATE_TYPES) },
+	{ key: 'generatorPath', label: '模板路径' },
+	{ key: 'templateDesc', label: '描述' }
+]
+
+// 查询上下文（响应式，init 时更新 templateGroupIdList）
+const queryContext = reactive({
+	templateGroupIdList: [] as number[]
+})
+
+// 初始化查询表单数据
+const initQueryForm = (): GenTemplateQuery => ({
 	templateGroupIdList: [],
 	templateGroupName: '',
 	fileName: '',
@@ -113,43 +55,43 @@ const initQueryFormData = (): GenTemplateQuery => ({
 	templateType: ''
 })
 
-const emit = defineEmits(['selectChange'])
-const state = reactive({
+// 表格配置
+const tableHook = useCrudTable<GenTemplateEntity, GenTemplateQuery>({
 	dataListApi: genTemplateApi.voPage,
+	tableKey: 'gen-project-template',
+	initQueryForm,
+	searchSchema: searchFields,
+	tableColumns,
+	queryContext,
 	mountedGetData: false,
-	queryContext: {
-		templateGroupIdList: []
+	subject: '模板'
+} as UseCrudTableOptions)
+
+// 勾选变化：转发给父组件
+const onSelectionChange = (selections: any[]) => {
+	emit('selectChange', selections)
+}
+
+// 数据加载后，根据 selectedIds 自动恢复勾选（v-if 重建时 prop 先于数据到达，watch 等数据到了再选）
+watch(
+	() => tableHook.table.data,
+	data => {
+		if (data.length === 0 || !props.selectedIds?.length) return
+		const elTableRef = queryTableRef.value?.tableRef
+		if (!elTableRef) return
+		const rows = data.filter((row: any) => props.selectedIds!.includes(row.id))
+		rows.forEach((row: any) => elTableRef.toggleRowSelection(row, true))
 	},
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
-let isManualSelection = true
+	{ flush: 'post' }
+)
 
+// 对外暴露的初始化方法
 const init = (templateGroupIdList: number[]) => {
-	state.queryContext = { templateGroupIdList }
-
-	//重置查询表单并且查询数据
-	resetQueryHandle()
+	queryContext.templateGroupIdList = templateGroupIdList
+	tableHook.query.reset()
 }
-
-const selectionChangeHandle = (selections: any[]) => {
-	if (isManualSelection) {
-		emit('selectChange', selections)
-	}
-}
-
-const toggleRowSelection = (rowList: any[]) => {
-	isManualSelection = false
-	rowList.forEach((row: any) => {
-		tableRef.value.toggleRowSelection(row, true)
-	})
-	isManualSelection = true
-}
-
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, tableRef, resetQueryHandle, tableIndex } = useTableAction(state)
 
 defineExpose({
-	init,
-	toggleRowSelection
+	init
 })
 </script>

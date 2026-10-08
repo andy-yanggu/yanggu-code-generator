@@ -19,6 +19,7 @@
 
 		<!-- 表格 -->
 		<data-table
+			ref="dataTableRef"
 			v-model:show-search="tableHook.search.visible"
 			v-model:maximized="tableHook.refs.cardMaximized"
 			v-model:columns="tableHook.columnConfig.list"
@@ -27,7 +28,8 @@
 			:pagination="tableHook.table.pagination"
 			:page-sizes="pageSizes"
 			:max-height="maxHeight"
-			@selection-change="tableHook.selection.onChange"
+			:show-toolbar-left="showToolbarLeft"
+			@selection-change="onSelectionChange"
 			@sort-change="tableHook.query.onSortChange"
 			@page-change="tableHook.query.onPageChange"
 			@size-change="tableHook.query.onSizeChange"
@@ -60,11 +62,22 @@ defineOptions({
 
 // 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
 // 用 any 避免泛型 ReturnType 与页面具体实体类型之间的 TS2719 冲突
-defineProps<{
+const props = defineProps<{
 	tableHook: any
 	maxHeight?: string
 	pageSizes?: number[]
+	showToolbarLeft?: boolean
 }>()
+
+const emit = defineEmits<{
+	(e: 'selectionChange', selections: any[]): void
+}>()
+
+// 勾选变化：内部更新 hook 状态 + 向父组件转发事件
+const onSelectionChange = (selections: any[]) => {
+	props.tableHook.selection.onChange(selections)
+	emit('selectionChange', selections)
+}
 
 // 插槽分路由：按前缀分类 → 剥前缀 → 分发到对应子组件
 // table-* 剥 table- 给 DataTable，query-* 剥 query- 给 SearchForm
@@ -90,5 +103,13 @@ const searchFieldSlots = computed(() => {
 		}
 	}
 	return result
+})
+
+// 暴露 DataTable 引用，供外层穿透访问 el-table（如 toggleRowSelection）
+const dataTableRef = ref()
+defineExpose({
+	get tableRef() {
+		return dataTableRef.value?.tableRef
+	}
 })
 </script>

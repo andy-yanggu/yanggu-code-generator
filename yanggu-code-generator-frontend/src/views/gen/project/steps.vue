@@ -19,9 +19,9 @@
 			</el-header>
 			<!-- 表单区域 -->
 			<el-main>
-				<template-index v-if="activeRef === 0" ref="templateIndexRef" @select-change="templateSelectChange"></template-index>
-				<table-index v-if="activeRef === 1" ref="tableIndexRef" @select-change="tableSelectChange"></table-index>
-				<enum-index v-if="activeRef === 2" ref="enumIndexRef" @select-change="enumSelectChange"></enum-index>
+				<template-index v-if="activeRef === 0" ref="templateIndexRef" :selected-ids="selectedTemplateIds" @select-change="templateSelectChange"></template-index>
+				<table-index v-if="activeRef === 1" ref="tableIndexRef" :selected-ids="selectedTableIds" @select-change="tableSelectChange"></table-index>
+				<enum-index v-if="activeRef === 2" ref="enumIndexRef" :selected-ids="selectedEnumIds" @select-change="enumSelectChange"></enum-index>
 				<generate-result
 					v-if="activeRef === 3"
 					ref="generateResultRef"
@@ -75,6 +75,11 @@ const tableListRef = ref<any[]>([])
 const enumListRef = ref<any[]>([])
 const finish = ref(false)
 
+// 从存储的行对象中派生 ID 数组，传给子组件用于自动恢复勾选
+const selectedTemplateIds = computed(() => templateListRef.value.map((item: any) => item.id))
+const selectedTableIds = computed(() => tableListRef.value.map((item: any) => item.id))
+const selectedEnumIds = computed(() => enumListRef.value.map((item: any) => item.id))
+
 // 初始化方法
 const init = (projectItem: GenProjectEntity) => {
 	activeRef.value = 0
@@ -107,18 +112,12 @@ const prevStep = () => {
 					projectReactive.enumTemplateGroupId
 				]
 				templateIndexRef.value.init(templateGroupIdList)
-
-				//恢复之前的勾选
-				templateIndexRef.value.toggleRowSelection(templateListRef.value)
 			})
 		}
 
 		if (activeRef.value === 1) {
 			nextTick(() => {
 				tableIndexRef.value.init(projectReactive.id)
-
-				//恢复之前的勾选
-				tableIndexRef.value.toggleRowSelection(tableListRef.value)
 			})
 		}
 	}
@@ -133,17 +132,11 @@ const nextStep = () => {
 	if (activeRef.value === 1) {
 		nextTick(() => {
 			tableIndexRef.value.init(projectReactive.id)
-
-			//恢复之前的勾选
-			tableIndexRef.value.toggleRowSelection(tableListRef.value)
 		})
 	}
 	if (activeRef.value === 2) {
 		nextTick(() => {
 			enumIndexRef.value.init(projectReactive.id)
-
-			//恢复枚举选中状态
-			enumIndexRef.value.toggleRowSelection(enumListRef.value)
 		})
 	}
 }

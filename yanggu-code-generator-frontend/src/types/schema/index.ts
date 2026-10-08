@@ -83,6 +83,8 @@ export interface TableColumnSchema {
 	visible?: boolean
 	disabled?: boolean
 	showOverflowTooltip?: boolean
+	/** 多选列是否跨页保持勾选（需配合 el-table row-key 使用） */
+	reserveSelection?: boolean
 }
 
 // 归一化搜索字段（补全默认值）

@@ -1,115 +1,102 @@
 <template>
-	<el-card class="layout-query-card" shadow="hover">
-		<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-			<el-form-item label="枚举名称" prop="enumName">
-				<el-input v-model="state.queryForm.enumName" clearable placeholder="请输入枚举名称"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-			</el-form-item>
-			<el-form-item>
-				<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-			</el-form-item>
-		</el-form>
-	</el-card>
-	<el-card shadow="hover">
-		<el-table
-			ref="tableRef"
-			v-loading="state.dataListLoading!"
-			row-key="id"
-			:data="state.dataList"
-			border
-			max-height="60vh"
-			@selection-change="selectionChangeHandle">
-			<el-table-column type="selection" reserve-selection header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-			<el-table-column prop="enumName" label="枚举名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="enumDesc" label="枚举描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="updateTime" label="更新时间" header-align="center" align="center"></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
-				<template #default="scope">
-					<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id, scope.row.enumName)">查看枚举项</el-button>
-				</template>
-			</el-table-column>
-		</el-table>
-		<el-pagination
-			:current-page="state.pageNum"
-			:page-sizes="state.pageSizes"
-			:page-size="state.pageSize"
-			:total="state.total"
-			background
-			layout="total, sizes, prev, pager, next, jumper"
-			@size-change="sizeChangeHandle"
-			@current-change="currentChangeHandle"></el-pagination>
-	</el-card>
+	<query-table ref="queryTableRef" :table-hook="tableHook" :show-toolbar-left="false" @selection-change="onSelectionChange">
+		<!-- 操作列 -->
+		<template #operation="scope">
+			<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id, scope.row.enumName)">查看枚举项</el-button>
+		</template>
+	</query-table>
 
 	<enum-item-index ref="enumItemIndexRef"></enum-item-index>
 </template>
 
 <script setup lang="ts">
-import { useTableAction } from '@/hooks'
 import { genEnumApi } from '@/api'
-import { GenEnumEntity, GenEnumQuery, IHooksOptions } from '@/types'
+import type { GenEnumEntity, GenEnumQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import { useCrudTable } from '@/hooks'
+import QueryTable from '@/components/crud/QueryTable.vue'
 import EnumItemIndex from '@/views/gen/project/enum-item-index.vue'
-import { Refresh, Search, View } from '@element-plus/icons-vue'
+import { View } from '@element-plus/icons-vue'
 
 defineOptions({
 	name: 'GenProjectEnum'
 })
 
+const props = defineProps<{
+	selectedIds?: number[]
+}>()
+
 const emit = defineEmits(['selectChange'])
+const queryTableRef = ref()
+const enumItemIndexRef = ref()
+
+// 搜索字段
+const searchFields: SearchFieldSchema[] = [
+	{ key: 'enumName', label: '枚举名称' }
+]
+
+// 表格列配置
+const tableColumns: TableColumnSchema[] = [
+	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true, reserveSelection: true },
+	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
+	{ key: 'enumName', label: '枚举名称' },
+	{ key: 'enumDesc', label: '枚举描述' },
+	{ key: 'createTime', label: '创建时间' },
+	{ key: 'updateTime', label: '更新时间' }
+]
+
+// 查询上下文（响应式，init 时更新 projectId）
+const queryContext = reactive({
+	projectId: '' as number | string
+})
 
 // 初始化查询表单数据
-const initQueryFormData = (): GenEnumQuery => ({
+const initQueryForm = (): GenEnumQuery => ({
 	enumName: '',
 	projectId: ''
 })
 
-const state = reactive({
+// 表格配置
+const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
 	dataListApi: genEnumApi.entityPage,
+	tableKey: 'gen-project-enum',
+	initQueryForm,
+	searchSchema: searchFields,
+	tableColumns,
+	queryContext,
 	mountedGetData: false,
-	queryContext: {
-		projectId: ''
+	subject: '枚举'
+} as UseCrudTableOptions)
+
+// 勾选变化：转发给父组件
+const onSelectionChange = (selections: any[]) => {
+	emit('selectChange', selections)
+}
+
+// 数据加载后，根据 selectedIds 自动恢复勾选
+watch(
+	() => tableHook.table.data,
+	data => {
+		if (data.length === 0 || !props.selectedIds?.length) return
+		const elTableRef = queryTableRef.value?.tableRef
+		if (!elTableRef) return
+		const rows = data.filter((row: any) => props.selectedIds!.includes(row.id))
+		rows.forEach((row: any) => elTableRef.toggleRowSelection(row, true))
 	},
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenEnumEntity, GenEnumQuery>)
-let isManualSelection = true
+	{ flush: 'post' }
+)
 
-const tableRef = ref()
-const enumItemIndexRef = ref()
+// 对外暴露的初始化方法
 const init = (projectId: number) => {
-	state.queryContext!.projectId = projectId
-	//重置表单查询
-	resetQueryHandle()
+	queryContext.projectId = projectId
+	tableHook.query.reset()
 }
 
-const selectionChangeHandle = (selections: any[]) => {
-	if (isManualSelection) {
-		emit('selectChange', selections)
-	}
-}
-
-const toggleRowSelection = (rowList: any[]) => {
-	if (rowList.length === 0) {
-		return
-	}
-	isManualSelection = false
-	rowList.forEach((row: any) => {
-		tableRef.value.toggleRowSelection(row, true)
-	})
-	isManualSelection = true
-}
-
+// 查看枚举项
 const enumItemIndexShow = (enumId: number, enumName: string) => {
 	enumItemIndexRef.value.init(enumId, enumName)
 }
 
-const { getDataList, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
-
 defineExpose({
-	init,
-	toggleRowSelection
+	init
 })
 </script>

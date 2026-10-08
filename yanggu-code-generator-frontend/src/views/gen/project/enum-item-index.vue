@@ -1,94 +1,70 @@
 <template>
 	<el-dialog v-model="dialogVisible" :title="`枚举项（${enumNameRef}）`" width="80%" @close="dialogVisible = false">
-		<el-card class="layout-query-card" shadow="hover">
-			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item label="枚举项名称" prop="enumItemName">
-					<el-input v-model="state.queryForm.enumItemName" placeholder="请输入枚举项名称" clearable></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</el-card>
-
-		<el-card shadow="hover">
-			<el-table v-loading="state.dataListLoading!" :data="state.dataList" border max-height="60vh" @sort-change="sortChangeHandle">
-				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-				<el-table-column prop="enumItemName" label="枚举项名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemCode" label="枚举项编码" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemDesc" label="枚举项描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="enumItemOrder" label="枚举项排序" header-align="center" align="center"></el-table-column>
-				<el-table-column
-					prop="createTime"
-					label="创建时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"></el-table-column>
-				<el-table-column
-					prop="updateTime"
-					label="修改时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"></el-table-column>
-			</el-table>
-			<el-pagination
-				:current-page="state.pageNum"
-				:page-sizes="state.pageSizes"
-				:page-size="state.pageSize"
-				:total="state.total"
-				layout="total, sizes, prev, pager, next, jumper"
-				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"></el-pagination>
-		</el-card>
+		<query-table :table-hook="tableHook" :show-toolbar-left="false"></query-table>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
-import { useTableAction } from '@/hooks'
 import { genEnumItemApi } from '@/api'
-import { GenEnumItemEntity, GenEnumItemQuery, IHooksOptions } from '@/types'
-import { Refresh, Search } from '@element-plus/icons-vue'
+import type { GenEnumItemEntity, GenEnumItemQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import { useCrudTable } from '@/hooks'
+import QueryTable from '@/components/crud/QueryTable.vue'
 
 defineOptions({
 	name: 'ProjectEnumItem'
 })
 
-// 初始化表单查询参数
-const initQueryFormData = (): GenEnumItemQuery => ({
+const dialogVisible = ref(false)
+const enumNameRef = ref('')
+
+// 搜索字段
+const searchFields: SearchFieldSchema[] = [
+	{ key: 'enumItemName', label: '枚举项名称' }
+]
+
+// 表格列配置
+const tableColumns: TableColumnSchema[] = [
+	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
+	{ key: 'enumItemName', label: '枚举项名称' },
+	{ key: 'enumItemCode', label: '枚举项编码' },
+	{ key: 'enumItemDesc', label: '枚举项描述' },
+	{ key: 'enumItemOrder', label: '枚举项排序' },
+	{ key: 'createTime', label: '创建时间', sortable: 'custom', minWidth: 120 },
+	{ key: 'updateTime', label: '修改时间', sortable: 'custom', minWidth: 120 }
+]
+
+// 查询上下文（响应式，init 时更新 enumId）
+const queryContext = reactive({
+	enumId: -1
+})
+
+// 初始化查询表单数据
+const initQueryForm = (): GenEnumItemQuery => ({
 	enumItemName: '',
 	enumId: -1
 })
 
-const state = reactive({
+// 表格配置
+const tableHook = useCrudTable<GenEnumItemEntity, GenEnumItemQuery>({
 	dataListApi: genEnumItemApi.entityPage,
+	tableKey: 'gen-project-enum-item',
+	initQueryForm,
+	searchSchema: searchFields,
+	tableColumns,
+	queryContext,
 	mountedGetData: false,
-	queryContext: {
-		enumId: -1
-	},
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenEnumItemEntity, GenEnumItemQuery>)
+	subject: '枚举项'
+} as UseCrudTableOptions)
 
-const dialogVisible = ref(false)
-const enumNameRef = ref('')
-
+// 对外暴露的初始化方法
 const init = (enumId: number, enumName: string) => {
 	dialogVisible.value = true
 	enumNameRef.value = enumName
-	state.queryContext!.enumId = enumId
-	resetQueryHandle()
+	queryContext.enumId = enumId
+	tableHook.query.reset()
 }
 
 defineExpose({
 	init
 })
-
-const { getDataList, sizeChangeHandle, currentChangeHandle, sortChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
 </script>

@@ -15,7 +15,8 @@ export const BUILTIN_SELECTION: TableColumnSchema = {
 	width: 50,
 	align: 'center',
 	fixed: 'left',
-	disabled: true
+	disabled: true,
+	reserveSelection: true
 }
 export const BUILTIN_INDEX: TableColumnSchema = { key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true }
 export const BUILTIN_CREATE_TIME: TableColumnSchema = {

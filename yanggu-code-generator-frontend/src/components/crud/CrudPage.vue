@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<query-table :table-hook="tableHook">
-			<!-- 工具栏左侧：默认新增+批量删除（可被 #table-toolbar-left 覆盖） -->
-			<template #toolbar-left="{ tableHook: t }">
+		<query-table :table-hook="tableHook" :show-toolbar-left="effectiveShowToolbarLeft">
+			<!-- 工具栏左侧：仅当需要时传递（用户提供了 #table-toolbar-left 插槽 或 showToolbarLeft 为 true） -->
+			<template v-if="effectiveShowToolbarLeft" #toolbar-left="{ tableHook: t }">
 				<slot name="table-toolbar-left" :table-hook="t" :dialog="crudDialogRef">
-					<el-space v-if="!tableSlots['table-toolbar-left']" size="default">
+					<el-space size="default">
 						<el-button type="primary" :icon="Plus" @click="crudDialogRef?.open('add')">新增</el-button>
 						<el-button type="danger" :loading="t.action.delete.loading" :icon="Delete" @click="t.action.delete.execute()">删除</el-button>
 					</el-space>
@@ -51,13 +51,19 @@ defineOptions({
 
 // ====== Props ======
 // 注意：useCrudTable / useCrudForm 是泛型函数，不同页面的 VO 类型不同，
-defineProps<{
+const props = defineProps<{
 	tableHook: ReturnType<typeof useCrudTable>
 	formHook: ReturnType<typeof useCrudForm>
+	/** 是否显示工具栏左侧（新增/批量删除按钮）。未传时自动检测：用户提供了 #table-toolbar-left 插槽则显示，否则隐藏 */
+	showToolbarLeft?: boolean
 }>()
 
 // ====== 引用 ======
 const crudDialogRef = ref<InstanceType<typeof CrudDialog>>()
+
+// ====== 工具栏左侧显隐逻辑 ======
+// 默认 true（向后兼容，保留新增/删除按钮）；显式传 false 可隐藏
+const effectiveShowToolbarLeft = computed(() => props.showToolbarLeft ?? true)
 
 // ====== 插槽路由（按前缀分类 → 保留前缀分发到 QueryTable，由 QueryTable 剥前缀给子组件） ======
 //
