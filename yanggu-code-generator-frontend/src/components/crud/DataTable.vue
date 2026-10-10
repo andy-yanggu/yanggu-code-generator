@@ -344,7 +344,11 @@ onUnmounted(() => {
 	align-items: center;
 	justify-content: space-between;
 }
-.table-tool-bar-left,
+.table-tool-bar-left {
+	display: flex;
+	align-items: center;
+}
+
 .table-tool-bar-right {
 	display: flex;
 	align-items: center;

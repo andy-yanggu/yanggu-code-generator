@@ -1,7 +1,7 @@
 import type { UseCrudOptions } from '@/types/hooks/use-crud'
 import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 import { defaultsDeep } from '@/utils/tool'
-import { BUILTIN_CREATE_TIME, BUILTIN_INDEX, BUILTIN_OPERATION, BUILTIN_SELECTION, BUILTIN_UPDATE_TIME, useCrudTable } from './use-crud-table'
+import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable } from './use-crud-table'
 import { useCrudForm } from './use-crud-form'
 
 // ======== 表单字段默认值 ========
@@ -49,16 +49,16 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 
 const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConfig']): TableColumnSchema[] => {
 	const cols: TableColumnSchema[] = []
-	if (opts?.showSelection !== false) cols.push(BUILTIN_SELECTION)
-	if (opts?.showIndex !== false) cols.push(BUILTIN_INDEX)
+	if (opts?.showSelection !== false) cols.push(createBuiltinSelection())
+	if (opts?.showIndex !== false) cols.push(createBuiltinIndex())
 	cols.push(
 		...fields
 			.filter(f => f.inTable)
 			.map(f => defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...f.table }, defaultTableColumnOptions()))
 	)
-	if (opts?.showCreateTime !== false) cols.push(BUILTIN_CREATE_TIME)
-	if (opts?.showUpdateTime !== false) cols.push(BUILTIN_UPDATE_TIME)
-	if (opts?.showOperation !== false) cols.push(BUILTIN_OPERATION)
+	if (opts?.showCreateTime !== false) cols.push(createBuiltinCreateTime())
+	if (opts?.showUpdateTime !== false) cols.push(createBuiltinUpdateTime())
+	if (opts?.showOperation !== false) cols.push(createBuiltinOperation())
 	return cols
 }
 

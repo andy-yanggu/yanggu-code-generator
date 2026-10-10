@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { BUILTIN_CREATE_TIME, BUILTIN_INDEX, BUILTIN_SELECTION, BUILTIN_UPDATE_TIME, useCrudTable } from '@/hooks'
+import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable } from '@/hooks'
 import { genGeneratorApi, genTemplateApi } from '@/api'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { getLabel } from '@/utils/enum'
@@ -46,14 +46,14 @@ const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
 		{ prop: 'templateType', label: '模板类型', component: 'select', options: TEMPLATE_TYPES.items, width: 160 }
 	],
 	tableColumns: [
-		BUILTIN_SELECTION,
-		BUILTIN_INDEX,
+		createBuiltinSelection(),
+		createBuiltinIndex(),
 		{ key: 'templateName', label: '模板名称' },
 		{ key: 'generatorPath', label: '模板路径' },
 		{ key: 'templateType', label: '模板类型', formatter: getLabel(TEMPLATE_TYPES) },
 		{ key: 'templateDesc', label: '描述' },
-		BUILTIN_UPDATE_TIME,
-		BUILTIN_CREATE_TIME
+		createBuiltinUpdateTime(),
+		createBuiltinCreateTime()
 	],
 	showOperation: false
 }

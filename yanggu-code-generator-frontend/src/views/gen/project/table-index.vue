@@ -1,5 +1,5 @@
 <template>
-	<query-table ref="queryTableRef" :table-hook="tableHook" :show-toolbar-left="false" @selection-change="onSelectionChange"></query-table>
+	<query-table ref="queryTableRef" :table-hook="tableHook" @selection-change="onSelectionChange"></query-table>
 </template>
 
 <script setup lang="ts">
@@ -58,7 +58,8 @@ const tableHook = useCrudTable<GenTableEntity, GenTableQuery>({
 	tableColumns,
 	queryContext,
 	mountedGetData: false,
-	subject: '表'
+	subject: '表',
+	showToolbarLeft: false
 } as UseCrudTableOptions)
 
 // 勾选变化：转发给父组件

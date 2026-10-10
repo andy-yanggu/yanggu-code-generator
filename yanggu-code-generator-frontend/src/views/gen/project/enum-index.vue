@@ -1,5 +1,5 @@
 <template>
-	<query-table ref="queryTableRef" :table-hook="tableHook" :show-toolbar-left="false" @selection-change="onSelectionChange">
+	<query-table ref="queryTableRef" :table-hook="tableHook" @selection-change="onSelectionChange">
 		<!-- 操作列 -->
 		<template #operation="scope">
 			<el-button type="primary" link :icon="View" @click="enumItemIndexShow(scope.row.id, scope.row.enumName)">查看枚举项</el-button>
@@ -64,7 +64,8 @@ const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
 	tableColumns,
 	queryContext,
 	mountedGetData: false,
-	subject: '枚举'
+	subject: '枚举',
+	showToolbarLeft: false
 } as UseCrudTableOptions)
 
 // 勾选变化：转发给父组件

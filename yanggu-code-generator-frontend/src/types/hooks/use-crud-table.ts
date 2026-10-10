@@ -72,4 +72,6 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	mountedGetData?: boolean
 	/** 重置查询表单后是否自动查询，默认 true */
 	resetQueryGetData?: boolean
+	/** 是否显示工具栏左侧区域（新增/批量删除按钮等），默认 true */
+	showToolbarLeft?: boolean
 }

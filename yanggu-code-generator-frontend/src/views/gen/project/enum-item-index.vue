@@ -1,6 +1,6 @@
 <template>
 	<el-dialog v-model="dialogVisible" :title="`枚举项（${enumNameRef}）`" width="80%" @close="dialogVisible = false">
-		<query-table :table-hook="tableHook" :show-toolbar-left="false"></query-table>
+		<query-table :table-hook="tableHook"></query-table>
 	</el-dialog>
 </template>
 
@@ -53,7 +53,8 @@ const tableHook = useCrudTable<GenEnumItemEntity, GenEnumItemQuery>({
 	tableColumns,
 	queryContext,
 	mountedGetData: false,
-	subject: '枚举项'
+	subject: '枚举项',
+	showToolbarLeft: false
 } as UseCrudTableOptions)
 
 // 对外暴露的初始化方法

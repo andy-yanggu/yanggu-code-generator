@@ -7,8 +7,8 @@ import { useTableSettingsStore } from '@/store/table-settings-store'
 import { defaultsDeep, isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 import { toValue } from 'vue'
 
-// ======== 内置固定列 ========
-export const BUILTIN_SELECTION: TableColumnSchema = {
+// ======== 内置固定列工厂函数 ========
+export const createBuiltinSelection = (): TableColumnSchema => ({
 	key: 'selection',
 	type: 'selection',
 	label: '',
@@ -17,25 +17,39 @@ export const BUILTIN_SELECTION: TableColumnSchema = {
 	fixed: 'left',
 	disabled: true,
 	reserveSelection: true
-}
-export const BUILTIN_INDEX: TableColumnSchema = { key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true }
-export const BUILTIN_CREATE_TIME: TableColumnSchema = {
+})
+export const createBuiltinIndex = (): TableColumnSchema => ({
+	key: 'index',
+	type: 'index',
+	label: '序号',
+	width: 60,
+	align: 'center',
+	disabled: true
+})
+export const createBuiltinCreateTime = (): TableColumnSchema => ({
 	key: 'createTime',
 	label: '创建时间',
 	minWidth: 120,
 	sortable: 'custom',
 	align: 'center',
 	showOverflowTooltip: true
-}
-export const BUILTIN_UPDATE_TIME: TableColumnSchema = {
+})
+export const createBuiltinUpdateTime = (): TableColumnSchema => ({
 	key: 'updateTime',
 	label: '修改时间',
 	minWidth: 120,
 	sortable: 'custom',
 	align: 'center',
 	showOverflowTooltip: true
-}
-export const BUILTIN_OPERATION: TableColumnSchema = { key: 'operation', label: '操作', fixed: 'right', width: 150, align: 'center', disabled: true }
+})
+export const createBuiltinOperation = (): TableColumnSchema => ({
+	key: 'operation',
+	label: '操作',
+	fixed: 'right',
+	width: 150,
+	align: 'center',
+	disabled: true
+})
 
 export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>) => {
 	// ====== 默认值（仅填充缺失属性，保留 reactive 响应性） ======
@@ -47,6 +61,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		pageSize: 10,
 		mountedGetData: true,
 		resetQueryGetData: true,
+		showToolbarLeft: true,
 		initQueryForm: () => ({}) as Query,
 		searchSchema: [],
 		queryContext: {},
@@ -421,7 +436,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		// UI 引用
 		refs: reactive({
 			cardMaximized,
-			primaryKey
+			primaryKey,
+			showToolbarLeft: opts.showToolbarLeft!
 		})
 	}
 }

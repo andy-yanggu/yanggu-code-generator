@@ -28,7 +28,7 @@
 			:pagination="tableHook.table.pagination"
 			:page-sizes="pageSizes"
 			:max-height="maxHeight"
-			:show-toolbar-left="showToolbarLeft"
+			:show-toolbar-left="tableHook.refs.showToolbarLeft"
 			@selection-change="onSelectionChange"
 			@sort-change="tableHook.query.onSortChange"
 			@page-change="tableHook.query.onPageChange"
@@ -66,7 +66,6 @@ const props = defineProps<{
 	tableHook: any
 	maxHeight?: string
 	pageSizes?: number[]
-	showToolbarLeft?: boolean
 }>()
 
 const emit = defineEmits<{
