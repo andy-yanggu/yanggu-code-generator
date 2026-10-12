@@ -42,6 +42,8 @@ export interface SearchFieldSchema {
 	clearable?: boolean
 	filterable?: boolean
 	rangeFields?: [string, string]
+	/** 搜索字段提示文字，有值时渲染问号图标 + el-tooltip */
+	tooltip?: string
 	/** 字段级校验规则 */
 	ruleList?: FormItemRule[]
 }
@@ -83,6 +85,8 @@ export interface TableColumnSchema {
 	visible?: boolean
 	disabled?: boolean
 	showOverflowTooltip?: boolean
+	/** 列头提示文字，有值时渲染问号图标 + el-tooltip */
+	tooltip?: string
 	/** 多选列是否跨页保持勾选（需配合 el-table row-key 使用） */
 	reserveSelection?: boolean
 }
@@ -111,6 +115,8 @@ export interface CrudField {
 	prop?: string
 	/** 字段显示名称 */
 	label: string
+	/** 字段说明，自动传播到表单 label 和表格列头（不传播到 query） */
+	formTableTooltip?: string
 
 	// ====== 视图角色标记 ======
 	/** 是否出现在表单，默认 false */

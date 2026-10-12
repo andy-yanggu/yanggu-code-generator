@@ -70,11 +70,11 @@ const fields: CrudField[] = [
 	{
 		key: 'baseClassName',
 		label: '基类名称',
+		formTableTooltip: '基类名称具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,
 		form: {
-			tooltip: '基类名称具有唯一性，不能重复',
 			ruleList: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }]
 		}
 	},
@@ -83,9 +83,9 @@ const fields: CrudField[] = [
 	{
 		key: 'fullClassName',
 		label: '基类全类名',
+		formTableTooltip: '基类全类名具有唯一性，不能重复',
 		inForm: true,
 		form: {
-			tooltip: '基类全类名具有唯一性，不能重复',
 			ruleList: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '基类全类名不能为空', trigger: 'blur' }]
 		}
 	},

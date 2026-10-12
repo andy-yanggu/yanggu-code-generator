@@ -26,22 +26,22 @@ const fields: CrudField[] = [
 	{
 		key: 'enumItemName',
 		label: '枚举项名称',
+		formTableTooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
 		inForm: true,
 		inSearch: true,
 		inTable: true,
 		form: {
-			tooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
 			ruleList: [{ required: true, message: '枚举项名称不能为空', trigger: 'blur' }]
 		}
 	},
 	{
 		key: 'enumItemCode',
 		label: '枚举项编码',
+		formTableTooltip: '枚举项编码具有唯一性',
 		inForm: true,
 		inSearch: true,
 		inTable: true,
 		form: {
-			tooltip: '枚举项编码具有唯一性',
 			ruleList: [{ required: true, message: '枚举项编码不能为空', trigger: 'blur' }]
 		}
 	},

@@ -114,6 +114,10 @@
 			@sort-change="(s: any) => emit('sortChange', s)"
 		>
 			<el-table-column v-for="col in visibleColumns" :key="col.key" v-bind="toColumnProps(col)">
+				<!-- 自定义列头：有 tooltip 时渲染问号图标 -->
+				<template v-if="col.tooltip" #header>
+					<form-label-tooltip :label="col.label" :tooltip="col.tooltip" :align="(col.headerAlign ?? col.align ?? 'center')" />
+				</template>
 				<!-- 操作列：使用 operation 插槽 -->
 				<template v-if="col.key === 'operation'" #default="scope">
 					<slot name="operation" v-bind="scope"></slot>
@@ -150,6 +154,7 @@ import { ArrowLeft, ArrowRight, Check, Close, Edit, FullScreen, Lock, Rank, Refr
 import Sortable from 'sortablejs'
 import { ElDivider } from 'element-plus'
 import IconButton from '@/components/icon-button/index.vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import type { Pagination, TableColumnSchema } from '@/types/schema'
 
 defineOptions({

@@ -1,5 +1,5 @@
 <template>
-	<div style="display: flex; align-items: center">
+	<div :style="{ display: 'flex', alignItems: 'center', justifyContent: alignMap[align] }">
 		<span>{{ label }}</span>
 		<el-tooltip v-if="tooltip" :content="tooltip" effect="dark" placement="top">
 			<el-icon style="margin-left: 5px; cursor: pointer">
@@ -34,6 +34,16 @@ defineProps({
 		type: Object,
 		default: QuestionFilled,
 		required: false
+	},
+	align: {
+		type: String as () => 'left' | 'center' | 'right',
+		default: 'left'
 	}
 })
+
+const alignMap: Record<string, string> = {
+	left: 'flex-start',
+	center: 'center',
+	right: 'flex-end'
+}
 </script>

@@ -19,11 +19,11 @@ const fields: CrudField[] = [
 	{
 		key: 'columnType',
 		label: '字段类型',
+		formTableTooltip: '数据库中的字段类型；字段类型具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,
 		form: {
-			tooltip: '数据库中的字段类型；字段类型具有唯一性，不能重复',
 			ruleList: [{ required: true, message: '字段类型不能为空', trigger: 'blur' }]
 		}
 	},

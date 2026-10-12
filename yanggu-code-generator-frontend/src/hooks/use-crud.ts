@@ -31,6 +31,7 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 			const shared: Partial<FormFieldSchema> = {}
 			if (f.component !== undefined) shared.component = f.component
 			if (f.options !== undefined) shared.options = f.options
+			if (f.formTableTooltip !== undefined) shared.tooltip = f.formTableTooltip
 			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.form }, defaultFormFieldOptions())
 		})
 }
@@ -54,7 +55,11 @@ const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConf
 	cols.push(
 		...fields
 			.filter(f => f.inTable)
-			.map(f => defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...f.table }, defaultTableColumnOptions()))
+			.map(f => {
+				const base: Partial<TableColumnSchema> = {}
+				if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
+				return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, defaultTableColumnOptions())
+			})
 	)
 	if (opts?.showCreateTime !== false) cols.push(createBuiltinCreateTime())
 	if (opts?.showUpdateTime !== false) cols.push(createBuiltinUpdateTime())

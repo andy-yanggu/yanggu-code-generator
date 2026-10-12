@@ -84,14 +84,17 @@
 					header-align="center"
 					align="center"
 					sortable="custom"></el-table-column>
-				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
+				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="200">
 					<template #default="scope">
 						<el-row>
-							<el-col :span="12">
+							<el-col :span="8">
 								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
 							</el-col>
-							<el-col :span="12">
+							<el-col :span="8">
 								<el-button type="primary" link :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-button>
+							</el-col>
+							<el-col :span="8">
+								<el-button type="success" link :icon="DocumentAdd" @click="generatorCodeV2(scope.row)">生成V2</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
@@ -123,6 +126,9 @@
 
 			<!-- 生成代码步骤条 -->
 			<steps ref="stepsRef"></steps>
+			
+			<!-- 生成代码步骤条 V2 -->
+			<steps-v2 ref="stepsV2Ref"></steps-v2>
 		</el-card>
 	</div>
 </template>
@@ -133,6 +139,7 @@ import Preview from '@/business/preview/index.vue'
 import { genProjectApi } from '@/api'
 import { GenProjectEntity, GenProjectQuery, IHooksOptions } from '@/types'
 import Steps from '@/views/gen/project/steps.vue'
+import StepsV2 from '@/views/gen/project/steps-v2.vue'
 import ProjectForm from '@/views/gen/project/form.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
@@ -163,6 +170,7 @@ const state = reactive({
 
 const previewRef = ref()
 const stepsRef = ref()
+const stepsV2Ref = ref()
 
 const previewHandle = (projectItem: GenProjectEntity) => {
 	previewRef.value.init(projectItem.id, projectItem.projectName, projectItem.id, projectItem.generatorType, GENERATOR_PRODUCT_TYPES.Project)
@@ -170,6 +178,10 @@ const previewHandle = (projectItem: GenProjectEntity) => {
 
 const generatorCode = (item: GenProjectEntity) => {
 	stepsRef.value.init(item)
+}
+
+const generatorCodeV2 = (item: GenProjectEntity) => {
+	stepsV2Ref.value.init(item)
 }
 
 const {

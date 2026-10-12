@@ -1,7 +1,11 @@
 <template>
 	<el-card v-if="visible" class="layout-query-card" shadow="hover">
 		<el-form ref="formRef" :inline="true" :model="model" :rules="fieldRules" @keyup.enter="handleSearch">
-			<el-form-item v-for="field in normalizedFields" :key="field.key" :label="field.label" :prop="field.prop">
+			<el-form-item v-for="field in normalizedFields" :key="field.key" :prop="field.prop">
+				<template #label>
+					<form-label-tooltip v-if="field.tooltip" :label="field.label" :tooltip="field.tooltip" />
+					<span v-else>{{ field.label }}</span>
+				</template>
 				<!-- 插槽覆盖（按 field.key 匹配） -->
 				<slot :name="field.key" :field="field" :form="model">
 					<dynamic-field v-model="model[field.prop]" :field="searchToFormField(field)"></dynamic-field>
@@ -23,6 +27,7 @@ import type { FormFieldSchema, SearchFieldSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
 import type { FormItemRule } from 'element-plus'
 import DynamicField from './internal/DynamicField.vue'
+import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 
 defineOptions({
 	name: 'CrudSearchForm'
