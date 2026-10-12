@@ -1,7 +1,7 @@
 import type { UseCrudOptions } from '@/types/hooks/use-crud'
 import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 import { defaultsDeep } from '@/utils/tool'
-import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable } from './use-crud-table'
+import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, defaultTableColumnOptions, useCrudTable } from './use-crud-table'
 import { useCrudForm } from './use-crud-form'
 
 // ======== 表单字段默认值 ========
@@ -14,12 +14,6 @@ const defaultFormFieldOptions = (): Partial<FormFieldSchema> => ({
 const defaultSearchFieldOptions = (): Partial<SearchFieldSchema> => ({
 	filterable: true,
 	clearable: true
-})
-
-// ======== 表格列默认值 ========
-const defaultTableColumnOptions = (): Partial<TableColumnSchema> => ({
-	align: 'center',
-	showOverflowTooltip: true
 })
 
 // ======== 派生函数 ========

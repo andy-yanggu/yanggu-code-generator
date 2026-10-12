@@ -7,6 +7,12 @@ import { useTableSettingsStore } from '@/store/table-settings-store'
 import { defaultsDeep, isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 import { toValue } from 'vue'
 
+// ======== 表格列默认值 ========
+export const defaultTableColumnOptions = (): Partial<TableColumnSchema> => ({
+	align: 'center',
+	showOverflowTooltip: true
+})
+
 // ======== 内置固定列工厂函数 ========
 export const createBuiltinSelection = (): TableColumnSchema => ({
 	key: 'selection',

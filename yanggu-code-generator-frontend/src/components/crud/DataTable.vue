@@ -155,6 +155,7 @@ import Sortable from 'sortablejs'
 import { ElDivider } from 'element-plus'
 import IconButton from '@/components/icon-button/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { defaultTableColumnOptions } from '@/hooks/use-crud-table'
 import type { Pagination, TableColumnSchema } from '@/types/schema'
 
 defineOptions({
@@ -313,6 +314,7 @@ const cancelRename = () => {
 
 // ====== 列配置转换 ======
 const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
+	const defaults = defaultTableColumnOptions()
 	const result: Record<string, any> = {}
 	if (col.type) result.type = col.type
 	if (col.prop) result.prop = col.prop
@@ -321,10 +323,10 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	if (col.width) result.width = col.width
 	if (col.minWidth) result.minWidth = col.minWidth
 	if (col.fixed) result.fixed = col.fixed
-	if (col.align) result.align = col.align
+	result.align = col.align ?? defaults.align
 	if (col.headerAlign) result.headerAlign = col.headerAlign
 	if (col.sortable) result.sortable = col.sortable
-	if (col.showOverflowTooltip !== false) result.showOverflowTooltip = true
+	if ((col.showOverflowTooltip ?? defaults.showOverflowTooltip) !== false) result.showOverflowTooltip = true
 	if (col.formatter) result.formatter = col.formatter
 	if (col.reserveSelection) result.reserveSelection = true
 	return result
