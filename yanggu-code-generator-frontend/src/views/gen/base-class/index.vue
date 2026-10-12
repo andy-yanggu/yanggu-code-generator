@@ -20,7 +20,7 @@
 					<el-button type="primary" link :icon="CopyDocument" @click="dialog?.open('copy', row[t.refs.primaryKey])">复制</el-button>
 				</el-col>
 				<el-col :span="12">
-					<el-button type="primary" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+					<el-button type="danger" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
 				</el-col>
 			</el-row>
 		</template>

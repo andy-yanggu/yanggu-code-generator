@@ -4,7 +4,9 @@
 		<template #table-action="{ row, tableHook: t, dialog }">
 			<el-row>
 				<el-col :span="12">
-					<el-button type="primary" link :icon="Connection" @click="datasourceTestHandle(row.id)">测试</el-button>
+					<el-button type="primary" link :icon="Connection" :loading="testingId === row.id" @click="datasourceTestHandle(row.id, row.connName)"
+						>测试</el-button
+					>
 				</el-col>
 				<el-col :span="12">
 					<el-button type="primary" link :icon="Edit" @click="dialog?.open('update', row[t.refs.primaryKey])">修改</el-button>
@@ -15,7 +17,7 @@
 					<el-button type="primary" link :icon="CopyDocument" @click="dialog?.open('copy', row[t.refs.primaryKey])">复制</el-button>
 				</el-col>
 				<el-col :span="12">
-					<el-button type="primary" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+					<el-button type="danger" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
 				</el-col>
 			</el-row>
 		</template>
@@ -35,6 +37,7 @@ import type { CrudField } from '@/types/schema'
 import type { GenDatasourceEntity, GenDatasourceQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
+import { useTimeoutFn } from '@vueuse/core'
 import { Connection, CopyDocument, Delete, Edit } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -119,15 +122,41 @@ const { tableHook, formHook } = useCrud<GenDatasourceEntity, GenDatasourceQuery,
 	tableConfig
 })
 
-// 测试数据源连接
-const datasourceTestHandle = (id: number) => {
-	genDatasourceApi.test(id).then(data => {
-		const { result, errorMessage, databaseName } = data
-		if (result) {
-			ElMessage.success(`测试成功，数据库为：${databaseName}`)
-		} else {
-			ElMessage.error(`测试失败，异常信息：${errorMessage}`)
-		}
+// 测试数据源连接（最小展示时长 800ms，避免请求过快时 loading 一闪而过）
+const testingId = ref<number | null>(null)
+const MIN_LOADING_MS = 800
+const datasourceTestHandle = (id: number, connName: string) => {
+	testingId.value = id
+	const startTime = Date.now()
+	const loadingMsg = ElMessage({
+		type: 'primary',
+		message: `数据源【${connName}】测试中...`,
+		duration: 0,
+		showClose: true
 	})
+	genDatasourceApi
+		.test(id)
+		.then(data => {
+			const elapsed = Date.now() - startTime
+			const showResult = () => {
+				loadingMsg.close()
+				testingId.value = null
+				const { result, errorMessage, databaseName } = data
+				if (result) {
+					ElMessage.success(`测试成功，数据库为：${databaseName}`)
+				} else {
+					ElMessage.error(`测试失败，异常信息：${errorMessage}`)
+				}
+			}
+			if (elapsed < MIN_LOADING_MS) {
+				useTimeoutFn(showResult, MIN_LOADING_MS - elapsed)
+			} else {
+				showResult()
+			}
+		})
+		.catch(() => {
+			loadingMsg.close()
+			testingId.value = null
+		})
 }
 </script>

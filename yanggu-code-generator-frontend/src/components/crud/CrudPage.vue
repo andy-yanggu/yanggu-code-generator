@@ -15,7 +15,7 @@
 				<slot name="table-action" :row="row" :table-hook="t" :dialog="crudDialogRef">
 					<template v-if="!tableSlots['table-action']">
 						<el-button type="primary" link :icon="Edit" @click="crudDialogRef?.open('update', row[t.refs.primaryKey])">修改</el-button>
-						<el-button type="primary" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+						<el-button type="danger" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
 					</template>
 				</slot>
 			</template>
