@@ -341,15 +341,18 @@ const handlerResetSystemSetting = () => {
 	> .el-collapse-item {
 		margin-bottom: 4px;
 		> .el-collapse-item__header {
+			// width:100% + padding + border-left 在 content-box 下会溢出容器、撑出横向滚动条，改用 border-box
+			box-sizing: border-box;
 			height: 34px;
 			padding: 0 20px 0 14px;
 			border-bottom: 1px solid var(--el-border-color-lighter);
 			border-left: 3px solid var(--el-color-primary);
 			background-color: var(--el-fill-color-light);
 			font-size: 14px;
-			> .el-collapse-item__arrow {
-				margin-right: 30px;
-			}
+		}
+		// 内容区留白：用子代链限定只命中顶层分组，避免穿透到 menu-preference-section 内嵌的 dir-collapse
+		> .el-collapse-item__wrap > .el-collapse-item__content {
+			padding: 20px;
 		}
 	}
 	> .el-collapse-item:last-child {

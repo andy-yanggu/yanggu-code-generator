@@ -78,8 +78,17 @@ const fields: CrudField[] = [
 			ruleList: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }]
 		}
 	},
-	{ key: 'packageName', label: '基类包名', inSearch: true, inTable: true },
-	{ key: 'className', label: '基类类名', inSearch: true, inTable: true },
+	{
+		// 多级表头分组：基类全类名 = 包名 + 类名（仅表格视图；分组节点本身不进表单/查询）
+		// children 内的字段照常参与 search（靠 flattenLeafFields 拍平），table.label 仅缩短表头、不影响搜索/表单标签
+		key: 'fullClassNameGroup',
+		label: '基类全类名',
+		inTable: true,
+		children: [
+			{ key: 'packageName', label: '基类包名', inSearch: true, inTable: true, table: { label: '包名' } },
+			{ key: 'className', label: '基类类名', inSearch: true, inTable: true, table: { label: '类名' } }
+		]
+	},
 	{
 		key: 'fullClassName',
 		label: '基类全类名',

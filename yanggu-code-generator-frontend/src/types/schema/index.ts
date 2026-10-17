@@ -89,6 +89,8 @@ export interface TableColumnSchema {
 	tooltip?: string
 	/** 多选列是否跨页保持勾选（需配合 el-table row-key 使用） */
 	reserveSelection?: boolean
+	/** 子列；非空即为「分组列」（多级表头父级，仅支持 2 层）。分组列无 prop、不渲染单元格，仅作父表头 */
+	children?: TableColumnSchema[]
 }
 
 // 归一化搜索字段（补全默认值）
@@ -143,6 +145,14 @@ export interface CrudField {
 	search?: Partial<SearchFieldSchema>
 	/** 表格列专属配置（align / sortable / formatter / width 等） */
 	table?: Partial<TableColumnSchema>
+
+	// ====== 多级表头（仅表格视图，2 层） ======
+	/**
+	 * 子字段，仅用于表格多级表头分组。
+	 * 声明 children 的字段本身即「分组节点」：只在表格视图生效（需 inTable: true），不进表单/查询；
+	 * children 内的字段照常参与 form/search/table 派生（表单与查询侧会自动拍平，不感知分组）。
+	 */
+	children?: CrudField[]
 }
 
 // 内置列开关（全部默认 true）

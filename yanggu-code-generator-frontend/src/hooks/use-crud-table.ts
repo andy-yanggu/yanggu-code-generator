@@ -330,34 +330,43 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const settingsStore = useTableSettingsStore()
 	const defaultColumns = opts.tableColumns!
 
-	const cloneColumns = (cols: TableColumnSchema[]): TableColumnSchema[] => cols.map(col => ({ ...col }))
+	// 递归深拷贝（children 一并克隆；不用 structuredClone，因 formatter 是函数无法克隆）
+	const cloneColumns = (cols: TableColumnSchema[]): TableColumnSchema[] =>
+		cols.map(col => (col.children?.length ? { ...col, children: cloneColumns(col.children) } : { ...col }))
 
-	const mergeWithDefaults = (saved: TableColumnSchema[]): TableColumnSchema[] => {
-		const defaultMap = new Map(defaultColumns.map(col => [col.key, col]))
+	// 递归合并：按 key 逐层匹配，保留用户改动的 visible/fixed/label，并递归合并分组的 children；
+	// 代码里新增（saved 中缺失）的默认列按默认顺序补回。
+	const mergeWithDefaults = (saved: TableColumnSchema[], defaults: TableColumnSchema[]): TableColumnSchema[] => {
+		const defaultMap = new Map(defaults.map(col => [col.key, col]))
 		const savedKeys = new Set(saved.map(col => col.key))
 
 		const merged = saved.map(savedCol => {
 			const defaultCol = defaultMap.get(savedCol.key)
-			if (!defaultCol) return { ...savedCol }
-			return { ...defaultCol, visible: savedCol.visible, fixed: savedCol.fixed }
+			if (!defaultCol) return cloneColumns([savedCol])[0]
+			const result: TableColumnSchema = {
+				...defaultCol,
+				visible: savedCol.visible,
+				fixed: savedCol.fixed,
+				label: savedCol.label ?? defaultCol.label
+			}
+			// 分组列：以默认分组结构为基底递归合并 children
+			if (defaultCol.children?.length || savedCol.children?.length) {
+				result.children = mergeWithDefaults(savedCol.children ?? [], defaultCol.children ?? [])
+			}
+			return result
 		})
 
-		for (const col of defaultColumns) {
+		for (const col of defaults) {
 			if (!savedKeys.has(col.key)) {
-				merged.push({ ...col })
+				merged.push(cloneColumns([col])[0])
 			}
 		}
 
 		return merged
 	}
 
-	const columns = ref<TableColumnSchema[]>(
-		opts.tableKey
-			? settingsStore.getColumns(opts.tableKey)
-				? mergeWithDefaults(settingsStore.getColumns(opts.tableKey)!)
-				: cloneColumns(defaultColumns)
-			: cloneColumns(defaultColumns)
-	)
+	const savedColumns = opts.tableKey ? (settingsStore.getColumns(opts.tableKey) as TableColumnSchema[] | undefined) : undefined
+	const columns = ref<TableColumnSchema[]>(savedColumns ? mergeWithDefaults(savedColumns, defaultColumns) : cloneColumns(defaultColumns))
 
 	const visibleColumns = computed(() => columns.value.filter(col => col.visible !== false))
 
@@ -371,6 +380,9 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		columns.value = cloneColumns(defaultColumns)
 		persistColumns()
 	}
+
+	// 列设置变更（显隐/固定/拖拽/改名）实时持久化
+	watch(columns, persistColumns, { deep: true })
 
 	// ====== 5. UI 状态 ======
 	const queryShow = ref(true)

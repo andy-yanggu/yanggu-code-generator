@@ -33,64 +33,52 @@
 									<el-button link type="primary" size="small" @click="resetColumns">重置</el-button>
 								</div>
 								<div ref="columnListRef" class="column-list">
-									<div
-										v-for="col in columns"
-										:key="col.key"
-										class="column-list-item"
-										:class="{ 'is-fixed': col.fixed || col.disabled, 'is-disabled': col.disabled, 'is-editing': editingKey === col.key }"
-									>
-										<!-- 编辑模式 -->
-										<template v-if="editingKey === col.key">
-											<span class="drag-handle"
-												><el-icon :size="14"><Lock /></el-icon
-											></span>
-											<el-input
-												v-model="editingTitle"
-												size="small"
-												placeholder="请输入列名"
-												class="rename-input"
-												@click.stop
-												@keydown.enter="saveRename()"
-												@keydown.escape="cancelRename()"
+									<template v-for="col in columns" :key="col.key">
+										<!-- 分组：表头行 + 组内叶子容器（独立 Sortable，禁止跨组移动） -->
+										<div v-if="col.children?.length" class="column-group" :class="{ 'is-fixed': col.fixed || col.disabled }">
+											<column-setting-item
+												:col="col"
+												is-group
+												:editing="editingKey === col.key"
+												:editing-title="editingTitle"
+												@update:editing-title="editingTitle = $event"
+												@toggle-visible="val => toggleColumnVisible(col, val)"
+												@toggle-fixed="dir => toggleFixed(col, dir)"
+												@start-rename="startRename(col)"
+												@save-rename="saveRename()"
+												@cancel-rename="cancelRename()"
 											/>
-											<div class="rename-btns">
-												<el-button type="primary" :icon="Check" link size="small" @click.stop="saveRename()" />
-												<el-button :icon="Close" link size="small" @click.stop="cancelRename()" />
+											<div class="column-group-children" :data-group-key="col.key">
+												<column-setting-item
+													v-for="child in col.children"
+													:key="child.key"
+													:col="child"
+													indent
+													:show-fixed="false"
+													:editing="editingKey === child.key"
+													:editing-title="editingTitle"
+													@update:editing-title="editingTitle = $event"
+													@toggle-visible="val => toggleColumnVisible(child, val)"
+													@start-rename="startRename(child)"
+													@save-rename="saveRename()"
+													@cancel-rename="cancelRename()"
+												/>
 											</div>
-										</template>
-										<!-- 显示模式 -->
-										<template v-else>
-											<span class="drag-handle">
-												<el-icon v-if="col.fixed || col.disabled" :size="14"><Lock /></el-icon>
-												<el-icon v-else :size="14"><Rank /></el-icon>
-											</span>
-											<el-checkbox
-												:model-value="col.visible !== false"
-												:disabled="col.disabled"
-												@change="(val: boolean | string | number) => toggleColumnVisible(col, val)"
-											>
-												{{ col.label }}
-											</el-checkbox>
-											<template v-if="!col.disabled">
-												<button class="pin-btn" :class="{ 'is-active': col.fixed === 'left' }" title="固定在左边" @click="toggleFixed(col, 'left')">
-													<el-icon :size="14"><ArrowLeft /></el-icon>
-												</button>
-												<button class="pin-btn" :class="{ 'is-active': col.fixed === 'right' }" title="固定在右边" @click="toggleFixed(col, 'right')">
-													<el-icon :size="14"><ArrowRight /></el-icon>
-												</button>
-											</template>
-											<el-button
-												v-if="!col.disabled"
-												:icon="Edit"
-												type="primary"
-												link
-												size="small"
-												class="rename-btn"
-												title="重命名"
-												@click.stop="startRename(col)"
-											/>
-										</template>
-									</div>
+										</div>
+										<!-- 顶层叶子列 -->
+										<column-setting-item
+											v-else
+											:col="col"
+											:editing="editingKey === col.key"
+											:editing-title="editingTitle"
+											@update:editing-title="editingTitle = $event"
+											@toggle-visible="val => toggleColumnVisible(col, val)"
+											@toggle-fixed="dir => toggleFixed(col, dir)"
+											@start-rename="startRename(col)"
+											@save-rename="saveRename()"
+											@cancel-rename="cancelRename()"
+										/>
+									</template>
 								</div>
 							</div>
 						</el-popover>
@@ -113,20 +101,37 @@
 			@selection-change="(s: any[]) => emit('selectionChange', s)"
 			@sort-change="(s: any) => emit('sortChange', s)"
 		>
-			<el-table-column v-for="col in visibleColumns" :key="col.key" v-bind="toColumnProps(col)">
-				<!-- 自定义列头：有 tooltip 时渲染问号图标 -->
-				<template v-if="col.tooltip" #header>
-					<form-label-tooltip :label="col.label" :tooltip="col.tooltip" :align="(col.headerAlign ?? col.align ?? 'center')" />
-				</template>
-				<!-- 操作列：使用 operation 插槽 -->
-				<template v-if="col.key === 'operation'" #default="scope">
-					<slot name="operation" v-bind="scope"></slot>
-				</template>
-				<!-- 其他列：透传命名插槽 -->
-				<template v-else-if="$slots[col.key]" #default="scope">
-					<slot :name="col.key" v-bind="scope"></slot>
-				</template>
-			</el-table-column>
+			<template v-for="col in visibleColumns" :key="col.key">
+				<!-- 分组列：父表头 + 内嵌叶子列（仅 2 层） -->
+				<el-table-column v-if="col.children?.length" v-bind="toColumnProps(col)">
+					<template v-if="col.tooltip" #header>
+						<form-label-tooltip :label="col.label" :tooltip="col.tooltip" :align="col.headerAlign ?? col.align ?? 'center'" />
+					</template>
+					<el-table-column v-for="child in col.children" :key="child.key" v-bind="toColumnProps(child)">
+						<template v-if="child.tooltip" #header>
+							<form-label-tooltip :label="child.label" :tooltip="child.tooltip" :align="child.headerAlign ?? child.align ?? 'center'" />
+						</template>
+						<template v-if="child.key === 'operation'" #default="scope">
+							<slot name="operation" v-bind="scope"></slot>
+						</template>
+						<template v-else-if="$slots[child.key]" #default="scope">
+							<slot :name="child.key" v-bind="scope"></slot>
+						</template>
+					</el-table-column>
+				</el-table-column>
+				<!-- 顶层叶子列 -->
+				<el-table-column v-else v-bind="toColumnProps(col)">
+					<template v-if="col.tooltip" #header>
+						<form-label-tooltip :label="col.label" :tooltip="col.tooltip" :align="col.headerAlign ?? col.align ?? 'center'" />
+					</template>
+					<template v-if="col.key === 'operation'" #default="scope">
+						<slot name="operation" v-bind="scope"></slot>
+					</template>
+					<template v-else-if="$slots[col.key]" #default="scope">
+						<slot :name="col.key" v-bind="scope"></slot>
+					</template>
+				</el-table-column>
+			</template>
 			<template #empty>
 				<slot name="empty">
 					<el-empty description="暂无数据" :image-size="120"></el-empty>
@@ -150,11 +155,12 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowLeft, ArrowRight, Check, Close, Edit, FullScreen, Lock, Rank, Refresh, Search, Setting } from '@element-plus/icons-vue'
+import { FullScreen, Refresh, Search, Setting } from '@element-plus/icons-vue'
 import Sortable from 'sortablejs'
 import { ElDivider } from 'element-plus'
 import IconButton from '@/components/icon-button/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import ColumnSettingItem from './internal/ColumnSettingItem.vue'
 import { defaultTableColumnOptions } from '@/hooks/use-crud-table'
 import type { Pagination, TableColumnSchema } from '@/types/schema'
 
@@ -211,13 +217,27 @@ onKeyStroke('Escape', () => {
 	if (maximized.value) maximized.value = false
 })
 
-// ====== 可见列 ======
-const visibleColumns = computed(() => columns.value.filter(col => col.visible !== false))
+// ====== 可见列（递归：分组下无可见叶子时整组隐藏） ======
+const isColumnVisible = (col: TableColumnSchema) => col.visible !== false
+const visibleColumns = computed<TableColumnSchema[]>(() => {
+	const result: TableColumnSchema[] = []
+	for (const col of columns.value) {
+		if (!isColumnVisible(col)) continue
+		if (col.children?.length) {
+			const children = col.children.filter(isColumnVisible)
+			if (children.length) result.push({ ...col, children })
+		} else {
+			result.push(col)
+		}
+	}
+	return result
+})
 
 // ====== 列设置面板 ======
 const columnSettingsVisible = ref(false)
 const columnListRef = ref<HTMLElement>()
-let sortableInstance: Sortable | null = null
+// 根 Sortable（顶层排序）+ 每个分组一个子 Sortable（组内排序，pull/put=false 禁止跨组）
+let sortableInstances: Sortable[] = []
 
 // 重命名状态
 const editingKey = ref<string | null>(null)
@@ -227,61 +247,103 @@ const handlePopoverShow = () => {
 	nextTick(() => createSortable())
 }
 
+const destroySortables = () => {
+	sortableInstances.forEach(s => s.destroy())
+	sortableInstances = []
+}
+
 const handlePopoverHide = () => {
-	sortableInstance?.destroy()
-	sortableInstance = null
+	destroySortables()
+}
+
+// 通用重排：把 oldIndex 处的元素移到 newIndex
+const reorder = (arr: TableColumnSchema[], oldIndex: number, newIndex: number): TableColumnSchema[] => {
+	const next = [...arr]
+	const [moved] = next.splice(oldIndex, 1)
+	next.splice(newIndex, 0, moved)
+	return next
 }
 
 const createSortable = () => {
 	const el = columnListRef.value
 	if (!el) return
-	if (sortableInstance) {
-		sortableInstance.destroy()
-		sortableInstance = null
-	}
-	sortableInstance = new Sortable(el, {
-		animation: 150,
-		filter: '.is-fixed',
-		preventOnFilter: false,
-		onMove: evt => {
-			const items = Array.from(el.children)
-			const draggedIdx = items.indexOf(evt.dragged)
-			const targetIdx = items.indexOf(evt.related)
-			const cols = columns.value
-			const draggedCol = cols[draggedIdx]
-			if (draggedCol?.fixed) return true
-			const fixedLeftCount = cols.filter((c: TableColumnSchema) => c.fixed === 'left').length
-			const fixedRightCount = cols.filter((c: TableColumnSchema) => c.fixed === 'right').length
-			const total = cols.length
-			if (targetIdx < fixedLeftCount) return false
-			if (targetIdx >= total - fixedRightCount) return false
-			return true
-		},
-		onEnd: evt => {
-			const { oldIndex, newIndex } = evt
-			if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
-			const arr = [...columns.value]
-			const [moved] = arr.splice(oldIndex, 1)
-			arr.splice(newIndex, 0, moved)
-			columns.value = arr
-		}
+	destroySortables()
+
+	// 根：只重排顶层（分组容器 + 未分组叶子），保护固定列区
+	sortableInstances.push(
+		new Sortable(el, {
+			animation: 150,
+			// .column-group-children：忽略组内叶子的拖拽（交给各自的子 Sortable），避免根实例把整组拖走
+			filter: '.is-fixed, .column-group-children',
+			preventOnFilter: false,
+			onMove: evt => {
+				const items = Array.from(el.children)
+				const draggedIdx = items.indexOf(evt.dragged)
+				const targetIdx = items.indexOf(evt.related)
+				const cols = columns.value
+				const draggedCol = cols[draggedIdx]
+				if (draggedCol?.fixed) return true
+				const fixedLeftCount = cols.filter((c: TableColumnSchema) => c.fixed === 'left').length
+				const fixedRightCount = cols.filter((c: TableColumnSchema) => c.fixed === 'right').length
+				const total = cols.length
+				if (targetIdx < fixedLeftCount) return false
+				if (targetIdx >= total - fixedRightCount) return false
+				return true
+			},
+			onEnd: evt => {
+				const { oldIndex, newIndex } = evt
+				if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
+				columns.value = reorder(columns.value, oldIndex, newIndex)
+			}
+		})
+	)
+
+	// 每个分组的子列表：组内重排，pull/put=false 从机制上禁止跨组移动
+	el.querySelectorAll<HTMLElement>('.column-group-children').forEach(childEl => {
+		const groupKey = childEl.dataset.groupKey
+		if (!groupKey) return
+		sortableInstances.push(
+			new Sortable(childEl, {
+				animation: 150,
+				group: { name: `grp-${groupKey}`, pull: false, put: false },
+				filter: '.is-fixed',
+				preventOnFilter: false,
+				onEnd: evt => {
+					const { oldIndex, newIndex } = evt
+					if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
+					columns.value = columns.value.map(c => (c.key === groupKey ? { ...c, children: reorder(c.children ?? [], oldIndex, newIndex) } : c))
+				}
+			})
+		)
 	})
 }
 
+// 递归定位并更新指定 key 的列（不可变）；未命中返回原数组引用
+const updateColumnByKey = (list: TableColumnSchema[], key: string, patch: (col: TableColumnSchema) => Partial<TableColumnSchema>): TableColumnSchema[] => {
+	let changed = false
+	const next = list.map(col => {
+		if (col.key === key) {
+			changed = true
+			return { ...col, ...patch(col) }
+		}
+		if (col.children?.length) {
+			const newChildren = updateColumnByKey(col.children, key, patch)
+			if (newChildren !== col.children) {
+				changed = true
+				return { ...col, children: newChildren }
+			}
+		}
+		return col
+	})
+	return changed ? next : list
+}
+
 const toggleColumnVisible = (col: TableColumnSchema, visible: boolean | string | number) => {
-	const idx = columns.value.findIndex((c: TableColumnSchema) => c.key === col.key)
-	if (idx === -1) return
-	const updated = [...columns.value]
-	updated[idx] = { ...updated[idx], visible: !!visible }
-	columns.value = updated
+	columns.value = updateColumnByKey(columns.value, col.key, () => ({ visible: !!visible }))
 }
 
 const toggleFixed = (col: TableColumnSchema, direction: 'left' | 'right') => {
-	const idx = columns.value.findIndex(c => c.key === col.key)
-	if (idx === -1) return
-	const updated = [...columns.value]
-	updated[idx] = { ...updated[idx], fixed: col.fixed === direction ? false : direction }
-	columns.value = updated
+	columns.value = updateColumnByKey(columns.value, col.key, c => ({ fixed: c.fixed === direction ? false : direction }))
 }
 
 const resetColumns = () => {
@@ -298,12 +360,7 @@ const saveRename = () => {
 	if (!editingKey.value) return
 	const trimmed = editingTitle.value.trim()
 	if (trimmed) {
-		const idx = columns.value.findIndex(c => c.key === editingKey.value)
-		if (idx !== -1) {
-			const updated = [...columns.value]
-			updated[idx] = { ...updated[idx], label: trimmed }
-			columns.value = updated
-		}
+		columns.value = updateColumnByKey(columns.value, editingKey.value, () => ({ label: trimmed }))
 	}
 	editingKey.value = null
 }
@@ -316,6 +373,16 @@ const cancelRename = () => {
 const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	const defaults = defaultTableColumnOptions()
 	const result: Record<string, any> = {}
+	// 分组列：仅作父表头，不下发 prop / formatter / showOverflowTooltip / sortable（对纯表头无意义）
+	if (col.children?.length) {
+		if (col.label) result.label = col.label
+		if (col.width) result.width = col.width
+		if (col.minWidth) result.minWidth = col.minWidth
+		if (col.fixed) result.fixed = col.fixed
+		result.align = col.align ?? defaults.align
+		if (col.headerAlign) result.headerAlign = col.headerAlign
+		return result
+	}
 	if (col.type) result.type = col.type
 	if (col.prop) result.prop = col.prop
 	else if (col.key && !col.type) result.prop = col.key
@@ -339,8 +406,7 @@ const cardRef = ref()
 defineExpose({ tableRef, cardRef })
 
 onUnmounted(() => {
-	sortableInstance?.destroy()
-	sortableInstance = null
+	destroySortables()
 })
 </script>
 
@@ -399,73 +465,16 @@ onUnmounted(() => {
 	flex-direction: column;
 	gap: 2px;
 }
-.column-list-item {
+/* 分组容器：作为根 Sortable 的拖拽单元 */
+.column-group {
 	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 4px 8px;
-	border-radius: 4px;
-	cursor: grab;
-	transition: background-color 0.15s;
-}
-.column-list-item:hover {
-	background-color: var(--el-fill-color-light);
-}
-.column-list-item.is-fixed {
-	cursor: default;
-	opacity: 0.7;
-}
-.column-list-item.is-fixed:hover {
-	background-color: transparent;
-}
-.column-list-item .drag-handle {
-	display: flex;
-	align-items: center;
-	color: var(--el-text-color-placeholder);
-	flex-shrink: 0;
-}
-.column-list-item.is-fixed .drag-handle {
-	color: var(--el-text-color-disabled);
-}
-.column-list-item.is-editing .drag-handle,
-.column-list-item.is-editing .pin-btn,
-.column-list-item.is-editing .rename-btn {
-	display: none;
-}
-.rename-input {
-	flex: 1;
-	min-width: 0;
-}
-.rename-btns {
-	display: flex;
+	flex-direction: column;
 	gap: 2px;
-	flex-shrink: 0;
+	border-radius: 4px;
 }
-.rename-btn {
-	opacity: 0;
-	transition: opacity 0.2s;
-	flex-shrink: 0;
-}
-.column-list-item:hover .rename-btn {
-	opacity: 1;
-}
-.pin-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 22px;
-	height: 22px;
-	border: none;
-	background: transparent;
-	color: var(--el-text-color-secondary);
-	cursor: pointer;
-	border-radius: 3px;
-	flex-shrink: 0;
-}
-.pin-btn:hover {
-	background-color: var(--el-fill-color);
-}
-.pin-btn.is-active {
-	color: var(--el-color-primary);
+.column-group-children {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 </style>

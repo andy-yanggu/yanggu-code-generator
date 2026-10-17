@@ -17,8 +17,25 @@ const defaultSearchFieldOptions = (): Partial<SearchFieldSchema> => ({
 })
 
 // ======== 派生函数 ========
+
+/**
+ * 拍平字段树：分组节点（含 children）本身不进表单/查询，用其叶子字段替代。
+ * 当前仅 2 层，递归实现以防未来放宽层级。
+ */
+const flattenLeafFields = (fields: CrudField[]): CrudField[] => {
+	const result: CrudField[] = []
+	for (const f of fields) {
+		if (f.children?.length) {
+			result.push(...flattenLeafFields(f.children))
+		} else {
+			result.push(f)
+		}
+	}
+	return result
+}
+
 const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
-	return fields
+	return flattenLeafFields(fields)
 		.filter(f => f.inForm)
 		.map(f => {
 			// 顶层共享属性注入 form 子对象
@@ -31,7 +48,7 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 }
 
 const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
-	return fields
+	return flattenLeafFields(fields)
 		.filter(f => f.inSearch)
 		.map(f => {
 			// 顶层共享属性注入 search 子对象
@@ -42,19 +59,22 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 		})
 }
 
+/** 由单个 CrudField 构建表格列；分组节点（含 children）递归构建子列，且自身不带 prop */
+const buildColumn = (f: CrudField): TableColumnSchema => {
+	const base: Partial<TableColumnSchema> = {}
+	if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
+	if (f.children?.length) {
+		const children = f.children.filter(c => c.inTable).map(buildColumn)
+		return defaultsDeep({ key: f.key, label: f.label, ...base, ...f.table, children }, defaultTableColumnOptions())
+	}
+	return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, defaultTableColumnOptions())
+}
+
 const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConfig']): TableColumnSchema[] => {
 	const cols: TableColumnSchema[] = []
 	if (opts?.showSelection !== false) cols.push(createBuiltinSelection())
 	if (opts?.showIndex !== false) cols.push(createBuiltinIndex())
-	cols.push(
-		...fields
-			.filter(f => f.inTable)
-			.map(f => {
-				const base: Partial<TableColumnSchema> = {}
-				if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
-				return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, defaultTableColumnOptions())
-			})
-	)
+	cols.push(...fields.filter(f => f.inTable).map(buildColumn))
 	if (opts?.showCreateTime !== false) cols.push(createBuiltinCreateTime())
 	if (opts?.showUpdateTime !== false) cols.push(createBuiltinUpdateTime())
 	if (opts?.showOperation !== false) cols.push(createBuiltinOperation())
