@@ -6,11 +6,11 @@
 		size="30%"
 		body-class="system-setting-drawer-body"
 		footer-class="system-setting-drawer-footer"
-		destroy-on-close>
+		destroy-on-close
+	>
 		<el-scrollbar>
-			<div class="drawer-content">
-				<div>
-					<el-divider>菜单设置</el-divider>
+			<el-collapse ref="collapseRef" v-model="activeCollapseItems" class="system-setting-collapse">
+				<el-collapse-item title="菜单设置" name="menu">
 					<setting-item v-model="systemSettingStore.menu.isOpenLogo" label="展示logo"></setting-item>
 					<el-row class="setting-row">
 						<el-text class="setting-label">折叠宽度</el-text>
@@ -21,7 +21,8 @@
 								:min="MENU_FOLD_WIDTH.min"
 								:max="MENU_FOLD_WIDTH.max"
 								:format-tooltip="(val: number) => val + 'px'"
-								class="setting-slider"></el-slider>
+								class="setting-slider"
+							></el-slider>
 							<el-text class="setting-range">{{ MENU_FOLD_WIDTH.max }}px</el-text>
 							<el-text class="setting-value">{{ systemSettingStore.menu.menuFoldWidth }}px</el-text>
 						</div>
@@ -35,7 +36,8 @@
 								:min="MENU_EXPAND_WIDTH.min"
 								:max="MENU_EXPAND_WIDTH.max"
 								:format-tooltip="(val: number) => val + 'px'"
-								class="setting-slider"></el-slider>
+								class="setting-slider"
+							></el-slider>
 							<el-text class="setting-range">{{ MENU_EXPAND_WIDTH.max }}px</el-text>
 							<el-text class="setting-value">{{ systemSettingStore.menu.menuExpandWidth }}px</el-text>
 						</div>
@@ -43,11 +45,13 @@
 					<setting-item
 						v-model="systemSettingStore.menu.isOpenMenuCollapseAnimation"
 						label="展开收起动画"
-						tooltip="开启后菜单展开和收起时会有平滑过渡动画效果"></setting-item>
+						tooltip="开启后菜单展开和收起时会有平滑过渡动画效果"
+					></setting-item>
 					<setting-item
 						v-model="systemSettingStore.menu.isOpenMenuUniqueOpened"
 						label="手风琴模式"
-						tooltip="开启后同一时间只允许一个子菜单展开，打开新子菜单时其他子菜单自动收起"></setting-item>
+						tooltip="开启后同一时间只允许一个子菜单展开，打开新子菜单时其他子菜单自动收起"
+					></setting-item>
 					<el-row class="setting-row">
 						<el-text style="margin-right: 5px">默认菜单</el-text>
 						<div style="display: flex; align-items: center">
@@ -59,16 +63,16 @@
 								filterable
 								default-expand-all
 								placeholder="请选择默认菜单"
-								style="width: 180px">
+								style="width: 180px"
+							>
 								<template #default="{ data }">
 									<icon-text-tooltip :icon="data.meta.icon" :title="menuPreferenceStore.getEffective(data.path, data.meta).title"></icon-text-tooltip>
 								</template>
 							</el-tree-select>
 						</div>
 					</el-row>
-				</div>
-				<div>
-					<el-divider>工具栏设置</el-divider>
+				</el-collapse-item>
+				<el-collapse-item title="工具栏设置" name="toolbar">
 					<setting-item v-model="systemSettingStore.toolbar.isOpenMenuCollapseButton" label="菜单展开/折叠按钮"></setting-item>
 					<setting-item v-model="systemSettingStore.toolbar.isOpenBreadcrumb" label="面包屑"></setting-item>
 					<setting-item v-model="systemSettingStore.toolbar.isOpenBreadcrumbIcon" label="面包屑图标"></setting-item>
@@ -77,40 +81,42 @@
 					<setting-item v-model="systemSettingStore.toolbar.isOpenLayoutSetting" label="布局大小"></setting-item>
 					<setting-item v-model="systemSettingStore.toolbar.isOpenFullscreen" label="开启/退出全屏"></setting-item>
 					<setting-item v-model="systemSettingStore.toolbar.isOpenThemeSwitch" label="日间/夜间主题切换"></setting-item>
-				</div>
-				<div>
-					<el-divider>标签页设置</el-divider>
+				</el-collapse-item>
+				<el-collapse-item title="标签页设置" name="tag">
 					<setting-item v-model="systemSettingStore.tag.isOpenTag" label="启用"></setting-item>
 					<setting-item v-model="systemSettingStore.tag.isOpenTagIcon" label="图标"></setting-item>
 					<setting-item
 						v-model="systemSettingStore.tag.isOpenTagCache"
 						label="持久化"
-						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"></setting-item>
+						tooltip="开启后即使刷新页面或重启浏览器已打开的标签页仍将保留"
+					></setting-item>
 					<setting-item
 						v-model="systemSettingStore.tag.isOpenTagDragActivated"
 						label="拖拽后激活标签"
-						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"></setting-item>
-				</div>
-				<div>
-					<el-divider>其他设置</el-divider>
+						tooltip="开启后拖拽标签页位置时会自动激活被拖拽的标签页"
+					></setting-item>
+				</el-collapse-item>
+				<el-collapse-item title="其他设置" name="other">
 					<setting-item
 						v-model="systemSettingStore.other.isOpenPageCache"
 						label="页面缓存"
-						tooltip="开启后切换菜单时页面数据保留，避免重复加载"></setting-item>
+						tooltip="开启后切换菜单时页面数据保留，避免重复加载"
+					></setting-item>
 					<setting-item
 						v-model="systemSettingStore.other.isOpenDynamicTitle"
 						label="动态标题"
-						tooltip="开启后页面标题会根据当前菜单动态显示"></setting-item>
+						tooltip="开启后页面标题会根据当前菜单动态显示"
+					></setting-item>
 					<setting-item
 						v-model="systemSettingStore.other.isOpenProgress"
 						label="载入进度条"
-						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"></setting-item>
-				</div>
-				<div>
-					<el-divider>菜单偏好设置</el-divider>
+						tooltip="开启后切换菜单或者刷新页面时会看到页面顶部有进度条"
+					></setting-item>
+				</el-collapse-item>
+				<el-collapse-item title="菜单偏好设置" name="menuPreference">
 					<menu-preference-section></menu-preference-section>
-				</div>
-			</div>
+				</el-collapse-item>
+			</el-collapse>
 		</el-scrollbar>
 		<template #footer>
 			<el-button :icon="CopyDocument" type="primary" size="small" @click="copySystemSetting()">复制设置</el-button>
@@ -140,10 +146,21 @@ const cacheStore = useCacheStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
 const menuPreferenceStore = useMenuPreferenceStore()
+const collapseRef = ref()
 const router = useRouter()
 
 const visible = ref(false)
+const ALL_COLLAPSE_NAMES = () => ['menu', 'toolbar', 'tag', 'other', 'menuPreference']
+const activeCollapseItems = ref(ALL_COLLAPSE_NAMES())
 const route = useRoute()
+
+watch(visible, newValue => {
+	if (newValue) {
+		nextTick(() => {
+			collapseRef.value?.setActiveNames(ALL_COLLAPSE_NAMES())
+		})
+	}
+})
 
 // 递归查找菜单标题
 const findMenuTitle = (menuList: MenuInfo[], targetPath: string): string | null => {
@@ -317,6 +334,29 @@ const handlerResetSystemSetting = () => {
 }
 </style>
 <style scoped lang="scss">
+:deep(.system-setting-collapse) {
+	border: none;
+	--el-collapse-header-bg-color: transparent;
+	--el-collapse-content-bg-color: transparent;
+	> .el-collapse-item {
+		margin-bottom: 4px;
+		> .el-collapse-item__header {
+			height: 34px;
+			padding: 0 20px 0 14px;
+			border-bottom: 1px solid var(--el-border-color-lighter);
+			border-left: 3px solid var(--el-color-primary);
+			background-color: var(--el-fill-color-light);
+			font-size: 14px;
+			> .el-collapse-item__arrow {
+				margin-right: 30px;
+			}
+		}
+	}
+	> .el-collapse-item:last-child {
+		margin-bottom: 0;
+	}
+}
+
 .setting-icon {
 	cursor: pointer;
 }
@@ -359,9 +399,5 @@ const handlerResetSystemSetting = () => {
 
 .setting-tree-select {
 	width: 180px;
-}
-
-.drawer-content {
-	padding: 0 15px 15px 15px;
 }
 </style>
