@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import MenuItemContent from '@/layout/sidebar/components/menu/menu-item-content.vue'
 import MenuLink from '@/layout/sidebar/components/menu/menu-link.vue'
-import { useMenuPreferenceStore } from '@/store'
+import { useMenuPreference } from '@/hooks/use-menu-preference'
 import { MenuInfo } from '@/types'
 import { isNotEmpty } from '@/utils/tool'
 
@@ -50,12 +50,8 @@ const props = defineProps({
 	}
 })
 
-const menuPreferenceStore = useMenuPreferenceStore()
-
-// 计算有效值（用户偏好 > 服务端默认，一次调用拿到全部）
-const effective = computed(() =>
-	menuPreferenceStore.getEffective(props.menu.path, props.menu.meta)
-)
+// 计算有效值（用户偏好 > 服务端默认，响应式，一次拿到全部字段）
+const { effective } = useMenuPreference(() => props.menu.path)
 
 // 计算菜单项的完整路径索引
 const menuIndexPath = computed(() => {

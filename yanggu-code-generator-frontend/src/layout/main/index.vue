@@ -39,10 +39,10 @@
 
 <script setup lang="ts">
 import IframeContainer from '@/layout/main/components/iframe-container.vue'
-import { useCacheStore, useMenuPreferenceStore, useSystemSettingStore } from '@/store'
+import { useCacheStore, useSystemSettingStore } from '@/store'
 import { useLayout } from '@/hooks/use-layout'
+import { useCurrentMenuPreference } from '@/hooks/use-menu-preference'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { ROUTE_META_DEFAULTS } from '@/config/router'
 
 defineOptions({
 	name: 'LayoutMain'
@@ -51,14 +51,10 @@ defineOptions({
 const route = useRoute()
 const cacheStore = useCacheStore()
 const systemSettingStore = useSystemSettingStore()
-const menuPreferenceStore = useMenuPreferenceStore()
 const { layoutScrollbarRef } = useLayout()
 
-// 判断 iframe 是否开启缓存（考虑用户偏好）
-const isIframeCached = (path: string, serverCache: boolean): boolean => {
-	const { cache } = menuPreferenceStore.getEffective(path, { cache: serverCache })
-	return cache
-}
+// 当前路由的有效缓存值（用户偏好 > 服务端默认，响应式）
+const { cache: effectiveCache } = useCurrentMenuPreference()
 
 /**
  * 当前路由页面是否应该被 keep-alive 缓存
@@ -67,14 +63,14 @@ const isIframeCached = (path: string, serverCache: boolean): boolean => {
  * - 缓存 iframe(type=3)：不走 keep-alive，由 iframe-container 池化管理
  */
 const shouldCachePage = computed(() => {
-	const { type, cache } = route.meta
+	const { type } = route.meta
 	// 业务菜单
 	if (type === 1) {
 		return true
 	}
 	// 非缓存的 iframe（缓存的 iframe 交给 iframe-container 处理）
 	if (type === 3) {
-		return !isIframeCached(route.path, (cache as boolean) || ROUTE_META_DEFAULTS.cache)
+		return !effectiveCache.value
 	}
 	return false
 })
@@ -83,9 +79,8 @@ const shouldCachePage = computed(() => {
 watch(
 	() => route.fullPath,
 	() => {
-		const { cache: effectiveCache } = menuPreferenceStore.getEffective(route.path, route.meta)
 		// 如果全局页面缓存关闭 或者 页面本身不缓存，则滚动到顶部
-		if (!systemSettingStore.other.isOpenPageCache || !effectiveCache) {
+		if (!systemSettingStore.other.isOpenPageCache || !effectiveCache.value) {
 			layoutScrollbarRef.value?.scrollTo({ top: 0, left: 0 })
 		}
 	}

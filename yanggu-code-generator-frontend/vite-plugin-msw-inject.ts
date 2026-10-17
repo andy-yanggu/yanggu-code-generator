@@ -9,7 +9,7 @@ import type { Plugin } from 'vite'
  *
  * 启用条件：开发环境 + VITE_ENABLE_MOCK=true
  */
-export function mswInjectPlugin(): Plugin {
+export const mswInjectPlugin = (): Plugin => {
 	let enableMock = false
 
 	return {

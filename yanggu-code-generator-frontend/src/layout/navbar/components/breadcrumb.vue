@@ -2,11 +2,8 @@
 	<el-breadcrumb separator="/">
 		<el-breadcrumb-item v-for="item in breadcrumbList" :key="item.title">
 			<template #default>
-				<icon-text-tooltip
-					:enable-icon="systemSettingStore.toolbar.isOpenBreadcrumbIcon"
-					:icon="item.icon"
-					:title="item.title"
-					placement="bottom"></icon-text-tooltip>
+				<icon-text-tooltip :enable-icon="systemSettingStore.toolbar.isOpenBreadcrumbIcon" :icon="item.icon" :title="item.title" placement="bottom">
+				</icon-text-tooltip>
 			</template>
 		</el-breadcrumb-item>
 	</el-breadcrumb>
@@ -15,7 +12,6 @@
 <script setup lang="ts">
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 import { useMenuPreferenceStore, useSystemSettingStore } from '@/store'
-import { titleChangeBus } from '@/utils/event-bus'
 
 defineOptions({
 	name: 'Breadcrumb'
@@ -34,71 +30,26 @@ const router = useRouter()
 const systemSettingStore = useSystemSettingStore()
 const menuPreferenceStore = useMenuPreferenceStore()
 
-// 面包屑列表
-const breadcrumbList = ref([] as Breadcrumb[])
-
-// 挂载时设置面包屑
-onMounted(() => {
-	setBreadcrumb(route.fullPath)
-})
-
-// 动态设置面包屑
-watch(
-	() => route.fullPath,
-	newPath => {
-		if (newPath.startsWith('/redirect')) {
-			return
-		}
-		setBreadcrumb(newPath)
-	}
-)
-
-// 监听 title 偏好变更，实时刷新面包屑
-const stopTitleListener = titleChangeBus.on(() => {
-	if (!route.fullPath.startsWith('/redirect')) {
-		setBreadcrumb(route.fullPath)
-	}
-})
-
-onUnmounted(() => {
-	stopTitleListener()
-})
-
-// 设置面包屑
-const setBreadcrumb = (fullPath: string) => {
+// 面包屑列表：computed 同时依赖 route.path 与 preferenceMap
+// → 路由切换、title 偏好变更时都会自动重算，无需再监听 titleChangeBus
+const breadcrumbList = computed<Breadcrumb[]>(() => {
+	// /redirect 是刷新页面用的过渡路由，剥掉前缀直接展示目标路径，避免闪烁
+	const basePath = route.path.replace(/^\/redirect/, '')
 	const matched: Breadcrumb[] = []
-	const paths = fullPath.split('/').filter(p => p)
 
 	let currentPath = ''
-	for (const path of paths) {
-		currentPath += `/${path}`
-		const breadcrumb = findRouteByPath(currentPath)
-		if (breadcrumb.title) {
-			matched.push(breadcrumb)
+	for (const seg of basePath.split('/').filter(p => p)) {
+		currentPath += `/${seg}`
+		// 使用 Vue Router 的路径匹配算法解析 meta
+		const resolved = router.resolve(currentPath)
+		if (resolved?.meta?.title) {
+			// 有效标题：用户偏好 > 服务端默认
+			const { title } = menuPreferenceStore.getEffective(currentPath, { title: resolved.meta.title as string })
+			matched.push({ title, icon: resolved.meta.icon as string })
 		}
 	}
-	breadcrumbList.value = matched
-}
-
-/**
- * 查找路径对应的 meta.title
- */
-const findRouteByPath = (targetPath: string): Breadcrumb => {
-	// 使用 Vue Router 的路径匹配算法
-	const matchedRoute = router.resolve(targetPath)
-
-	if (matchedRoute?.meta?.title) {
-		const { title: effectiveTitle } = menuPreferenceStore.getEffective(targetPath, {
-			title: matchedRoute.meta.title as string
-		})
-		return {
-			title: effectiveTitle,
-			icon: matchedRoute.meta.icon as string
-		}
-	} else {
-		return { title: '', icon: '' }
-	}
-}
+	return matched
+})
 </script>
 <style scoped>
 :deep(.el-breadcrumb__inner),

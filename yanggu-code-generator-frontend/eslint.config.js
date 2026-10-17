@@ -26,6 +26,8 @@ export default [
 		},
 		rules: {
 			curly: 'error',
+			// 全局规则：统一使用 const 箭头/函数表达式定义函数，禁止 function 声明
+			'func-style': ['error', 'expression'],
 			'vue/multi-word-component-names': 'off',
 			'no-unused-vars': 'off',
 			'@typescript-eslint/no-unused-vars': [
