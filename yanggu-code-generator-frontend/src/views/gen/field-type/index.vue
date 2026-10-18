@@ -62,7 +62,7 @@ const tableConfig = reactive({
 	dataListApi: genFieldTypeApi.entityPage,
 	deleteApi: genFieldTypeApi.deleteList,
 	deleteNameKey: 'columnType',
-	tableKey: 'gen-field-type-test'
+	tableKey: 'gen-field-type'
 } as UseCrudTableOptions)
 
 // 统一 hook：fields 自动派生 formSchema / searchSchema / tableColumns

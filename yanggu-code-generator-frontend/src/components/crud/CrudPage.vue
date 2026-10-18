@@ -59,7 +59,7 @@ defineOptions({
 // 用具名契约类型而不是 ReturnType<typeof useCrudTable>：后者拿到的是未实例化的泛型签名，
 // 只能用默认实参展开成 <any, any>，与页面侧的具体实体实例化结果比较时会报 TS2719。
 // 具名接口有稳定的类型身份，默认实参下各属性退化为 any，页面传具体类型仍可直接赋值。
-const props = defineProps<{
+defineProps<{
 	tableHook: UseCrudTableReturn
 	formHook: UseCrudFormReturn
 }>()
