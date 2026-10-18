@@ -93,20 +93,78 @@ export interface TableColumnSchema {
 	children?: TableColumnSchema[]
 }
 
+// el-table sort-change 事件负载（order 为 null 表示取消排序）
+export interface SortChangePayload {
+	prop: string
+	order: 'ascending' | 'descending' | null
+}
+
+/**
+ * 归一化后的搜索字段：key / prop / component / placeholder / width 均已补全。
+ * 下游（SearchForm、DynamicField、buildQueryForm）可安全地把这些属性当非空使用，无需 ! 断言。
+ */
+export type NormalizedSearchField = SearchFieldSchema & {
+	key: string
+	prop: string
+	component: ComponentType
+	placeholder: string
+	width: number | string
+}
+
+/**
+ * 归一化后的表单字段：key / prop 均已补全。
+ * FormField 用它作索引类型（model[field.prop]），避免 TS2538「undefined 不能作索引类型」。
+ */
+export type NormalizedFormField = FormFieldSchema & {
+	key: string
+	prop: string
+}
+
+// 区间选择类组件：渲染为 el-date-picker 的 range 形态，使用起止占位符而非 placeholder
+const RANGE_COMPONENTS: ComponentType[] = ['date-range', 'datetime-range']
+
+// 搜索字段默认宽度（区间选择器需容纳起止两个值，比普通字段宽）
+const DEFAULT_SEARCH_WIDTH: Partial<Record<ComponentType, number>> = {
+	'date-range': 260,
+	'datetime-range': 380
+}
+
+/**
+ * key / prop 互为兜底并校验非空。
+ *
+ * 归一化函数的返回类型承诺 key/prop 是 string，必须在运行时落实：
+ * 两者都缺时插槽名会退化成 field-undefined、el-form-item 的 prop 为 undefined
+ * 会导致该字段的校验规则静默失效（必填不生效且全程无任何报错）。
+ */
+const resolveFieldIdentity = (field: SearchFieldSchema | FormFieldSchema) => {
+	const key = field.key ?? field.prop
+	const prop = field.prop ?? key
+	if (!key || !prop) {
+		throw new Error(`[crud] 字段缺少 key/prop，无法归一化：${field.label ?? JSON.stringify(field)}`)
+	}
+	return { key, prop }
+}
+
 // 归一化搜索字段（补全默认值）
-export const normalizeSearchField = (
-	field: SearchFieldSchema
-): SearchFieldSchema & { key: string; prop: string; component: ComponentType; placeholder: string; width: number | string } => {
+export const normalizeSearchField = (field: SearchFieldSchema): NormalizedSearchField => {
+	const { key, prop } = resolveFieldIdentity(field)
 	const component = field.component ?? 'input'
-	const placeholder = field.placeholder ?? (component === 'select' ? `请选择${field.label}` : `请输入${field.label}`)
+	const isRange = RANGE_COMPONENTS.includes(component)
+	const placeholder = field.placeholder ?? (isRange ? '' : component === 'select' ? `请选择${field.label}` : `请输入${field.label}`)
 	return {
 		...field,
-		key: field.key ?? field.prop,
-		prop: field.prop ?? field.key,
+		key,
+		prop,
 		component,
 		placeholder,
-		width: field.width ?? 160
+		width: field.width ?? DEFAULT_SEARCH_WIDTH[component] ?? 160
 	}
+}
+
+// 归一化表单字段（补全 prop）
+export const normalizeFormField = (field: FormFieldSchema): NormalizedFormField => {
+	const { key, prop } = resolveFieldIdentity(field)
+	return { ...field, key, prop }
 }
 
 // 统一字段声明（一份 fields 派生 formSchema / searchSchema / tableColumns）

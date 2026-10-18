@@ -1,4 +1,6 @@
 import type { UseCrudOptions } from '@/types/hooks/use-crud'
+import type { UseCrudFormReturn } from '@/types/hooks/use-crud-form'
+import type { UseCrudTableReturn } from '@/types/hooks/use-crud-table'
 import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
 import { defaultsDeep } from '@/utils/tool'
 import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, defaultTableColumnOptions, useCrudTable } from './use-crud-table'
@@ -91,7 +93,9 @@ const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConf
  * 1. fields 模式：提供 fields 数组，自动派生 formSchema / searchSchema / tableColumns
  * 2. 传统模式：直接传 formSchema / searchSchema / tableColumns（向后兼容）
  */
-export const useCrud = <VO = any, Query = any, DTO = any>(opts: UseCrudOptions<VO, Query, DTO>) => {
+export const useCrud = <VO = any, Query = any, DTO = any>(
+	opts: UseCrudOptions<VO, Query, DTO>
+): { tableHook: UseCrudTableReturn<VO, Query>; formHook: UseCrudFormReturn<DTO> } => {
 	// ====== 默认值 ======
 	const defaultOptions = (): Partial<UseCrudOptions<VO, Query, DTO>> => ({
 		primaryKey: 'id',

@@ -10,7 +10,10 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 	const activeState = states.find(s => s.isActive)!
 	const inactiveState = states.find(s => !s.isActive)!
 
-	const textMap = Object.fromEntries(states.map(s => [s.value, s.text])) as Record<T, string>
+	// Map 的 key 类型没有 string|number|symbol 约束，可以容纳 boolean 等任意开关值；
+	// 若写成 Record<T, string>，TS 会要求 T extends string|number|symbol，
+	// 而开关字段常见的是 boolean 或 0/1，加约束反而会让所有调用方报 TS2345。
+	const textMap = new Map<T, string>(states.map(s => [s.value, s.text] as [T, string]))
 
 	const getOldValue = (newValue: T): T => (newValue === activeState.value ? inactiveState.value : activeState.value)
 
@@ -28,8 +31,9 @@ export const useSwitchChangeHandler = <T = any>(config: SwitchUpdateConfig<T>) =
 
 	const switchSubmitHandler = (newValue: T, row: any) => {
 		const oldValue = getOldValue(newValue)
-		const oldText = textMap[oldValue]
-		const newText = textMap[newValue]
+		// states 只有两项且已校验，正常不会取不到；?? '' 只为消除 undefined 传入文案函数的可能
+		const oldText = textMap.get(oldValue) ?? ''
+		const newText = textMap.get(newValue) ?? ''
 		const confirmValue: string = String(row[confirmField])
 
 		ElMessageBox.confirm(getConfirmMessage(confirmValue, confirmFieldText, newText), '提示', {

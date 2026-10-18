@@ -1,7 +1,7 @@
 import type { Key } from '@/types/common'
-import type { MaybeRefOrGetter } from 'vue'
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue'
 import type { FormItemRule } from 'element-plus'
-import type { FormFieldSchema } from '@/types/schema'
+import type { FormFieldSchema, FormMode, NormalizedFormField } from '@/types/schema'
 
 /**
  * useCrudForm 配置选项
@@ -56,4 +56,46 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	// ---- 消息 ----
 	/** 自定义成功消息（字符串或按模式返回字符串的函数） */
 	successMessage?: string | ((mode: string) => string)
+}
+
+/**
+ * useCrudForm 返回值契约
+ *
+ * 存在的理由同 UseCrudTableReturn：避开 `ReturnType<typeof useCrudForm>` 在泛型函数上
+ * 只能用默认实参实例化、从而与页面侧具体实体类型比较时报 TS2719 的问题。
+ *
+ * 只带 DTO 一个类型形参：返回值对外暴露的数据只有 form.data（DTO 形态）。
+ * VO 只在 options 侧参与 detailApi / beforeDataAssign / afterDataAssign，
+ * 写进返回值契约会成为一个从未被使用的类型形参（eslint no-unused-vars 报错）。
+ */
+export interface UseCrudFormReturn<DTO = any> {
+	/** 归一化后的表单字段（key/prop 已补全） */
+	formSchema: NormalizedFormField[]
+	dialog: {
+		visible: boolean
+		mode: FormMode
+		title: string
+		/** 详情接口加载中；true 时禁止提交，避免把未填充的空表单写回后端 */
+		detailLoading: boolean
+		open: (mode: FormMode, id?: Key) => void
+		close: () => void
+	}
+	/**
+	 * 表单状态。
+	 *
+	 * 注意：本组由 shallowReactive 包裹，**不会**解包内部的 ref / computed，
+	 * 所以 rules 与 formRef 在契约里仍是 Ref 形态（模板中需写 formHook.form.rules.value）。
+	 * 不能改成 reactive：formRef 一旦被解包，CrudDialog 的 `:ref="formHook.form.formRef"`
+	 * 就会拿到组件实例而不是 Ref 对象，el-form 的校验/重置将全部失效。
+	 */
+	form: {
+		data: DTO
+		rules: ComputedRef<Record<string, FormItemRule[]>>
+		labelWidth: string
+		formRef: Ref<any>
+	}
+	submit: {
+		execute: () => void
+		loading: boolean
+	}
 }

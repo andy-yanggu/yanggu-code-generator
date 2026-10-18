@@ -18,12 +18,14 @@ const props = defineProps<{
 	field: FormFieldSchema
 }>()
 
-// 选择类组件用"请选择"，其他用"请输入"
+// 选择类组件用"请选择"，其他用"请输入"；区间选择类用起止占位符，不使用 placeholder
 const SELECT_TYPES = new Set(['select', 'radio', 'checkbox', 'tree-select', 'cascader'])
+const RANGE_TYPES = new Set(['date-range', 'datetime-range'])
 
 const computedPlaceholder = computed(() => {
 	if (props.field.placeholder) return props.field.placeholder
 	const component = props.field.component ?? 'input'
+	if (RANGE_TYPES.has(component)) return ''
 	const prefix = SELECT_TYPES.has(component) ? '请选择' : '请输入'
 	return `${prefix}${props.field.label}`
 })
@@ -47,6 +49,8 @@ const currentComponent = computed(() => {
 			return ElSwitch
 		case 'date-picker':
 		case 'datetime-picker':
+		case 'date-range':
+		case 'datetime-range':
 			return ElDatePicker
 		case 'input-number':
 			return ElInputNumber
@@ -65,11 +69,23 @@ const getComponentProps = computed(() => {
 	const placeholder = computedPlaceholder.value
 	const { options, filterable, width } = props.field
 
+	const style = width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined
+
 	const baseProps: Record<string, any> = {
 		placeholder,
 		clearable: true,
 		filterable,
-		style: width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined
+		style
+	}
+
+	// 区间选择器不吃 placeholder，改用起止占位符
+	const rangeBaseProps: Record<string, any> = {
+		clearable: true,
+		startPlaceholder: '开始日期',
+		endPlaceholder: '结束日期',
+		rangeSeparator: '至',
+		unlinkPanels: true,
+		style
 	}
 
 	switch (component) {
@@ -84,6 +100,16 @@ const getComponentProps = computed(() => {
 			return { ...baseProps, type: 'date', valueFormat: 'YYYY-MM-DD' }
 		case 'datetime-picker':
 			return { ...baseProps, type: 'datetime', valueFormat: 'YYYY-MM-DD HH:mm:ss' }
+		case 'date-range':
+			return { ...rangeBaseProps, type: 'daterange', valueFormat: 'YYYY-MM-DD' }
+		case 'datetime-range':
+			return {
+				...rangeBaseProps,
+				type: 'datetimerange',
+				valueFormat: 'YYYY-MM-DD HH:mm:ss',
+				startPlaceholder: '开始时间',
+				endPlaceholder: '结束时间'
+			}
 		case 'tree-select':
 			return { ...baseProps, data: options, checkStrictly: true }
 		case 'cascader':

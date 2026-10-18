@@ -240,7 +240,7 @@
 </template>
 
 <script setup lang="ts">
-import { Action, TabsPaneContext } from 'element-plus'
+import { Action, FilterNodeMethodFunction, TabPaneName, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
@@ -664,11 +664,16 @@ watch(treeSearchText, val => {
 })
 
 // 过滤树节点
-const filterNode = (value: string, data: Tree) => {
+// el-tree 的 filter-node-method 契约是 FilterNodeMethodFunction：
+// (value: FilterValue, data: TreeNodeData, child: Node) => boolean，其中 TreeNodeData = Record<string, any>。
+// 索引签名满足不了 Tree 的必填具名属性，形参逆变检查会报 TS2322，
+// 所以按契约签名声明，函数体内再把 data 断言成 Tree。
+const filterNode: FilterNodeMethodFunction = (value, data) => {
 	if (!value) {
 		return true
 	}
-	return data.fileName.includes(value)
+	const node = data as Tree
+	return node.fileName.includes(String(value))
 }
 
 // tree点击
@@ -1088,7 +1093,11 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 }
 
 // tab删除
-const handleTabRemove = (id: number) => {
+// el-tabs 的 tab-remove 契约是 (name: TabPaneName) => any，TabPaneName = string | number。
+// 形参写窄成 number 会在 strictFunctionTypes 的逆变检查下报 TS2322；
+// 本组件的 tab name 绑定的是 tabItem.id（number），所以按契约接收后再转回 number。
+const handleTabRemove = (name: TabPaneName) => {
+	const id = Number(name)
 	// 找到要删除的 tab
 	const index = templateTreeData.tabList.findIndex(item => item.id === id)
 	if (index <= -1) {

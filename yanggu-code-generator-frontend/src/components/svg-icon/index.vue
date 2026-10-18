@@ -8,29 +8,32 @@ defineOptions({
 	name: 'SvgIcon'
 })
 
-const props = defineProps({
-	// 图标名称（传入时需要带上前缀 icon-）
-	icon: {
-		type: String,
-		required: true
-	},
-	// 图标颜色
-	color: {
-		type: String,
-		default: ''
-	},
-	// 图标大小，支持 px / em / rem
-	size: {
-		type: String,
-		default: '1em'
-	},
-	// 是否为pointer
-	isPointer: {
-		type: Boolean,
-		required: false,
-		default: null
+/**
+ * isPointer 是三态语义，不是普通的布尔开关：
+ * - null / 不传：完全不设置 cursor，由外层样式继承
+ * - true：cursor: pointer
+ * - false：cursor: default
+ *
+ * runtime 声明（type: Boolean）只能表达 boolean | undefined，表达不了 null，
+ * 导致 icon-text-tooltip 透传 null 时报 TS2322；改用类型声明式把三态写进签名。
+ */
+const props = withDefaults(
+	defineProps<{
+		/** 图标名称（传入时需要带上前缀 icon-） */
+		icon: string
+		/** 图标颜色 */
+		color?: string
+		/** 图标大小，支持 px / em / rem */
+		size?: string
+		/** 是否为 pointer */
+		isPointer?: boolean | null
+	}>(),
+	{
+		color: '',
+		size: '1em',
+		isPointer: null
 	}
-})
+)
 
 const svgStyle = computed(() => {
 	const style = {
@@ -39,7 +42,8 @@ const svgStyle = computed(() => {
 		height: props.size,
 		cursor: ''
 	}
-	if (props.isPointer === null) {
+	// 三态：null / undefined（未指定）时不设 cursor，交给外层样式继承
+	if (props.isPointer === null || props.isPointer === undefined) {
 		return style
 	} else if (props.isPointer) {
 		style.cursor = 'pointer'

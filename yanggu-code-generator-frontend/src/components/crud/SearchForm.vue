@@ -56,7 +56,7 @@ const fieldRules = computed<Record<string, FormItemRule[]>>(() => {
 	const rules: Record<string, FormItemRule[]> = {}
 	for (const field of normalizedFields.value) {
 		if (field.ruleList?.length) {
-			rules[field.prop!] = [...field.ruleList]
+			rules[field.prop] = [...field.ruleList]
 		}
 	}
 	return rules

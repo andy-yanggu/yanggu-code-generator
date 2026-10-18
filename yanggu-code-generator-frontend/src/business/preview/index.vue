@@ -171,7 +171,7 @@
 </template>
 
 <script setup lang="ts">
-import { TabsPaneContext } from 'element-plus'
+import { FilterNodeMethodFunction, TabPaneName, TabsPaneContext } from 'element-plus'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi } from '@/api'
@@ -379,7 +379,11 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 }
 
 // tab删除
-const handleTabRemove = (filePath: string) => {
+// el-tabs 的 tab-remove 契约是 (name: TabPaneName) => any，TabPaneName = string | number。
+// 形参写窄成 string 会在 strictFunctionTypes 的逆变检查下报 TS2322；
+// 本组件的 tab name 绑定的是 filePath（string），所以按契约接收后再收窄回 string。
+const handleTabRemove = (name: TabPaneName) => {
+	const filePath = String(name)
 	// 找到索引
 	const index = templateTreeData.tabList.findIndex(item => item.filePath === filePath)
 	if (index <= -1) {
@@ -483,11 +487,16 @@ const submitState = shallowReactive({
 
 const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
-const filterNode = (value: string, data: Tree) => {
+// el-tree 的 filter-node-method 契约是 FilterNodeMethodFunction：
+// (value: FilterValue, data: TreeNodeData, child: Node) => boolean，其中 TreeNodeData = Record<string, any>。
+// 索引签名满足不了 Tree 的必填具名属性，形参逆变检查会报 TS2322，
+// 所以按契约签名声明，函数体内再把 data 断言成 Tree。
+const filterNode: FilterNodeMethodFunction = (value, data) => {
 	if (!value) {
 		return true
 	}
-	return data.fileName.includes(value)
+	const node = data as Tree
+	return node.fileName.includes(String(value))
 }
 
 // 获取节点的图标

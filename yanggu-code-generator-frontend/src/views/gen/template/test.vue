@@ -149,7 +149,7 @@
 
 <script setup lang="ts">
 import CodeMirror from '@/business/code-mirror/index.vue'
-import { Action } from 'element-plus'
+import { Action, CascaderValue } from 'element-plus'
 import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
@@ -309,7 +309,12 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 }
 
 // 处理选中值变化
-const handleCascaderChange = async (val: string[]) => {
+// el-cascader 的 change 契约是 (value: CascaderValue | null | undefined) => any，
+// CascaderValue 是「单值 / 路径数组 / 多选数组」的联合。本组件是单选 + emitPath，
+// 运行时拿到的必然是 string[]，但形参必须按契约放宽，否则 strictFunctionTypes
+// 的逆变检查会报 TS2322；这里在函数体内再收窄回 string[]。
+const handleCascaderChange = async (value: CascaderValue | null | undefined) => {
+	const val = (value ?? []) as string[]
 	if (isEmpty(val)) {
 		return
 	}

@@ -24,7 +24,7 @@
 					:inactive-text="inactiveText"
 					inline-prompt
 					@change="
-						(val: number) => {
+						val => {
 							if (!row?.id || !row?.propTitle) {
 								return
 							}
@@ -42,7 +42,7 @@
 					:min="0"
 					size="small"
 					@focus="row._oldPropOrder = row.propOrder"
-					@change="(cur: number, old: number) => orderChangeHandle(cur, old, row)"
+					@change="(cur, old) => orderChangeHandle(cur, old, row)"
 				></el-input-number>
 			</template>
 
@@ -53,17 +53,17 @@
 					active-text="是"
 					inactive-text="否"
 					inline-prompt
-					@update:model-value="(val: boolean) => (model.required = val ? 1 : 0)"
+					@update:model-value="val => (model.required = val ? 1 : 0)"
 				/>
 			</template>
 
 			<!-- 表单字段 componentOptions：动态选项列表 -->
 			<template #form-componentOptions="{ model }">
 				<el-row
-					v-for="(item, index) in model.componentOptions"
+					v-for="(item, index) in componentOptionsOf(model)"
 					:key="index"
 					:gutter="10"
-					:style="{ marginBottom: index < model.componentOptions.length - 1 ? '18px' : '0' }"
+					:style="{ marginBottom: index < componentOptionsOf(model).length - 1 ? '18px' : '0' }"
 				>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions[${index}].label`">
@@ -275,8 +275,12 @@ const switchUpdateConfig = {
 const { activeValue, inactiveValue, activeText, inactiveText, switchSubmitLoading, switchSubmitHandler } = useSwitchChangeHandler(switchUpdateConfig)
 
 // 排序修改处理
-const orderChangeHandle = (cur: number, old: number, row: GenTemplateGroupPropertyEntity) => {
-	if (cur === old) return
+// el-input-number 的 change 契约是 (cur: number | undefined, prev: number | undefined) => any：
+// 输入框被清空时 emit 的是 undefined。形参写窄成 number 会触发逆变检查报 TS2322，
+// 所以按契约接收，并在开头把 undefined 挡掉——清空不应触发排序修改。
+// （cur / old 是从不被重新赋值的形参，收窄后在 .catch 回调里仍然是 number）
+const orderChangeHandle = (cur: number | undefined, old: number | undefined, row: GenTemplateGroupPropertyEntity) => {
+	if (cur === undefined || old === undefined || cur === old) return
 	genTemplateGroupPropertyApi
 		.changeOrder(row.id, cur)
 		.then(() => {
@@ -289,6 +293,22 @@ const orderChangeHandle = (cur: number, old: number, row: GenTemplateGroupProper
 }
 
 // 组件选项操作
+/** 组件选项的形状（与 emptyLabelData 一致） */
+interface ComponentOption {
+	label: string
+	value: string
+}
+
+/**
+ * 把插槽作用域里的 model.componentOptions 收窄成数组。
+ *
+ * 插槽传出的 model 是 Record<string, any>，直接 v-for 遍历 model.componentOptions 时
+ * vue-tsc 无法判定它是数组还是对象，会把 index 推成 string | number（对象遍历时的 key），
+ * 导致 index < ... / index + 1 / removeOption(model, index) 全部报错。
+ * 收窄成数组后 index 才是 number；返回的是同一个响应式数组引用，v-model 仍能写回。
+ */
+const componentOptionsOf = (model: any): ComponentOption[] => (model?.componentOptions ?? []) as ComponentOption[]
+
 const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(formHook.form.data.componentType as number))
 const switchOptionFull = computed(() => formHook.form.data.componentType === 5 && formHook.form.data.componentOptions.length >= 2)
 

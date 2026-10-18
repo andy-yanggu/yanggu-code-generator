@@ -1,10 +1,10 @@
-import type { UseCrudTableOptions } from '@/types/hooks/use-crud-table'
-import type { Pagination, TableColumnSchema } from '@/types/schema'
+import type { UseCrudTableOptions, UseCrudTableReturn } from '@/types/hooks/use-crud-table'
+import type { Pagination, SortChangePayload, TableColumnSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
 import type { Key, KeyArray } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
-import { defaultsDeep, isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
+import { defaultsDeep, isEmpty, isNotBlank } from '@/utils/tool'
 import { toValue } from 'vue'
 
 // ======== 表格列默认值 ========
@@ -57,7 +57,7 @@ export const createBuiltinOperation = (): TableColumnSchema => ({
 	disabled: true
 })
 
-export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>) => {
+export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>): UseCrudTableReturn<VO, Query> => {
 	// ====== 默认值（仅填充缺失属性，保留 reactive 响应性） ======
 	const defaultOptions = (): Partial<UseCrudTableOptions<VO, Query>> => ({
 		primaryKey: 'id',
@@ -85,7 +85,10 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const resetQueryGetData = opts.resetQueryGetData!
 
 	// ====== 1. 查询/分页 ======
-	const queryForm = reactive({ ...(opts.initQueryForm!() || {}) })
+	// 不能写成 reactive({ ...(opts.initQueryForm!() as object) })：展开一个未实例化的泛型形参
+	// 会把类型擦成 {}，导致页面访问 tableHook.search.form.xxx 报 TS2339。
+	// reactive 的形参要求 object，而裸泛型形参的隐式约束是 unknown，所以需先断言为 object。
+	const queryForm = reactive((opts.initQueryForm?.() ?? {}) as object) as Query
 	const dataList = ref([] as VO[])
 	const loading = ref(false)
 	const pageNum = ref(1)
@@ -93,6 +96,10 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const total = ref(0)
 	const order = ref('')
 	const asc = ref(false)
+	// el-table 组件实例，由 QueryTable 挂载后通过 selection.bindTable() 注入。
+	// 必须用 shallowRef：组件实例内含 DOM 与内部 store，被 reactive 深代理会引发性能问题。
+	// 声明在这一节（而非多选小节）是因为 resetQueryHandle 需要调它的 clearSort()。
+	const tableInstance = shallowRef<any>()
 
 	// 归一化搜索字段
 	const searchFields = computed(() => opts.searchSchema!.map(normalizeSearchField))
@@ -108,12 +115,14 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		for (const field of searchFields.value) {
 			if (field.component === 'date-range' || field.component === 'datetime-range') {
 				const val = result[field.prop]
+				// delete 必须放在判断内：值不是二元数组时保留原始字段，
+				// 否则查询条件会静默消失（既不拆出起止字段，也不传原值）
 				if (Array.isArray(val) && val.length === 2) {
 					const [startKey, endKey] = field.rangeFields ?? [`${field.prop}Start`, `${field.prop}End`]
 					result[startKey] = val[0]
 					result[endKey] = val[1]
+					delete result[field.prop]
 				}
-				delete result[field.prop]
 			}
 		}
 
@@ -146,7 +155,6 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 					dataList.value = list
 					total.value = list.length
 					pageNum.value = 1
-					pageSize.value = list.length
 				}
 			})
 			.finally(() => {
@@ -160,17 +168,48 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		executeQuery()
 	}
 
+	// 把查询表单恢复到 initQueryForm() 的初始值
+	const resetQueryForm = () => {
+		const initial = (opts.initQueryForm?.() ?? {}) as Record<string, any>
+		const form = queryForm as Record<string, any>
+		// 先删多余 key：el-form 的 resetFields() 走 setProp(model, prop, initialValue)，
+		// prop 不在 model 上时会新建 key，这些 key 会随 buildQueryForm() 的展开一起发给后端。
+		// 套用与表单侧 assignFormData 相同的"先删后 assign"，不套 Object.assign 的"只增不减"语义。
+		for (const key of Object.keys(form)) {
+			if (!(key in initial)) {
+				delete form[key]
+			}
+		}
+		Object.assign(form, initial)
+	}
+
 	// 重置查询
 	const resetQueryHandle = () => {
-		nextTick(() => {
-			if (resetQueryGetData) {
-				getDataList()
-			}
-		})
+		// 清查询条件必须在 hook 里做，不能只依赖 SearchForm 的 resetFields()：
+		// 1) 多个页面（枚举项抽屉、项目页内嵌表格等）在 init() 里直接调 query.reset()，根本不经过 SearchForm；
+		// 2) SearchForm 根节点是 v-if，折叠后重新展开时 el-form 会重新记录初始值，
+		//    此刻 queryForm 里若残留着上次的条件，就会被当成"初始值"，resetFields 只会重置回残留值。
+		resetQueryForm()
+		// 排序属于查询条件：不清掉的话，点「重置」后表单虽然回到初始值，
+		// 但请求仍带 orderItemList，用户无法回到「无排序」状态。
+		order.value = ''
+		asc.value = false
+		// 表头箭头由 el-table 内部 states 驱动，与 order/asc 无关。clearSort 内部传了 silent，
+		// 只重置内部排序状态、不会 emit sort-change，因此不会多打一次请求。
+		tableInstance.value?.clearSort()
+		// 不用 nextTick 包 getDataList：buildQueryForm 同步读的就是上面刚改完的 queryForm / order / asc，
+		// clearSort 也是同步方法，没有任何一步依赖 DOM 更新。
+		if (resetQueryGetData) {
+			getDataList()
+		}
 	}
 
 	// 分页：页码变化
 	const onPageChange = (page: number) => {
+		// 改每页条数时 el-pagination 会先同步 emit size-change（onSizeChange 已把页码重置为 1），
+		// 随后 watch 到总页数变少，再 emit 一次 current-change(1)。此时页码其实没变，
+		// 不拦掉就会用同样的参数再查一次。
+		if (page === pageNum.value) return
 		pageNum.value = page
 		executeQuery()
 	}
@@ -183,7 +222,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	}
 
 	// 排序变化
-	const onSortChange = ({ order: sortOrder, prop }: { order: string; prop: string }) => {
+	const onSortChange = ({ order: sortOrder, prop }: SortChangePayload) => {
 		if (sortOrder === 'ascending') {
 			order.value = prop
 			asc.value = true
@@ -199,6 +238,9 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	// ====== 2. 多选 ======
 	const selectedRows = ref([] as VO[])
 	const selectedIds = ref([] as KeyArray)
+	const bindTable = (instance: any) => {
+		tableInstance.value = instance
+	}
 
 	const onSelectionChange = (selections: VO[]) => {
 		selectedRows.value = selections
@@ -206,12 +248,12 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	}
 
 	const clearSelection = () => {
-		if (isNotEmpty(selectedIds.value)) {
-			nextTick(() => {
-				selectedIds.value = []
-				selectedRows.value = []
-			})
-		}
+		// 必须先清 el-table 内部的 selection store：reserveSelection 模式下它不会自行剔除已不在数据里的行，
+		// 只清本地镜像会导致下次勾选时旧行回流进 selectedIds（如批量删除后再次删除会带上已删除的 id）。
+		// el-table.clearSelection() 会 emit selection-change([])，本地镜像随之同步，下面两行为幂等兜底。
+		tableInstance.value?.clearSelection()
+		selectedIds.value = []
+		selectedRows.value = []
 	}
 
 	// ====== 3. 操作（删除 + 导出/导入） ======
@@ -306,21 +348,24 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	}
 
 	// --- 导入 ---
-	const importExecute = (file: File, params: Record<string, any> = {}) => {
+	// 返回 Promise 而非 void：el-upload 的 http-request 契约是 UploadRequestHandler，
+	// 要求返回 XMLHttpRequest | Promise<unknown>；且 el-upload 靠这个 Promise 判定上传何时结束，
+	// 返回 void 会让它跳过状态处理，接口失败时还会变成无人捕获的 floating rejection。
+	const importExecute = (file: File, params: Record<string, any> = {}): Promise<void> => {
 		if (!file) {
 			ElMessage.warning('请选择要导入的文件')
-			return
+			return Promise.resolve()
 		}
 		if (!opts.importApi) {
 			ElMessage.warning('未配置导入接口')
-			return
+			return Promise.resolve()
 		}
 
 		const formData = new FormData()
 		formData.append('file', file)
 		Object.keys(params).forEach(key => formData.append(key, params[key]))
 
-		opts.importApi!(formData).then(() => {
+		return opts.importApi!(formData).then(() => {
 			ElMessage.success(opts.importSuccessMessage)
 			getDataList()
 		})
@@ -368,8 +413,6 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const savedColumns = opts.tableKey ? (settingsStore.getColumns(opts.tableKey) as TableColumnSchema[] | undefined) : undefined
 	const columns = ref<TableColumnSchema[]>(savedColumns ? mergeWithDefaults(savedColumns, defaultColumns) : cloneColumns(defaultColumns))
 
-	const visibleColumns = computed(() => columns.value.filter(col => col.visible !== false))
-
 	const persistColumns = () => {
 		if (opts.tableKey) {
 			settingsStore.saveColumns(opts.tableKey, toRaw(columns.value) as any)
@@ -393,22 +436,26 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	}
 
 	// ====== 6. 生命周期 ======
+	// 不用 nextTick 包一层：Vue 的挂载顺序是子先父后，页面 onMounted 触发时
+	// QueryTable 的 onMounted 已经调过 bindTable，tableInstance 已就位。
 	onMounted(() => {
 		if (mountedGetData) {
-			nextTick(() => {
-				resetQueryHandle()
-			})
+			resetQueryHandle()
 		}
 	})
 
 	// ====== 返回值：7 组 reactive 包裹 ======
+	// search / table / selection 三组需要按契约收口：reactive 的 UnwrapNestedRefs 会把裸泛型形参
+	// 包成 UnwrapRef<Query> / UnwrapRefSimple<VO>，而泛型未实例化时这些条件类型无法化简，
+	// 与契约里的 Query / VO 在类型层面互不相认（运行时是同一个对象，不存在实际差异）。
+	// 其余四组无泛型参与，保持原样以获得完整的实现/契约漂移检查。
 	return {
 		// 搜索区
 		search: reactive({
 			fields: searchFields,
 			form: queryForm,
 			visible: queryShow
-		}),
+		}) as UseCrudTableReturn<VO, Query>['search'],
 		// 查询操作
 		query: reactive({
 			getDataList,
@@ -421,16 +468,20 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		table: reactive({
 			data: dataList,
 			loading,
-			pagination: computed<Pagination>(() => ({ current: pageNum.value, size: pageSize.value, total: total.value })),
+			// 不分页时返回 undefined，DataTable 的 v-if="pagination" 据此隐藏分页条
+			pagination: computed<Pagination | undefined>(() =>
+				isPage ? { current: pageNum.value, size: pageSize.value, total: total.value } : undefined
+			),
 			index: tableIndex
-		}),
+		}) as UseCrudTableReturn<VO, Query>['table'],
 		// 多选
 		selection: reactive({
 			rows: selectedRows,
 			ids: selectedIds,
 			onChange: onSelectionChange,
-			clear: clearSelection
-		}),
+			clear: clearSelection,
+			bindTable
+		}) as UseCrudTableReturn<VO, Query>['selection'],
 		// 操作（删除 + 导出/导入）
 		action: reactive({
 			delete: {
@@ -448,7 +499,6 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		// 列配置
 		columnConfig: reactive({
 			list: columns,
-			visible: visibleColumns,
 			reset: resetColumnSettings
 		}),
 		// UI 引用

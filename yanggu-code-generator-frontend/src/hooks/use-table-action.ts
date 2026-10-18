@@ -200,7 +200,9 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 			console.error('未配置主键')
 			return
 		}
-		state.dataListSelections = selections.map(item => item[state.primaryKey!])
+		// item[state.primaryKey] 的静态类型是 VO[keyof VO]：索引访问无法收窄到“主键那一个字段”，
+		// 运行时它必然是后端主键，按 L238 / L254 的同一做法断言成 Key
+		state.dataListSelections = selections.map(item => item[state.primaryKey!] as Key)
 	}
 
 	// 清空勾选
@@ -264,7 +266,9 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		const count = idList.length
 
 		// 提取名称
-		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]).filter(isNotBlank) as string[]) : []
+		// 先断言成 string[] 再 filter：isNotBlank 的形参是 Scalar，而 row[state.deleteNameKey] 的类型是
+		// VO[keyof VO]，两者在 strictFunctionTypes 的逆变检查下不相容（TS2769）
+		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]) as string[]).filter(isNotBlank) : []
 
 		// 没有名称
 		if (isEmpty(names)) {

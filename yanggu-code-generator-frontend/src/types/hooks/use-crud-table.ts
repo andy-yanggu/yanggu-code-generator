@@ -1,7 +1,7 @@
-import type { Key } from '@/types/common'
+import type { Key, KeyArray } from '@/types/common'
 import type { MaybeRefOrGetter } from 'vue'
 import type { PageVO } from '@/types/api/common'
-import type { BuiltinColumnOptions, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { BuiltinColumnOptions, NormalizedSearchField, Pagination, SearchFieldSchema, SortChangePayload, TableColumnSchema } from '@/types/schema'
 
 // 数据列表接口
 type DataListApi<VO, Query> = (query: Query) => Promise<PageVO<VO>>
@@ -74,4 +74,85 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	resetQueryGetData?: boolean
 	/** 是否显示工具栏左侧区域（新增/批量删除按钮等），默认 true */
 	showToolbarLeft?: boolean
+}
+
+/**
+ * useCrudTable 返回值契约
+ *
+ * 存在的理由：组件 props 不能用 `ReturnType<typeof useCrudTable>` 声明。
+ * useCrudTable 是泛型函数，`typeof` 取到的是未实例化的签名，ReturnType 只能用默认实参
+ * 实例化成 `<any, any>`，与页面侧的具体实体实例化结果比较时会报 TS2719
+ * （“Two different types with this name exist, but they are unrelated”）。
+ * 具名接口有稳定的类型身份，默认实参下各属性退化为 any，页面传入具体实例化类型仍可直接赋值。
+ *
+ * 注：各分组由 reactive 包裹，内部 ref / computed 已被自动解包，所以此处均为值类型而非 Ref<T>。
+ */
+export interface UseCrudTableReturn<VO = any, Query = any> {
+	/** 搜索区 */
+	search: {
+		/** 归一化后的搜索字段 */
+		fields: NormalizedSearchField[]
+		/** 查询表单（与 initQueryForm 返回值同构） */
+		form: Query
+		/** 搜索区是否展开 */
+		visible: boolean
+	}
+	/** 查询操作 */
+	query: {
+		/** 查询（重置到第一页） */
+		getDataList: () => void
+		/** 重置查询表单 */
+		reset: () => void
+		onPageChange: (page: number) => void
+		onSizeChange: (size: number) => void
+		onSortChange: (payload: SortChangePayload) => void
+	}
+	/** 表格数据 */
+	table: {
+		data: VO[]
+		loading: boolean
+		/** isPage 为 false 时为 undefined，DataTable 据此隐藏分页条 */
+		pagination?: Pagination
+		/** 序号列计算（含分页偏移） */
+		index: (index: number) => number
+	}
+	/** 多选 */
+	selection: {
+		rows: VO[]
+		ids: KeyArray
+		onChange: (selections: VO[]) => void
+		/** 清空勾选（会同步清掉 el-table 内部的 selection store） */
+		clear: () => void
+		/** 注入 el-table 实例，由 QueryTable 在 onMounted 里调用 */
+		bindTable: (instance: any) => void
+	}
+	/** 操作（删除 + 导出/导入） */
+	action: {
+		delete: {
+			/** 不传参=批量删除勾选项；传 row=行内删除；传 id=按主键删除 */
+			execute: (arg?: Key | VO) => void
+			loading: boolean
+		}
+		export: {
+			execute: (id?: Key) => void
+			loading: boolean
+		}
+		import: {
+			/** 返回 Promise 以满足 el-upload 的 UploadRequestHandler 契约（需 XMLHttpRequest | Promise<unknown>） */
+			execute: (file: File, params?: Record<string, any>) => Promise<void>
+		}
+	}
+	/** 列配置 */
+	columnConfig: {
+		/** 全量列（含隐藏），v-model 绑定给 DataTable */
+		list: TableColumnSchema[]
+		/** 恢复默认列配置并持久化 */
+		reset: () => void
+	}
+	/** UI 引用与只读配置 */
+	refs: {
+		cardMaximized: boolean
+		primaryKey: string
+		showToolbarLeft: boolean
+	}
 }

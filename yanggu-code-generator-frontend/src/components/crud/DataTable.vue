@@ -14,17 +14,17 @@
 						<icon-button size="16px" :el-icon="Refresh" tooltip="刷新表格" @click="emit('getDataList')" />
 						<!-- 列设置 -->
 						<el-popover
+							v-model:visible="columnSettingsVisible"
 							placement="top"
 							:width="300"
 							trigger="click"
 							popper-class="yanggu-column-settings-popover"
-							:visible="columnSettingsVisible"
 							@show="handlePopoverShow"
 							@hide="handlePopoverHide"
 						>
 							<template #reference>
 								<span class="column-settings-trigger">
-									<icon-button size="16px" :el-icon="Setting" tooltip="列设置" @click="columnSettingsVisible = !columnSettingsVisible" />
+									<icon-button size="16px" :el-icon="Setting" tooltip="列设置" />
 								</span>
 							</template>
 							<div class="column-settings-panel">
@@ -97,7 +97,7 @@
 			:data="data"
 			:max-height="maxHeight"
 			border
-			row-key="id"
+			:row-key="rowKey"
 			@selection-change="(s: any[]) => emit('selectionChange', s)"
 			@sort-change="(s: any) => emit('sortChange', s)"
 		>
@@ -174,13 +174,21 @@ const showSearch = defineModel('showSearch', { type: Boolean, default: true })
 const maximized = defineModel('maximized', { type: Boolean, default: false })
 const columns = defineModel<TableColumnSchema[]>('columns', { default: () => [] })
 
-withDefaults(
+const props = withDefaults(
 	defineProps<{
 		data: any[]
 		loading?: boolean
 		pagination?: Pagination
 		pageSizes?: number[]
 		maxHeight?: string
+		/**
+		 * 序号列的行号计算函数，映射到 el-table-column 的 `index` 属性。
+		 * el-table 的 type="index" 只按「当前页」的行下标从 1 起算，翻页后又从 1 开始，
+		 * 必须由外部传入跨页序号函数（(pageNum-1)*pageSize+index+1）才能与分页条页码对齐。
+		 */
+		rowIndex?: (index: number) => number
+		/** 行数据主键字段名，映射到 el-table 的 row-key（跳页保持勾选、树形数据行身份依赖它）。默认 'id' */
+		rowKey?: string
 		/** 是否显示工具栏左侧（默认按钮或用户插槽）。默认 true */
 		showToolbarLeft?: boolean
 	}>(),
@@ -188,6 +196,9 @@ withDefaults(
 		loading: false,
 		pageSizes: () => [10, 20, 50, 100, 200],
 		maxHeight: '60vh',
+		// 不传时等同 el-table 原生行为：每页从 1 开始
+		rowIndex: (index: number) => index + 1,
+		rowKey: 'id',
 		showToolbarLeft: true
 	}
 )
@@ -383,7 +394,11 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 		if (col.headerAlign) result.headerAlign = col.headerAlign
 		return result
 	}
-	if (col.type) result.type = col.type
+	if (col.type) {
+		result.type = col.type
+		// 序号列必须下发 index，否则 el-table 只按当前页下标从 1 数，第 2 页起仍是 1、2、3
+		if (col.type === 'index') result.index = props.rowIndex
+	}
 	if (col.prop) result.prop = col.prop
 	else if (col.key && !col.type) result.prop = col.key
 	if (col.label) result.label = col.label

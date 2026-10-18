@@ -19,21 +19,27 @@
 					</template>
 				</slot>
 			</template>
-			<!-- 透传表格列插槽（保留 table- 前缀，由 QueryTable 剥前缀后转给 DataTable） -->
-			<template v-for="(fn, name) in tableSlots" :key="name" #[name]="slotData">
-				<component :is="() => fn(slotData ?? {})" />
+			<!-- 透传表格列插槽（保留 table- 前缀，由 QueryTable 剥前缀后转给 DataTable）
+			     注意：必须用 <slot> 直接渲染。若写成 <component :is="() => fn(scope)">，
+			     每次 render 都会产生新的函数式组件类型，patch 时按不同类型处理而卸载重建，
+			     插槽里的 el-select 展开态、输入焦点、局部 state 会全部丢失。 -->
+			<template v-for="(_, name) in tableSlots" :key="name" #[name]="slotData">
+				<slot :name="name" v-bind="slotData ?? {}"></slot>
 			</template>
 			<!-- 透传搜索字段插槽（保留 query- 前缀，由 QueryTable 剥前缀后转给 SearchForm） -->
-			<template v-for="(fn, name) in querySlots" :key="name" #[name]="slotData">
-				<component :is="() => fn(slotData ?? {})" />
+			<template v-for="(_, name) in querySlots" :key="name" #[name]="slotData">
+				<slot :name="name" v-bind="slotData ?? {}"></slot>
 			</template>
 		</query-table>
 
 		<!-- 弹窗表单 -->
 		<crud-dialog ref="crudDialogRef" :form-hook="formHook">
-			<!-- 透传表单字段插槽（已剥去 form- 前缀，补 field- 前缀匹配 FormField） -->
-			<template v-for="(fn, name) in formSlots" :key="name" #[name]="slotData">
-				<component :is="() => fn(slotData ?? {})" />
+			<!-- 透传表单字段插槽（form-xxx → field-xxx 匹配 FormField）
+			     两个名字不能混用：#[s.field] 是对外插槽名，
+			     <slot :name="s.full"> 才是本组件 $slots 的真实键名（带 form- 前缀），
+			     写成 <slot :name="s.field"> 会匹配不到而渲染成空注释。 -->
+			<template v-for="s in formSlots" :key="s.full" #[s.field]="slotData">
+				<slot :name="s.full" v-bind="slotData ?? {}"></slot>
 			</template>
 		</crud-dialog>
 	</div>
@@ -43,17 +49,19 @@
 import { Delete, Edit, Plus } from '@element-plus/icons-vue'
 import QueryTable from './QueryTable.vue'
 import CrudDialog from './CrudDialog.vue'
-import { useCrudForm, useCrudTable } from '@/hooks'
+import type { UseCrudFormReturn, UseCrudTableReturn } from '@/types'
 
 defineOptions({
 	name: 'CrudPage'
 })
 
 // ====== Props ======
-// 注意：useCrudTable / useCrudForm 是泛型函数，不同页面的 VO 类型不同，
+// 用具名契约类型而不是 ReturnType<typeof useCrudTable>：后者拿到的是未实例化的泛型签名，
+// 只能用默认实参展开成 <any, any>，与页面侧的具体实体实例化结果比较时会报 TS2719。
+// 具名接口有稳定的类型身份，默认实参下各属性退化为 any，页面传具体类型仍可直接赋值。
 const props = defineProps<{
-	tableHook: ReturnType<typeof useCrudTable>
-	formHook: ReturnType<typeof useCrudForm>
+	tableHook: UseCrudTableReturn
+	formHook: UseCrudFormReturn
 }>()
 
 // ====== 引用 ======
@@ -97,14 +105,14 @@ const querySlots = computed(() => {
 	return result
 })
 
-/** form-* 前缀的插槽：剥去 form- 前缀，补 field- 前缀匹配 FormField 的插槽名 */
-const formSlots = computed(() => {
-	const result: Record<string, any> = {}
-	for (const name in allSlots) {
-		if (name.startsWith('form-') && !handledSlotNames.has(name)) {
-			result[`field-${name.slice(5)}`] = allSlots[name]
-		}
-	}
-	return result
-})
+/**
+ * form-* 前缀的插槽：form-xxx 改名成 field-xxx 匹配 FormField。
+ * full 是本组件 $slots 的真实键名（渲染 `<slot :name>` 必须用它），field 是给 CrudDialog 的插槽名。
+ * 只留 field 会让 `<slot :name>` 找不到自己的插槽，表单自定义字段会退化成默认控件。
+ */
+const formSlots = computed(() =>
+	Object.keys(allSlots)
+		.filter(name => name.startsWith('form-') && !handledSlotNames.has(name))
+		.map(full => ({ full, field: `field-${full.slice(5)}` }))
+)
 </script>

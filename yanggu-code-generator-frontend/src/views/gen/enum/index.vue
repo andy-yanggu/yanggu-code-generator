@@ -5,7 +5,7 @@
 			<template #toolbar-left>
 				<el-space size="default">
 					<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-					<el-button type="danger" :loading="tableHook.action.delete.loading" :icon="Delete" @click="tableHook.action.delete()">删除</el-button>
+					<el-button type="danger" :loading="tableHook.action.delete.loading" :icon="Delete" @click="tableHook.action.delete.execute()">删除</el-button>
 					<el-button type="success" :icon="DocumentAdd" @click="generatorBatchHandler()">生成</el-button>
 				</el-space>
 			</template>
@@ -46,7 +46,7 @@
 							<template #dropdown>
 								<el-dropdown-menu>
 									<el-dropdown-item :icon="DocumentAdd" @click="generatorHandler(row)">生成</el-dropdown-item>
-									<el-dropdown-item :icon="Delete" @click="tableHook.action.delete(row)">删除</el-dropdown-item>
+									<el-dropdown-item :icon="Delete" @click="tableHook.action.delete.execute(row)">删除</el-dropdown-item>
 								</el-dropdown-menu>
 							</template>
 						</el-dropdown>
