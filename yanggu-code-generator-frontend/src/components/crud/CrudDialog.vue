@@ -11,7 +11,16 @@
 			:validate-on-rule-change="false"
 			@keyup.enter="handleEnterSubmit"
 		>
-			<form-field v-for="field in formHook.formSchema" :key="field.prop" v-model="formHook.form.data" :field="field" :mode="formHook.dialog.mode">
+			<!-- form.data 是父子共享的同一个 reactive 对象：FormField 内部改的是 model[prop]，
+			     本质就是改这个对象的属性，从不 emit update:modelValue，所以 v-model 的写回分支是死代码，
+			     用单向绑定把「只读、修改走对象属性」这个意图写准确。 -->
+			<form-field
+				v-for="field in formHook.formSchema"
+				:key="field.prop"
+				:model-value="formHook.form.data"
+				:field="field"
+				:mode="formHook.dialog.mode"
+			>
 				<!-- 透传插槽（用户用字段 prop 名作为插槽名，如 #columnType） -->
 				<template v-for="(_, name) in passthroughSlots" :key="name" #[name]="slotData">
 					<slot :name="name" v-bind="slotData ?? {}"></slot>

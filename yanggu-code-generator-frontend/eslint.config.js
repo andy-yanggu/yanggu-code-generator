@@ -29,6 +29,11 @@ export default [
 			// 全局规则：统一使用 const 箭头/函数表达式定义函数，禁止 function 声明
 			'func-style': ['error', 'expression'],
 			'vue/multi-word-component-names': 'off',
+			// CRUD 体系的 hook 由页面层创建，以 props 传给纯展示组件，父子共享同一个 reactive 对象。
+			// 子组件写 formHook.dialog.visible 改的是 hook 内部的 ref，props 引用并未被替换，
+			// 数据不会不同步；这属于架构约定，不是 props 突变。
+			// shallowOnly 保留「整体替换 prop」（props.x = v）的检测，放行「改 prop 内部属性」（props.x.y = v）。
+			'vue/no-mutating-props': ['error', { shallowOnly: true }],
 			'no-unused-vars': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
