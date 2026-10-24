@@ -63,6 +63,7 @@ const fieldRules = computed<Record<string, FormItemRule[]>>(() => {
 })
 
 // SearchFieldSchema → FormFieldSchema（DynamicField 接收 FormFieldSchema）
+// 逐项白名单映射：这里没列出的属性会被静默丢掉（clearable 曾因此在查询区失效），新增字段属性需同步补到这里
 const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({
 	prop: field.prop,
 	label: field.label,
@@ -70,6 +71,7 @@ const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({
 	placeholder: field.placeholder,
 	width: field.width,
 	options: field.options,
+	clearable: field.clearable,
 	filterable: field.filterable
 })
 

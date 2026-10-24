@@ -81,12 +81,17 @@ const handleEnterSubmit = (e: KeyboardEvent) => {
 	props.formHook.submit.execute()
 }
 
-// 透传插槽（排除保留插槽，直接转发给 FormField）
-const reservedSlotNames = new Set(['toolbar-left', 'action-column'])
+/**
+ * 透传表单字段插槽（对外约定为 field-[字段key]，如 #field-columnType）。
+ *
+ * 只认 field- 前缀：FormField 只消费 slot name="field-${field.key}"，其他名字转发过去也无人渲染。
+ * 旧版这里是黑名单 set(['toolbar-left', 'action-column']) —— 那是工具栏与操作列改名前的残留，
+ * 现在 CrudPage 传给本组件的插槽只有 field-*（form-xxx 在 CrudPage 改名而来），黑名单永远不会命中。
+ */
 const passthroughSlots = computed(() => {
 	const slots: Record<string, any> = {}
 	for (const name in useSlots()) {
-		if (!reservedSlotNames.has(name)) {
+		if (name.startsWith('field-')) {
 			slots[name] = true
 		}
 	}

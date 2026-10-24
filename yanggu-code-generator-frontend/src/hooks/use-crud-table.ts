@@ -65,6 +65,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		isPage: true,
 		pageSizes: [10, 20, 50, 100, 200],
 		pageSize: 10,
+		maxHeight: '60vh',
 		mountedGetData: true,
 		resetQueryGetData: true,
 		showToolbarLeft: true,
@@ -505,7 +506,10 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		refs: reactive({
 			cardMaximized,
 			primaryKey,
-			showToolbarLeft: opts.showToolbarLeft!
+			showToolbarLeft: opts.showToolbarLeft!,
+			// 分页条档位与表格高度只能从 hook 配置改：CrudPage 只接收 tableHook，无法再往下传 props
+			pageSizes: opts.pageSizes!,
+			maxHeight: opts.maxHeight!
 		})
 	}
 }

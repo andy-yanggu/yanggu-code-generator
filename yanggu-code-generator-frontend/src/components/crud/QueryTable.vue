@@ -31,8 +31,8 @@
 			:data="tableHook.table.data"
 			:loading="tableHook.table.loading"
 			:pagination="tableHook.table.pagination"
-			:page-sizes="pageSizes"
-			:max-height="maxHeight"
+			:page-sizes="tableHook.refs.pageSizes"
+			:max-height="tableHook.refs.maxHeight"
 			:row-key="tableHook.refs.primaryKey"
 			:row-index="tableHook.table.index"
 			:show-toolbar-left="tableHook.refs.showToolbarLeft"
@@ -71,10 +71,10 @@ defineOptions({
 
 // 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
 // 用具名契约类型而非 any：恢复组件内部对 tableHook 的类型检查（属性名写错能编译期拦住）
+// 分页档位与表格高度不再单独开 prop：CrudPage 只接收 tableHook，无法往下传，
+// 由 hook 配置经 refs 下发，避免出现"声明了但没人传"的中间层。
 const props = defineProps<{
 	tableHook: UseCrudTableReturn
-	maxHeight?: string
-	pageSizes?: number[]
 }>()
 
 const emit = defineEmits<{

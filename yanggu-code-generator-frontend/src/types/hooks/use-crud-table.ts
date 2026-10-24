@@ -40,6 +40,8 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	pageSize?: number
 	/** 每页条数选项，默认 [10, 20, 50, 100, 200] */
 	pageSizes?: number[]
+	/** 表格最大高度（CSS 值），默认 '60vh' */
+	maxHeight?: string
 
 	// ======== 删除 ========
 	/** 批量删除接口 */
@@ -154,5 +156,9 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 		cardMaximized: boolean
 		primaryKey: string
 		showToolbarLeft: boolean
+		/** 每页条数选项，来自 useCrudTable 配置，供分页条使用 */
+		pageSizes: number[]
+		/** 表格最大高度（CSS 值），来自 useCrudTable 配置 */
+		maxHeight: string
 	}
 }

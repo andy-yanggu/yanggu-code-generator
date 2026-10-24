@@ -40,10 +40,12 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 	return flattenLeafFields(fields)
 		.filter(f => f.inForm)
 		.map(f => {
-			// 顶层共享属性注入 form 子对象
+			// 顶层共享属性注入 form 子对象（f.form 里的同名属性优先级更高）
 			const shared: Partial<FormFieldSchema> = {}
 			if (f.component !== undefined) shared.component = f.component
 			if (f.options !== undefined) shared.options = f.options
+			if (f.filterable !== undefined) shared.filterable = f.filterable
+			if (f.clearable !== undefined) shared.clearable = f.clearable
 			if (f.formTableTooltip !== undefined) shared.tooltip = f.formTableTooltip
 			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.form }, defaultFormFieldOptions())
 		})
@@ -53,10 +55,12 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 	return flattenLeafFields(fields)
 		.filter(f => f.inSearch)
 		.map(f => {
-			// 顶层共享属性注入 search 子对象
+			// 顶层共享属性注入 search 子对象（f.search 里的同名属性优先级更高）
 			const shared: Partial<SearchFieldSchema> = {}
 			if (f.component !== undefined) shared.component = f.component
 			if (f.options !== undefined) shared.options = f.options
+			if (f.filterable !== undefined) shared.filterable = f.filterable
+			if (f.clearable !== undefined) shared.clearable = f.clearable
 			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.search }, defaultSearchFieldOptions())
 		})
 }

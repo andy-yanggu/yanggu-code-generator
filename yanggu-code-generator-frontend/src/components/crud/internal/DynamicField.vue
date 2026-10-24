@@ -68,19 +68,21 @@ const getComponentProps = computed(() => {
 	const component = (props.field.component ?? 'input') as ComponentType
 	const placeholder = computedPlaceholder.value
 	const { options, filterable, width } = props.field
+	// clearable 由 schema 决定，缺省为 true（与 useCrud 注入的表单/查询字段默认值一致）
+	const clearable = props.field.clearable ?? true
 
 	const style = width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined
 
 	const baseProps: Record<string, any> = {
 		placeholder,
-		clearable: true,
+		clearable,
 		filterable,
 		style
 	}
 
 	// 区间选择器不吃 placeholder，改用起止占位符
 	const rangeBaseProps: Record<string, any> = {
-		clearable: true,
+		clearable,
 		startPlaceholder: '开始日期',
 		endPlaceholder: '结束日期',
 		rangeSeparator: '至',
