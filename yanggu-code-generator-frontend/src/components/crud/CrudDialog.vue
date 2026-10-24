@@ -1,5 +1,5 @@
 <template>
-	<el-dialog v-model="formHook.dialog.visible" :title="formHook.dialog.title" :close-on-click-modal="false">
+	<el-dialog v-model="formHook.dialog.visible" :title="formHook.dialog.title" :close-on-click-modal="false" @close="formHook.dialog.close()">
 		<el-form
 			:ref="formHook.form.formRef"
 			v-loading="formHook.dialog.detailLoading"
@@ -21,9 +21,14 @@
 				:field="field"
 				:mode="formHook.dialog.mode"
 			>
-				<!-- 透传插槽（用户用字段 prop 名作为插槽名，如 #columnType） -->
-				<template v-for="(_, name) in passthroughSlots" :key="name" #[name]="slotData">
-					<slot :name="name" v-bind="slotData ?? {}"></slot>
+				<!-- 透传插槽（用户用字段 prop 名作为插槽名，如 #columnType）。
+				     遍历直接读模板里的 $slots（响应式）：useSlots() 返回非响应式对象，放进 computed
+				     没有响应式依赖、只会在首次渲染求值一次，动态增删插槽时会漏掉。
+				     过滤放在 <slot> 的 v-if 上（渲染出口过滤）：v-slot 必须挂在自定义元素的直接子级
+				     template 上，不能用两层 template 嵌套做过滤。FormField 只消费 field-${key}，
+				     其余名字即使注册过去也无人渲染，无副作用。 -->
+				<template v-for="(_, name) in $slots" :key="name" #[name]="slotData">
+					<slot v-if="name.startsWith('field-')" :name="name" v-bind="slotData ?? {}"></slot>
 				</template>
 			</form-field>
 		</el-form>
@@ -80,23 +85,6 @@ const handleEnterSubmit = (e: KeyboardEvent) => {
 	if (target.closest('.el-select, .el-cascader, button')) return
 	props.formHook.submit.execute()
 }
-
-/**
- * 透传表单字段插槽（对外约定为 field-[字段key]，如 #field-columnType）。
- *
- * 只认 field- 前缀：FormField 只消费 slot name="field-${field.key}"，其他名字转发过去也无人渲染。
- * 旧版这里是黑名单 set(['toolbar-left', 'action-column']) —— 那是工具栏与操作列改名前的残留，
- * 现在 CrudPage 传给本组件的插槽只有 field-*（form-xxx 在 CrudPage 改名而来），黑名单永远不会命中。
- */
-const passthroughSlots = computed(() => {
-	const slots: Record<string, any> = {}
-	for (const name in useSlots()) {
-		if (name.startsWith('field-')) {
-			slots[name] = true
-		}
-	}
-	return slots
-})
 
 // 暴露 dialog 方法供父组件调用
 defineExpose({

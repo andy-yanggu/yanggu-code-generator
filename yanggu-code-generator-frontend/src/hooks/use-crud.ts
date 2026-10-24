@@ -2,21 +2,23 @@ import type { UseCrudOptions } from '@/types/hooks/use-crud'
 import type { UseCrudFormReturn } from '@/types/hooks/use-crud-form'
 import type { UseCrudTableReturn } from '@/types/hooks/use-crud-table'
 import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import {
+	DEFAULT_FORM_FIELD_OPTIONS,
+	DEFAULT_PRIMARY_KEY,
+	DEFAULT_SEARCH_FIELD_OPTIONS,
+	DEFAULT_SUBJECT,
+	DEFAULT_TABLE_COLUMN_OPTIONS
+} from '@/config/crud'
 import { defaultsDeep } from '@/utils/tool'
-import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, defaultTableColumnOptions, useCrudTable } from './use-crud-table'
-import { useCrudForm } from './use-crud-form'
-
-// ======== 表单字段默认值 ========
-const defaultFormFieldOptions = (): Partial<FormFieldSchema> => ({
-	filterable: true,
-	clearable: true
-})
-
-// ======== 查询字段默认值 ========
-const defaultSearchFieldOptions = (): Partial<SearchFieldSchema> => ({
-	filterable: true,
-	clearable: true
-})
+import {
+	createBuiltinCreateTime,
+	createBuiltinIndex,
+	createBuiltinOperation,
+	createBuiltinSelection,
+	createBuiltinUpdateTime,
+	useCrudTable
+} from './use-crud-table'
+import { useCrudForm } from './use-crud-form' // ======== 派生函数 ========
 
 // ======== 派生函数 ========
 
@@ -47,7 +49,7 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 			if (f.filterable !== undefined) shared.filterable = f.filterable
 			if (f.clearable !== undefined) shared.clearable = f.clearable
 			if (f.formTableTooltip !== undefined) shared.tooltip = f.formTableTooltip
-			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.form }, defaultFormFieldOptions())
+			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.form }, DEFAULT_FORM_FIELD_OPTIONS)
 		})
 }
 
@@ -61,7 +63,7 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 			if (f.options !== undefined) shared.options = f.options
 			if (f.filterable !== undefined) shared.filterable = f.filterable
 			if (f.clearable !== undefined) shared.clearable = f.clearable
-			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.search }, defaultSearchFieldOptions())
+			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.search }, DEFAULT_SEARCH_FIELD_OPTIONS)
 		})
 }
 
@@ -71,9 +73,9 @@ const buildColumn = (f: CrudField): TableColumnSchema => {
 	if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
 	if (f.children?.length) {
 		const children = f.children.filter(c => c.inTable).map(buildColumn)
-		return defaultsDeep({ key: f.key, label: f.label, ...base, ...f.table, children }, defaultTableColumnOptions())
+		return defaultsDeep({ key: f.key, label: f.label, ...base, ...f.table, children }, DEFAULT_TABLE_COLUMN_OPTIONS)
 	}
-	return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, defaultTableColumnOptions())
+	return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, DEFAULT_TABLE_COLUMN_OPTIONS)
 }
 
 const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConfig']): TableColumnSchema[] => {
@@ -102,8 +104,8 @@ export const useCrud = <VO = any, Query = any, DTO = any>(
 ): { tableHook: UseCrudTableReturn<VO, Query>; formHook: UseCrudFormReturn<DTO> } => {
 	// ====== 默认值 ======
 	const defaultOptions = (): Partial<UseCrudOptions<VO, Query, DTO>> => ({
-		primaryKey: 'id',
-		subject: '数据'
+		primaryKey: DEFAULT_PRIMARY_KEY,
+		subject: DEFAULT_SUBJECT
 	})
 
 	defaultsDeep(opts, defaultOptions())

@@ -1,7 +1,13 @@
 import type { ColumnConfig, UseTableOptions } from '@/types/hooks/column-config'
-import type { SearchFieldConfig } from '@/types/hooks/search-field'
 import type { Key, KeyArray, PageQuery, PageVO } from '@/types'
 import { normalizeSearchField } from '@/types/hooks/search-field'
+import {
+	DEFAULT_EXPORT_SUCCESS_MESSAGE,
+	DEFAULT_IMPORT_SUCCESS_MESSAGE,
+	DEFAULT_PAGE_SIZES,
+	DEFAULT_PRIMARY_KEY,
+	DEFAULT_SUBJECT
+} from '@/config/crud'
 import { useTableSettingsStore } from '@/store/table-settings-store'
 import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
@@ -16,14 +22,14 @@ import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
  */
 export const useTableV2 = <VO = any, Query extends PageQuery = PageQuery>(options: UseTableOptions<VO, Query>) => {
 	// ====== 配置解构（带默认值） ======
-	const primaryKey = (options.primaryKey ?? 'id') as keyof VO
+	const primaryKey = (options.primaryKey ?? DEFAULT_PRIMARY_KEY) as keyof VO
 	const isPage = options.isPage !== false
 	const mountedGetData = options.mountedGetData !== false
 	const resetQueryGetData = options.resetQueryGetData !== false
-	const tableSubject = options.tableSubject ?? '数据'
-	const defaultPageSizes = options.pageSizes ?? [10, 20, 50, 100, 200]
-	const exportSuccessMessage = options.exportSuccessMessage ?? '导出成功，请查看下载的文件'
-	const importSuccessMessage = options.importSuccessMessage ?? '导入成功，请查看数据'
+	const tableSubject = options.tableSubject ?? DEFAULT_SUBJECT
+	const defaultPageSizes = options.pageSizes ?? [...DEFAULT_PAGE_SIZES]
+	const exportSuccessMessage = options.exportSuccessMessage ?? DEFAULT_EXPORT_SUCCESS_MESSAGE
+	const importSuccessMessage = options.importSuccessMessage ?? DEFAULT_IMPORT_SUCCESS_MESSAGE
 
 	// ====== 1. 查询/分页 ======
 	const queryRef = ref()
@@ -370,7 +376,9 @@ export const useTableV2 = <VO = any, Query extends PageQuery = PageQuery>(option
 
 	const columns = ref<ColumnConfig[]>(
 		options.tableKey
-			? (settingsStore.getColumns(options.tableKey) ? mergeWithDefaults(settingsStore.getColumns(options.tableKey)!) : cloneColumns(defaultColumns))
+			? settingsStore.getColumns(options.tableKey)
+				? mergeWithDefaults(settingsStore.getColumns(options.tableKey)!)
+				: cloneColumns(defaultColumns)
 			: cloneColumns(defaultColumns)
 	)
 

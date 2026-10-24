@@ -1,17 +1,20 @@
 import type { UseCrudTableOptions, UseCrudTableReturn } from '@/types/hooks/use-crud-table'
 import type { Pagination, SortChangePayload, TableColumnSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
+import {
+	DEFAULT_EXPORT_SUCCESS_MESSAGE,
+	DEFAULT_IMPORT_SUCCESS_MESSAGE,
+	DEFAULT_PAGE_SIZE,
+	DEFAULT_PAGE_SIZES,
+	DEFAULT_PRIMARY_KEY,
+	DEFAULT_SUBJECT,
+	DEFAULT_TABLE_MAX_HEIGHT
+} from '@/config/crud'
 import type { Key, KeyArray } from '@/types/common'
 import type { PageVO } from '@/types/api/common'
 import { useTableSettingsStore } from '@/store/table-settings-store'
 import { defaultsDeep, isEmpty, isNotBlank } from '@/utils/tool'
-import { toValue } from 'vue'
-
-// ======== 表格列默认值 ========
-export const defaultTableColumnOptions = (): Partial<TableColumnSchema> => ({
-	align: 'center',
-	showOverflowTooltip: true
-})
+import { toValue } from 'vue' // ======== 内置固定列工厂函数 ========
 
 // ======== 内置固定列工厂函数 ========
 export const createBuiltinSelection = (): TableColumnSchema => ({
@@ -54,26 +57,27 @@ export const createBuiltinOperation = (): TableColumnSchema => ({
 	fixed: 'right',
 	width: 150,
 	align: 'center',
+	showOverflowTooltip: false,
 	disabled: true
 })
 
 export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO, Query>): UseCrudTableReturn<VO, Query> => {
 	// ====== 默认值（仅填充缺失属性，保留 reactive 响应性） ======
 	const defaultOptions = (): Partial<UseCrudTableOptions<VO, Query>> => ({
-		primaryKey: 'id',
-		subject: '数据',
+		primaryKey: DEFAULT_PRIMARY_KEY,
+		subject: DEFAULT_SUBJECT,
 		isPage: true,
-		pageSizes: [10, 20, 50, 100, 200],
-		pageSize: 10,
-		maxHeight: '60vh',
+		pageSizes: [...DEFAULT_PAGE_SIZES],
+		pageSize: DEFAULT_PAGE_SIZE,
+		maxHeight: DEFAULT_TABLE_MAX_HEIGHT,
 		mountedGetData: true,
 		resetQueryGetData: true,
 		showToolbarLeft: true,
 		initQueryForm: () => ({}) as Query,
 		searchSchema: [],
 		queryContext: {},
-		exportSuccessMessage: '导出成功，请查看下载的文件',
-		importSuccessMessage: '导入成功，请查看数据'
+		exportSuccessMessage: DEFAULT_EXPORT_SUCCESS_MESSAGE,
+		importSuccessMessage: DEFAULT_IMPORT_SUCCESS_MESSAGE
 	})
 
 	defaultsDeep(opts, defaultOptions())
@@ -141,12 +145,18 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		return result
 	}
 
+	// 查询请求序号：每次发起查询递增，用于丢弃迟到的响应
+	// （快速连续翻页/排序时，旧请求若后返回会覆盖新数据，旧 finally 还会提前撤掉新请求的 loading）
+	let requestSeq = 0
+
 	// 执行查询
 	const executeQuery = () => {
+		const seq = ++requestSeq
 		loading.value = true
 		opts
 			.dataListApi(buildQueryForm() as Query)
 			.then((data: PageVO<VO> | VO[]) => {
+				if (seq !== requestSeq) return
 				if (isPage) {
 					const pageVO = data as PageVO<VO>
 					dataList.value = pageVO.records
@@ -158,7 +168,12 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 					pageNum.value = 1
 				}
 			})
+			.catch(() => {
+				// 错误提示由 request.ts 拦截器统一负责，这里只静默接住，避免触发 unhandledrejection
+			})
 			.finally(() => {
+				// 旧请求结束时不能撤掉新请求的 loading
+				if (seq !== requestSeq) return
 				loading.value = false
 			})
 	}
@@ -315,6 +330,9 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 						clearSelection()
 						getDataList()
 					})
+					.catch(() => {
+						// 错误提示由 request.ts 拦截器统一负责，这里只静默接住，避免触发 unhandledrejection
+					})
 					.finally(() => {
 						deleteLoading.value = false
 					})
@@ -342,6 +360,9 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 			.then(() => {
 				ElMessage.success(opts.exportSuccessMessage)
 				clearSelection()
+			})
+			.catch(() => {
+				// 错误提示由 request.ts 拦截器统一负责，这里只静默接住，避免触发 unhandledrejection
 			})
 			.finally(() => {
 				exportLoading.value = false
@@ -470,9 +491,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 			data: dataList,
 			loading,
 			// 不分页时返回 undefined，DataTable 的 v-if="pagination" 据此隐藏分页条
-			pagination: computed<Pagination | undefined>(() =>
-				isPage ? { current: pageNum.value, size: pageSize.value, total: total.value } : undefined
-			),
+			pagination: computed<Pagination | undefined>(() => (isPage ? { current: pageNum.value, size: pageSize.value, total: total.value } : undefined)),
 			index: tableIndex
 		}) as UseCrudTableReturn<VO, Query>['table'],
 		// 多选

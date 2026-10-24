@@ -161,7 +161,7 @@ import { ElDivider } from 'element-plus'
 import IconButton from '@/components/icon-button/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import ColumnSettingItem from './internal/ColumnSettingItem.vue'
-import { defaultTableColumnOptions } from '@/hooks/use-crud-table'
+import { DEFAULT_PAGE_SIZES, DEFAULT_PRIMARY_KEY, DEFAULT_TABLE_COLUMN_OPTIONS, DEFAULT_TABLE_MAX_HEIGHT } from '@/config/crud'
 import type { Pagination, TableColumnSchema } from '@/types/schema'
 
 defineOptions({
@@ -194,11 +194,11 @@ const props = withDefaults(
 	}>(),
 	{
 		loading: false,
-		pageSizes: () => [10, 20, 50, 100, 200],
-		maxHeight: '60vh',
+		pageSizes: () => [...DEFAULT_PAGE_SIZES],
+		maxHeight: DEFAULT_TABLE_MAX_HEIGHT,
 		// 不传时等同 el-table 原生行为：每页从 1 开始
 		rowIndex: (index: number) => index + 1,
-		rowKey: 'id',
+		rowKey: DEFAULT_PRIMARY_KEY,
 		showToolbarLeft: true
 	}
 )
@@ -330,7 +330,11 @@ const createSortable = () => {
 }
 
 // 递归定位并更新指定 key 的列（不可变）；未命中返回原数组引用
-const updateColumnByKey = (list: TableColumnSchema[], key: string, patch: (col: TableColumnSchema) => Partial<TableColumnSchema>): TableColumnSchema[] => {
+const updateColumnByKey = (
+	list: TableColumnSchema[],
+	key: string,
+	patch: (col: TableColumnSchema) => Partial<TableColumnSchema>
+): TableColumnSchema[] => {
 	let changed = false
 	const next = list.map(col => {
 		if (col.key === key) {
@@ -381,8 +385,10 @@ const cancelRename = () => {
 }
 
 // ====== 列配置转换 ======
+// 默认值是只读常量：toColumnProps 在模板里逐列调用（render 期），不能每次调用都新建一份
+const columnDefaults = DEFAULT_TABLE_COLUMN_OPTIONS
+
 const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
-	const defaults = defaultTableColumnOptions()
 	const result: Record<string, any> = {}
 	// 分组列：仅作父表头，不下发 prop / formatter / showOverflowTooltip / sortable（对纯表头无意义）
 	if (col.children?.length) {
@@ -390,7 +396,7 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 		if (col.width) result.width = col.width
 		if (col.minWidth) result.minWidth = col.minWidth
 		if (col.fixed) result.fixed = col.fixed
-		result.align = col.align ?? defaults.align
+		result.align = col.align ?? columnDefaults.align
 		if (col.headerAlign) result.headerAlign = col.headerAlign
 		return result
 	}
@@ -405,10 +411,10 @@ const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	if (col.width) result.width = col.width
 	if (col.minWidth) result.minWidth = col.minWidth
 	if (col.fixed) result.fixed = col.fixed
-	result.align = col.align ?? defaults.align
+	result.align = col.align ?? columnDefaults.align
 	if (col.headerAlign) result.headerAlign = col.headerAlign
 	if (col.sortable) result.sortable = col.sortable
-	if ((col.showOverflowTooltip ?? defaults.showOverflowTooltip) !== false) result.showOverflowTooltip = true
+	if ((col.showOverflowTooltip ?? columnDefaults.showOverflowTooltip) !== false) result.showOverflowTooltip = true
 	if (col.formatter) result.formatter = col.formatter
 	if (col.reserveSelection) result.reserveSelection = true
 	return result

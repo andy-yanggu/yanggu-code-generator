@@ -1,14 +1,14 @@
 <template>
 	<el-card v-if="visible" class="layout-query-card" shadow="hover">
 		<el-form ref="formRef" :inline="true" :model="model" :rules="fieldRules" @keyup.enter="handleSearch">
-			<el-form-item v-for="field in normalizedFields" :key="field.key" :prop="field.prop">
+			<el-form-item v-for="(field, index) in normalizedFields" :key="field.key" :prop="field.prop">
 				<template #label>
 					<form-label-tooltip v-if="field.tooltip" :label="field.label" :tooltip="field.tooltip" />
 					<span v-else>{{ field.label }}</span>
 				</template>
 				<!-- 插槽覆盖（按 field.key 匹配） -->
 				<slot :name="field.key" :field="field" :form="model">
-					<dynamic-field v-model="model[field.prop]" :field="searchToFormField(field)"></dynamic-field>
+					<dynamic-field v-model="model[field.prop]" :field="formFields[index]"></dynamic-field>
 				</slot>
 			</el-form-item>
 			<el-form-item>
@@ -74,6 +74,11 @@ const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({
 	clearable: field.clearable,
 	filterable: field.filterable
 })
+
+// 提前映射成 DynamicField 需要的字段（与 normalizedFields 下标一一对应）。
+// 不要在模板里直接调 searchToFormField：模板读了 model[field.prop]，输入一个字符就会重渲染，
+// 每次渲染都为每个字段新建对象，导致所有 DynamicField 的 field prop 全部换引用。
+const formFields = computed(() => normalizedFields.value.map(searchToFormField))
 
 // 查询（内部校验）
 const handleSearch = async () => {

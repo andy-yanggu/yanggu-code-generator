@@ -2,12 +2,13 @@ import type { UseCrudFormOptions, UseCrudFormReturn } from '@/types/hooks/use-cr
 import type { Key } from '@/types/common'
 import type { FormItemRule, FormMode } from '@/types/schema'
 import { normalizeFormField } from '@/types/schema'
+import { DEFAULT_FORM_LABEL_WIDTH, DEFAULT_PRIMARY_KEY, DEFAULT_SUBJECT } from '@/config/crud'
 import { toValue } from 'vue'
 
 export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>): UseCrudFormReturn<DTO> => {
-	const primaryKey = options.primaryKey ?? 'id'
-	const subject = options.subject ?? '数据'
-	const labelWidth = options.labelWidth ?? '100px'
+	const primaryKey = options.primaryKey ?? DEFAULT_PRIMARY_KEY
+	const subject = options.subject ?? DEFAULT_SUBJECT
+	const labelWidth = options.labelWidth ?? DEFAULT_FORM_LABEL_WIDTH
 
 	// 归一化表单字段（补全 key/prop，一次性处理）
 	const normalizedFormSchema = (options.formSchema ?? []).map(normalizeFormField)

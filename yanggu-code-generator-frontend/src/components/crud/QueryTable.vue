@@ -1,10 +1,8 @@
 <template>
 	<div>
 		<!-- 搜索表单 -->
-		<!-- eslint-disable vue/no-mutating-props -->
-		<!-- v-model 绑定到 prop 的嵌套 reactive 属性是安全的（修改的是 hook 内部的 ref，不是 prop 引用本身） -->
 		<search-form
-			v-model="tableHook.search.form"
+			:model-value="tableHook.search.form"
 			:fields="tableHook.search.fields"
 			:visible="tableHook.search.visible"
 			:loading="tableHook.table.loading"

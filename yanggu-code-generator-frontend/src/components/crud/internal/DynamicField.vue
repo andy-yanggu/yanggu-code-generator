@@ -8,6 +8,7 @@
 import { computed } from 'vue'
 import { ElCascader, ElCheckboxGroup, ElDatePicker, ElInput, ElInputNumber, ElRadioGroup, ElSelect, ElSwitch, ElTreeSelect } from 'element-plus'
 import type { ComponentType, FormFieldSchema } from '@/types/schema'
+import { DEFAULT_FIELD_CLEARABLE, DEFAULT_FIELD_FILTERABLE } from '@/config/crud'
 
 defineOptions({
 	name: 'DynamicField'
@@ -67,9 +68,11 @@ const currentComponent = computed(() => {
 const getComponentProps = computed(() => {
 	const component = (props.field.component ?? 'input') as ComponentType
 	const placeholder = computedPlaceholder.value
-	const { options, filterable, width } = props.field
-	// clearable 由 schema 决定，缺省为 true（与 useCrud 注入的表单/查询字段默认值一致）
-	const clearable = props.field.clearable ?? true
+	const { options, width } = props.field
+	// clearable / filterable 由 schema 决定，缺省为 true（与 constant/crud 中注入的字段默认值一致）。
+	// 传统模式（直传 formSchema / searchSchema）的 normalize* 不补默认值，必须在这里兜底
+	const clearable = props.field.clearable ?? DEFAULT_FIELD_CLEARABLE
+	const filterable = props.field.filterable ?? DEFAULT_FIELD_FILTERABLE
 
 	const style = width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined
 
