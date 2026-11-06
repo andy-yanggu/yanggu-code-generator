@@ -34,6 +34,7 @@
 			:max-height="tableHook.refs.maxHeight"
 			:row-key="tableHook.refs.primaryKey"
 			:row-index="tableHook.table.index"
+			:show-table-header="tableHook.refs.showTableHeader"
 			:show-toolbar-left="tableHook.refs.showToolbarLeft"
 			@selection-change="onSelectionChange"
 			@sort-change="tableHook.query.onSortChange"

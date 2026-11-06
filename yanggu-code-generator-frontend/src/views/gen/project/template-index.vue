@@ -65,7 +65,7 @@ const tableHook = useCrudTable<GenTemplateEntity, GenTemplateQuery>({
 	queryContext,
 	mountedGetData: false,
 	subject: '模板',
-	showToolbarLeft: false
+	showTableHeader: false
 } as UseCrudTableOptions)
 
 // 勾选变化：转发给父组件

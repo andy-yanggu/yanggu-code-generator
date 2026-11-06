@@ -72,6 +72,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		maxHeight: DEFAULT_TABLE_MAX_HEIGHT,
 		mountedGetData: true,
 		resetQueryGetData: true,
+		showTableHeader: true,
 		showToolbarLeft: true,
 		initQueryForm: () => ({}) as Query,
 		searchSchema: [],
@@ -525,6 +526,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		refs: reactive({
 			cardMaximized,
 			primaryKey,
+			showTableHeader: opts.showTableHeader!,
 			showToolbarLeft: opts.showToolbarLeft!,
 			// 分页条档位与表格高度只能从 hook 配置改：CrudPage 只接收 tableHook，无法再往下传 props
 			pageSizes: opts.pageSizes!,

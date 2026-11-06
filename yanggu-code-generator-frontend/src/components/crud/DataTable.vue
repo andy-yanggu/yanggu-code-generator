@@ -1,7 +1,8 @@
 <template>
 	<el-card ref="cardRef" class="layout-table-card" :class="{ 'is-maximized': maximized }" shadow="hover">
-		<!-- 工具栏 -->
-		<template #header>
+		<!-- 工具栏整块可由 showTableHeader 关闭：v-if 在 slot template 上是条件插槽，
+		     false 时 el-card 的 $slots.header 为空、不渲染 header 容器，不会残留空白条 -->
+		<template v-if="showTableHeader" #header>
 			<div class="table-tool-bar">
 				<div v-if="showToolbarLeft" class="table-tool-bar-left">
 					<slot name="toolbar-left"></slot>
@@ -189,6 +190,8 @@ const props = withDefaults(
 		rowIndex?: (index: number) => number
 		/** 行数据主键字段名，映射到 el-table 的 row-key（跳页保持勾选、树形数据行身份依赖它）。默认 'id' */
 		rowKey?: string
+		/** 是否显示卡片 header 区（工具栏整块，含左右两侧），默认 true */
+		showTableHeader?: boolean
 		/** 是否显示工具栏左侧（默认按钮或用户插槽）。默认 true */
 		showToolbarLeft?: boolean
 	}>(),
@@ -199,6 +202,7 @@ const props = withDefaults(
 		// 不传时等同 el-table 原生行为：每页从 1 开始
 		rowIndex: (index: number) => index + 1,
 		rowKey: DEFAULT_PRIMARY_KEY,
+		showTableHeader: true,
 		showToolbarLeft: true
 	}
 )

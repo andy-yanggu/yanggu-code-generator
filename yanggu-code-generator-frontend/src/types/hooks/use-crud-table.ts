@@ -74,6 +74,8 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	mountedGetData?: boolean
 	/** 重置查询表单后是否自动查询，默认 true */
 	resetQueryGetData?: boolean
+	/** 是否显示表格卡片的 header 区（左侧按钮 + 右侧搜索/刷新/列设置/最大化图标整块），默认 true */
+	showTableHeader?: boolean
 	/** 是否显示工具栏左侧区域（新增/批量删除按钮等），默认 true */
 	showToolbarLeft?: boolean
 }
@@ -155,6 +157,8 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 	refs: {
 		cardMaximized: boolean
 		primaryKey: string
+		/** 是否整块显示卡片 header，来自 useCrudTable 配置 */
+		showTableHeader: boolean
 		showToolbarLeft: boolean
 		/** 每页条数选项，来自 useCrudTable 配置，供分页条使用 */
 		pageSizes: number[]
