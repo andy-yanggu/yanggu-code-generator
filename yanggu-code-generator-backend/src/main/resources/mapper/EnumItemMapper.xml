@@ -11,6 +11,9 @@
         enum_item_code,
         enum_item_desc,
         enum_item_order,
+        tag_type,
+        tag_effect,
+        tag_color,
         create_time,
         update_time,
         is_delete
@@ -35,6 +38,9 @@
         <result property="enumItemCode" column="enum_item_code"/>
         <result property="enumItemDesc" column="enum_item_desc"/>
         <result property="enumItemOrder" column="enum_item_order"/>
+        <result property="tagType" column="tag_type"/>
+        <result property="tagEffect" column="tag_effect"/>
+        <result property="tagColor" column="tag_color"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
