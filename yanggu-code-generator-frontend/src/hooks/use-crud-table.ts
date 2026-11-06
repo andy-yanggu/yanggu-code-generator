@@ -33,6 +33,7 @@ export const createBuiltinIndex = (): TableColumnSchema => ({
 	label: '序号',
 	width: 60,
 	align: 'center',
+	fixed: 'left',
 	disabled: true
 })
 export const createBuiltinCreateTime = (): TableColumnSchema => ({
@@ -402,13 +403,21 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const cloneColumns = (cols: TableColumnSchema[]): TableColumnSchema[] =>
 		cols.map(col => (col.children?.length ? { ...col, children: cloneColumns(col.children) } : { ...col }))
 
-	// 递归合并：按 key 逐层匹配，保留用户改动的 visible/fixed/label，并递归合并分组的 children；
-	// 代码里新增（saved 中缺失）的默认列按默认顺序补回。
+	// 递归合并：按 key 逐层匹配，保留用户改动的 visible/fixed/label，并递归合并分组的 children。
+	// 职责划分：disabled 列（selection/index/expand/operation 等结构列，列设置面板拖拽 filter 本就保护、
+	// 用户无法调序）的位置与状态由声明侧决定，不参与 saved 排序——历史快照里"新结构列被追加到末尾"
+	// 的坏顺序可自愈；可拖拽数据列才跟随用户持久化顺序，代码新增的补到末尾
 	const mergeWithDefaults = (saved: TableColumnSchema[], defaults: TableColumnSchema[]): TableColumnSchema[] => {
-		const defaultMap = new Map(defaults.map(col => [col.key, col]))
-		const savedKeys = new Set(saved.map(col => col.key))
+		const isCodeSideColumn = (c: TableColumnSchema) => c.disabled === true
+		const leadingStructural = defaults.filter(c => isCodeSideColumn(c) && c.fixed !== 'right')
+		const trailingStructural = defaults.filter(c => isCodeSideColumn(c) && c.fixed === 'right')
+		const dataDefaults = defaults.filter(c => !isCodeSideColumn(c))
 
-		const merged = saved.map(savedCol => {
+		const savedData = saved.filter(c => !isCodeSideColumn(c))
+		const defaultMap = new Map(dataDefaults.map(col => [col.key, col]))
+		const savedKeys = new Set(savedData.map(col => col.key))
+
+		const mergedData = savedData.map(savedCol => {
 			const defaultCol = defaultMap.get(savedCol.key)
 			if (!defaultCol) return cloneColumns([savedCol])[0]
 			const result: TableColumnSchema = {
@@ -424,13 +433,13 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 			return result
 		})
 
-		for (const col of defaults) {
+		for (const col of dataDefaults) {
 			if (!savedKeys.has(col.key)) {
-				merged.push(cloneColumns([col])[0])
+				mergedData.push(cloneColumns([col])[0])
 			}
 		}
 
-		return merged
+		return [...cloneColumns(leadingStructural), ...mergedData, ...cloneColumns(trailingStructural)]
 	}
 
 	const savedColumns = opts.tableKey ? (settingsStore.getColumns(opts.tableKey) as TableColumnSchema[] | undefined) : undefined

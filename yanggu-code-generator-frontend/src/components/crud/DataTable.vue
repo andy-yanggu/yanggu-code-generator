@@ -394,6 +394,15 @@ const columnDefaults = DEFAULT_TABLE_COLUMN_OPTIONS
 
 const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
 	const result: Record<string, any> = {}
+	// 展开列：单元格是展开区的挂载点，prop / formatter / sortable / showOverflowTooltip / align
+	// 等数据列属性对它均无消费点，只下发有实际意义的四项
+	if (col.type === 'expand') {
+		result.type = col.type
+		if (col.label) result.label = col.label
+		if (col.width) result.width = col.width
+		if (col.fixed) result.fixed = col.fixed
+		return result
+	}
 	// 分组列：仅作父表头，不下发 prop / formatter / showOverflowTooltip / sortable（对纯表头无意义）
 	if (col.children?.length) {
 		if (col.label) result.label = col.label

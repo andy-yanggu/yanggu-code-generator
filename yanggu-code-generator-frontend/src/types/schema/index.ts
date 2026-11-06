@@ -74,7 +74,7 @@ export interface TableColumnSchema {
 	key: string
 	label: string
 	prop?: string
-	type?: 'selection' | 'index'
+	type?: 'selection' | 'index' | 'expand'
 	width?: number | string
 	minWidth?: number
 	fixed?: 'left' | 'right' | boolean
