@@ -9,13 +9,14 @@
 			<template #form-tagColor="{ model, mode }">
 				<el-color-picker v-model="model.tagColor" :disabled="mode === 'detail'" size="small"></el-color-picker>
 			</template>
+			<template #form-tagPreview="{ model }">
+				<el-tag :type="model.tagType" :effect="model.tagEffect" :color="model.tagColor">
+					{{ model.enumItemDesc }}
+				</el-tag>
+			</template>
 			<!-- 表格列 tagPreview：用行自身的 tag 三字段实时预览样式，文案取枚举项描述；-->
 			<template #table-tagPreview="{ row }">
-				<el-tag
-					:type="row.tagType && row.tagType !== 'default' ? row.tagType : undefined"
-					:effect="row.tagEffect || undefined"
-					:color="row.tagColor || undefined"
-				>
+				<el-tag :type="row.tagType" :effect="row.tagEffect" :color="row.tagColor">
 					{{ row.enumItemDesc }}
 				</el-tag>
 			</template>
@@ -102,6 +103,7 @@ const fields: CrudField[] = [
 	{
 		key: 'tagPreview',
 		label: '标签预览',
+		inForm: true,
 		inTable: true,
 		table: { width: 140 }
 	}

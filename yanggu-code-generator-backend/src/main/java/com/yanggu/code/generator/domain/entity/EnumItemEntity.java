@@ -1,9 +1,6 @@
 package com.yanggu.code.generator.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -61,19 +58,19 @@ public class EnumItemEntity extends BaseEntity implements Serializable {
     /**
      * 标签类型（primary/success/info/warning/danger）
      */
-    @TableField(value = "tag_type")
+    @TableField(value = "tag_type", updateStrategy = FieldStrategy.ALWAYS)
     private String tagType;
 
     /**
      * 标签样式（light/dark/plain）
      */
-    @TableField(value = "tag_effect")
+    @TableField(value = "tag_effect", updateStrategy = FieldStrategy.ALWAYS)
     private String tagEffect;
 
     /**
      * 标签背景色（hex，如#409EFF）
      */
-    @TableField(value = "tag_color")
+    @TableField(value = "tag_color", updateStrategy = FieldStrategy.ALWAYS)
     private String tagColor;
 
 }
