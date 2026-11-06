@@ -40,7 +40,7 @@
 					label="模板类型"
 					header-align="center"
 					align="center"
-					:formatter="getLabel(TEMPLATE_TYPES)"></el-table-column>
+					:formatter="getDictTag(TEMPLATE_TYPES)"></el-table-column>
 				<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 			</el-table>
 			<el-pagination
@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import { useSubmitHandler, useTableAction } from '@/hooks'
 import { genGeneratorApi, genTemplateApi } from '@/api'
 import { GenTemplateEntity, GenTemplateQuery, IHooksOptions, SubmitOptions } from '@/types'

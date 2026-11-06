@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import { genTemplateApi } from '@/api'
 import type { GenTemplateEntity, GenTemplateQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
 import { useCrudTable } from '@/hooks'
@@ -34,9 +34,9 @@ const tableColumns: TableColumnSchema[] = [
 	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true, reserveSelection: true },
 	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
 	{ key: 'templateGroupName', label: '模板组名称' },
-	{ key: 'templateGroupType', label: '模板组类型', formatter: getLabel(TEMPLATE_GROUP_TYPES) },
+	{ key: 'templateGroupType', label: '模板组类型', formatter: getDictTag(TEMPLATE_GROUP_TYPES) },
 	{ key: 'fileName', label: '目录/文件名称' },
-	{ key: 'templateType', label: '模板类型', formatter: getLabel(TEMPLATE_TYPES) },
+	{ key: 'templateType', label: '模板类型', formatter: getDictTag(TEMPLATE_TYPES) },
 	{ key: 'generatorPath', label: '模板路径' },
 	{ key: 'templateDesc', label: '描述' }
 ]

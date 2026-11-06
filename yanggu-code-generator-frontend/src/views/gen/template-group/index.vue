@@ -15,9 +15,7 @@
 
 			<!-- 属性数量列：可点击链接 -->
 			<template #table-groupPropertyCount="{ row }">
-				<el-tooltip content="配置属性" placement="top">
-					<el-button type="primary" link @click="propertyHandler(row)">{{ row.groupPropertyCount }}个</el-button>
-				</el-tooltip>
+				<el-button type="primary" link @click="propertyHandler(row)">{{ row.groupPropertyCount }}个</el-button>
 			</template>
 
 			<!-- 操作列：模板 + 属性 + 修改 + 更多（2×2 网格） -->
@@ -83,7 +81,7 @@
 <script setup lang="ts">
 import { genTemplateGroupApi } from '@/api'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import type { CrudField, GenTemplateGroupEntity, GenTemplateGroupQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
@@ -119,7 +117,7 @@ const fields: CrudField[] = [
 		form: {
 			ruleList: [{ required: true, message: '模板组类型不能为空', trigger: 'blur' }]
 		},
-		table: { formatter: getLabel(TEMPLATE_GROUP_TYPES) }
+		table: { formatter: getDictTag(TEMPLATE_GROUP_TYPES) }
 	},
 	{ key: 'groupDesc', label: '模板组描述', inForm: true, inTable: true },
 	{ key: 'groupPropertyCount', label: '属性数量', inTable: true }

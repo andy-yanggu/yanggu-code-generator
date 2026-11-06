@@ -5,7 +5,9 @@
 			<template #toolbar-left>
 				<el-space size="default">
 					<el-button type="primary" :icon="Plus" @click="formInitHandle()">新增</el-button>
-					<el-button type="danger" :loading="tableHook.action.delete.loading" :icon="Delete" @click="tableHook.action.delete.execute()">删除</el-button>
+					<el-button type="danger" :loading="tableHook.action.delete.loading" :icon="Delete" @click="tableHook.action.delete.execute()"
+						>删除</el-button
+					>
 					<el-button type="success" :icon="DocumentAdd" @click="generatorBatchHandler()">生成</el-button>
 				</el-space>
 			</template>
@@ -21,9 +23,7 @@
 
 			<!-- 表格列插槽：枚举项数量 -->
 			<template #table-enumItemCount="{ row }">
-				<el-tooltip content="配置枚举项" placement="top">
-					<el-button type="primary" link @click="configEnumItemHandle(row)">{{ row.enumItemCount }}个</el-button>
-				</el-tooltip>
+				<el-button type="primary" link @click="configEnumItemHandle(row)">{{ row.enumItemCount }}个</el-button>
 			</template>
 
 			<!-- 操作列 -->
@@ -73,7 +73,7 @@ import TemplateIndex from '@/views/gen/enum/template-index.vue'
 import Preview from '@/business/preview/index.vue'
 import { genEnumApi, genProjectApi } from '@/api'
 import { GenEnumEntity, GenEnumQuery, GenProjectEntity } from '@/types'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import {
 	createBuiltinCreateTime,
@@ -158,7 +158,7 @@ const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
 		createBuiltinIndex(),
 		{ key: 'projectName', label: '项目名称' },
 		{ key: 'enumName', label: '枚举名称' },
-		{ key: 'generatorType', label: '生成类型', formatter: getLabel(PROJECT_GENERATE_TYPES) },
+		{ key: 'generatorType', label: '生成类型', formatter: getDictTag(PROJECT_GENERATE_TYPES) },
 		{ key: 'enumDesc', label: '枚举描述' },
 		{ key: 'enumItemCount', label: '枚举项数量' },
 		createBuiltinCreateTime(),

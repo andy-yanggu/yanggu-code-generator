@@ -1,34 +1,42 @@
 import { Enum } from 'enum-plus'
 
-// 数据库类型枚举
+// el-tag 的 type 联合（与 Element Plus 保持一致），供枚举项的 type 字段标注，拼错颜色名编译期即报错
+export type TagType = 'primary' | 'success' | 'info' | 'warning' | 'danger'
+
+// el-tag 的 effect 联合（与 Element Plus 保持一致）：与 type 正交，5×3=15 种视觉组合
+// 约定：同一枚举内重色的项用 effect 区分（首个保持默认 light，后续用 plain），不传即走 el-tag 默认值
+export type TagEffect = 'light' | 'dark' | 'plain'
+
+// 数据库类型枚举（语义色只有 5 档，7 个数据库无法一一分配：优先照顾品牌色，
+// 重色项用 effect 区分：首个保持 light，第二个用 plain，做到 7 项 7 样）
 export const DB_TYPES = Enum({
-	MySQL: { value: 'MySQL', label: 'MySQL' },
-	Oracle: { value: 'Oracle', label: 'Oracle' },
-	PostgreSQL: { value: 'PostgreSQL', label: 'PostgreSQL' },
-	SQLServer: { value: 'SQLServer', label: 'SQLServer' },
-	DM: { value: 'DM', label: '达梦8' },
-	KingBase: { value: 'KingBase', label: '人大金仓' },
-	Clickhouse: { value: 'Clickhouse', label: 'Clickhouse' }
+	MySQL: { value: 'MySQL', label: 'MySQL', type: 'primary' as TagType },
+	Oracle: { value: 'Oracle', label: 'Oracle', type: 'danger' as TagType },
+	PostgreSQL: { value: 'PostgreSQL', label: 'PostgreSQL', type: 'primary' as TagType, effect: 'plain' as TagEffect },
+	SQLServer: { value: 'SQLServer', label: 'SQLServer', type: 'warning' as TagType },
+	DM: { value: 'DM', label: '达梦8', type: 'success' as TagType },
+	KingBase: { value: 'KingBase', label: '人大金仓', type: 'danger' as TagType, effect: 'plain' as TagEffect },
+	Clickhouse: { value: 'Clickhouse', label: 'Clickhouse', type: 'info' as TagType }
 } as const)
 
-// 模板组类型枚举
+// 模板组类型枚举（试点：带 type 字段的枚举项由 dict-tag 渲染成对应颜色的 el-tag）
 export const TEMPLATE_GROUP_TYPES = Enum({
-	Project: { value: 0, label: '项目模板' },
-	Table: { value: 1, label: '表模板' },
-	Enum: { value: 2, label: '枚举模板' }
+	Project: { value: 0, label: '项目模板', type: 'primary' as TagType },
+	Table: { value: 1, label: '表模板', type: 'success' as TagType },
+	Enum: { value: 2, label: '枚举模板', type: 'info' as TagType }
 } as const)
 
 // 模板类型枚举
 export const TEMPLATE_TYPES = Enum({
-	Directory: { value: 0, label: '目录' },
-	File: { value: 1, label: '模板文件' },
-	Binary: { value: 2, label: '二进制文件' }
+	Directory: { value: 0, label: '目录', type: 'primary' as TagType },
+	File: { value: 1, label: '模板文件', type: 'success' as TagType },
+	Binary: { value: 2, label: '二进制文件', type: 'info' as TagType }
 } as const)
 
 // 项目生成方式
 export const PROJECT_GENERATE_TYPES = Enum({
-	Zip: { value: 0, label: 'ZIP压缩包' },
-	Local: { value: 1, label: '服务器本地' }
+	Zip: { value: 0, label: 'ZIP压缩包', type: 'primary' as TagType },
+	Local: { value: 1, label: '服务器本地', type: 'success' as TagType }
 } as const)
 
 // 表单布局枚举
@@ -50,7 +58,7 @@ export const TABLE_GENERATOR_FUNCTION_TYPES = Enum({
 } as const)
 
 // 表弹窗方式
-export const TABLE_POPUP_TYPE_TYPES = Enum({
+export const TABLE_POPUP_TYPES = Enum({
 	Dialog: { value: 0, label: '对话框' },
 	Drawer: { value: 1, label: '抽屉' }
 } as const)
@@ -101,4 +109,4 @@ export const LAYOUT_SIZE_TYPES = Enum({
 	Small: { value: 'small', label: '稍小' }
 } as const)
 
-export type LayoutSize = typeof LAYOUT_SIZE_TYPES.values[number]
+export type LayoutSize = (typeof LAYOUT_SIZE_TYPES.values)[number]

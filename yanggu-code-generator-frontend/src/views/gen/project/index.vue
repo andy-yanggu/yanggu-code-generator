@@ -66,7 +66,7 @@
 				<el-table-column
 					prop="generatorType"
 					label="生成方式"
-					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
+					:formatter="getDictTag(PROJECT_GENERATE_TYPES)"
 					header-align="center"
 					align="center"></el-table-column>
 				<el-table-column prop="projectPackage" label="项目包名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -143,7 +143,7 @@ import StepsV2 from '@/views/gen/project/steps-v2.vue'
 import ProjectForm from '@/views/gen/project/form.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { useInitForm } from '@/hooks/use-init-form'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import { Delete, DocumentAdd, Edit, Plus, Refresh, Search, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 

@@ -63,7 +63,7 @@
 				<el-table-column
 					prop="generatorType"
 					label="生成方式"
-					:formatter="getLabel(PROJECT_GENERATE_TYPES)"
+					:formatter="getDictTag(PROJECT_GENERATE_TYPES)"
 					header-align="center"
 					align="center"
 					width="100"></el-table-column>
@@ -156,7 +156,7 @@ import Preview from '@/business/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import { useInitForm, useTableAction } from '@/hooks'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
 import TableToolBar from '@/components/table/tool-bar/index.vue'

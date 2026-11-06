@@ -1,5 +1,7 @@
 <template>
-	<el-tag v-if="isNotBlank(value)" :type="(enumItem as any)?.type" :color="(enumItem as any)?.color">{{ enumItem?.label }}</el-tag>
+	<el-tag v-if="isNotBlank(value)" :type="(enumItem as any)?.type" :color="(enumItem as any)?.color" :effect="(enumItem as any)?.effect">
+		{{ enumItem?.label }}
+	</el-tag>
 </template>
 
 <script setup lang="ts">

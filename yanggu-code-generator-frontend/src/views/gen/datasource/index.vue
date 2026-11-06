@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { genDatasourceApi } from '@/api'
 import { DB_TYPES } from '@/constant/enum'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import type { CrudField } from '@/types/schema'
 import type { GenDatasourceEntity, GenDatasourceQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
@@ -71,7 +71,7 @@ const fields: CrudField[] = [
 		form: {
 			ruleList: [{ required: true, message: '数据库类型不能为空', trigger: 'blur' }]
 		},
-		table: { formatter: getLabel(DB_TYPES) }
+		table: { formatter: getDictTag(DB_TYPES) }
 	},
 	{
 		key: 'connUrl',

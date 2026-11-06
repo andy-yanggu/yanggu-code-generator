@@ -90,7 +90,7 @@
 				</el-col>
 				<el-col :span="12">
 					<el-form-item label="弹窗方式" prop="popupType">
-						<el-radio-group v-model="state.dataForm.popupType" :options="TABLE_POPUP_TYPE_TYPES.items"></el-radio-group>
+						<el-radio-group v-model="state.dataForm.popupType" :options="TABLE_POPUP_TYPES.items"></el-radio-group>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -130,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPE_TYPES } from '@/constant/enum'
+import { FORM_LAYOUT_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPES } from '@/constant/enum'
 import { useSubmitForm } from '@/hooks'
 import { Check, Close } from '@element-plus/icons-vue'
 import { genBaseClassApi, genProjectApi, genTableApi, genTemplateGroupPropertyApi } from '@/api'

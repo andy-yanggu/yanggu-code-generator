@@ -17,7 +17,7 @@
 import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable } from '@/hooks'
 import { genGeneratorApi, genTemplateApi } from '@/api'
 import { TEMPLATE_TYPES } from '@/constant/enum'
-import { getLabel } from '@/utils/enum'
+import { getDictTag } from '@/utils/enum'
 import type { GenTemplateEntity, GenTemplateQuery, UseCrudTableOptions } from '@/types'
 import { Close, DocumentAdd } from '@element-plus/icons-vue'
 import QueryTable from '@/components/crud/QueryTable.vue'
@@ -50,7 +50,7 @@ const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
 		createBuiltinIndex(),
 		{ key: 'templateName', label: '模板名称' },
 		{ key: 'generatorPath', label: '模板路径' },
-		{ key: 'templateType', label: '模板类型', formatter: getLabel(TEMPLATE_TYPES) },
+		{ key: 'templateType', label: '模板类型', formatter: getDictTag(TEMPLATE_TYPES) },
 		{ key: 'templateDesc', label: '描述' },
 		createBuiltinUpdateTime(),
 		createBuiltinCreateTime()
