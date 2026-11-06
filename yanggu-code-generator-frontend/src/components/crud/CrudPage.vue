@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<query-table :table-hook="tableHook">
+		<query-table v-bind="$attrs" :table-hook="tableHook">
 			<!-- 工具栏左侧：仅当需要时传递（用户提供了 #table-toolbar-left 插槽 或 showToolbarLeft 为 true） -->
 			<template v-if="tableHook.refs.showToolbarLeft" #toolbar-left="{ tableHook: t }">
 				<slot name="table-toolbar-left" :table-hook="t" :dialog="crudDialogRef">
@@ -52,7 +52,10 @@ import CrudDialog from './CrudDialog.vue'
 import type { UseCrudFormReturn, UseCrudTableReturn } from '@/types'
 
 defineOptions({
-	name: 'CrudPage'
+	name: 'CrudPage',
+	// 页面传来的 el-table 原生属性/事件不在根 div 上静默失效，而是经 v-bind="$attrs" 逐层透传到 el-table；
+	// 透传放在具名绑定之前，系统核心绑定（table-hook 等）永远压过用户透传
+	inheritAttrs: false
 })
 
 // ====== Props ======

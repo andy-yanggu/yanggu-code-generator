@@ -22,6 +22,7 @@
 
 		<!-- 表格 -->
 		<data-table
+			v-bind="$attrs"
 			ref="dataTableRef"
 			v-model:show-search="tableHook.search.visible"
 			v-model:maximized="tableHook.refs.cardMaximized"
@@ -64,7 +65,11 @@ import DataTable from './DataTable.vue'
 import type { UseCrudTableReturn } from '@/types'
 
 defineOptions({
-	name: 'QueryTable'
+	name: 'QueryTable',
+	// 透传通道与 CrudPage 同构：inheritAttrs:false 阻止原生属性落在根 div 上静默失效，
+	// v-bind="$attrs" 置于 v-model/具名 props 之前，确保系统绑定优先级高于用户透传；
+	// 已在 defineEmits 声明的事件（如 selectionChange）会被 emits 消费、不会重复透传
+	inheritAttrs: false
 })
 
 // 接收 hook 返回值作为 prop（纯展示组件，不再内部调用 hook）
