@@ -4,6 +4,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serial;
@@ -60,5 +61,26 @@ public class EnumItemDTO implements Serializable {
     @Schema(description = "枚举项排序")
     @NotNull(message = "枚举项顺序不能为空")
     private Integer enumItemOrder;
+
+    /**
+     * 标签类型（primary/success/info/warning/danger），不配置时走默认样式
+     */
+    @Schema(description = "标签类型")
+    @Size(max = 16, message = "标签类型长度不能超过16")
+    private String tagType;
+
+    /**
+     * 标签样式（light/dark/plain），不配置时走默认样式
+     */
+    @Schema(description = "标签样式")
+    @Size(max = 16, message = "标签样式长度不能超过16")
+    private String tagEffect;
+
+    /**
+     * 标签背景色（hex，如#409EFF），不配置时走默认样式
+     */
+    @Schema(description = "标签背景色")
+    @Size(max = 32, message = "标签背景色长度不能超过32")
+    private String tagColor;
 
 }

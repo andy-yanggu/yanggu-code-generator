@@ -58,4 +58,22 @@ public class EnumItemEntity extends BaseEntity implements Serializable {
     @TableField(value = "enum_item_order")
     private Integer enumItemOrder;
 
+    /**
+     * 标签类型（primary/success/info/warning/danger）
+     */
+    @TableField(value = "tag_type")
+    private String tagType;
+
+    /**
+     * 标签样式（light/dark/plain）
+     */
+    @TableField(value = "tag_effect")
+    private String tagEffect;
+
+    /**
+     * 标签背景色（hex，如#409EFF）
+     */
+    @TableField(value = "tag_color")
+    private String tagColor;
+
 }

@@ -5,12 +5,27 @@
 			<template #form-enumItemOrder="{ model, mode }">
 				<el-input-number v-model="model.enumItemOrder" :min="0" :disabled="mode === 'detail'" size="small"></el-input-number>
 			</template>
+			<!-- 表单字段 tagColor：el-color-picker 不在 DynamicField 的 component 清单里，用插槽覆盖 -->
+			<template #form-tagColor="{ model, mode }">
+				<el-color-picker v-model="model.tagColor" :disabled="mode === 'detail'" size="small"></el-color-picker>
+			</template>
+			<!-- 表格列 tagPreview：用行自身的 tag 三字段实时预览样式，文案取枚举项描述；-->
+			<template #table-tagPreview="{ row }">
+				<el-tag
+					:type="row.tagType && row.tagType !== 'default' ? row.tagType : undefined"
+					:effect="row.tagEffect || undefined"
+					:color="row.tagColor || undefined"
+				>
+					{{ row.enumItemDesc }}
+				</el-tag>
+			</template>
 		</crud-page>
 	</el-dialog>
 </template>
 
 <script setup lang="ts">
 import { genEnumItemApi } from '@/api'
+import { TAG_EFFECT_OPTIONS, TAG_TYPE_OPTIONS } from '@/constant/enum'
 import type { CrudField, GenEnumItemEntity, GenEnumItemQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
@@ -64,6 +79,31 @@ const fields: CrudField[] = [
 			ruleList: [{ required: true, message: '枚举项排序不能为空', trigger: 'blur' }]
 		},
 		table: { width: 120, sortable: 'custom' }
+	},
+	{
+		key: 'tagType',
+		label: '标签类型',
+		component: 'select',
+		options: [...TAG_TYPE_OPTIONS],
+		inForm: true
+	},
+	{
+		key: 'tagEffect',
+		label: '标签主题',
+		component: 'select',
+		options: [...TAG_EFFECT_OPTIONS],
+		inForm: true
+	},
+	{
+		key: 'tagColor',
+		label: '标签背景色',
+		inForm: true
+	},
+	{
+		key: 'tagPreview',
+		label: '标签预览',
+		inTable: true,
+		table: { width: 140 }
 	}
 ]
 
@@ -83,7 +123,10 @@ const initFormData = (ctx?: Record<string, any>): GenEnumItemEntity => ({
 	enumItemName: '',
 	enumItemCode: '',
 	enumItemDesc: '',
-	enumItemOrder: 0
+	enumItemOrder: 0,
+	tagType: '',
+	tagEffect: '',
+	tagColor: ''
 })
 
 // 表单配置
@@ -98,6 +141,14 @@ const formConfig = reactive({
 			formHook.form.data.enumItemName += '_复制'
 			formHook.form.data.id = ''
 		}
+	},
+	beforeSubmit: () => {
+		// 空串归一为 null：select 清空后可能残留 ''，直接入库会破坏"未配置=NULL"语义，
+		// 导致后续 IS NOT NULL 查询误命中
+		const data = formHook.form.data as GenEnumItemEntity
+		if (!data.tagType) data.tagType = null
+		if (!data.tagEffect) data.tagEffect = null
+		if (!data.tagColor) data.tagColor = null
 	},
 	labelWidth: '120px',
 	formContext

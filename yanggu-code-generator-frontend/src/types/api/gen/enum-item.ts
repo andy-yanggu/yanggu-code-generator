@@ -17,6 +17,12 @@ export interface GenEnumItemEntity {
 	enumItemDesc: string
 	// 枚举项排序
 	enumItemOrder: number
+	// 标签类型(primary/success/info/warning/danger)，未配置为 null
+	tagType?: string | null
+	// 标签样式(light/dark/plain)，未配置为 null
+	tagEffect?: string | null
+	// 标签背景色(hex，如#409EFF)，未配置为 null
+	tagColor?: string | null
 }
 
 /**

@@ -55,4 +55,22 @@ public class EnumItemVO extends BaseVO implements Serializable {
     @Schema(description = "枚举项排序")
     private Integer enumItemOrder;
 
+    /**
+     * 标签类型（primary/success/info/warning/danger）
+     */
+    @Schema(description = "标签类型")
+    private String tagType;
+
+    /**
+     * 标签样式（light/dark/plain）
+     */
+    @Schema(description = "标签样式")
+    private String tagEffect;
+
+    /**
+     * 标签背景色（hex，如#409EFF）
+     */
+    @Schema(description = "标签背景色")
+    private String tagColor;
+
 }

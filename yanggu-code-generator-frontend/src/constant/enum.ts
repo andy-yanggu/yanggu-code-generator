@@ -7,6 +7,22 @@ export type TagType = 'primary' | 'success' | 'info' | 'warning' | 'danger'
 // 约定：同一枚举内重色的项用 effect 区分（首个保持默认 light，后续用 plain），不传即走 el-tag 默认值
 export type TagEffect = 'light' | 'dark' | 'plain'
 
+// el-tag 样式选项集：供枚举项管理的样式配置表单使用，value 与 TagType/TagEffect 字面量对齐；
+// 不加 as const（会变 readonly 数组无法赋给 TypedArray 契约），消费侧自行展开拷贝隔离引用
+export const TAG_TYPE_OPTIONS: { value: TagType; label: string }[] = [
+	{ value: 'primary', label: '主色（primary）' },
+	{ value: 'success', label: '成功（success）' },
+	{ value: 'info', label: '信息（info）' },
+	{ value: 'warning', label: '警告（warning）' },
+	{ value: 'danger', label: '危险（danger）' }
+]
+
+export const TAG_EFFECT_OPTIONS: { value: TagEffect; label: string }[] = [
+	{ value: 'light', label: '浅色填充（light）' },
+	{ value: 'dark', label: '深色填充（dark）' },
+	{ value: 'plain', label: '空心描边（plain）' }
+]
+
 // 数据库类型枚举（语义色只有 5 档，7 个数据库无法一一分配：优先照顾品牌色，
 // 重色项用 effect 区分：首个保持 light，第二个用 plain，做到 7 项 7 样）
 export const DB_TYPES = Enum({

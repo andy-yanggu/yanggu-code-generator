@@ -157,6 +157,9 @@ CREATE TABLE `gen_enum_item`  (
   `enum_item_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '枚举项编码',
   `enum_item_desc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '枚举项描述',
   `enum_item_order` int NULL DEFAULT 0 COMMENT '枚举项排序',
+  `tag_type` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'default' COMMENT '标签类型(default/primary/success/info/warning/danger)',
+  `tag_effect` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'light' COMMENT '标签样式(light/dark/plain)',
+  `tag_color` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '标签背景色(hex，如#409EFF)',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `is_delete` tinyint NULL DEFAULT 0 COMMENT '是否删除（0-未删除，1-删除）',
@@ -166,44 +169,44 @@ CREATE TABLE `gen_enum_item`  (
 -- ----------------------------
 -- Records of gen_enum_item
 -- ----------------------------
-INSERT INTO `gen_enum_item` VALUES (1, 1, 'PROJECT', '0', '项目模板', 0, '2025-05-19 14:59:48', '2025-09-22 11:17:31', 1);
-INSERT INTO `gen_enum_item` VALUES (3, 1, 'TABLE', '1', '表模板', 1, '2025-05-19 15:03:02', '2025-09-22 11:17:31', 1);
-INSERT INTO `gen_enum_item` VALUES (4, 3, 'file', '0', '文件', 0, '2025-05-20 10:41:22', '2025-07-31 11:09:21', 0);
-INSERT INTO `gen_enum_item` VALUES (6, 3, 'directory', '1', '目录', 1, '2025-05-20 10:52:03', '2025-06-19 09:53:41', 0);
-INSERT INTO `gen_enum_item` VALUES (7, 4, 'override', '0', '覆盖', 0, '2025-05-20 11:07:35', '2025-05-20 11:07:35', 0);
-INSERT INTO `gen_enum_item` VALUES (8, 4, 'append', '1', '追加', 0, '2025-05-20 11:07:50', '2025-09-23 10:16:07', 0);
-INSERT INTO `gen_enum_item` VALUES (9, 5, 'override', '0', '覆盖', 0, '2025-05-20 11:15:45', '2025-05-20 11:15:45', 0);
-INSERT INTO `gen_enum_item` VALUES (10, 5, 'append', '1', '追加', 0, '2025-05-20 11:15:57', '2025-05-20 11:15:57', 0);
-INSERT INTO `gen_enum_item` VALUES (11, 1, 'ENUM', '2', '枚举模板', 2, '2025-06-18 14:28:11', '2025-09-22 11:17:31', 1);
-INSERT INTO `gen_enum_item` VALUES (12, 7, 'project', '0', '项目模板', 0, '2025-09-15 11:16:35', '2025-12-31 09:39:03', 0);
-INSERT INTO `gen_enum_item` VALUES (13, 7, 'table', '1', '表模板', 1, '2025-09-15 11:16:53', '2025-12-31 09:39:08', 0);
-INSERT INTO `gen_enum_item` VALUES (14, 7, 'enum', '2', '枚举模板', 2, '2025-09-15 11:17:13', '2025-12-31 09:39:14', 0);
-INSERT INTO `gen_enum_item` VALUES (15, 8, 'active', 'ACTIVE', '正常', 0, '2025-09-16 16:51:07', '2025-12-31 09:38:38', 0);
-INSERT INTO `gen_enum_item` VALUES (16, 8, 'disable', 'DISABLED', '禁用', 1, '2025-09-16 16:51:24', '2025-12-31 09:38:47', 0);
-INSERT INTO `gen_enum_item` VALUES (17, 8, 'locked', 'LOCKED', '锁定', 2, '2025-09-16 16:51:32', '2025-12-31 09:38:52', 0);
-INSERT INTO `gen_enum_item` VALUES (18, 9, 'disable', '0', '停用', 0, '2025-09-16 17:20:06', '2025-12-31 09:38:19', 0);
-INSERT INTO `gen_enum_item` VALUES (19, 9, 'enable', '1', '启用', 1, '2025-09-16 17:20:20', '2025-12-31 09:38:25', 0);
-INSERT INTO `gen_enum_item` VALUES (20, 10, 'disable', '0', '停用', 0, '2025-09-17 10:48:42', '2025-12-31 09:37:48', 0);
-INSERT INTO `gen_enum_item` VALUES (21, 10, 'enable', '1', '启用', 1, '2025-09-17 10:48:54', '2025-12-31 09:37:53', 0);
-INSERT INTO `gen_enum_item` VALUES (22, 10, 'dsadas', 'asdasd', 'asdas', 4, '2025-09-24 17:28:51', '2025-09-24 17:29:04', 1);
-INSERT INTO `gen_enum_item` VALUES (23, 10, 'sadsad', 'sdsadasdas', 'dasdasas', 4, '2025-09-24 17:28:57', '2025-09-24 17:29:01', 1);
-INSERT INTO `gen_enum_item` VALUES (24, 11, 'sadasd', 'asdas', 'asdasd', 1, '2025-09-24 17:29:33', '2025-09-24 17:29:39', 1);
-INSERT INTO `gen_enum_item` VALUES (25, 12, 'dsada', 'asda', 'asdas', 0, '2025-09-26 16:51:09', '2025-09-26 16:51:34', 1);
-INSERT INTO `gen_enum_item` VALUES (26, 12, 'ad11sdas', 'sdsad', 'sadas', 0, '2025-09-26 16:51:14', '2025-09-26 16:51:34', 1);
-INSERT INTO `gen_enum_item` VALUES (27, 14, '啊实打实', '撒大叔', '啊撒大声地', 0, '2025-10-16 17:38:38', '2025-10-16 17:38:42', 1);
-INSERT INTO `gen_enum_item` VALUES (28, -1, '阿萨大大', '大', '啊实打实', 3, '2025-12-23 16:32:19', '2025-12-23 16:32:19', 0);
-INSERT INTO `gen_enum_item` VALUES (29, -1, '阿打算', '啊实打实', '阿萨大大', 5, '2025-12-23 16:33:45', '2025-12-23 16:33:45', 0);
-INSERT INTO `gen_enum_item` VALUES (30, 10, '啊大大', '啊撒大声地', '阿萨大大打算', 4, '2025-12-23 16:34:43', '2025-12-23 16:34:49', 1);
-INSERT INTO `gen_enum_item` VALUES (31, 10, '阿迪达斯', '阿达撒上的', '阿达撒大声地', 0, '2025-12-23 17:02:40', '2025-12-23 17:03:05', 1);
-INSERT INTO `gen_enum_item` VALUES (32, 17, '大萨达22', '撒大晚上的啊撒大声地', '啊撒大声地撒大声地', 3, '2025-12-23 17:46:23', '2025-12-23 17:46:48', 1);
-INSERT INTO `gen_enum_item` VALUES (33, 18, '大萨达撒大声地', '1大大撒撒大声地', '阿斯达洒水大萨达撒', 9, '2025-12-24 10:01:33', '2025-12-24 10:01:45', 1);
-INSERT INTO `gen_enum_item` VALUES (34, 19, 'adasd1', 'adasd', 'sadas22222', 0, '2025-12-24 10:49:48', '2025-12-24 10:50:07', 1);
-INSERT INTO `gen_enum_item` VALUES (35, 19, 'asdasd1', 'sadasdsadsa', 'sadsadsad', 5, '2025-12-24 10:50:02', '2025-12-24 10:50:07', 1);
-INSERT INTO `gen_enum_item` VALUES (36, 13, 'error', '0', '错误', 0, '2026-01-13 10:05:36', '2026-01-13 10:05:36', 0);
-INSERT INTO `gen_enum_item` VALUES (37, 13, 'success', '1', '成功', 1, '2026-01-13 10:05:56', '2026-01-13 10:05:56', 0);
-INSERT INTO `gen_enum_item` VALUES (38, 21, 'MySQL', 'MySQL', 'MySQL', 0, '2026-01-15 09:29:33', '2026-01-15 09:29:33', 0);
-INSERT INTO `gen_enum_item` VALUES (39, 21, 'Oracle', 'Oracle', 'Oracle', 0, '2026-01-15 09:29:49', '2026-01-15 09:29:49', 0);
-INSERT INTO `gen_enum_item` VALUES (40, 21, '达梦8', 'DM', '达梦8', 0, '2026-01-15 09:30:09', '2026-01-15 09:30:09', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (1, 1, 'PROJECT', '0', '项目模板', 0, '2025-05-19 14:59:48', '2025-09-22 11:17:31', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (3, 1, 'TABLE', '1', '表模板', 1, '2025-05-19 15:03:02', '2025-09-22 11:17:31', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (4, 3, 'file', '0', '文件', 0, '2025-05-20 10:41:22', '2025-07-31 11:09:21', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (6, 3, 'directory', '1', '目录', 1, '2025-05-20 10:52:03', '2025-06-19 09:53:41', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (7, 4, 'override', '0', '覆盖', 0, '2025-05-20 11:07:35', '2025-05-20 11:07:35', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (8, 4, 'append', '1', '追加', 0, '2025-05-20 11:07:50', '2025-09-23 10:16:07', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (9, 5, 'override', '0', '覆盖', 0, '2025-05-20 11:15:45', '2025-05-20 11:15:45', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (10, 5, 'append', '1', '追加', 0, '2025-05-20 11:15:57', '2025-05-20 11:15:57', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (11, 1, 'ENUM', '2', '枚举模板', 2, '2025-06-18 14:28:11', '2025-09-22 11:17:31', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (12, 7, 'project', '0', '项目模板', 0, '2025-09-15 11:16:35', '2025-12-31 09:39:03', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (13, 7, 'table', '1', '表模板', 1, '2025-09-15 11:16:53', '2025-12-31 09:39:08', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (14, 7, 'enum', '2', '枚举模板', 2, '2025-09-15 11:17:13', '2025-12-31 09:39:14', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (15, 8, 'active', 'ACTIVE', '正常', 0, '2025-09-16 16:51:07', '2025-12-31 09:38:38', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (16, 8, 'disable', 'DISABLED', '禁用', 1, '2025-09-16 16:51:24', '2025-12-31 09:38:47', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (17, 8, 'locked', 'LOCKED', '锁定', 2, '2025-09-16 16:51:32', '2025-12-31 09:38:52', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (18, 9, 'disable', '0', '停用', 0, '2025-09-16 17:20:06', '2025-12-31 09:38:19', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (19, 9, 'enable', '1', '启用', 1, '2025-09-16 17:20:20', '2025-12-31 09:38:25', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (20, 10, 'disable', '0', '停用', 0, '2025-09-17 10:48:42', '2025-12-31 09:37:48', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (21, 10, 'enable', '1', '启用', 1, '2025-09-17 10:48:54', '2025-12-31 09:37:53', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (22, 10, 'dsadas', 'asdasd', 'asdas', 4, '2025-09-24 17:28:51', '2025-09-24 17:29:04', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (23, 10, 'sadsad', 'sdsadasdas', 'dasdasas', 4, '2025-09-24 17:28:57', '2025-09-24 17:29:01', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (24, 11, 'sadasd', 'asdas', 'asdasd', 1, '2025-09-24 17:29:33', '2025-09-24 17:29:39', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (25, 12, 'dsada', 'asda', 'asdas', 0, '2025-09-26 16:51:09', '2025-09-26 16:51:34', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (26, 12, 'ad11sdas', 'sdsad', 'sadas', 0, '2025-09-26 16:51:14', '2025-09-26 16:51:34', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (27, 14, '啊实打实', '撒大叔', '啊撒大声地', 0, '2025-10-16 17:38:38', '2025-10-16 17:38:42', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (28, -1, '阿萨大大', '大', '啊实打实', 3, '2025-12-23 16:32:19', '2025-12-23 16:32:19', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (29, -1, '阿打算', '啊实打实', '阿萨大大', 5, '2025-12-23 16:33:45', '2025-12-23 16:33:45', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (30, 10, '啊大大', '啊撒大声地', '阿萨大大打算', 4, '2025-12-23 16:34:43', '2025-12-23 16:34:49', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (31, 10, '阿迪达斯', '阿达撒上的', '阿达撒大声地', 0, '2025-12-23 17:02:40', '2025-12-23 17:03:05', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (32, 17, '大萨达22', '撒大晚上的啊撒大声地', '啊撒大声地撒大声地', 3, '2025-12-23 17:46:23', '2025-12-23 17:46:48', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (33, 18, '大萨达撒大声地', '1大大撒撒大声地', '阿斯达洒水大萨达撒', 9, '2025-12-24 10:01:33', '2025-12-24 10:01:45', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (34, 19, 'adasd1', 'adasd', 'sadas22222', 0, '2025-12-24 10:49:48', '2025-12-24 10:50:07', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (35, 19, 'asdasd1', 'sadasdsadsa', 'sadsadsad', 5, '2025-12-24 10:50:02', '2025-12-24 10:50:07', 1);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (36, 13, 'error', '0', '错误', 0, '2026-01-13 10:05:36', '2026-01-13 10:05:36', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (37, 13, 'success', '1', '成功', 1, '2026-01-13 10:05:56', '2026-01-13 10:05:56', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (38, 21, 'MySQL', 'MySQL', 'MySQL', 0, '2026-01-15 09:29:33', '2026-01-15 09:29:33', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (39, 21, 'Oracle', 'Oracle', 'Oracle', 0, '2026-01-15 09:29:49', '2026-01-15 09:29:49', 0);
+INSERT INTO `gen_enum_item` (`id`, `enum_id`, `enum_item_name`, `enum_item_code`, `enum_item_desc`, `enum_item_order`, `create_time`, `update_time`, `is_delete`) VALUES (40, 21, '达梦8', 'DM', '达梦8', 0, '2026-01-15 09:30:09', '2026-01-15 09:30:09', 0);
 
 -- ----------------------------
 -- Table structure for gen_field_type
