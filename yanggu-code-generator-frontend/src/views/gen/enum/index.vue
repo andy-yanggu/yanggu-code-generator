@@ -85,6 +85,7 @@ import {
 	useInitForm
 } from '@/hooks'
 import { Delete, DocumentAdd, Edit, More, Plus, Setting, View } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import QueryTable from '@/components/crud/QueryTable.vue'
 import OptionLabel from '@/components/option/label/index.vue'
 
@@ -150,8 +151,8 @@ const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
 		projectId: ''
 	}),
 	searchSchema: [
-		{ prop: 'enumName', label: '枚举名称' },
-		{ prop: 'projectId', label: '项目' }
+		{ prop: 'projectId', label: '项目' },
+		{ prop: 'enumName', label: '枚举名称' }
 	],
 	tableColumns: [
 		createBuiltinSelection(),

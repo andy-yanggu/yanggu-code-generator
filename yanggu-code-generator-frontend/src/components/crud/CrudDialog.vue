@@ -34,6 +34,7 @@
 		</el-form>
 		<template #footer>
 			<template v-if="formHook.dialog.mode !== 'detail'">
+				<el-button :icon="Close" @click="formHook.dialog.close()">取消</el-button>
 				<el-button
 					type="primary"
 					:icon="Check"
@@ -43,7 +44,6 @@
 				>
 					确定
 				</el-button>
-				<el-button :icon="Close" @click="formHook.dialog.close()">取消</el-button>
 			</template>
 			<template v-else>
 				<el-button :icon="Close" @click="formHook.dialog.close()">关闭</el-button>

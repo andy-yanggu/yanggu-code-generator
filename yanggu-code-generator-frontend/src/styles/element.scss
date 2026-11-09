@@ -162,16 +162,32 @@
 
 /* ==================== 消息弹出框 ==================== */
 /* 确定在前，取消在后 */
-.el-message-box__btns {
+/*.el-message-box__btns {
   display: flex;
   justify-content: flex-end;
   gap: var(--message-box-btn-gap);
 }
 
 .el-message-box__btns .el-button--primary {
-  order: -1; /* 让"是(Y)"排到最前 */
+  order: -1; !* 让"是(Y)"排到最前 *!
 }
 
 .el-message-box__btns .el-button + .el-button {
   margin-left: 0 !important;
 }
+
+!* ==================== 气泡确认框 ==================== *!
+!* 确定在左，取消在右（与 MessageBox 保持一致） *!
+.el-popconfirm__action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.el-popconfirm__action .el-button--primary {
+  order: -1; !* 确认按钮排到左边 *!
+}
+
+.el-popconfirm__action .el-button + .el-button {
+  margin-left: 0 !important;
+}*/

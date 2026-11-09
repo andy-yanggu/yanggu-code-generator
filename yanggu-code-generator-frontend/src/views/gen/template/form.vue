@@ -50,8 +50,8 @@
 		</el-form>
 
 		<template #footer>
-			<el-button v-if="formType !== 'detail'" type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
+			<el-button v-if="formType !== 'detail'" type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
 		</template>
 	</el-dialog>
 </template>

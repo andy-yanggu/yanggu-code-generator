@@ -53,8 +53,8 @@
 				@current-change="currentChangeHandle"></el-pagination>
 		</el-card>
 		<template #footer>
-			<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
 			<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
+			<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
 		</template>
 	</el-dialog>
 </template>

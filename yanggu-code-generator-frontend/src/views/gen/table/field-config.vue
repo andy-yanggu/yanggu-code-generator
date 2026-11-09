@@ -154,8 +154,8 @@
 			</el-tab-pane>
 		</el-tabs>
 		<template #footer>
-			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle(fieldList)">确定</el-button>
 			<el-button :icon="Close" @click="visible = false">取消</el-button>
+			<el-button type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle(fieldList)">确定</el-button>
 		</template>
 	</el-dialog>
 </template>

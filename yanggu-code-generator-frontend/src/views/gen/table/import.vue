@@ -41,10 +41,10 @@
 			</el-table>
 		</el-card>
 		<template #footer>
+			<el-button :icon="Close" @click="visible = false">取消</el-button>
 			<el-button type="primary" :icon="Upload" :disabled="isEmpty(state.dataListSelections!)" :loading="submitLoading" @click="submitData()">
 				导入
 			</el-button>
-			<el-button :icon="Close" @click="visible = false">取消</el-button>
 		</template>
 	</el-dialog>
 </template>
