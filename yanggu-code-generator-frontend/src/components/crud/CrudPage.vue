@@ -15,7 +15,16 @@
 				<slot name="table-action" :row="row" :table-hook="t" :dialog="crudDialogRef">
 					<template v-if="!tableSlots['table-action']">
 						<el-button type="primary" link :icon="Edit" @click="crudDialogRef?.open('update', row[t.refs.primaryKey])">修改</el-button>
-						<el-button type="danger" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+						<el-popconfirm
+							:title="`确认要删除${t.refs.subject}【${row[t.refs.deleteNameKey] || '该记录'}】吗？`"
+							placement="top"
+							@confirm="t.action.delete.row(row)"
+							@cancel="ElMessage.info('删除已取消')"
+						>
+							<template #reference>
+								<el-button type="danger" link :icon="Delete">删除</el-button>
+							</template>
+						</el-popconfirm>
 					</template>
 				</slot>
 			</template>
@@ -47,6 +56,7 @@
 
 <script setup lang="ts">
 import { Delete, Edit, Plus } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import QueryTable from './QueryTable.vue'
 import CrudDialog from './CrudDialog.vue'
 import type { UseCrudFormReturn, UseCrudTableReturn } from '@/types'

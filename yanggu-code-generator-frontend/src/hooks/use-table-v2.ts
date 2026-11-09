@@ -217,6 +217,31 @@ export const useTableV2 = <VO = any, Query extends PageQuery = PageQuery>(option
 	// ====== 4. 批量删除 ======
 	const deleteLoading = ref(false)
 
+	/**
+	 * 单行删除（无确认弹窗，由调用方用 Popconfirm 包裹触发按钮）
+	 */
+	const deleteRow = (row: VO) => {
+		if (!options.deleteListApi) {
+			ElMessage.warning('未配置删除接口，请检查')
+			return
+		}
+		const id = (row as any)[primaryKey] as Key
+		if (id === undefined) {
+			ElMessage.warning('未找到主键字段，请检查')
+			return
+		}
+		deleteLoading.value = true
+		options.deleteListApi([id])
+			.then(() => {
+				ElMessage.success('删除成功')
+				clearSelectionHandle()
+				getDataList()
+			})
+			.finally(() => {
+				deleteLoading.value = false
+			})
+	}
+
 	const resolveDeleteContext = (arg?: Key | VO) => {
 		if (arg && typeof arg === 'object') {
 			const row = arg as VO
@@ -456,7 +481,14 @@ export const useTableV2 = <VO = any, Query extends PageQuery = PageQuery>(option
 		/** 删除 */
 		delete: reactive({
 			execute: deleteBatchHandle,
+			row: deleteRow,
 			loading: deleteLoading
+		}),
+
+		/** 文案配置（供模板 Popconfirm 动态标题使用） */
+		deleteConfig: reactive({
+			subject: tableSubject,
+			deleteNameKey: (options.deleteNameKey ?? '') as string
 		}),
 
 		/** 导出/导入 */
@@ -491,7 +523,10 @@ export const useTableV2 = <VO = any, Query extends PageQuery = PageQuery>(option
 		clearSelectionHandle,
 		sortChangeHandle,
 		deleteBatchHandle,
+		deleteRow,
 		deleteLoading,
+		subject: tableSubject,
+		deleteNameKey: (options.deleteNameKey ?? '') as string,
 		exportHandle,
 		importHandle,
 		exportLoading,

@@ -133,8 +133,10 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 	/** 操作（删除 + 导出/导入） */
 	action: {
 		delete: {
-			/** 不传参=批量删除勾选项；传 row=行内删除；传 id=按主键删除 */
+			/** 不传参=批量删除勾选项；传 row=行内删除；传 id=按主键删除（MessageBox 确认） */
 			execute: (arg?: Key | VO) => void
+			/** 单行删除（无确认弹窗，由调用方用 Popconfirm 包裹触发按钮） */
+			row: (row: VO) => void
 			loading: boolean
 		}
 		export: {
@@ -157,7 +159,11 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 	refs: {
 		cardMaximized: boolean
 		primaryKey: string
-		/** 是否整块显示卡片 header，来自 useCrudTable 配置 */
+		/** 主体名称（用于删除确认文案等） */
+		subject: string
+		/** 删除时展示的名称字段 */
+		deleteNameKey: string
+		/** 是否整块显示卡片 header 区，来自 useCrudTable 配置 */
 		showTableHeader: boolean
 		showToolbarLeft: boolean
 		/** 每页条数选项，来自 useCrudTable 配置，供分页条使用 */

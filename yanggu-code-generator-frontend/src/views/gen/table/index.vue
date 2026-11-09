@@ -31,7 +31,8 @@
 					v-model:show-search="queryShow"
 					v-model:query-loading="state.dataListLoading"
 					v-model:maximized="tableCardMaximized"
-					@get-data-list="getDataList()">
+					@get-data-list="getDataList()"
+				>
 					<template #left>
 						<el-space size="default">
 							<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
@@ -48,7 +49,8 @@
 				border
 				max-height="60vh"
 				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle">
+				@sort-change="sortChangeHandle"
+			>
 				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
 				<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
@@ -58,7 +60,8 @@
 					show-overflow-tooltip
 					header-align="center"
 					align="center"
-					width="100"></el-table-column>
+					width="100"
+				></el-table-column>
 				<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column
 					prop="generatorType"
@@ -66,7 +69,8 @@
 					:formatter="getDictTag(PROJECT_GENERATE_TYPES)"
 					header-align="center"
 					align="center"
-					width="100"></el-table-column>
+					width="100"
+				></el-table-column>
 				<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
 				<el-table-column prop="fieldCount" label="字段数量" header-align="center" align="center" width="100">
 					<template #default="scope">
@@ -82,7 +86,8 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"></el-table-column>
+					sortable="custom"
+				></el-table-column>
 				<el-table-column
 					prop="updateTime"
 					label="修改时间"
@@ -90,7 +95,8 @@
 					min-width="120"
 					header-align="center"
 					align="center"
-					sortable="custom"></el-table-column>
+					sortable="custom"
+				></el-table-column>
 				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
 					<template #default="scope">
 						<el-row>
@@ -112,7 +118,18 @@
 										<el-dropdown-menu>
 											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
 											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">同步</el-dropdown-item>
-											<el-dropdown-item :icon="Delete" @click="deleteBatchHandle(scope.row)">删除</el-dropdown-item>
+											<el-popconfirm
+												:title="`确定删除${subject}【${scope.row[deleteNameKey] || '该记录'}】吗？`"
+												placement="top"
+												@confirm="deleteRow(scope.row)"
+												@cancel="ElMessage.info('删除已取消')"
+											>
+												<template #reference>
+													<span>
+														<el-dropdown-item :icon="Delete">删除</el-dropdown-item>
+													</span>
+												</template>
+											</el-popconfirm>
 										</el-dropdown-menu>
 									</template>
 								</el-dropdown>
@@ -129,7 +146,8 @@
 				background
 				layout="total, sizes, prev, pager, next, jumper"
 				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"></el-pagination>
+				@current-change="currentChangeHandle"
+			></el-pagination>
 
 			<!-- 弹窗, 新增 / 修改 -->
 			<gen-table-form ref="formRef" @refresh-data-list="getDataList"></gen-table-form>
@@ -159,6 +177,7 @@ import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum
 import { getDictTag } from '@/utils/enum'
 import { useInitForm, useTableAction } from '@/hooks'
 import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genProjectApi, genTableApi } from '@/api'
 import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, KeyArray } from '@/types'
@@ -256,6 +275,9 @@ const {
 	sizeChangeHandle,
 	currentChangeHandle,
 	deleteBatchHandle,
+	deleteRow,
+	subject,
+	deleteNameKey,
 	sortChangeHandle,
 	queryRef,
 	queryShow,

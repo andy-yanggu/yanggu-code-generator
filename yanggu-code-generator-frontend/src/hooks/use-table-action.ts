@@ -257,6 +257,31 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		}
 	}
 
+	/**
+	 * 单行删除（无确认弹窗，由调用方用 Popconfirm 包裹触发按钮）
+	 */
+	const deleteRow = (row: VO) => {
+		if (!state.deleteListApi) {
+			ElMessage.warning('未配置删除接口，请检查')
+			return
+		}
+		const id = (row as any)[state.primaryKey!] as Key
+		if (id === undefined) {
+			ElMessage.warning('未找到主键字段，请检查')
+			return
+		}
+		state.deleteLoading = true
+		state.deleteListApi([id])
+			.then(() => {
+				ElMessage.success('删除成功')
+				clearSelectionHandle()
+				getDataList()
+			})
+			.finally(() => {
+				state.deleteLoading = false
+			})
+	}
+
 	const getSubject = () => {
 		return state.tableSubject ?? '数据'
 	}
@@ -441,6 +466,9 @@ export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(st
 		clearSelectionHandle,
 		sortChangeHandle,
 		deleteBatchHandle,
+		deleteRow,
+		subject: getSubject(),
+		deleteNameKey: (state.deleteNameKey ?? '') as string,
 		queryRef,
 		queryShow,
 		tableCardRef,

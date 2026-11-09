@@ -344,6 +344,34 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 			})
 	}
 
+	/**
+	 * 单行删除（无确认弹窗，由调用方用 Popconfirm 包裹触发按钮）
+	 */
+	const deleteRow = (row: VO) => {
+		if (!opts.deleteApi) {
+			ElMessage.warning('未配置删除接口，请检查')
+			return
+		}
+		const id = (row as any)[primaryKey] as Key
+		if (id === undefined) {
+			ElMessage.warning('未找到主键字段，请检查')
+			return
+		}
+		deleteLoading.value = true
+		opts.deleteApi([id])
+			.then(() => {
+				ElMessage.success('删除成功')
+				clearSelection()
+				getDataList()
+			})
+			.catch(() => {
+				// 错误提示由 request.ts 拦截器统一负责，这里只静默接住
+			})
+			.finally(() => {
+				deleteLoading.value = false
+			})
+	}
+
 	// --- 导出 ---
 	const exportExecute = (id?: Key) => {
 		if (!opts.exportApi) {
@@ -516,6 +544,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		action: reactive({
 			delete: {
 				execute: deleteExecute,
+				row: deleteRow,
 				loading: deleteLoading
 			},
 			export: {
@@ -535,6 +564,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		refs: reactive({
 			cardMaximized,
 			primaryKey,
+			subject,
+			deleteNameKey: opts.deleteNameKey ?? '',
 			showTableHeader: opts.showTableHeader!,
 			showToolbarLeft: opts.showToolbarLeft!,
 			// 分页条档位与表格高度只能从 hook 配置改：CrudPage 只接收 tableHook，无法再往下传 props

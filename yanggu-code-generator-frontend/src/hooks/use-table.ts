@@ -190,6 +190,31 @@ export const useTable = <VO = any, Query extends PageQuery = PageQuery>(options:
 	// ====== 4. 批量删除 ======
 	const deleteLoading = ref(false)
 
+	/**
+	 * 单行删除（无确认弹窗，由调用方用 Popconfirm 包裹触发按钮）
+	 */
+	const deleteRow = (row: VO) => {
+		if (!options.deleteListApi) {
+			ElMessage.warning('未配置删除接口，请检查')
+			return
+		}
+		const id = (row as any)[primaryKey] as Key
+		if (id === undefined) {
+			ElMessage.warning('未找到主键字段，请检查')
+			return
+		}
+		deleteLoading.value = true
+		options.deleteListApi([id])
+			.then(() => {
+				ElMessage.success('删除成功')
+				clearSelectionHandle()
+				getDataList()
+			})
+			.finally(() => {
+				deleteLoading.value = false
+			})
+	}
+
 	// 解析删除上下文（行内删除 / 批量删除）
 	const resolveDeleteContext = (arg?: Key | VO) => {
 		// 行内删除（row 对象）
@@ -426,7 +451,10 @@ export const useTable = <VO = any, Query extends PageQuery = PageQuery>(options:
 
 		// 删除
 		deleteBatchHandle,
+		deleteRow,
 		deleteLoading,
+		subject: tableSubject,
+		deleteNameKey: (options.deleteNameKey ?? '') as string,
 
 		// 导出/导入
 		exportHandle: exportHandle,

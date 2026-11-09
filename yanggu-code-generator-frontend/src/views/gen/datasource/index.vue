@@ -17,7 +17,16 @@
 					<el-button type="primary" link :icon="CopyDocument" @click="dialog?.open('copy', row[t.refs.primaryKey])">复制</el-button>
 				</el-col>
 				<el-col :span="12">
-					<el-button type="danger" link :icon="Delete" @click="t.action.delete.execute(row)">删除</el-button>
+					<el-popconfirm
+						:title="`确定删除${t.refs.subject}【${row[t.refs.deleteNameKey] || '该记录'}】吗？`"
+						placement="top"
+						@confirm="t.action.delete.row(row)"
+						@cancel="ElMessage.info('删除已取消')"
+					>
+						<template #reference>
+							<el-button type="danger" link :icon="Delete">删除</el-button>
+						</template>
+					</el-popconfirm>
 				</el-col>
 			</el-row>
 		</template>
@@ -39,6 +48,7 @@ import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import { useTimeoutFn } from '@vueuse/core'
 import { Connection, CopyDocument, Delete, Edit } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 defineOptions({
 	name: 'GenDatasource'
