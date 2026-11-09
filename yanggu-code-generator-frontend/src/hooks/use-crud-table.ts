@@ -1,5 +1,5 @@
 import type { UseCrudTableOptions, UseCrudTableReturn } from '@/types/hooks/use-crud-table'
-import type { Pagination, SortChangePayload, TableColumnSchema } from '@/types/schema'
+import type { Pagination, SortChangePayload, TableFieldSchema } from '@/types/schema'
 import { normalizeSearchField } from '@/types/schema'
 import {
 	DEFAULT_EXPORT_SUCCESS_MESSAGE,
@@ -17,7 +17,7 @@ import { defaultsDeep, isEmpty, isNotBlank } from '@/utils/tool'
 import { toValue } from 'vue' // ======== 内置固定列工厂函数 ========
 
 // ======== 内置固定列工厂函数 ========
-export const createBuiltinSelection = (): TableColumnSchema => ({
+export const createBuiltinSelection = (): TableFieldSchema => ({
 	key: 'selection',
 	type: 'selection',
 	label: '',
@@ -27,7 +27,7 @@ export const createBuiltinSelection = (): TableColumnSchema => ({
 	disabled: true,
 	reserveSelection: true
 })
-export const createBuiltinIndex = (): TableColumnSchema => ({
+export const createBuiltinIndex = (): TableFieldSchema => ({
 	key: 'index',
 	type: 'index',
 	label: '序号',
@@ -36,7 +36,7 @@ export const createBuiltinIndex = (): TableColumnSchema => ({
 	fixed: 'left',
 	disabled: true
 })
-export const createBuiltinCreateTime = (): TableColumnSchema => ({
+export const createBuiltinCreateTime = (): TableFieldSchema => ({
 	key: 'createTime',
 	label: '创建时间',
 	minWidth: 120,
@@ -44,7 +44,7 @@ export const createBuiltinCreateTime = (): TableColumnSchema => ({
 	align: 'center',
 	showOverflowTooltip: true
 })
-export const createBuiltinUpdateTime = (): TableColumnSchema => ({
+export const createBuiltinUpdateTime = (): TableFieldSchema => ({
 	key: 'updateTime',
 	label: '修改时间',
 	minWidth: 120,
@@ -52,7 +52,7 @@ export const createBuiltinUpdateTime = (): TableColumnSchema => ({
 	align: 'center',
 	showOverflowTooltip: true
 })
-export const createBuiltinOperation = (): TableColumnSchema => ({
+export const createBuiltinOperation = (): TableFieldSchema => ({
 	key: 'operation',
 	label: '操作',
 	fixed: 'right',
@@ -400,15 +400,15 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const defaultColumns = opts.tableColumns!
 
 	// 递归深拷贝（children 一并克隆；不用 structuredClone，因 formatter 是函数无法克隆）
-	const cloneColumns = (cols: TableColumnSchema[]): TableColumnSchema[] =>
+	const cloneColumns = (cols: TableFieldSchema[]): TableFieldSchema[] =>
 		cols.map(col => (col.children?.length ? { ...col, children: cloneColumns(col.children) } : { ...col }))
 
 	// 递归合并：按 key 逐层匹配，保留用户改动的 visible/fixed/label，并递归合并分组的 children。
 	// 职责划分：disabled 列（selection/index/expand/operation 等结构列，列设置面板拖拽 filter 本就保护、
 	// 用户无法调序）的位置与状态由声明侧决定，不参与 saved 排序——历史快照里"新结构列被追加到末尾"
 	// 的坏顺序可自愈；可拖拽数据列才跟随用户持久化顺序，代码新增的补到末尾
-	const mergeWithDefaults = (saved: TableColumnSchema[], defaults: TableColumnSchema[]): TableColumnSchema[] => {
-		const isCodeSideColumn = (c: TableColumnSchema) => c.disabled === true
+	const mergeWithDefaults = (saved: TableFieldSchema[], defaults: TableFieldSchema[]): TableFieldSchema[] => {
+		const isCodeSideColumn = (c: TableFieldSchema) => c.disabled === true
 		const leadingStructural = defaults.filter(c => isCodeSideColumn(c) && c.fixed !== 'right')
 		const trailingStructural = defaults.filter(c => isCodeSideColumn(c) && c.fixed === 'right')
 		const dataDefaults = defaults.filter(c => !isCodeSideColumn(c))
@@ -420,7 +420,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		const mergedData = savedData.map(savedCol => {
 			const defaultCol = defaultMap.get(savedCol.key)
 			if (!defaultCol) return cloneColumns([savedCol])[0]
-			const result: TableColumnSchema = {
+			const result: TableFieldSchema = {
 				...defaultCol,
 				visible: savedCol.visible,
 				fixed: savedCol.fixed,
@@ -442,8 +442,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		return [...cloneColumns(leadingStructural), ...mergedData, ...cloneColumns(trailingStructural)]
 	}
 
-	const savedColumns = opts.tableKey ? (settingsStore.getColumns(opts.tableKey) as TableColumnSchema[] | undefined) : undefined
-	const columns = ref<TableColumnSchema[]>(savedColumns ? mergeWithDefaults(savedColumns, defaultColumns) : cloneColumns(defaultColumns))
+	const savedColumns = opts.tableKey ? (settingsStore.getColumns(opts.tableKey) as TableFieldSchema[] | undefined) : undefined
+	const columns = ref<TableFieldSchema[]>(savedColumns ? mergeWithDefaults(savedColumns, defaultColumns) : cloneColumns(defaultColumns))
 
 	const persistColumns = () => {
 		if (opts.tableKey) {

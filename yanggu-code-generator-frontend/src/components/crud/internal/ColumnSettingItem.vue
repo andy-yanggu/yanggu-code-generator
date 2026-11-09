@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, Check, Close, Edit, Lock, Rank } from '@element-plus/icons-vue'
-import type { TableColumnSchema } from '@/types/schema'
+import type { TableFieldSchema } from '@/types/schema'
 
 defineOptions({
 	name: 'ColumnSettingItem'
@@ -59,7 +59,7 @@ defineOptions({
 withDefaults(
 	defineProps<{
 		/** 列配置 */
-		col: TableColumnSchema
+		col: TableFieldSchema
 		/** 是否处于改名编辑态 */
 		editing?: boolean
 		/** 编辑态输入框的值 */

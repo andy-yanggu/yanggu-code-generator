@@ -28,54 +28,50 @@ export interface Pagination {
 	total: number
 }
 
-// 搜索字段 schema
-export interface SearchFieldSchema {
+// 三视图（Search / Form / Table）共享基类型：身份标识 + 通用展示属性
+export interface BaseFieldSchema {
 	/** 字段唯一标识，用于插槽命名和 v-model 绑定；未填时取 prop */
 	key?: string
 	/** 数据字段名；未填时取 key */
 	prop?: string
 	label: string
+	/** 字段提示文字，有值时渲染问号图标 + el-tooltip */
+	tooltip?: string
+	/** 宽度：搜索/表单字段为输入控件宽度，表格列为列宽 */
+	width?: number | string
+}
+
+// 输入类字段共享属性（Search + Form 共用，Table 不消费）
+export interface InputFieldSchema extends BaseFieldSchema {
 	component?: ComponentType
 	placeholder?: string
-	width?: number | string
 	options?: { label: string; value: any }[]
 	clearable?: boolean
 	filterable?: boolean
-	rangeFields?: [string, string]
-	/** 搜索字段提示文字，有值时渲染问号图标 + el-tooltip */
-	tooltip?: string
 	/** 字段级校验规则 */
 	ruleList?: FormItemRule[]
+}
+
+// 搜索字段 schema
+export interface SearchFieldSchema extends InputFieldSchema {
+	/** 区间选择器的起止字段名（仅搜索使用） */
+	rangeFields?: [string, string]
 }
 
 // 表单字段 schema
-export interface FormFieldSchema {
-	/** 字段唯一标识，用于插槽命名；未填时取 prop */
-	key?: string
-	/** 数据字段名；未填时取 key */
-	prop?: string
-	label: string
-	/** label 旁的提示文字，有值时自动渲染问号图标 + tooltip */
-	tooltip?: string
-	component?: ComponentType
-	placeholder?: string
-	width?: number | string
-	options?: { label: string; value: any }[]
-	clearable?: boolean
-	filterable?: boolean
+export interface FormFieldSchema extends InputFieldSchema {
+	/** 栅格占据列数（仅表单使用） */
 	span?: number
+	/** 详情模式下的自定义格式化函数（仅表单使用） */
 	detailFormatter?: (value: any) => string
-	/** 字段级校验规则 */
-	ruleList?: FormItemRule[]
 }
 
-// 表格列 schema
-export interface TableColumnSchema {
+// 表格字段 schema（继承 Base，不继承 Input：表格列不消费输入类属性）
+export interface TableFieldSchema extends BaseFieldSchema {
+	/** 列唯一标识，用于 v-for key、列设置查找、Sortable 排序（必填） */
 	key: string
-	label: string
 	prop?: string
 	type?: 'selection' | 'index' | 'expand'
-	width?: number | string
 	minWidth?: number
 	fixed?: 'left' | 'right' | boolean
 	align?: 'left' | 'center' | 'right'
@@ -85,12 +81,10 @@ export interface TableColumnSchema {
 	visible?: boolean
 	disabled?: boolean
 	showOverflowTooltip?: boolean
-	/** 列头提示文字，有值时渲染问号图标 + el-tooltip */
-	tooltip?: string
 	/** 多选列是否跨页保持勾选（需配合 el-table row-key 使用） */
 	reserveSelection?: boolean
 	/** 子列；非空即为「分组列」（多级表头父级，仅支持 2 层）。分组列无 prop、不渲染单元格，仅作父表头 */
-	children?: TableColumnSchema[]
+	children?: TableFieldSchema[]
 }
 
 // el-table sort-change 事件负载（order 为 null 表示取消排序）
@@ -201,8 +195,8 @@ export interface CrudField {
 	form?: Partial<FormFieldSchema>
 	/** 查询表单专属配置（width / rangeFields 等） */
 	search?: Partial<SearchFieldSchema>
-	/** 表格列专属配置（align / sortable / formatter / width 等） */
-	table?: Partial<TableColumnSchema>
+	/** 表格字段专属配置（align / sortable / formatter / minWidth 等） */
+	table?: Partial<TableFieldSchema>
 
 	// ====== 多级表头（仅表格视图，2 层） ======
 	/**

@@ -63,17 +63,10 @@ const fieldRules = computed<Record<string, FormItemRule[]>>(() => {
 })
 
 // SearchFieldSchema → FormFieldSchema（DynamicField 接收 FormFieldSchema）
-// 逐项白名单映射：这里没列出的属性会被静默丢掉（clearable 曾因此在查询区失效），新增字段属性需同步补到这里
-const searchToFormField = (field: SearchFieldSchema): FormFieldSchema => ({
-	prop: field.prop,
-	label: field.label,
-	component: field.component,
-	placeholder: field.placeholder,
-	width: field.width,
-	options: field.options,
-	clearable: field.clearable,
-	filterable: field.filterable
-})
+// 两者共享 InputFieldSchema 基类型（component / options / clearable / filterable / ruleList 等），
+// 剔除搜索独有的 rangeFields 后结构兼容，直接 cast 即可。未来 InputFieldSchema 新增属性时自动透传。
+const searchToFormField = ({ rangeFields, ...field }: SearchFieldSchema): FormFieldSchema =>
+	field as FormFieldSchema
 
 // 提前映射成 DynamicField 需要的字段（与 normalizedFields 下标一一对应）。
 // 不要在模板里直接调 searchToFormField：模板读了 model[field.prop]，输入一个字符就会重渲染，

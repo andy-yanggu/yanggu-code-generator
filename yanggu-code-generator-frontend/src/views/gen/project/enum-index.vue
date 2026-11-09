@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { genEnumApi, genEnumItemApi } from '@/api'
-import type { GenEnumEntity, GenEnumItemEntity, GenEnumQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import type { GenEnumEntity, GenEnumItemEntity, GenEnumQuery, SearchFieldSchema, TableFieldSchema, UseCrudTableOptions } from '@/types'
 import type { TagEffect, TagType } from '@/constant/enum'
 import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable } from '@/hooks'
 import QueryTable from '@/components/crud/QueryTable.vue'
@@ -41,7 +41,7 @@ const queryTableRef = ref()
 const searchFields: SearchFieldSchema[] = [{ key: 'enumName', label: '枚举名称' }]
 
 // 表格列配置
-const tableColumns: TableColumnSchema[] = [
+const tableColumns: TableFieldSchema[] = [
 	// 展开列：#table-enumItems 插槽在展开区就地显示该枚举的项（取代原弹窗）；
 	// 与 selection/index 同为固定左侧的结构列，横向滚动时展开入口不滚走
 	{ key: 'enumItems', type: 'expand', label: '', fixed: 'left', disabled: true },

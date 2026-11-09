@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { genTableApi } from '@/api'
-import type { GenTableEntity, GenTableQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import type { GenTableEntity, GenTableQuery, SearchFieldSchema, TableFieldSchema, UseCrudTableOptions } from '@/types'
 import { useCrudTable } from '@/hooks'
 import QueryTable from '@/components/crud/QueryTable.vue'
 
@@ -26,7 +26,7 @@ const searchFields: SearchFieldSchema[] = [
 ]
 
 // 表格列配置
-const tableColumns: TableColumnSchema[] = [
+const tableColumns: TableFieldSchema[] = [
 	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true, reserveSelection: true },
 	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
 	{ key: 'tableName', label: '表名' },

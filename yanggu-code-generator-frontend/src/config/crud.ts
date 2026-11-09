@@ -1,4 +1,4 @@
-import type { FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { FormFieldSchema, SearchFieldSchema, TableFieldSchema } from '@/types/schema'
 
 // ======== CRUD 组件体系共享默认值 ========
 // 收拢各 hook / 组件原先散落的同义默认值：此前分页档位硬编码了 3 处、
@@ -15,7 +15,7 @@ export const DEFAULT_FORM_LABEL_WIDTH = '100px'
 
 // 表格
 export const DEFAULT_TABLE_MAX_HEIGHT = '60vh'
-export const DEFAULT_TABLE_COLUMN_OPTIONS = { align: 'center', showOverflowTooltip: true } as const satisfies Partial<TableColumnSchema>
+export const DEFAULT_TABLE_COLUMN_OPTIONS = { align: 'center', showOverflowTooltip: true } as const satisfies Partial<TableFieldSchema>
 
 // 分页
 export const DEFAULT_PAGE_SIZES: number[] = [10, 20, 50, 100, 200]

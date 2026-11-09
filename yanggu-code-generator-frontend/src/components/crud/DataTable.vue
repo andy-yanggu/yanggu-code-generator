@@ -163,7 +163,7 @@ import IconButton from '@/components/icon-button/index.vue'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import ColumnSettingItem from './internal/ColumnSettingItem.vue'
 import { DEFAULT_PAGE_SIZES, DEFAULT_PRIMARY_KEY, DEFAULT_TABLE_COLUMN_OPTIONS, DEFAULT_TABLE_MAX_HEIGHT } from '@/config/crud'
-import type { Pagination, TableColumnSchema } from '@/types/schema'
+import type { Pagination, TableFieldSchema } from '@/types/schema'
 
 defineOptions({
 	name: 'CrudDataTable',
@@ -173,7 +173,7 @@ defineOptions({
 // ====== defineModel ======
 const showSearch = defineModel('showSearch', { type: Boolean, default: true })
 const maximized = defineModel('maximized', { type: Boolean, default: false })
-const columns = defineModel<TableColumnSchema[]>('columns', { default: () => [] })
+const columns = defineModel<TableFieldSchema[]>('columns', { default: () => [] })
 
 const props = withDefaults(
 	defineProps<{
@@ -233,9 +233,9 @@ onKeyStroke('Escape', () => {
 })
 
 // ====== 可见列（递归：分组下无可见叶子时整组隐藏） ======
-const isColumnVisible = (col: TableColumnSchema) => col.visible !== false
-const visibleColumns = computed<TableColumnSchema[]>(() => {
-	const result: TableColumnSchema[] = []
+const isColumnVisible = (col: TableFieldSchema) => col.visible !== false
+const visibleColumns = computed<TableFieldSchema[]>(() => {
+	const result: TableFieldSchema[] = []
 	for (const col of columns.value) {
 		if (!isColumnVisible(col)) continue
 		if (col.children?.length) {
@@ -272,7 +272,7 @@ const handlePopoverHide = () => {
 }
 
 // 通用重排：把 oldIndex 处的元素移到 newIndex
-const reorder = (arr: TableColumnSchema[], oldIndex: number, newIndex: number): TableColumnSchema[] => {
+const reorder = (arr: TableFieldSchema[], oldIndex: number, newIndex: number): TableFieldSchema[] => {
 	const next = [...arr]
 	const [moved] = next.splice(oldIndex, 1)
 	next.splice(newIndex, 0, moved)
@@ -298,8 +298,8 @@ const createSortable = () => {
 				const cols = columns.value
 				const draggedCol = cols[draggedIdx]
 				if (draggedCol?.fixed) return true
-				const fixedLeftCount = cols.filter((c: TableColumnSchema) => c.fixed === 'left').length
-				const fixedRightCount = cols.filter((c: TableColumnSchema) => c.fixed === 'right').length
+				const fixedLeftCount = cols.filter((c: TableFieldSchema) => c.fixed === 'left').length
+				const fixedRightCount = cols.filter((c: TableFieldSchema) => c.fixed === 'right').length
 				const total = cols.length
 				if (targetIdx < fixedLeftCount) return false
 				if (targetIdx >= total - fixedRightCount) return false
@@ -335,10 +335,10 @@ const createSortable = () => {
 
 // 递归定位并更新指定 key 的列（不可变）；未命中返回原数组引用
 const updateColumnByKey = (
-	list: TableColumnSchema[],
+	list: TableFieldSchema[],
 	key: string,
-	patch: (col: TableColumnSchema) => Partial<TableColumnSchema>
-): TableColumnSchema[] => {
+	patch: (col: TableFieldSchema) => Partial<TableFieldSchema>
+): TableFieldSchema[] => {
 	let changed = false
 	const next = list.map(col => {
 		if (col.key === key) {
@@ -357,11 +357,11 @@ const updateColumnByKey = (
 	return changed ? next : list
 }
 
-const toggleColumnVisible = (col: TableColumnSchema, visible: boolean | string | number) => {
+const toggleColumnVisible = (col: TableFieldSchema, visible: boolean | string | number) => {
 	columns.value = updateColumnByKey(columns.value, col.key, () => ({ visible: !!visible }))
 }
 
-const toggleFixed = (col: TableColumnSchema, direction: 'left' | 'right') => {
+const toggleFixed = (col: TableFieldSchema, direction: 'left' | 'right') => {
 	columns.value = updateColumnByKey(columns.value, col.key, c => ({ fixed: c.fixed === direction ? false : direction }))
 }
 
@@ -370,7 +370,7 @@ const resetColumns = () => {
 	emit('resetColumns')
 }
 
-const startRename = (col: TableColumnSchema) => {
+const startRename = (col: TableFieldSchema) => {
 	editingKey.value = col.key
 	editingTitle.value = col.label
 }
@@ -392,7 +392,7 @@ const cancelRename = () => {
 // 默认值是只读常量：toColumnProps 在模板里逐列调用（render 期），不能每次调用都新建一份
 const columnDefaults = DEFAULT_TABLE_COLUMN_OPTIONS
 
-const toColumnProps = (col: TableColumnSchema): Record<string, any> => {
+const toColumnProps = (col: TableFieldSchema): Record<string, any> => {
 	const result: Record<string, any> = {}
 	// 展开列：单元格是展开区的挂载点，prop / formatter / sortable / showOverflowTooltip / align
 	// 等数据列属性对它均无消费点，只下发有实际意义的四项

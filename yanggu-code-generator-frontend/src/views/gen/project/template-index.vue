@@ -6,7 +6,7 @@
 import { TEMPLATE_GROUP_TYPES, TEMPLATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
 import { genTemplateApi } from '@/api'
-import type { GenTemplateEntity, GenTemplateQuery, SearchFieldSchema, TableColumnSchema, UseCrudTableOptions } from '@/types'
+import type { GenTemplateEntity, GenTemplateQuery, SearchFieldSchema, TableFieldSchema, UseCrudTableOptions } from '@/types'
 import { useCrudTable } from '@/hooks'
 import QueryTable from '@/components/crud/QueryTable.vue'
 
@@ -30,7 +30,7 @@ const searchFields: SearchFieldSchema[] = [
 ]
 
 // 表格列配置
-const tableColumns: TableColumnSchema[] = [
+const tableColumns: TableFieldSchema[] = [
 	{ key: 'selection', type: 'selection', label: '', width: 50, align: 'center', fixed: 'left', disabled: true, reserveSelection: true },
 	{ key: 'index', type: 'index', label: '序号', width: 60, align: 'center', disabled: true },
 	{ key: 'templateGroupName', label: '模板组名称' },

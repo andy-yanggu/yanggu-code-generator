@@ -1,7 +1,7 @@
 import type { Key, KeyArray } from '@/types/common'
 import type { MaybeRefOrGetter } from 'vue'
 import type { PageVO } from '@/types/api/common'
-import type { BuiltinColumnOptions, NormalizedSearchField, Pagination, SearchFieldSchema, SortChangePayload, TableColumnSchema } from '@/types/schema'
+import type { BuiltinColumnOptions, NormalizedSearchField, Pagination, SearchFieldSchema, SortChangePayload, TableFieldSchema } from '@/types/schema'
 
 // 数据列表接口
 type DataListApi<VO, Query> = (query: Query) => Promise<PageVO<VO>>
@@ -24,7 +24,7 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	dataListApi: DataListApi<VO, Query>
 	// ======== 表格列（使用 fields 模式时可省略，由 useCrud 自动派生） ========
 	/** 表格列配置 */
-	tableColumns?: TableColumnSchema[]
+	tableColumns?: TableFieldSchema[]
 	// ======== 查询 ========
 	/** 查询表单初始值工厂；无搜索表单时无需填写，默认 () => ({}) */
 	initQueryForm?: () => Query
@@ -149,7 +149,7 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 	/** 列配置 */
 	columnConfig: {
 		/** 全量列（含隐藏），v-model 绑定给 DataTable */
-		list: TableColumnSchema[]
+		list: TableFieldSchema[]
 		/** 恢复默认列配置并持久化 */
 		reset: () => void
 	}

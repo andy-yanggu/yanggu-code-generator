@@ -1,7 +1,7 @@
 import type { UseCrudOptions } from '@/types/hooks/use-crud'
 import type { UseCrudFormReturn } from '@/types/hooks/use-crud-form'
 import type { UseCrudTableReturn } from '@/types/hooks/use-crud-table'
-import type { CrudField, FormFieldSchema, SearchFieldSchema, TableColumnSchema } from '@/types/schema'
+import type { CrudField, FormFieldSchema, SearchFieldSchema, TableFieldSchema } from '@/types/schema'
 import {
 	DEFAULT_FORM_FIELD_OPTIONS,
 	DEFAULT_PRIMARY_KEY,
@@ -68,8 +68,8 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 }
 
 /** 由单个 CrudField 构建表格列；分组节点（含 children）递归构建子列，且自身不带 prop */
-const buildColumn = (f: CrudField): TableColumnSchema => {
-	const base: Partial<TableColumnSchema> = {}
+const buildColumn = (f: CrudField): TableFieldSchema => {
+	const base: Partial<TableFieldSchema> = {}
 	if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
 	if (f.children?.length) {
 		const children = f.children.filter(c => c.inTable).map(buildColumn)
@@ -78,8 +78,8 @@ const buildColumn = (f: CrudField): TableColumnSchema => {
 	return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...base, ...f.table }, DEFAULT_TABLE_COLUMN_OPTIONS)
 }
 
-const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConfig']): TableColumnSchema[] => {
-	const cols: TableColumnSchema[] = []
+const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConfig']): TableFieldSchema[] => {
+	const cols: TableFieldSchema[] = []
 	if (opts?.showSelection !== false) cols.push(createBuiltinSelection())
 	if (opts?.showIndex !== false) cols.push(createBuiltinIndex())
 	cols.push(...fields.filter(f => f.inTable).map(buildColumn))
