@@ -48,7 +48,7 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 			if (f.options !== undefined) shared.options = f.options
 			if (f.filterable !== undefined) shared.filterable = f.filterable
 			if (f.clearable !== undefined) shared.clearable = f.clearable
-			if (f.formTableTooltip !== undefined) shared.tooltip = f.formTableTooltip
+			if (f.tooltip !== undefined) shared.tooltip = f.tooltip
 			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.form }, DEFAULT_FORM_FIELD_OPTIONS)
 		})
 }
@@ -63,6 +63,7 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 			if (f.options !== undefined) shared.options = f.options
 			if (f.filterable !== undefined) shared.filterable = f.filterable
 			if (f.clearable !== undefined) shared.clearable = f.clearable
+			if (f.tooltip !== undefined) shared.tooltip = f.tooltip
 			return defaultsDeep({ key: f.key, prop: f.prop ?? f.key, label: f.label, ...shared, ...f.search }, DEFAULT_SEARCH_FIELD_OPTIONS)
 		})
 }
@@ -70,7 +71,7 @@ const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
 /** 由单个 CrudField 构建表格列；分组节点（含 children）递归构建子列，且自身不带 prop */
 const buildColumn = (f: CrudField): TableFieldSchema => {
 	const base: Partial<TableFieldSchema> = {}
-	if (f.formTableTooltip !== undefined) base.tooltip = f.formTableTooltip
+	if (f.tooltip !== undefined) base.tooltip = f.tooltip
 	if (f.children?.length) {
 		const children = f.children.filter(c => c.inTable).map(buildColumn)
 		return defaultsDeep({ key: f.key, label: f.label, ...base, ...f.table, children }, DEFAULT_TABLE_COLUMN_OPTIONS)

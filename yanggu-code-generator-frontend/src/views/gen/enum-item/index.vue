@@ -42,7 +42,7 @@ const fields: CrudField[] = [
 	{
 		key: 'enumItemName',
 		label: '枚举项名称',
-		formTableTooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
+		tooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
 		inForm: true,
 		inSearch: true,
 		inTable: true,
@@ -53,7 +53,7 @@ const fields: CrudField[] = [
 	{
 		key: 'enumItemCode',
 		label: '枚举项编码',
-		formTableTooltip: '枚举项编码具有唯一性',
+		tooltip: '枚举项编码具有唯一性',
 		inForm: true,
 		inSearch: true,
 		inTable: true,

@@ -169,8 +169,8 @@ export interface CrudField {
 	prop?: string
 	/** 字段显示名称 */
 	label: string
-	/** 字段说明，自动传播到表单 label 和表格列头（不传播到 query） */
-	formTableTooltip?: string
+	/** 字段提示文字，有值时渲染问号图标 + el-tooltip（传播到 form/search/table 三处，子对象可覆盖） */
+	tooltip?: string
 
 	// ====== 视图角色标记 ======
 	/** 是否出现在表单，默认 false */

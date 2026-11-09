@@ -52,7 +52,7 @@ const fields: CrudField[] = [
 	{
 		key: 'connName',
 		label: '连接名称',
-		formTableTooltip: '连接名称具有唯一性',
+		tooltip: '连接名称具有唯一性',
 		inForm: true,
 		inSearch: true,
 		inTable: true,

@@ -118,7 +118,7 @@ const fields: CrudField[] = [
 	{
 		key: 'propTitle',
 		label: '属性标题',
-		formTableTooltip: '属性标题具有唯一性，不能重复',
+		tooltip: '属性标题具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,
@@ -132,7 +132,7 @@ const fields: CrudField[] = [
 	{
 		key: 'propKey',
 		label: '属性键',
-		formTableTooltip: '属性键具有唯一性，不能重复',
+		tooltip: '属性键具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,

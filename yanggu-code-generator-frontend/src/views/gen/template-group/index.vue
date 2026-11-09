@@ -98,7 +98,7 @@ const fields: CrudField[] = [
 	{
 		key: 'groupName',
 		label: '模板组名称',
-		formTableTooltip: '模板组名称具有唯一性，不能重复',
+		tooltip: '模板组名称具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,

@@ -70,7 +70,7 @@ const fields: CrudField[] = [
 	{
 		key: 'baseClassName',
 		label: '基类名称',
-		formTableTooltip: '基类名称具有唯一性，不能重复',
+		tooltip: '基类名称具有唯一性，不能重复',
 		inForm: true,
 		inSearch: true,
 		inTable: true,
@@ -83,7 +83,7 @@ const fields: CrudField[] = [
 		// children 内的字段照常参与 search（靠 flattenLeafFields 拍平），table.label 仅缩短表头、不影响搜索/表单标签
 		key: 'fullClassNameGroup',
 		label: '基类全类名',
-		formTableTooltip: '基类全类名具有唯一性，不能重复',
+		tooltip: '基类全类名具有唯一性，不能重复',
 		inTable: true,
 		children: [
 			{ key: 'packageName', label: '基类包名', inSearch: true, inTable: true, table: { label: '包名' } },
@@ -93,7 +93,7 @@ const fields: CrudField[] = [
 	{
 		key: 'fullClassName',
 		label: '基类全类名',
-		formTableTooltip: '基类全类名具有唯一性，不能重复',
+		tooltip: '基类全类名具有唯一性，不能重复',
 		inForm: true,
 		form: {
 			ruleList: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '基类全类名不能为空', trigger: 'blur' }]
