@@ -1,57 +1,6 @@
 <template>
 	<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" destroy-on-close @close="dialogVisible = false">
-		<el-card class="layout-query-card" shadow="hover">
-			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item label="模板名称" prop="templateName">
-					<el-input v-model="state.queryForm.templateName" clearable placeholder="请输入模板名称"></el-input>
-				</el-form-item>
-				<el-form-item label="模板类型" prop="templateType">
-					<el-select
-						v-model="state.queryForm.templateType"
-						:options="TEMPLATE_TYPES.items"
-						style="width: 160px"
-						filterable
-						clearable
-						placeholder="请选择模板类型"></el-select>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</el-card>
-
-		<el-card shadow="hover">
-			<el-table
-				v-loading="state.dataListLoading!"
-				:data="state.dataList"
-				row-key="id"
-				border
-				max-height="60vh"
-				@selection-change="selectionChangeHandle">
-				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-				<el-table-column prop="templateName" label="模板名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="generatorPath" label="模板路径" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column
-					prop="templateType"
-					label="模板类型"
-					header-align="center"
-					align="center"
-					:formatter="getDictTag(TEMPLATE_TYPES)"></el-table-column>
-				<el-table-column prop="templateDesc" label="描述" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-			</el-table>
-			<el-pagination
-				:current-page="state.pageNum"
-				:page-sizes="state.pageSizes"
-				:page-size="state.pageSize"
-				:total="state.total"
-				layout="total, sizes, prev, pager, next, jumper"
-				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"></el-pagination>
-		</el-card>
+		<query-table :table-hook="tableHook"></query-table>
 		<template #footer>
 			<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>
 			<el-button type="success" :icon="DocumentAdd" :loading="submitLoading" @click="generateCode()">生成</el-button>
@@ -60,12 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { TEMPLATE_TYPES } from '@/constant/enum'
-import { Close, DocumentAdd, Refresh, Search } from '@element-plus/icons-vue'
-import { getDictTag } from '@/utils/enum'
-import { useSubmitHandler, useTableAction } from '@/hooks'
+import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable, useSubmitHandler } from '@/hooks'
 import { genGeneratorApi, genTemplateApi } from '@/api'
-import { GenTemplateEntity, GenTemplateQuery, IHooksOptions, SubmitOptions } from '@/types'
+import { TEMPLATE_TYPES } from '@/constant/enum'
+import { getDictTag } from '@/utils/enum'
+import { Close, DocumentAdd } from '@element-plus/icons-vue'
+import QueryTable from '@/components/crud/QueryTable.vue'
+import type { GenTemplateEntity, GenTemplateQuery, SubmitOptions, UseCrudTableOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTableTemplate'
@@ -73,45 +23,80 @@ defineOptions({
 
 const emit = defineEmits(['clearSelection'])
 
-// 初始化表单查询参数
-const initQueryFormData = (): GenTemplateQuery => ({
-	templateGroupId: -1,
-	templateName: '',
-	templateType: ''
-})
+// ====== 查询上下文 ======
+// 模板组 ID 由 init() 传入，用 ref + computed 交给 hook，避免每次打开把条件写死在 queryForm 里
+const currentTemplateGroupId = ref(-1)
 
-const state = reactive({
+const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
+	initQueryForm: (): GenTemplateQuery => ({
+		templateGroupId: -1,
+		templateName: '',
+		templateType: ''
+	}),
+	queryContext: computed(() => ({ templateGroupId: currentTemplateGroupId.value })),
 	dataListApi: genTemplateApi.voPage,
 	mountedGetData: false,
-	queryContext: {
-		templateGroupId: -1
-	},
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenTemplateEntity, GenTemplateQuery>)
-const generatorTypeRef = ref()
-const tableIdRef = ref()
+	searchSchema: [
+		{ prop: 'templateName', label: '模板名称' },
+		{ prop: 'templateType', label: '模板类型', component: 'select', options: TEMPLATE_TYPES.items, width: 160 }
+	],
+	tableColumns: [
+		createBuiltinSelection(),
+		createBuiltinIndex(),
+		{ key: 'templateName', label: '模板名称' },
+		{ key: 'generatorPath', label: '模板路径' },
+		{ key: 'templateType', label: '模板类型', formatter: getDictTag(TEMPLATE_TYPES) },
+		{ key: 'templateDesc', label: '描述' },
+		createBuiltinCreateTime(),
+		createBuiltinUpdateTime()
+	],
+	showTableHeader: false
+}
+
+const tableHook = useCrudTable(tableConfig)
+
+// ====== 弹窗与生成逻辑 ======
 const dialogVisible = ref(false)
+const generatorTypeRef = ref<number>(-1)
+const tableIdRef = ref<number[]>([])
 
 const init = (templateGroupId: number, generatorType: number, tableIdList: number[]) => {
 	dialogVisible.value = true
 	generatorTypeRef.value = generatorType
 	tableIdRef.value = tableIdList
+	currentTemplateGroupId.value = templateGroupId
 
-	//重置查询表单数据，并且进行分页查询
-	state.queryContext = { templateGroupId }
-	resetQueryHandle()
+	// destroy-on-close 会让表格实例每次重建，el-table 的勾选 store 是新实例的（空），
+	// 但 hook 里的 selectedRows/selectedIds 是跨次打开的旧镜像，必须显式清掉，
+	// 否则这次打开即便一条没勾，生成请求仍会带上上次的模板 id。
+	tableHook.selection.clear()
+
+	// 重置查询表单并加载数据
+	nextTick(() => {
+		tableHook.query.reset()
+	})
 }
 
-const generateCode = () => {
-	const data = state.dataListSelections ?? []
+const submitState = shallowReactive<SubmitOptions>({
+	visible: dialogVisible,
+	successDuration: 1000,
+	onSuccess: () => {
+		emit('clearSelection')
+	}
+})
 
-	if (data.length === 0) {
+const { submitLoading, submitHandle } = useSubmitHandler(submitState)
+
+const generateCode = () => {
+	// selection.ids 由 primaryKey 映射而来，与改造前 dataListSelections 的内容一致
+	const templateIdList = [...tableHook.selection.ids]
+
+	if (templateIdList.length === 0) {
 		ElMessage.warning('请选择模板')
 		return
 	}
 	const dataForm = {
-		templateIdList: state.dataListSelections,
+		templateIdList,
 		tableIdList: tableIdRef.value
 	}
 	const generatorType = generatorTypeRef.value
@@ -127,18 +112,6 @@ const generateCode = () => {
 	}
 	submitHandle(dataForm)
 }
-
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, queryRef, resetQueryHandle, tableIndex } = useTableAction(state)
-
-const submitState = shallowReactive({
-	visible: dialogVisible,
-	successDuration: 1000,
-	onSuccess: () => {
-		emit('clearSelection')
-	}
-} as SubmitOptions)
-
-const { submitLoading, submitHandle } = useSubmitHandler(submitState)
 
 defineExpose({
 	init

@@ -55,6 +55,13 @@ export default defineConfig({
 	build: {
 		rolldownOptions: {
 			output: {
+				// 打包时移除 console / debugger（Oxc 压缩器，默认 false 需显式开启）
+				minify: {
+					compress: {
+						dropConsole: true,
+						dropDebugger: true
+					}
+				},
 				// 依赖与业务代码分离，大依赖独立 chunk 提升缓存命中率
 				codeSplitting: {
 					groups: [

@@ -1,7 +1,3 @@
-import type { KeyArray } from '@/types/common'
-import type { PageQuery, PageVO } from '@/types/api/common'
-import type { SearchFieldConfig } from '@/types/hooks/search-field'
-
 /**
  * 列配置 —— 定义表格列的元数据
  *
@@ -49,72 +45,4 @@ export interface ColumnConfig {
 	visible?: boolean
 	/** 是否在列设置面板中禁用（不可隐藏/拖动），固定列建议设为 true */
 	disabled?: boolean
-}
-
-// ---- useTable 类型定义 ----
-
-/** 数据列表接口 */
-type DataListApi<Query, VO> = (queryForm?: Query) => Promise<PageVO<VO> | VO[]>
-/** 批量删除接口 */
-type DeleteListApi = (idList: KeyArray) => Promise<void>
-/** 导出接口 */
-type ExportApi = (idList: KeyArray) => Promise<void>
-/** 导入接口 */
-type ImportApi = (formData: FormData) => Promise<void>
-
-/**
- * useTable 配置选项
- *
- * 替代旧的 IHooksOptions，采用显式 options 入参（不再通过 defaultsDeep 运行时变异调用方对象）
- */
-export interface UseTableOptions<VO = any, Query extends PageQuery = PageQuery> {
-	// ---- 必填 ----
-	/** 数据列表查询接口 */
-	dataListApi: DataListApi<Query, VO>
-
-	// ---- 查询/分页 ----
-	/** 表格主体名称，用于删除/导出提示语，如：'用户'、'角色' */
-	tableSubject?: string
-	/** 初始化 / 重置查询条件 */
-	initQueryFormData: () => Query
-	/** 查询上下文（不会被 reset 覆盖的固定参数） */
-	queryContext?: Partial<Query>
-	/** 是否在 mounted 时自动加载数据，默认 true */
-	mountedGetData?: boolean
-	/** 重置后是否自动查询，默认 true */
-	resetQueryGetData?: boolean
-	/** 是否需要分页，默认 true */
-	isPage?: boolean
-	/** 每页条数选项，默认 [10, 20, 50, 100, 200] */
-	pageSizes?: number[]
-
-	// ---- 列配置 ----
-	/** 列配置数组 */
-	columns?: ColumnConfig[]
-	/** 用于 store 持久化的唯一 key，不传则不持久化列设置 */
-	tableKey?: string
-
-	// ---- 搜索表单（独立于列配置） ----
-	/** 搜索字段定义数组，与表格列完全解耦 */
-	searchFields?: SearchFieldConfig[]
-
-	// ---- 删除 ----
-	/** 批量删除接口 */
-	deleteListApi?: DeleteListApi
-	/** 主键字段名，用于删除/多选场景，默认 'id' */
-	primaryKey?: keyof VO
-	/** 删除确认时用于展示的名称字段 */
-	deleteNameKey?: keyof VO
-	/** 自定义删除确认提示语 */
-	deleteConfirmMessage?: string
-
-	// ---- 导出/导入 ----
-	/** 导出接口 */
-	exportApi?: ExportApi
-	/** 导入接口 */
-	importApi?: ImportApi
-	/** 导出成功提示语 */
-	exportSuccessMessage?: string
-	/** 导入成功提示语 */
-	importSuccessMessage?: string
 }

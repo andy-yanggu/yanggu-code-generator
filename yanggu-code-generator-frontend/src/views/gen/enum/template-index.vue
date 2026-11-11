@@ -55,7 +55,8 @@ const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
 		createBuiltinUpdateTime(),
 		createBuiltinCreateTime()
 	],
-	showOperation: false
+	showOperation: false,
+	showTableHeader: false
 }
 
 const tableHook = useCrudTable(tableConfig)
