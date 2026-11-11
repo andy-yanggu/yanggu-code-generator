@@ -2,6 +2,7 @@
 	<div>
 		<!-- 搜索表单 -->
 		<search-form
+			ref="searchFormRef"
 			:model-value="tableHook.search.form"
 			:fields="tableHook.search.fields"
 			:visible="tableHook.search.visible"
@@ -114,12 +115,16 @@ const searchFieldSlots = computed(() => splitSlotNames('query-'))
 
 // 暴露 DataTable 引用，供外层穿透访问 el-table（如 toggleRowSelection）
 const dataTableRef = ref()
+const searchFormRef = ref()
 
-// el-table 实例接线：hook 的 selection.clear() 需要调表格实例的 clearSelection()
-// 才能真正清掉内部 selection store（reserveSelection 模式下已删除的行不会自行剔除）。
-// 放在 onMounted：此时 DataTable 已挂载，defineExpose 的 ref 经 proxyRefs 自动解包为 el-table 实例
+// 实例接线：selection.clear() 需要调表格实例的 clearSelection() 才能真正清掉内部
+// selection store（reserveSelection 模式下已删除的行不会自行剔除）；
+// query.reset() 需要调 SearchForm 的 clearValidate()，否则弹窗不销毁内容时
+// el-form-item 的校验红字会跟着存活实例一起残留到下次打开。
+// 放在 onMounted：此时 DataTable / SearchForm 均已挂载，defineExpose 的 ref 经 proxyRefs 自动解包
 onMounted(() => {
 	props.tableHook.selection.bindTable(dataTableRef.value?.tableRef)
+	props.tableHook.search.bindForm(searchFormRef.value)
 })
 
 defineExpose({

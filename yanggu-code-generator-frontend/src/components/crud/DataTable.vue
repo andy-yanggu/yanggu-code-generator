@@ -27,11 +27,7 @@
 									<icon-button size="16px" :el-icon="Setting" tooltip="列设置" />
 								</span>
 							</template>
-						<column-settings-panel
-							ref="columnSettingsRef"
-							v-model:columns="columns"
-							@reset="emit('resetColumns')"
-						/>
+							<column-settings-panel ref="columnSettingsRef" v-model:columns="columns" @reset="emit('resetColumns')" />
 						</el-popover>
 						<!-- 最大化 -->
 						<icon-button size="16px" :el-icon="FullScreen" :tooltip="maximized ? '退出全屏' : '表格全屏'" @click="handleToggleMaximized()" />
@@ -44,6 +40,7 @@
 		<el-table
 			ref="tableRef"
 			v-loading="loading"
+			element-loading-text="数据加载中..."
 			v-bind="$attrs"
 			:data="data"
 			:max-height="maxHeight"
@@ -252,6 +249,10 @@ const toColumnProps = (col: TableFieldSchema): Record<string, any> => {
 	if ((col.showOverflowTooltip ?? columnDefaults.showOverflowTooltip) !== false) result.showOverflowTooltip = true
 	if (col.formatter) result.formatter = col.formatter
 	if (col.reserveSelection) result.reserveSelection = true
+	// 行级勾选开关：只有 selection 列会被 el-table 消费，其余列下发了也不生效；
+	// 这里是纯展示组件，不判断业务语义，selectable 的返回值由声明侧决定。
+	// 注意：该属性是函数，列设置持久化（JSON）时会被丢弃，因此只给结构列使用
+	if (col.selectable) result.selectable = col.selectable
 	return result
 }
 

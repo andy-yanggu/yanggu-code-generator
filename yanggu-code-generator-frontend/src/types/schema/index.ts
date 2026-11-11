@@ -83,6 +83,12 @@ export interface TableFieldSchema extends BaseFieldSchema {
 	showOverflowTooltip?: boolean
 	/** 多选列是否跨页保持勾选（需配合 el-table row-key 使用） */
 	reserveSelection?: boolean
+	/**
+	 * 多选列的行级勾选开关，映射到 el-table-column 的 selectable（仅 selection 列消费）。
+	 * 用于「已导入 / 无权限的行不允许勾选」这类业务态：返回 false 时该行复选框置灰，
+	 * 且表头全选会跳过这些行。缺省不下发，等同 el-table 原生行为（全部可勾选）。
+	 */
+	selectable?: (row: any, index: number) => boolean
 	/** 子列；非空即为「分组列」（多级表头父级，仅支持 2 层）。分组列无 prop、不渲染单元格，仅作父表头 */
 	children?: TableFieldSchema[]
 }

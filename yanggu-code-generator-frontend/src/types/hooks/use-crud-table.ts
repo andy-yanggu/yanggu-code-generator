@@ -100,12 +100,17 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 		form: Query
 		/** 搜索区是否展开 */
 		visible: boolean
+		/**
+		 * 注入 SearchForm 实例（由 QueryTable 在 onMounted 里调用）。
+		 * query.reset() 靠它调 el-form 的 clearValidate()，清掉跨次打开残留的校验红字。
+		 */
+		bindForm: (instance: any) => void
 	}
 	/** 查询操作 */
 	query: {
 		/** 查询（重置到第一页） */
 		getDataList: () => void
-		/** 重置查询表单 */
+		/** 重置查询表单（同时清排序状态与 el-form 校验提示） */
 		reset: () => void
 		onPageChange: (page: number) => void
 		onSizeChange: (size: number) => void

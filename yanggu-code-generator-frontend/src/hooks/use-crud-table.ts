@@ -107,6 +107,12 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	// 必须用 shallowRef：组件实例内含 DOM 与内部 store，被 reactive 深代理会引发性能问题。
 	// 声明在这一节（而非多选小节）是因为 resetQueryHandle 需要调它的 clearSort()。
 	const tableInstance = shallowRef<any>()
+	// SearchForm（内部 el-form）实例，由 QueryTable 挂载后 bind。
+	// 只用于 reset 时清校验状态；同样走 shallowRef，组件实例不宜被深代理。
+	const searchFormInstance = shallowRef<any>()
+	const bindSearchForm = (instance: any) => {
+		searchFormInstance.value = instance
+	}
 
 	// 归一化搜索字段
 	const searchFields = computed(() => opts.searchSchema!.map(normalizeSearchField))
@@ -215,6 +221,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		// 表头箭头由 el-table 内部 states 驱动，与 order/asc 无关。clearSort 内部传了 silent，
 		// 只重置内部排序状态、不会 emit sort-change，因此不会多打一次请求。
 		tableInstance.value?.clearSort()
+		// 清表单校验状态
+		searchFormInstance.value?.clearValidate?.()
 		// 不用 nextTick 包 getDataList：buildQueryForm 同步读的就是上面刚改完的 queryForm / order / asc，
 		// clearSort 也是同步方法，没有任何一步依赖 DOM 更新。
 		if (resetQueryGetData) {
@@ -358,7 +366,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 			return
 		}
 		deleteLoading.value = true
-		opts.deleteApi([id])
+		opts
+			.deleteApi([id])
 			.then(() => {
 				ElMessage.success('删除成功')
 				clearSelection()
@@ -514,7 +523,8 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		search: reactive({
 			fields: searchFields,
 			form: queryForm,
-			visible: queryShow
+			visible: queryShow,
+			bindForm: bindSearchForm
 		}) as UseCrudTableReturn<VO, Query>['search'],
 		// 查询操作
 		query: reactive({

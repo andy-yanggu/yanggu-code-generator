@@ -88,4 +88,13 @@ const handleReset = () => {
 	formRef.value?.resetFields()
 	emit('reset')
 }
+
+// 对外暴露校验相关方法：QueryTable 会把本组件实例 bind 给 hook，
+// hook 的 query.reset() 在重置查询条件时需同步清掉 el-form-item 的校验红字。
+// 这里包一层箭头函数而非直接暴露 formRef：调用方不需要知道 el-form 的存在，
+// 且 formRef 在搜索区被 v-if 折叠时为 undefined，内部已做了安全降级。
+const clearValidate = () => formRef.value?.clearValidate()
+const resetFields = () => formRef.value?.resetFields()
+
+defineExpose({ clearValidate, resetFields })
 </script>
