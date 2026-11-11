@@ -1,12 +1,13 @@
 <template>
 	<div class="logo-container" @click="clickHandler()">
-		<el-avatar src="./favicon.ico" size="small" class="logo-avatar"></el-avatar>
+		<el-avatar :src="faviconUrl" size="small" class="logo-avatar"></el-avatar>
 		<el-text v-if="!appStore.isCollapse" tag="b">{{ appTitle }}</el-text>
 	</div>
 </template>
 <script setup lang="ts">
 import { useAppStore, useSystemSettingStore } from '@/store'
 import { env } from '@/config'
+import faviconUrl from '@/assets/favicon.ico'
 
 defineOptions({
 	name: 'Logo'
