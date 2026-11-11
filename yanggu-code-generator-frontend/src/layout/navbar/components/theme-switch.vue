@@ -19,6 +19,60 @@ defineOptions({
 const appStore = useAppStore()
 
 /**
+ * 取消遗留的 View Transition 动画
+ *
+ * fill: 'forwards' 的动画在 transition 结束后仍挂在 documentElement 上，
+ * 并把终态 clip-path 继续作用到下一次切换的同名伪元素上。
+ *
+ * 实测后果：dark → light 全程
+ * ::view-transition-old(root) = circle(0px at 上次点击位置)，
+ * 旧页面快照整段不可见，圆扩散时底下是空白背景，
+ * 观感上就是开头闪一下、动画不连贯。
+ *
+ * 正常结束时由 finished 回调取消，
+ * 切换被跳过或异常导致回调没跑到时，
+ * 在下次切换开始前再兜底清理一次。
+ */
+const cancelViewTransitionAnimations = () => {
+	document
+		.getAnimations()
+		.filter(animation => (animation.effect as KeyframeEffect | null)?.pseudoElement?.includes('view-transition'))
+		.forEach(animation => animation.cancel())
+}
+
+/**
+ * 两个方向统一使用同一个时长
+ *
+ * 收缩与扩散互为逆过程，时长不一致会让来回手感不一样，
+ * 扩散方向多出来的 300ms 也只是把卡顿感拉长。
+ */
+const transitionDuration = 500
+
+/**
+ * 正在进行中的 View Transition
+ *
+ * 连点时用它找到上一次切换并跳过，
+ * 避免多份动画并发叠在同一组伪元素上。
+ *
+ * 这里用结构类型而不是 ViewTransition，不依赖 lib.dom 是否已收录该类型。
+ */
+let currentTransition: { skipTransition(): void } | null = null
+
+/**
+ * 监听主题切换动画的失败
+ *
+ * 连点时上一次动画会随上一次 transition 被取消，
+ * 此时 finished 抛出的 AbortError 属于预期内，不再上报。
+ */
+const watchThemeAnimation = (animation: Animation) => {
+	animation.finished.catch(error => {
+		if ((error as Error)?.name !== 'AbortError') {
+			console.error('❌ Theme animation error:', error)
+		}
+	})
+}
+
+/**
  * 主题切换动画
  *
  * light → dark（收缩）：
@@ -91,41 +145,7 @@ const handleThemeToggle = (event: MouseEvent) => {
 
 	/**
 	 * ========================================
-	 * 5. 调试日志
-	 * ========================================
-	 */
-	console.group('🎨 Theme Switch')
-
-	console.log('current theme:', isDarkNow ? 'dark' : 'light')
-
-	console.log('target theme:', isDarkNow ? 'light' : 'dark')
-
-	console.log('click position:', {
-		x,
-		y
-	})
-
-	console.log('left-bottom anchor:', {
-		x: leftBottomX,
-		y: leftBottomY
-	})
-
-	console.log('viewport:', {
-		width: window.innerWidth,
-		height: window.innerHeight
-	})
-
-	console.log('maxRadius:', maxRadius)
-
-	console.log('left-bottom clipPath:', leftBottomClipPath)
-
-	console.log('click clipPath:', clickClipPath)
-
-	console.groupEnd()
-
-	/**
-	 * ========================================
-	 * 6. 浏览器不支持 View Transition
+	 * 5. 浏览器不支持 View Transition
 	 * ========================================
 	 */
 	if (!('startViewTransition' in document)) {
@@ -135,7 +155,7 @@ const handleThemeToggle = (event: MouseEvent) => {
 
 	/**
 	 * ========================================
-	 * 7. 根据方向切换 z-index
+	 * 6. 根据方向切换 z-index
 	 * ========================================
 	 *
 	 * light → dark（收缩）：
@@ -145,14 +165,21 @@ const handleThemeToggle = (event: MouseEvent) => {
 	 * dark → light（扩散）：
 	 *   新页面 light 位于上层（默认层级），从点击处扩散到左下角，
 	 *   覆盖下层的旧页面 dark。
+	 *
+	 * 连点时先跳过上一次还没跑完的 transition，
+	 * 类名也按本次方向整体覆盖（而不是只在收缩时 add），
+	 * 避免上一次遗留的 theme-transition-shrink 把本次层级关系搞反。
 	 */
-	if (!isDarkNow) {
-		document.documentElement.classList.add('theme-transition-shrink')
-	}
+	currentTransition?.skipTransition()
+
+	// 上一次切换遗留的动画会污染本次的伪元素，先清理
+	cancelViewTransitionAnimations()
+
+	document.documentElement.classList.toggle('theme-transition-shrink', !isDarkNow)
 
 	/**
 	 * ========================================
-	 * 8. 创建 View Transition
+	 * 7. 创建 View Transition
 	 * ========================================
 	 */
 	const transition = document.startViewTransition(async () => {
@@ -167,9 +194,11 @@ const handleThemeToggle = (event: MouseEvent) => {
 		await nextTick()
 	})
 
+	currentTransition = transition
+
 	/**
 	 * ========================================
-	 * 9. View Transition ready
+	 * 8. View Transition ready
 	 * ========================================
 	 */
 	transition.ready
@@ -196,16 +225,14 @@ const handleThemeToggle = (event: MouseEvent) => {
 						clipPath: [leftBottomClipPath, clickClipPath]
 					},
 					{
-						duration: 500,
-						easing: 'ease-in-out',
+						duration: transitionDuration,
+						easing: 'ease-out',
 						fill: 'forwards',
 						pseudoElement: '::view-transition-old(root)'
 					}
 				)
 
-				animation.finished.catch(error => {
-					console.error('❌ Theme animation error:', error)
-				})
+				watchThemeAnimation(animation)
 
 				return
 			}
@@ -231,33 +258,44 @@ const handleThemeToggle = (event: MouseEvent) => {
 					clipPath: [clickClipPath, leftBottomClipPath]
 				},
 				{
-					duration: 800,
-					easing: 'ease-in-out',
+					duration: transitionDuration,
+					easing: 'ease-out',
 					fill: 'forwards',
 					pseudoElement: '::view-transition-new(root)'
 				}
 			)
 
-			animation.finished.catch(error => {
-				console.error('❌ Theme animation error:', error)
-			})
+			watchThemeAnimation(animation)
 		})
 		.catch(error => {
-			console.error('❌ ViewTransition ready error:', error)
+			// 连点时被 skipTransition 接管的切换，ready 会以 AbortError 结算，属预期内
+			if ((error as Error)?.name !== 'AbortError') {
+				console.error('❌ ViewTransition ready error:', error)
+			}
 		})
 
 	/**
 	 * ========================================
-	 * 10. View Transition 整体完成
+	 * 9. View Transition 整体完成
 	 * ========================================
+	 *
+	 * 被新一轮切换接管时，上一次的 finished 同样会结算，
+	 * 此时不做清理，避免抹掉本次刚设置好的类名与动画。
 	 */
+	const cleanupThemeTransition = () => {
+		if (currentTransition !== transition) return
+
+		currentTransition = null
+
+		document.documentElement.classList.remove('theme-transition-shrink')
+
+		cancelViewTransitionAnimations()
+	}
+
 	transition.finished
-		.then(() => {
-			document.documentElement.classList.remove('theme-transition-shrink')
-			console.log('✅ Theme transition finished')
-		})
+		.then(cleanupThemeTransition)
 		.catch(error => {
-			document.documentElement.classList.remove('theme-transition-shrink')
+			cleanupThemeTransition()
 			console.error('❌ ViewTransition finished error:', error)
 		})
 }
