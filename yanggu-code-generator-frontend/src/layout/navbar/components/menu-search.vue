@@ -13,12 +13,24 @@
 				class="search-input"
 				@input="querySearch"></el-input>
 
-			<!-- 树形结构展示 -->
+			<!-- 树形结构展示：默认全部展开，命中关键词的片段由高亮组件分段渲染 -->
 			<el-scrollbar ref="scrollbarRef" max-height="400px" class="search-results">
-				<MenuTreeNode v-for="node in searchState.matchItemList" :key="node.title" :node="node" :level="0" :on-select="handleSelect"></MenuTreeNode>
-				<div v-if="isEmpty(searchState.matchItemList)" class="no-results">
-					<el-text>无匹配结果</el-text>
-				</div>
+				<el-tree
+					:data="searchState.matchItemList"
+					node-key="path"
+					:props="{ label: 'title', children: 'children' }"
+					:indent="16"
+					default-expand-all
+					empty-text="无匹配结果"
+					class="menu-search-tree"
+					@node-click="handleNodeClick">
+					<template #default="{ data }">
+						<div class="menu-tree-node">
+							<svg-icon v-if="data.icon" :icon="data.icon"></svg-icon>
+							<menu-tree-label :title="data.title" :keyword="searchState.keyword"></menu-tree-label>
+						</div>
+					</template>
+				</el-tree>
 			</el-scrollbar>
 		</el-dialog>
 	</div>
@@ -27,14 +39,24 @@
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
 import { useMenuPreferenceStore, useUserStore } from '@/store'
-import { MenuInfo } from '@/types'
-import MenuTreeNode, { TreeNode } from '@/layout/navbar/components/menu-tree-node.vue'
+import { MenuInfo, RouteType } from '@/types'
+import MenuTreeLabel from '@/layout/navbar/components/menu-tree-label.vue'
 import IconButton from '@/components/icon-button/index.vue'
-import { isEmpty } from '@/utils/tool'
+import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
 	name: 'MenuSearch'
 })
+
+/** 菜单搜索树节点，由 userStore.menuList 递归构建，仅本组件消费 */
+interface TreeNode {
+	title: string
+	icon?: string
+	path?: string
+	type: RouteType
+	externalUrl?: string
+	children?: TreeNode[]
+}
 
 const initState = () => ({
 	visible: false,
@@ -102,7 +124,8 @@ const debouncedQuerySearch = useDebounceFn((queryString?: string) => {
 		return
 	}
 
-	const keyword = raw.toLowerCase()
+	// trim 与高亮分段保持一致，否则尾部空格会出现过滤有结果、高亮不命中
+	const keyword = raw.trim().toLowerCase()
 
 	const filterTree = (nodes: TreeNode[]): TreeNode[] => {
 		return nodes
@@ -128,11 +151,21 @@ const onDialogOpened = async () => {
 	scrollbarRef.value?.setScrollTop(0)
 }
 
+// 目录行交给 el-tree 自身切换展开/收起，只有可跳转的节点才执行 handleSelect。
+// 这里按 type 而不按 children 判定：filterTree 会把命中目录的 children 置为空数组，
+// 此时目录被当成叶子就会落到 window.open(undefined) 上。
+const handleNodeClick = (data: TreeNode) => {
+	if (data.type === RouteType.DIRECTORY) {
+		return
+	}
+	handleSelect(data)
+}
+
 // 选择树节点
 const handleSelect = (node: TreeNode) => {
 	searchState.visible = false
 	// 如果是菜单或者iframe，则路由跳转
-	if ([1, 3].includes(node.type)) {
+	if ([RouteType.MENU, RouteType.IFRAME].includes(node.type)) {
 		if (node.path != route.path) {
 			router.push(node.path!)
 		}
@@ -156,14 +189,24 @@ const handleSelect = (node: TreeNode) => {
 }
 .search-results {
 	margin-top: 8px;
-	padding-left: 8px;
 }
 .search-input {
 	margin-bottom: 6px;
 }
-.no-results {
-	padding: 16px 0;
-	text-align: center;
-	color: #8c8c8c;
+.menu-search-tree {
+	display: block;
+	/* 行高与 hover 底色走 EP 自己的变量，不直接覆盖 .el-tree-node__content 的 height */
+	--el-tree-node-content-height: 32px;
+	--el-tree-node-hover-bg-color: var(--el-color-primary-light-9);
+}
+.menu-tree-node {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex: 1;
+	min-width: 0;
+}
+:deep(.el-tree-node__content) {
+	border-radius: 4px;
 }
 </style>
