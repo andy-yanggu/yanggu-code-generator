@@ -1,7 +1,7 @@
 // 参考：https://prettier.io/docs/en/options.html
 module.exports = {
 	// 超过指定值换行
-	printWidth: 150,
+	printWidth: 180,
 	// 制表符宽度
 	tabWidth: 2,
 	// 使用制表符缩进

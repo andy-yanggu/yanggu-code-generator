@@ -86,6 +86,9 @@ const fields: CrudField[] = [
 		inTable: true,
 		form: {
 			ruleList: [{ required: true, message: '基类名称不能为空', trigger: 'blur' }]
+		},
+		table: {
+			minWidth: 120
 		}
 	},
 	{
