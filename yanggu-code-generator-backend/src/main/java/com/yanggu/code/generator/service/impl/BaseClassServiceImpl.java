@@ -110,8 +110,8 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
      */
     @Override
     public PageVO<BaseClassVO> entityPage(BaseClassQuery query) {
-        //简单sql使用QueryWrapper
         Page<BaseClassEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         baseClassMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //baseClassMapper.entityPage(page, query);

@@ -130,8 +130,8 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      */
     @Override
     public PageVO<EnumVO> entityPage(EnumQuery query) {
-        //简单sql使用QueryWrapper
         Page<EnumEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         enumMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //enumMapper.entityPage(page, query);

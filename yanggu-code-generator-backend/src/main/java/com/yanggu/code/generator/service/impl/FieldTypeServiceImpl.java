@@ -108,8 +108,8 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
      */
     @Override
     public PageVO<FieldTypeVO> entityPage(FieldTypeQuery query) {
-        //简单sql使用QueryWrapper
         Page<FieldTypeEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         fieldTypeMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //fieldTypeMapper.entityPage(page, query);

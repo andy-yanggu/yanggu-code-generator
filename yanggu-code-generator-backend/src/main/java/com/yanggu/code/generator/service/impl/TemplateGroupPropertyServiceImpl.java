@@ -121,8 +121,8 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      */
     @Override
     public PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyQuery query) {
-        //简单sql使用QueryWrapper
         Page<TemplateGroupPropertyEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         templateGroupPropertyMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //templateGroupPropertyMapper.entityPage(page, query);

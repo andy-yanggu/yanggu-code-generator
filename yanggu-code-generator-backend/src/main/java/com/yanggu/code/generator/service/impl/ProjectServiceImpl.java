@@ -147,8 +147,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
      */
     @Override
     public PageVO<ProjectVO> entityPage(ProjectQuery query) {
-        //简单sql使用QueryWrapper
         Page<ProjectEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         projectMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //projectMapper.entityPage(page, query);

@@ -131,8 +131,8 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      */
     @Override
     public PageVO<TableVO> entityPage(TableQuery query) {
-        //简单sql使用QueryWrapper
         Page<TableEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         tableMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //tableMapper.entityPage(page, query);

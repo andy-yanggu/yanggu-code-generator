@@ -115,8 +115,8 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      */
     @Override
     public PageVO<DatasourceVO> entityPage(DatasourceQuery query) {
-        //简单sql使用QueryWrapper
         Page<DatasourceEntity> page = query.toPage();
+        //简单sql使用QueryWrapper
         datasourceMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
         //datasourceMapper.entityPage(page, query);
