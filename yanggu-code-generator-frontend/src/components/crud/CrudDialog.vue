@@ -20,8 +20,8 @@
 			     本质就是改这个对象的属性，从不 emit update:modelValue，所以 v-model 的写回分支是死代码，
 			     用单向绑定把「只读、修改走对象属性」这个意图写准确。 -->
 			<form-field
-				v-for="field in formHook.formSchema"
-				:key="field.prop"
+				v-for="field in visibleFormSchema"
+				:key="field.key"
 				:model-value="formHook.form.data"
 				:field="field"
 				:mode="formHook.dialog.mode"
@@ -71,6 +71,11 @@ defineOptions({
 const props = defineProps<{
 	formHook: UseCrudFormReturn
 }>()
+
+// 条件显隐过滤：visible(data) 为 false 的字段整条不渲染。
+// 读的是 form.data 里的具体属性，computed 能追踪到；字段隐藏即卸载，
+// el-form-item 注销后该字段的校验自动跳过，与旧模板里 v-if 包裹 form-item 的行为一致。
+const visibleFormSchema = computed(() => props.formHook.formSchema.filter(field => !field.visible || field.visible(props.formHook.form.data)))
 
 /**
  * 回车提交。

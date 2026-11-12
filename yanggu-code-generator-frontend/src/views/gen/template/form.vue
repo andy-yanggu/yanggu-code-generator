@@ -1,69 +1,32 @@
 <template>
-	<el-dialog v-model="visible" :title="dialogTitle()" width="60%" :close-on-click-modal="false" @closed="visible = false">
-		<el-form
-			ref="dataFormRef"
-			:model="state.dataForm"
-			:rules="dataRules"
-			:disabled="formType === 'detail'"
-			label-width="110px"
-			:validate-on-rule-change="false"
-			@keyup.enter="submitHandle()">
-			<el-form-item label="路径" prop="templatePath">
-				<el-input v-model="state.dataForm.templatePath" disabled></el-input>
-			</el-form-item>
-			<el-form-item :label="fileName" prop="fileName">
-				<el-input v-model="state.dataForm.fileName" clearable :placeholder="`请输入${fileName}`"></el-input>
-			</el-form-item>
-			<el-form-item label="模板类型" prop="templateType">
-				<el-radio-group v-model="state.dataForm.templateType" :options="TEMPLATE_TYPES.items" disabled></el-radio-group>
-			</el-form-item>
-			<template v-if="state.dataForm.templateType === 0">
-				<el-form-item prop="conditionExpression">
-					<template #label>
-						<form-label-tooltip tooltip="使用Aviator表达式，需要返回布尔值" label="条件表达式"></form-label-tooltip>
-					</template>
-					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
-				</el-form-item>
-			</template>
-			<template v-if="state.dataForm.templateType === 1">
-				<el-form-item label="模板名称" prop="templateName">
-					<el-input v-model="state.dataForm.templateName" clearable placeholder="请输入模板名称"></el-input>
-				</el-form-item>
-				<el-form-item prop="conditionExpression">
-					<template #label>
-						<form-label-tooltip tooltip="使用Aviator表达式，需要返回布尔值" label="条件表达式"></form-label-tooltip>
-					</template>
-					<el-input v-model="state.dataForm.conditionExpression" clearable placeholder="请输入条件表达式"></el-input>
-				</el-form-item>
-			</template>
-			<template v-else-if="state.dataForm.templateType === 2">
-				<!-- 文件上传 -->
-				<el-form-item v-if="state.dataForm.templateType === 2" label="文件上传" prop="binaryOriginalFileName">
-					<el-upload :limit="1" :file-list="fileList" :on-exceed="handleExceed" :http-request="handleManualUpload" :on-remove="handleRemove">
-						<el-button type="primary" :icon="Upload">点击上传</el-button>
-					</el-upload>
-				</el-form-item>
-			</template>
-			<el-form-item label="描述" prop="templateDesc">
-				<el-input v-model="state.dataForm.templateDesc" clearable placeholder="请输入描述"></el-input>
-			</el-form-item>
-		</el-form>
-
-		<template #footer>
-			<el-button :icon="Close" @click="visible = false">取消</el-button>
-			<el-button v-if="formType !== 'detail'" type="primary" :icon="Check" :loading="submitLoading" @click="submitHandle()">确定</el-button>
+	<crud-dialog :form-hook="formHook">
+		<!-- 路径：树上下文回填，只读展示（DynamicField 无 disabled 透传，走字段插槽） -->
+		<template #field-templatePath>
+			<el-input v-model="formHook.form.data.templatePath" disabled></el-input>
 		</template>
-	</el-dialog>
+
+		<!-- 模板类型：由打开入口（右键菜单项）预设，表单内不可改 -->
+		<template #field-templateType>
+			<el-radio-group v-model="formHook.form.data.templateType" :options="TEMPLATE_TYPES.items" disabled></el-radio-group>
+		</template>
+
+		<!-- 二进制文件上传：FileReader 读 base64 进 templateContent，文件名进 binaryOriginalFileName -->
+		<template #field-binaryOriginalFileName>
+			<el-upload :limit="1" :file-list="fileList" :on-exceed="handleExceed" :http-request="handleManualUpload" :on-remove="handleRemove">
+				<el-button type="primary" :icon="Upload">点击上传</el-button>
+			</el-upload>
+		</template>
+	</crud-dialog>
 </template>
 
 <script setup lang="ts">
-import { TEMPLATE_TYPES } from '@/constant/enum'
-import { useSubmitForm } from '@/hooks'
-import { Check, Close, Upload } from '@element-plus/icons-vue'
-import { FormItemRule, UploadProps } from 'element-plus'
+import CrudDialog from '@/components/crud/CrudDialog.vue'
 import { genTemplateApi } from '@/api'
-import { FormOptions, GenTemplateEntity, Key } from '@/types'
-import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
+import { TEMPLATE_TYPES } from '@/constant/enum'
+import { useCrudForm } from '@/hooks'
+import { Upload } from '@element-plus/icons-vue'
+import type { FormItemRule, UploadProps } from 'element-plus'
+import type { FormFieldSchema, FormInitOptions, GenTemplateEntity, Key } from '@/types'
 
 defineOptions({
 	name: 'GenTemplateForm'
@@ -90,96 +53,99 @@ const props = defineProps({
 
 const emit = defineEmits(['refreshDataList'])
 
-const initAfterHandle = () => {
-	state.dataForm.templateGroupId = props.templateGroupId
-	state.dataForm.parentId = props.parentId
-	state.dataForm.templateType = props.templateType
-	state.dataForm.templatePath = props.templatePath
-	if (state.dataForm.templateType === 2) {
-		if (state.dataForm.id) {
-			fileList.value = [
-				{
-					name: state.dataForm.binaryOriginalFileName
-				} as File
-			]
-		} else {
-			fileList.value = []
+// ====== 上下文 ======
+// 右键菜单入口决定 parentId / templateType / templatePath（tree.vue 的 contextMenu），
+// 连同当前模板组 id 组成 formContext：add 经 initFormData(ctx) 注入，update 在 afterDataAssign 覆盖（旧 initAfterHandle 语义）
+const formContext = computed(() => ({
+	templateGroupId: props.templateGroupId,
+	parentId: props.parentId,
+	templateType: props.templateType,
+	templatePath: props.templatePath
+}))
+
+// ====== 表单字段 ======
+// templateType 在弹窗期间恒定（控件禁用），visible 以表单数据为准即可
+const formSchema: FormFieldSchema[] = [
+	{ key: 'templatePath', label: '路径' },
+	// fileName 的两个变体：共享 prop、visible 互斥，label/placeholder 随类型声明式切换。
+	// 必填文案不写在 ruleList（mergedRules 按 prop 归并，后声明变体会覆盖前者），由 extraRules 按类型下发
+	{ key: 'fileNameDir', prop: 'fileName', label: '目录名称', visible: data => data.templateType === 0 },
+	{ key: 'fileNameFile', prop: 'fileName', label: '文件名称', visible: data => data.templateType !== 0 },
+	{ key: 'templateType', label: '模板类型', ruleList: [{ required: true, message: '模板类型不能为空', trigger: 'blur' }] },
+	{
+		key: 'conditionExpression',
+		label: '条件表达式',
+		tooltip: '使用Aviator表达式，需要返回布尔值',
+		visible: data => [0, 1].includes(data.templateType)
+	},
+	// 隐藏即卸载注销校验，旧 validator 的「type!=0 才必填」条件由 visible 承接
+	{ key: 'templateName', label: '模板名称', visible: data => data.templateType === 1, ruleList: [{ required: true, message: '模板名称不能为空', trigger: 'blur' }] },
+	{ key: 'binaryOriginalFileName', label: '文件上传', visible: data => data.templateType === 2, ruleList: [{ required: true, message: '文件不能为空', trigger: 'blur' }] },
+	{ key: 'templateDesc', label: '描述' }
+]
+
+// ====== 动态校验规则 ======
+// getter 形态：mergedRules 内 toValue 解包时追踪 form.data.templateType，切换类型（含详情回填）后文案自动重算
+const buildExtraRules = (): Record<string, FormItemRule[]> => ({
+	fileName: [
+		{
+			required: true,
+			message: `${formHook.form.data.templateType === 0 ? '目录名称' : '文件名称'}不能为空`,
+			trigger: 'blur'
 		}
-	}
-}
-
-// 初始化表单数据
-const initFormData = (): GenTemplateEntity => ({
-	id: '',
-	templateGroupId: -1,
-	parentId: -1,
-	templateName: '',
-	fileName: '',
-	templateType: -1,
-	templateDesc: '',
-	binaryOriginalFileName: '',
-	conditionExpression: '',
-	templateContent: '',
-	templatePath: ''
-})
-
-const state = reactive({
-	// 标题主体
-	titleSubject: '模板',
-	submitApi: genTemplateApi.submit,
-	detailApi: (id: Key) => genTemplateApi.detailData({ id }),
-	initFormData,
-	dataForm: initFormData(),
-	initAfter: initAfterHandle,
-	emit
-} as FormOptions<GenTemplateEntity>)
-
-const validateTemplateName = (_: any, value: any, callback: any) => {
-	if (state.dataForm.templateType != 0 && !value) {
-		callback(new Error())
-	} else {
-		callback()
-	}
-}
-
-const validateBinaryFile = (_: any, value: any, callback: any) => {
-	if (state.dataForm.templateType === 2 && !value) {
-		callback(new Error())
-	} else {
-		callback()
-	}
-}
-
-const fileName = computed(() => {
-	if (state.dataForm.templateType === 0) {
-		return '目录名称'
-	} else {
-		return '文件名称'
-	}
-})
-
-const dataRules = computed(() => {
-	const constRules: Partial<Record<keyof GenTemplateEntity, FormItemRule[]>> = {
-		templateName: [{ required: true, validator: validateTemplateName, message: '模板名称不能为空', trigger: 'blur' }],
-		fileName: [{ required: true, message: `${fileName.value}不能为空`, trigger: 'blur' }],
-		templateType: [{ required: true, message: '模板类型不能为空', trigger: 'blur' }],
-		binaryOriginalFileName: [{ required: true, validator: validateBinaryFile, message: '文件不能为空', trigger: 'blur' }]
-	}
-	return constRules
+	]
 })
 
 const fileList = ref([] as File[])
 
-const { visible, dataFormRef, formType, init, submitHandle, submitLoading, dialogTitle } = useSubmitForm(state)
+// ====== 表单 hook ======
+const formHook = useCrudForm<GenTemplateEntity, GenTemplateEntity>({
+	subject: '模板',
+	formSchema,
+	initFormData: ctx => ({
+		id: '',
+		templateGroupId: -1,
+		parentId: -1,
+		templateName: '',
+		fileName: '',
+		templateType: -1,
+		templateDesc: '',
+		binaryOriginalFileName: '',
+		conditionExpression: '',
+		templateContent: '',
+		templatePath: '',
+		...ctx
+	}),
+	submitApi: genTemplateApi.submit,
+	detailApi: (id: Key) => genTemplateApi.detailData({ id }),
+	formContext,
+	extraRules: buildExtraRules,
+	labelWidth: '110px',
+	dialogWidth: '60%',
+	beforeOpen: () => {
+		// 每次打开重置文件列表，避免带上上一条二进制文件的显示
+		fileList.value = []
+	},
+	afterDataAssign: () => {
+		// 与旧 initAfterHandle 对齐：详情回填后仍以下次入口上下文为准（父级/路径由树节点决定，不信任详情回传）
+		const data = formHook.form.data
+		Object.assign(data, toValue(formContext))
+		if (data.templateType === 2 && data.binaryOriginalFileName) {
+			fileList.value = [{ name: data.binaryOriginalFileName } as File]
+		}
+	},
+	afterSubmit: data => emit('refreshDataList', data)
+})
 
+// ====== 文件上传（逻辑与旧版一致） ======
 // 统一的文件处理方法
 const processFile = (file: File) => {
 	return new Promise<void>(resolve => {
 		const reader = new FileReader()
 		reader.onload = e => {
 			// 更新表单中的 templateContent 字段
-			state.dataForm.templateContent = e.target?.result as string
-			state.dataForm.binaryOriginalFileName = file.name
+			formHook.form.data.templateContent = e.target?.result as string
+			formHook.form.data.binaryOriginalFileName = file.name
 
 			// 更新文件列表用于显示（添加状态以便显示成功图标）
 			fileList.value = [file]
@@ -208,8 +174,8 @@ const handleManualUpload = async (options: any) => {
 // 处理超出限制的情况（自动替换文件）
 const handleExceed: UploadProps['onExceed'] = files => {
 	// 清除之前文件的数据
-	state.dataForm.binaryOriginalFileName = ''
-	state.dataForm.templateContent = ''
+	formHook.form.data.binaryOriginalFileName = ''
+	formHook.form.data.templateContent = ''
 	fileList.value = []
 
 	// 处理新文件
@@ -220,16 +186,20 @@ const handleExceed: UploadProps['onExceed'] = files => {
 // 处理文件移除
 const handleRemove: UploadProps['onRemove'] = () => {
 	// 清除文件数据
-	state.dataForm.binaryOriginalFileName = ''
-	state.dataForm.templateContent = ''
+	formHook.form.data.binaryOriginalFileName = ''
+	formHook.form.data.templateContent = ''
 
 	// 清空文件列表
 	fileList.value = []
+}
+
+// ====== 对外契约（与旧版一致，tree.vue 的 useInitForm 继续以 formRef.value.init({ type, id }) 调用） ======
+const init = (options: FormInitOptions) => {
+	formHook.dialog.open(options.type, options.id)
 }
 
 defineExpose({
 	init
 })
 </script>
-
 <style scoped></style>

@@ -79,6 +79,14 @@ export interface FormFieldSchema extends InputFieldSchema {
 	 * 这类条目不对应真实数据列，prop 仅作 v-for key 与插槽名，不触发校验。
 	 */
 	display?: 'bare'
+	/**
+	 * 条件显隐（仅表单使用）：基于当前表单数据判断该字段是否渲染，返回 false 时整个 form-item 不出现。
+	 * 隐藏期间字段随 el-form-item 卸载而注销，校验自动跳过（与旧模板 v-if 行为一致）。
+	 * 需要「按条件切换 label / 校验文案」时，声明两个共享同一 prop、visible 互斥的变体字段即可，
+	 * 注意此时该 prop 的规则不要写在两个变体的 ruleList 里（mergedRules 按 prop 归并，后声明者会覆盖前者），
+	 * 应经 useCrudForm 的 extraRules getter 按当前数据下发。
+	 */
+	visible?: (data: any) => boolean
 }
 
 // 表格字段 schema（继承 Base，不继承 Input：表格列不消费输入类属性）
