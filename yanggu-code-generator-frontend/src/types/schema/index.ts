@@ -50,6 +50,14 @@ export interface InputFieldSchema extends BaseFieldSchema {
 	filterable?: boolean
 	/** 字段级校验规则 */
 	ruleList?: FormItemRule[]
+	/**
+	 * 日期/时间选择器的默认时刻（映射 el-date-picker 的 default-time）。
+	 * - `datetime-picker`：传单个 `Date`，决定选完日期后时间部分的默认值；
+	 * - `datetime-range`：传 `[Date, Date]`，分别决定起止时间部分的默认值，
+	 *   典型用法 `[00:00:00, 23:59:59]` 以确保后端 `between(createTime, ...)` 覆盖最后一天整天。
+	 * 未提供则沿用 Element Plus 默认（起 00:00:00 / 止 00:00:00），可能漏掉末日晚间记录。
+	 */
+	defaultTime?: Date | [Date, Date]
 }
 
 // 搜索字段 schema

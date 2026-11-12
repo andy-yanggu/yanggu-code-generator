@@ -1,169 +1,84 @@
 <template>
 	<div>
-		<el-card v-if="queryShow" class="layout-query-card" shadow="hover">
-			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList()">
-				<el-form-item label="项目" prop="projectId">
-					<el-select v-model="state.queryForm.projectId" style="width: 140px" placeholder="请选择项目" filterable clearable>
-						<el-option v-for="item in projectList" :key="item.id!" :label="item.projectName" :value="item.id!">
-							<option-label :label="item.projectName" :desc="item.projectDesc"></option-label>
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="数据库名称" prop="databaseName">
-					<el-input v-model="state.queryForm.databaseName" placeholder="请输入数据库名称" clearable></el-input>
-				</el-form-item>
-				<el-form-item label="表名" prop="tableName">
-					<el-input v-model="state.queryForm.tableName" clearable placeholder="请输入表名"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" :loading="state.dataListLoading" :icon="Search" @click="getDataList()">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button :icon="Refresh" @click="resetQueryHandle()">重置</el-button>
-				</el-form-item>
-			</el-form>
-		</el-card>
-
-		<el-card ref="tableCardRef" class="layout-table-card" :class="{ 'is-maximized': tableCardMaximized }" shadow="hover">
-			<!-- 表格工具栏 -->
-			<template #header>
-				<table-tool-bar
-					v-model:show-search="queryShow"
-					v-model:query-loading="state.dataListLoading"
-					v-model:maximized="tableCardMaximized"
-					@get-data-list="getDataList()"
-				>
-					<template #left>
-						<el-space size="default">
-							<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
-							<el-button type="danger" :loading="state.deleteLoading" :icon="Delete" @click="deleteBatchHandle()">删除</el-button>
-							<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成</el-button>
-						</el-space>
-					</template>
-				</table-tool-bar>
+		<query-table :table-hook="tableHook">
+			<!-- 工具栏左侧：导入 + 批量删除 + 批量生成 -->
+			<template #toolbar-left>
+				<el-space size="default">
+					<el-button type="primary" :icon="Upload" @click="importHandle()">导入</el-button>
+					<el-button type="danger" :loading="tableHook.action.delete.loading" :icon="Delete" @click="tableHook.action.delete.execute()">删除</el-button>
+					<el-button type="success" :icon="DocumentAdd" @click="generatorCodeBatch()">生成</el-button>
+				</el-space>
 			</template>
-			<el-table
-				ref="tableRef"
-				v-loading="state.dataListLoading!"
-				:data="state.dataList"
-				border
-				max-height="60vh"
-				@selection-change="selectionChangeHandle"
-				@sort-change="sortChangeHandle"
-			>
-				<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-				<el-table-column type="index" :index="tableIndex" label="序号" header-align="center" align="center" width="60"></el-table-column>
-				<el-table-column prop="projectName" label="项目名称" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column
-					prop="databaseName"
-					label="数据库名称"
-					show-overflow-tooltip
-					header-align="center"
-					align="center"
-					width="100"
-				></el-table-column>
-				<el-table-column prop="tableName" label="表名" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column
-					prop="generatorType"
-					label="生成方式"
-					:formatter="getDictTag(PROJECT_GENERATE_TYPES)"
-					header-align="center"
-					align="center"
-					width="100"
-				></el-table-column>
-				<el-table-column prop="tableComment" label="注释" show-overflow-tooltip header-align="center" align="center"></el-table-column>
-				<el-table-column prop="fieldCount" label="字段数量" header-align="center" align="center" width="100">
-					<template #default="scope">
-						<el-tooltip content="配置字段" placement="top">
-							<el-button type="primary" link @click="editHandle(scope.row)">{{ scope.row.fieldCount }}个</el-button>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column
-					prop="createTime"
-					label="创建时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"
-				></el-table-column>
-				<el-table-column
-					prop="updateTime"
-					label="修改时间"
-					show-overflow-tooltip
-					min-width="120"
-					header-align="center"
-					align="center"
-					sortable="custom"
-				></el-table-column>
-				<el-table-column label="操作" fixed="right" header-align="center" align="center" width="160">
-					<template #default="scope">
-						<el-row>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Setting" @click="editHandle(scope.row)">配置</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="Edit" @click="formInitHandle(scope.row.id)">修改</el-button>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="12">
-								<el-button type="primary" link :icon="View" @click="previewHandle(scope.row)">预览</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-dropdown>
-									<el-button type="primary" link :icon="More">更多</el-button>
-									<template #dropdown>
-										<el-dropdown-menu>
-											<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(scope.row)">生成</el-dropdown-item>
-											<el-dropdown-item :icon="Refresh" @click="syncHandle(scope.row)">同步</el-dropdown-item>
-											<el-popconfirm
-												:title="`确定删除${subject}【${scope.row[deleteNameKey] || '该记录'}】吗？`"
-												placement="top"
-												@confirm="deleteRow(scope.row)"
-												@cancel="ElMessage.info('删除已取消')"
-											>
-												<template #reference>
-													<span>
-														<el-dropdown-item :icon="Delete">删除</el-dropdown-item>
-													</span>
-												</template>
-											</el-popconfirm>
-										</el-dropdown-menu>
-									</template>
-								</el-dropdown>
-							</el-col>
-						</el-row>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				:current-page="state.pageNum"
-				:page-sizes="state.pageSizes"
-				:page-size="state.pageSize"
-				:total="state.total"
-				background
-				layout="total, sizes, prev, pager, next, jumper"
-				@size-change="sizeChangeHandle"
-				@current-change="currentChangeHandle"
-			></el-pagination>
 
-			<!-- 弹窗, 新增 / 修改 -->
-			<gen-table-form ref="formRef" @refresh-data-list="getDataList"></gen-table-form>
+			<!-- 查询字段：项目下拉。DynamicField 不支持自定义 el-option 内渲染，走插槽手写 -->
+			<template #query-projectId>
+				<el-select v-model="tableHook.search.form.projectId" style="width: 140px" placeholder="请选择项目" filterable clearable>
+					<el-option v-for="item in projectList" :key="item.id!" :label="item.projectName" :value="item.id!">
+						<option-label :label="item.projectName" :desc="item.projectDesc"></option-label>
+					</el-option>
+				</el-select>
+			</template>
 
-			<!-- 导入表组件 -->
-			<import ref="importRef" @refresh-data-list="getDataList"></import>
+			<!-- 表格列：字段数量渲染为可点击链接，点击打开字段配置弹窗 -->
+			<template #table-fieldCount="{ row }">
+				<el-button type="primary" link @click="editHandle(row)">{{ row.fieldCount }}个</el-button>
+			</template>
 
-			<!-- 预览 -->
-			<preview ref="previewRef"></preview>
+			<!-- 操作列：配置 / 修改 / 预览 / 更多（生成、同步、删除） -->
+			<template #operation="{ row }">
+				<el-row>
+					<el-col :span="12">
+						<el-button type="primary" link :icon="Setting" @click="editHandle(row)">配置</el-button>
+					</el-col>
+					<el-col :span="12">
+						<el-button type="primary" link :icon="Edit" @click="formInitHandle(row.id)">修改</el-button>
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span="12">
+						<el-button type="primary" link :icon="View" @click="previewHandle(row)">预览</el-button>
+					</el-col>
+					<el-col :span="12">
+						<el-dropdown>
+							<el-button type="primary" link :icon="More">更多</el-button>
+							<template #dropdown>
+								<el-dropdown-menu>
+									<el-dropdown-item :icon="DocumentAdd" @click="generatorCode(row)">生成</el-dropdown-item>
+									<el-dropdown-item :icon="Refresh" @click="syncHandle(row)">同步</el-dropdown-item>
+									<el-popconfirm
+										:title="`确定删除${tableHook.refs.subject}【${row[tableHook.refs.deleteNameKey] || '该记录'}】吗？`"
+										placement="top"
+										@confirm="tableHook.action.delete.row(row)"
+										@cancel="ElMessage.info('删除已取消')"
+									>
+										<template #reference>
+											<span>
+												<el-dropdown-item :icon="Delete">删除</el-dropdown-item>
+											</span>
+										</template>
+									</el-popconfirm>
+								</el-dropdown-menu>
+							</template>
+						</el-dropdown>
+					</el-col>
+				</el-row>
+			</template>
+		</query-table>
 
-			<!-- 字段配置 -->
-			<field-config ref="editRef" @refresh-data-list="getDataList"></field-config>
+		<!-- 弹窗, 新增 / 修改 -->
+		<gen-table-form ref="formRef" @refresh-data-list="tableHook.query.getDataList"></gen-table-form>
 
-			<!-- 代码生成 -->
-			<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
-		</el-card>
+		<!-- 导入表组件 -->
+		<import ref="importRef" @refresh-data-list="tableHook.query.getDataList"></import>
+
+		<!-- 预览 -->
+		<preview ref="previewRef"></preview>
+
+		<!-- 字段配置 -->
+		<field-config ref="editRef" @refresh-data-list="tableHook.query.getDataList"></field-config>
+
+		<!-- 代码生成 -->
+		<template-index ref="templateIndexRef" @clear-selection="clearSelectionHandler()"></template-index>
 	</div>
 </template>
 
@@ -173,15 +88,15 @@ import GenTableForm from '@/views/gen/table/form.vue'
 import Preview from '@/business/preview/index.vue'
 import FieldConfig from '@/views/gen/table/field-config.vue'
 import TemplateIndex from '@/views/gen/table/template-index.vue'
+import QueryTable from '@/components/crud/QueryTable.vue'
+import OptionLabel from '@/components/option/label/index.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
-import { useInitForm, useTableAction } from '@/hooks'
-import { Delete, DocumentAdd, Edit, More, Refresh, Search, Setting, Upload, View } from '@element-plus/icons-vue'
+import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection, createBuiltinUpdateTime, useCrudTable, useInitForm } from '@/hooks'
+import { Delete, DocumentAdd, Edit, More, Refresh, Setting, Upload, View } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import TableToolBar from '@/components/table/tool-bar/index.vue'
 import { genProjectApi, genTableApi } from '@/api'
-import { GenProjectEntity, GenTableEntity, GenTableQuery, IHooksOptions, KeyArray } from '@/types'
-import OptionLabel from '@/components/option/label/index.vue'
+import type { GenProjectEntity, GenTableEntity, GenTableQuery, KeyArray, SearchFieldSchema, TableFieldSchema } from '@/types'
 
 defineOptions({
 	name: 'GenTable'
@@ -190,22 +105,6 @@ defineOptions({
 onMounted(() => {
 	getProjectList()
 })
-
-// 初始化表单查询参数
-const initQueryFormData = (): GenTableQuery => ({
-	tableName: '',
-	projectId: '',
-	databaseName: ''
-})
-
-const state = reactive({
-	tableSubject: '表',
-	deleteNameKey: 'tableName',
-	dataListApi: genTableApi.voPage,
-	deleteListApi: genTableApi.deleteList,
-	initQueryFormData,
-	queryForm: initQueryFormData()
-} as IHooksOptions<GenTableEntity, GenTableQuery>)
 
 const importRef = ref()
 const editRef = ref()
@@ -223,71 +122,91 @@ const importHandle = () => {
 	importRef.value.init()
 }
 
-const previewHandle = (tableItem: any) => {
-	previewRef.value.init(tableItem.id, tableItem.tableName, tableItem.projectId, tableItem.generatorType, GENERATOR_PRODUCT_TYPES.Table)
+const previewHandle = (row: GenTableEntity) => {
+	previewRef.value.init(row.id, row.tableName, row.projectId, (row as any).generatorType, GENERATOR_PRODUCT_TYPES.Table)
 }
 
-const editHandle = (row: any) => {
+const editHandle = (row: GenTableEntity) => {
 	editRef.value.init(row)
 }
 
-//生成代码
-const generatorCode = (item: any) => {
-	templateIndexRef.value.init(item.tableTemplateGroupId, item.generatorType, [item.id])
+// 生成代码：单行
+const generatorCode = (row: GenTableEntity) => {
+	templateIndexRef.value.init(row.tableTemplateGroupId, (row as any).generatorType, [row.id])
 }
 
+// 生成代码：批量。先做同项目校验，通过后打开生成弹窗
 const generatorCodeBatch = () => {
-	const dataList: KeyArray = state.dataListSelections ? state.dataListSelections : []
-	if (dataList.length === 0) {
+	const ids: KeyArray = tableHook.selection.ids
+	if (ids.length === 0) {
 		ElMessage.warning('请选择要生成代码的表')
 		return
 	}
-	genTableApi.generateCheck(dataList).then(data => {
+	genTableApi.generateCheck(ids).then(data => {
 		const { checkResult, tableTemplateGroupId, generatorType } = data
 		if (!checkResult) {
 			ElMessage.warning('当前选择的表不是同一个项目')
 		} else {
-			templateIndexRef.value.init(tableTemplateGroupId, generatorType, dataList)
+			templateIndexRef.value.init(tableTemplateGroupId, generatorType, ids)
 		}
 	})
 }
 
-const syncHandle = (row: any) => {
+const syncHandle = (row: GenTableEntity) => {
 	ElMessageBox.confirm(`确定同步项目${row.projectName}下表${row.tableName}的字段吗?`, '提示', {
 		confirmButtonText: '确定',
 		cancelButtonText: '取消',
 		type: 'warning'
 	}).then(() => {
-		genTableApi.sync(row.id).then(() => {
+		genTableApi.sync(row.id as number).then(() => {
 			ElMessage.success('字段同步成功')
 		})
 	})
 }
 
+// 生成弹窗完成后清空勾选，避免下次批量生成带上已生成的表
 const clearSelectionHandler = () => {
-	state.dataListSelections = []
-	tableRef.value.clearSelection()
+	tableHook.selection.clear()
 }
 
-const {
-	getDataList,
-	selectionChangeHandle,
-	sizeChangeHandle,
-	currentChangeHandle,
-	deleteBatchHandle,
-	deleteRow,
-	subject,
-	deleteNameKey,
-	sortChangeHandle,
-	queryRef,
-	queryShow,
-	tableCardRef,
-	tableCardMaximized,
-	tableRef,
-	resetQueryHandle,
-	tableIndex
-} = useTableAction(state)
+// ====== 搜索字段 ======
+const searchSchema: SearchFieldSchema[] = [
+	{ key: 'projectId', label: '项目', component: 'select' },
+	{ key: 'databaseName', label: '数据库名称' },
+	{ key: 'tableName', label: '表名' }
+]
 
+// ====== 表格列（选择/序号/时间/操作走 use-crud-table 内置列工厂；操作列按业务放宽到 200） ======
+const tableColumns: TableFieldSchema[] = [
+	createBuiltinSelection(),
+	createBuiltinIndex(),
+	{ key: 'projectName', label: '项目名称' },
+	{ key: 'databaseName', label: '数据库名称', width: 100 },
+	{ key: 'tableName', label: '表名' },
+	{ key: 'generatorType', label: '生成方式', width: 120, formatter: getDictTag(PROJECT_GENERATE_TYPES) },
+	{ key: 'tableComment', label: '注释' },
+	{ key: 'fieldCount', label: '字段数量', width: 100 },
+	createBuiltinCreateTime(),
+	createBuiltinUpdateTime(),
+	{ ...createBuiltinOperation(), width: 160 }
+]
+
+// ====== 表格 Hook（承载搜索/分页/排序/多选/删除，页面自身不再持有 state） ======
+const tableHook = useCrudTable<GenTableEntity, GenTableQuery>({
+	subject: '表',
+	deleteNameKey: 'tableName',
+	dataListApi: genTableApi.voPage,
+	deleteApi: genTableApi.deleteList,
+	initQueryForm: (): GenTableQuery => ({
+		tableName: '',
+		projectId: '',
+		databaseName: ''
+	}),
+	searchSchema,
+	tableColumns
+})
+
+// form.vue 暂保留旧式 ref 弹窗，本 hook 只提供 formRef 与 formInitHandle(id)
 const { formRef, formInitHandle } = useInitForm()
 </script>
 

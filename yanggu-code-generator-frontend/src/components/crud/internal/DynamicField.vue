@@ -104,7 +104,13 @@ const getComponentProps = computed(() => {
 		case 'date-picker':
 			return { ...baseProps, type: 'date', valueFormat: 'YYYY-MM-DD' }
 		case 'datetime-picker':
-			return { ...baseProps, type: 'datetime', valueFormat: 'YYYY-MM-DD HH:mm:ss' }
+			return {
+				...baseProps,
+				type: 'datetime',
+				valueFormat: 'YYYY-MM-DD HH:mm:ss',
+				// 仅在 schema 显式声明时下发 default-time，未提供则沿用 Element Plus 默认
+				...(props.field.defaultTime !== undefined ? { defaultTime: props.field.defaultTime } : {})
+			}
 		case 'date-range':
 			return { ...rangeBaseProps, type: 'daterange', valueFormat: 'YYYY-MM-DD' }
 		case 'datetime-range':
@@ -113,7 +119,9 @@ const getComponentProps = computed(() => {
 				type: 'datetimerange',
 				valueFormat: 'YYYY-MM-DD HH:mm:ss',
 				startPlaceholder: '开始时间',
-				endPlaceholder: '结束时间'
+				endPlaceholder: '结束时间',
+				// 起止默认时刻（典型 [00:00:00, 23:59:59]），避免末日晚间记录被后端 between 漏掉
+				...(props.field.defaultTime !== undefined ? { defaultTime: props.field.defaultTime } : {})
 			}
 		case 'tree-select':
 			return { ...baseProps, data: options, checkStrictly: true }
