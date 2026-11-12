@@ -26,10 +26,22 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	subject?: string
 	/** 完全自定义弹窗标题（优先级最高） */
 	title?: string
-	/** 表单校验规则 */
+	/** 表单校验规则（静态部分，来自各字段 ruleList 的汇总） */
 	rules?: Record<string, FormItemRule[]>
+	/**
+	 * 动态校验规则：整体深合并到最终 rules 之上。
+	 * 用于承载「运行时才知道」的规则——如按模板组属性清单动态追加的 templateGroupPropertyData.{propKey} 必填、
+	 * moduleList 逐行校验器。支持 ref / computed / getter，变化时校验规则自动重算。
+	 * 同名字段以 extraRules 为准（覆盖 ruleList 派生的静态规则）。
+	 */
+	extraRules?: MaybeRefOrGetter<Record<string, FormItemRule[]>>
 	/** 表单标签宽度，默认 '100px' */
 	labelWidth?: string
+	/**
+	 * 弹窗宽度，透传给 el-dialog 的 width。
+	 * 支持任意 CSS 宽度（如 '65%'、'900px'）；不填则沿用 el-dialog 默认（50%）。
+	 */
+	dialogWidth?: string
 	/** 固定表单上下文（类似 queryContext），自动注入到 initFormData / beforeOpen。支持响应式（computed / ref / reactive） */
 	formContext?: MaybeRefOrGetter<Record<string, any>>
 
@@ -54,8 +66,8 @@ export interface UseCrudFormOptions<DTO = any, VO = any> {
 	onSubmitError?: (error: any) => void
 
 	// ---- 消息 ----
-	/** 自定义成功消息（字符串或按模式返回字符串的函数） */
-	successMessage?: string | ((mode: string) => string)
+	/** 自定义成功消息（字符串，或按模式/表单数据返回字符串的函数） */
+	successMessage?: string | ((mode: string, data: DTO) => string)
 }
 
 /**
@@ -75,6 +87,8 @@ export interface UseCrudFormReturn<DTO = any> {
 		visible: boolean
 		mode: FormMode
 		title: string
+		/** 弹窗宽度，透传 el-dialog 的 width；未配置为 undefined（走 el-dialog 默认） */
+		width?: string
 		/** 详情接口加载中；true 时禁止提交，避免把未填充的空表单写回后端 */
 		detailLoading: boolean
 		open: (mode: FormMode, id?: Key) => void

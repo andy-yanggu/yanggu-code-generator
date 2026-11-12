@@ -72,6 +72,13 @@ export interface FormFieldSchema extends InputFieldSchema {
 	span?: number
 	/** 详情模式下的自定义格式化函数（仅表单使用） */
 	detailFormatter?: (value: any) => string
+	/**
+	 * 渲染形态标记（仅表单使用）。
+	 * 'bare' = 独占整行的「非数据项」条目（分段标题 / 动态子表单容器等组合布局用的虚拟字段）：
+	 * FormField 不套 el-form-item、无 label，内容完全由 form-[key] 插槽提供；未提供插槽则整条不渲染。
+	 * 这类条目不对应真实数据列，prop 仅作 v-for key 与插槽名，不触发校验。
+	 */
+	display?: 'bare'
 }
 
 // 表格字段 schema（继承 Base，不继承 Input：表格列不消费输入类属性）

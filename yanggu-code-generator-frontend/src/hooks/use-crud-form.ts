@@ -2,13 +2,67 @@ import type { UseCrudFormOptions, UseCrudFormReturn } from '@/types/hooks/use-cr
 import type { Key } from '@/types/common'
 import type { FormItemRule, FormMode } from '@/types/schema'
 import { normalizeFormField } from '@/types/schema'
-import { DEFAULT_FORM_LABEL_WIDTH, DEFAULT_PRIMARY_KEY, DEFAULT_SUBJECT } from '@/config/crud'
+import { DEFAULT_FORM_LABEL_WIDTH, DEFAULT_PRIMARY_KEY, DEFAULT_SUBJECT, MIN_LOADING_MS } from '@/config/crud'
 import { toValue } from 'vue'
+
+/**
+ * loading 遮罩最短展示时长等待器。
+ *
+ * 目的：接口 <400ms 返回时，遮罩"一闪而过"视觉上是抖动而非反馈；这里保证
+ * 从 start 到放行至少等 MIN_LOADING_MS，超过则立即放行。
+ *
+ * 复用同一个 useTimeoutFn 句柄：
+ * - VueUse 内部会在 setup scope 销毁时 stop，无需手动清理
+ * - interval 用 getter：useTimeoutFn 的 start() 不接受自定义 delay 参数，
+ *   只按创建时的 interval 走。传 () => nextDelay 让每次 start 前重读"剩余时长"
+ *   —— 慢接口 elapsed 已超 400ms 时，remaining<=0 走同步分支不会重启 timer；
+ *   快接口则用补齐后的 remaining 起 timer，不会多加 400ms
+ * - wait() 若发现上一次 pending，先解掉旧 resolve 再挂新的，避免旧 promise 悬挂
+ * - cancel() 用于弹窗显式关闭时立即放行 pending wait（旧 continuation 靠 seq 守卫吞掉）
+ */
+const createMinLoadingWaiter = () => {
+	let resolve: (() => void) | null = null
+	let nextDelay = MIN_LOADING_MS
+	const timer = useTimeoutFn(
+		() => {
+			const r = resolve
+			resolve = null
+			r?.()
+		},
+		() => nextDelay,
+		{ immediate: false }
+	)
+
+	return {
+		wait: (start: number): Promise<void> => {
+			timer.stop()
+			resolve?.()
+			resolve = null
+
+			const remaining = MIN_LOADING_MS - (Date.now() - start)
+			if (remaining <= 0) return Promise.resolve()
+
+			nextDelay = remaining
+			return new Promise<void>(r => {
+				resolve = r
+				timer.start()
+			})
+		},
+		cancel: () => {
+			timer.stop()
+			const r = resolve
+			resolve = null
+			r?.()
+		}
+	}
+}
 
 export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO, VO>): UseCrudFormReturn<DTO> => {
 	const primaryKey = options.primaryKey ?? DEFAULT_PRIMARY_KEY
 	const subject = options.subject ?? DEFAULT_SUBJECT
 	const labelWidth = options.labelWidth ?? DEFAULT_FORM_LABEL_WIDTH
+	// 弹窗宽度：静态配置，未提供则保持 undefined，交给 el-dialog 默认宽度
+	const dialogWidth = options.dialogWidth
 
 	// 归一化表单字段（补全 key/prop，一次性处理）
 	const normalizedFormSchema = (options.formSchema ?? []).map(normalizeFormField)
@@ -16,7 +70,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 		console.warn('[crud] useCrudForm 收到空的 formSchema，弹窗将不渲染任何字段')
 	}
 
-	// 合并规则：schema 字段级 ruleList + 顶层 rules（顶层优先覆盖）
+	// 合并规则：schema 字段级 ruleList + 顶层 rules（顶层优先覆盖）+ extraRules（动态规则，最终覆盖）
 	const mergedRules = computed<Record<string, FormItemRule[]>>(() => {
 		const result: Record<string, FormItemRule[]> = {}
 		for (const field of normalizedFormSchema) {
@@ -26,6 +80,13 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 		}
 		if (options.rules) {
 			for (const [key, val] of Object.entries(options.rules)) {
+				result[key] = val
+			}
+		}
+		// extraRules 支持 ref / computed / getter：toValue 解包时被访问的响应源会被 computed 收集，
+		// 因而动态属性清单加载完成后规则会自动重算
+		if (options.extraRules) {
+			for (const [key, val] of Object.entries(toValue(options.extraRules))) {
 				result[key] = val
 			}
 		}
@@ -63,6 +124,10 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 	const detailLoading = ref(false)
 	const detailFailed = ref(false)
 
+	// 遮罩最短展示时长等待器：必须在 setup 上下文里创建，供 useTimeoutFn 绑定生命周期
+	const detailMinWaiter = createMinLoadingWaiter()
+	const submitMinWaiter = createMinLoadingWaiter()
+
 	// 标题映射
 	const titleMap: Record<string, string> = {
 		add: '新增',
@@ -83,7 +148,9 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 	// 计算成功消息
 	const getSuccessMessage = () => {
 		if (options.successMessage) {
-			return typeof options.successMessage === 'function' ? options.successMessage(mode.value) : options.successMessage
+			return typeof options.successMessage === 'function'
+				? options.successMessage(mode.value, formData as DTO)
+				: options.successMessage
 		}
 		return `${subject}${titleMap[mode.value]}成功`
 	}
@@ -99,6 +166,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 
 		detailLoading.value = true
 		detailFailed.value = false
+		const start = Date.now()
 		options
 			.detailApi(id)
 			.then(data => {
@@ -117,8 +185,10 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 				detailFailed.value = true
 				options.onDetailError?.(error)
 			})
-			.finally(() => {
-				// 旧请求结束时不能撤掉新请求的遮罩
+			.finally(async () => {
+				// 遮罩至少展示 MIN_LOADING_MS，接口快时补齐剩余时长再撤
+				// 旧请求结束时不能撤掉新请求的遮罩：await 之后再做序号判断
+				await detailMinWaiter.wait(start)
 				if (seq !== detailRequestSeq) return
 				detailLoading.value = false
 			})
@@ -176,6 +246,10 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 		detailRequestSeq += 1
 		detailLoading.value = false
 		visible.value = false
+		// 释放可能仍在 pending 的最小时长等待：让旧 continuation 立即走完 seq 守卫分支，
+		// 避免用户下次打开时踩到旧 timer 残留
+		detailMinWaiter.cancel()
+		submitMinWaiter.cancel()
 	}
 
 	// 提交（内部校验 + 调接口）
@@ -210,22 +284,26 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 			options.beforeSubmit?.()
 
 			submitLoading.value = true
+			const start = Date.now()
 			options
 				.submitApi(formData as DTO)
-				.then(data => {
+				.then(async data => {
+					// 遮罩最短展示：成功后 toast + 关弹窗也一并延后到 min 时长结束，
+					// 视觉上与"正在提交..."遮罩衔接一致，避免弹窗一闪即关
+					await submitMinWaiter.wait(start)
 					ElMessage.success(getSuccessMessage())
 					visible.value = false
+					submitLoading.value = false
 					if (options.afterSubmit) {
 						options.afterSubmit(data ?? formData)
 					}
 				})
-				.catch(error => {
+				.catch(async error => {
+					await submitMinWaiter.wait(start)
+					submitLoading.value = false
 					if (options.onSubmitError) {
 						options.onSubmitError(error)
 					}
-				})
-				.finally(() => {
-					submitLoading.value = false
 				})
 		})
 	}
@@ -237,6 +315,7 @@ export const useCrudForm = <DTO = any, VO = any>(options: UseCrudFormOptions<DTO
 			visible,
 			mode,
 			title: dialogTitle,
+			width: dialogWidth,
 			detailLoading,
 			open,
 			close

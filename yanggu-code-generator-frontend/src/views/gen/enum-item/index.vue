@@ -46,6 +46,9 @@ const fields: CrudField[] = [
 		inForm: true,
 		inSearch: true,
 		inTable: true,
+		table: {
+			minWidth: 120
+		},
 		form: {
 			ruleList: [{ required: true, message: '枚举项名称不能为空', trigger: 'blur' }]
 		}
@@ -57,6 +60,9 @@ const fields: CrudField[] = [
 		inForm: true,
 		inSearch: true,
 		inTable: true,
+		table: {
+			minWidth: 120
+		},
 		form: {
 			ruleList: [{ required: true, message: '枚举项编码不能为空', trigger: 'blur' }]
 		}
@@ -66,6 +72,9 @@ const fields: CrudField[] = [
 		label: '枚举项描述',
 		inForm: true,
 		inTable: true,
+		table: {
+			minWidth: 120
+		},
 		form: {
 			ruleList: [{ required: true, message: '枚举项描述不能为空', trigger: 'blur' }]
 		}

@@ -12,6 +12,9 @@ import type { FormFieldSchema, SearchFieldSchema, TableFieldSchema } from '@/typ
 export const DEFAULT_PRIMARY_KEY = 'id'
 export const DEFAULT_SUBJECT = '数据'
 export const DEFAULT_FORM_LABEL_WIDTH = '100px'
+// loading 遮罩最短展示时长：接口响应快时避免 loading 一闪而过（<300ms 视觉上是抖动而非反馈）
+// 消费点：useCrudForm 的 detailLoading / submitLoading
+export const MIN_LOADING_MS = 400
 
 // 表格
 export const DEFAULT_TABLE_MAX_HEIGHT = '60vh'

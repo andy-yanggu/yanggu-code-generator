@@ -1,5 +1,9 @@
 <template>
-	<el-form-item :prop="field.prop">
+	<!-- bare：独占整行的非数据项虚拟字段（分段标题 / 动态子表单容器）。
+	     不套 el-form-item、无 label，内容完全交给 field-[key] 插槽；
+	     未提供插槽时 <slot> 无兜底内容即整条不渲染，避免落进 DynamicField default 分支被兜底成空 el-input。 -->
+	<slot v-if="field.display === 'bare'" :name="`field-${field.key}`" :model="model" :field="field" :mode="mode"></slot>
+	<el-form-item v-else :prop="field.prop">
 		<template #label>
 			<form-label-tooltip v-if="field.tooltip" :label="field.label" :tooltip="field.tooltip" />
 			<span v-else>{{ field.label }}</span>

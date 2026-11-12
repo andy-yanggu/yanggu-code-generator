@@ -1,9 +1,14 @@
 <template>
-	<el-dialog v-model="formHook.dialog.visible" :title="formHook.dialog.title" :close-on-click-modal="false" @close="formHook.dialog.close()">
+	<el-dialog
+		v-model="formHook.dialog.visible"
+		:title="formHook.dialog.title"
+		:width="formHook.dialog.width"
+		:close-on-click-modal="false"
+		@close="formHook.dialog.close()">
 		<el-form
 			:ref="formHook.form.formRef"
-			v-loading="formHook.dialog.detailLoading"
-			element-loading-text="数据加载中..."
+			v-loading="formHook.dialog.detailLoading || formHook.submit.loading"
+			:element-loading-text="formHook.submit.loading ? '正在提交...' : '数据加载中...'"
 			:disabled="formHook.dialog.mode === 'detail'"
 			:model="formHook.form.data"
 			:rules="formHook.form.rules.value"
