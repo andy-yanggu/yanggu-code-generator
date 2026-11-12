@@ -1,25 +1,20 @@
 package com.yanggu.code.generator.common.domain.query;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * 分页查询参数基类，分页查询入参和返回基类
- *
- * @param <T> 必须是Entity或者是VO
+ * 分页查询参数基类
+ * <p>仅承载查询条件与分页参数，不承载分页结果；分页结果容器由 {@link #toPage()} 产出，返回值统一封装为PageVO</p>
  */
 @Data
 @Schema(description = "分页查询参数基类")
-public class PageQuery<T> implements IPage<T>, Serializable {
+public class PageQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2101820826443930585L;
@@ -43,76 +38,18 @@ public class PageQuery<T> implements IPage<T>, Serializable {
     private List<OrderItemQuery> orderItemList = OrderItemQuery.descs("updateTime", "id");
 
     /**
-     * 分页数据
+     * 产出mybatis-plus分页载体，泛型由调用点的目标类型推断
+     * <p>调用规约：必须先赋值给显式声明类型的局部变量，再传入mapper方法，不做链式内联</p>
      */
-    @Schema(description = "分页数据", hidden = true)
-    private List<T> records;
+    public <T> Page<T> toPage() {
+        return Page.of(this.pageNum, this.pageSize);
+    }
 
     /**
-     * 记录总数
+     * 产出mybatis-plus分页载体，并指定是否执行count查询
      */
-    @Schema(description = "记录总数", hidden = true)
-    private long total;
-
-    @Schema(hidden = true)
-    private Long size;
-
-    @Schema(hidden = true)
-    private Long current;
-
-    @Schema(hidden = true)
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private Long pages;
-
-    @Override
-    public long getSize() {
-        return this.pageSize;
-    }
-
-    @Override
-    public IPage<T> setSize(long size) {
-        this.pageSize = size;
-        return this;
-    }
-
-    @Override
-    public long getCurrent() {
-        return pageNum;
-    }
-
-    @Override
-    public IPage<T> setCurrent(long current) {
-        this.pageNum = current;
-        return this;
-    }
-
-    @Override
-    public List<T> getRecords() {
-        return this.records;
-    }
-
-    @Override
-    public PageQuery<T> setRecords(List<T> records) {
-        this.records = records;
-        return this;
-    }
-
-    @Override
-    public long getTotal() {
-        return this.total;
-    }
-
-    @Override
-    public PageQuery<T> setTotal(long total) {
-        this.total = total;
-        return this;
-    }
-
-    @Override
-    public List<OrderItem> orders() {
-        //返回空数组，让框架不做排序处理
-        return List.of();
+    public <T> Page<T> toPage(boolean searchCount) {
+        return Page.of(this.pageNum, this.pageSize, searchCount);
     }
 
 }

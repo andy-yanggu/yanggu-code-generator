@@ -4,6 +4,7 @@ import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.EnumUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -12,8 +13,7 @@ import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
-import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
@@ -136,27 +136,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
 
 
     /**
-     * 简单分页
+     * 模板内部列表查询，供 tree() 组装树使用，不对外暴露接口
      */
-    @Override
-    public PageVO<TemplateVO> entityPage(TemplateEntityQuery query) {
-        //简单sql使用QueryWrapper
-        templateMapper.selectPage(query, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //templateMapper.entityPage(query);
-        return templateMapstruct.entityToPageVO(query);
-    }
-
-    /**
-     * 简单列表
-     */
-    @Override
-    public List<TemplateVO> entityList(TemplateEntityQuery query) {
-        query.setPageSize(-1L);
-        //简单sql使用QueryWrapper
+    private List<TemplateVO> entityList(TemplateQuery query) {
         List<TemplateEntity> entityList = templateMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<TemplateBO> entityList = templateMapper.entityList(query);
         return templateMapstruct.entityToVO(entityList);
     }
 
@@ -164,19 +147,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 复杂分页
      */
     @Override
-    public PageVO<TemplateVO> voPage(TemplateVOQuery query) {
-        templateMapper.voPage(query);
-        return templateMapstruct.voToPageVO(query);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<TemplateVO> voList(TemplateVOQuery query) {
-        //查询全部数据
-        query.setPageSize(-1L);
-        return templateMapper.voList(query);
+    public PageVO<TemplateVO> voPage(TemplateQuery query) {
+        Page<TemplateVO> page = query.toPage();
+        templateMapper.voPage(page, query);
+        return templateMapstruct.voToPageVO(page);
     }
 
     @Override
@@ -188,7 +162,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
 
     @Override
     public List<TemplateVO> tree(Long templateGroupId) {
-        TemplateEntityQuery query = new TemplateEntityQuery();
+        TemplateQuery query = new TemplateQuery();
         query.setTemplateGroupId(templateGroupId);
         List<TemplateVO> allList = this.entityList(query);
         return allList.stream()
@@ -333,7 +307,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
         }
     }
 
-    private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateEntityQuery query) {
+    private LambdaQueryWrapper<TemplateEntity> buildQueryWrapper(TemplateQuery query) {
         LambdaQueryWrapper<TemplateEntity> wrapper = Wrappers.lambdaQuery(TemplateEntity.class);
 
         //过滤字段

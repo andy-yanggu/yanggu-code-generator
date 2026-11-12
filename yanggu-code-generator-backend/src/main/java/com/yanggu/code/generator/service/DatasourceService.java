@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
-import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
-import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.query.DatasourceQuery;
 import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 
@@ -50,22 +49,22 @@ public interface DatasourceService extends IService<DatasourceEntity> {
     /**
      * 简单分页
      */
-    PageVO<DatasourceVO> entityPage(DatasourceEntityQuery query);
+    PageVO<DatasourceVO> entityPage(DatasourceQuery query);
 
     /**
      * 简单列表
      */
-    List<DatasourceVO> entityList(DatasourceEntityQuery query);
+    List<DatasourceVO> entityList(DatasourceQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<DatasourceVO> voPage(DatasourceVOQuery query);
+    PageVO<DatasourceVO> voPage(DatasourceQuery query);
 
     /**
      * 复杂列表
      */
-    List<DatasourceVO> voList(DatasourceVOQuery query);
+    List<DatasourceVO> voList(DatasourceQuery query);
 
     /**
      * 根据数据源ID，获取数据源

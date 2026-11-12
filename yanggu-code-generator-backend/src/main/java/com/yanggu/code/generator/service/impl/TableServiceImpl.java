@@ -5,6 +5,7 @@ import cn.hutool.v7.core.text.NamingCase;
 import cn.hutool.v7.core.text.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -15,8 +16,7 @@ import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.domain.query.TableEntityQuery;
-import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.query.TableQuery;
 import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.enums.FormLayoutEnum;
@@ -130,20 +130,20 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 简单分页
      */
     @Override
-    public PageVO<TableVO> entityPage(TableEntityQuery query) {
+    public PageVO<TableVO> entityPage(TableQuery query) {
         //简单sql使用QueryWrapper
-        tableMapper.selectPage(query, buildQueryWrapper(query));
+        Page<TableEntity> page = query.toPage();
+        tableMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //tableMapper.entityPage(query);
-        return tableMapstruct.entityToPageVO(query);
+        //tableMapper.entityPage(page, query);
+        return tableMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<TableVO> entityList(TableEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<TableVO> entityList(TableQuery query) {
         //简单sql使用QueryWrapper
         List<TableEntity> entityList = tableMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -155,18 +155,18 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 复杂分页
      */
     @Override
-    public PageVO<TableVO> voPage(TableVOQuery query) {
-        tableMapper.voPage(query);
-        return tableMapstruct.voToPageVO(query);
+    public PageVO<TableVO> voPage(TableQuery query) {
+        Page<TableVO> page = query.toPage();
+        tableMapper.voPage(page, query);
+        return tableMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<TableVO> voList(TableVOQuery query) {
+    public List<TableVO> voList(TableQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return tableMapper.voList(query);
     }
 
@@ -294,7 +294,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
 
     @Override
     public List<TableEntity> getTableListByProjectId(Long projectId) {
-        TableEntityQuery query = new TableEntityQuery();
+        TableQuery query = new TableQuery();
         query.setProjectId(projectId);
         return tableMapper.entityList(query);
     }
@@ -307,7 +307,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         return entity;
     }
 
-    private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableEntityQuery query) {
+    private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableQuery query) {
         LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
 
         wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());

@@ -1,7 +1,6 @@
 package com.yanggu.code.generator.domain.query;
 
 import com.yanggu.code.generator.common.domain.query.PageQuery;
-import com.yanggu.code.generator.domain.vo.TableVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,21 +10,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 表VO查询实体类
+ * 表查询实体类
  */
 @Data
-@Schema(description = "表VO查询实体类")
+@Schema(description = "表查询实体类")
 @EqualsAndHashCode(callSuper = true)
-public class TableVOQuery extends PageQuery<TableVO> implements Serializable {
+public class TableQuery extends PageQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 表名
-     */
-    @Schema(description = "表名")
-    private String tableName;
 
     /**
      * 项目ID
@@ -44,5 +37,17 @@ public class TableVOQuery extends PageQuery<TableVO> implements Serializable {
      */
     @Schema(description = "数据库名称")
     private String databaseName;
+
+    /**
+     * 表名
+     */
+    @Schema(description = "表名")
+    private String tableName;
+
+    /**
+     * 类名
+     */
+    @Schema(description = "类名")
+    private String className;
 
 }

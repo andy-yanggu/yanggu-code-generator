@@ -1,7 +1,6 @@
 package com.yanggu.code.generator.domain.query;
 
 import com.yanggu.code.generator.common.domain.query.PageQuery;
-import com.yanggu.code.generator.domain.entity.TableEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,32 +9,32 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 表Entity查询实体类
+ * 基类查询实体类
  */
 @Data
-@Schema(description = "表Entity查询实体类")
+@Schema(description = "基类查询实体类")
 @EqualsAndHashCode(callSuper = true)
-public class TableEntityQuery extends PageQuery<TableEntity> implements Serializable {
+public class BaseClassQuery extends PageQuery implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 项目ID
+     * 基类名称
      */
-    @Schema(description = "项目ID")
-    private Long projectId;
+    @Schema(description = "基类名称")
+    private String baseClassName;
 
     /**
-     * 表名
+     * 基类包名
      */
-    @Schema(description = "表名")
-    private String tableName;
+    @Schema(description = "基类包名")
+    private String packageName;
 
     /**
-     * 类名
+     * 基类类名
      */
-    @Schema(description = "类名")
+    @Schema(description = "基类类名")
     private String className;
 
 }

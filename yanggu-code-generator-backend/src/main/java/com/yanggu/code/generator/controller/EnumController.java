@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
-import com.yanggu.code.generator.domain.query.EnumEntityQuery;
-import com.yanggu.code.generator.domain.query.EnumVOQuery;
+import com.yanggu.code.generator.domain.query.EnumQuery;
 import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.service.EnumService;
@@ -109,7 +108,7 @@ public class EnumController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "枚举简单分页")
-    public PageVO<EnumVO> entityPage(@RequestBody EnumEntityQuery query) {
+    public PageVO<EnumVO> entityPage(@RequestBody EnumQuery query) {
         return enumService.entityPage(query);
     }
 
@@ -119,7 +118,7 @@ public class EnumController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "枚举简单列表")
-    public List<EnumVO> entityList(@RequestBody EnumEntityQuery query) {
+    public List<EnumVO> entityList(@RequestBody EnumQuery query) {
         return enumService.entityList(query);
     }
 
@@ -129,7 +128,7 @@ public class EnumController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "枚举复杂分页")
-    public PageVO<EnumVO> voPage(@RequestBody EnumVOQuery query) {
+    public PageVO<EnumVO> voPage(@RequestBody EnumQuery query) {
         return enumService.voPage(query);
     }
 
@@ -139,7 +138,7 @@ public class EnumController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "枚举复杂列表")
-    public List<EnumVO> voList(@RequestBody EnumVOQuery query) {
+    public List<EnumVO> voList(@RequestBody EnumQuery query) {
         return enumService.voList(query);
     }
 

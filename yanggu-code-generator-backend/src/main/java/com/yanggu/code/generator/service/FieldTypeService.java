@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.FieldTypeDTO;
 import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
-import com.yanggu.code.generator.domain.query.FieldTypeEntityQuery;
-import com.yanggu.code.generator.domain.query.FieldTypeVOQuery;
+import com.yanggu.code.generator.domain.query.FieldTypeQuery;
 import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 
 import java.util.List;
@@ -50,22 +49,22 @@ public interface FieldTypeService extends IService<FieldTypeEntity> {
     /**
      * 简单分页
      */
-    PageVO<FieldTypeVO> entityPage(FieldTypeEntityQuery query);
+    PageVO<FieldTypeVO> entityPage(FieldTypeQuery query);
 
     /**
      * 简单列表
      */
-    List<FieldTypeVO> entityList(FieldTypeEntityQuery query);
+    List<FieldTypeVO> entityList(FieldTypeQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<FieldTypeVO> voPage(FieldTypeVOQuery query);
+    PageVO<FieldTypeVO> voPage(FieldTypeQuery query);
 
     /**
      * 复杂列表
      */
-    List<FieldTypeVO> voList(FieldTypeVOQuery query);
+    List<FieldTypeVO> voList(FieldTypeQuery query);
 
     Map<String, FieldTypeEntity> getMap();
 

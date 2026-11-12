@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.common.domain.vo;
 
 
-import com.yanggu.code.generator.common.domain.query.PageQuery;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,13 +48,13 @@ public class PageVO<T> implements Serializable {
     private Long total;
 
     /**
-     * 将其余VO分页数据转换成PageVO分页数据
+     * 由mybatis-plus分页载体构造PageVO（records已是最终类型）
      */
-    public PageVO(PageQuery<T> pageQuery) {
-        this.pageNum = pageQuery.getPageNum();
-        this.pageSize = pageQuery.getPageSize();
-        this.records = pageQuery.getRecords();
-        this.total = pageQuery.getTotal();
+    public PageVO(IPage<T> page) {
+        this.pageNum = page.getCurrent();
+        this.pageSize = page.getSize();
+        this.records = page.getRecords();
+        this.total = page.getTotal();
     }
 
     /**

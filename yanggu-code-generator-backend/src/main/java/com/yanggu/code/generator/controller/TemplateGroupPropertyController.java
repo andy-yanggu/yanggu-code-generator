@@ -7,8 +7,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateOrderDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupPropertyQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -115,7 +114,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "模板组属性简单分页")
-    public PageVO<TemplateGroupPropertyVO> entityPage(@RequestBody TemplateGroupPropertyEntityQuery query) {
+    public PageVO<TemplateGroupPropertyVO> entityPage(@RequestBody TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.entityPage(query);
     }
 
@@ -125,7 +124,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "模板组属性简单列表")
-    public List<TemplateGroupPropertyVO> entityList(@RequestBody TemplateGroupPropertyEntityQuery query) {
+    public List<TemplateGroupPropertyVO> entityList(@RequestBody TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.entityList(query);
     }
 
@@ -135,7 +134,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "模板组属性复杂分页")
-    public PageVO<TemplateGroupPropertyVO> voPage(@RequestBody TemplateGroupPropertyVOQuery query) {
+    public PageVO<TemplateGroupPropertyVO> voPage(@RequestBody TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.voPage(query);
     }
 
@@ -145,7 +144,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "模板组属性复杂列表")
-    public List<TemplateGroupPropertyVO> voList(@RequestBody TemplateGroupPropertyVOQuery query) {
+    public List<TemplateGroupPropertyVO> voList(@RequestBody TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.voList(query);
     }
 

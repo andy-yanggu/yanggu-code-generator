@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.FieldTypeDTO;
-import com.yanggu.code.generator.domain.query.FieldTypeEntityQuery;
-import com.yanggu.code.generator.domain.query.FieldTypeVOQuery;
+import com.yanggu.code.generator.domain.query.FieldTypeQuery;
 import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 import com.yanggu.code.generator.service.FieldTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,7 +107,7 @@ public class FieldTypeController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "字段类型简单分页")
-    public PageVO<FieldTypeVO> entityPage(@RequestBody FieldTypeEntityQuery query) {
+    public PageVO<FieldTypeVO> entityPage(@RequestBody FieldTypeQuery query) {
         return fieldTypeService.entityPage(query);
     }
 
@@ -118,7 +117,7 @@ public class FieldTypeController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "字段类型简单列表")
-    public List<FieldTypeVO> entityList(@RequestBody FieldTypeEntityQuery query) {
+    public List<FieldTypeVO> entityList(@RequestBody FieldTypeQuery query) {
         return fieldTypeService.entityList(query);
     }
 
@@ -128,7 +127,7 @@ public class FieldTypeController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "字段类型复杂分页")
-    public PageVO<FieldTypeVO> voPage(@RequestBody FieldTypeVOQuery query) {
+    public PageVO<FieldTypeVO> voPage(@RequestBody FieldTypeQuery query) {
         return fieldTypeService.voPage(query);
     }
 
@@ -138,7 +137,7 @@ public class FieldTypeController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "字段类型复杂列表")
-    public List<FieldTypeVO> voList(@RequestBody FieldTypeVOQuery query) {
+    public List<FieldTypeVO> voList(@RequestBody FieldTypeQuery query) {
         return fieldTypeService.voList(query);
     }
 

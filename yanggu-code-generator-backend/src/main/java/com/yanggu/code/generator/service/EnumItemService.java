@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.EnumItemDTO;
 import com.yanggu.code.generator.domain.entity.EnumItemEntity;
-import com.yanggu.code.generator.domain.query.EnumItemEntityQuery;
-import com.yanggu.code.generator.domain.query.EnumItemVOQuery;
+import com.yanggu.code.generator.domain.query.EnumItemQuery;
 import com.yanggu.code.generator.domain.vo.EnumItemVO;
 
 import java.util.List;
@@ -48,22 +47,22 @@ public interface EnumItemService extends IService<EnumItemEntity> {
     /**
      * 简单分页
      */
-    PageVO<EnumItemVO> entityPage(EnumItemEntityQuery query);
+    PageVO<EnumItemVO> entityPage(EnumItemQuery query);
 
     /**
      * 简单列表
      */
-    List<EnumItemVO> entityList(EnumItemEntityQuery query);
+    List<EnumItemVO> entityList(EnumItemQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<EnumItemVO> voPage(EnumItemVOQuery query);
+    PageVO<EnumItemVO> voPage(EnumItemQuery query);
 
     /**
      * 复杂列表
      */
-    List<EnumItemVO> voList(EnumItemVOQuery query);
+    List<EnumItemVO> voList(EnumItemQuery query);
 
     List<EnumItemEntity> selectByEnumId(Long enumId);
 

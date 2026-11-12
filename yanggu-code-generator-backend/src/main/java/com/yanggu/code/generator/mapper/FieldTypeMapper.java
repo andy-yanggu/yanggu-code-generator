@@ -3,8 +3,7 @@ package com.yanggu.code.generator.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
-import com.yanggu.code.generator.domain.query.FieldTypeEntityQuery;
-import com.yanggu.code.generator.domain.query.FieldTypeVOQuery;
+import com.yanggu.code.generator.domain.query.FieldTypeQuery;
 import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,22 +22,22 @@ public interface FieldTypeMapper extends BaseMapperPlus<FieldTypeEntity> {
     /**
      * Entity分页
      */
-    IPage<FieldTypeEntity> entityPage(@Param("query") FieldTypeEntityQuery query);
+    IPage<FieldTypeEntity> entityPage(IPage<FieldTypeEntity> page, @Param("query") FieldTypeQuery query);
 
     /**
      * Entity列表
      */
-    List<FieldTypeEntity> entityList(@Param("query") FieldTypeEntityQuery query);
+    List<FieldTypeEntity> entityList(@Param("query") FieldTypeQuery query);
 
     /**
      * VO分页
      */
-    IPage<FieldTypeVO> voPage(@Param("query") FieldTypeVOQuery query);
+    IPage<FieldTypeVO> voPage(IPage<FieldTypeVO> page, @Param("query") FieldTypeQuery query);
 
     /**
      * VO列表
      */
-    List<FieldTypeVO> voList(@Param("query") FieldTypeVOQuery query);
+    List<FieldTypeVO> voList(@Param("query") FieldTypeQuery query);
 
     /**
      * 根据tableId，获取包列表

@@ -32,9 +32,6 @@
                 #{item}
             </foreach>
         </if>
-        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupName')">
-            AND g.group_name LIKE CONCAT('%', #{query.templateGroupName}, '%')
-        </if>
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateName')">
             AND t.template_name LIKE CONCAT('%', #{query.templateName}, '%')
         </if>
@@ -43,6 +40,9 @@
         </if>
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateType')">
             AND t.template_type = #{query.templateType}
+        </if>
+        <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupName')">
+            AND g.group_name LIKE CONCAT('%', #{query.templateGroupName}, '%')
         </if>
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'templateGroupType')">
             AND g.type = #{query.templateGroupType}
@@ -65,32 +65,6 @@
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
     </resultMap>
-
-    <!-- Entity分页 -->
-    <select id="entityPage" resultMap="templateMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_template
-        <where>
-            is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
-
-    <!-- Entity列表 -->
-    <select id="entityList" resultMap="templateMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_template
-        <where>
-            is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
 
     <!-- 查询出所有的叶子节点和设置了filePath字段的值 -->
     <sql id="leafNodeTemplate">
@@ -116,9 +90,7 @@
                 gen_template
             WHERE
                 parent_id = 0 AND is_delete = 0
-
             UNION ALL
-
             -- 递归成员：逐层向下遍历子节点，拼接filePath
             SELECT
                 t.id,
@@ -187,19 +159,6 @@
         JOIN gen_template_group AS g ON t.template_group_id = g.id AND g.is_delete = 0
         <where>
             t.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
-
-    <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.TemplateVO">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_template
-        <where>
-            is_delete = 0
             <include refid="whereSQL"/>
         </where>
         <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>

@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.common.mapstruct;
 
-import com.yanggu.code.generator.common.domain.query.PageQuery;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 
 /**
@@ -13,8 +13,8 @@ public interface PageVOMapstruct<V> {
     /**
      * 将VO分页数据转换成PageVO分页数据
      */
-    default PageVO<V> voToPageVO(PageQuery<V> voPageQuery) {
-        return new PageVO<>(voPageQuery);
+    default PageVO<V> voToPageVO(IPage<V> page) {
+        return new PageVO<>(page);
     }
 
 }

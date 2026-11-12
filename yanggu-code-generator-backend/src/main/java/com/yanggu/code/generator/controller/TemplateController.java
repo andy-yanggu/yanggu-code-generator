@@ -7,8 +7,7 @@ import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
-import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,50 +106,20 @@ public class TemplateController {
     }
 
     /**
-     * 模板简单分页
-     */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "模板简单分页")
-    public PageVO<TemplateVO> entityPage(@RequestBody TemplateEntityQuery query) {
-        return templateService.entityPage(query);
-    }
-
-    /**
-     * 模板简单列表
-     */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "模板简单列表")
-    public List<TemplateVO> entityList(@RequestBody TemplateEntityQuery query) {
-        return templateService.entityList(query);
-    }
-
-    /**
      * 模板复杂分页
      */
     @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "模板复杂分页")
-    public PageVO<TemplateVO> voPage(@RequestBody TemplateVOQuery query) {
+    public PageVO<TemplateVO> voPage(@RequestBody TemplateQuery query) {
         return templateService.voPage(query);
-    }
-
-    /**
-     * 模板复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "模板复杂列表")
-    public List<TemplateVO> voList(@RequestBody TemplateVOQuery query) {
-        return templateService.voList(query);
     }
 
     /**
      * 模板树数据
      */
     @GetMapping("/tree")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "模板树数据")
     @Parameter(name = "templateGroupId", description = "模板组ID", required = true)
     public List<TemplateVO> tree(@RequestParam("templateGroupId") @NotNull(message = "模板组ID不能为空") Long templateGroupId) {
@@ -161,7 +130,7 @@ public class TemplateController {
      * 修改模板内容
      */
     @PutMapping("/updateContent")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "修改模板内容")
     public void updateContent(@RequestBody @Valid TemplateContentDTO contentDTO) {
         templateService.updateContent(contentDTO);
@@ -171,7 +140,7 @@ public class TemplateController {
      * 修改模板父级
      */
     @PutMapping("/updateParent")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 10)
     @Operation(summary = "修改模板父级")
     public void updateParent(@RequestBody TemplateDragDTO dragDTO) {
         templateService.updateParent(dragDTO);
@@ -181,7 +150,7 @@ public class TemplateController {
      * 批量更新模板内容
      */
     @PutMapping("/updateContentBatch")
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 11)
     @Operation(summary = "批量更新模板内容")
     public void updateContentBatch(@RequestBody @Validated(UpdateGroup.class) List<TemplateContentDTO> contentDTOList) {
         templateService.updateContentBatch(contentDTOList);

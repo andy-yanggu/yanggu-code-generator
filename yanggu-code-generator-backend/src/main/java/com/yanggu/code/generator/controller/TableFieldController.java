@@ -2,7 +2,7 @@ package com.yanggu.code.generator.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
-import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
+import com.yanggu.code.generator.domain.query.TableFieldQuery;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.service.TableFieldService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +35,7 @@ public class TableFieldController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "表字段简单列表")
-    public List<TableFieldVO> entityList(@RequestBody TableFieldEntityQuery query) {
+    public List<TableFieldVO> entityList(@RequestBody TableFieldQuery query) {
         return tableFieldService.entityList(query);
     }
 

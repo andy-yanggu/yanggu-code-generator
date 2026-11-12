@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.EnumItemDTO;
-import com.yanggu.code.generator.domain.query.EnumItemEntityQuery;
-import com.yanggu.code.generator.domain.query.EnumItemVOQuery;
+import com.yanggu.code.generator.domain.query.EnumItemQuery;
 import com.yanggu.code.generator.domain.vo.EnumItemVO;
 import com.yanggu.code.generator.service.EnumItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,7 +107,7 @@ public class EnumItemController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "枚举项简单分页")
-    public PageVO<EnumItemVO> entityPage(@RequestBody EnumItemEntityQuery query) {
+    public PageVO<EnumItemVO> entityPage(@RequestBody EnumItemQuery query) {
         return enumItemService.entityPage(query);
     }
 
@@ -118,7 +117,7 @@ public class EnumItemController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "枚举项简单列表")
-    public List<EnumItemVO> entityList(@RequestBody EnumItemEntityQuery query) {
+    public List<EnumItemVO> entityList(@RequestBody EnumItemQuery query) {
         return enumItemService.entityList(query);
     }
 
@@ -128,7 +127,7 @@ public class EnumItemController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "枚举项复杂分页")
-    public PageVO<EnumItemVO> voPage(@RequestBody EnumItemVOQuery query) {
+    public PageVO<EnumItemVO> voPage(@RequestBody EnumItemQuery query) {
         return enumItemService.voPage(query);
     }
 
@@ -138,7 +137,7 @@ public class EnumItemController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "枚举项复杂列表")
-    public List<EnumItemVO> voList(@RequestBody EnumItemVOQuery query) {
+    public List<EnumItemVO> voList(@RequestBody EnumItemQuery query) {
         return enumItemService.voList(query);
     }
 

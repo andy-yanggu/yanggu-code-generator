@@ -3,6 +3,7 @@ package com.yanggu.code.generator.service.impl;
 import cn.hutool.v7.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -12,8 +13,7 @@ import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.EnumItemEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.domain.query.EnumEntityQuery;
-import com.yanggu.code.generator.domain.query.EnumVOQuery;
+import com.yanggu.code.generator.domain.query.EnumQuery;
 import com.yanggu.code.generator.domain.vo.EnumGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.EnumVO;
 import com.yanggu.code.generator.mapper.EnumMapper;
@@ -129,20 +129,20 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 简单分页
      */
     @Override
-    public PageVO<EnumVO> entityPage(EnumEntityQuery query) {
+    public PageVO<EnumVO> entityPage(EnumQuery query) {
         //简单sql使用QueryWrapper
-        enumMapper.selectPage(query, buildQueryWrapper(query));
+        Page<EnumEntity> page = query.toPage();
+        enumMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //enumMapper.entityPage(query);
-        return enumMapstruct.entityToPageVO(query);
+        //enumMapper.entityPage(page, query);
+        return enumMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<EnumVO> entityList(EnumEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<EnumVO> entityList(EnumQuery query) {
         //简单sql使用QueryWrapper
         List<EnumEntity> entityList = enumMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -154,18 +154,18 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 复杂分页
      */
     @Override
-    public PageVO<EnumVO> voPage(EnumVOQuery query) {
-        enumMapper.voPage(query);
-        return enumMapstruct.voToPageVO(query);
+    public PageVO<EnumVO> voPage(EnumQuery query) {
+        Page<EnumVO> page = query.toPage();
+        enumMapper.voPage(page, query);
+        return enumMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<EnumVO> voList(EnumVOQuery query) {
+    public List<EnumVO> voList(EnumQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return enumMapper.voList(query);
     }
 
@@ -248,7 +248,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         }
     }
 
-    private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumEntityQuery query) {
+    private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumQuery query) {
         LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
 
         //过滤字段

@@ -9,6 +9,7 @@ import cn.hutool.v7.http.meta.HttpHeaderUtil;
 import cn.hutool.v7.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -16,8 +17,7 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.TemplateGroupPropertyBO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupPropertyQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.mapper.TemplateGroupPropertyMapper;
 import com.yanggu.code.generator.mapstruct.TemplateGroupPropertyMapstruct;
@@ -120,20 +120,20 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 简单分页
      */
     @Override
-    public PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyEntityQuery query) {
+    public PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyQuery query) {
         //简单sql使用QueryWrapper
-        templateGroupPropertyMapper.selectPage(query, buildQueryWrapper(query));
+        Page<TemplateGroupPropertyEntity> page = query.toPage();
+        templateGroupPropertyMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //templateGroupPropertyMapper.entityPage(query);
-        return templateGroupPropertyMapstruct.entityToPageVO(query);
+        //templateGroupPropertyMapper.entityPage(page, query);
+        return templateGroupPropertyMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyQuery query) {
         //简单sql使用QueryWrapper
         List<TemplateGroupPropertyEntity> entityList = templateGroupPropertyMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -145,18 +145,18 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 复杂分页
      */
     @Override
-    public PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyVOQuery query) {
-        templateGroupPropertyMapper.voPage(query);
-        return templateGroupPropertyMapstruct.voToPageVO(query);
+    public PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyQuery query) {
+        Page<TemplateGroupPropertyVO> page = query.toPage();
+        templateGroupPropertyMapper.voPage(page, query);
+        return templateGroupPropertyMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyVOQuery query) {
+    public List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return templateGroupPropertyMapper.voList(query);
     }
 
@@ -239,7 +239,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
         }
     }
 
-    private LambdaQueryWrapper<TemplateGroupPropertyEntity> buildQueryWrapper(TemplateGroupPropertyEntityQuery query) {
+    private LambdaQueryWrapper<TemplateGroupPropertyEntity> buildQueryWrapper(TemplateGroupPropertyQuery query) {
         LambdaQueryWrapper<TemplateGroupPropertyEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupPropertyEntity.class);
 
         //过滤字段

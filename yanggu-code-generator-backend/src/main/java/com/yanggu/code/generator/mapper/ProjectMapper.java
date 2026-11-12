@@ -3,8 +3,7 @@ package com.yanggu.code.generator.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
-import com.yanggu.code.generator.domain.query.ProjectVOQuery;
+import com.yanggu.code.generator.domain.query.ProjectQuery;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,21 +21,21 @@ public interface ProjectMapper extends BaseMapperPlus<ProjectEntity> {
     /**
      * Entity分页
      */
-    IPage<ProjectEntity> entityPage(@Param("query") ProjectEntityQuery query);
+    IPage<ProjectEntity> entityPage(IPage<ProjectEntity> page, @Param("query") ProjectQuery query);
 
     /**
      * Entity列表
      */
-    List<ProjectEntity> entityList(@Param("query") ProjectEntityQuery query);
+    List<ProjectEntity> entityList(@Param("query") ProjectQuery query);
 
     /**
      * VO分页
      */
-    IPage<ProjectVO> voPage(@Param("query") ProjectVOQuery query);
+    IPage<ProjectVO> voPage(IPage<ProjectVO> page, @Param("query") ProjectQuery query);
 
     /**
      * VO列表
      */
-    List<ProjectVO> voList(@Param("query") ProjectVOQuery query);
+    List<ProjectVO> voList(@Param("query") ProjectQuery query);
 
 }

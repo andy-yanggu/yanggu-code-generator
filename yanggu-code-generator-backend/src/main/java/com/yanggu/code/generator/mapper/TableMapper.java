@@ -3,8 +3,7 @@ package com.yanggu.code.generator.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.query.TableEntityQuery;
-import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.query.TableQuery;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,22 +21,22 @@ public interface TableMapper extends BaseMapperPlus<TableEntity> {
     /**
      * Entity分页
      */
-    IPage<TableEntity> entityPage(@Param("query") TableEntityQuery query);
+    IPage<TableEntity> entityPage(IPage<TableEntity> page, @Param("query") TableQuery query);
 
     /**
      * Entity列表
      */
-    List<TableEntity> entityList(@Param("query") TableEntityQuery query);
+    List<TableEntity> entityList(@Param("query") TableQuery query);
 
     /**
      * VO分页
      */
-    IPage<TableVO> voPage(@Param("query") TableVOQuery query);
+    IPage<TableVO> voPage(IPage<TableVO> page, @Param("query") TableQuery query);
 
     /**
      * VO列表
      */
-    List<TableVO> voList(@Param("query") TableVOQuery query);
+    List<TableVO> voList(@Param("query") TableQuery query);
 
     List<Long> distinctProjectIdList(@Param("idList") List<Long> idList);
 

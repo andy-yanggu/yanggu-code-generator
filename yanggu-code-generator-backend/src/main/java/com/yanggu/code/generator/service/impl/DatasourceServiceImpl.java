@@ -2,6 +2,7 @@ package com.yanggu.code.generator.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -10,8 +11,7 @@ import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
-import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.query.DatasourceQuery;
 import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.mapper.DatasourceMapper;
@@ -114,20 +114,20 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 简单分页
      */
     @Override
-    public PageVO<DatasourceVO> entityPage(DatasourceEntityQuery query) {
+    public PageVO<DatasourceVO> entityPage(DatasourceQuery query) {
         //简单sql使用QueryWrapper
-        datasourceMapper.selectPage(query, buildQueryWrapper(query));
+        Page<DatasourceEntity> page = query.toPage();
+        datasourceMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //datasourceMapper.entityPage(query);
-        return datasourceMapstruct.entityToPageVO(query);
+        //datasourceMapper.entityPage(page, query);
+        return datasourceMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<DatasourceVO> entityList(DatasourceEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<DatasourceVO> entityList(DatasourceQuery query) {
         //简单sql使用QueryWrapper
         List<DatasourceEntity> entityList = datasourceMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -139,18 +139,18 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 复杂分页
      */
     @Override
-    public PageVO<DatasourceVO> voPage(DatasourceVOQuery query) {
-        datasourceMapper.voPage(query);
-        return datasourceMapstruct.voToPageVO(query);
+    public PageVO<DatasourceVO> voPage(DatasourceQuery query) {
+        Page<DatasourceVO> page = query.toPage();
+        datasourceMapper.voPage(page, query);
+        return datasourceMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<DatasourceVO> voList(DatasourceVOQuery query) {
+    public List<DatasourceVO> voList(DatasourceQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return datasourceMapper.voList(query);
     }
 
@@ -210,7 +210,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
         }
     }
 
-    private LambdaQueryWrapper<DatasourceEntity> buildQueryWrapper(DatasourceEntityQuery query) {
+    private LambdaQueryWrapper<DatasourceEntity> buildQueryWrapper(DatasourceQuery query) {
         LambdaQueryWrapper<DatasourceEntity> wrapper = Wrappers.lambdaQuery(DatasourceEntity.class);
 
         //过滤字段

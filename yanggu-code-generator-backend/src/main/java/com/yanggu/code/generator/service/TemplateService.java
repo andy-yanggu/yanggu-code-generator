@@ -7,8 +7,7 @@ import com.yanggu.code.generator.domain.dto.TemplateContentDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
-import com.yanggu.code.generator.domain.query.TemplateEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 
 import java.util.List;
@@ -54,24 +53,9 @@ public interface TemplateService extends IService<TemplateEntity> {
     List<TemplateVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
-     */
-    PageVO<TemplateVO> entityPage(TemplateEntityQuery query);
-
-    /**
-     * 简单列表
-     */
-    List<TemplateVO> entityList(TemplateEntityQuery query);
-
-    /**
      * 复杂分页
      */
-    PageVO<TemplateVO> voPage(TemplateVOQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<TemplateVO> voList(TemplateVOQuery query);
+    PageVO<TemplateVO> voPage(TemplateQuery query);
 
     /**
      * 根据模板组ID查询模板

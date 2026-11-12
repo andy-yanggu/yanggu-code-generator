@@ -2,14 +2,14 @@ package com.yanggu.code.generator.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.FieldTypeDTO;
 import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
-import com.yanggu.code.generator.domain.query.FieldTypeEntityQuery;
-import com.yanggu.code.generator.domain.query.FieldTypeVOQuery;
+import com.yanggu.code.generator.domain.query.FieldTypeQuery;
 import com.yanggu.code.generator.domain.vo.FieldTypeVO;
 import com.yanggu.code.generator.mapper.FieldTypeMapper;
 import com.yanggu.code.generator.mapstruct.FieldTypeMapstruct;
@@ -107,20 +107,20 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
      * 简单分页
      */
     @Override
-    public PageVO<FieldTypeVO> entityPage(FieldTypeEntityQuery query) {
+    public PageVO<FieldTypeVO> entityPage(FieldTypeQuery query) {
         //简单sql使用QueryWrapper
-        fieldTypeMapper.selectPage(query, buildQueryWrapper(query));
+        Page<FieldTypeEntity> page = query.toPage();
+        fieldTypeMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //fieldTypeMapper.entityPage(query);
-        return fieldTypeMapstruct.entityToPageVO(query);
+        //fieldTypeMapper.entityPage(page, query);
+        return fieldTypeMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<FieldTypeVO> entityList(FieldTypeEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<FieldTypeVO> entityList(FieldTypeQuery query) {
         //简单sql使用QueryWrapper
         List<FieldTypeEntity> entityList = fieldTypeMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -132,18 +132,18 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
      * 复杂分页
      */
     @Override
-    public PageVO<FieldTypeVO> voPage(FieldTypeVOQuery query) {
-        fieldTypeMapper.voPage(query);
-        return fieldTypeMapstruct.voToPageVO(query);
+    public PageVO<FieldTypeVO> voPage(FieldTypeQuery query) {
+        Page<FieldTypeVO> page = query.toPage();
+        fieldTypeMapper.voPage(page, query);
+        return fieldTypeMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<FieldTypeVO> voList(FieldTypeVOQuery query) {
+    public List<FieldTypeVO> voList(FieldTypeQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return fieldTypeMapper.voList(query);
     }
 
@@ -188,7 +188,7 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
         }
     }
 
-    private LambdaQueryWrapper<FieldTypeEntity> buildQueryWrapper(FieldTypeEntityQuery query) {
+    private LambdaQueryWrapper<FieldTypeEntity> buildQueryWrapper(FieldTypeQuery query) {
         LambdaQueryWrapper<FieldTypeEntity> wrapper = Wrappers.lambdaQuery(FieldTypeEntity.class);
 
         //过滤字段

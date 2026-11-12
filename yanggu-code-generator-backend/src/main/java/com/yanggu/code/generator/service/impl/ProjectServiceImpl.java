@@ -3,6 +3,7 @@ package com.yanggu.code.generator.service.impl;
 import cn.hutool.v7.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -12,9 +13,8 @@ import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
+import com.yanggu.code.generator.domain.query.ProjectQuery;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
-import com.yanggu.code.generator.domain.query.ProjectVOQuery;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.mapper.ProjectMapper;
@@ -146,20 +146,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
      * 简单分页
      */
     @Override
-    public PageVO<ProjectVO> entityPage(ProjectEntityQuery query) {
+    public PageVO<ProjectVO> entityPage(ProjectQuery query) {
         //简单sql使用QueryWrapper
-        projectMapper.selectPage(query, buildQueryWrapper(query));
+        Page<ProjectEntity> page = query.toPage();
+        projectMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //projectMapper.entityPage(query);
-        return projectMapstruct.entityToPageVO(query);
+        //projectMapper.entityPage(page, query);
+        return projectMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<ProjectVO> entityList(ProjectEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<ProjectVO> entityList(ProjectQuery query) {
         //简单sql使用QueryWrapper
         List<ProjectEntity> entityList = projectMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -171,18 +171,18 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
      * 复杂分页
      */
     @Override
-    public PageVO<ProjectVO> voPage(ProjectVOQuery query) {
-        projectMapper.voPage(query);
-        return projectMapstruct.voToPageVO(query);
+    public PageVO<ProjectVO> voPage(ProjectQuery query) {
+        Page<ProjectVO> page = query.toPage();
+        projectMapper.voPage(page, query);
+        return projectMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<ProjectVO> voList(ProjectVOQuery query) {
+    public List<ProjectVO> voList(ProjectQuery query) {
         //查询全部数据
-        query.setPageSize(-1L);
         return projectMapper.voList(query);
     }
 
@@ -228,7 +228,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         }
     }
 
-    private LambdaQueryWrapper<ProjectEntity> buildQueryWrapper(ProjectEntityQuery query) {
+    private LambdaQueryWrapper<ProjectEntity> buildQueryWrapper(ProjectQuery query) {
         LambdaQueryWrapper<ProjectEntity> wrapper = Wrappers.lambdaQuery(ProjectEntity.class);
 
         //过滤字段

@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.DatasourceDTO;
-import com.yanggu.code.generator.domain.query.DatasourceEntityQuery;
-import com.yanggu.code.generator.domain.query.DatasourceVOQuery;
+import com.yanggu.code.generator.domain.query.DatasourceQuery;
 import com.yanggu.code.generator.domain.vo.DatasourceTestVO;
 import com.yanggu.code.generator.domain.vo.DatasourceVO;
 import com.yanggu.code.generator.service.DatasourceService;
@@ -109,7 +108,7 @@ public class DatasourceController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "数据源简单分页")
-    public PageVO<DatasourceVO> entityPage(@RequestBody DatasourceEntityQuery query) {
+    public PageVO<DatasourceVO> entityPage(@RequestBody DatasourceQuery query) {
         return datasourceService.entityPage(query);
     }
 
@@ -119,7 +118,7 @@ public class DatasourceController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "数据源简单列表")
-    public List<DatasourceVO> entityList(@RequestBody DatasourceEntityQuery query) {
+    public List<DatasourceVO> entityList(@RequestBody DatasourceQuery query) {
         return datasourceService.entityList(query);
     }
 
@@ -129,7 +128,7 @@ public class DatasourceController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "数据源复杂分页")
-    public PageVO<DatasourceVO> voPage(@RequestBody DatasourceVOQuery query) {
+    public PageVO<DatasourceVO> voPage(@RequestBody DatasourceQuery query) {
         return datasourceService.voPage(query);
     }
 
@@ -139,7 +138,7 @@ public class DatasourceController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "数据源复杂列表")
-    public List<DatasourceVO> voList(@RequestBody DatasourceVOQuery query) {
+    public List<DatasourceVO> voList(@RequestBody DatasourceQuery query) {
         return datasourceService.voList(query);
     }
 

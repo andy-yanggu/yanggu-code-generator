@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import org.springframework.http.ResponseEntity;
@@ -53,22 +52,22 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     /**
      * 简单分页
      */
-    PageVO<TemplateGroupVO> entityPage(TemplateGroupEntityQuery query);
+    PageVO<TemplateGroupVO> entityPage(TemplateGroupQuery query);
 
     /**
      * 简单列表
      */
-    List<TemplateGroupVO> entityList(TemplateGroupEntityQuery query);
+    List<TemplateGroupVO> entityList(TemplateGroupQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<TemplateGroupVO> voPage(TemplateGroupVOQuery query);
+    PageVO<TemplateGroupVO> voPage(TemplateGroupQuery query);
 
     /**
      * 复杂列表
      */
-    List<TemplateGroupVO> voList(TemplateGroupVOQuery query);
+    List<TemplateGroupVO> voList(TemplateGroupQuery query);
 
     /**
      * 复制模板组

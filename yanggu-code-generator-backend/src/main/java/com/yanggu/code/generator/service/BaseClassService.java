@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.entity.BaseClassEntity;
-import com.yanggu.code.generator.domain.query.BaseClassEntityQuery;
-import com.yanggu.code.generator.domain.query.BaseClassVOQuery;
+import com.yanggu.code.generator.domain.query.BaseClassQuery;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 
 import java.util.List;
@@ -48,21 +47,21 @@ public interface BaseClassService extends IService<BaseClassEntity> {
     /**
      * 简单分页
      */
-    PageVO<BaseClassVO> entityPage(BaseClassEntityQuery query);
+    PageVO<BaseClassVO> entityPage(BaseClassQuery query);
 
     /**
      * 简单列表
      */
-    List<BaseClassVO> entityList(BaseClassEntityQuery query);
+    List<BaseClassVO> entityList(BaseClassQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<BaseClassVO> voPage(BaseClassVOQuery query);
+    PageVO<BaseClassVO> voPage(BaseClassQuery query);
 
     /**
      * 复杂列表
      */
-    List<BaseClassVO> voList(BaseClassVOQuery query);
+    List<BaseClassVO> voList(BaseClassQuery query);
 
 }

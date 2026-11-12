@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
-import com.yanggu.code.generator.domain.query.TemplateGroupEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.service.TemplateGroupService;
@@ -113,7 +112,7 @@ public class TemplateGroupController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "模板组简单分页")
-    public PageVO<TemplateGroupVO> entityPage(@RequestBody TemplateGroupEntityQuery query) {
+    public PageVO<TemplateGroupVO> entityPage(@RequestBody TemplateGroupQuery query) {
         return templateGroupService.entityPage(query);
     }
 
@@ -123,7 +122,7 @@ public class TemplateGroupController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "模板组简单列表")
-    public List<TemplateGroupVO> entityList(@RequestBody TemplateGroupEntityQuery query) {
+    public List<TemplateGroupVO> entityList(@RequestBody TemplateGroupQuery query) {
         return templateGroupService.entityList(query);
     }
 
@@ -133,7 +132,7 @@ public class TemplateGroupController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "模板组复杂分页")
-    public PageVO<TemplateGroupVO> voPage(@RequestBody TemplateGroupVOQuery query) {
+    public PageVO<TemplateGroupVO> voPage(@RequestBody TemplateGroupQuery query) {
         return templateGroupService.voPage(query);
     }
 
@@ -143,7 +142,7 @@ public class TemplateGroupController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "模板组复杂列表")
-    public List<TemplateGroupVO> voList(@RequestBody TemplateGroupVOQuery query) {
+    public List<TemplateGroupVO> voList(@RequestBody TemplateGroupQuery query) {
         return templateGroupService.voList(query);
     }
 

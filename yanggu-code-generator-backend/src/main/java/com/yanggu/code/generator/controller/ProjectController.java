@@ -5,9 +5,8 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.ProjectDTO;
-import com.yanggu.code.generator.domain.query.ProjectEntityQuery;
+import com.yanggu.code.generator.domain.query.ProjectQuery;
 import com.yanggu.code.generator.domain.query.ProjectTableQuery;
-import com.yanggu.code.generator.domain.query.ProjectVOQuery;
 import com.yanggu.code.generator.domain.vo.ProjectVO;
 import com.yanggu.code.generator.domain.vo.TableImportVO;
 import com.yanggu.code.generator.service.ProjectService;
@@ -110,7 +109,7 @@ public class ProjectController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "项目简单分页")
-    public PageVO<ProjectVO> entityPage(@RequestBody ProjectEntityQuery query) {
+    public PageVO<ProjectVO> entityPage(@RequestBody ProjectQuery query) {
         return projectService.entityPage(query);
     }
 
@@ -120,7 +119,7 @@ public class ProjectController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "项目简单列表")
-    public List<ProjectVO> entityList(@RequestBody ProjectEntityQuery query) {
+    public List<ProjectVO> entityList(@RequestBody ProjectQuery query) {
         return projectService.entityList(query);
     }
 
@@ -130,7 +129,7 @@ public class ProjectController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "项目复杂分页")
-    public PageVO<ProjectVO> voPage(@RequestBody ProjectVOQuery query) {
+    public PageVO<ProjectVO> voPage(@RequestBody ProjectQuery query) {
         return projectService.voPage(query);
     }
 
@@ -140,7 +139,7 @@ public class ProjectController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "项目复杂列表")
-    public List<ProjectVO> voList(@RequestBody ProjectVOQuery query) {
+    public List<ProjectVO> voList(@RequestBody ProjectQuery query) {
         return projectService.voList(query);
     }
 

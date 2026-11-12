@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.query.TableEntityQuery;
-import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.query.TableQuery;
 import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 
@@ -50,22 +49,22 @@ public interface TableService extends IService<TableEntity> {
     /**
      * 简单分页
      */
-    PageVO<TableVO> entityPage(TableEntityQuery query);
+    PageVO<TableVO> entityPage(TableQuery query);
 
     /**
      * 简单列表
      */
-    List<TableVO> entityList(TableEntityQuery query);
+    List<TableVO> entityList(TableQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<TableVO> voPage(TableVOQuery query);
+    PageVO<TableVO> voPage(TableQuery query);
 
     /**
      * 复杂列表
      */
-    List<TableVO> voList(TableVOQuery query);
+    List<TableVO> voList(TableQuery query);
 
     /**
      * 导入表

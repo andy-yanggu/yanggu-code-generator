@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
+import com.yanggu.code.generator.domain.query.TableFieldQuery;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface TableFieldService extends IService<TableFieldEntity> {
     /**
      * 简单列表
      */
-    List<TableFieldVO> entityList(TableFieldEntityQuery query);
+    List<TableFieldVO> entityList(TableFieldQuery query);
 
     /**
      * 表字段提交

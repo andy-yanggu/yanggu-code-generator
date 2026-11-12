@@ -2,6 +2,7 @@ package com.yanggu.code.generator.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
@@ -9,8 +10,7 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.BaseClassDTO;
 import com.yanggu.code.generator.domain.entity.BaseClassEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.query.BaseClassEntityQuery;
-import com.yanggu.code.generator.domain.query.BaseClassVOQuery;
+import com.yanggu.code.generator.domain.query.BaseClassQuery;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.mapper.BaseClassMapper;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
@@ -109,20 +109,20 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
      * 简单分页
      */
     @Override
-    public PageVO<BaseClassVO> entityPage(BaseClassEntityQuery query) {
+    public PageVO<BaseClassVO> entityPage(BaseClassQuery query) {
         //简单sql使用QueryWrapper
-        baseClassMapper.selectPage(query, buildQueryWrapper(query));
+        Page<BaseClassEntity> page = query.toPage();
+        baseClassMapper.selectPage(page, buildQueryWrapper(query));
         //较复杂sql，使用xml
-        //baseClassMapper.entityPage(query);
-        return baseClassMapstruct.entityToPageVO(query);
+        //baseClassMapper.entityPage(page, query);
+        return baseClassMapstruct.entityToPageVO(page);
     }
 
     /**
      * 简单列表
      */
     @Override
-    public List<BaseClassVO> entityList(BaseClassEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<BaseClassVO> entityList(BaseClassQuery query) {
         //简单sql使用QueryWrapper
         List<BaseClassEntity> entityList = baseClassMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -134,18 +134,18 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
      * 复杂分页
      */
     @Override
-    public PageVO<BaseClassVO> voPage(BaseClassVOQuery query) {
-        baseClassMapper.voPage(query);
-        return baseClassMapstruct.voToPageVO(query);
+    public PageVO<BaseClassVO> voPage(BaseClassQuery query) {
+        Page<BaseClassVO> page = query.toPage();
+        baseClassMapper.voPage(page, query);
+        return baseClassMapstruct.voToPageVO(page);
     }
 
     /**
      * 复杂列表
      */
     @Override
-    public List<BaseClassVO> voList(BaseClassVOQuery query) {
-        //查询全部数据
-        query.setPageSize(-1L);
+    public List<BaseClassVO> voList(BaseClassQuery query) {
+        //查询全部数据：不传page即不触发分页插件
         return baseClassMapper.voList(query);
     }
 
@@ -190,7 +190,7 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
         }
     }
 
-    private LambdaQueryWrapper<BaseClassEntity> buildQueryWrapper(BaseClassEntityQuery query) {
+    private LambdaQueryWrapper<BaseClassEntity> buildQueryWrapper(BaseClassQuery query) {
         LambdaQueryWrapper<BaseClassEntity> wrapper = Wrappers.lambdaQuery(BaseClassEntity.class);
 
         //过滤字段

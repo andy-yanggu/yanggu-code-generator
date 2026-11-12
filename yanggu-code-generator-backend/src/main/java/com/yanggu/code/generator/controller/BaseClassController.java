@@ -5,8 +5,7 @@ import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.BaseClassDTO;
-import com.yanggu.code.generator.domain.query.BaseClassEntityQuery;
-import com.yanggu.code.generator.domain.query.BaseClassVOQuery;
+import com.yanggu.code.generator.domain.query.BaseClassQuery;
 import com.yanggu.code.generator.domain.vo.BaseClassVO;
 import com.yanggu.code.generator.service.BaseClassService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,7 +107,7 @@ public class BaseClassController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "基类简单分页")
-    public PageVO<BaseClassVO> entityPage(@RequestBody BaseClassEntityQuery query) {
+    public PageVO<BaseClassVO> entityPage(@RequestBody BaseClassQuery query) {
         return baseClassService.entityPage(query);
     }
 
@@ -118,7 +117,7 @@ public class BaseClassController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "基类简单列表")
-    public List<BaseClassVO> entityList(@RequestBody BaseClassEntityQuery query) {
+    public List<BaseClassVO> entityList(@RequestBody BaseClassQuery query) {
         return baseClassService.entityList(query);
     }
 
@@ -128,7 +127,7 @@ public class BaseClassController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "基类复杂分页")
-    public PageVO<BaseClassVO> voPage(@RequestBody BaseClassVOQuery query) {
+    public PageVO<BaseClassVO> voPage(@RequestBody BaseClassQuery query) {
         return baseClassService.voPage(query);
     }
 
@@ -138,7 +137,7 @@ public class BaseClassController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "基类复杂列表")
-    public List<BaseClassVO> voList(@RequestBody BaseClassVOQuery query) {
+    public List<BaseClassVO> voList(@RequestBody BaseClassQuery query) {
         return baseClassService.voList(query);
     }
 

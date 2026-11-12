@@ -6,8 +6,7 @@ import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
-import com.yanggu.code.generator.domain.query.TableEntityQuery;
-import com.yanggu.code.generator.domain.query.TableVOQuery;
+import com.yanggu.code.generator.domain.query.TableQuery;
 import com.yanggu.code.generator.domain.vo.TableGenerateCheckVO;
 import com.yanggu.code.generator.domain.vo.TableVO;
 import com.yanggu.code.generator.service.TableService;
@@ -110,7 +109,7 @@ public class TableController {
     @PostMapping("/entityPage")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "表简单分页")
-    public PageVO<TableVO> entityPage(@RequestBody TableEntityQuery query) {
+    public PageVO<TableVO> entityPage(@RequestBody TableQuery query) {
         return tableService.entityPage(query);
     }
 
@@ -120,7 +119,7 @@ public class TableController {
     @PostMapping("/entityList")
     @ApiOperationSupport(order = 8)
     @Operation(summary = "表简单列表")
-    public List<TableVO> entityList(@RequestBody TableEntityQuery query) {
+    public List<TableVO> entityList(@RequestBody TableQuery query) {
         return tableService.entityList(query);
     }
 
@@ -130,7 +129,7 @@ public class TableController {
     @PostMapping("/voPage")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "表复杂分页")
-    public PageVO<TableVO> voPage(@RequestBody TableVOQuery query) {
+    public PageVO<TableVO> voPage(@RequestBody TableQuery query) {
         return tableService.voPage(query);
     }
 
@@ -140,7 +139,7 @@ public class TableController {
     @PostMapping("/voList")
     @ApiOperationSupport(order = 10)
     @Operation(summary = "表复杂列表")
-    public List<TableVO> voList(@RequestBody TableVOQuery query) {
+    public List<TableVO> voList(@RequestBody TableQuery query) {
         return tableService.voList(query);
     }
 

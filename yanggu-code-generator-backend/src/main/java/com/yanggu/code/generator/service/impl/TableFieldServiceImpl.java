@@ -10,7 +10,7 @@ import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.TableFieldDTO;
 import com.yanggu.code.generator.domain.entity.FieldTypeEntity;
 import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.domain.query.TableFieldEntityQuery;
+import com.yanggu.code.generator.domain.query.TableFieldQuery;
 import com.yanggu.code.generator.domain.vo.TableFieldVO;
 import com.yanggu.code.generator.enums.AutoFillEnum;
 import com.yanggu.code.generator.mapper.TableFieldMapper;
@@ -43,8 +43,7 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
      * 简单列表
      */
     @Override
-    public List<TableFieldVO> entityList(TableFieldEntityQuery query) {
-        query.setPageSize(-1L);
+    public List<TableFieldVO> entityList(TableFieldQuery query) {
         //简单sql使用QueryWrapper
         List<TableFieldEntity> entityList = tableFieldMapper.selectList(buildQueryWrapper(query));
         //复杂sql，使用xml
@@ -118,7 +117,7 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
         }
     }
 
-    private LambdaQueryWrapper<TableFieldEntity> buildQueryWrapper(TableFieldEntityQuery query) {
+    private LambdaQueryWrapper<TableFieldEntity> buildQueryWrapper(TableFieldQuery query) {
         LambdaQueryWrapper<TableFieldEntity> wrapper = Wrappers.lambdaQuery(TableFieldEntity.class);
 
         //过滤字段

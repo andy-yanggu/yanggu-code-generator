@@ -8,8 +8,7 @@ import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateOrderDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyUpdateRequiredDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyEntityQuery;
-import com.yanggu.code.generator.domain.query.TemplateGroupPropertyVOQuery;
+import com.yanggu.code.generator.domain.query.TemplateGroupPropertyQuery;
 import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,22 +55,22 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
     /**
      * 简单分页
      */
-    PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyEntityQuery query);
+    PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyQuery query);
 
     /**
      * 简单列表
      */
-    List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyEntityQuery query);
+    List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyQuery query);
 
     /**
      * 复杂分页
      */
-    PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyVOQuery query);
+    PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyQuery query);
 
     /**
      * 复杂列表
      */
-    List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyVOQuery query);
+    List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyQuery query);
 
     /**
      * 导出
