@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 项目查询实体类
@@ -36,12 +36,12 @@ public class ProjectQuery extends PageQuery implements Serializable {
      * 开始时间
      */
     @Schema(description = "开始时间")
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /**
      * 结束时间
      */
     @Schema(description = "结束时间")
-    private Date endTime;
+    private LocalDateTime endTime;
 
 }

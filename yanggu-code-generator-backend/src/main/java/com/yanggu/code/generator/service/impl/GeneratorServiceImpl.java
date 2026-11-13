@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -545,8 +546,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         //开发者信息
         tableModel.setAuthor(table.getAuthor());
-        tableModel.setDatetime(DateUtil.format(new Date(), DateFormatPool.NORM_DATETIME_PATTERN));
-        tableModel.setDate(DateUtil.format(new Date(), DateFormatPool.NORM_DATE_PATTERN));
+        tableModel.setDatetime(DateUtil.format(LocalDateTime.now(), DateFormatPool.NORM_DATETIME_PATTERN));
+        tableModel.setDate(DateUtil.format(LocalDateTime.now(), DateFormatPool.NORM_DATE_PATTERN));
 
         //设置字段分类
         setFieldTypeList(tableModel);
@@ -766,7 +767,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         // zip压缩包数据
         byte[] data = outputStream.toByteArray();
 
-        String fileName = originFileName + "_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".zip";
+        String fileName = originFileName + "_" + DateUtil.format(LocalDateTime.now(), PURE_DATETIME_PATTERN) + ".zip";
 
         return buildResponseEntity(fileName, data);
     }

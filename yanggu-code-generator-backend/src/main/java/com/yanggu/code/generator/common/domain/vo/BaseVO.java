@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Controller返回值数据基类
@@ -22,13 +22,13 @@ public abstract class BaseVO implements Serializable {
      * 创建时间
      */
     @Schema(description = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 修改时间
      */
     @Schema(description = "修改时间")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 是否删除（0正常, 1删除）

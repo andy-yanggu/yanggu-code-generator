@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -274,7 +275,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
         String jsonStr = JSONUtil.toJsonStr(boList);
 
-        String fileName = "template_group_" + DateUtil.format(new Date(), PURE_DATETIME_PATTERN) + ".json";
+        String fileName = "template_group_" + DateUtil.format(LocalDateTime.now(), PURE_DATETIME_PATTERN) + ".json";
         return ResponseEntity.ok()
                 .header(CONTENT_DISPOSITION, HttpHeaderUtil.createAttachmentDisposition(fileName, CharsetUtil.UTF_8))
                 .contentType(APPLICATION_OCTET_STREAM)
