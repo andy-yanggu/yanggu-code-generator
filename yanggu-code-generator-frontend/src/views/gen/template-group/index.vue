@@ -125,7 +125,12 @@ const fields: CrudField[] = [
 
 // 表单配置
 const formConfig = reactive({
-	initFormData: (): GenTemplateGroupEntity => ({ id: null, groupName: '', type: '', groupDesc: '' }),
+	initFormData: (): GenTemplateGroupEntity => ({
+		id: null,
+		groupName: '',
+		type: '',
+		groupDesc: ''
+	}),
 	submitApi: genTemplateGroupApi.submit,
 	detailApi: genTemplateGroupApi.detail,
 	beforeOpen: () => {
@@ -154,7 +159,10 @@ const tableConfig = reactive({
 	exportApi: genTemplateGroupApi.export,
 	importApi: genTemplateGroupApi.import,
 	importSuccessMessage: '模板组导入成功',
-	initQueryForm: (): GenTemplateGroupQuery => ({ groupName: '', type: '' })
+	initQueryData: (): GenTemplateGroupQuery => ({
+		groupName: '',
+		type: ''
+	})
 } as UseCrudTableOptions)
 
 // 统一 hook

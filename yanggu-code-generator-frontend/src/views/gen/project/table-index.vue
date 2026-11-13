@@ -43,7 +43,7 @@ const queryContext = reactive({
 })
 
 // 初始化查询表单数据
-const initQueryForm = (): GenTableQuery => ({
+const initQueryData = (): GenTableQuery => ({
 	tableName: '',
 	className: '',
 	projectId: -1
@@ -53,7 +53,7 @@ const initQueryForm = (): GenTableQuery => ({
 const tableHook = useCrudTable<GenTableEntity, GenTableQuery>({
 	dataListApi: genTableApi.entityPage,
 	tableKey: 'gen-project-table',
-	initQueryForm,
+	initQueryData,
 	searchSchema: searchFields,
 	tableColumns,
 	queryContext,

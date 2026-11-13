@@ -166,7 +166,7 @@ const formConfig = reactive({
 } as UseCrudFormOptions)
 
 // 初始化查询表单数据
-const initQueryForm = (): GenEnumItemQuery => ({
+const initQueryData = (): GenEnumItemQuery => ({
 	enumItemName: '',
 	enumItemCode: '',
 	enumId: -1
@@ -179,7 +179,7 @@ const queryContext = reactive({
 
 // 表格配置
 const tableConfig = reactive({
-	initQueryForm,
+	initQueryData,
 	dataListApi: genEnumItemApi.entityPage,
 	deleteApi: genEnumItemApi.deleteList,
 	deleteNameKey: 'enumItemName',

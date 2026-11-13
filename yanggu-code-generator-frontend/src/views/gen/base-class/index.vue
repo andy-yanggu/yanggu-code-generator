@@ -49,15 +49,7 @@
 
 		<!-- 表单字段 fieldList：el-input-tag -->
 		<template #form-fieldList="{ model }">
-			<el-input-tag
-				v-model="model.fieldList"
-				collapse-tags
-				collapse-tags-tooltip
-				:max-collapse-tags="5"
-				draggable
-				clearable
-				placeholder="请输入基类字段"
-			></el-input-tag>
+			<el-input-tag v-model="model.fieldList" collapse-tags collapse-tags-tooltip :max-collapse-tags="5" draggable clearable placeholder="请输入基类字段"></el-input-tag>
 		</template>
 	</crud-page>
 </template>
@@ -69,7 +61,6 @@ import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import PopoverList from '@/components/popover/list/index.vue'
 import { CopyDocument, Delete, Edit, View } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 
 defineOptions({
 	name: 'GenBaseClass'
@@ -124,7 +115,14 @@ const fields: CrudField[] = [
 ]
 
 // 初始化表单数据
-const initFormData = (): GenBaseClassEntity => ({ id: '', baseClassName: '', packageName: '', className: '', fieldList: [], remark: '' })
+const initFormData = (): GenBaseClassEntity => ({
+	id: '',
+	baseClassName: '',
+	packageName: '',
+	className: '',
+	fieldList: [],
+	remark: ''
+})
 
 // 表单配置
 const formConfig = reactive({
@@ -141,11 +139,15 @@ const formConfig = reactive({
 } as UseCrudFormOptions)
 
 // 初始化查询表单数据
-const initQueryForm = (): GenBaseClassQuery => ({ baseClassName: '', packageName: '', className: '' })
+const initQueryData = (): GenBaseClassQuery => ({
+	baseClassName: '',
+	packageName: '',
+	className: ''
+})
 
 // 表格配置
 const tableConfig = reactive({
-	initQueryForm,
+	initQueryData,
 	dataListApi: genBaseClassApi.entityPage,
 	deleteApi: genBaseClassApi.deleteList,
 	deleteNameKey: 'baseClassName',

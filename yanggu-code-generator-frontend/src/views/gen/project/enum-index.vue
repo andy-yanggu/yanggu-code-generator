@@ -59,7 +59,7 @@ const queryContext = reactive({
 })
 
 // 初始化查询表单数据
-const initQueryForm = (): GenEnumQuery => ({
+const initQueryData = (): GenEnumQuery => ({
 	enumName: '',
 	projectId: ''
 })
@@ -68,7 +68,7 @@ const initQueryForm = (): GenEnumQuery => ({
 const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
 	dataListApi: genEnumApi.entityPage,
 	tableKey: 'gen-project-enum',
-	initQueryForm,
+	initQueryData,
 	searchSchema: searchFields,
 	tableColumns,
 	queryContext,

@@ -149,7 +149,6 @@ import { useCrud } from '@/hooks/use-crud'
 import { isNotEmpty } from '@/utils/tool'
 import { Delete, DocumentAdd, Edit, Plus, View } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
-import { ElMessage } from 'element-plus'
 import { genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
 import type {
 	CrudField,
@@ -378,7 +377,7 @@ const tableConfig = reactive({
 	dataListApi: genProjectApi.voPage,
 	deleteApi: genProjectApi.deleteList,
 	deleteConfirmMessage: '删除项目会删除项目下的所有表，是否继续？',
-	initQueryForm: (): GenProjectQuery => ({
+	initQueryData: (): GenProjectQuery => ({
 		projectName: '',
 		generatorType: '',
 		dateTimeRange: []

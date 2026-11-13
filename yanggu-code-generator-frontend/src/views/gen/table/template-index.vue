@@ -28,7 +28,7 @@ const emit = defineEmits(['clearSelection'])
 const currentTemplateGroupId = ref(-1)
 
 const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
-	initQueryForm: (): GenTemplateQuery => ({
+	initQueryData: (): GenTemplateQuery => ({
 		templateGroupId: -1,
 		templateName: '',
 		templateType: ''

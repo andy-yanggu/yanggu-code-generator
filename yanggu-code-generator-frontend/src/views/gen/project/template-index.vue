@@ -47,7 +47,7 @@ const queryContext = reactive({
 })
 
 // 初始化查询表单数据
-const initQueryForm = (): GenTemplateQuery => ({
+const initQueryData = (): GenTemplateQuery => ({
 	templateGroupIdList: [],
 	templateGroupName: '',
 	fileName: '',
@@ -59,7 +59,7 @@ const initQueryForm = (): GenTemplateQuery => ({
 const tableHook = useCrudTable<GenTemplateEntity, GenTemplateQuery>({
 	dataListApi: genTemplateApi.voPage,
 	tableKey: 'gen-project-template',
-	initQueryForm,
+	initQueryData,
 	searchSchema: searchFields,
 	tableColumns,
 	queryContext,

@@ -33,7 +33,7 @@ const currentGroupId = ref<number>(0)
 
 // ====== 表格配置 ======
 const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
-	initQueryForm: (): GenTemplateQuery => ({
+	initQueryData: (): GenTemplateQuery => ({
 		templateGroupId: '',
 		templateName: '',
 		templateType: ''

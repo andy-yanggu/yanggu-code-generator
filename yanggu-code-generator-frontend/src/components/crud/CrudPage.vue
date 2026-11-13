@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 import { Delete, Edit, Plus } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 import QueryTable from './QueryTable.vue'
 import CrudDialog from './CrudDialog.vue'
 import type { UseCrudFormReturn, UseCrudTableReturn } from '@/types'

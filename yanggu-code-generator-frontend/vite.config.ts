@@ -39,6 +39,9 @@ export default defineConfig({
 		}),
 		// Vue/VueRouter/Pinia/ElementPlus API 自动导入
 		AutoImport({
+			// 模板里单独使用的 API（如 @cancel="ElMessage.info(...)"）也要注入，
+			// 否则编译成 _ctx.ElMessage 运行时为 undefined
+			vueTemplate: true,
 			imports: [
 				'vue',
 				'vue-router',

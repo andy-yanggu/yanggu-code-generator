@@ -143,7 +143,6 @@ import { useCrud } from '@/hooks/use-crud'
 import { isNotEmpty } from '@/utils/tool'
 import { Delete, DocumentAdd, Edit, More, Refresh, Setting, Upload, View } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
-import { ElMessage } from 'element-plus'
 import { genBaseClassApi, genProjectApi, genTableApi, genTemplateGroupPropertyApi } from '@/api'
 import type {
 	CrudField,
@@ -316,7 +315,7 @@ const tableConfig = reactive({
 	deleteNameKey: 'tableName',
 	dataListApi: genTableApi.voPage,
 	deleteApi: genTableApi.deleteList,
-	initQueryForm: (): GenTableQuery => ({
+	initQueryData: (): GenTableQuery => ({
 		tableName: '',
 		projectId: '',
 		databaseName: ''

@@ -100,7 +100,6 @@ import { getDictTag } from '@/utils/enum'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { isBlank, isNotEmpty } from '@/utils/tool'
 import { Delete, DocumentAdd, Edit, More, Plus, Setting, View } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 
 defineOptions({
 	name: 'GenEnum'
@@ -176,7 +175,7 @@ const tableConfig = reactive({
 	deleteNameKey: 'enumName',
 	dataListApi: genEnumApi.voPage,
 	deleteApi: genEnumApi.deleteList,
-	initQueryForm: (): GenEnumQuery => ({
+	initQueryData: (): GenEnumQuery => ({
 		enumName: '',
 		projectId: ''
 	})

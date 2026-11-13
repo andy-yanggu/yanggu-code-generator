@@ -81,7 +81,13 @@ const { tableHook, formHook } = useCrud({
     { key: 'type', label: '类型', component: 'select', options: typeOptions, inForm: true, inTable: true },
   ],
   tableConfig: reactive({ dataListApi: pageApi, deleteApi: deleteApi }),
-  formConfig: reactive({ addApi: saveApi, updateApi: saveApi, detailApi: detailApi, initFormData: () => ({ name: '', type: undefined }) }),
+  formConfig: reactive({
+    addApi: saveApi, updateApi: saveApi, detailApi: detailApi,
+    initFormData: () => ({
+      name: '',
+      type: undefined
+    })
+  }),
 })
 ```
 
@@ -150,7 +156,7 @@ BaseFieldSchema（身份 + 通用展示：key? / prop? / label / tooltip? / widt
 | 配置 | 归属 | 说明 |
 |---|---|---|
 | `dataListApi` | tableConfig | 必填（fields 模式下 `tableColumns` / `searchSchema` 可省略，仅传统模式必填） |
-| `initQueryForm` | tableConfig | 可选，默认 `() => ({})`，无搜索页可省 |
+| `initQueryData` | tableConfig | 可选，默认 `() => ({})`，无搜索页可省 |
 | `deleteApi` | tableConfig | 可选，无删除场景本已支持 |
 | `mountedGetData: false` | tableConfig | 关闭首屏自动加载（弹窗式子组件场景，由外部触发查询） |
 | `queryContext` | tableConfig | 跨视图上下文过滤（如子表按 groupId 查询） |
@@ -217,7 +223,7 @@ BaseFieldSchema（身份 + 通用展示：key? / prop? / label / tooltip? / widt
 组件注册三条途径（页面里没有 import 也能用，不是 bug）：
 
 1. **Element Plus 组件**：unplugin-vue-components + ElementPlusResolver 按需引入；样式在 main.ts 全量导入（`importStyle: false`）。
-2. **Vue/Pinia/vueuse API + ElMessage 等**：unplugin-auto-import，声明文件 `auto-imports.d.ts`。
+2. **Vue/Pinia/vueuse API + ElMessage / ElMessageBox / ElNotification / ElLoading**：unplugin-auto-import，声明文件 `auto-imports.d.ts`；页面里**不要再手写 `import { ElMessage } from 'element-plus'`**。必须开 `vueTemplate: true`：只在 `<template>` 里用到的 API（如 `@cancel="ElMessage.info('删除已取消')"`）默认不会被注入，会编译成 `_ctx.ElMessage` 而运行时 undefined；且 `vue-tsc` / ESLint 因 `auto-imports.d.ts` 的全局声明会一律放行，这类断链只能看 Vite 编译产物（或运行时）才能发现。
 3. **全局注册**：`svg-icons-register`（`<svg-icon>` 可用）、`setupEcharts`（`<chart>`）、`v-auth` 指令。
 
 `src/components/` 一览：
@@ -259,7 +265,8 @@ BaseFieldSchema（身份 + 通用展示：key? / prop? / label / tooltip? / widt
 ## 工程约定
 
 - **代码风格**：Prettier（单引号、无分号、tab 缩进、printWidth 150）+ ESLint（typescript-eslint、unused-imports、`vue/no-mutating-props` shallowOnly）。函数声明统一箭头函数形式（func-style: expression）。
-- **书写习惯**：不含嵌套对象/数组的 schema 条目、只有常量字段的 `initFormData` / `initQueryForm` 写单行；含 `ruleList` / `validator` 嵌套的条目保持多行。
+- **书写习惯**：不含嵌套对象/数组的 schema 条目写单行，含 `ruleList` / `validator` 嵌套的条目保持多行；但 `initFormData` / `initQueryData` **一律多行、一行一个字段**（哪怕字段很少），因为页面加字段时这两处是必改点，单行写法会让 diff 挤在一行、也容易漏改。
+- **加字段清单**：新增业务字段需同步改 Entity/VO 类型、`fields` 条目、`initFormData`、`initQueryData`（若参与搜索），后端还要补 Mapper resultMap / SQL 列，缺一个都是静默不生效。
 - **console**：生产构建已由 `vite.config.ts` 的 `rolldownOptions.output.minify.compress.dropConsole` 打包剔除；开发期调试日志发布前清理。
 - **提交前检查**：目前无 husky / CI，需**手动**跑 `pnpm lint && pnpm type-check`（二者通过才可提交）。
 - **注释风格**：中文注释；关键设计决策与踩坑点必须写"为什么"（为什么这样做、踩过什么坑、曾考虑过什么被否），长文件用 `// ======== 区块名 ========` 分节。

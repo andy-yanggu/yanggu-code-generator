@@ -61,14 +61,21 @@ import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import DatasourceTestDialog from '@/views/gen/datasource/test-dialog.vue'
 import { Connection, CopyDocument, Delete, Edit } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 
 defineOptions({
 	name: 'GenDatasource'
 })
 
 // 初始化表单数据
-const initFormData = (): GenDatasourceEntity => ({ id: null, dbType: '', connName: '', connUrl: '', username: '', password: '', datasourceDesc: '' })
+const initFormData = (): GenDatasourceEntity => ({
+	id: null,
+	dbType: '',
+	connName: '',
+	connUrl: '',
+	username: '',
+	password: '',
+	datasourceDesc: ''
+})
 
 // 统一字段声明
 const fields: CrudField[] = [
@@ -127,11 +134,14 @@ const formConfig = reactive({
 } as UseCrudFormOptions)
 
 // 初始化查询表单数据
-const initQueryForm = (): GenDatasourceQuery => ({ dbType: '', connName: '' })
+const initQueryData = (): GenDatasourceQuery => ({
+	dbType: '',
+	connName: ''
+})
 
 // 表格配置
 const tableConfig = reactive({
-	initQueryForm,
+	initQueryData,
 	dataListApi: genDatasourceApi.entityPage,
 	deleteApi: genDatasourceApi.deleteList,
 	deleteNameKey: 'connName'

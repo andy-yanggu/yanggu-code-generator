@@ -61,7 +61,7 @@ const tableConfig: UseCrudTableOptions<GenTableEntity, GenTableQuery> = {
 	// 项目为必填，打开弹窗时不自动查询，等用户选完项目点「查询」
 	resetQueryGetData: false,
 	dataListApi: genProjectApi.tableList,
-	initQueryForm: (): GenTableQuery => ({
+	initQueryData: (): GenTableQuery => ({
 		projectId: '',
 		tableName: ''
 	}),

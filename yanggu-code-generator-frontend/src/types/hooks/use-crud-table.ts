@@ -27,7 +27,7 @@ export interface UseCrudTableOptions<VO = any, Query = any> extends BuiltinColum
 	tableColumns?: TableFieldSchema[]
 	// ======== 查询 ========
 	/** 查询表单初始值工厂；无搜索表单时无需填写，默认 () => ({}) */
-	initQueryForm?: () => Query
+	initQueryData?: () => Query
 	/** 搜索字段配置 */
 	searchSchema?: SearchFieldSchema[]
 	/** 固定查询上下文（不被 reset 覆盖，如固定租户 ID）。支持响应式（computed / ref / reactive） */
@@ -96,7 +96,7 @@ export interface UseCrudTableReturn<VO = any, Query = any> {
 	search: {
 		/** 归一化后的搜索字段 */
 		fields: NormalizedSearchField[]
-		/** 查询表单（与 initQueryForm 返回值同构） */
+		/** 查询表单（与 initQueryData 返回值同构） */
 		form: Query
 		/** 搜索区是否展开 */
 		visible: boolean

@@ -44,7 +44,12 @@ const fields: CrudField[] = [
 ]
 
 // 初始化表单数据
-const initFormData = (): GenFieldTypeEntity => ({ id: null, columnType: '', attrType: '', packageName: '' })
+const initFormData = (): GenFieldTypeEntity => ({
+	id: null,
+	columnType: '',
+	attrType: '',
+	packageName: ''
+})
 
 // 表单配置
 const formConfig = reactive({
@@ -54,11 +59,14 @@ const formConfig = reactive({
 } as UseCrudFormOptions)
 
 // 初始化查询表单数据
-const initQueryForm = (): GenFieldTypeQuery => ({ columnType: '', attrType: '' })
+const initQueryData = (): GenFieldTypeQuery => ({
+	columnType: '',
+	attrType: ''
+})
 
 // 表格配置
 const tableConfig = reactive({
-	initQueryForm,
+	initQueryData,
 	dataListApi: genFieldTypeApi.entityPage,
 	deleteApi: genFieldTypeApi.deleteList,
 	deleteNameKey: 'columnType',

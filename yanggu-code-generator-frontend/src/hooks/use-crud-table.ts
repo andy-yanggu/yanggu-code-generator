@@ -75,7 +75,7 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		resetQueryGetData: true,
 		showTableHeader: true,
 		showToolbarLeft: true,
-		initQueryForm: () => ({}) as Query,
+		initQueryData: () => ({}) as Query,
 		searchSchema: [],
 		queryContext: {},
 		exportSuccessMessage: DEFAULT_EXPORT_SUCCESS_MESSAGE,
@@ -92,10 +92,10 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 	const resetQueryGetData = opts.resetQueryGetData!
 
 	// ====== 1. 查询/分页 ======
-	// 不能写成 reactive({ ...(opts.initQueryForm!() as object) })：展开一个未实例化的泛型形参
+	// 不能写成 reactive({ ...(opts.initQueryData!() as object) })：展开一个未实例化的泛型形参
 	// 会把类型擦成 {}，导致页面访问 tableHook.search.form.xxx 报 TS2339。
 	// reactive 的形参要求 object，而裸泛型形参的隐式约束是 unknown，所以需先断言为 object。
-	const queryForm = reactive((opts.initQueryForm?.() ?? {}) as object) as Query
+	const queryForm = reactive((opts.initQueryData?.() ?? {}) as object) as Query
 	const dataList = ref([] as VO[])
 	const loading = ref(false)
 	const pageNum = ref(1)
@@ -192,9 +192,9 @@ export const useCrudTable = <VO = any, Query = any>(opts: UseCrudTableOptions<VO
 		executeQuery()
 	}
 
-	// 把查询表单恢复到 initQueryForm() 的初始值
+	// 把查询表单恢复到 initQueryData() 的初始值
 	const resetQueryForm = () => {
-		const initial = (opts.initQueryForm?.() ?? {}) as Record<string, any>
+		const initial = (opts.initQueryData?.() ?? {}) as Record<string, any>
 		const form = queryForm as Record<string, any>
 		// 先删多余 key：el-form 的 resetFields() 走 setProp(model, prop, initialValue)，
 		// prop 不在 model 上时会新建 key，这些 key 会随 buildQueryForm() 的展开一起发给后端。

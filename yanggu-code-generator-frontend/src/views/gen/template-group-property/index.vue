@@ -244,7 +244,7 @@ const tableConfig = reactive({
 	importApi: genTemplateGroupPropertyApi.import,
 	mountedGetData: false,
 	queryContext: computed(() => ({ templateGroupId: props.templateGroupId })),
-	initQueryForm: (): GenTemplateGroupPropertyQuery => ({
+	initQueryData: (): GenTemplateGroupPropertyQuery => ({
 		templateGroupId: '',
 		propTitle: '',
 		propKey: ''
