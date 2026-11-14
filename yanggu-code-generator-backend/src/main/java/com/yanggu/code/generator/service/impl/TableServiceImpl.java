@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.TableDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
@@ -32,7 +31,6 @@ import java.rmi.ServerException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -127,46 +125,22 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
     @Override
-    public PageVO<TableVO> entityPage(TableQuery query) {
-        Page<TableEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
-        tableMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //tableMapper.entityPage(page, query);
-        return tableMapstruct.entityToPageVO(page);
-    }
-
-    /**
-     * 简单列表
-     */
-    @Override
-    public List<TableVO> entityList(TableQuery query) {
-        //简单sql使用QueryWrapper
-        List<TableEntity> entityList = tableMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<TableEntity> entityList = tableMapper.entityList(query);
-        return tableMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<TableVO> voPage(TableQuery query) {
+    public PageVO<TableVO> page(TableQuery query) {
+        //需要JOIN关联字段，使用xml
         Page<TableVO> page = query.toPage();
         tableMapper.voPage(page, query);
         return tableMapstruct.voToPageVO(page);
     }
 
     /**
-     * 复杂列表
+     * 列表（完整VO，含关联字段）
      */
     @Override
-    public List<TableVO> voList(TableQuery query) {
-        //查询全部数据
+    public List<TableVO> list(TableQuery query) {
+        //需要JOIN关联字段，使用xml
         return tableMapper.voList(query);
     }
 
@@ -305,18 +279,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
             throw new BusinessException(DATA_NOT_EXIST, "表", id);
         }
         return entity;
-    }
-
-    private LambdaQueryWrapper<TableEntity> buildQueryWrapper(TableQuery query) {
-        LambdaQueryWrapper<TableEntity> wrapper = Wrappers.lambdaQuery(TableEntity.class);
-
-        wrapper.eq(Objects.nonNull(query.getProjectId()), TableEntity::getProjectId, query.getProjectId());
-        wrapper.like(MybatisUtil.isNotEmpty(query.getTableName()), TableEntity::getTableName, query.getTableName());
-        wrapper.like(MybatisUtil.isNotEmpty(query.getClassName()), TableEntity::getClassName, query.getClassName());
-
-        //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
-        return wrapper;
     }
 
     private void importTable(ProjectEntity project, DataSourceBO dataSource, String tableName) {

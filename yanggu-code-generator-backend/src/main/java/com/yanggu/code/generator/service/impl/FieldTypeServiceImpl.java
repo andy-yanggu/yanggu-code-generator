@@ -104,47 +104,24 @@ public class FieldTypeServiceImpl extends ServiceImpl<FieldTypeMapper, FieldType
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<FieldTypeVO> entityPage(FieldTypeQuery query) {
+    public PageVO<FieldTypeVO> page(FieldTypeQuery query) {
+        //无JOIN需求，使用QueryWrapper
         Page<FieldTypeEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
         fieldTypeMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //fieldTypeMapper.entityPage(page, query);
         return fieldTypeMapstruct.entityToPageVO(page);
     }
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<FieldTypeVO> entityList(FieldTypeQuery query) {
-        //简单sql使用QueryWrapper
+    public List<FieldTypeVO> list(FieldTypeQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<FieldTypeEntity> entityList = fieldTypeMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<FieldTypeEntity> entityList = fieldTypeMapper.entityList(query);
         return fieldTypeMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<FieldTypeVO> voPage(FieldTypeQuery query) {
-        Page<FieldTypeVO> page = query.toPage();
-        fieldTypeMapper.voPage(page, query);
-        return fieldTypeMapstruct.voToPageVO(page);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<FieldTypeVO> voList(FieldTypeQuery query) {
-        //查询全部数据
-        return fieldTypeMapper.voList(query);
     }
 
     @Override

@@ -105,7 +105,7 @@ const init = () => {
 		tableHook.table.data = []
 		tableHook.query.reset()
 
-		genProjectApi.entityList().then(data => {
+		genProjectApi.list().then(data => {
 			projectList.value = data
 		})
 	})

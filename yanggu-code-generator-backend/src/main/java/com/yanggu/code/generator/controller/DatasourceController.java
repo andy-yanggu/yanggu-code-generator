@@ -103,43 +103,23 @@ public class DatasourceController {
     }
 
     /**
-     * 数据源简单分页
+     * 数据源分页（完整VO）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "数据源简单分页")
-    public PageVO<DatasourceVO> entityPage(@RequestBody DatasourceQuery query) {
-        return datasourceService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "数据源分页")
+    public PageVO<DatasourceVO> page(@RequestBody DatasourceQuery query) {
+        return datasourceService.page(query);
     }
 
     /**
-     * 数据源简单列表
+     * 数据源列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "数据源简单列表")
-    public List<DatasourceVO> entityList(@RequestBody DatasourceQuery query) {
-        return datasourceService.entityList(query);
-    }
-
-    /**
-     * 数据源复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "数据源复杂分页")
-    public PageVO<DatasourceVO> voPage(@RequestBody DatasourceQuery query) {
-        return datasourceService.voPage(query);
-    }
-
-    /**
-     * 数据源复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "数据源复杂列表")
-    public List<DatasourceVO> voList(@RequestBody DatasourceQuery query) {
-        return datasourceService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "数据源列表")
+    public List<DatasourceVO> list(@RequestBody DatasourceQuery query) {
+        return datasourceService.list(query);
     }
 
     /**

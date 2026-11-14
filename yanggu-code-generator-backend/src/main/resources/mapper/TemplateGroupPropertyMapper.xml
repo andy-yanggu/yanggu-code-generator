@@ -52,6 +52,13 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
+    <!-- VO类字段映射（JSON列必须显式指定TypeHandler，其余列自动映射） -->
+    <resultMap type="com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO" id="templateGroupPropertyVOMap" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="componentOptions" column="component_options"
+                typeHandler="com.yanggu.code.generator.config.LabelValueDataTypeHandler"/>
+    </resultMap>
+
     <!-- Entity分页 -->
     <select id="entityPage" resultMap="templateGroupPropertyMap">
         SELECT
@@ -79,7 +86,7 @@
     </select>
 
     <!-- VO分页 -->
-    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO">
+    <select id="voPage" resultMap="templateGroupPropertyVOMap">
         SELECT
         <include refid="allColumns"/>
         FROM
@@ -92,7 +99,7 @@
     </select>
 
     <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO">
+    <select id="voList" resultMap="templateGroupPropertyVOMap">
         SELECT
         <include refid="allColumns"/>
         FROM

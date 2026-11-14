@@ -102,43 +102,23 @@ public class BaseClassController {
     }
 
     /**
-     * 基类简单分页
+     * 基类分页（完整VO）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "基类简单分页")
-    public PageVO<BaseClassVO> entityPage(@RequestBody BaseClassQuery query) {
-        return baseClassService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "基类分页")
+    public PageVO<BaseClassVO> page(@RequestBody BaseClassQuery query) {
+        return baseClassService.page(query);
     }
 
     /**
-     * 基类简单列表
+     * 基类列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "基类简单列表")
-    public List<BaseClassVO> entityList(@RequestBody BaseClassQuery query) {
-        return baseClassService.entityList(query);
-    }
-
-    /**
-     * 基类复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "基类复杂分页")
-    public PageVO<BaseClassVO> voPage(@RequestBody BaseClassQuery query) {
-        return baseClassService.voPage(query);
-    }
-
-    /**
-     * 基类复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "基类复杂列表")
-    public List<BaseClassVO> voList(@RequestBody BaseClassQuery query) {
-        return baseClassService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "基类列表")
+    public List<BaseClassVO> list(@RequestBody BaseClassQuery query) {
+        return baseClassService.list(query);
     }
 
 }

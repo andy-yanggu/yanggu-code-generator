@@ -45,23 +45,13 @@ public interface BaseClassService extends IService<BaseClassEntity> {
     List<BaseClassVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<BaseClassVO> entityPage(BaseClassQuery query);
+    PageVO<BaseClassVO> page(BaseClassQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<BaseClassVO> entityList(BaseClassQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<BaseClassVO> voPage(BaseClassQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<BaseClassVO> voList(BaseClassQuery query);
+    List<BaseClassVO> list(BaseClassQuery query);
 
 }

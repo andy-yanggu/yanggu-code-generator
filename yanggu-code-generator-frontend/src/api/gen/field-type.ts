@@ -4,7 +4,7 @@ import { GenFieldTypeEntity, GenFieldTypeQuery } from '@/types'
 
 // 特定api
 interface CustomApi {
-	list: () => Promise<string[]>
+	distinctList: () => Promise<string[]>
 }
 
 const baseUrl: string = '/gen/fieldType'
@@ -13,8 +13,8 @@ const baseUrl: string = '/gen/fieldType'
 export const genFieldTypeApi: EnabledCrudApi<GenFieldTypeEntity, GenFieldTypeQuery> & CustomApi = {
 	// 通用CRUD接口
 	...createCrudApi<GenFieldTypeEntity, GenFieldTypeQuery>(baseUrl),
-	// 获取字段类型列表
-	list: (): Promise<string[]> => {
+	// 获取字段类型去重名称列表
+	distinctList: (): Promise<string[]> => {
 		return service.get(baseUrl + '/distinctList')
 	}
 }

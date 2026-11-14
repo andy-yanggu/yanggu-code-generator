@@ -106,47 +106,24 @@ public class BaseClassServiceImpl extends ServiceImpl<BaseClassMapper, BaseClass
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<BaseClassVO> entityPage(BaseClassQuery query) {
+    public PageVO<BaseClassVO> page(BaseClassQuery query) {
+        //无JOIN需求，使用QueryWrapper
         Page<BaseClassEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
         baseClassMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //baseClassMapper.entityPage(page, query);
         return baseClassMapstruct.entityToPageVO(page);
     }
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<BaseClassVO> entityList(BaseClassQuery query) {
-        //简单sql使用QueryWrapper
+    public List<BaseClassVO> list(BaseClassQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<BaseClassEntity> entityList = baseClassMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<BaseClassEntity> entityList = baseClassMapper.entityList(query);
         return baseClassMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<BaseClassVO> voPage(BaseClassQuery query) {
-        Page<BaseClassVO> page = query.toPage();
-        baseClassMapper.voPage(page, query);
-        return baseClassMapstruct.voToPageVO(page);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<BaseClassVO> voList(BaseClassQuery query) {
-        //查询全部数据：不传page即不触发分页插件
-        return baseClassMapper.voList(query);
     }
 
     private BaseClassEntity selectById(Long id) {

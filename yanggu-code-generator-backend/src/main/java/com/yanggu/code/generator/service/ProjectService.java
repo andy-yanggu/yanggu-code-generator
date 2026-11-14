@@ -47,24 +47,14 @@ public interface ProjectService extends IService<ProjectEntity> {
     List<ProjectVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
-    PageVO<ProjectVO> entityPage(ProjectQuery query);
+    PageVO<ProjectVO> page(ProjectQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO，含关联字段）
      */
-    List<ProjectVO> entityList(ProjectQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<ProjectVO> voPage(ProjectQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<ProjectVO> voList(ProjectQuery query);
+    List<ProjectVO> list(ProjectQuery query);
 
     /**
      * 项目下的表

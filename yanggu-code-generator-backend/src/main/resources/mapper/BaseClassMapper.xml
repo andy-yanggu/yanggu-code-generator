@@ -20,7 +20,7 @@
     <sql id="whereSQL">
         <!-- 这里写过滤语句，过滤项需要加query前缀 -->
         <if test="@com.yanggu.code.generator.common.mybatis.util.MybatisUtil@isNotEmpty(query, 'className')">
-            AND code LIKE CONCAT('%', #{query.className}, '%')
+            AND class_name LIKE CONCAT('%', #{query.className}, '%')
         </if>
     </sql>
 
@@ -35,6 +35,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <!-- VO类字段映射（JSON列必须显式指定TypeHandler，其余列自动映射） -->
+    <resultMap type="com.yanggu.code.generator.domain.vo.BaseClassVO" id="baseClassVOMap" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="fieldList" column="field_list"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ListStringTypeHandler"/>
     </resultMap>
 
     <!-- Entity分页 -->
@@ -64,7 +71,7 @@
     </select>
 
     <!-- VO分页 -->
-    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.BaseClassVO">
+    <select id="voPage" resultMap="baseClassVOMap">
         SELECT
         <include refid="allColumns"/>
         FROM
@@ -77,7 +84,7 @@
     </select>
 
     <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.BaseClassVO">
+    <select id="voList" resultMap="baseClassVOMap">
         SELECT
         <include refid="allColumns"/>
         FROM

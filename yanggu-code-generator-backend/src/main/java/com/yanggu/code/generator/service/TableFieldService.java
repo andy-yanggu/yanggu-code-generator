@@ -16,9 +16,9 @@ import java.util.List;
 public interface TableFieldService extends IService<TableFieldEntity> {
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<TableFieldVO> entityList(TableFieldQuery query);
+    List<TableFieldVO> list(TableFieldQuery query);
 
     /**
      * 表字段提交

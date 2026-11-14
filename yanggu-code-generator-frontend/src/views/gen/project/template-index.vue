@@ -57,7 +57,7 @@ const initQueryData = (): GenTemplateQuery => ({
 
 // 表格配置
 const tableHook = useCrudTable<GenTemplateEntity, GenTemplateQuery>({
-	dataListApi: genTemplateApi.voPage,
+	dataListApi: genTemplateApi.page,
 	tableKey: 'gen-project-template',
 	initQueryData,
 	searchSchema: searchFields,

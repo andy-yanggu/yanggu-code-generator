@@ -47,24 +47,14 @@ public interface FieldTypeService extends IService<FieldTypeEntity> {
     List<FieldTypeVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<FieldTypeVO> entityPage(FieldTypeQuery query);
+    PageVO<FieldTypeVO> page(FieldTypeQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<FieldTypeVO> entityList(FieldTypeQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<FieldTypeVO> voPage(FieldTypeQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<FieldTypeVO> voList(FieldTypeQuery query);
+    List<FieldTypeVO> list(FieldTypeQuery query);
 
     Map<String, FieldTypeEntity> getMap();
 

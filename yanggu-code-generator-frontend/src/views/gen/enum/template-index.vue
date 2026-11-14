@@ -38,7 +38,7 @@ const tableConfig: UseCrudTableOptions<GenTemplateEntity, GenTemplateQuery> = {
 		templateName: '',
 		templateType: ''
 	}),
-	dataListApi: genTemplateApi.voPage,
+	dataListApi: genTemplateApi.page,
 	mountedGetData: false,
 	queryContext: computed(() => ({ templateGroupId: currentGroupId.value })),
 	searchSchema: [

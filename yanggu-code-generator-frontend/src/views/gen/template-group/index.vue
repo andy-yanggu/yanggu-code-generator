@@ -152,7 +152,7 @@ const formConfig = reactive({
 
 // 表格配置
 const tableConfig = reactive({
-	dataListApi: genTemplateGroupApi.voPage,
+	dataListApi: genTemplateGroupApi.page,
 	deleteApi: genTemplateGroupApi.deleteList,
 	deleteNameKey: 'groupName',
 	deleteConfirmMessage: '删除模板组，模板组下面的所有模板、属性都会删除',

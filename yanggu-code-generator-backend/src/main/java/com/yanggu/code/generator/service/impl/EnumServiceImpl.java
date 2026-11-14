@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.dto.EnumDTO;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.EnumItemEntity;
@@ -126,46 +125,22 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
     @Override
-    public PageVO<EnumVO> entityPage(EnumQuery query) {
-        Page<EnumEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
-        enumMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //enumMapper.entityPage(page, query);
-        return enumMapstruct.entityToPageVO(page);
-    }
-
-    /**
-     * 简单列表
-     */
-    @Override
-    public List<EnumVO> entityList(EnumQuery query) {
-        //简单sql使用QueryWrapper
-        List<EnumEntity> entityList = enumMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<EnumEntity> entityList = enumMapper.entityList(query);
-        return enumMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<EnumVO> voPage(EnumQuery query) {
+    public PageVO<EnumVO> page(EnumQuery query) {
+        //需要JOIN关联字段，使用xml
         Page<EnumVO> page = query.toPage();
         enumMapper.voPage(page, query);
         return enumMapstruct.voToPageVO(page);
     }
 
     /**
-     * 复杂列表
+     * 列表（完整VO，含关联字段）
      */
     @Override
-    public List<EnumVO> voList(EnumQuery query) {
-        //查询全部数据
+    public List<EnumVO> list(EnumQuery query) {
+        //需要JOIN关联字段，使用xml
         return enumMapper.voList(query);
     }
 
@@ -246,18 +221,6 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
         if (exists) {
             throw new BusinessException("枚举已被表字段引用，不能删除");
         }
-    }
-
-    private LambdaQueryWrapper<EnumEntity> buildQueryWrapper(EnumQuery query) {
-        LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
-
-        //过滤字段
-        wrapper.eq(MybatisUtil.isNotEmpty(query.getProjectId()), EnumEntity::getProjectId, query.getProjectId());
-        wrapper.like(MybatisUtil.isNotEmpty(query.getEnumName()), EnumEntity::getEnumName, query.getEnumName());
-
-        //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
-        return wrapper;
     }
 
 }

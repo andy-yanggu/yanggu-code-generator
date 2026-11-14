@@ -117,47 +117,24 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyQuery query) {
+    public PageVO<TemplateGroupPropertyVO> page(TemplateGroupPropertyQuery query) {
+        //无JOIN需求，使用QueryWrapper
         Page<TemplateGroupPropertyEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
         templateGroupPropertyMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //templateGroupPropertyMapper.entityPage(page, query);
         return templateGroupPropertyMapstruct.entityToPageVO(page);
     }
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyQuery query) {
-        //简单sql使用QueryWrapper
+    public List<TemplateGroupPropertyVO> list(TemplateGroupPropertyQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<TemplateGroupPropertyEntity> entityList = templateGroupPropertyMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<TemplateGroupPropertyEntity> entityList = templateGroupPropertyMapper.entityList(query);
         return templateGroupPropertyMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyQuery query) {
-        Page<TemplateGroupPropertyVO> page = query.toPage();
-        templateGroupPropertyMapper.voPage(page, query);
-        return templateGroupPropertyMapstruct.voToPageVO(page);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyQuery query) {
-        //查询全部数据
-        return templateGroupPropertyMapper.voList(query);
     }
 
     @Override

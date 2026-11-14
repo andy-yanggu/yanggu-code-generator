@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.dto.ProjectDTO;
 import com.yanggu.code.generator.domain.dto.TableImportDTO;
@@ -143,46 +142,22 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
     @Override
-    public PageVO<ProjectVO> entityPage(ProjectQuery query) {
-        Page<ProjectEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
-        projectMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //projectMapper.entityPage(page, query);
-        return projectMapstruct.entityToPageVO(page);
-    }
-
-    /**
-     * 简单列表
-     */
-    @Override
-    public List<ProjectVO> entityList(ProjectQuery query) {
-        //简单sql使用QueryWrapper
-        List<ProjectEntity> entityList = projectMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<ProjectEntity> entityList = projectMapper.entityList(query);
-        return projectMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<ProjectVO> voPage(ProjectQuery query) {
+    public PageVO<ProjectVO> page(ProjectQuery query) {
+        //需要JOIN关联字段，使用xml
         Page<ProjectVO> page = query.toPage();
         projectMapper.voPage(page, query);
         return projectMapstruct.voToPageVO(page);
     }
 
     /**
-     * 复杂列表
+     * 列表（完整VO，含关联字段）
      */
     @Override
-    public List<ProjectVO> voList(ProjectQuery query) {
-        //查询全部数据
+    public List<ProjectVO> list(ProjectQuery query) {
+        //需要JOIN关联字段，使用xml
         return projectMapper.voList(query);
     }
 
@@ -226,21 +201,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         if (exists) {
             throw new BusinessException(DATA_ALREADY_EXIST, "项目", dto.getProjectName());
         }
-    }
-
-    private LambdaQueryWrapper<ProjectEntity> buildQueryWrapper(ProjectQuery query) {
-        LambdaQueryWrapper<ProjectEntity> wrapper = Wrappers.lambdaQuery(ProjectEntity.class);
-
-        //过滤字段
-        wrapper.like(MybatisUtil.isNotEmpty(query.getProjectName()), ProjectEntity::getProjectName, query.getProjectName());
-        //生成方式
-        wrapper.eq(MybatisUtil.isNotEmpty(query.getGeneratorType()), ProjectEntity::getGeneratorType, query.getGeneratorType());
-        //时间过滤
-        wrapper.between(MybatisUtil.isNotEmpty(query.getStartTime()) && MybatisUtil.isNotEmpty(query.getEndTime()), ProjectEntity::getCreateTime, query.getStartTime(), query.getEndTime());
-
-        //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
-        return wrapper;
     }
 
 }

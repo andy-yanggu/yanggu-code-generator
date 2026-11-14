@@ -148,7 +148,7 @@ const initQueryData = (): GenBaseClassQuery => ({
 // 表格配置
 const tableConfig = reactive({
 	initQueryData,
-	dataListApi: genBaseClassApi.entityPage,
+	dataListApi: genBaseClassApi.page,
 	deleteApi: genBaseClassApi.deleteList,
 	deleteNameKey: 'baseClassName',
 	tableKey: 'gen-base-class'

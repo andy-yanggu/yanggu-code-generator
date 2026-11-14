@@ -31,30 +31,18 @@ export interface CrudApi<Entity = any, Query extends PageQuery = PageQuery, VO =
 	detailList: (idList: KeyArray) => Promise<VO[]>
 
 	/**
-	 * 分页查询基础实体数据
-	 * - 只返回表的原始字段，不包含关联表信息
-	 * - 用于简单分页展示和列表查询
+	 * 分页查询（统一入口，返回完整VO）
+	 * - 后端自动选择实现：有JOIN关联字段走XML，否则走QueryWrapper
+	 * - 包含JSON列与关联表信息
 	 */
-	entityPage: (queryForm?: Query) => Promise<PageVO<VO>>
+	page: (queryForm?: Query) => Promise<PageVO<VO>>
 
 	/**
-	 * 分页查询复杂视图数据（VO）
-	 * - 可能包含关联表 JOIN 的额外信息
-	 * - 用于需要显示完整业务信息的场景
+	 * 列表查询（统一入口，无分页，返回完整VO）
+	 * - 后端自动选择实现：有JOIN关联字段走XML，否则走QueryWrapper
+	 * - 包含JSON列与关联表信息
 	 */
-	voPage: (queryForm?: Query) => Promise<PageVO<VO>>
-
-	/**
-	 * 列表查询基础实体数据（无分页）
-	 * - 只返回表原始字段
-	 */
-	entityList: (queryForm?: Query) => Promise<VO[]>
-
-	/**
-	 * 列表查询复杂视图数据（VO）（无分页）
-	 * - 包含关联表 JOIN 的额外信息
-	 */
-	voList: (queryForm?: Query) => Promise<VO[]>
+	list: (queryForm?: Query) => Promise<VO[]>
 
 	/**
 	 * 导出数据，勾选导出数据
@@ -121,13 +109,9 @@ export const createCrudApi = <
 
 	add('detailList', idList => service.post(`${baseUrl}/detailList`, idList))
 
-	add('entityPage', queryForm => service.post(`${baseUrl}/entityPage`, queryForm ?? {}))
+	add('page', queryForm => service.post(`${baseUrl}/page`, queryForm ?? {}))
 
-	add('entityList', queryForm => service.post(`${baseUrl}/entityList`, queryForm ?? {}))
-
-	add('voPage', queryForm => service.post(`${baseUrl}/voPage`, queryForm ?? {}))
-
-	add('voList', queryForm => service.post(`${baseUrl}/voList`, queryForm ?? {}))
+	add('list', queryForm => service.post(`${baseUrl}/list`, queryForm ?? {}))
 
 	add('export', idList => downloadFile(`${baseUrl}/export`, { idList }))
 

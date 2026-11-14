@@ -111,47 +111,24 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<DatasourceVO> entityPage(DatasourceQuery query) {
+    public PageVO<DatasourceVO> page(DatasourceQuery query) {
+        //无JOIN需求，使用QueryWrapper
         Page<DatasourceEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
         datasourceMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //datasourceMapper.entityPage(page, query);
         return datasourceMapstruct.entityToPageVO(page);
     }
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<DatasourceVO> entityList(DatasourceQuery query) {
-        //简单sql使用QueryWrapper
+    public List<DatasourceVO> list(DatasourceQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<DatasourceEntity> entityList = datasourceMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<DatasourceEntity> entityList = datasourceMapper.entityList(query);
         return datasourceMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<DatasourceVO> voPage(DatasourceQuery query) {
-        Page<DatasourceVO> page = query.toPage();
-        datasourceMapper.voPage(page, query);
-        return datasourceMapstruct.voToPageVO(page);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<DatasourceVO> voList(DatasourceQuery query) {
-        //查询全部数据
-        return datasourceMapper.voList(query);
     }
 
     @Override

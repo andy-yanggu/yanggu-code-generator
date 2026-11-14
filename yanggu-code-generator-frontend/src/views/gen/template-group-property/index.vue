@@ -237,7 +237,7 @@ const formConfig = reactive({
 
 // 表格配置
 const tableConfig = reactive({
-	dataListApi: genTemplateGroupPropertyApi.entityPage,
+	dataListApi: genTemplateGroupPropertyApi.page,
 	deleteApi: genTemplateGroupPropertyApi.deleteList,
 	deleteNameKey: 'propTitle',
 	exportApi: genTemplateGroupPropertyApi.export,

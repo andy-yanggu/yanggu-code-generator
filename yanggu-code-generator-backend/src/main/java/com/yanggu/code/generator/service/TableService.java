@@ -47,24 +47,14 @@ public interface TableService extends IService<TableEntity> {
     List<TableVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
-    PageVO<TableVO> entityPage(TableQuery query);
+    PageVO<TableVO> page(TableQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO，含关联字段）
      */
-    List<TableVO> entityList(TableQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<TableVO> voPage(TableQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<TableVO> voList(TableQuery query);
+    List<TableVO> list(TableQuery query);
 
     /**
      * 导入表

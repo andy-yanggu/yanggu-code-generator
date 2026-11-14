@@ -180,7 +180,7 @@ const queryContext = reactive({
 // 表格配置
 const tableConfig = reactive({
 	initQueryData,
-	dataListApi: genEnumItemApi.entityPage,
+	dataListApi: genEnumItemApi.page,
 	deleteApi: genEnumItemApi.deleteList,
 	deleteNameKey: 'enumItemName',
 	tableKey: 'gen-enum-item',

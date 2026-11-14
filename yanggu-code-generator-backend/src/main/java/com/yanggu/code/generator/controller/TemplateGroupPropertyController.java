@@ -109,43 +109,23 @@ public class TemplateGroupPropertyController {
     }
 
     /**
-     * 模板组属性简单分页
+     * 模板组属性分页（完整VO）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "模板组属性简单分页")
-    public PageVO<TemplateGroupPropertyVO> entityPage(@RequestBody TemplateGroupPropertyQuery query) {
-        return templateGroupPropertyService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "模板组属性分页")
+    public PageVO<TemplateGroupPropertyVO> page(@RequestBody TemplateGroupPropertyQuery query) {
+        return templateGroupPropertyService.page(query);
     }
 
     /**
-     * 模板组属性简单列表
+     * 模板组属性列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "模板组属性简单列表")
-    public List<TemplateGroupPropertyVO> entityList(@RequestBody TemplateGroupPropertyQuery query) {
-        return templateGroupPropertyService.entityList(query);
-    }
-
-    /**
-     * 模板组属性复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "模板组属性复杂分页")
-    public PageVO<TemplateGroupPropertyVO> voPage(@RequestBody TemplateGroupPropertyQuery query) {
-        return templateGroupPropertyService.voPage(query);
-    }
-
-    /**
-     * 模板组属性复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "模板组属性复杂列表")
-    public List<TemplateGroupPropertyVO> voList(@RequestBody TemplateGroupPropertyQuery query) {
-        return templateGroupPropertyService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "模板组属性列表")
+    public List<TemplateGroupPropertyVO> list(@RequestBody TemplateGroupPropertyQuery query) {
+        return templateGroupPropertyService.list(query);
     }
 
     /**

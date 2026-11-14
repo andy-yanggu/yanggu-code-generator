@@ -67,7 +67,7 @@ const initQueryData = (): GenFieldTypeQuery => ({
 // 表格配置
 const tableConfig = reactive({
 	initQueryData,
-	dataListApi: genFieldTypeApi.entityPage,
+	dataListApi: genFieldTypeApi.page,
 	deleteApi: genFieldTypeApi.deleteList,
 	deleteNameKey: 'columnType',
 	tableKey: 'gen-field-type'

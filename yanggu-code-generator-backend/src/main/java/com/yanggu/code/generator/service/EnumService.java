@@ -46,24 +46,14 @@ public interface EnumService extends IService<EnumEntity> {
     List<EnumVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
-    PageVO<EnumVO> entityPage(EnumQuery query);
+    PageVO<EnumVO> page(EnumQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO，含关联字段）
      */
-    List<EnumVO> entityList(EnumQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<EnumVO> voPage(EnumQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<EnumVO> voList(EnumQuery query);
+    List<EnumVO> list(EnumQuery query);
 
     List<EnumEntity> enumList(Long projectId);
 

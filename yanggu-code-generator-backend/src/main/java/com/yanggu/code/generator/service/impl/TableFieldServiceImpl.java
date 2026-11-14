@@ -40,14 +40,12 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
     private FieldTypeService fieldTypeService;
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<TableFieldVO> entityList(TableFieldQuery query) {
-        //简单sql使用QueryWrapper
+    public List<TableFieldVO> list(TableFieldQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<TableFieldEntity> entityList = tableFieldMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<TableFieldEntity> entityList = tableFieldMapper.entityList(query);
         return tableFieldMapstruct.entityToVO(entityList);
     }
 

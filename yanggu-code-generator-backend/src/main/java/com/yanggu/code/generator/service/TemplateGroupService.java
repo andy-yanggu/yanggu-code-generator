@@ -50,24 +50,14 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     List<TemplateGroupVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
-    PageVO<TemplateGroupVO> entityPage(TemplateGroupQuery query);
+    PageVO<TemplateGroupVO> page(TemplateGroupQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO，含关联字段及属性清单）
      */
-    List<TemplateGroupVO> entityList(TemplateGroupQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<TemplateGroupVO> voPage(TemplateGroupQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<TemplateGroupVO> voList(TemplateGroupQuery query);
+    List<TemplateGroupVO> list(TemplateGroupQuery query);
 
     /**
      * 复制模板组

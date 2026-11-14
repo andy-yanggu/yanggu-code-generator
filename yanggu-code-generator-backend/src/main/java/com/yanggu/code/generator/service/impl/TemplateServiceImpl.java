@@ -144,10 +144,11 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     /**
-     * 复杂分页
+     * 分页（完整VO，含关联字段）
      */
     @Override
-    public PageVO<TemplateVO> voPage(TemplateQuery query) {
+    public PageVO<TemplateVO> page(TemplateQuery query) {
+        //需要JOIN关联字段，使用xml
         Page<TemplateVO> page = query.toPage();
         templateMapper.voPage(page, query);
         return templateMapstruct.voToPageVO(page);

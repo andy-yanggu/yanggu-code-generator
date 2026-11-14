@@ -177,11 +177,11 @@ const enumTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 
 onMounted(() => {
 	// 数据源下拉
-	genDatasourceApi.entityList().then(data => {
+	genDatasourceApi.list().then(data => {
 		datasourceList.value = data
 	})
-	// 模板组下拉（按 type 分流：0 项目 / 1 表 / 2 枚举；voList 已内联 propertyList）
-	genTemplateGroupApi.voList().then(data => {
+	// 模板组下拉（按 type 分流：0 项目 / 1 表 / 2 枚举；list 已内联 propertyList）
+	genTemplateGroupApi.list().then(data => {
 		projectTemplateGroupList.value = data.filter(item => item.type === 0)
 		tableTemplateGroupList.value = data.filter(item => item.type === 1)
 		enumTemplateGroupList.value = data.filter(item => item.type === 2)
@@ -374,7 +374,7 @@ const tableColumns: TableFieldSchema[] = [
 // deleteConfirmMessage 只驱动工具栏"批量删除"的 MessageBox；行内单条删除走 Popconfirm（文案见 #table-action 插槽）。
 const tableConfig = reactive({
 	deleteNameKey: 'projectName',
-	dataListApi: genProjectApi.voPage,
+	dataListApi: genProjectApi.page,
 	deleteApi: genProjectApi.deleteList,
 	deleteConfirmMessage: '删除项目会删除项目下的所有表，是否继续？',
 	initQueryData: (): GenProjectQuery => ({
@@ -394,7 +394,7 @@ const { tableHook, formHook } = useCrud<GenProjectEntity, GenProjectQuery, GenPr
 	formConfig
 })
 
-// 所选项目模板组的属性清单（voList 已内联 propertyList，无需额外请求）；驱动动态子表单显隐与必填校验
+// 所选项目模板组的属性清单（list 已内联 propertyList，无需额外请求）；驱动动态子表单显隐与必填校验
 const projectTemplateGroupPropertyList = computed(() => {
 	const find = projectTemplateGroupList.value.find(item => item.id === formHook.form.data.projectTemplateGroupId)
 	return find?.propertyList ?? []

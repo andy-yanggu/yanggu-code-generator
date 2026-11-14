@@ -53,9 +53,9 @@ public interface TemplateService extends IService<TemplateEntity> {
     List<TemplateVO> detailList(List<Long> idList);
 
     /**
-     * 复杂分页
+     * 分页（完整VO，含关联字段）
      */
-    PageVO<TemplateVO> voPage(TemplateQuery query);
+    PageVO<TemplateVO> page(TemplateQuery query);
 
     /**
      * 根据模板组ID查询模板

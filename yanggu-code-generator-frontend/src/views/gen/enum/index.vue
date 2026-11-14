@@ -112,7 +112,7 @@ const projectList = ref([] as GenProjectEntity[])
 const enumTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
 const getProjectList = () => {
-	genProjectApi.entityList().then(data => {
+	genProjectApi.list().then(data => {
 		projectList.value = data
 	})
 }
@@ -173,7 +173,7 @@ const formConfig = reactive({
 // ====== 表格配置 ======
 const tableConfig = reactive({
 	deleteNameKey: 'enumName',
-	dataListApi: genEnumApi.voPage,
+	dataListApi: genEnumApi.page,
 	deleteApi: genEnumApi.deleteList,
 	initQueryData: (): GenEnumQuery => ({
 		enumName: '',
@@ -204,7 +204,7 @@ watch(
 		}
 
 		genTemplateGroupPropertyApi
-			.entityList({
+			.list({
 				templateGroupId: project.enumTemplateGroupId
 			})
 			.then(data => {

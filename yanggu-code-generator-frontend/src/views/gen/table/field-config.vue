@@ -243,9 +243,9 @@ const init = async (row: GenTableEntity) => {
 	try {
 		// 并行执行所有异步请求
 		const [fieldRes, enumRes, fieldTypeRes] = await Promise.all([
-			genTableFieldApi.entityList({ tableId: id as number }),
-			genEnumApi.entityList({ projectId: projectIdRef.value }),
-			genFieldTypeApi.list()
+			genTableFieldApi.list({ tableId: id as number }),
+			genEnumApi.list({ projectId: projectIdRef.value }),
+			genFieldTypeApi.distinctList()
 		])
 
 		fieldList.value = fieldRes

@@ -102,43 +102,23 @@ public class FieldTypeController {
     }
 
     /**
-     * 字段类型简单分页
+     * 字段类型分页（完整VO）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "字段类型简单分页")
-    public PageVO<FieldTypeVO> entityPage(@RequestBody FieldTypeQuery query) {
-        return fieldTypeService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "字段类型分页")
+    public PageVO<FieldTypeVO> page(@RequestBody FieldTypeQuery query) {
+        return fieldTypeService.page(query);
     }
 
     /**
-     * 字段类型简单列表
+     * 字段类型列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "字段类型简单列表")
-    public List<FieldTypeVO> entityList(@RequestBody FieldTypeQuery query) {
-        return fieldTypeService.entityList(query);
-    }
-
-    /**
-     * 字段类型复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "字段类型复杂分页")
-    public PageVO<FieldTypeVO> voPage(@RequestBody FieldTypeQuery query) {
-        return fieldTypeService.voPage(query);
-    }
-
-    /**
-     * 字段类型复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "字段类型复杂列表")
-    public List<FieldTypeVO> voList(@RequestBody FieldTypeQuery query) {
-        return fieldTypeService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "字段类型列表")
+    public List<FieldTypeVO> list(@RequestBody FieldTypeQuery query) {
+        return fieldTypeService.list(query);
     }
 
     /**

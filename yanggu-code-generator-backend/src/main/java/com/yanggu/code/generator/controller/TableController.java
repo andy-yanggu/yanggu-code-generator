@@ -104,43 +104,23 @@ public class TableController {
     }
 
     /**
-     * 表简单分页
+     * 表分页（完整VO，含关联字段）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "表简单分页")
-    public PageVO<TableVO> entityPage(@RequestBody TableQuery query) {
-        return tableService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "表分页")
+    public PageVO<TableVO> page(@RequestBody TableQuery query) {
+        return tableService.page(query);
     }
 
     /**
-     * 表简单列表
+     * 表列表（完整VO，含关联字段）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "表简单列表")
-    public List<TableVO> entityList(@RequestBody TableQuery query) {
-        return tableService.entityList(query);
-    }
-
-    /**
-     * 表复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "表复杂分页")
-    public PageVO<TableVO> voPage(@RequestBody TableQuery query) {
-        return tableService.voPage(query);
-    }
-
-    /**
-     * 表复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "表复杂列表")
-    public List<TableVO> voList(@RequestBody TableQuery query) {
-        return tableService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "表列表")
+    public List<TableVO> list(@RequestBody TableQuery query) {
+        return tableService.list(query);
     }
 
     /**

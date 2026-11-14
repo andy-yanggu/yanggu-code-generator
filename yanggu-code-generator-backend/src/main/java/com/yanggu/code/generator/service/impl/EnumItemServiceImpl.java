@@ -99,47 +99,24 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<EnumItemVO> entityPage(EnumItemQuery query) {
-        //简单sql使用QueryWrapper
+    public PageVO<EnumItemVO> page(EnumItemQuery query) {
+        //无JOIN需求，使用QueryWrapper
         Page<EnumItemEntity> page = query.toPage();
         enumItemMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //enumItemMapper.entityPage(page, query);
         return enumItemMapstruct.entityToPageVO(page);
     }
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<EnumItemVO> entityList(EnumItemQuery query) {
-        //简单sql使用QueryWrapper
+    public List<EnumItemVO> list(EnumItemQuery query) {
+        //无JOIN需求，使用QueryWrapper
         List<EnumItemEntity> entityList = enumItemMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<EnumItemEntity> entityList = enumItemMapper.entityList(query);
         return enumItemMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<EnumItemVO> voPage(EnumItemQuery query) {
-        Page<EnumItemVO> page = query.toPage();
-        enumItemMapper.voPage(page, query);
-        return enumItemMapstruct.voToPageVO(page);
-    }
-
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<EnumItemVO> voList(EnumItemQuery query) {
-        //查询全部数据
-        return enumItemMapper.voList(query);
     }
 
     @Override

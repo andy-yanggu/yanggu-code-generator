@@ -66,7 +66,7 @@ const initQueryData = (): GenEnumQuery => ({
 
 // 表格配置
 const tableHook = useCrudTable<GenEnumEntity, GenEnumQuery>({
-	dataListApi: genEnumApi.entityPage,
+	dataListApi: genEnumApi.page,
 	tableKey: 'gen-project-enum',
 	initQueryData,
 	searchSchema: searchFields,
@@ -101,7 +101,7 @@ const init = (projectId: number) => {
 	tableHook.query.reset()
 }
 
-// 展开区枚举项缓存：首次展开时按 enumId 一次拉全（entityList 不分页），后续展开命中缓存
+// 展开区枚举项缓存：首次展开时按 enumId 一次拉全（list 不分页），后续展开命中缓存
 const enumItemsMap = reactive<Record<string, GenEnumItemEntity[]>>({})
 
 // el-tag 绑定归一：DB 行数据的 tag 字段是 string | null，且列默认值 'default' 不在 el-tag 白名单里，
@@ -113,7 +113,7 @@ const onExpandChange = (row: GenEnumEntity, expandedRows: GenEnumEntity[]) => {
 	// GenEnumEntity.id 声明为 Key（含 null/undefined 分支），真实数据必为数字主键，此处收敛索引类型
 	const enumId = row.id as number
 	if (!expandedRows.includes(row) || enumItemsMap[enumId]) return
-	genEnumItemApi.entityList({ enumId }).then(list => {
+	genEnumItemApi.list({ enumId }).then(list => {
 		enumItemsMap[enumId] = list
 	})
 }

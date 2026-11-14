@@ -53,24 +53,14 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
     List<TemplateGroupPropertyVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<TemplateGroupPropertyVO> entityPage(TemplateGroupPropertyQuery query);
+    PageVO<TemplateGroupPropertyVO> page(TemplateGroupPropertyQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<TemplateGroupPropertyVO> entityList(TemplateGroupPropertyQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<TemplateGroupPropertyVO> voPage(TemplateGroupPropertyQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<TemplateGroupPropertyVO> voList(TemplateGroupPropertyQuery query);
+    List<TemplateGroupPropertyVO> list(TemplateGroupPropertyQuery query);
 
     /**
      * 导出

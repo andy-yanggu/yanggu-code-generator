@@ -104,43 +104,23 @@ public class ProjectController {
     }
 
     /**
-     * 项目简单分页
+     * 项目分页（完整VO，含关联字段）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "项目简单分页")
-    public PageVO<ProjectVO> entityPage(@RequestBody ProjectQuery query) {
-        return projectService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "项目分页")
+    public PageVO<ProjectVO> page(@RequestBody ProjectQuery query) {
+        return projectService.page(query);
     }
 
     /**
-     * 项目简单列表
+     * 项目列表（完整VO，含关联字段）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "项目简单列表")
-    public List<ProjectVO> entityList(@RequestBody ProjectQuery query) {
-        return projectService.entityList(query);
-    }
-
-    /**
-     * 项目复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "项目复杂分页")
-    public PageVO<ProjectVO> voPage(@RequestBody ProjectQuery query) {
-        return projectService.voPage(query);
-    }
-
-    /**
-     * 项目复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "项目复杂列表")
-    public List<ProjectVO> voList(@RequestBody ProjectQuery query) {
-        return projectService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "项目列表")
+    public List<ProjectVO> list(@RequestBody ProjectQuery query) {
+        return projectService.list(query);
     }
 
     /**

@@ -15,7 +15,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.common.mybatis.util.MybatisUtil;
 import com.yanggu.code.generator.domain.bo.TemplateBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupPropertyBO;
@@ -157,48 +156,34 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     /**
-     * 简单分页
+     * 分页（完整VO，含关联字段）
      */
     @Override
-    public PageVO<TemplateGroupVO> entityPage(TemplateGroupQuery query) {
-        Page<TemplateGroupEntity> page = query.toPage();
-        //简单sql使用QueryWrapper
-        templateGroupMapper.selectPage(page, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //templateGroupMapper.entityPage(page, query);
-        return templateGroupMapstruct.entityToPageVO(page);
-    }
-
-    /**
-     * 简单列表
-     */
-    @Override
-    public List<TemplateGroupVO> entityList(TemplateGroupQuery query) {
-        //简单sql使用QueryWrapper
-        List<TemplateGroupEntity> entityList = templateGroupMapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<TemplateGroupBO> entityList = templateGroupMapper.entityList(query);
-        return templateGroupMapstruct.entityToVO(entityList);
-    }
-
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<TemplateGroupVO> voPage(TemplateGroupQuery query) {
+    public PageVO<TemplateGroupVO> page(TemplateGroupQuery query) {
+        //需要JOIN关联字段，使用xml
         Page<TemplateGroupVO> page = query.toPage();
         templateGroupMapper.voPage(page, query);
         return templateGroupMapstruct.voToPageVO(page);
     }
 
     /**
-     * 复杂列表
+     * 列表（完整VO，含关联字段及属性清单）
      */
     @Override
-    public List<TemplateGroupVO> voList(TemplateGroupQuery query) {
-        //查询全部数据
+    public List<TemplateGroupVO> list(TemplateGroupQuery query) {
+        //需要JOIN关联字段，使用xml
         List<TemplateGroupVO> voList = templateGroupMapper.voList(query);
+        fillPropertyList(voList);
+        return voList;
+    }
 
+    /**
+     * 填充模板组属性清单
+     */
+    private void fillPropertyList(List<TemplateGroupVO> voList) {
+        if (CollUtil.isEmpty(voList)) {
+            return;
+        }
         List<Long> groupIdList = voList.stream()
                 .map(TemplateGroupVO::getId)
                 .toList();
@@ -210,7 +195,6 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
             List<TemplateGroupPropertyVO> propertyVOList = templateGroupPropertyMapstruct.entityToVO(propertyList);
             vo.setPropertyList(propertyVOList);
         });
-        return voList;
     }
 
     @Override
@@ -539,18 +523,6 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         if (exists) {
             throw new BusinessException("模板组已被项目引用，不能删除");
         }
-    }
-
-    private LambdaQueryWrapper<TemplateGroupEntity> buildQueryWrapper(TemplateGroupQuery query) {
-        LambdaQueryWrapper<TemplateGroupEntity> wrapper = Wrappers.lambdaQuery(TemplateGroupEntity.class);
-
-        //过滤字段
-        wrapper.like(MybatisUtil.isNotEmpty(query.getGroupName()), TemplateGroupEntity::getGroupName, query.getGroupName());
-        wrapper.eq(MybatisUtil.isNotEmpty(query.getType()), TemplateGroupEntity::getType, query.getType());
-
-        //排序字段
-        MybatisUtil.orderBy(wrapper, query.getOrderItemList());
-        return wrapper;
     }
 
 }

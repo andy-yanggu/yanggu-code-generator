@@ -142,7 +142,7 @@ const initQueryData = (): GenDatasourceQuery => ({
 // 表格配置
 const tableConfig = reactive({
 	initQueryData,
-	dataListApi: genDatasourceApi.entityPage,
+	dataListApi: genDatasourceApi.page,
 	deleteApi: genDatasourceApi.deleteList,
 	deleteNameKey: 'connName'
 } as UseCrudTableOptions)

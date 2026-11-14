@@ -68,6 +68,15 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
+    <!-- VO类字段映射（JSON列必须显式指定TypeHandler，其余列自动映射） -->
+    <resultMap type="com.yanggu.code.generator.domain.vo.ProjectVO" id="projectVOMap" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="moduleList" column="module_list"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
+    </resultMap>
+
     <!-- Entity分页 -->
     <select id="entityPage" resultMap="projectMap">
         SELECT
@@ -97,7 +106,7 @@
     </select>
 
     <!-- VO分页 -->
-    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.ProjectVO">
+    <select id="voPage" resultMap="projectVOMap">
         SELECT
             <include refid="allColumns"/>,
             gtp.group_name AS project_template_group_name
@@ -113,11 +122,13 @@
     </select>
 
     <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.ProjectVO">
+    <select id="voList" resultMap="projectVOMap">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            gtp.group_name AS project_template_group_name
         FROM
             gen_project AS gp
+        LEFT JOIN gen_template_group AS gtp ON gp.project_template_group_id = gtp.id AND gtp.is_delete = 0
         <where>
             gp.is_delete = 0
             <include refid="whereSQL"/>

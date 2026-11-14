@@ -102,43 +102,23 @@ public class EnumItemController {
     }
 
     /**
-     * 枚举项简单分页
+     * 枚举项分页（完整VO）
      */
-    @PostMapping("/entityPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "枚举项简单分页")
-    public PageVO<EnumItemVO> entityPage(@RequestBody EnumItemQuery query) {
-        return enumItemService.entityPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "枚举项分页")
+    public PageVO<EnumItemVO> page(@RequestBody EnumItemQuery query) {
+        return enumItemService.page(query);
     }
 
     /**
-     * 枚举项简单列表
+     * 枚举项列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "枚举项简单列表")
-    public List<EnumItemVO> entityList(@RequestBody EnumItemQuery query) {
-        return enumItemService.entityList(query);
-    }
-
-    /**
-     * 枚举项复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "枚举项复杂分页")
-    public PageVO<EnumItemVO> voPage(@RequestBody EnumItemQuery query) {
-        return enumItemService.voPage(query);
-    }
-
-    /**
-     * 枚举项复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(order = 10)
-    @Operation(summary = "枚举项复杂列表")
-    public List<EnumItemVO> voList(@RequestBody EnumItemQuery query) {
-        return enumItemService.voList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 13)
+    @Operation(summary = "枚举项列表")
+    public List<EnumItemVO> list(@RequestBody EnumItemQuery query) {
+        return enumItemService.list(query);
     }
 
 }

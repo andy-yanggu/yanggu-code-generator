@@ -30,13 +30,13 @@ public class TableFieldController {
     private TableFieldService tableFieldService;
 
     /**
-     * 表字段简单列表
+     * 表字段列表（完整VO）
      */
-    @PostMapping("/entityList")
-    @ApiOperationSupport(order = 1)
-    @Operation(summary = "表字段简单列表")
-    public List<TableFieldVO> entityList(@RequestBody TableFieldQuery query) {
-        return tableFieldService.entityList(query);
+    @PostMapping("/list")
+    @ApiOperationSupport(order = 3)
+    @Operation(summary = "表字段列表")
+    public List<TableFieldVO> list(@RequestBody TableFieldQuery query) {
+        return tableFieldService.list(query);
     }
 
     /**

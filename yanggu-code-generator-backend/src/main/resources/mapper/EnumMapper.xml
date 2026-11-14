@@ -38,6 +38,13 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
+    <!-- VO类字段映射（JSON列必须显式指定TypeHandler，其余列自动映射） -->
+    <resultMap type="com.yanggu.code.generator.domain.vo.EnumVO" id="enumVOMap" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="templateGroupPropertyData" column="template_group_property_data"
+                typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
+    </resultMap>
+
     <resultMap id="enumModelMap" type="com.yanggu.code.generator.domain.entity.EnumEntity" autoMapping="true" extends="enumMap">
         <id property="id" column="id"/>
         <collection property="enumItemList" ofType="com.yanggu.code.generator.domain.entity.EnumItemEntity" autoMapping="true">
@@ -74,7 +81,7 @@
     </select>
 
     <!-- VO分页 -->
-    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
+    <select id="voPage" resultMap="enumVOMap">
         SELECT
             <include refid="allColumns"/>,
             IFNULL(c.enum_item_count, 0) AS enum_item_count,
@@ -105,11 +112,28 @@
     </select>
 
     <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.EnumVO">
+    <select id="voList" resultMap="enumVOMap">
         SELECT
-            <include refid="allColumns"/>
+            <include refid="allColumns"/>,
+            IFNULL(c.enum_item_count, 0) AS enum_item_count,
+            p.project_name,
+            p.generator_type,
+            p.enum_template_group_id
         FROM
             gen_enum AS e
+        JOIN gen_project AS p ON e.project_id = p.id AND p.is_delete = 0
+        LEFT JOIN
+        (
+            SELECT
+                ei.enum_id,
+                COUNT(*) AS enum_item_count
+            FROM
+                gen_enum_item AS ei
+            WHERE
+                ei.is_delete = 0
+            GROUP BY
+                ei.enum_id
+        ) AS c ON e.id = c.enum_id
         <where>
             e.is_delete = 0
             <include refid="whereSQL"/>

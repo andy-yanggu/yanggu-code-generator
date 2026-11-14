@@ -45,24 +45,14 @@ public interface EnumItemService extends IService<EnumItemEntity> {
     List<EnumItemVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<EnumItemVO> entityPage(EnumItemQuery query);
+    PageVO<EnumItemVO> page(EnumItemQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<EnumItemVO> entityList(EnumItemQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<EnumItemVO> voPage(EnumItemQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<EnumItemVO> voList(EnumItemQuery query);
+    List<EnumItemVO> list(EnumItemQuery query);
 
     List<EnumItemEntity> selectByEnumId(Long enumId);
 

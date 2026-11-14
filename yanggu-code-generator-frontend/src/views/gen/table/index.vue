@@ -170,11 +170,11 @@ const tableTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[
 
 onMounted(() => {
 	// 项目下拉（查询插槽 + 表单项目/模块联动共用）
-	genProjectApi.entityList().then(data => {
+	genProjectApi.list().then(data => {
 		projectList.value = data
 	})
 	// 基类下拉（表单 Entity/VO 基类选择）
-	genBaseClassApi.entityList().then(data => {
+	genBaseClassApi.list().then(data => {
 		baseClassList.value = data
 	})
 })
@@ -313,7 +313,7 @@ const formConfig = reactive({
 // ====== 表格配置 ======
 const tableConfig = reactive({
 	deleteNameKey: 'tableName',
-	dataListApi: genTableApi.voPage,
+	dataListApi: genTableApi.page,
 	deleteApi: genTableApi.deleteList,
 	initQueryData: (): GenTableQuery => ({
 		tableName: '',
@@ -339,7 +339,7 @@ watch(
 		if (!templateGroupId) {
 			return
 		}
-		genTemplateGroupPropertyApi.entityList({ templateGroupId }).then(data => {
+		genTemplateGroupPropertyApi.list({ templateGroupId }).then(data => {
 			tableTemplateGroupPropertyList.value = data
 		})
 	}

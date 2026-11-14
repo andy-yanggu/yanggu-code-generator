@@ -47,24 +47,14 @@ public interface DatasourceService extends IService<DatasourceEntity> {
     List<DatasourceVO> detailList(List<Long> idList);
 
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<DatasourceVO> entityPage(DatasourceQuery query);
+    PageVO<DatasourceVO> page(DatasourceQuery query);
 
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<DatasourceVO> entityList(DatasourceQuery query);
-
-    /**
-     * 复杂分页
-     */
-    PageVO<DatasourceVO> voPage(DatasourceQuery query);
-
-    /**
-     * 复杂列表
-     */
-    List<DatasourceVO> voList(DatasourceQuery query);
+    List<DatasourceVO> list(DatasourceQuery query);
 
     /**
      * 根据数据源ID，获取数据源

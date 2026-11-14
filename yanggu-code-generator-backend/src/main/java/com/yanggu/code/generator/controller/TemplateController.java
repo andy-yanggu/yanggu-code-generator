@@ -106,13 +106,13 @@ public class TemplateController {
     }
 
     /**
-     * 模板复杂分页
+     * 模板分页
      */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "模板复杂分页")
-    public PageVO<TemplateVO> voPage(@RequestBody TemplateQuery query) {
-        return templateService.voPage(query);
+    @PostMapping("/page")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "模板分页")
+    public PageVO<TemplateVO> page(@RequestBody TemplateQuery query) {
+        return templateService.page(query);
     }
 
     /**
