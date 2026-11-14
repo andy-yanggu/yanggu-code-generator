@@ -5,7 +5,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons-ng'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { mswInjectPlugin } from './vite-plugin-msw-inject'
+import { mswInjectPlugin } from './vite-plugin-msw-inject.ts'
 
 // 参考：https://cn.vitejs.dev/config/
 export default defineConfig({
