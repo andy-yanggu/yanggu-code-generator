@@ -1,7 +1,8 @@
 <template>
 	<div>
-		<!-- 搜索表单 -->
+		<!-- 搜索表单：无搜索项时整块不渲染，避免只剩「查询/重置」按钮的空卡片 -->
 		<search-form
+			v-if="hasSearchFields"
 			ref="searchFormRef"
 			:model-value="tableHook.search.form"
 			:fields="tableHook.search.fields"
@@ -37,6 +38,7 @@
 			:row-index="tableHook.table.index"
 			:show-table-header="tableHook.refs.showTableHeader"
 			:show-toolbar-left="tableHook.refs.showToolbarLeft"
+			:show-search-toggle="hasSearchFields"
 			@selection-change="onSelectionChange"
 			@sort-change="tableHook.query.onSortChange"
 			@page-change="tableHook.query.onPageChange"
@@ -113,6 +115,9 @@ const tableColumnSlots = computed(() => splitSlotNames('table-'))
 /** query-* 插槽：剥 query- 前缀，转发给 SearchForm */
 const searchFieldSlots = computed(() => splitSlotNames('query-'))
 
+/** 是否有搜索项：无搜索项时搜索卡片与工具栏的搜索切换按钮一并隐藏（否则按钮点了没反应） */
+const hasSearchFields = computed(() => props.tableHook.search.fields.length > 0)
+
 // 暴露 DataTable 引用，供外层穿透访问 el-table（如 toggleRowSelection）
 const dataTableRef = ref()
 const searchFormRef = ref()
@@ -121,7 +126,8 @@ const searchFormRef = ref()
 // selection store（reserveSelection 模式下已删除的行不会自行剔除）；
 // query.reset() 需要调 SearchForm 的 clearValidate()，否则弹窗不销毁内容时
 // el-form-item 的校验红字会跟着存活实例一起残留到下次打开。
-// 放在 onMounted：此时 DataTable / SearchForm 均已挂载，defineExpose 的 ref 经 proxyRefs 自动解包
+// 放在 onMounted：此时 DataTable / SearchForm 均已挂载，defineExpose 的 ref 经 proxyRefs 自动解包。
+// 无搜索项时 SearchForm 不渲染，searchFormRef 为 undefined，hook 侧 reset 的 ?. 守卫会安全跳过
 onMounted(() => {
 	props.tableHook.selection.bindTable(dataTableRef.value?.tableRef)
 	props.tableHook.search.bindForm(searchFormRef.value)

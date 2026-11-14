@@ -9,8 +9,8 @@
 				</div>
 				<div class="table-tool-bar-right">
 					<el-space size="small" :spacer="spacer">
-						<!-- 搜索 -->
-						<icon-button size="16px" :el-icon="Search" :tooltip="showSearch ? '隐藏搜索' : '显示搜索'" @click="toggleSearch()" />
+						<!-- 搜索（无搜索项时由 showSearchToggle 隐藏，避免点了没反应的死按钮） -->
+						<icon-button v-if="showSearchToggle" size="16px" :el-icon="Search" :tooltip="showSearch ? '隐藏搜索' : '显示搜索'" @click="toggleSearch()"></icon-button>
 						<!-- 刷新 -->
 						<icon-button size="16px" :el-icon="Refresh" tooltip="刷新表格" @click="emit('getDataList')" />
 						<!-- 列设置 -->
@@ -140,6 +140,8 @@ const props = withDefaults(
 		showTableHeader?: boolean
 		/** 是否显示工具栏左侧（默认按钮或用户插槽）。默认 true */
 		showToolbarLeft?: boolean
+		/** 是否显示工具栏的搜索切换按钮。无搜索项的表格应关闭（QueryTable 按 search.fields 派生下发），默认 true */
+		showSearchToggle?: boolean
 	}>(),
 	{
 		loading: false,
@@ -149,7 +151,8 @@ const props = withDefaults(
 		rowIndex: (index: number) => index + 1,
 		rowKey: DEFAULT_PRIMARY_KEY,
 		showTableHeader: true,
-		showToolbarLeft: true
+		showToolbarLeft: true,
+		showSearchToggle: true
 	}
 )
 
@@ -200,11 +203,6 @@ const columnSettingsRef = ref<InstanceType<typeof ColumnSettingsPanel>>()
 
 const handlePopoverShow = () => {
 	columnSettingsRef.value?.onPopoverShow()
-}
-
-const resetColumns = () => {
-	columnSettingsRef.value?.resetState()
-	emit('resetColumns')
 }
 
 // ====== 列配置转换 ======

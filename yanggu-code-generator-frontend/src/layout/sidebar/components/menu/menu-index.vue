@@ -14,7 +14,6 @@
 <script setup lang="ts">
 import MenuItem from '@/layout/sidebar/components/menu/menu-item.vue'
 import { useAppStore, useSystemSettingStore, useUserStore } from '@/store'
-import { findMenuByPath } from '@/utils/menu'
 import type { ElScrollbar } from 'element-plus'
 
 defineOptions({
@@ -25,7 +24,6 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const systemSettingStore = useSystemSettingStore()
 const route = useRoute()
-const router = useRouter()
 
 // el-scrollbar 引用
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
@@ -42,16 +40,11 @@ watch(
 	{ immediate: false }
 )
 
-// 初始化激活菜单
+// 初始化激活菜单：以当前路由为准（URL 是真相源），菜单高亮跟随路由。
+// 不再用持久化的旧菜单覆盖深链目标；刷新保活由 URL 自身保证，无需在此恢复。
 onMounted(() => {
-	const activeMenuPath = userStore.activeMenuPath
-	const findMenu = findMenuByPath(userStore.menuList, activeMenuPath)
-	// 外链不处理
-	if (findMenu?.meta?.type === 4) {
-		return
-	}
-	if (activeMenuPath !== route.fullPath) {
-		router.push(activeMenuPath)
+	if (route.path && route.path !== '/') {
+		userStore.setActiveMenuPath(route.path)
 	}
 })
 
