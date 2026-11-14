@@ -90,8 +90,8 @@ const fields: CrudField[] = [
 		tooltip: '基类全类名具有唯一性，不能重复',
 		inTable: true,
 		children: [
-			{ key: 'packageName', label: '基类包名', inSearch: true, inTable: true, table: { label: '包名' } },
-			{ key: 'className', label: '基类类名', inSearch: true, inTable: true, table: { label: '类名' } }
+			{ key: 'packageName', label: '基类包名', inSearch: true, inTable: true },
+			{ key: 'className', label: '基类类名', inSearch: true, inTable: true }
 		]
 	},
 	{
@@ -134,6 +134,11 @@ const formConfig = reactive({
 			formHook.form.data.baseClassName += '_复制'
 			formHook.form.data.id = ''
 		}
+	},
+	extraRules: {
+		fullClassName: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '基类全类名不能为空', trigger: 'blur' }],
+		packageName: [{ required: true, message: '基类包名不能为空', trigger: 'blur' }],
+		className: [{ required: true, message: '基类类名不能为空', trigger: 'blur' }]
 	},
 	labelWidth: '130px'
 } as UseCrudFormOptions)
