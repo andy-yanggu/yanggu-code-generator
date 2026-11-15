@@ -158,6 +158,7 @@ import { Result, SubmitOptions } from '@/types'
 import { useInitForm, useSubmitHandler } from '@/hooks'
 import OptionLabel from '@/components/option/label/index.vue'
 import GenTemplateForm from '@/views/gen/template/form.vue'
+import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 
 defineOptions({
 	name: 'GenTemplateTest'
@@ -336,7 +337,8 @@ const handleCascaderChange = async (value: CascaderValue | null | undefined) => 
 	}
 	testData.activeName = 'render'
 	const loadingInstance = ElLoading.service({
-		text: '模板渲染中...'
+		text: '模板渲染中...',
+		...LOADING_MASK_OPTIONS
 	})
 	try {
 		const data = await genGeneratorApi.templateTest(queryForm, { noErrorMessage: true })

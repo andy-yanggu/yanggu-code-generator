@@ -25,19 +25,10 @@ withDefaults(
 <style lang="scss" scoped>
 // icon-loading 专用步进旋转：12 根辐条带透明度梯度，steps(12) 每跳 30° 正好落到下一根辐条，
 // 亮头在前暗尾在后形成追逐感；匀速动画会糊掉梯度方向感，故不用 EP 的 is-loading。
-// 动画收口在本组件：调用方不再自挂全局旋转类；周期仍读全局 --icon-loading-duration 变量。
+// 动画收口在本组件：调用方不再自挂全局旋转类；周期读全局 --icon-loading-duration 变量，
+// keyframes 全局定义在 custom.scss（与 v-loading 蒙层覆盖规则共用，蒙层 CSS 够不到 scoped 哈希名）。
 // 与 EP 裸 svg 的行盒对齐是 el-result 上下文规则（custom.scss 的 .el-result__icon svg.svg-icon），非本组件私有，不搬进来
 .loading-icon {
 	animation: icon-loading-rotate var(--icon-loading-duration) steps(12, end) infinite;
-}
-
-@keyframes icon-loading-rotate {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
 }
 </style>

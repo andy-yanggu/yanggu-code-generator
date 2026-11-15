@@ -6,26 +6,19 @@
 		size="100%"
 		:modal="false"
 		body-class="template-tree-drawer-body"
-		:before-close="handleClose">
+		:before-close="handleClose"
+	>
 		<el-splitter class="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
 				<el-affix :offset="20">
 					<el-row style="margin-bottom: 10px" :gutter="10">
 						<el-col :span="14">
-							<el-input
-								v-model="treeSearchText"
-								placeholder="请输入目录/文件名称"
-								size="small"
-								clearable
-								prefix-icon="Search"
-								style="width: 100%; margin-left: 10px"></el-input>
+							<el-input v-model="treeSearchText" placeholder="请输入目录/文件名称" size="small" clearable prefix-icon="Search" style="width: 100%; margin-left: 10px"></el-input>
 						</el-col>
 						<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
 							<el-button size="small" type="primary" :icon="Refresh" @click="refreshTree()">刷新</el-button>
-							<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()">
-								删除
-							</el-button>
+							<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()"> 删除 </el-button>
 						</el-col>
 					</el-row>
 				</el-affix>
@@ -51,7 +44,8 @@
 							@node-contextmenu="handleNodeRightClick"
 							@node-drop="handleNodeDrop"
 							@node-expand="handleNodeExpand"
-							@node-collapse="handleNodeCollapse">
+							@node-collapse="handleNodeCollapse"
+						>
 							<template #default="{ node, data }">
 								<el-tooltip :content="data.templateDesc" placement="top" :disabled="!data.templateDesc">
 									<div class="custom-tree-node">
@@ -114,15 +108,12 @@
 					:parent-id="contextMenu.parentId"
 					:template-type="contextMenu.templateType"
 					:template-path="contextMenu.templatePath"
-					@refresh-data-list="initAfterHandler"></template-form>
+					@refresh-data-list="initAfterHandler"
+				></template-form>
 			</el-splitter-panel>
 			<!-- 右侧：模板编辑 -->
 			<el-splitter-panel>
-				<el-container
-					v-if="templateTreeData.tabList.length > 0"
-					ref="templateContainerRef"
-					style="height: 100%"
-					:class="{ 'full-screen-mode': isFullscreen }">
+				<el-container v-if="templateTreeData.tabList.length > 0" ref="templateContainerRef" style="height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
@@ -130,23 +121,8 @@
 								<text-tooltip :title="`路径：${fullFilePath}`" :tooltip-content="fullFilePath" max-width="100%"></text-tooltip>
 							</el-col>
 							<el-col :span="7" style="text-align: right">
-								<el-button
-									v-if="![0, 2].includes(activeTabItem.templateType)"
-									size="small"
-									type="warning"
-									:icon="DocumentChecked"
-									@click="testTemplateContent">
-									测试
-								</el-button>
-								<el-button
-									:disabled="!activeTabItem.isEdited"
-									size="small"
-									type="primary"
-									:icon="Edit"
-									:loading="submitLoading"
-									@click="saveTemplateContent">
-									保存
-								</el-button>
+								<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent"> 测试 </el-button>
+								<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent"> 保存 </el-button>
 								<el-button size="small" @click="toggle()">
 									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
 									{{ isFullscreen ? '退出' : '全屏' }}
@@ -154,13 +130,7 @@
 							</el-col>
 						</el-row>
 						<el-divider style="margin: 5px 0"></el-divider>
-						<el-tabs
-							ref="tabsRef"
-							v-model="templateTreeData.activeItemId"
-							tab-position="top"
-							type="card"
-							@tab-click="handleTabClick"
-							@tab-remove="handleTabRemove">
+						<el-tabs ref="tabsRef" v-model="templateTreeData.activeItemId" tab-position="top" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
 							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
@@ -241,6 +211,7 @@
 
 <script setup lang="ts">
 import { Action, FilterNodeMethodFunction, TabPaneName, TabsPaneContext } from 'element-plus'
+import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
@@ -453,7 +424,7 @@ const handleNodeCollapse = (data: Tree) => {
 
 // 初始化方法
 const init = async () => {
-	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中' })
+	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
 	try {
 		const data = await genTemplateApi.treeData(props.templateGroupId)
 		templateTreeData.treeList = data

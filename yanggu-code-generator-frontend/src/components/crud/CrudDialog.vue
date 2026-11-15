@@ -9,6 +9,7 @@
 			:ref="formHook.form.formRef"
 			v-loading="formHook.dialog.detailLoading || formHook.submit.loading"
 			:element-loading-text="formHook.submit.loading ? '正在提交...' : '数据加载中...'"
+			v-bind="LOADING_MASK_ATTRS"
 			:disabled="formHook.dialog.mode === 'detail'"
 			:model="formHook.form.data"
 			:rules="formHook.form.rules.value"
@@ -60,6 +61,7 @@
 <script setup lang="ts">
 import { Check, Close } from '@element-plus/icons-vue'
 import FormField from './internal/FormField.vue'
+import { LOADING_MASK_ATTRS } from '@/components/loading-icon/loading-mask'
 import type { UseCrudFormReturn } from '@/types'
 
 defineOptions({

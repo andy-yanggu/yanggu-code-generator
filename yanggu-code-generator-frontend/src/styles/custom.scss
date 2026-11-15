@@ -10,3 +10,24 @@
   display: inline;
   vertical-align: baseline;
 }
+
+/* v-loading 蒙层 spinner 换装：spinner 经 <use> 引用 sprite 的 icon-loading（几何单源于 ui-core.ts），
+   这里只把 EP circular 的匀速旋转覆盖成步进旋转并补语义色；尺寸仍吃 EP 的 --el-loading-spinner-size。
+   权重 (0,3,0) 压过 EP 的 .el-loading-spinner .circular 匀速旋转 */
+.el-loading-mask.yanggu-loading-mask .circular {
+  color: var(--el-color-primary);
+  fill: currentColor;
+  animation: icon-loading-rotate var(--icon-loading-duration) steps(12, end) infinite;
+}
+
+/* icon-loading 步进旋转 keyframes：全局单一定义，LoadingIcon 组件 scoped 与 v-loading 蒙层覆盖规则共用
+   （蒙层 CSS 够不到 scoped 哈希名，故不放组件内） */
+@keyframes icon-loading-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -178,6 +178,7 @@ import { genGeneratorApi } from '@/api'
 import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@element-plus/icons-vue'
 import { copyToClipboard, isNotEmpty } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
+import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 import { useSubmitHandler } from '@/hooks'
 import { SubmitOptions } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
@@ -288,7 +289,7 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.visible = true
 	// 等待DOM更新后再显示loading
 	await nextTick()
-	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...' })
+	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
 	try {
 		const previewData = {
 			previewProductId: id,

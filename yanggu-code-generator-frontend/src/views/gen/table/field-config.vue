@@ -165,6 +165,7 @@ import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
 import { GenEnumEntity, GenTableEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
 import { useSubmitHandler } from '@/hooks'
+import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 
 defineOptions({
 	name: 'GenTableFieldConfig'
@@ -237,7 +238,8 @@ const init = async (row: GenTableEntity) => {
 	// 局部加载，指定目标为当前对话框
 	const loadingInstance = ElLoading.service({
 		target: '.field-config-dialog .el-dialog__body',
-		text: '数据加载中...'
+		text: '数据加载中...',
+		...LOADING_MASK_OPTIONS
 	})
 
 	try {
