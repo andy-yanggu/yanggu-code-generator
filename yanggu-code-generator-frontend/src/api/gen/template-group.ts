@@ -1,10 +1,10 @@
 import { service } from '@/utils/request'
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/types'
+import { GenTemplateGroupCopyDTO, GenTemplateGroupEntity, GenTemplateGroupQuery } from '@/types'
 
 // 特定api
 interface CustomApi {
-	copy: (dataForm: any) => Promise<void>
+	copy: (dataForm: GenTemplateGroupCopyDTO) => Promise<void>
 	cascaderData: (queryForm: any) => Promise<any>
 }
 
@@ -15,7 +15,7 @@ export const genTemplateGroupApi: EnabledCrudApi<GenTemplateGroupEntity, GenTemp
 	// 通用CRUD接口
 	...createCrudApi<GenTemplateGroupEntity, GenTemplateGroupQuery>(baseUrl),
 	// 复制模板组
-	copy: (dataForm: any) => {
+	copy: (dataForm: GenTemplateGroupCopyDTO) => {
 		return service.post(baseUrl + '/copy', dataForm)
 	},
 	// 获取级联数据

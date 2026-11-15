@@ -2,6 +2,7 @@ package com.yanggu.code.generator.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupCopyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
@@ -62,7 +63,7 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     /**
      * 复制模板组
      */
-    void copy(TemplateGroupDTO dto);
+    void copy(TemplateGroupCopyDTO dto);
 
     /**
      * 导出模板组

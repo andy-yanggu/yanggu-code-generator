@@ -82,7 +82,7 @@
 import { genTemplateGroupApi } from '@/api'
 import { TEMPLATE_GROUP_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
-import type { CrudField, GenTemplateGroupEntity, GenTemplateGroupQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
+import type { CrudField, GenTemplateGroupCopyDTO, GenTemplateGroupEntity, GenTemplateGroupQuery, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
@@ -142,9 +142,11 @@ const formConfig = reactive({
 			delete formConfig.successMessage
 		}
 	},
-	afterDataAssign: () => {
+	afterDataAssign: data => {
 		if (formHook.dialog.mode === 'copy') {
 			formHook.form.data.groupName += '_复制'
+			// hook 在 copy 模式下会把主键置空（通用复制语义），后端复制接口需要源模板组ID，故另用 oldGroupId 携带
+			;(formHook.form.data as GenTemplateGroupCopyDTO).oldGroupId = data.id
 		}
 	},
 	labelWidth: '120px'

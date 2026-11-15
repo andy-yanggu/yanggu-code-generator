@@ -4,6 +4,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.common.validation.group.InsertGroup;
 import com.yanggu.code.generator.common.validation.group.UpdateGroup;
+import com.yanggu.code.generator.domain.dto.TemplateGroupCopyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.query.TemplateGroupQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
@@ -132,7 +133,7 @@ public class TemplateGroupController {
     @PostMapping("/copy")
     @ApiOperationSupport(order = 11)
     @Operation(summary = "复制模板组")
-    public void copy(@RequestBody TemplateGroupDTO dto) {
+    public void copy(@RequestBody @Validated TemplateGroupCopyDTO dto) {
         templateGroupService.copy(dto);
     }
 

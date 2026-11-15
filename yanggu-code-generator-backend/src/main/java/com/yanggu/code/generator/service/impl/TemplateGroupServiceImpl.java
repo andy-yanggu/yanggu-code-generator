@@ -19,6 +19,7 @@ import com.yanggu.code.generator.domain.bo.TemplateBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupBO;
 import com.yanggu.code.generator.domain.bo.TemplateGroupPropertyBO;
 import com.yanggu.code.generator.domain.dto.TemplateDTO;
+import com.yanggu.code.generator.domain.dto.TemplateGroupCopyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupPropertyDTO;
 import com.yanggu.code.generator.domain.entity.*;
@@ -199,8 +200,9 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void copy(TemplateGroupDTO dto) {
-        Long oldGroupId = dto.getId();
+    public void copy(TemplateGroupCopyDTO dto) {
+        // 源模板组ID由前端单独传入：id 字段不用来区分新旧，新增的那条记录靠 id 置空走 insert
+        Long oldGroupId = dto.getOldGroupId();
         dto.setId(null);
 
         //新增模板组
