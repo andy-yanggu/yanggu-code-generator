@@ -98,10 +98,7 @@ const fields: CrudField[] = [
 		key: 'fullClassName',
 		label: '基类全类名',
 		tooltip: '基类全类名具有唯一性，不能重复',
-		inForm: true,
-		form: {
-			ruleList: [{ required: true, validator: (_: any, __: any, callback: any) => callback(), message: '基类全类名不能为空', trigger: 'blur' }]
-		}
+		inForm: true
 	},
 	{
 		key: 'fieldList',

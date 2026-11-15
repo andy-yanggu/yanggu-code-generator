@@ -1,11 +1,12 @@
 <template>
-	<div v-loading="currentLoading" class="iframe-container">
+	<div v-loading="currentLoading" element-loading-text="页面加载中..." v-bind="LOADING_MASK_ATTRS" class="iframe-container">
 		<iframe :src="iframeSrc" width="100%" height="100%" style="min-height: calc(100vh - 84px)" allow="accelerometer" @load="handleLoad"></iframe>
 	</div>
 </template>
 
 <script setup lang="ts">
 import NProgress from 'nprogress'
+import { LOADING_MASK_ATTRS } from '@/components/loading-icon/loading-mask'
 import { useAppStore, useSystemSettingStore } from '@/store'
 
 defineOptions({

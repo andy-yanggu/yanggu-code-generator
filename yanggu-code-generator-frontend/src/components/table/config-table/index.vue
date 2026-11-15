@@ -7,7 +7,7 @@
 -->
 <template>
 	<div class="config-table">
-		<el-table ref="tableRef" v-loading="loading" v-bind="$attrs" :data="data">
+		<el-table ref="tableRef" v-loading="loading" v-bind="tableBindAttrs" :data="data">
 			<el-table-column v-for="col in columns" :key="col.key" v-bind="toColumnProps(col)">
 				<!-- 透传命名插槽：以 column.key 为插槽名 -->
 				<template v-if="$slots[col.key]" #default="scope">
@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import type { ColumnConfig } from '@/types/hooks/column-config'
+import { LOADING_MASK_ATTRS } from '@/components/loading-icon/loading-mask'
 
 defineOptions({
 	name: 'ConfigTable',
@@ -75,6 +76,11 @@ const emit = defineEmits<{
 }>()
 
 const tableRef = ref()
+
+// 蒙层常量与 $attrs 合并成单个 v-bind 下发（同元素只允许一个 v-bind）；
+// el-table 的 props 类型对 style 等很严，而 attrs 本就是无类型透传逃生通道，这里放宽成 Record 避免 vue-tsc 误报
+const attrs = useAttrs()
+const tableBindAttrs = computed(() => ({ ...LOADING_MASK_ATTRS, ...(attrs as Record<string, any>) }))
 
 /** 将 ColumnConfig 转换为 ElTableColumn 的 props */
 const toColumnProps = (col: ColumnConfig): Record<string, any> => {
