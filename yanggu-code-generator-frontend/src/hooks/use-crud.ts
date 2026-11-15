@@ -127,10 +127,11 @@ export const useCrud = <VO = any, Query = any, DTO = any>(
 
 	formOpts.primaryKey ??= primaryKey
 	formOpts.subject ??= subject
-	const formHook = useCrudForm<DTO, VO>({
-		...formOpts,
-		afterSubmit: formOpts.afterSubmit ?? (() => tableHook.query.getDataList())
-	})
+	// 与 tableOpts 一致，把配置对象本身交给 hook，不要展开复制一份。
+	// 展开会读取一次 reactive 快照，把 submitApi / successMessage 等字段定格成当时的值，
+	// 页面在 beforeOpen 里按弹窗模式改写这些字段（如复制模式换成 copy 接口）就会静默失效
+	formOpts.afterSubmit ??= () => tableHook.query.getDataList()
+	const formHook = useCrudForm<DTO, VO>(formOpts)
 
 	return { tableHook, formHook }
 }
