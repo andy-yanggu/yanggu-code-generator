@@ -4,32 +4,13 @@
 	     pending 期间不拦关闭路径：遮罩 / ESC / ✕ / footer 随时可关，弹窗关不掉请求；请求回来后只写状态不再弹开，
 	     单并发锁由 finish 收口释放，所以提前关窗不会把表格按钮卡在「测试中」。 -->
 	<el-dialog v-model="visible" title="数据源连接测试" width="600">
-		<el-result
-			v-if="testResult"
-			class="test-result"
-			:icon="TEST_KIND_ICON[testResult.kind]"
-			:title="TEST_KIND_TITLE[testResult.kind]"
-			:sub-title="testSubTitle"
-		>
-			<!-- pending 顶掉内置图标：is-loading 命中 EP 内置的 rotating 动画，icon-primary 命中 el-result 的语义色规则，两处都不写死样式。
-			     条件具名插槽在 v-if 为假时不会注册，结果态才走 :icon 属性的内置图标
-			     图形复用 el-loading 的开口圆弧几何（r=20 + dasharray 90,150），stroke 走 currentColor 才吃得到 icon-primary 的语义色。
-			     不用 EP 的 Loading 图标：它是 8 根等长辐条、严格 8 重对称，转一圈视觉重复 8 次且没有方向感，撑不起 48px 的大图标位 -->
+		<el-result v-if="testResult" class="test-result" :icon="TEST_KIND_ICON[testResult.kind]" :title="TEST_KIND_TITLE[testResult.kind]" :sub-title="testSubTitle">
+			<!-- pending 顶掉内置图标：icon-loading 是 12 根带透明度梯度的辐条，icon-loading-spin 全局类做 steps(12) 步进旋转，
+			     亮头暗尾逐格追逐；icon-primary 命中 el-result 的语义色规则，svg-icon 的 fill: currentColor 接住颜色。
+			     尺寸显式传 el-result 的图标变量，与结果态内置图标同源；symbol 的 viewBox 已按 EP 语义图标的图形占比收边，同框即同视觉大小。
+			     条件具名插槽在 v-if 为假时不会注册，结果态才走 :icon 属性的内置图标 -->
 			<template v-if="isPending" #icon>
-				<el-icon class="test-result__icon is-loading icon-primary">
-					<svg viewBox="25 25 50 50" aria-hidden="true">
-						<circle
-							cx="50"
-							cy="50"
-							r="20"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="4"
-							stroke-linecap="round"
-							stroke-dasharray="90,150"
-						></circle>
-					</svg>
-				</el-icon>
+				<svg-icon icon="icon-loading" size="var(--el-result-icon-font-size)" class="icon-loading-spin icon-primary"></svg-icon>
 			</template>
 
 			<template #extra>
@@ -71,6 +52,7 @@ import { copyToClipboard, isNotBlank } from '@/utils/tool'
 import type { GenDatasourceEntity, Key } from '@/types'
 import dayjs from 'dayjs'
 import { Check, Close, DocumentCopy } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 
 defineOptions({
 	name: 'GenDatasourceTestDialog'
@@ -120,7 +102,7 @@ const TEST_KIND_TITLE: Record<TestKind, string> = {
 }
 
 const TEST_KIND_ICON: Record<TestKind, ResultIconType> = {
-	// pending 走 #icon 插槽自绘旋转图标，此项只为类型完备
+	// pending 走 #icon 插槽的 icon-loading 步进旋转图标，此项只为类型完备
 	pending: 'primary',
 	success: 'success',
 	fail: 'error',
@@ -366,22 +348,12 @@ defineExpose({
 		word-break: break-word;
 	}
 
-	// 结果态图标是 EP 内置图标组件渲染的裸 svg，直接挂在 __icon 下；pending 的圆弧包在 i.el-icon 里、svg 是孙元素
-	// 所以这个 > 天然只命中落定那一态，不需再加状态类；el-result 是本组件模板里的元素，带 data-v，:deep 能递到它的内部
+	// 结果态图标是 EP 内置图标组件渲染的裸 svg，直接挂在 __icon 下；pending 的 svg-icon 根也是 svg 且同为直接子元素，
+	// 用 :not(.svg-icon) 排除：否则这条 animation 简写会凭更高权重盖掉步进旋转，pending 就不转了
 	// 两态是两个不同 DOM 元素，Vue 卸旧挂新、中间没有任何过渡；给新图标一次淡入放大，把“形状硬切”的注意力接住
 	// transform-origin 实测为 24px 24px（48×48 的正中），缩放不会跑偏；缓动末值略大于 1 做一点回弹
-	:deep(.el-result__icon > svg) {
+	:deep(.el-result__icon > svg:not(.svg-icon)) {
 		animation: test-icon-in 240ms cubic-bezier(0.2, 0.9, 0.32, 1.18) both;
-	}
-
-	// pending 图标：盒子尺寸跟着 el-result 自己的图标变量走，避免 48px 写两处
-	// el-icon 默认 1em 的盒子装不下被 __icon svg 强制到 48px 的图形，会把标题顶上去
-	// 转速：EP 把周期写死在 .el-icon.is-loading 的 animation 简写里（2s），无 prop 与变量可调，只能覆盖
-	// 只改 animation-duration，name/缓动/次数仍由 EP 提供；选择器带上 is-loading 是为了高一级权重，避免与 EP 同权重靠样式注入顺序决胜
-	// 1s/圈是开口圆弧的合适区间（0.8~1.2s）：再快显得焦躁，再慢在 6 秒的等待里像卡住
-	&__icon.is-loading {
-		font-size: var(--el-result-icon-font-size);
-		animation-duration: 1s;
 	}
 
 	&__detail-head {

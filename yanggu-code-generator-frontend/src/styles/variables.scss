@@ -6,6 +6,8 @@
   /* ==================== 图标交互 ==================== */
   --icon-hover-transform-scale: 1.1;
   --icon-hover-transform-translate-y: -1px;
+  /* icon-loading 步进旋转一圈的时长：12 根辐条每格 30°，1s 一圈约 83ms 一跳，再快显焦躁再慢像卡住 */
+  --icon-loading-duration: 1s;
 
   /* ==================== 菜单 ==================== */
   --menu-item-height: 48px;

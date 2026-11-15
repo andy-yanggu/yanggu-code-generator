@@ -19,25 +19,14 @@
 	</div>
 
 	<!-- 加载中：el-result 的 icon 属性只认 5 种语义值，没有 loading 档，转圈图形只能走 #icon 插槽。
-	     图标取 RefreshRight 而不是 icons-vue 的 Loading：后者是 8 根等长放射短棒、45° 旋转对称，配匀速动画几乎看不出在转 -->
+	     图形取自有图标库的 icon-loading：12 根辐条带透明度梯度，配 steps(12) 步进旋转亮头暗尾逐格追逐；
+	     不用 icons-vue 的 Loading：它是 8 根等长放射短棒、45° 旋转对称，配匀速动画几乎看不出在转 -->
 	<div v-else-if="status === 'loading'" class="result-container">
 		<el-result title="代码生成中" :sub-title="loadingSubTitle">
 			<template #icon>
-				<!-- is-loading 命中 EP 内置的 rotating 动画，icon-primary 命中 el-result 的语义色规则（与相邻两个分支的取色路径一致），尺寸则交给下方 CSS 变量 -->
-				<el-icon class="loading-icon is-loading icon-primary">
-					<svg viewBox="25 25 50 50" aria-hidden="true">
-						<circle
-							cx="50"
-							cy="50"
-							r="20"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="4"
-							stroke-linecap="round"
-							stroke-dasharray="90,150"
-						></circle>
-					</svg>
-				</el-icon>
+				<!-- icon-loading-spin 全局类提供步进旋转，icon-primary 命中 el-result 的语义色规则（与相邻两个分支的取色路径一致）；
+				     尺寸显式传 el-result 的图标变量，与相邻分支内置图标同源；symbol 的 viewBox 已按 EP 语义图标的图形占比收边，同框即同视觉大小 -->
+				<svg-icon icon="icon-loading" size="var(--el-result-icon-font-size)" class="icon-loading-spin icon-primary"></svg-icon>
 			</template>
 		</el-result>
 	</div>
@@ -45,6 +34,7 @@
 
 <script lang="ts" setup>
 import { Back } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
 import { genGeneratorApi } from '@/api'
 
 defineOptions({
@@ -169,14 +159,5 @@ defineExpose({
 	align-items: center;
 	justify-content: center;
 	min-height: 40vh;
-}
-
-// loading 图标尺寸不写死：读 el-result 自己的图标变量，与相邻两个分支的内置图标同源
-// 这里补字号不只是为了大小：el-icon 的盒子默认只有 1em，不撑开就装不下被 __icon svg 强制到 64px 的图形，会把标题顶上去
-// 转速：EP 将周期写死在 .el-icon.is-loading 的 animation 简写里（2s），无 prop 与变量可调，只能覆盖
-// 只改 animation-duration，name/缓动/次数仍由 EP 提供；选择器带上 is-loading 是为了高一级权重，避免与 EP 同权重靠样式注入顺序决胜
-.loading-icon.is-loading {
-	font-size: var(--el-result-icon-font-size);
-	animation-duration: 1s;
 }
 </style>
