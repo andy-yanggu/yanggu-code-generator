@@ -18,15 +18,12 @@
 		</el-result>
 	</div>
 
-	<!-- 加载中：el-result 的 icon 属性只认 5 种语义值，没有 loading 档，转圈图形只能走 #icon 插槽。
-	     图形取自有图标库的 icon-loading：12 根辐条带透明度梯度，配 steps(12) 步进旋转亮头暗尾逐格追逐；
-	     不用 icons-vue 的 Loading：它是 8 根等长放射短棒、45° 旋转对称，配匀速动画几乎看不出在转 -->
+	<!-- 加载中：el-result 的 icon 属性只认 5 种语义值，没有 loading 档，转圈图形只能走 #icon 插槽；
+	     图形/旋转/尺寸封装在 LoadingIcon，icon-primary 取语义色（与相邻两个分支的取色路径一致） -->
 	<div v-else-if="status === 'loading'" class="result-container">
 		<el-result title="代码生成中" :sub-title="loadingSubTitle">
 			<template #icon>
-				<!-- icon-loading-spin 全局类提供步进旋转，icon-primary 命中 el-result 的语义色规则（与相邻两个分支的取色路径一致）；
-				     尺寸显式传 el-result 的图标变量，与相邻分支内置图标同源；symbol 的 viewBox 已按 EP 语义图标的图形占比收边，同框即同视觉大小 -->
-				<svg-icon icon="icon-loading" size="var(--el-result-icon-font-size)" class="icon-loading-spin icon-primary"></svg-icon>
+				<loading-icon class="icon-primary"></loading-icon>
 			</template>
 		</el-result>
 	</div>
@@ -34,7 +31,7 @@
 
 <script lang="ts" setup>
 import { Back } from '@element-plus/icons-vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
+import LoadingIcon from '@/components/loading-icon/index.vue'
 import { genGeneratorApi } from '@/api'
 
 defineOptions({

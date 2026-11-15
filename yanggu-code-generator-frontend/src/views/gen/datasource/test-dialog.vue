@@ -5,12 +5,10 @@
 	     单并发锁由 finish 收口释放，所以提前关窗不会把表格按钮卡在「测试中」。 -->
 	<el-dialog v-model="visible" title="数据源连接测试" width="600">
 		<el-result v-if="testResult" class="test-result" :icon="TEST_KIND_ICON[testResult.kind]" :title="TEST_KIND_TITLE[testResult.kind]" :sub-title="testSubTitle">
-			<!-- pending 顶掉内置图标：icon-loading 是 12 根带透明度梯度的辐条，icon-loading-spin 全局类做 steps(12) 步进旋转，
-			     亮头暗尾逐格追逐；icon-primary 命中 el-result 的语义色规则，svg-icon 的 fill: currentColor 接住颜色。
-			     尺寸显式传 el-result 的图标变量，与结果态内置图标同源；symbol 的 viewBox 已按 EP 语义图标的图形占比收边，同框即同视觉大小。
-			     条件具名插槽在 v-if 为假时不会注册，结果态才走 :icon 属性的内置图标 -->
+			<!-- pending 顶掉内置图标：LoadingIcon 封装 icon-loading 图形、步进旋转与 el-result 图标尺寸；
+			     icon-primary 命中 el-result 的语义色规则。条件具名插槽在 v-if 为假时不会注册，结果态才走 :icon 属性的内置图标 -->
 			<template v-if="isPending" #icon>
-				<svg-icon icon="icon-loading" size="var(--el-result-icon-font-size)" class="icon-loading-spin icon-primary"></svg-icon>
+				<loading-icon class="icon-primary"></loading-icon>
 			</template>
 
 			<template #extra>
@@ -52,7 +50,7 @@ import { copyToClipboard, isNotBlank } from '@/utils/tool'
 import type { GenDatasourceEntity, Key } from '@/types'
 import dayjs from 'dayjs'
 import { Check, Close, DocumentCopy } from '@element-plus/icons-vue'
-import SvgIcon from '@/components/svg-icon/index.vue'
+import LoadingIcon from '@/components/loading-icon/index.vue'
 
 defineOptions({
 	name: 'GenDatasourceTestDialog'

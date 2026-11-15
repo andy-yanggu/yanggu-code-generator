@@ -3,22 +3,6 @@
   transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y));
 }
 
-/* icon-loading 专用步进旋转：12 根辐条带透明度梯度，steps(12) 每跳 30° 正好落到下一根辐条，
-   亮头在前暗尾在后形成追逐感；匀速动画会糊掉梯度方向感，故不用 EP 的 is-loading */
-.icon-loading-spin {
-  animation: icon-loading-rotate var(--icon-loading-duration) steps(12, end) infinite;
-}
-
-@keyframes icon-loading-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* el-result 图标插槽里的 svg-icon 要与 EP 内置裸 svg 的行盒对齐：EP 的 svg 走 UA 默认 inline + baseline，
    svg-icon 全局是 inline-block + middle，strut 高度差几 px 会让标题在 pending 与结果态之间错位；
    在 __icon 上下文里改回 inline + baseline（权重高于 svg-icon 的 scoped 规则） */
