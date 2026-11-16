@@ -113,7 +113,7 @@
 			</el-splitter-panel>
 			<!-- 右侧：模板编辑 -->
 			<el-splitter-panel>
-				<el-container v-if="templateTreeData.tabList.length > 0" ref="templateContainerRef" style="height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+				<el-container v-if="templateTreeData.tabList.length > 0" style="height: 100%" :class="{ 'full-screen-mode': treeFullScreen }">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
@@ -123,9 +123,9 @@
 							<el-col :span="7" style="text-align: right">
 								<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent"> 测试 </el-button>
 								<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent"> 保存 </el-button>
-								<el-button size="small" @click="toggle()">
-									<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
-									{{ isFullscreen ? '退出' : '全屏' }}
+								<el-button size="small" @click="handleToggleFullScreen()">
+									<svg-icon :icon="treeFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
+									{{ treeFullScreen ? '退出' : '全屏' }}
 								</el-button>
 							</el-col>
 						</el-row>
@@ -316,8 +316,6 @@ watch(
 
 const checkedNodeListLength = computed(() => treeRef.value?.getCheckedKeys().length)
 
-const templateContainerRef = ref()
-
 // 实现tab的拖拽排序
 const initTabSortable = () => {
 	if (!tabsRef.value) {
@@ -369,7 +367,21 @@ const activeTabItem: Ref<Tree> = computed(() => {
 })
 
 const treeSearchText = ref('')
-const { isFullscreen, toggle } = useFullscreen(templateContainerRef)
+// 全屏目标用 documentElement 而不是编辑区容器：元素级全屏只渲染该元素的子树，
+const { isFullscreen } = useFullscreen()
+// isFullscreen 反映的是文档级全屏，navbar 那个按钮同样作用于 documentElement，两者会一起翻转；
+const treeFullScreen = ref(false)
+
+// 原生全屏结束（含 ESC、navbar 退出）时撤销铺满态，避免本地状态悬挂
+watch(isFullscreen, value => {
+	if (!value) treeFullScreen.value = false
+})
+
+// 原生全屏是文档级状态：navbar 已打开过就不必重复请求；退出铺满时把原生全屏一并收掉，
+// 否则点了「退出」浏览器仍是全屏，看起来像按钮没生效
+const handleToggleFullScreen = () => {
+	treeFullScreen.value = !treeFullScreen.value
+}
 // 模板树右键菜单状态
 const contextMenu = reactive({
 	visible: false,
@@ -1381,7 +1393,7 @@ html.dark .context-menu svg {
 	width: 100vw;
 	height: 100vh;
 	z-index: 3000;
-	background: var(--theme-main-bg-color);
+	background: var(--el-bg-color-page);
 	margin: 0 !important;
 	padding: 20px;
 }

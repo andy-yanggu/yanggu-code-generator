@@ -1,24 +1,13 @@
 <template>
 	<!-- 预览界面 -->
-	<el-drawer
-		v-model="templateTreeData.visible"
-		:title="`代码预览（${templateTreeData.name}）`"
-		size="100%"
-		body-class="preview-drawer-body"
-		destroy-on-close>
+	<el-drawer v-model="templateTreeData.visible" :title="`代码预览（${templateTreeData.name}）`" size="100%" body-class="preview-drawer-body" destroy-on-close>
 		<el-splitter class="preview-container" style="height: 100%">
 			<!-- 左侧：树结构 -->
 			<el-splitter-panel collapsible size="30%" style="overflow: hidden; margin-right: 5px">
 				<el-affix :offset="20">
 					<el-row style="margin-bottom: 10px" :gutter="10">
 						<el-col :span="16">
-							<el-input
-								v-model="treeSearchText"
-								placeholder="请输入目录/文件名称"
-								size="small"
-								clearable
-								:prefix-icon="Search"
-								style="width: 100%; margin-left: 10px"></el-input>
+							<el-input v-model="treeSearchText" placeholder="请输入目录/文件名称" size="small" clearable :prefix-icon="Search" style="width: 100%; margin-left: 10px"></el-input>
 						</el-col>
 						<el-col :span="8" style="display: flex; justify-content: center; align-items: center">
 							<el-tooltip content="重新渲染" placement="top">
@@ -26,15 +15,8 @@
 									size="small"
 									type="primary"
 									:icon="Refresh"
-									@click="
-										init(
-											templateTreeData.id,
-											templateTreeData.name,
-											templateTreeData.projectId,
-											templateTreeData.generatorType,
-											templateTreeData.generatorProductType
-										)
-									">
+									@click="init(templateTreeData.id, templateTreeData.name, templateTreeData.projectId, templateTreeData.generatorType, templateTreeData.generatorProductType)"
+								>
 									刷新
 								</el-button>
 							</el-tooltip>
@@ -53,7 +35,8 @@
 							class="custom-tree"
 							:props="{ label: 'fileName' }"
 							:filter-node-method="filterNode"
-							@node-click="handleTreeNodeClick">
+							@node-click="handleTreeNodeClick"
+						>
 							<template #default="{ node, data }">
 								<div class="custom-tree-node">
 									<svg-icon :icon="getIcon(node, data)"></svg-icon>
@@ -66,17 +49,14 @@
 			</el-splitter-panel>
 
 			<!-- 右侧：代码预览区 -->
-			<el-splitter-panel v-if="isNotEmpty(templateTreeData.tabList)" :class="{ 'full-screen-mode': isFullscreen }">
-				<el-container style="height: 100%; padding: 5px">
+			<el-splitter-panel v-if="isNotEmpty(templateTreeData.tabList)">
+				<el-container style="height: 100%; padding: 5px" :class="{ 'full-screen-mode': previewFullScreen }">
 					<!-- 头部操作区域 -->
 					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
 						<el-row style="margin-bottom: 5px">
 							<el-col :span="16">
 								<div class="path-container">
-									<text-tooltip
-										:title="'路径：' + activeTabItem.filePath"
-										:tooltip-content="activeTabItem.filePath"
-										:max-width="'100%'"></text-tooltip>
+									<text-tooltip :title="'路径：' + activeTabItem.filePath" :tooltip-content="activeTabItem.filePath" :max-width="'100%'"></text-tooltip>
 									<el-tooltip :disabled="copyIconState === Check" content="复制文件路径" placement="top">
 										<el-icon class="copy-icon" @click="copyPath(activeTabItem.filePath)">
 											<component :is="copyIconState"></component>
@@ -86,46 +66,26 @@
 							</el-col>
 							<el-col :span="8" style="text-align: right">
 								<el-tooltip content="复制代码" :disabled="copyCodeState.icon === Check" placement="top">
-									<el-button
-										v-if="activeTabItem.templateType === 1"
-										type="primary"
-										size="small"
-										:icon="copyCodeState.icon"
-										@click="handleCopy(activeTabItem.templateContent)">
+									<el-button v-if="activeTabItem.templateType === 1" type="primary" size="small" :icon="copyCodeState.icon" @click="handleCopy(activeTabItem.templateContent)">
 										{{ copyCodeState.text }}
 									</el-button>
 								</el-tooltip>
 								<el-tooltip :content="generatorState.tooltip" placement="top">
-									<el-button
-										type="success"
-										size="small"
-										:loading="submitLoading"
-										:icon="generatorState.icon"
-										@click="downloadTemplateData(activeTabItem)">
+									<el-button type="success" size="small" :loading="submitLoading" :icon="generatorState.icon" @click="downloadTemplateData(activeTabItem)">
 										{{ generatorState.text }}
 									</el-button>
 								</el-tooltip>
-								<el-tooltip :content="isFullscreen ? '退出全屏' : '开启全屏'" placement="top">
-									<el-button size="small" @click="toggle()">
-										<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
-										{{ isFullscreen ? '退出' : '全屏' }}
+								<el-tooltip :content="previewFullScreen ? '退出全屏' : '开启全屏'" placement="top">
+									<el-button size="small" @click="handleToggleFullScreen()">
+										<svg-icon :icon="previewFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
+										{{ previewFullScreen ? '退出' : '全屏' }}
 									</el-button>
 								</el-tooltip>
 							</el-col>
 						</el-row>
 						<el-divider style="margin: 5px 0"></el-divider>
-						<el-tabs
-							v-model="templateTreeData.tabActiveName"
-							tab-position="top"
-							type="card"
-							@tab-click="handleTabClick"
-							@tab-remove="handleTabRemove">
-							<el-tab-pane
-								v-for="tabItem in templateTreeData.tabList"
-								:key="tabItem.filePath"
-								:name="tabItem.filePath"
-								:label="tabItem.fileName"
-								closable>
+						<el-tabs v-model="templateTreeData.tabActiveName" tab-position="top" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.filePath" :name="tabItem.filePath" :label="tabItem.fileName" closable>
 								<template #label>
 									<icon-text-tooltip :title="tabItem.fileName" :icon="getIcon({ expanded: false }, tabItem)"></icon-text-tooltip>
 								</template>
@@ -153,12 +113,12 @@
 					</el-main>
 				</el-container>
 			</el-splitter-panel>
-			<el-splitter-panel v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': isFullscreen }">
+			<el-splitter-panel v-else style="display: flex; flex-direction: column; height: 100%" :class="{ 'full-screen-mode': previewFullScreen }">
 				<el-row>
 					<el-col :span="24" style="text-align: right">
-						<el-button size="small" @click="toggle()">
-							<svg-icon :icon="isFullscreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
-							{{ isFullscreen ? '退出' : '全屏' }}
+						<el-button size="small" @click="handleToggleFullScreen()">
+							<svg-icon :icon="previewFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 4px"></svg-icon>
+							{{ previewFullScreen ? '退出' : '全屏' }}
 						</el-button>
 					</el-col>
 				</el-row>
@@ -259,7 +219,15 @@ const initTemplateTreeData = () => ({
 })
 const templateTreeData = reactive(initTemplateTreeData())
 const treeSearchText = ref('')
-const { isFullscreen, toggle } = useFullscreen()
+// 只有 navbar 用浏览器原生全屏（隐藏标签页/地址栏），预览这里纯 CSS 铺满，不碰 Fullscreen API。
+// 原生全屏是文档级状态，navbar 那个按钮会让所有不传 target 的 useFullscreen 一起翻转；
+// 而元素级 target 又会把挂 body 的 ElMessage / tooltip / 抽屉本体挡在全屏子树外（规范只渲染全屏元素的后代）。
+// 铺满靠下面 .full-screen-mode 的 fixed/100vw/100vh 完成，弹窗和消息因此不需要任何特殊处理。
+const previewFullScreen = ref(false)
+
+const handleToggleFullScreen = () => {
+	previewFullScreen.value = !previewFullScreen.value
+}
 const imageTypeList = ref(['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico'])
 
 const activeTabItem = computed(() => {
@@ -275,6 +243,8 @@ const activeTabItem = computed(() => {
 const init = async (id: number, name: string, projectId: number, generatorType: number, generatorProductType: number) => {
 	Object.assign(templateTreeData, initTemplateTreeData())
 	treeSearchText.value = ''
+	// 抽屉 destroy-on-close 只销毁内容、组件实例常驻，上次打开遗留的铺满态会在新一次打开时立刻生效
+	previewFullScreen.value = false
 	templateTreeData.id = id
 	templateTreeData.name = name
 	templateTreeData.projectId = projectId
