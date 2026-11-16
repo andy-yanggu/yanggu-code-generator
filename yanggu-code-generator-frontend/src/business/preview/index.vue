@@ -219,11 +219,15 @@ const initTemplateTreeData = () => ({
 })
 const templateTreeData = reactive(initTemplateTreeData())
 const treeSearchText = ref('')
-// 只有 navbar 用浏览器原生全屏（隐藏标签页/地址栏），预览这里纯 CSS 铺满，不碰 Fullscreen API。
-// 原生全屏是文档级状态，navbar 那个按钮会让所有不传 target 的 useFullscreen 一起翻转；
-// 而元素级 target 又会把挂 body 的 ElMessage / tooltip / 抽屉本体挡在全屏子树外（规范只渲染全屏元素的后代）。
-// 铺满靠下面 .full-screen-mode 的 fixed/100vw/100vh 完成，弹窗和消息因此不需要任何特殊处理。
+const { isFullscreen } = useFullscreen()
+// isFullscreen 反映的是文档级全屏，navbar 那个按钮同样作用于 documentElement，两者会一起翻转；
+// 所以 CSS 铺满改由本地状态驱动，只有本组件的按钮能置位，避免 navbar 全屏时预览自己铺满导致错位。
 const previewFullScreen = ref(false)
+
+// 原生全屏结束（含 ESC、navbar 退出）时撤销铺满态，避免本地状态悬挂
+watch(isFullscreen, value => {
+	if (!value) previewFullScreen.value = false
+})
 
 const handleToggleFullScreen = () => {
 	previewFullScreen.value = !previewFullScreen.value
