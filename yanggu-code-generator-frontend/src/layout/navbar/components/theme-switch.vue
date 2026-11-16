@@ -1,15 +1,12 @@
 <template>
-	<icon-button
-		:el-icon="appStore.isDark ? Moon : Sunny"
-		:tooltip="appStore.isDark ? '切换到日间模式' : '切换到夜间模式'"
-		size="18px"
-		@click="handleThemeToggle"></icon-button>
+	<el-tooltip :content="appStore.isDark ? '切换到日间模式' : '切换到夜间模式'">
+		<el-switch :model-value="appStore.isDark" inline-prompt :active-action-icon="Moon" :inactive-action-icon="Sunny" @click="handleThemeToggle"></el-switch>
+	</el-tooltip>
 </template>
 
 <script setup lang="ts">
 import { nextTick } from 'vue'
 import { useAppStore } from '@/store'
-import IconButton from '@/components/icon-button/index.vue'
 import { Moon, Sunny } from '@element-plus/icons-vue'
 
 defineOptions({
@@ -292,12 +289,10 @@ const handleThemeToggle = (event: MouseEvent) => {
 		cancelViewTransitionAnimations()
 	}
 
-	transition.finished
-		.then(cleanupThemeTransition)
-		.catch(error => {
-			cleanupThemeTransition()
-			console.error('❌ ViewTransition finished error:', error)
-		})
+	transition.finished.then(cleanupThemeTransition).catch(error => {
+		cleanupThemeTransition()
+		console.error('❌ ViewTransition finished error:', error)
+	})
 }
 </script>
 
