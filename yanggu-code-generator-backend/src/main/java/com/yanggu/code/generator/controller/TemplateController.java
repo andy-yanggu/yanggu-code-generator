@@ -111,7 +111,7 @@ public class TemplateController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "模板分页")
-    public PageVO<TemplateVO> page(@RequestBody TemplateQuery query) {
+    public PageVO<TemplateVO> page(@RequestBody @Validated TemplateQuery query) {
         return templateService.page(query);
     }
 

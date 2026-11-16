@@ -50,7 +50,7 @@ public class TableFieldServiceImpl extends ServiceImpl<TableFieldMapper, TableFi
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void submitList(List<TableFieldDTO> submitList) {
         List<TableFieldEntity> entityList = tableFieldMapstruct.dtoToEntity(submitList);
 

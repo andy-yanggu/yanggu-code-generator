@@ -114,7 +114,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "模板组属性分页")
-    public PageVO<TemplateGroupPropertyVO> page(@RequestBody TemplateGroupPropertyQuery query) {
+    public PageVO<TemplateGroupPropertyVO> page(@RequestBody @Validated TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.page(query);
     }
 
@@ -124,7 +124,7 @@ public class TemplateGroupPropertyController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "模板组属性列表")
-    public List<TemplateGroupPropertyVO> list(@RequestBody TemplateGroupPropertyQuery query) {
+    public List<TemplateGroupPropertyVO> list(@RequestBody @Validated TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.list(query);
     }
 

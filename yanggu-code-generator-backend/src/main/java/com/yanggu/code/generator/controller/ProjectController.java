@@ -109,7 +109,7 @@ public class ProjectController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "项目分页")
-    public PageVO<ProjectVO> page(@RequestBody ProjectQuery query) {
+    public PageVO<ProjectVO> page(@RequestBody @Validated ProjectQuery query) {
         return projectService.page(query);
     }
 
@@ -119,7 +119,7 @@ public class ProjectController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "项目列表")
-    public List<ProjectVO> list(@RequestBody ProjectQuery query) {
+    public List<ProjectVO> list(@RequestBody @Validated ProjectQuery query) {
         return projectService.list(query);
     }
 

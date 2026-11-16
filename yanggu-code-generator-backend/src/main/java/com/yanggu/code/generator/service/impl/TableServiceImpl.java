@@ -64,7 +64,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void add(TableDTO dto) {
         TableEntity entity = tableMapstruct.dtoToEntity(dto);
         tableMapper.insert(entity);
@@ -74,7 +74,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(TableDTO dto) {
         TableEntity formEntity = tableMapstruct.dtoToEntity(dto);
         TableEntity dbEntity = selectById(dto.getId());
@@ -85,7 +85,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         TableEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -95,7 +95,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //关联删除
         tableMapper.deleteByIds(idList);
@@ -145,7 +145,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void importTable(TableImportDTO importDTO) throws Exception {
         Long projectId = importDTO.getProjectId();
         List<String> tableNameList = importDTO.getTableNameList();
@@ -168,7 +168,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByProjectId(List<Long> idList) {
         LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class).in(TableEntity::getProjectId, idList);
         List<TableEntity> tableList = tableMapper.selectList(queryWrapper);
@@ -197,7 +197,7 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void syncTableField(Long id) throws Exception {
         TableEntity table = this.getById(id);
         Long projectId = table.getProjectId();

@@ -88,7 +88,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public TemplateGroupEntity add(TemplateGroupDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -101,7 +101,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(TemplateGroupDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -118,7 +118,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         TemplateGroupEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -128,7 +128,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //删除校验
         checkReference(idList);
@@ -199,7 +199,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void copy(TemplateGroupCopyDTO dto) {
         // 源模板组ID由前端单独传入：id 字段不用来区分新旧，新增的那条记录靠 id 置空走 insert
         Long oldGroupId = dto.getOldGroupId();
@@ -269,7 +269,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void importTemplateGroup(MultipartFile file) throws IOException {
         String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
         if (StrUtil.isBlank(data)) {

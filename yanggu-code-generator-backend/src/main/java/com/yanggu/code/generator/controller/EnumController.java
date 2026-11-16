@@ -108,7 +108,7 @@ public class EnumController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "枚举分页")
-    public PageVO<EnumVO> page(@RequestBody EnumQuery query) {
+    public PageVO<EnumVO> page(@RequestBody @Validated EnumQuery query) {
         return enumService.page(query);
     }
 
@@ -118,7 +118,7 @@ public class EnumController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "枚举列表")
-    public List<EnumVO> list(@RequestBody EnumQuery query) {
+    public List<EnumVO> list(@RequestBody @Validated EnumQuery query) {
         return enumService.list(query);
     }
 

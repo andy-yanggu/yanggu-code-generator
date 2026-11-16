@@ -79,7 +79,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public ${classNameUpper}Entity add(${classNameUpper}DTO dto) {
         <#if isUnique>
         //唯一性校验等
@@ -96,7 +96,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(${classNameUpper}DTO dto) {
         <#if isUnique>
         //唯一性校验等
@@ -122,7 +122,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(${primaryKeyType} id) {
         deleteList(List.of(id));
     }
@@ -131,7 +131,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<${primaryKeyType}> idList) {
         List<${classNameUpper}Entity> dbEntityList = ${className}Mapper.selectByIds(idList);
         //删除校验
@@ -218,7 +218,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
      * 导入
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void import(MultipartFile file) throws Exception {
         String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
         if (StrUtil.isBlank(data)) {

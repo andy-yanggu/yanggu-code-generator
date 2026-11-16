@@ -54,7 +54,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public TemplateGroupPropertyEntity add(TemplateGroupPropertyDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -67,7 +67,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(TemplateGroupPropertyDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -80,7 +80,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         deleteList(List.of(id));
     }
@@ -89,7 +89,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         List<TemplateGroupPropertyEntity> dbEntityList = templateGroupPropertyMapper.selectByIds(idList);
         //删除校验
@@ -156,7 +156,7 @@ public class TemplateGroupPropertyServiceImpl extends ServiceImpl<TemplateGroupP
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void importTemplateGroupProperty(MultipartFile file, Long templateGroupId) throws IOException {
         String data = IoUtil.read(file.getInputStream(), CharsetUtil.UTF_8);
         if (StrUtil.isBlank(data)) {

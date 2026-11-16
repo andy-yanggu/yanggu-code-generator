@@ -107,7 +107,7 @@ public class FieldTypeController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "字段类型分页")
-    public PageVO<FieldTypeVO> page(@RequestBody FieldTypeQuery query) {
+    public PageVO<FieldTypeVO> page(@RequestBody @Validated FieldTypeQuery query) {
         return fieldTypeService.page(query);
     }
 
@@ -117,7 +117,7 @@ public class FieldTypeController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "字段类型列表")
-    public List<FieldTypeVO> list(@RequestBody FieldTypeQuery query) {
+    public List<FieldTypeVO> list(@RequestBody @Validated FieldTypeQuery query) {
         return fieldTypeService.list(query);
     }
 

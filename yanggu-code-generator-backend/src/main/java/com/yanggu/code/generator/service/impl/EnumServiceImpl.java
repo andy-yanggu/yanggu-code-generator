@@ -55,7 +55,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void add(EnumDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -67,7 +67,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(EnumDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -80,7 +80,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         EnumEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -90,7 +90,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //删除校验
         checkReference(idList);
@@ -173,7 +173,7 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByProjectId(List<Long> idList) {
         LambdaQueryWrapper<EnumEntity> wrapper = Wrappers.lambdaQuery(EnumEntity.class);
         wrapper.select(EnumEntity::getId);

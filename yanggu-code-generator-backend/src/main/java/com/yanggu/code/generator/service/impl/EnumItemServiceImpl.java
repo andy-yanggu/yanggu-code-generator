@@ -39,7 +39,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void add(EnumItemDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -51,7 +51,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(EnumItemDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -64,7 +64,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         EnumItemEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -74,7 +74,7 @@ public class EnumItemServiceImpl extends ServiceImpl<EnumItemMapper, EnumItemEnt
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //删除校验和关联删除
         enumItemMapper.deleteByIds(idList);

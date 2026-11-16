@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         exception.getBindingResult().getFieldErrors().forEach(fieldError -> stringJoiner.add(fieldError.getDefaultMessage()));
         log.error("字段校验不通过, 请求方式: {}, 请求uri: {}, 字段校验异常信息: {}",
                 request.getMethod(), request.getRequestURI(), stringJoiner, exception);
-        return fail(PARAM_ERR);
+        return fail(PARAM_ERR.getCode(), buildErrorMessage(stringJoiner));
     }
 
     /**
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
         constraintViolations.forEach(temp -> stringJoiner.add(temp.getMessage()));
         log.error("参数校验不通过, 请求方式: {}, 请求uri: {}, 异常信息: {}",
                 request.getMethod(), request.getRequestURI(), stringJoiner, exception);
-        return fail(PARAM_ERR);
+        return fail(PARAM_ERR.getCode(), buildErrorMessage(stringJoiner));
     }
 
     /**
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
         exception.getBindingResult().getFieldErrors().forEach(fieldError -> stringJoiner.add(fieldError.getDefaultMessage()));
         log.error("参数绑定不通过, 请求方式: {}, 请求uri: {}, 异常信息: {}",
                 request.getMethod(), request.getRequestURI(), stringJoiner, exception);
-        return fail(PARAM_ERR);
+        return fail(PARAM_ERR.getCode(), buildErrorMessage(stringJoiner));
     }
 
     /**
@@ -191,6 +191,13 @@ public class GlobalExceptionHandler {
         log.error("请求参数解析失败, 请求方式: {}, 请求uri: {}, 异常信息: {}",
                 request.getMethod(), request.getRequestURI(), exception.getMessage(), exception);
         return fail(REQUEST_ERR.getCode(), exception.getMessage());
+    }
+
+    /**
+     * 拼装校验提示信息，多条以分号分隔，全部为空时回退到默认错误信息
+     */
+    private String buildErrorMessage(StringJoiner stringJoiner) {
+        return stringJoiner.length() == 0 ? PARAM_ERR.getMessage() : stringJoiner.toString();
     }
 
 }

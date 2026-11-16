@@ -108,7 +108,7 @@ public class DatasourceController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "数据源分页")
-    public PageVO<DatasourceVO> page(@RequestBody DatasourceQuery query) {
+    public PageVO<DatasourceVO> page(@RequestBody @Validated DatasourceQuery query) {
         return datasourceService.page(query);
     }
 
@@ -118,7 +118,7 @@ public class DatasourceController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "数据源列表")
-    public List<DatasourceVO> list(@RequestBody DatasourceQuery query) {
+    public List<DatasourceVO> list(@RequestBody @Validated DatasourceQuery query) {
         return datasourceService.list(query);
     }
 

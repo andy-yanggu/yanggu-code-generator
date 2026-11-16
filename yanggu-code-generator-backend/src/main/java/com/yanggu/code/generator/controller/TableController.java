@@ -109,7 +109,7 @@ public class TableController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "表分页")
-    public PageVO<TableVO> page(@RequestBody TableQuery query) {
+    public PageVO<TableVO> page(@RequestBody @Validated TableQuery query) {
         return tableService.page(query);
     }
 
@@ -119,7 +119,7 @@ public class TableController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "表列表")
-    public List<TableVO> list(@RequestBody TableQuery query) {
+    public List<TableVO> list(@RequestBody @Validated TableQuery query) {
         return tableService.list(query);
     }
 

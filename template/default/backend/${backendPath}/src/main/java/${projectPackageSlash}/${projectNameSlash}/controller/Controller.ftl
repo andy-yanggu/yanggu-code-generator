@@ -145,7 +145,7 @@ public class ${classNameUpper}Controller {
     @PostMapping("/entityPage")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 7)
     @Operation(summary = "${tableComment}简单分页")
-    public PageVO<${classNameUpper}VO> entityPage(@RequestBody ${classNameUpper}EntityQuery query) {
+    public PageVO<${classNameUpper}VO> entityPage(@RequestBody @Validated ${classNameUpper}EntityQuery query) {
         return ${className}Service.entityPage(query);
     }
 
@@ -157,7 +157,7 @@ public class ${classNameUpper}Controller {
     @PostMapping("/entityList")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 8)
     @Operation(summary = "${tableComment}简单列表")
-    public List<${classNameUpper}VO> entityList(@RequestBody ${classNameUpper}EntityQuery query) {
+    public List<${classNameUpper}VO> entityList(@RequestBody @Validated ${classNameUpper}EntityQuery query) {
         return ${className}Service.entityList(query);
     }
 
@@ -169,7 +169,7 @@ public class ${classNameUpper}Controller {
     @PostMapping("/voPage")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 9)
     @Operation(summary = "${tableComment}复杂分页")
-    public PageVO<${classNameUpper}VO> voPage(@RequestBody ${classNameUpper}VOQuery query) {
+    public PageVO<${classNameUpper}VO> voPage(@RequestBody @Validated ${classNameUpper}VOQuery query) {
         return ${className}Service.voPage(query);
     }
 
@@ -181,7 +181,7 @@ public class ${classNameUpper}Controller {
     @PostMapping("/voList")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 10)
     @Operation(summary = "${tableComment}复杂列表")
-    public List<${classNameUpper}VO> voList(@RequestBody ${classNameUpper}VOQuery query) {
+    public List<${classNameUpper}VO> voList(@RequestBody @Validated ${classNameUpper}VOQuery query) {
         return ${className}Service.voList(query);
     }
 

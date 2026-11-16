@@ -91,7 +91,7 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
         return this.list(wrapper);
     }
 
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     default void changeRequired(TemplateGroupPropertyUpdateRequiredDTO dto) {
         TemplateGroupPropertyEntity updateEntity = new TemplateGroupPropertyEntity();
         updateEntity.setId(dto.getId());
@@ -99,7 +99,7 @@ public interface TemplateGroupPropertyService extends IService<TemplateGroupProp
         this.updateById(updateEntity);
     }
 
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     default void changeOrder(TemplateGroupPropertyUpdateOrderDTO dto) {
         TemplateGroupPropertyEntity updateEntity = new TemplateGroupPropertyEntity();
         updateEntity.setId(dto.getId());

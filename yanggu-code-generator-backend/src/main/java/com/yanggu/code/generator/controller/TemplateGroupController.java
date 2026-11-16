@@ -113,7 +113,7 @@ public class TemplateGroupController {
     @PostMapping("/page")
     @ApiOperationSupport(order = 12)
     @Operation(summary = "模板组分页")
-    public PageVO<TemplateGroupVO> page(@RequestBody TemplateGroupQuery query) {
+    public PageVO<TemplateGroupVO> page(@RequestBody @Validated TemplateGroupQuery query) {
         return templateGroupService.page(query);
     }
 
@@ -123,7 +123,7 @@ public class TemplateGroupController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 13)
     @Operation(summary = "模板组列表")
-    public List<TemplateGroupVO> list(@RequestBody TemplateGroupQuery query) {
+    public List<TemplateGroupVO> list(@RequestBody @Validated TemplateGroupQuery query) {
         return templateGroupService.list(query);
     }
 

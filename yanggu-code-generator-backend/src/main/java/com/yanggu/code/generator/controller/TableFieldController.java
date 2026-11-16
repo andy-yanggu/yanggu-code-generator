@@ -35,7 +35,7 @@ public class TableFieldController {
     @PostMapping("/list")
     @ApiOperationSupport(order = 3)
     @Operation(summary = "表字段列表")
-    public List<TableFieldVO> list(@RequestBody TableFieldQuery query) {
+    public List<TableFieldVO> list(@RequestBody @Validated TableFieldQuery query) {
         return tableFieldService.list(query);
     }
 

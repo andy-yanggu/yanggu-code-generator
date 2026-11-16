@@ -2,6 +2,8 @@ package com.yanggu.code.generator.common.domain.query;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.io.Serial;
@@ -20,15 +22,23 @@ public class PageQuery implements Serializable {
     private static final long serialVersionUID = 2101820826443930585L;
 
     /**
+     * 每页大小上限，防止一次拉取全表
+     */
+    public static final long MAX_PAGE_SIZE = 500L;
+
+    /**
      * 当前页码
      */
     @Schema(description = "当前页码", defaultValue = "1")
+    @Min(value = 1, message = "当前页码不能小于1")
     private Long pageNum = 1L;
 
     /**
      * 每页大小
      */
     @Schema(description = "每页大小", defaultValue = "10")
+    @Min(value = 1, message = "每页大小不能小于1")
+    @Max(value = MAX_PAGE_SIZE, message = "每页大小不能超过" + MAX_PAGE_SIZE)
     private Long pageSize = 10L;
 
     /**

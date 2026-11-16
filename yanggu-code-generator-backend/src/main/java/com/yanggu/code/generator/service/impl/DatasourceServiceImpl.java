@@ -49,7 +49,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void add(DatasourceDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -61,7 +61,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void update(DatasourceDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -74,7 +74,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         DatasourceEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -84,7 +84,7 @@ public class DatasourceServiceImpl extends ServiceImpl<DatasourceMapper, Datasou
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //删除校验
         checkReference(idList);

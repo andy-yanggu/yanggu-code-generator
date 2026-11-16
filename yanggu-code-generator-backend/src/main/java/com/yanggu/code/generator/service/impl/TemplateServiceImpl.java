@@ -50,7 +50,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     private TemplateMapstruct templateMapstruct;
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public TemplateVO addData(TemplateDTO dto) {
         TemplateEntity templateEntity = add(dto);
         return templateMapstruct.entityToVO(templateEntity);
@@ -60,7 +60,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 新增
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public TemplateEntity add(TemplateDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -73,7 +73,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 修改
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public TemplateVO update(TemplateDTO dto) {
         //唯一性校验等
         checkUnique(dto);
@@ -87,7 +87,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
         TemplateEntity dbEntity = selectById(id);
         deleteList(List.of(id));
@@ -97,7 +97,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
      * 批量删除
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteList(List<Long> idList) {
         //删除校验和关联删除
         templateMapper.deleteByIds(idList);
@@ -174,7 +174,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateContent(TemplateContentDTO contentDTO) {
         TemplateEntity entity = new TemplateEntity();
         entity.setId(contentDTO.getId());
@@ -183,7 +183,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateParent(TemplateDragDTO dragDTO) {
         Long dragNodeId = dragDTO.getDragNodeId();
         Long newParentId = dragDTO.getNewParentId();
@@ -219,7 +219,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEnt
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void updateContentBatch(List<TemplateContentDTO> contentDTOList) {
         List<TemplateEntity> list = contentDTOList.stream()
                 .map(dto -> {
