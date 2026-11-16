@@ -223,35 +223,11 @@ import { useInitForm } from '@/hooks/use-init-form'
 import { startLoadingDots } from '@/hooks/use-loading-dots'
 import { genTemplateApi } from '@/api'
 import { isEmpty } from '@/utils/tool'
+import { buildFileList, buildTree, findByIdFromTree, getFullPathById, getIcon as resolveNodeIcon, joinFileName, type Tree } from './tree-utils'
 
 defineOptions({
 	name: 'GenTemplateTree'
 })
-
-interface Tree {
-	// 主键ID
-	id: number
-	// 父级ID
-	parentId: number
-	// 模板名称
-	templateName: string
-	// 文件名称
-	fileName: string
-	// 描述
-	templateDesc?: string
-	// 模板类型（0-目录，1-模板文件，2-二进制文件）
-	templateType: number
-	// 原始内容（用于恢复）
-	originalTemplateContent?: string
-	// 模板内容
-	templateContent?: string
-	// 二进制原始文件名
-	binaryOriginalFileName?: string
-	// 子节点列表
-	children?: Tree[]
-	// 新增编辑状态属性
-	isEdited?: boolean // 标记是否已编辑但未保存
-}
 
 const props = defineProps({
 	templateGroupId: {
@@ -481,21 +457,6 @@ const initData = async () => {
 	refreshTabData(templateContentList)
 }
 
-const findByIdFromTree = (id: number, treeList: Tree[]): Tree | undefined => {
-	for (const tree of treeList) {
-		if (tree.id === id) {
-			return tree
-		}
-		if (tree.children && tree.children.length > 0) {
-			const tempTree = findByIdFromTree(id, tree.children!)
-			if (tempTree) {
-				return tempTree
-			}
-		}
-	}
-	return undefined
-}
-
 // 全量刷新树数据，回到初始状态
 const refreshTree = () => {
 	ElMessageBox.confirm('刷新将丢失所有未保存的编辑内容及界面状态（包括节点展开状态、搜索条件等），确定要刷新吗？', '提示', {
@@ -603,49 +564,6 @@ const handleClose = (done: () => void) => {
 				done()
 			}
 		})
-}
-
-// 递归查找并拼接路径
-const getFullPathById = (id: number, nodes: Tree[], parentPath = ''): string => {
-	for (const node of nodes) {
-		const currentPath = parentPath ? `${parentPath}/${node.fileName}` : node.fileName
-		if (node.id === id) {
-			return currentPath
-		}
-		if (node.children?.length) {
-			const result = getFullPathById(id, node.children, currentPath)
-			if (result) {
-				return result
-			}
-		}
-	}
-	return ''
-}
-
-// 构建树
-const buildTree = (treeList: Tree[]) => {
-	treeList.forEach(treeItem => {
-		if (treeItem.templateType === 1) {
-			treeItem.originalTemplateContent = treeItem.templateContent
-		}
-		if (treeItem.children && treeItem.children.length > 0) {
-			buildTree(treeItem.children)
-		}
-	})
-}
-
-// 找到所有的模板文件和二进制文件
-const buildFileList = (treeList: Tree[]) => {
-	const templateContentList: Tree[] = []
-	treeList.forEach(treeItem => {
-		// 找到模板文件和二进制文件
-		if (treeItem.templateType != 0) {
-			templateContentList.push(treeItem)
-		} else if (treeItem.children && treeItem.children.length > 0) {
-			templateContentList.push(...buildFileList(treeItem.children))
-		}
-	})
-	return templateContentList
 }
 
 watch(treeSearchText, val => {
@@ -997,27 +915,8 @@ const initAfterHandler = (tree: Tree) => {
 	templateTreeData.activeItemId = tree.id
 }
 
-// 获取节点的图标
-const getIcon = (node: any, data: Tree): string => {
-	if (data.templateType === 0) {
-		if (node.expanded) {
-			return 'icon-folder-open'
-		} else {
-			return 'icon-folder'
-		}
-	} else if (data.templateType === 1) {
-		return 'icon-file-text'
-	} else if (data.templateType === 2) {
-		const some = imageTypeList.value.some(item => data.binaryOriginalFileName?.endsWith(item))
-		if (some) {
-			return 'icon-file-image'
-		} else {
-			return 'icon-file-unknown'
-		}
-	} else {
-		return 'icon-file-unknown'
-	}
-}
+// 获取节点的图标：绑定组件内的图片扩展名清单，模板里仍按 getIcon(node, data) 两参调用
+const getIcon = (node: { expanded?: boolean }, data: Tree): string => resolveNodeIcon(node, data, imageTypeList.value)
 
 const hideTabContextMenu = () => {
 	tabContextMenu.visible = false
@@ -1210,19 +1109,6 @@ const closeAllTabs = () => {
 		templateTreeData.tabList = []
 		templateTreeData.activeItemId = -1
 	})
-}
-
-const joinFileName = (editTabs: Tree[]): string => {
-	if (editTabs.length > 3) {
-		return (
-			editTabs
-				.slice(0, 3)
-				.map(tab => tab.fileName)
-				.join('、') + `...等${editTabs.length}个模板文件`
-		)
-	} else {
-		return editTabs.map(tab => tab.fileName).join('、') + '模板文件'
-	}
 }
 
 // 通用关闭处理
