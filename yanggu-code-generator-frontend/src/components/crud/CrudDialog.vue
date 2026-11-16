@@ -8,7 +8,7 @@
 		<el-form
 			:ref="formHook.form.formRef"
 			v-loading="formHook.dialog.detailLoading || formHook.submit.loading"
-			:element-loading-text="formHook.submit.loading ? '正在提交...' : '数据加载中...'"
+			:element-loading-text="loadingText"
 			v-bind="LOADING_MASK_ATTRS"
 			:disabled="formHook.dialog.mode === 'detail'"
 			:model="formHook.form.data"
@@ -62,6 +62,7 @@
 import { Check, Close } from '@element-plus/icons-vue'
 import FormField from './internal/FormField.vue'
 import { LOADING_MASK_ATTRS } from '@/components/loading-icon/loading-mask'
+import { useLoadingDots } from '@/hooks'
 import type { UseCrudFormReturn } from '@/types'
 
 defineOptions({
@@ -73,6 +74,12 @@ defineOptions({
 const props = defineProps<{
 	formHook: UseCrudFormReturn
 }>()
+
+// 蒙层文案：提交与详情加载共用同一蒙层，基准文案按触发源切换，点号由 useLoadingDots 步进
+const loadingText = useLoadingDots(
+	() => (props.formHook.submit.loading ? '正在提交' : '数据加载中'),
+	() => props.formHook.dialog.detailLoading || props.formHook.submit.loading
+)
 
 // 条件显隐过滤：visible(data) 为 false 的字段整条不渲染。
 // 读的是 form.data 里的具体属性，computed 能追踪到；字段隐藏即卸载，

@@ -179,7 +179,7 @@ import { Check, CopyDocument, DocumentAdd, Download, Refresh, Search } from '@el
 import { copyToClipboard, isNotEmpty } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
-import { useSubmitHandler } from '@/hooks'
+import { startLoadingDots, useSubmitHandler } from '@/hooks'
 import { SubmitOptions } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
@@ -289,7 +289,9 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	templateTreeData.visible = true
 	// 等待DOM更新后再显示loading
 	await nextTick()
-	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
+	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中', ...LOADING_MASK_OPTIONS })
+	// text 只在创建时读取一次，点号动画借 setText 逐步刷新，关闭蒙层前先停掉定时器
+	const stopLoadingDots = startLoadingDots(loadingInstance, '数据加载中')
 	try {
 		const previewData = {
 			previewProductId: id,
@@ -307,6 +309,7 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 			tabPush(templateContentList[0])
 		}
 	} finally {
+		stopLoadingDots()
 		loadingInstance.close()
 	}
 }
