@@ -2,7 +2,6 @@ package com.yanggu.code.generator.domain.vo;
 
 import com.yanggu.code.generator.common.domain.vo.BaseVO;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -49,7 +48,6 @@ public class BaseClassVO extends BaseVO implements Serializable {
      * 基类字段
      */
     @Schema(description = "基类字段")
-    @NotEmpty(message = "基类字段不能为空")
     private List<String> fieldList;
 
     /**
