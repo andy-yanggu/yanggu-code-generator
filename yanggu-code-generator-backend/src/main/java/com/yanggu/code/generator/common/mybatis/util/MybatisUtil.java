@@ -15,6 +15,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * mybatis工具类
@@ -22,6 +23,11 @@ import java.util.List;
 @Slf4j
 @UtilityClass
 public class MybatisUtil {
+
+    /**
+     * 排序字段合法格式：仅允许字母、数字、下划线
+     */
+    private static final Pattern COLUMN_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
 
     /**
      * 设置排序字段
@@ -63,6 +69,20 @@ public class MybatisUtil {
             throw new IllegalArgumentException(StrUtil.format("column: {} is not exist", column));
         }
         return LambdaFactory.build(SFunction.class, getter.getMethod());
+    }
+
+    /**
+     * 校验排序字段合法性（防SQL注入）并转为下划线列名
+     * <p>仅允许字母、数字、下划线，拒绝空格、括号、逗号、引号等SQL语法字符，非法时快速失败</p>
+     */
+    public static String toSafeUnderlineCase(String column) {
+        if (StrUtil.isBlank(column)) {
+            throw new IllegalArgumentException("排序字段不能为空");
+        }
+        if (!COLUMN_PATTERN.matcher(column).matches()) {
+            throw new IllegalArgumentException(StrUtil.format("排序字段不合法: {}", column));
+        }
+        return NamingCase.toUnderlineCase(column);
     }
 
     /**
