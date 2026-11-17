@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.config;
 
 import cn.hutool.v7.core.collection.CollUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import com.yanggu.code.generator.common.mybatis.typehandler.list.AbstractListTypeHandler;
 import com.yanggu.code.generator.domain.entity.LabelValueDataEntity;
 import com.yanggu.code.generator.util.GenUtil;

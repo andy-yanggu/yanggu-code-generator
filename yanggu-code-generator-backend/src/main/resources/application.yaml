@@ -14,15 +14,12 @@ spring:
     # 允许循环依赖
     allow-circular-references: true
 
-  # 配置策略
-  mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
-
   # jackson配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+    # Jackson 3默认行为对齐Boot 3.x的过渡开关，前端回归通过后移除
+    use-jackson2-defaults: true
 
   # 数据源配置
   datasource:

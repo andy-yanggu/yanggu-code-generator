@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.yanggu.code.generator.common.domain.vo.PageVO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupCopyDTO;
 import com.yanggu.code.generator.domain.dto.TemplateGroupDTO;

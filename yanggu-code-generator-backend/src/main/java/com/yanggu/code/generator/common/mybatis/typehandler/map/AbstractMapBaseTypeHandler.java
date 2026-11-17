@@ -1,7 +1,7 @@
 package com.yanggu.code.generator.common.mybatis.typehandler.map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -25,7 +25,7 @@ import java.util.Objects;
 public abstract class AbstractMapBaseTypeHandler<K, V> extends BaseTypeHandler<Map<K, V>> {
 
     //使用jackson序列化和反序列化
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper OBJECT_MAPPER = new JsonMapper();
 
     /**
      * 获取类型

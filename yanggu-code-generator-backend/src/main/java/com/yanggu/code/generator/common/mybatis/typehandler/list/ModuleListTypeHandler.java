@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.common.mybatis.typehandler.list;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import com.yanggu.code.generator.domain.entity.ModuleEntity;
 
 import java.util.List;

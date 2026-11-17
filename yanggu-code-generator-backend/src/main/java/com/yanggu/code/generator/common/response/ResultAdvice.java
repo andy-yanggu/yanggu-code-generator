@@ -1,8 +1,7 @@
 package com.yanggu.code.generator.common.response;
 
 import cn.hutool.v7.core.collection.CollUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +26,7 @@ import java.util.List;
 public class ResultAdvice implements ResponseBodyAdvice<Object> {
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     /**
      * 不需要增强的类名，有默认值，主要是swagger等的类
@@ -62,7 +61,6 @@ public class ResultAdvice implements ResponseBodyAdvice<Object> {
     }
 
     @Override
-    @SneakyThrows
     public Object beforeBodyWrite(Object body,
                                   MethodParameter returnType,
                                   MediaType selectedContentType,

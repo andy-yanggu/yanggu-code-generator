@@ -1,6 +1,6 @@
 package com.yanggu.code.generator.common.mybatis.typehandler.map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.Map;
 
