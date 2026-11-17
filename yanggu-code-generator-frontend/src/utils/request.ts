@@ -69,7 +69,9 @@ service.interceptors.response.use(
 
 		// 响应成功
 		if (result.code === 200) {
-			return config.rawResponse === false ? result : result.data
+			// rawResponse=true 时返回外层 Result（包含 code/message/data），
+			// 默认返回 unwrap 后的 result.data
+			return config.rawResponse ? result : result.data
 		}
 
 		// 处理业务逻辑错误

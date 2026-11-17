@@ -62,9 +62,9 @@
   color: var(--el-color-primary) !important;
 }
 
-/* 菜单悬浮状态：只高亮文字和图标，不更改背景颜色 */
+/* 菜单悬浮状态 */
 .el-menu-item:hover {
-  background-color: transparent !important;
+  background-color: var(--el-color-primary-light-9) !important;
 }
 
 .el-menu-item:hover .menu-title,
@@ -79,7 +79,7 @@
 }
 
 .el-sub-menu__title:hover {
-  background-color: transparent !important;
+  background-color: var(--el-color-primary-light-9) !important;
 }
 
 /* ==================== 表格 ==================== */
