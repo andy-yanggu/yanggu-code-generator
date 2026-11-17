@@ -37,7 +37,17 @@ public class DbUtil {
 
         Connection connection = DriverManager.getConnection(dataSource.getConnUrl(), dataSource.getUsername(), dataSource.getPassword());
         if (dataSource.getDbType() == DbType.Oracle) {
-            ((OracleConnection) connection).setRemarksReporting(true);
+            try {
+                ((OracleConnection) connection).setRemarksReporting(true);
+            } catch (Exception e) {
+                //Oracle参数设置失败时回滚关闭连接,避免泄漏
+                try {
+                    connection.close();
+                } catch (SQLException closeEx) {
+                    e.addSuppressed(closeEx);
+                }
+                throw e;
+            }
         }
 
         return connection;
@@ -49,24 +59,24 @@ public class DbUtil {
     public static String getDatabaseName(DataSourceBO dataSource) throws Exception {
         Connection connection = dataSource.getConnection();
         AbstractQuery dbQuery = dataSource.getDbQuery();
-        PreparedStatement preparedStatement = connection.prepareStatement(dbQuery.databaseName());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        return resultSet.getString(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(dbQuery.databaseName());
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            resultSet.next();
+            return resultSet.getString(1);
+        }
     }
 
     /**
      * 根据数据源，获取全部数据表
      */
     public static List<TableImportVO> getTableList(DataSourceBO datasource, String tableName) {
-        List<TableImportVO> tableList = new ArrayList<>();
-        try {
-            AbstractQuery query = datasource.getDbQuery();
-
+        AbstractQuery query = datasource.getDbQuery();
+        //连接生命周期由调用方管理,本方法只负责Statement/ResultSet的关闭
+        try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, true));
+             ResultSet rs = preparedStatement.executeQuery()) {
             //查询数据
-            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, true));
             String databaseName = getDatabaseName(datasource);
-            ResultSet rs = preparedStatement.executeQuery();
+            List<TableImportVO> tableList = new ArrayList<>();
             while (rs.next()) {
                 TableImportVO table = new TableImportVO();
                 table.setDatabaseName(databaseName);
@@ -74,13 +84,10 @@ public class DbUtil {
                 table.setTableComment(rs.getString(query.tableComment()));
                 tableList.add(table);
             }
-
-            datasource.getConnection().close();
+            return tableList;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            throw new BusinessException("查询数据表失败：" + e.getMessage());
         }
-
-        return tableList;
     }
 
     /**
@@ -128,8 +135,6 @@ public class DbUtil {
      * @param tableName  表名
      */
     public static List<TableFieldEntity> getTableFieldList(DataSourceBO datasource, Long tableId, String tableName) {
-        List<TableFieldEntity> tableFieldList = new ArrayList<>();
-
         try {
             AbstractQuery query = datasource.getDbQuery();
             String tableFieldsSql = query.tableFieldsSql();
@@ -139,35 +144,37 @@ public class DbUtil {
             } else {
                 tableFieldsSql = String.format(tableFieldsSql, tableName);
             }
-            PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(tableFieldsSql);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                TableFieldEntity field = new TableFieldEntity();
-                tableFieldList.add(field);
+            //连接生命周期由调用方管理,本方法只负责Statement/ResultSet的关闭
+            try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(tableFieldsSql);
+                 ResultSet rs = preparedStatement.executeQuery()) {
+                List<TableFieldEntity> tableFieldList = new ArrayList<>();
+                while (rs.next()) {
+                    TableFieldEntity field = new TableFieldEntity();
+                    tableFieldList.add(field);
 
-                //设置表ID
-                field.setTableId(tableId);
+                    //设置表ID
+                    field.setTableId(tableId);
 
-                //设置字段名称
-                field.setFieldName(rs.getString(query.fieldName()));
+                    //设置字段名称
+                    field.setFieldName(rs.getString(query.fieldName()));
 
-                //设置字段类型
-                setFieldType(rs, query, field);
+                    //设置字段类型
+                    setFieldType(rs, query, field);
 
-                //设置字段注释
-                field.setFieldComment(rs.getString(query.fieldComment()));
+                    //设置字段注释
+                    field.setFieldComment(rs.getString(query.fieldComment()));
 
-                //设置主键字段
-                setPrimaryKey(rs, query, field);
+                    //设置主键字段
+                    setPrimaryKey(rs, query, field);
 
-                //设置逻辑删除字段
-                setLogicDeleteInfo(field);
+                    //设置逻辑删除字段
+                    setLogicDeleteInfo(field);
+                }
+                return tableFieldList;
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            throw new BusinessException("获取表字段失败：" + e.getMessage());
         }
-
-        return tableFieldList;
     }
 
     private static void setFieldType(ResultSet rs, AbstractQuery query, TableFieldEntity field) throws SQLException {

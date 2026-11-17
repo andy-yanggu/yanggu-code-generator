@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.ServerException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -153,17 +152,11 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         //初始化配置信息
         ProjectEntity project = projectService.getById(projectId);
 
-        DataSourceBO dataSource = datasourceService.get(project.getDatasourceId());
-
-        //批量导入
-        for (String tempTableName : tableNameList) {
-            importTable(project, dataSource, tempTableName);
-        }
-        try {
-            //释放数据源
-            dataSource.getConnection().close();
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
+        //批量导入,try-with-resources确保连接在任何路径下都被释放
+        try (DataSourceBO dataSource = datasourceService.get(project.getDatasourceId())) {
+            for (String tempTableName : tableNameList) {
+                importTable(project, dataSource, tempTableName);
+            }
         }
     }
 
@@ -203,11 +196,12 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
         Long projectId = table.getProjectId();
         ProjectEntity project = projectService.getById(projectId);
 
-        // 初始化配置信息
-        DataSourceBO datasource = datasourceService.get(project.getDatasourceId());
-
-        // 从数据库获取表字段列表
-        List<TableFieldEntity> dbTableFieldList = DbUtil.getTableFieldList(datasource, table.getId(), table.getTableName());
+        // 初始化配置信息,try-with-resources确保连接在任何路径下都被释放
+        List<TableFieldEntity> dbTableFieldList;
+        try (DataSourceBO datasource = datasourceService.get(project.getDatasourceId())) {
+            // 从数据库获取表字段列表
+            dbTableFieldList = DbUtil.getTableFieldList(datasource, table.getId(), table.getTableName());
+        }
         if (dbTableFieldList.isEmpty()) {
             throw new ServerException("同步失败，请检查数据库表：" + table.getTableName());
         }

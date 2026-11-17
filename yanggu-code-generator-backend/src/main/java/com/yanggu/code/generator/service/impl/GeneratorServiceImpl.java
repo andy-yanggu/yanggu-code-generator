@@ -15,7 +15,6 @@ import cn.hutool.v7.core.util.EnumUtil;
 import cn.hutool.v7.http.meta.HttpHeaderUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yanggu.code.generator.common.exception.BusinessException;
-import com.yanggu.code.generator.domain.bo.DataSourceBO;
 import com.yanggu.code.generator.domain.entity.*;
 import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.domain.query.*;
@@ -23,6 +22,7 @@ import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.BusinessResultError;
+import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
@@ -251,11 +251,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
             case PROJECT -> {
                 Long datasourceId = project.getDatasourceId();
-                DataSourceBO dataSource = null;
-                if (datasourceId != null) {
-                    dataSource = datasourceService.get(datasourceId);
-                }
-                ProjectModel projectModel = buildProjectDataModel(project, dataSource);
+                DatasourceEntity datasource = datasourceId == null ? null : datasourceService.getById(datasourceId);
+                ProjectModel projectModel = buildProjectDataModel(project, datasource);
                 boolean executionResult = executionExpression(templateVO.getConditionExpression(), projectModel);
                 if (!executionResult) {
                     throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
@@ -375,16 +372,13 @@ public class GeneratorServiceImpl implements GeneratorService {
     private List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
         //获取数据源信息
         Long datasourceId = project.getDatasourceId();
-        DataSourceBO dataSource = null;
-        if (datasourceId != null) {
-            dataSource = datasourceService.get(datasourceId);
-        }
+        DatasourceEntity datasource = datasourceId == null ? null : datasourceService.getById(datasourceId);
         //获取项目模板组信息
         Long projectTemplateGroupId = project.getProjectTemplateGroupId();
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId, true);
         List<TemplateVO> projecTemplateList = buildTemplateTreeWithPaths(templateGroup.getTemplateList());
 
-        ProjectModel projectModel = buildProjectDataModel(project, dataSource);
+        ProjectModel projectModel = buildProjectDataModel(project, datasource);
         return projecTemplateList.stream()
                 .filter(template -> CollUtil.isEmpty(templateIdList) || templateIdList.contains(template.getId()))
                 .filter(template -> executionExpression(template.getConditionExpression(), projectModel))
@@ -437,7 +431,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     /**
      * 构建项目渲染数据
      */
-    private ProjectModel buildProjectDataModel(ProjectEntity project, DataSourceBO dataSource) {
+    private ProjectModel buildProjectDataModel(ProjectEntity project, DatasourceEntity datasource) {
         //项目数据
         ProjectModel projectModel = new ProjectModel();
         String projectName = project.getProjectName();
@@ -457,11 +451,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         projectModel.setModuleList(BeanUtil.copyToList(project.getModuleList(), ModuleModel.class));
 
         //数据源数据
-        if (dataSource != null) {
-            projectModel.setDatabaseDriverClassName(dataSource.getDbType().getDriverClass());
-            projectModel.setDatabaseUrl(dataSource.getConnUrl());
-            projectModel.setDatabaseUsername(dataSource.getUsername());
-            projectModel.setDatabasePassword(dataSource.getPassword());
+        if (datasource != null) {
+            projectModel.setDatabaseDriverClassName(EnumUtil.getBy(DbType::getCode, datasource.getDbType()).getDriverClass());
+            projectModel.setDatabaseUrl(datasource.getConnUrl());
+            projectModel.setDatabaseUsername(datasource.getUsername());
+            projectModel.setDatabasePassword(datasource.getPassword());
         }
 
         // 项目模板属性数据

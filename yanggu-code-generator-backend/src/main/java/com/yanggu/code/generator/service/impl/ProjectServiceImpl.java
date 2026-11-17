@@ -65,11 +65,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         ProjectEntity entity = projectMapstruct.dtoToEntity(dto);
         projectMapper.insert(entity);
 
-        //默认导入项目对应数据库下的所有表
+        //默认导入项目对应数据库下的所有表,try-with-resources确保连接在任何路径下都被释放
         Long datasourceId = entity.getDatasourceId();
         if (datasourceId != null) {
-            DataSourceBO dataSourceBO = datasourceService.get(datasourceId);
-            List<String> tableNameList = DbUtil.getTableNameList(dataSourceBO);
+            List<String> tableNameList;
+            try (DataSourceBO dataSourceBO = datasourceService.get(datasourceId)) {
+                tableNameList = DbUtil.getTableNameList(dataSourceBO);
+            }
 
             if (CollUtil.isEmpty(tableNameList)) {
                 return;
@@ -169,10 +171,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
         if (datasourceId == null) {
             throw new BusinessException("该项目没有配置数据源，请先配置数据源");
         }
-        // 获取数据源
-        DataSourceBO datasource = datasourceService.get(datasourceId);
-        // 根据数据源，获取全部数据表
-        List<TableImportVO> tableList = DbUtil.getTableList(datasource, query.getTableName());
+        // 获取数据源,try-with-resources确保连接在任何路径下都被释放
+        List<TableImportVO> tableList;
+        try (DataSourceBO datasource = datasourceService.get(datasourceId)) {
+            // 根据数据源，获取全部数据表
+            tableList = DbUtil.getTableList(datasource, query.getTableName());
+        }
         tableList.forEach(table -> {
             LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class);
             queryWrapper.eq(TableEntity::getProjectId, projectId);
