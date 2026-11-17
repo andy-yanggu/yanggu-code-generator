@@ -129,7 +129,7 @@ public class ProjectController {
     @PostMapping("/tableList")
     @ApiOperationSupport(order = 9)
     @Operation(summary = "项目下的表")
-    public List<TableImportVO> tableList(@RequestBody ProjectTableQuery query) throws Exception {
+    public List<TableImportVO> tableList(@RequestBody @Validated ProjectTableQuery query) throws Exception {
         return projectService.tableList(query);
     }
 

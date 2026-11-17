@@ -70,6 +70,8 @@ public class DbUtil {
      * 根据数据源，获取全部数据表
      */
     public static List<TableImportVO> getTableList(DataSourceBO datasource, String tableName) {
+        //表名安全校验,阻断元数据查询SQL注入
+        requireSafeTableName(tableName);
         AbstractQuery query = datasource.getDbQuery();
         //连接生命周期由调用方管理,本方法只负责Statement/ResultSet的关闭
         try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, true));
@@ -106,6 +108,8 @@ public class DbUtil {
      * @param tableName  表名
      */
     public static TableEntity getTable(DataSourceBO datasource, String tableName) {
+        //表名安全校验,阻断元数据查询SQL注入
+        requireSafeTableName(tableName);
         AbstractQuery query = datasource.getDbQuery();
         try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, false))) {
 
@@ -135,6 +139,8 @@ public class DbUtil {
      * @param tableName  表名
      */
     public static List<TableFieldEntity> getTableFieldList(DataSourceBO datasource, Long tableId, String tableName) {
+        //表名安全校验,阻断元数据查询SQL注入
+        requireSafeTableName(tableName);
         try {
             AbstractQuery query = datasource.getDbQuery();
             String tableFieldsSql = query.tableFieldsSql();
@@ -174,6 +180,18 @@ public class DbUtil {
             }
         } catch (Exception e) {
             throw new BusinessException("获取表字段失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 表名安全校验,仅允许字母/数字/下划线/$,空白表示查询全部表
+     */
+    private static void requireSafeTableName(String tableName) {
+        if (StrUtil.isBlank(tableName)) {
+            return;
+        }
+        if (!tableName.matches("^[A-Za-z0-9_$]+$")) {
+            throw new BusinessException("表名包含非法字符：" + tableName);
         }
     }
 
