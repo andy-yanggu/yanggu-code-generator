@@ -107,7 +107,7 @@ public class TableController {
      * 表分页（完整VO，含关联字段）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "表分页")
     public PageVO<TableVO> page(@RequestBody @Validated TableQuery query) {
         return tableService.page(query);
@@ -117,7 +117,7 @@ public class TableController {
      * 表列表（完整VO，含关联字段）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "表列表")
     public List<TableVO> list(@RequestBody @Validated TableQuery query) {
         return tableService.list(query);
@@ -127,7 +127,7 @@ public class TableController {
      * 导入表
      */
     @PostMapping("/import")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "导入表")
     public void importTable(@RequestBody @Validated TableImportDTO importDTO) throws Exception {
         tableService.importTable(importDTO);
@@ -139,7 +139,7 @@ public class TableController {
      * @param id 表ID
      */
     @PutMapping("/sync")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 10)
     @Operation(summary = "同步表字段")
     @Parameter(name = "id", description = "表ID", required = true)
     public void syncTableField(@RequestParam("id") Long id) throws Exception {
@@ -152,7 +152,7 @@ public class TableController {
      * @param idList 表ID列表
      */
     @PostMapping("/generateCheck")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 11)
     @Operation(summary = "表批量生成代码检测接口")
     public TableGenerateCheckVO generateCheck(@RequestBody @NotEmpty(message = "表ID列表不能为空") List<Long> idList) {
         return tableService.generateCheck(idList);

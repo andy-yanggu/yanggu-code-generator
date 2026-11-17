@@ -111,7 +111,7 @@ public class TemplateGroupController {
      * 模板组分页（完整VO，含关联字段）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "模板组分页")
     public PageVO<TemplateGroupVO> page(@RequestBody @Validated TemplateGroupQuery query) {
         return templateGroupService.page(query);
@@ -121,7 +121,7 @@ public class TemplateGroupController {
      * 模板组列表（完整VO，含关联字段及属性清单）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "模板组列表")
     public List<TemplateGroupVO> list(@RequestBody @Validated TemplateGroupQuery query) {
         return templateGroupService.list(query);
@@ -131,7 +131,7 @@ public class TemplateGroupController {
      * 复制模板组
      */
     @PostMapping("/copy")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "复制模板组")
     public void copy(@RequestBody @Validated TemplateGroupCopyDTO dto) {
         templateGroupService.copy(dto);
@@ -143,7 +143,7 @@ public class TemplateGroupController {
      * @param idList 模板组ID列表
      */
     @GetMapping("/export")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 10)
     @Operation(summary = "导出模板组")
     @Parameter(name = "idList", description = "模板组ID列表", required = true)
     public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "模板组ID列表不能为空") List<Long> idList) {
@@ -156,7 +156,7 @@ public class TemplateGroupController {
      * @param file 文件
      */
     @PostMapping("/import")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 11)
     @Operation(summary = "导入模板组")
     @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
             schema = @Schema(name = "file", format = "binary"))
@@ -168,7 +168,7 @@ public class TemplateGroupController {
      * 获取级联数据
      */
     @GetMapping("/cascaderData")
-    @ApiOperationSupport(order = 15)
+    @ApiOperationSupport(order = 12)
     @Operation(summary = "获取级联数据")
     public List<CascaderDataVO> cascaderData(@RequestParam("templateGroupType") Integer templateGroupType,
                                              @RequestParam("templateGroupId") Long templateGroupId) {

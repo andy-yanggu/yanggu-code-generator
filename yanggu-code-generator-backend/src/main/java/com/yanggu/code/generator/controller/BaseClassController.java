@@ -105,7 +105,7 @@ public class BaseClassController {
      * 基类分页（完整VO）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "基类分页")
     public PageVO<BaseClassVO> page(@RequestBody @Validated BaseClassQuery query) {
         return baseClassService.page(query);
@@ -115,7 +115,7 @@ public class BaseClassController {
      * 基类列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "基类列表")
     public List<BaseClassVO> list(@RequestBody @Validated BaseClassQuery query) {
         return baseClassService.list(query);

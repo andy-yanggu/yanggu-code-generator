@@ -106,7 +106,7 @@ public class DatasourceController {
      * 数据源分页（完整VO）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "数据源分页")
     public PageVO<DatasourceVO> page(@RequestBody @Validated DatasourceQuery query) {
         return datasourceService.page(query);
@@ -116,7 +116,7 @@ public class DatasourceController {
      * 数据源列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "数据源列表")
     public List<DatasourceVO> list(@RequestBody @Validated DatasourceQuery query) {
         return datasourceService.list(query);
@@ -128,7 +128,7 @@ public class DatasourceController {
      * @param id 数据源ID
      */
     @GetMapping("/test")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "测试数据源")
     @Parameter(name = "id", description = "数据源ID", required = true)
     public DatasourceTestVO test(@RequestParam("id") Long id) throws Exception {

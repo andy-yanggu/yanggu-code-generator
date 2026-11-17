@@ -107,7 +107,7 @@ public class ProjectController {
      * 项目分页（完整VO，含关联字段）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "项目分页")
     public PageVO<ProjectVO> page(@RequestBody @Validated ProjectQuery query) {
         return projectService.page(query);
@@ -117,7 +117,7 @@ public class ProjectController {
      * 项目列表（完整VO，含关联字段）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "项目列表")
     public List<ProjectVO> list(@RequestBody @Validated ProjectQuery query) {
         return projectService.list(query);
@@ -127,7 +127,7 @@ public class ProjectController {
      * 项目下的表
      */
     @PostMapping("/tableList")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "项目下的表")
     public List<TableImportVO> tableList(@RequestBody ProjectTableQuery query) throws Exception {
         return projectService.tableList(query);

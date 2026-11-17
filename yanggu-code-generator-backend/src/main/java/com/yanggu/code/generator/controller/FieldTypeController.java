@@ -105,7 +105,7 @@ public class FieldTypeController {
      * 字段类型分页（完整VO）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "字段类型分页")
     public PageVO<FieldTypeVO> page(@RequestBody @Validated FieldTypeQuery query) {
         return fieldTypeService.page(query);
@@ -115,7 +115,7 @@ public class FieldTypeController {
      * 字段类型列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "字段类型列表")
     public List<FieldTypeVO> list(@RequestBody @Validated FieldTypeQuery query) {
         return fieldTypeService.list(query);
@@ -125,7 +125,7 @@ public class FieldTypeController {
      * 去重字段类型列表
      */
     @GetMapping("/distinctList")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "去重字段类型列表")
     public List<String> distinctList() {
         return fieldTypeService.distinctList();

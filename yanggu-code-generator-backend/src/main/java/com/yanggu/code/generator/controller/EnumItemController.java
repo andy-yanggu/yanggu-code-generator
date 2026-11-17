@@ -105,7 +105,7 @@ public class EnumItemController {
      * 枚举项分页（完整VO）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "枚举项分页")
     public PageVO<EnumItemVO> page(@RequestBody @Validated EnumItemQuery query) {
         return enumItemService.page(query);
@@ -115,7 +115,7 @@ public class EnumItemController {
      * 枚举项列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "枚举项列表")
     public List<EnumItemVO> list(@RequestBody @Validated EnumItemQuery query) {
         return enumItemService.list(query);

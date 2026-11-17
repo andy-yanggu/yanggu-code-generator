@@ -106,7 +106,7 @@ public class EnumController {
      * 枚举分页（完整VO，含关联字段）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "枚举分页")
     public PageVO<EnumVO> page(@RequestBody @Validated EnumQuery query) {
         return enumService.page(query);
@@ -116,7 +116,7 @@ public class EnumController {
      * 枚举列表（完整VO，含关联字段）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "枚举列表")
     public List<EnumVO> list(@RequestBody @Validated EnumQuery query) {
         return enumService.list(query);
@@ -128,7 +128,7 @@ public class EnumController {
      * @param idList 枚举ID列表
      */
     @PostMapping("/generateCheck")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "枚举批量生成代码检测接口")
     public EnumGenerateCheckVO generateCheck(@RequestBody @NotEmpty(message = "枚举ID列表不能为空") List<Long> idList) {
         return enumService.generateCheck(idList);

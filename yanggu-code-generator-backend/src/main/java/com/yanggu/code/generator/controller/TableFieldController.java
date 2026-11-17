@@ -33,7 +33,7 @@ public class TableFieldController {
      * 表字段列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 3)
+    @ApiOperationSupport(order = 1)
     @Operation(summary = "表字段列表")
     public List<TableFieldVO> list(@RequestBody @Validated TableFieldQuery query) {
         return tableFieldService.list(query);

@@ -112,7 +112,7 @@ public class TemplateGroupPropertyController {
      * 模板组属性分页（完整VO）
      */
     @PostMapping("/page")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 7)
     @Operation(summary = "模板组属性分页")
     public PageVO<TemplateGroupPropertyVO> page(@RequestBody @Validated TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.page(query);
@@ -122,7 +122,7 @@ public class TemplateGroupPropertyController {
      * 模板组属性列表（完整VO）
      */
     @PostMapping("/list")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 8)
     @Operation(summary = "模板组属性列表")
     public List<TemplateGroupPropertyVO> list(@RequestBody @Validated TemplateGroupPropertyQuery query) {
         return templateGroupPropertyService.list(query);
@@ -134,7 +134,7 @@ public class TemplateGroupPropertyController {
      * @param idList 模板组属性ID列表
      */
     @GetMapping("/export")
-    @ApiOperationSupport(order = 11)
+    @ApiOperationSupport(order = 9)
     @Operation(summary = "导出模板组属性")
     @Parameter(name = "idList", description = "模板组属性ID列表", required = true)
     public ResponseEntity<byte[]> export(@RequestParam("idList") @NotEmpty(message = "模板组属性ID列表不能为空") List<Long> idList) {
@@ -148,7 +148,7 @@ public class TemplateGroupPropertyController {
      * @param templateGroupId 模板组ID
      */
     @PostMapping("/import")
-    @ApiOperationSupport(order = 12)
+    @ApiOperationSupport(order = 10)
     @Operation(summary = "导入模板组属性")
     @Parameters({
             @Parameter(name = "templateGroupId", description = "模板组ID", required = true),
@@ -164,7 +164,7 @@ public class TemplateGroupPropertyController {
      * 变更是否必填
      */
     @PutMapping("/changeRequired")
-    @ApiOperationSupport(order = 13)
+    @ApiOperationSupport(order = 11)
     @Operation(summary = "变更是否必填")
     public void changeRequired(@RequestBody @Validated TemplateGroupPropertyUpdateRequiredDTO dto) {
         templateGroupPropertyService.changeRequired(dto);
@@ -174,7 +174,7 @@ public class TemplateGroupPropertyController {
      * 变更顺序
      */
     @PutMapping("/changeOrder")
-    @ApiOperationSupport(order = 14)
+    @ApiOperationSupport(order = 12)
     @Operation(summary = "变更顺序")
     public void changeOrder(@RequestBody @Validated TemplateGroupPropertyUpdateOrderDTO dto) {
         templateGroupPropertyService.changeOrder(dto);
