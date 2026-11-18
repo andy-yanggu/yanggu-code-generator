@@ -164,7 +164,7 @@
 import { genEnumApi, genFieldTypeApi, genTableFieldApi } from '@/api'
 import { GenEnumEntity, GenTableEntity, GenTableFieldEntity, LabelData, SubmitOptions } from '@/types'
 import { Check, Close } from '@element-plus/icons-vue'
-import { startLoadingDots, useSubmitHandler } from '@/hooks'
+import { useSubmitHandler } from '@/hooks'
 import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 
 defineOptions({
@@ -238,11 +238,9 @@ const init = async (row: GenTableEntity) => {
 	// 局部加载，指定目标为当前对话框
 	const loadingInstance = ElLoading.service({
 		target: '.field-config-dialog .el-dialog__body',
-		text: '数据加载中',
+		text: '数据加载中...',
 		...LOADING_MASK_OPTIONS
 	})
-	// text 只在创建时读取一次，点号动画借 setText 逐步刷新，关闭蒙层前先停掉定时器
-	const stopLoadingDots = startLoadingDots(loadingInstance, '数据加载中')
 
 	try {
 		// 并行执行所有异步请求
@@ -264,7 +262,6 @@ const init = async (row: GenTableEntity) => {
 	} catch {
 		ElMessage.error('数据加载失败')
 	} finally {
-		stopLoadingDots()
 		loadingInstance.close()
 	}
 }

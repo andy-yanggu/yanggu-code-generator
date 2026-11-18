@@ -40,7 +40,7 @@
 		<el-table
 			ref="tableRef"
 			v-loading="loading"
-			:element-loading-text="loadingText"
+			element-loading-text="数据加载中..."
 			v-bind="tableBindAttrs"
 			:data="data"
 			:max-height="maxHeight"
@@ -109,7 +109,6 @@ import IconButton from '@/components/icon-button/index.vue'
 import { LOADING_MASK_ATTRS } from '@/components/loading-icon/loading-mask'
 import FormLabelTooltip from '@/components/form/label-tooltip/index.vue'
 import ColumnSettingsPanel from './internal/ColumnSettingsPanel.vue'
-import { useLoadingDots } from '@/hooks'
 import { DEFAULT_PAGE_SIZES, DEFAULT_PRIMARY_KEY, DEFAULT_TABLE_COLUMN_OPTIONS, DEFAULT_TABLE_MAX_HEIGHT } from '@/config/crud'
 import type { Pagination, TableFieldSchema } from '@/types/schema'
 
@@ -171,9 +170,6 @@ const emit = defineEmits<{
 // 而 attrs 本就是无类型透传逃生通道，这里放宽成 Record 避免 vue-tsc 误报
 const attrs = useAttrs()
 const tableBindAttrs = computed(() => ({ ...LOADING_MASK_ATTRS, ...(attrs as Record<string, any>) }))
-
-// 蒙层文案点号动画：loading 期间 '' → '.' → '..' → '...' 循环
-const loadingText = useLoadingDots('数据加载中', () => props.loading)
 
 // ====== 工具栏 ======
 const spacer = h(ElDivider, { direction: 'vertical' })

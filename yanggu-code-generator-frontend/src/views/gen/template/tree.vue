@@ -220,7 +220,6 @@ import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right 
 import TemplateTest from '@/views/gen/template/test.vue'
 import Sortable from 'sortablejs'
 import { useInitForm } from '@/hooks/use-init-form'
-import { startLoadingDots } from '@/hooks/use-loading-dots'
 import { genTemplateApi } from '@/api'
 import { isEmpty } from '@/utils/tool'
 import { buildFileList, buildTree, findByIdFromTree, getFullPathById, getIcon as resolveNodeIcon, joinFileName, type Tree } from './tree-utils'
@@ -413,9 +412,7 @@ const handleNodeCollapse = (data: Tree) => {
 
 // 初始化方法
 const init = async () => {
-	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中', ...LOADING_MASK_OPTIONS })
-	// text 只在创建时读取一次，点号动画借 setText 逐步刷新；蒙层延迟 500ms 关闭，动画随 close 一并停掉
-	const stopLoadingDots = startLoadingDots(loadingInstance, '数据加载中')
+	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
 	try {
 		const data = await genTemplateApi.treeData(props.templateGroupId)
 		templateTreeData.treeList = data
@@ -440,10 +437,8 @@ const init = async () => {
 		// 更新一下tab中的数据，已新加载数据为准
 		refreshTabData(templateContentList)
 	} finally {
-		useTimeoutFn(() => {
-			stopLoadingDots()
-			loadingInstance.close()
-		}, 500)
+		// 延迟 500ms 再收蒙层
+		useTimeoutFn(() => loadingInstance.close(), 500)
 	}
 }
 
