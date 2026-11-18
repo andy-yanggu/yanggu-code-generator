@@ -130,7 +130,15 @@
 							</el-col>
 						</el-row>
 						<el-divider style="margin: 5px 0"></el-divider>
-						<el-tabs ref="tabsRef" v-model="templateTreeData.activeItemId" tab-position="top" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+						<el-tabs
+							ref="tabsRef"
+							v-model="templateTreeData.activeItemId"
+							style="--el-tabs-header-height: 35px"
+							tab-position="top"
+							type="card"
+							@tab-click="handleTabClick"
+							@tab-remove="handleTabRemove"
+						>
 							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
 								<template #label>
 									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
@@ -1196,34 +1204,39 @@ defineExpose({
 .edit-icon {
 	margin-left: auto;
 	cursor: pointer;
-	color: #909399;
+	color: var(--el-text-color-secondary);
 	font-size: 14px;
 }
 .edit-icon:hover {
-	color: #409eff;
+	color: var(--el-color-primary);
 }
 
+/* 配色一律走 EP 语义变量：明暗两套由 html.dark 的变量取值自行切换，不再手写 dark 分支 */
 .context-menu {
 	position: fixed;
-	align-items: center;
-	background: #fff;
-	border: 1px solid #ddd;
+	background: var(--el-bg-color-overlay);
+	border: 1px solid var(--el-border-color);
+	/* 黑色半透明阴影明暗通用，无主题耦合，故保持字面量 */
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	padding: 5px 5px;
+	padding: 5px;
+	/* 本菜单在 el-drawer 内触发，抽屉已由 popup manager 递增到 2000+，
+	   故必须高于 var(--el-index-popper)，勿改成 EP 层级变量 */
 	z-index: 9999;
+	/* 全局 reset 未统一清列表标记，此处必须自带 */
 	list-style: none;
 	min-width: 85px;
-	max-width: 200px; /* 限制最大宽度 */
-	overflow: hidden; /* 防止超出 */
-	white-space: nowrap; /* 如果需要单行显示 */
-	text-overflow: ellipsis; /* 超出部分用省略号 */
+	max-width: 200px;
+	overflow: hidden;
+	white-space: nowrap;
+	/* 此处原先的 text-overflow: ellipsis 不生效（ul 是容器、li 为 flex，
+	   裸文本是匿名 flex item），要真出省略号须把 li 内文本包进 span，
+	   留给 ContextMenu 抽象一并处理 */
 }
 .context-menu li {
 	display: flex;
 	align-items: center;
 	gap: 5px;
 	font-size: 12px;
-	box-sizing: border-box;
 	cursor: pointer;
 	padding: 5px 10px;
 	text-align: left;
@@ -1233,25 +1246,10 @@ defineExpose({
 }
 
 .context-menu li:hover {
-	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
-	color: #333; /* 可选：加深文字颜色 */
-}
-
-/* 添加暗黑模式下的右键菜单样式 */
-html.dark .context-menu {
-	background: #1e1e1e;
-	border: 1px solid #3a3a3a;
-	color: #e0e0e0;
-}
-
-html.dark .context-menu li:hover {
-	background-color: #3a3a3a;
-	color: #e0e0e0;
-}
-
-/* 为图标添加暗黑模式适配 */
-html.dark .context-menu svg {
-	color: #e0e0e0;
+	/* 中性灰 hover：取填充色阶的 dark 档，明暗两套分别落到 #ebedf0 / #39393A，
+	   与原设计值同调；light 档在暗色下仅 #262727，hover 几乎看不出 */
+	background-color: var(--el-fill-color-dark);
+	color: var(--el-text-color-primary);
 }
 /* 两种容器：tab 和 tree node 都可以挂红点 */
 .tab-label {

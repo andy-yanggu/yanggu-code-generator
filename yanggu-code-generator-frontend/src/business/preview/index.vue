@@ -533,24 +533,6 @@ defineExpose({
 	align-items: center;
 	gap: 5px;
 }
-.context-menu li {
-	display: flex;
-	align-items: center;
-	gap: 5px;
-	font-size: 12px;
-	width: 100%; /* 让项目占满容器宽度 */
-	cursor: pointer; /* 鼠标变成小手 */
-	padding: 6px 8px;
-	border-radius: 4px;
-	box-sizing: border-box; /* 避免padding让li超宽 */
-	transition:
-		background-color 0.2s ease,
-		color 0.2s ease; /* 动画过渡 */
-}
-.context-menu li:hover {
-	background-color: #f0f0f0; /* 浅灰色高亮，可自定义颜色 */
-	color: #333; /* 可选：加深文字颜色 */
-}
 
 /* 覆盖 Element Plus 默认样式 */
 :deep(.full-screen-mode) {

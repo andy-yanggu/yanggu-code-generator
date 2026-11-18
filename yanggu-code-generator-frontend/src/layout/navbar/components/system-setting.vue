@@ -341,8 +341,8 @@ const handlerResetSystemSetting = () => {
 	> .el-collapse-item {
 		margin-bottom: 4px;
 		> .el-collapse-item__header {
-			// width:100% + padding + border-left 在 content-box 下会溢出容器、撑出横向滚动条，改用 border-box
-			box-sizing: border-box;
+			// 此 header 由 EP 给定为 width:100%，下面 3px 左边框与内衬能算在 100% 之内、不撑出横向
+			// 滚动条，靠的是全局 * { box-sizing: border-box }，故无需在此重复声明 box-sizing
 			height: 34px;
 			padding: 0 20px 0 14px;
 			border-bottom: 1px solid var(--el-border-color-lighter);

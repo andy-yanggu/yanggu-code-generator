@@ -1,8 +1,8 @@
 <template>
 	<div class="base-chart">
-		<!-- Loading 状态 -->
+		<!-- Loading 状态：复用 loading 图形单源（icon-loading symbol + 全局步进旋转），不再自绘边框圆 -->
 		<div v-if="loading" class="chart-loading">
-			<span class="loader"></span>
+			<loading-icon size="32px" class="chart-loading__icon"></loading-icon>
 		</div>
 
 		<!-- 空数据状态 -->
@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import LoadingIcon from '@/components/loading-icon/index.vue'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 
 const props = defineProps({
@@ -72,22 +73,13 @@ const isEmpty = computed(() => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #999;
+	color: var(--el-text-color-secondary);
 	font-size: 14px;
 }
 
-.loader {
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	border: 4px solid #ddd;
-	border-top-color: #409eff;
-	animation: loading 0.8s linear infinite;
-}
-
-@keyframes loading {
-	to {
-		transform: rotate(360deg);
-	}
+/* icon-loading 是单色图形，靠 fill: currentColor 取色：这里显式给主色，
+   与原设计的蓝色弧段语义一致（LoadingIcon 不封装颜色） */
+.chart-loading__icon {
+	color: var(--el-color-primary);
 }
 </style>
