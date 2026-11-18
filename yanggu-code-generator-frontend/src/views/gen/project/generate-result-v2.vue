@@ -3,8 +3,7 @@
 	<div v-if="status === 'success'" class="result-container">
 		<el-result icon="success" title="生成成功" :sub-title="successSubTitle">
 			<template #extra>
-				<el-text type="info">{{ remainSeconds }}秒后自动关闭</el-text>
-				<el-button type="primary" size="small" style="margin-left: 12px" @click="dialogVisible = false">立即关闭</el-button>
+				<el-button type="primary" size="small" @click="dialogVisible = false">立即关闭</el-button>
 			</template>
 		</el-result>
 	</div>
@@ -53,12 +52,13 @@ const emit = defineEmits<{
 }>()
 
 const successSubTitle = computed(() => {
+	let resultText = '代码生成成功'
 	if (generatorTypeRef.value === 0) {
-		return '代码已经下载到浏览器'
+		resultText = '代码已经下载到浏览器'
 	} else if (generatorTypeRef.value === 1) {
-		return '代码已经生成到本地'
+		resultText = '代码已经生成到本地'
 	}
-	return '代码生成成功'
+	return `${resultText}，${remainSeconds.value}秒后自动关闭`
 })
 
 // 「已等待」的刷新节奏：200ms 足够看出计数活着，不必跟到帧级
