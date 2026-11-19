@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.util;
 
-import cn.hutool.v7.core.reflect.ClassUtil;
 import cn.hutool.v7.json.JSONArray;
 import cn.hutool.v7.json.JSONObject;
 import cn.hutool.v7.json.JSONPrimitive;
@@ -104,16 +103,6 @@ public class GenUtil {
 
         // 默认返回原始字符串
         return value;
-    }
-
-    public String getStringValue(Object value) {
-        String data;
-        if (ClassUtil.isSimpleValueType(value.getClass())) {
-            data = value.toString();
-        } else {
-            data = JSONUtil.toJsonStr(value);
-        }
-        return data;
     }
 
 }

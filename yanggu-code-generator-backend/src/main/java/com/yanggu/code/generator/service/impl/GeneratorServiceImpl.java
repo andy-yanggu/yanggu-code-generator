@@ -21,11 +21,7 @@ import com.yanggu.code.generator.domain.query.*;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
-import com.yanggu.code.generator.enums.BusinessResultError;
-import com.yanggu.code.generator.enums.DbType;
-import com.yanggu.code.generator.enums.GeneratorProductTypeEnum;
-import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
-import com.yanggu.code.generator.enums.TemplateTypeEnum;
+import com.yanggu.code.generator.enums.*;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
@@ -400,11 +396,11 @@ public class GeneratorServiceImpl implements GeneratorService {
                 .toList();
     }
 
-    private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enmumIdList, List<Long> enumTemplateIdList) {
+    private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enumIdList, List<Long> enumTemplateIdList) {
         List<EnumModel> enumModelList = new ArrayList<>();
         List<EnumEntity> enumList = enumService.enumList(project.getId());
         enumList = enumList.stream()
-                .filter(enumEntity -> CollUtil.isEmpty(enmumIdList) || enmumIdList.contains(enumEntity.getId()))
+                .filter(enumEntity -> CollUtil.isEmpty(enumIdList) || enumIdList.contains(enumEntity.getId()))
                 .toList();
         for (EnumEntity enumEntity : enumList) {
             EnumModel dataModel = buildEnumDataModel(enumEntity, project);

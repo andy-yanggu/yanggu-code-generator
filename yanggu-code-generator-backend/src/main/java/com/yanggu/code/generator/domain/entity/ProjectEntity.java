@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanggu.code.generator.common.domain.entity.BaseEntity;
-import com.yanggu.code.generator.common.mybatis.typehandler.list.ModuleListTypeHandler;
 import com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler;
+import com.yanggu.code.generator.config.ModuleListTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

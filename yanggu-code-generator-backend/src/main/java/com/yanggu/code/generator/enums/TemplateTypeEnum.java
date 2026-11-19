@@ -16,8 +16,7 @@ public enum TemplateTypeEnum {
 
     TEMPLATE_FILE(1, "模板文件"),
 
-    BINARY_FILE(2, "二进制文件");
-
+    BINARY_FILE(2, "二进制文件"),
     ;
 
     @EnumValue

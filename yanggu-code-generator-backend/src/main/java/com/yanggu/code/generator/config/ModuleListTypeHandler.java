@@ -1,7 +1,8 @@
-package com.yanggu.code.generator.common.mybatis.typehandler.list;
+package com.yanggu.code.generator.config;
 
-import tools.jackson.core.type.TypeReference;
+import com.yanggu.code.generator.common.mybatis.typehandler.list.AbstractListTypeHandler;
 import com.yanggu.code.generator.domain.entity.ModuleEntity;
+import tools.jackson.core.type.TypeReference;
 
 import java.util.List;
 

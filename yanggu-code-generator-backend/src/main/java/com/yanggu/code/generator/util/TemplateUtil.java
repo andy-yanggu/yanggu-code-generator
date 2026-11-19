@@ -18,6 +18,14 @@ import java.io.StringWriter;
 @UtilityClass
 public class TemplateUtil {
 
+    private static final Configuration cfg;
+
+    static {
+        cfg = new Configuration(Configuration.VERSION_2_3_32);
+        // 不要千分位，从根源解决
+        cfg.setNumberFormat("0");
+    }
+
     /**
      * 获取模板渲染后的内容
      *
@@ -28,9 +36,6 @@ public class TemplateUtil {
     public static String renderTemplate(String templateName, String templateContent, Object dataModel) {
         try (StringReader reader = new StringReader(templateContent);
              StringWriter sw = new StringWriter()) {
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
-            // 不要千分位，从根源解决
-            cfg.setNumberFormat("0");
             Template template = new Template(templateName, reader, cfg, "utf-8");
             template.process(dataModel, sw);
             return sw.toString();

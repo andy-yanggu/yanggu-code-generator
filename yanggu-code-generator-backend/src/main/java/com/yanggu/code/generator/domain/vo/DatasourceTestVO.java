@@ -25,6 +25,7 @@ public class DatasourceTestVO {
     /**
      * 错误信息
      */
+    @Schema(description = "错误信息")
     private String errorMessage;
 
 }

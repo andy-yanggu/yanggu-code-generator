@@ -11,8 +11,11 @@ import lombok.Getter;
 public enum GeneratorProductTypeEnum {
 
     PROJECT(0, "项目"),
+
     TABLE(1, "表"),
-    ENUM(2, "枚举");
+
+    ENUM(2, "枚举"),
+    ;
 
     private final Integer productType;
 

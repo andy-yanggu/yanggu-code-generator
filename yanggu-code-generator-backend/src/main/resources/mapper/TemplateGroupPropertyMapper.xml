@@ -5,8 +5,7 @@
 
     <!-- 所有字段 -->
     <sql id="allColumns">
-        id
-        ,
+        id,
         template_group_id,
         prop_title,
         prop_key,
