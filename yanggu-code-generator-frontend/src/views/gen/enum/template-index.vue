@@ -1,9 +1,6 @@
 <template>
 	<el-dialog v-model="dialogVisible" title="请选择模板" width="75%" @close="dialogVisible = false">
-		<query-table ref="queryTableRef" :table-hook="tableHook">
-			<!-- 工具栏留空，不需要默认按钮 -->
-			<template #toolbar-left></template>
-		</query-table>
+		<query-table ref="queryTableRef" :table-hook="tableHook"></query-table>
 		<template #footer>
 			<div class="footer-buttons">
 				<el-button :icon="Close" @click="dialogVisible = false">取消</el-button>

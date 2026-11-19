@@ -38,6 +38,19 @@ const flattenLeafFields = (fields: CrudField[]): CrudField[] => {
 	return result
 }
 
+/**
+ * 按视图排序位做稳定排序：声明了 index 的按其升序排，未声明的视为排在已声明之后、
+ * 彼此保持入参原相对顺序。Array.prototype.sort 在 ES2019+ 保证稳定，
+ * 显式用原下标兜底比较只是把稳定性写死、不依赖引擎实现。
+ * 三者都不填 index 时（已迁移页面）等价于原样返回，向后兼容。
+ */
+const sortByViewIndex = <T>(list: T[], getIndex: (item: T) => number | undefined): T[] => {
+	return list
+		.map((item, i) => ({ item, i, idx: getIndex(item) }))
+		.sort((a, b) => (a.idx ?? Number.MAX_SAFE_INTEGER) - (b.idx ?? Number.MAX_SAFE_INTEGER) || a.i - b.i)
+		.map(entry => entry.item)
+}
+
 const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 	return flattenLeafFields(fields)
 		.filter(f => f.inForm)
@@ -54,8 +67,10 @@ const buildFormSchema = (fields: CrudField[]): FormFieldSchema[] => {
 }
 
 const buildSearchSchema = (fields: CrudField[]): SearchFieldSchema[] => {
-	return flattenLeafFields(fields)
-		.filter(f => f.inSearch)
+	return sortByViewIndex(
+		flattenLeafFields(fields).filter(f => f.inSearch),
+		f => f.searchIndex
+	)
 		.map(f => {
 			// 顶层共享属性注入 search 子对象（f.search 里的同名属性优先级更高）
 			const shared: Partial<SearchFieldSchema> = {}
@@ -83,7 +98,10 @@ const buildTableColumns = (fields: CrudField[], opts?: UseCrudOptions['tableConf
 	const cols: TableFieldSchema[] = []
 	if (opts?.showSelection !== false) cols.push(createBuiltinSelection())
 	if (opts?.showIndex !== false) cols.push(createBuiltinIndex())
-	cols.push(...fields.filter(f => f.inTable).map(buildColumn))
+	sortByViewIndex(
+		fields.filter(f => f.inTable),
+		f => f.tableIndex
+	).forEach(f => cols.push(buildColumn(f)))
 	if (opts?.showCreateTime !== false) cols.push(createBuiltinCreateTime())
 	if (opts?.showUpdateTime !== false) cols.push(createBuiltinUpdateTime())
 	if (opts?.showOperation !== false) cols.push(createBuiltinOperation())

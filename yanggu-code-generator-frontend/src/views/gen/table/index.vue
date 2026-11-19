@@ -168,7 +168,8 @@ const projectList = ref([] as GenProjectEntity[])
 const baseClassList = ref([] as GenBaseClassEntity[])
 const tableTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
-onMounted(() => {
+// 加载页面下拉数据（项目/基类）
+const loadOptions = () => {
 	// 项目下拉（查询插槽 + 表单项目/模块联动共用）
 	genProjectApi.list().then(data => {
 		projectList.value = data
@@ -177,6 +178,20 @@ onMounted(() => {
 	genBaseClassApi.list().then(data => {
 		baseClassList.value = data
 	})
+}
+
+// 首次进入（无缓存场景由此加载；有缓存场景后续激活由 onActivated 负责）
+onMounted(loadOptions)
+
+// 页面被重新激活时再拉取一次；首次激活紧随 onMounted，跳过以避免重复请求
+let activatedOnce = false
+onActivated(() => {
+	// console.log('activated')
+	if (!activatedOnce) {
+		activatedOnce = true
+		return
+	}
+	loadOptions()
 })
 
 // ====== 统一字段声明 ======

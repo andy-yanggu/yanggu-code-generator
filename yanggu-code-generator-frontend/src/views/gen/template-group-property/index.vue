@@ -62,23 +62,30 @@
 				<el-row
 					v-for="(item, index) in componentOptionsOf(model)"
 					:key="index"
+					class="component-option-row"
 					:gutter="10"
 					:style="{ marginBottom: index < componentOptionsOf(model).length - 1 ? '18px' : '0' }"
 				>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions[${index}].label`">
-							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 220px" />
+							<el-input v-model="item.label" clearable placeholder="请输入选项标题" style="width: 100%" />
 						</el-form-item>
 					</el-col>
 					<el-col :span="10">
 						<el-form-item :prop="`componentOptions[${index}].value`">
-							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 220px" />
+							<el-input v-model="item.value" clearable placeholder="请输入选项值" style="width: 100%" />
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
-						<el-button circle type="primary" :icon="Plus" :disabled="switchOptionFull" @click="addOption(model, index + 1)" />
-						<el-button circle type="danger" :icon="Delete" @click="removeOption(model, index)" />
+						<el-space size="default">
+							<el-button circle :icon="Top" :disabled="index === 0" title="上移" @click="moveOption(model, index, -1)" />
+							<el-button circle :icon="Bottom" :disabled="index === componentOptionsOf(model).length - 1" title="下移" @click="moveOption(model, index, 1)" />
+							<el-button v-show="componentOptionsOf(model).length > 1" type="danger" circle :icon="Delete" title="删除" @click="removeOption(model, index)" />
+						</el-space>
 					</div>
+				</el-row>
+				<el-row class="add-option-row" :gutter="10">
+					<el-button class="add-option-btn" type="primary" plain :icon="Plus" @click="addOption(model, componentOptionsOf(model).length)">新增选项</el-button>
 				</el-row>
 			</template>
 		</crud-page>
@@ -98,7 +105,7 @@ import type {
 } from '@/types'
 import { useCrud, useSwitchChangeHandler } from '@/hooks'
 import CrudPage from '@/components/crud/CrudPage.vue'
-import { Delete, Download, Plus, Upload } from '@element-plus/icons-vue'
+import { Bottom, Delete, Download, Plus, Top, Upload } from '@element-plus/icons-vue'
 import { genTemplateGroupPropertyApi } from '@/api'
 
 defineOptions({
@@ -231,6 +238,7 @@ const formConfig = reactive({
 		}
 	},
 	labelWidth: '130px',
+	dialogWidth: '65%', // 表单弹窗加宽，容纳操作区三枚按钮，与 project 表单观感一致
 	subject: '模板组属性',
 	formContext
 } as UseCrudFormOptions)
@@ -310,7 +318,6 @@ interface ComponentOption {
 const componentOptionsOf = (model: any): ComponentOption[] => (model?.componentOptions ?? []) as ComponentOption[]
 
 const hasComponentOptions = computed(() => [2, 3, 4, 5].includes(formHook.form.data.componentType as number))
-const switchOptionFull = computed(() => formHook.form.data.componentType === 5 && formHook.form.data.componentOptions.length >= 2)
 
 const addOption = (model: any, index: number) => {
 	model.componentOptions.splice(index, 0, emptyLabelData())
@@ -318,6 +325,16 @@ const addOption = (model: any, index: number) => {
 
 const removeOption = (model: any, index: number) => {
 	model.componentOptions.splice(index, 1)
+}
+
+// 选项上下移：与相邻项交换位置（越界防御式直接返回，按钮 disabled 已挡常规场景）
+const moveOption = (model: any, index: number, dir: -1 | 1) => {
+	const list = model.componentOptions as ComponentOption[]
+	const target = index + dir
+	if (target < 0 || target >= list.length) return
+	const from = list[index]
+	list[index] = list[target]
+	list[target] = from
 }
 
 // 组件类型变更时清空选项
@@ -351,10 +368,35 @@ defineExpose({ init })
 }
 
 .module-actions {
-	width: 50px;
+	width: 130px; /* 上移/下移/删除三枚圆钮(el-space间距12×2)+左内边距10 ≈ 130px，与 project 模块行一致，固定宽避免显隐抖动 */
 	display: flex;
 	align-items: center;
 	padding-left: 10px;
-	gap: 15px;
+}
+
+/* 组件选项行：占满 el-form-item__content 整行，两列 flex 均分填满，操作区固定宽靠右 */
+.component-option-row {
+	width: 100%;
+
+	:deep(.el-col) {
+		flex: 1 1 0;
+		max-width: none;
+	}
+}
+
+/* 新增选项：外层 el-row 是 el-form-item__content(flex) 的子项，默认缩到内容宽度，需占满整行 */
+.add-option-row {
+	width: 100%;
+}
+
+/* 新增选项：整行虚线占位添加区，图标+文字居中 */
+.add-option-btn {
+	width: 100%; /* 撑满选项整行宽度 */
+	margin-top: 20px;
+	border-style: dashed; /* 虚线占位语义 */
+
+	span {
+		justify-content: center; /* 图标+文字水平居中 */
+	}
 }
 </style>

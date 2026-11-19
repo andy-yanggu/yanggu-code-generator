@@ -209,6 +209,19 @@ export interface CrudField {
 	/** 是否出现在表格列，默认 false */
 	inTable?: boolean
 
+	// ====== 视图独立顺序（三者互不影响；不填则保持 fields 中的相对顺序） ======
+	/**
+	 * 表格列排序位：仅在本视图（inTable）字段之间按升序排。
+	 * 未声明的字段视为排在已声明之后，彼此保持 fields 原相对顺序；
+	 * 内置固定列（多选/序号/创建时间/修改时间/操作）位置固定，不参与此排序。
+	 */
+	tableIndex?: number
+	/**
+	 * 查询字段排序位：仅在本视图（inSearch）字段之间按升序排。
+	 * 语义同 tableIndex；表单顺序无对应项，始终跟随 fields 数组顺序。
+	 */
+	searchIndex?: number
+
 	// ====== Form + Search 共享属性（派生时自动注入两个子对象） ======
 	/** 组件类型（无 el- 前缀） */
 	component?: ComponentType

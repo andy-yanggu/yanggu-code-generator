@@ -48,6 +48,8 @@ export interface GenModuleEntity {
 	moduleDesc: string
 	// 模块路径
 	modulePath: string
+	// 前端表格行稳定 key（不可枚举，仅渲染用，不会提交到后端）
+	_rowKey?: string
 }
 
 /**

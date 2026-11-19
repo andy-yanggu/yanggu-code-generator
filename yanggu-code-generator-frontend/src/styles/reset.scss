@@ -10,15 +10,6 @@
   padding: 0;
 }
 
-/* 焦点可见兜底（WCAG 2.4.7）：原先这里是 * { outline: none !important }，!important 无差别压掉
-   EP 自带的 .el-button:focus-visible / .el-checkbox input:focus-visible 等多条焦点样式，
-   键盘用户完全看不到焦点落点。改为只在 :focus-visible 上给统一焦点环，取值与 EP 自己的规则一致（2px + offset 1px）：
-   EP 已定义 :focus-visible 的组件选择器权重更高，继续吃它自己的取色；本条只兜住 EP 没覆盖的元素与原生控件 */
-:focus-visible {
-  outline: 2px solid var(--el-color-primary);
-  outline-offset: 1px;
-}
-
 html,
 body,
 #app {

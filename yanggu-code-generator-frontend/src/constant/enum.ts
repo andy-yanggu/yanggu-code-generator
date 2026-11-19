@@ -39,7 +39,7 @@ export const DB_TYPES = Enum({
 export const TEMPLATE_GROUP_TYPES = Enum({
 	Project: { value: 0, label: '项目模板', type: 'primary' as TagType },
 	Table: { value: 1, label: '表模板', type: 'success' as TagType },
-	Enum: { value: 2, label: '枚举模板', type: 'info' as TagType }
+	Enum: { value: 2, label: '枚举模板', type: 'warning' as TagType }
 } as const)
 
 // 模板类型枚举

@@ -20,10 +20,7 @@
 	<template v-if="!props.currentMenuTag.pinned">
 		<el-divider></el-divider>
 		<div class="icon-list">
-			<div
-				v-if="!props.currentMenuTag.pinned && (props.currentMenuTag.fullPath !== defaultMenu || unpinnedLength > 1)"
-				class="icon-item"
-				@click="emits('closeCurrentTag')">
+			<div v-if="!props.currentMenuTag.pinned && (props.currentMenuTag.fullPath !== defaultMenu || unpinnedLength > 1)" class="icon-item" @click="emits('closeCurrentTag')">
 				<el-icon size="10"><CloseBold></CloseBold></el-icon>
 				<span>关闭当前</span>
 			</div>
@@ -80,17 +77,7 @@ const unpinnedLength = computed(() => unpinnedTags.value.length)
 
 const currentUnpinnedIndex = computed(() => unpinnedTags.value.findIndex(tag => tag.fullPath === props.currentMenuTag.fullPath))
 
-const emits = defineEmits([
-	'refreshCurrentTag',
-	'closeCurrentTag',
-	'closeAllTags',
-	'closeOtherTags',
-	'closeLeftTag',
-	'closeRightTag',
-	'openNewWindow',
-	'fullScreen',
-	'togglePin'
-])
+const emits = defineEmits(['refreshCurrentTag', 'closeCurrentTag', 'closeAllTags', 'closeOtherTags', 'closeLeftTag', 'closeRightTag', 'openNewWindow', 'fullScreen', 'togglePin'])
 </script>
 
 <style scoped>
@@ -99,7 +86,6 @@ const emits = defineEmits([
 	flex-direction: column;
 	gap: 10px;
 	padding: 5px;
-	width: 70px;
 }
 
 .icon-item {
