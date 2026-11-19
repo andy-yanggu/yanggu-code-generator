@@ -12,13 +12,11 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupPropertyVO;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -147,14 +145,10 @@ public class TemplateGroupPropertyController {
      * @param file            文件
      * @param templateGroupId 模板组ID
      */
-    @PostMapping("/import")
+    @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperationSupport(order = 10)
     @Operation(summary = "导入模板组属性")
-    @Parameters({
-            @Parameter(name = "templateGroupId", description = "模板组ID", required = true),
-            @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
-                    schema = @Schema(name = "file", format = "binary"))
-    })
+    @Parameter(name = "templateGroupId", description = "模板组ID", required = true)
     public void importTemplateGroup(@RequestParam("file") MultipartFile file,
                                     @RequestParam("templateGroupId") Long templateGroupId) throws Exception {
         templateGroupPropertyService.importTemplateGroupProperty(file, templateGroupId);

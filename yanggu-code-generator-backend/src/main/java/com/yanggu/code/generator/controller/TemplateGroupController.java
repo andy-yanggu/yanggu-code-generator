@@ -12,12 +12,11 @@ import com.yanggu.code.generator.domain.vo.TemplateGroupVO;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -155,11 +154,9 @@ public class TemplateGroupController {
      *
      * @param file 文件
      */
-    @PostMapping("/import")
+    @PostMapping(path = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperationSupport(order = 11)
     @Operation(summary = "导入模板组")
-    @Parameter(name = "file", description = "文件", in = ParameterIn.DEFAULT, required = true,
-            schema = @Schema(name = "file", format = "binary"))
     public void importTemplateGroup(@RequestParam("file") MultipartFile file) throws Exception {
         templateGroupService.importTemplateGroup(file);
     }

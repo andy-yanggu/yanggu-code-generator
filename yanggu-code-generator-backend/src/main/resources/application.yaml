@@ -42,6 +42,12 @@ knife4j:
   setting:
     enable-dynamic-parameter: true
 
+# springdoc配置
+springdoc:
+  # 接口声明了consumes=multipart/form-data时，把同方法的query参数折叠进form-data属性，
+  # 使文件与非文件参数在Swagger调试页统一渲染为表单参数
+  default-support-form-data: true
+
 # 代码生成器相关配置
 generator:
   logic-delete:
