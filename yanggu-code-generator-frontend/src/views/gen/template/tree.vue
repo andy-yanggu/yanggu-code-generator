@@ -1218,6 +1218,7 @@ defineExpose({
 	border: 1px solid var(--el-border-color);
 	/* 黑色半透明阴影明暗通用，无主题耦合，故保持字面量 */
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	border-radius: 4px;
 	padding: 5px;
 	/* 本菜单在 el-drawer 内触发，抽屉已由 popup manager 递增到 2000+，
 	   故必须高于 var(--el-index-popper)，勿改成 EP 层级变量 */
@@ -1239,6 +1240,7 @@ defineExpose({
 	font-size: 12px;
 	cursor: pointer;
 	padding: 5px 10px;
+	border-radius: 4px;
 	text-align: left;
 	transition:
 		background-color 0.2s ease,

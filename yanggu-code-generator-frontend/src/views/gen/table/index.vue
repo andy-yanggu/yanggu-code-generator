@@ -316,7 +316,14 @@ const formConfig = reactive({
 		popupType: '',
 		tableTemplateGroupId: '',
 		templateGroupPropertyData: {},
-		generatorFunction: [0, 1, 2, 3, 4, 5]
+		generatorFunction: [
+			TABLE_GENERATOR_FUNCTION_TYPES.Add,
+			TABLE_GENERATOR_FUNCTION_TYPES.Update,
+			TABLE_GENERATOR_FUNCTION_TYPES.Delete,
+			TABLE_GENERATOR_FUNCTION_TYPES.Detail,
+			TABLE_GENERATOR_FUNCTION_TYPES.Page,
+			TABLE_GENERATOR_FUNCTION_TYPES.List
+		]
 	}),
 	submitApi: genTableApi.submit,
 	detailApi: genTableApi.detail,
@@ -365,7 +372,7 @@ const importHandle = () => {
 }
 
 const previewHandle = (row: GenTableEntity) => {
-	previewRef.value.init(row.id, row.tableName, row.projectId, (row as any).generatorType, GENERATOR_PRODUCT_TYPES.Table)
+	previewRef.value.init(row.id, row.tableName, row.projectId, row.generatorType, GENERATOR_PRODUCT_TYPES.Table)
 }
 
 const editHandle = (row: GenTableEntity) => {
@@ -374,7 +381,7 @@ const editHandle = (row: GenTableEntity) => {
 
 // 生成代码：单行
 const generatorCode = (row: GenTableEntity) => {
-	templateIndexRef.value.init(row.tableTemplateGroupId, (row as any).generatorType, [row.id])
+	templateIndexRef.value.init(row.tableTemplateGroupId, row.generatorType, [row.id])
 }
 
 // 生成代码：批量。先做同项目校验，通过后打开生成弹窗

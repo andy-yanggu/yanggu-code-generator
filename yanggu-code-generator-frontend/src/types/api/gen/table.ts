@@ -42,6 +42,8 @@ export interface GenTableEntity {
 	permissionFlag: string
 	// 表项目模板组ID
 	tableTemplateGroupId: number | string
+	// 生成类型
+	generatorType?: number | string
 }
 
 /**
