@@ -1,14 +1,6 @@
 <template>
 	<div>
 		<crud-page :table-hook="tableHook" :form-hook="formHook">
-			<!-- 工具栏左侧：新增 + 批量删除（覆盖默认按钮） -->
-			<template #table-toolbar-left="{ tableHook: t }">
-				<el-space size="default">
-					<el-button type="primary" :icon="Plus" @click="formHook.dialog.open('add')">新增</el-button>
-					<el-button type="danger" :loading="t.action.delete.loading" :icon="Delete" @click="t.action.delete.execute()">删除</el-button>
-				</el-space>
-			</template>
-
 			<!-- 表单字段：项目端口（v-model.number 保证写入数字，配合 type:number 校验） -->
 			<template #form-projectPort="{ model }">
 				<el-input v-model.number="model.projectPort" placeholder="请输入项目端口" clearable></el-input>
@@ -23,35 +15,40 @@
 				</el-select>
 			</template>
 
-			<!-- 表单字段：模块列表（动态数组子表单，逐行增删 + 交叉校验，保留原始 UI） -->
+			<!-- 表单字段：模块列表（动态数组子表单：逐行上/下移动 + 删除，底部统一新增，稳定 uuid key） -->
 			<template #form-moduleList="{ model }">
 				<el-row
 					v-for="(item, index) in model.moduleList as GenModuleEntity[]"
-					:key="index"
+					:key="item._rowKey"
+					class="module-row"
 					:gutter="10"
 					:style="{ marginBottom: index < (model.moduleList as GenModuleEntity[]).length - 1 ? '18px' : '0' }"
 				>
 					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].moduleName`">
-							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 180px"></el-input>
+							<el-input v-model="item.moduleName" clearable placeholder="请输入模块名称" style="width: 100%"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].modulePath`">
-							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 180px"></el-input>
+							<el-input v-model="item.modulePath" clearable placeholder="请输入模块路径" style="width: 100%"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="6.5">
 						<el-form-item :prop="`moduleList[${index}].moduleDesc`">
-							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 180px"></el-input>
+							<el-input v-model="item.moduleDesc" clearable placeholder="请输入模块描述" style="width: 100%"></el-input>
 						</el-form-item>
 					</el-col>
 					<div class="module-actions">
 						<el-space size="default">
-							<el-button circle :icon="Plus" type="primary" @click="model.moduleList.splice(index + 1, 0, emptyModule())"></el-button>
-							<el-button v-show="model.moduleList.length > 1" type="danger" circle :icon="Delete" @click="model.moduleList.splice(index, 1)"></el-button>
+							<el-button circle :icon="Top" :disabled="index === 0" title="上移" @click="moveModule(index, -1)"></el-button>
+							<el-button circle :icon="Bottom" :disabled="index === (model.moduleList as GenModuleEntity[]).length - 1" title="下移" @click="moveModule(index, 1)"></el-button>
+							<el-button v-show="model.moduleList.length > 1" type="danger" circle :icon="Delete" title="删除" @click="removeModule(index)"></el-button>
 						</el-space>
 					</div>
+				</el-row>
+				<el-row class="add-module-row" :gutter="10">
+					<el-button class="add-module-btn" type="primary" plain :icon="Plus" @click="addModule">新增模块</el-button>
 				</el-row>
 			</template>
 
@@ -144,24 +141,12 @@ import TemplateGroupPropertyForm from '@/views/gen/template-group-property/prope
 import OptionLabel from '@/components/option/label/index.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
-import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinOperation, createBuiltinSelection } from '@/hooks'
 import { useCrud } from '@/hooks/use-crud'
 import { isNotEmpty } from '@/utils/tool'
-import { Delete, DocumentAdd, Edit, Plus, View } from '@element-plus/icons-vue'
+import { Bottom, Delete, DocumentAdd, Edit, Plus, Top, View } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
 import { genDatasourceApi, genProjectApi, genTemplateGroupApi } from '@/api'
-import type {
-	CrudField,
-	GenDatasourceEntity,
-	GenModuleEntity,
-	GenProjectEntity,
-	GenProjectQuery,
-	GenTemplateGroupEntity,
-	SearchFieldSchema,
-	TableFieldSchema,
-	UseCrudFormOptions,
-	UseCrudTableOptions
-} from '@/types'
+import type { CrudField, GenDatasourceEntity, GenModuleEntity, GenProjectEntity, GenProjectQuery, GenTemplateGroupEntity, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 
 defineOptions({
 	name: 'GenProject'
@@ -188,21 +173,45 @@ onMounted(() => {
 	})
 })
 
-const emptyModule = (): GenModuleEntity => ({
-	moduleName: '',
-	modulePath: '',
-	moduleDesc: ''
-})
+// 模块行稳定 key：单调递增种子保证即便删行/重开也不会与现存行重复；
+// 用不可枚举属性挂载 → JSON 序列化提交时自动忽略，不污染后端数据
+let rowKeySeed = 0
+const nextRowKey = () => `mod-${++rowKeySeed}`
+const withRowKey = (module: GenModuleEntity): GenModuleEntity => {
+	Object.defineProperty(module, '_rowKey', { value: nextRowKey(), enumerable: false, configurable: true, writable: true })
+	return module
+}
 
-// ====== 表单字段声明（fields 仅驱动 formSchema；表格列/查询因顺序与表单冲突，改由 tableConfig 显式声明） ======
+const emptyModule = (): GenModuleEntity => withRowKey({ moduleName: '', modulePath: '', moduleDesc: '' })
+
+// moduleList 行操作：统一从 formHook 读取数组（handler 运行期调用，无 TDZ）
+const addModule = () => formHook.form.data.moduleList.push(emptyModule())
+const removeModule = (index: number) => formHook.form.data.moduleList.splice(index, 1)
+const moveModule = (index: number, dir: -1 | 1) => {
+	const list = formHook.form.data.moduleList
+	const target = index + dir
+	if (target < 0 || target >= list.length) return
+	const from = list[index]
+	list[index] = list[target]
+	list[target] = from
+}
+
+// ====== 统一字段声明（一份 fields 派生 formSchema / searchSchema / tableColumns） ======
+// 表单顺序跟随数组顺序；表格列与查询因顺序与表单不一致，用 tableIndex / searchIndex 独立控制。
+// 视图差异（如 generatorType 表单 radio、查询 select）写进各自的 table / search 子对象。
+// 仅表格 / 仅查询的虚拟字段（projectTemplateGroupName、dateTimeRange）只开对应 inTable / inSearch，不进表单。
 const fields: CrudField[] = [
 	{ key: 'divider-basic', label: '基础信息', inForm: true, form: { display: 'bare' } },
 	{
 		key: 'projectName',
 		label: '项目名称',
-		tooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性",
 		inForm: true,
-		form: { ruleList: [{ required: true, message: '项目名称不能为空', trigger: 'blur' }] }
+		inSearch: true,
+		inTable: true,
+		searchIndex: 0,
+		tableIndex: 0,
+		form: { tooltip: "使用英文小写字母，单词之间使用'-'拼接；该字段具有唯一性", ruleList: [{ required: true, message: '项目名称不能为空', trigger: 'blur' }] },
+		search: { width: 140 }
 	},
 	{
 		key: 'projectVersion',
@@ -214,14 +223,22 @@ const fields: CrudField[] = [
 		key: 'generatorType',
 		label: '生成方式',
 		inForm: true,
+		inSearch: true,
+		inTable: true,
+		searchIndex: 1,
+		tableIndex: 4,
 		component: 'radio',
 		options: PROJECT_GENERATE_TYPES.items,
-		form: { ruleList: [{ required: true, message: '生成类型不能为空', trigger: 'blur' }] }
+		form: { ruleList: [{ required: true, message: '生成类型不能为空', trigger: 'blur' }] },
+		search: { component: 'select', width: 150 },
+		table: { formatter: getDictTag(PROJECT_GENERATE_TYPES), minWidth: 110 }
 	},
 	{
 		key: 'projectPort',
 		label: '项目端口',
 		inForm: true,
+		inTable: true,
+		tableIndex: 1,
 		form: {
 			ruleList: [
 				{ required: true, message: '项目端口不能为空', trigger: 'blur' },
@@ -229,10 +246,10 @@ const fields: CrudField[] = [
 			]
 		}
 	},
-	{ key: 'projectPackage', label: '项目包名', inForm: true },
+	{ key: 'projectPackage', label: '项目包名', inForm: true, inTable: true, tableIndex: 5 },
 	{ key: 'datasourceId', label: '数据源', inForm: true },
-	{ key: 'author', label: '作者', inForm: true },
-	{ key: 'projectDesc', label: '项目描述', inForm: true },
+	{ key: 'author', label: '作者', inForm: true, inTable: true, tableIndex: 2 },
+	{ key: 'projectDesc', label: '项目描述', inForm: true, inTable: true, tableIndex: 3 },
 	// 模块列表：普通字段（保留 label「模块列表」），内容由 form-moduleList 插槽承载动态数组 UI
 	{ key: 'moduleList', label: '模块列表', inForm: true },
 
@@ -250,7 +267,21 @@ const fields: CrudField[] = [
 
 	{ key: 'divider-other', label: '其他配置', inForm: true, form: { display: 'bare' } },
 	{ key: 'backendPath', label: '后端路径', tooltip: "以 '/' 分隔", inForm: true },
-	{ key: 'frontendPath', label: '前端路径', tooltip: "以 '/' 分隔", inForm: true }
+	{ key: 'frontendPath', label: '前端路径', tooltip: "以 '/' 分隔", inForm: true },
+
+	// ====== 视图专属虚拟字段（不进表单，靠 index 落到目标视图的正确位置） ======
+	// 表格列：项目模板组名称（列表接口返回的关联名，表单里是 projectTemplateGroupId）
+	{ key: 'projectTemplateGroupName', label: '项目模板组', inTable: true, tableIndex: 6, table: { minWidth: 120 } },
+	// 查询字段：创建时间区间。后端契约字段 startTime / endTime，靠 rangeFields 拆数组；
+	// defaultTime 保证末日晚间记录不被后端 between(createTime, start, end) 漏掉
+	{
+		key: 'dateTimeRange',
+		label: '创建时间',
+		inSearch: true,
+		searchIndex: 2,
+		component: 'datetime-range',
+		search: { rangeFields: ['startTime', 'endTime'], defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)] }
+	}
 ]
 
 /**
@@ -328,6 +359,12 @@ const formConfig = reactive({
 	}),
 	submitApi: genProjectApi.submit,
 	detailApi: genProjectApi.detail,
+	// update/copy 载入详情时给后端返回的模块行补稳定 key（必须在 assignFormData 之前挂到原始对象上）
+	beforeDataAssign: (data: GenProjectEntity) => {
+		data?.moduleList?.forEach((module: GenModuleEntity) => {
+			if (!module._rowKey) withRowKey(module)
+		})
+	},
 	extraRules: buildExtraRules,
 	labelWidth: '120px',
 	dialogWidth: '65%',
@@ -340,37 +377,8 @@ const formConfig = reactive({
 	}
 } as UseCrudFormOptions)
 
-// ====== 查询字段（顺序独立于表单，显式声明） ======
-// dateTimeRange：后端契约字段是 startTime / endTime，靠 rangeFields 让 hook 拆数组
-// defaultTime 保证末日晚间记录不被后端 between(createTime, start, end) 漏掉
-const searchSchema: SearchFieldSchema[] = [
-	{ key: 'projectName', label: '项目名称', width: 140 },
-	{ key: 'generatorType', label: '生成方式', component: 'select', options: PROJECT_GENERATE_TYPES.items, width: 150 },
-	{
-		key: 'dateTimeRange',
-		label: '创建时间',
-		component: 'datetime-range',
-		rangeFields: ['startTime', 'endTime'],
-		defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]
-	}
-]
-
-// ====== 表格列（顺序独立于表单，显式声明；原页无 updateTime 列） ======
-const tableColumns: TableFieldSchema[] = [
-	createBuiltinSelection(),
-	createBuiltinIndex(),
-	{ key: 'projectName', label: '项目名称' },
-	{ key: 'projectPort', label: '项目端口' },
-	{ key: 'author', label: '作者' },
-	{ key: 'projectDesc', label: '项目描述' },
-	{ key: 'generatorType', label: '生成方式', formatter: getDictTag(PROJECT_GENERATE_TYPES), minWidth: 90 },
-	{ key: 'projectPackage', label: '项目包名' },
-	{ key: 'projectTemplateGroupName', label: '项目模板组' },
-	createBuiltinCreateTime(),
-	{ ...createBuiltinOperation(), width: 160 }
-]
-
 // ====== 表格配置 ======
+// searchSchema / tableColumns 已由 fields 统一派生（表格/查询顺序靠 tableIndex / searchIndex 控制）。
 // deleteConfirmMessage 只驱动工具栏"批量删除"的 MessageBox；行内单条删除走 Popconfirm（文案见 #table-action 插槽）。
 const tableConfig = reactive({
 	deleteNameKey: 'projectName',
@@ -381,9 +389,7 @@ const tableConfig = reactive({
 		projectName: '',
 		generatorType: '',
 		dateTimeRange: []
-	}),
-	searchSchema,
-	tableColumns
+	})
 } as UseCrudTableOptions)
 
 // ====== 统一 hook ======
@@ -411,9 +417,36 @@ const generatorCodeV2 = (row: GenProjectEntity) => {
 
 <style lang="scss" scoped>
 .module-actions {
-	width: 60px; /* 固定宽度，解决大屏抖动问题 */
+	width: 130px; /* 容纳上移/下移/删除三枚按钮(120px)+左内边距(10px)，避免删除溢出右边界，且固定宽解决大屏抖动 */
 	display: flex;
 	align-items: center;
 	padding-left: 10px;
+}
+
+/* 模块行：与下方新增按钮行同宽，占满 el-form-item__content 整行 */
+.module-row {
+	width: 100%;
+
+	/* 三个输入列 flex 均分填满，操作区固定宽度靠右，使右边缘与新增按钮对齐 */
+	:deep(.el-col) {
+		flex: 1 1 0;
+		max-width: none;
+	}
+}
+
+/* 新增模块：外层 el-row 是 el-form-item__content(flex) 的子项，默认缩到内容宽度，需占满整行 */
+.add-module-row {
+	width: 100%;
+}
+
+/* 新增模块：整行虚线占位添加区，图标+文字居中 */
+.add-module-btn {
+	width: 100%; /* 撑满模块列表整行宽度 */
+	margin-top: 20px;
+	border-style: dashed; /* 对齐虚线占位语义 */
+
+	span {
+		justify-content: center; /* 图标+文字水平居中 */
+	}
 }
 </style>
