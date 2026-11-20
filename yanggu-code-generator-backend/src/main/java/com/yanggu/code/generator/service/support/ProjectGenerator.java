@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
@@ -29,6 +30,12 @@ public class ProjectGenerator implements ProductGenerator {
     @Override
     public List<TemplateContentVO> generate(GeneratorQuery query) {
         return previewBuilder.buildProjectPreview(query);
+    }
+
+    @Override
+    public List<TemplateContentVO> generateSingle(GeneratorQuery query) {
+        ProjectEntity project = projectService.getById(query.getProductIds().getFirst());
+        return previewBuilder.projectPreview(project, query.getTemplateIds());
     }
 
     @Override

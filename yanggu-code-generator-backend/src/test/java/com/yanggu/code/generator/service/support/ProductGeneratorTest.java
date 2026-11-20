@@ -93,6 +93,25 @@ class ProductGeneratorTest {
     }
 
     @Test
+    void projectGenerateSingleRendersOnlyProjectTemplates() {
+        GeneratorQuery q = query(0, List.of(100L));
+        ProjectEntity project = new ProjectEntity();
+        project.setProjectName("demo");
+        when(projectService.getById(100L)).thenReturn(project);
+        when(previewBuilder.projectPreview(project, q.getTemplateIds())).thenReturn(List.of(vo("CorsConfig.java")));
+        assertEquals(List.of("CorsConfig.java"),
+                projectGenerator.generateSingle(q).stream().map(TemplateContentVO::getFileName).toList());
+    }
+
+    @Test
+    void tableGenerateSingleDelegatesToGenerate() {
+        GeneratorQuery q = query(1, List.of(201L));
+        when(previewBuilder.tablePreview(201L, q.getTemplateIds())).thenReturn(List.of(vo("A.java")));
+        assertEquals(List.of("A.java"),
+                tableGenerator.generateSingle(q).stream().map(TemplateContentVO::getFileName).toList());
+    }
+
+    @Test
     void projectDelegatesAndNamesByProject() {
         GeneratorQuery q = query(0, List.of(100L));
         when(previewBuilder.buildProjectPreview(q)).thenReturn(List.of(vo("P.java")));

@@ -15,5 +15,13 @@ public interface ProductGenerator {
 
     List<TemplateContentVO> generate(GeneratorQuery query);
 
+    /**
+     * 单品生成：单产物 + 单模板维度渲染。表/枚举 generate 已按模板 ID 过滤可直接复用；
+     * 项目需覆写为仅渲染项目自身模板，避免全量预览中排在前面的表/枚举产物被误取
+     */
+    default List<TemplateContentVO> generateSingle(GeneratorQuery query) {
+        return generate(query);
+    }
+
     String artifactName(GeneratorQuery query);
 }

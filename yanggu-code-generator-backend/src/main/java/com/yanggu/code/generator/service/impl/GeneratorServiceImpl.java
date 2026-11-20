@@ -67,9 +67,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public List<PreviewTemplateVO> preview(GeneratorQuery query) {
         query.validate(false);
-        ProductGenerator generator = generator(query);
-        List<TemplateContentVO> templateContentList = generator.generate(query);
-        return PreviewTreeBuilder.buildTree(templateContentList);
+        return PreviewTreeBuilder.buildTree(renderTemplateList(query));
     }
 
     @Override
@@ -84,22 +82,20 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public void downloadLocal(GeneratorQuery query) {
         query.validate(false);
-        ProductGenerator generator = generator(query);
-        List<TemplateContentVO> templateContentList = generator.generate(query);
-        downloadHandler.downloadLocal(templateContentList);
+        downloadHandler.downloadLocal(renderTemplateList(query));
     }
 
     @Override
     public ResponseEntity<byte[]> downloadSingle(GeneratorQuery query) {
         query.validate(true);
-        TemplateContentVO content = generator(query).generate(query).getFirst();
+        TemplateContentVO content = generator(query).generateSingle(query).getFirst();
         return downloadHandler.buildResponseEntity(content.getFileName(), content.getContent().getBytes());
     }
 
     @Override
     public void singleLocal(GeneratorQuery query) {
         query.validate(true);
-        downloadHandler.downloadLocal(generator(query).generate(query));
+        downloadHandler.downloadLocal(generator(query).generateSingle(query));
     }
 
     @Override
@@ -123,7 +119,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         return generatorMap.get(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, query.getProductType()));
     }
     
-    private List<TemplateContentVO> test(GeneratorQuery query) {
+    private List<TemplateContentVO> renderTemplateList(GeneratorQuery query) {
         ProductGenerator generator = generator(query);
         return generator.generate(query);
     }
@@ -137,4 +133,5 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
         return previewBuilder.render(templateGroup, templateVO, dataModel);
     }
+
 }
