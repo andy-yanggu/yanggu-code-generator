@@ -203,15 +203,19 @@ const handleNetworkError = (error: any, config: any) => {
  * @param url 请求地址
  * @param params 请求参数
  * @param noErrorMessage 是否不显示错误提示
+ * @param method 请求方法，默认 get；复杂参数（嵌套对象/长列表）建议 post
  */
-export const downloadFile = (url: string, params?: any, noErrorMessage = false): Promise<void> => {
+export const downloadFile = (url: string, params?: any, noErrorMessage = false, method: 'get' | 'post' = 'get'): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		service
-			.get(url, {
-				responseType: 'blob',
-				params,
-				noErrorMessage
-			})
+		const request =
+			method === 'post'
+				? service.post(url, params, { responseType: 'blob', noErrorMessage })
+				: service.get(url, {
+						responseType: 'blob',
+						params,
+						noErrorMessage
+					})
+		request
 			.then(response => {
 				const contentDisposition = response.headers['content-disposition'] as string | undefined
 				let filename = 'download'
