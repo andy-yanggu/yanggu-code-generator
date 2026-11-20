@@ -13,8 +13,15 @@ import java.util.List;
  */
 public interface ProductGenerator {
 
+    /**
+     * 产物类型
+     * @return
+     */
     TemplateGroupTypeEnum type();
 
+    /**
+     * 生成
+     */
     List<TemplateContentVO> generate(GeneratorQuery query);
 
     /**
@@ -25,10 +32,14 @@ public interface ProductGenerator {
         return generate(query).getFirst();
     }
 
+    /**
+     * 产物名称：用于 zip 命名
+     */
     String artifactName(GeneratorQuery query);
 
     /**
      * 模板测试数据模型：按产物类型构建渲染用数据模型，project 由调用方查好传入避免重复查询
      */
     Object testDataModel(TemplateTestQuery query, ProjectEntity project);
+
 }

@@ -173,23 +173,6 @@ public class TableServiceImpl extends ServiceImpl<TableMapper, TableEntity> impl
     }
 
     @Override
-    public Long getTableTemplateGroupId(Long id) {
-        TableEntity table = this.getById(id);
-        if (table == null) {
-            throw new BusinessException("表不存在");
-        }
-        ProjectEntity project = projectService.getById(table.getProjectId());
-        if (project == null) {
-            throw new BusinessException("项目不存在");
-        }
-        Long tableTemplateGroupId = project.getTableTemplateGroupId();
-        if (tableTemplateGroupId == null) {
-            throw new BusinessException("模板组不存在");
-        }
-        return tableTemplateGroupId;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncTableField(Long id) throws Exception {
         TableEntity table = this.getById(id);

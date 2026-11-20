@@ -22,6 +22,9 @@ public class TemplateGroupPropertyDataServiceImpl implements TemplateGroupProper
 
     @Override
     public Map<String, Object> getData(Long templateGroupId, Map<String, Object> data) {
+        if (templateGroupId == null) {
+            return data;
+        }
         List<Long> templateGroupIdList = List.of(templateGroupId);
         Map<String, Object> collectMap = templateGroupPropertyService.listByGroupId(templateGroupIdList).stream()
                 .collect(Collectors.toMap(TemplateGroupPropertyEntity::getPropKey, TemplateGroupPropertyEntity::getPropDefaultValue));

@@ -51,6 +51,7 @@ public class TableGenerator implements ProductGenerator {
 
     @Override
     public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
-        return dataModelBuilder.buildTableDataModel(tableService.getById(query.getTestId()), project);
+        TableEntity tableEntity = tableService.getById(query.getTestId());
+        return dataModelBuilder.buildTableDataModel(tableEntity, project);
     }
 }

@@ -111,11 +111,9 @@ public class DbUtil {
         //表名安全校验,阻断元数据查询SQL注入
         requireSafeTableName(tableName);
         AbstractQuery query = datasource.getDbQuery();
-        try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(query.tableSql(tableName, false))) {
-
-            //查询表元数据
-            ResultSet rs;
-            rs = preparedStatement.executeQuery();
+        String sql = query.tableSql(tableName, false);
+        try (PreparedStatement preparedStatement = datasource.getConnection().prepareStatement(sql);
+             ResultSet rs = preparedStatement.executeQuery()) {
             rs.next();
             TableEntity table = new TableEntity();
             //设置表名

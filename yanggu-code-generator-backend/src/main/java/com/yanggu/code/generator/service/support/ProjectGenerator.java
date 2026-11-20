@@ -33,13 +33,13 @@ public class ProjectGenerator implements ProductGenerator {
 
     @Override
     public List<TemplateContentVO> generate(GeneratorQuery query) {
-        return previewBuilder.buildProjectPreview(query);
+        return previewBuilder.fullProjectPreview(query);
     }
 
     @Override
     public TemplateContentVO generateSingle(GeneratorQuery query) {
-        ProjectEntity project = projectService.getById(query.getProductIds().getFirst());
-        return previewBuilder.projectPreview(project, query.getTemplateIds()).getFirst();
+        // 与 tablePreview/enumPreview 保持入参一致：仅传 ID，项目实体由 PreviewBuilder 内部加载
+        return previewBuilder.projectPreview(query.getProductIds().getFirst(), query.getTemplateIds()).getFirst();
     }
 
     @Override
@@ -49,6 +49,6 @@ public class ProjectGenerator implements ProductGenerator {
 
     @Override
     public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
-        return dataModelBuilder.buildProjectDataModel(project, dataModelBuilder.resolveDatasource(project));
+        return dataModelBuilder.buildProjectDataModel(project);
     }
 }

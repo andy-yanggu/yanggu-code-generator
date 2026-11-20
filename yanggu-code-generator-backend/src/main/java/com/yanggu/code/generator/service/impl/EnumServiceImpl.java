@@ -146,7 +146,12 @@ public class EnumServiceImpl extends ServiceImpl<EnumMapper, EnumEntity> impleme
 
     @Override
     public List<EnumEntity> enumList(Long projectId) {
-        return enumMapper.selectEnumList(projectId);
+        return enumMapper.selectEnumList(projectId, null);
+    }
+
+    @Override
+    public List<EnumEntity> enumList(Long projectId, List<Long> enumIdList) {
+        return enumMapper.selectEnumList(projectId, enumIdList);
     }
 
     @Override

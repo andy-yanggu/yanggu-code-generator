@@ -103,10 +103,8 @@ class ProductGeneratorTest {
     @Test
     void projectGenerateSingleRendersOnlyProjectTemplates() {
         GeneratorQuery q = query(0, List.of(100L));
-        ProjectEntity project = new ProjectEntity();
-        project.setProjectName("demo");
-        when(projectService.getById(100L)).thenReturn(project);
-        when(previewBuilder.projectPreview(project, q.getTemplateIds())).thenReturn(List.of(vo("CorsConfig.java")));
+        // projectPreview 入参统一为 projectId，ProjectGenerator 不再需要预加载 ProjectEntity
+        when(previewBuilder.projectPreview(100L, q.getTemplateIds())).thenReturn(List.of(vo("CorsConfig.java")));
         assertEquals("CorsConfig.java", projectGenerator.generateSingle(q).getFileName());
     }
 
@@ -120,7 +118,7 @@ class ProductGeneratorTest {
     @Test
     void projectDelegatesAndNamesByProject() {
         GeneratorQuery q = query(0, List.of(100L));
-        when(previewBuilder.buildProjectPreview(q)).thenReturn(List.of(vo("P.java")));
+        when(previewBuilder.fullProjectPreview(q)).thenReturn(List.of(vo("P.java")));
         assertEquals(1, projectGenerator.generate(q).size());
         ProjectEntity project = new ProjectEntity();
         project.setProjectName("demo");
@@ -132,10 +130,8 @@ class ProductGeneratorTest {
     @Test
     void projectTestDataModelUsesResolvedDatasource() {
         ProjectEntity project = new ProjectEntity();
-        DatasourceEntity datasource = new DatasourceEntity();
         ProjectModel model = new ProjectModel();
-        when(dataModelBuilder.resolveDatasource(project)).thenReturn(datasource);
-        when(dataModelBuilder.buildProjectDataModel(project, datasource)).thenReturn(model);
+        when(dataModelBuilder.buildProjectDataModel(project)).thenReturn(model);
         assertSame(model, projectGenerator.testDataModel(new TemplateTestQuery(), project));
     }
 

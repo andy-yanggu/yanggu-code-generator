@@ -8,30 +8,12 @@ import cn.hutool.v7.core.text.NamingCase;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.BooleanUtil;
 import cn.hutool.v7.core.util.EnumUtil;
-import com.yanggu.code.generator.domain.entity.BaseClassEntity;
-import com.yanggu.code.generator.domain.entity.DatasourceEntity;
-import com.yanggu.code.generator.domain.entity.EnumEntity;
-import com.yanggu.code.generator.domain.entity.EnumItemEntity;
-import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.entity.TableEntity;
-import com.yanggu.code.generator.domain.entity.TableFieldEntity;
-import com.yanggu.code.generator.domain.model.BaseClassModel;
-import com.yanggu.code.generator.domain.model.EnumItemModel;
-import com.yanggu.code.generator.domain.model.EnumModel;
-import com.yanggu.code.generator.domain.model.ModuleModel;
-import com.yanggu.code.generator.domain.model.ProjectModel;
-import com.yanggu.code.generator.domain.model.TableFieldModel;
-import com.yanggu.code.generator.domain.model.TableModel;
+import com.yanggu.code.generator.domain.entity.*;
+import com.yanggu.code.generator.domain.model.*;
 import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
-import com.yanggu.code.generator.service.BaseClassService;
-import com.yanggu.code.generator.service.DatasourceService;
-import com.yanggu.code.generator.service.EnumService;
-import com.yanggu.code.generator.service.FieldTypeService;
-import com.yanggu.code.generator.service.TableFieldService;
-import com.yanggu.code.generator.service.TableService;
-import com.yanggu.code.generator.service.TemplateGroupPropertyDataService;
+import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.util.GenUtil;
 import com.yanggu.code.generator.util.NameUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +27,6 @@ import java.util.Set;
 
 /**
  * 生成器数据模型组装器
- *
  * 将实体数据组装为 FreeMarker 渲染所需的 ProjectModel/TableModel/EnumModel。
  * 项目公共字段（名称变换系列、包路径、前后端路径）与枚举名称变换统一在此填充，消除原三处重复拷贝。
  */
@@ -80,77 +61,10 @@ public class DataModelBuilder {
     private DatasourceService datasourceService;
 
     /**
-     * 解析项目的数据源（无数据源时返回 null）
-     */
-    public DatasourceEntity resolveDatasource(ProjectEntity project) {
-        Long datasourceId = project.getDatasourceId();
-        return datasourceId == null ? null : datasourceService.getById(datasourceId);
-    }
-
-    /**
-     * 项目公共命名信息（一次计算，多处填充）
-     */
-    private record ProjectNaming(String name, String underline, String pascal, String dot, String slash,
-                                 String pkg, String pkgSlash, String backendPath, String frontendPath) {
-    }
-
-    private ProjectNaming projectNaming(ProjectEntity project) {
-        String projectName = project.getProjectName();
-        return new ProjectNaming(projectName, NameUtil.toUnderLine(projectName), NameUtil.toPascal(projectName),
-                NameUtil.toDot(projectName), NameUtil.toSlash(projectName),
-                project.getProjectPackage(), StrUtil.replace(project.getProjectPackage(), ".", "/"),
-                project.getBackendPath(), project.getFrontendPath());
-    }
-
-    private void fillProjectCommon(ProjectModel model, ProjectNaming n) {
-        model.setProjectName(n.name());
-        model.setProjectNameUnderline(n.underline());
-        model.setProjectNamePascal(n.pascal());
-        model.setProjectNameDot(n.dot());
-        model.setProjectNameSlash(n.slash());
-        model.setProjectPackage(n.pkg());
-        model.setProjectPackageSlash(n.pkgSlash());
-        model.setBackendPath(n.backendPath());
-        model.setFrontendPath(n.frontendPath());
-    }
-
-    private void fillProjectCommon(TableModel model, ProjectNaming n) {
-        model.setProjectName(n.name());
-        model.setProjectNameUnderline(n.underline());
-        model.setProjectNamePascal(n.pascal());
-        model.setProjectNameDot(n.dot());
-        model.setProjectNameSlash(n.slash());
-        model.setProjectPackage(n.pkg());
-        model.setProjectPackageSlash(n.pkgSlash());
-        model.setBackendPath(n.backendPath());
-        model.setFrontendPath(n.frontendPath());
-    }
-
-    private void fillProjectCommon(EnumModel model, ProjectNaming n) {
-        model.setProjectNameDot(n.dot());
-        model.setProjectNameSlash(n.slash());
-        model.setProjectPackage(n.pkg());
-        model.setProjectPackageSlash(n.pkgSlash());
-        model.setBackendPath(n.backendPath());
-        model.setFrontendPath(n.frontendPath());
-    }
-
-    private void fillEnumNaming(TableFieldModel field, String enumName) {
-        field.setEnumName(enumName);
-        field.setEnumNamePascal(NameUtil.toPascal(enumName));
-        field.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumName));
-    }
-
-    private void fillEnumNaming(EnumModel model, String enumName) {
-        model.setEnumName(enumName);
-        model.setEnumNamePascal(NameUtil.toPascal(enumName));
-        model.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumName));
-    }
-
-    /**
      * 构建项目渲染数据
+     * datasource 由本方法按 project.datasourceId 自取，调用方无需预查传入
      */
-    public ProjectModel buildProjectDataModel(ProjectEntity project, DatasourceEntity datasource) {
+    public ProjectModel buildProjectDataModel(ProjectEntity project) {
         //项目数据
         ProjectModel projectModel = new ProjectModel();
         fillProjectCommon(projectModel, projectNaming(project));
@@ -160,7 +74,8 @@ public class DataModelBuilder {
         projectModel.setProjectDesc(project.getProjectDesc());
         projectModel.setModuleList(BeanUtil.copyToList(project.getModuleList(), ModuleModel.class));
 
-        //数据源数据
+        //数据源数据：内部解析，null 表示项目未绑数据源
+        DatasourceEntity datasource = resolveDatasource(project);
         if (datasource != null) {
             projectModel.setDatabaseDriverClassName(EnumUtil.getBy(DbType::getCode, datasource.getDbType()).getDriverClass());
             projectModel.setDatabaseUrl(datasource.getConnUrl());
@@ -174,9 +89,7 @@ public class DataModelBuilder {
         //表模型数据列表
         List<TableModel> tableModelList = new ArrayList<>();
         projectModel.setTableModelList(tableModelList);
-
         List<TableEntity> tableList = tableService.getTableListByProjectId(project.getId());
-
         for (TableEntity table : tableList) {
             TableModel tableModel = buildTableDataModel(table, project);
             tableModelList.add(tableModel);
@@ -185,7 +98,6 @@ public class DataModelBuilder {
         //枚举模型数据列表
         List<EnumModel> enumModelList = new ArrayList<>();
         projectModel.setEnumModelList(enumModelList);
-
         List<EnumEntity> enumList = enumService.enumList(project.getId());
         for (EnumEntity enumEntity : enumList) {
             EnumModel enumModel = buildEnumDataModel(enumEntity, project);
@@ -381,5 +293,75 @@ public class DataModelBuilder {
                 }
             }
         }
+    }
+
+    // ==================== 内部辅助（私有） ====================
+
+    /**
+     * 解析项目的数据源（无数据源时返回 null）
+     */
+    private DatasourceEntity resolveDatasource(ProjectEntity project) {
+        Long datasourceId = project.getDatasourceId();
+        return datasourceId == null ? null : datasourceService.getById(datasourceId);
+    }
+
+    /**
+     * 项目公共命名信息（一次计算，多处填充）
+     */
+    private record ProjectNaming(String name, String underline, String pascal, String dot, String slash,
+                                 String pkg, String pkgSlash, String backendPath, String frontendPath) {
+    }
+
+    private ProjectNaming projectNaming(ProjectEntity project) {
+        String projectName = project.getProjectName();
+        return new ProjectNaming(projectName, NameUtil.toUnderLine(projectName), NameUtil.toPascal(projectName),
+                NameUtil.toDot(projectName), NameUtil.toSlash(projectName),
+                project.getProjectPackage(), StrUtil.replace(project.getProjectPackage(), ".", "/"),
+                project.getBackendPath(), project.getFrontendPath());
+    }
+
+    private void fillProjectCommon(ProjectModel model, ProjectNaming n) {
+        model.setProjectName(n.name());
+        model.setProjectNameUnderline(n.underline());
+        model.setProjectNamePascal(n.pascal());
+        model.setProjectNameDot(n.dot());
+        model.setProjectNameSlash(n.slash());
+        model.setProjectPackage(n.pkg());
+        model.setProjectPackageSlash(n.pkgSlash());
+        model.setBackendPath(n.backendPath());
+        model.setFrontendPath(n.frontendPath());
+    }
+
+    private void fillProjectCommon(TableModel model, ProjectNaming n) {
+        model.setProjectName(n.name());
+        model.setProjectNameUnderline(n.underline());
+        model.setProjectNamePascal(n.pascal());
+        model.setProjectNameDot(n.dot());
+        model.setProjectNameSlash(n.slash());
+        model.setProjectPackage(n.pkg());
+        model.setProjectPackageSlash(n.pkgSlash());
+        model.setBackendPath(n.backendPath());
+        model.setFrontendPath(n.frontendPath());
+    }
+
+    private void fillProjectCommon(EnumModel model, ProjectNaming n) {
+        model.setProjectNameDot(n.dot());
+        model.setProjectNameSlash(n.slash());
+        model.setProjectPackage(n.pkg());
+        model.setProjectPackageSlash(n.pkgSlash());
+        model.setBackendPath(n.backendPath());
+        model.setFrontendPath(n.frontendPath());
+    }
+
+    private void fillEnumNaming(TableFieldModel field, String enumName) {
+        field.setEnumName(enumName);
+        field.setEnumNamePascal(NameUtil.toPascal(enumName));
+        field.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumName));
+    }
+
+    private void fillEnumNaming(EnumModel model, String enumName) {
+        model.setEnumName(enumName);
+        model.setEnumNamePascal(NameUtil.toPascal(enumName));
+        model.setEnumNameAllUpper(NameUtil.toAllUpperCase(enumName));
     }
 }

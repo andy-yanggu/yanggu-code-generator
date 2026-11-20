@@ -3,8 +3,9 @@ package com.yanggu.code.generator.service.support;
 import cn.hutool.v7.core.collection.CollUtil;
 import cn.hutool.v7.core.text.StrUtil;
 import cn.hutool.v7.core.util.EnumUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.yanggu.code.generator.domain.entity.DatasourceEntity;
+import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
@@ -28,16 +29,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * 生成器预览编排器
- *
  * 编排项目/表/枚举三种产品维度的模板预览构建，并统一收口渲染链：
  * 模板树路径分配 → 模板 ID 过滤 → 条件表达式过滤 → 单模板渲染，
  * 消除原 tablePreview/enumPreview/projectPreview/enumListPreview/templateTest 五处重复链路。
+ *
+ * <p>可见性约定：
+ * <ul>
+ *   <li>{@link #checkCondition}、{@link #render} 保留 public — 供 {@code GeneratorServiceImpl#templateTest} 及单测直调；</li>
+ *   <li>产品入口（fullProjectPreview / tablePreview / enumPreview / projectPreview）public — 供 ProductGenerator 分派；</li>
+ *   <li>其他均为内部辅助，private。</li>
+ * </ul>
  */
 @Component
 public class PreviewBuilder {
@@ -60,18 +67,7 @@ public class PreviewBuilder {
     @Autowired
     private DataModelBuilder dataModelBuilder;
 
-    /**
-     * 获取模板组内配置了生成路径的叶子模板列表（可按模板 ID 过滤）
-     */
-    public List<TemplateVO> leafTemplates(TemplateGroupEntity templateGroup, List<Long> templateIdFilter) {
-        List<TemplateVO> templateList = TemplatePathResolver.assignGeneratorPaths(templateMapstruct.entityToVO(templateGroup.getTemplateList()));
-        if (CollUtil.isNotEmpty(templateIdFilter)) {
-            templateList = templateList.stream()
-                    .filter(template -> templateIdFilter.contains(template.getId()))
-                    .toList();
-        }
-        return templateList;
-    }
+    // ==================== public：渲染基础设施 ====================
 
     /**
      * 校验模板的条件表达式（空表达式视为通过）
@@ -90,44 +86,108 @@ public class PreviewBuilder {
         String templateName = template.getTemplateName();
         Integer templateType = template.getTemplateType();
         String templateContent = template.getTemplateContent();
-        String fileContent;
-        switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
-            case DIRECTORY -> fileContent = "";
-            // 渲染成文件内容
-            case TEMPLATE_FILE -> fileContent = TemplateUtil.renderTemplate(templateName, templateContent, dataModel);
-            // 二进制文件
-            case BINARY_FILE -> fileContent = templateContent;
-            default -> throw new RuntimeException("未知模板类型");
-        }
-        //路径
+        String fileContent = switch (EnumUtil.getBy(TemplateTypeEnum::getCode, templateType)) {
+            // 目录节点无内容
+            case DIRECTORY -> "";
+            // 模板文件：用 freemarker 渲染成文本
+            case TEMPLATE_FILE -> TemplateUtil.renderTemplate(templateName, templateContent, dataModel);
+            // 二进制文件：直传原文
+            case BINARY_FILE -> templateContent;
+        };
+        // 路径也需要按数据模型渲染一次（占位符替换）
         String filePath = TemplateUtil.renderTemplate(templateName, template.getGeneratorPath(), dataModel);
-        //文件名
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-        TemplateContentVO templateContentVO = new TemplateContentVO();
-        templateContentVO.setContent(fileContent);
-        templateContentVO.setFileName(fileName);
-        templateContentVO.setFilePath(filePath);
-        templateContentVO.setTemplateId(template.getId());
-        templateContentVO.setTemplateGroupType(templateGroupType);
-        templateContentVO.setTemplateType(templateType);
-        return templateContentVO;
+
+        TemplateContentVO vo = new TemplateContentVO();
+        vo.setContent(fileContent);
+        vo.setFileName(fileName);
+        vo.setFilePath(filePath);
+        vo.setTemplateId(template.getId());
+        vo.setTemplateGroupType(templateGroupType);
+        vo.setTemplateType(templateType);
+        return vo;
+    }
+
+    // ==================== public：产品维度入口 ====================
+
+    /**
+     * 构建项目维度的完整预览（表模板 + 枚举模板 + 项目模板）
+     */
+    public List<TemplateContentVO> fullProjectPreview(GeneratorQuery query) {
+        Long projectId = query.getProductIds().getFirst();
+        ProjectEntity project = projectService.getById(projectId);
+        ProjectFilter filter = query.getProjectFilter();
+        List<Long> tableIdList = filterValue(filter, ProjectFilter::getTableIds);
+        List<Long> enumIdList = filterValue(filter, ProjectFilter::getEnumIds);
+        List<Long> tableTemplateIdList = filterValue(filter, ProjectFilter::getTableTemplateIds);
+        List<Long> enumTemplateIdList = filterValue(filter, ProjectFilter::getEnumTemplateIds);
+
+        List<TemplateContentVO> allPreviewList = new ArrayList<>();
+        allPreviewList.addAll(tableListPreview(project, tableIdList, tableTemplateIdList));
+        allPreviewList.addAll(enumListPreview(project, enumIdList, enumTemplateIdList));
+        allPreviewList.addAll(doProjectPreview(project, query.getTemplateIds()));
+        return allPreviewList;
     }
 
     /**
-     * 统一渲染链：叶子模板 → ID 过滤 → 条件表达式过滤 → 渲染 → 附加字段填充
-     *
-     * @param templateGroup  模板组
-     * @param templateIdFilter 模板 ID 过滤（空表示不过滤）
-     * @param dataModel      渲染数据模型
-     * @param contentFiller  渲染结果附加填充（可 null）
-     * @return 渲染内容列表
+     * 构建单表预览
      */
-    public List<TemplateContentVO> renderGroupTemplates(TemplateGroupEntity templateGroup, List<Long> templateIdFilter,
+    public List<TemplateContentVO> tablePreview(Long tableId, List<Long> templateIds) {
+        TableEntity table = tableService.getById(tableId);
+        ProjectEntity project = projectService.getById(table.getProjectId());
+        // 单品生成：表已显式指定，模板组必配，未配直接报错
+        TemplateGroupEntity templateGroup = requireTemplateGroup(project, project.getTableTemplateGroupId(), "表模板组");
+
+        TableModel tableModel = dataModelBuilder.buildTableDataModel(table, project);
+        return renderGroupTemplates(templateGroup, templateIds, tableModel, vo -> vo.setTableId(tableId));
+    }
+
+    /**
+     * 构建单枚举预览
+     */
+    public List<TemplateContentVO> enumPreview(Long enumId, List<Long> templateIds) {
+        EnumEntity enumEntity = enumService.getById(enumId);
+        ProjectEntity project = projectService.getById(enumEntity.getProjectId());
+        // 单品生成：枚举已显式指定，模板组必配，未配直接报错
+        TemplateGroupEntity templateGroup = requireTemplateGroup(project, project.getEnumTemplateGroupId(), "枚举模板组");
+
+        EnumModel enumModel = dataModelBuilder.buildEnumDataModel(enumEntity, project);
+        return renderGroupTemplates(templateGroup, templateIds, enumModel, vo -> vo.setEnumId(enumId));
+    }
+
+    /**
+     * 构建项目自身模板预览（对外入口，与 table/enum 保持入参一致：传 ID）
+     */
+    public List<TemplateContentVO> projectPreview(Long projectId, List<Long> templateIdList) {
+        return doProjectPreview(projectService.getById(projectId), templateIdList);
+    }
+
+    // ==================== private：渲染链基础设施 ====================
+
+    /**
+     * 获取模板组内配置了生成路径的叶子模板列表（可按模板 ID 过滤）
+     */
+    private List<TemplateVO> leafTemplates(TemplateGroupEntity templateGroup, List<Long> templateIdFilter) {
+        List<TemplateVO> templateList = TemplatePathResolver.assignGeneratorPaths(
+                templateMapstruct.entityToVO(templateGroup.getTemplateList()));
+        if (CollUtil.isNotEmpty(templateIdFilter)) {
+            templateList = templateList.stream()
+                    .filter(template -> templateIdFilter.contains(template.getId()))
+                    .toList();
+        }
+        return templateList;
+    }
+
+    /**
+     * 叶子模板列表在给定数据模型上的渲染链：条件过滤 → 渲染 → 附加字段填充。
+     * 批量场景（多枚举共用一份叶子）直接复用，避免每条目都重复查模板组与重算路径。
+     */
+    private List<TemplateContentVO> renderLeafTemplates(Integer templateGroupType, List<TemplateVO> leaves,
                                                         Object dataModel, Consumer<TemplateContentVO> contentFiller) {
-        return leafTemplates(templateGroup, templateIdFilter).stream()
+        return leaves.stream()
                 .filter(template -> checkCondition(template.getConditionExpression(), dataModel))
                 .map(template -> {
-                    TemplateContentVO vo = render(templateGroup.getType(), template, dataModel);
+                    TemplateContentVO vo = render(templateGroupType, template, dataModel);
                     if (contentFiller != null) {
                         contentFiller.accept(vo);
                     }
@@ -137,127 +197,100 @@ public class PreviewBuilder {
     }
 
     /**
-     * 构建项目维度的完整预览（表模板 + 枚举模板 + 项目模板）
+     * 单数据模型 + 模板组的完整渲染链：leafTemplates → renderLeafTemplates
      */
-    public List<TemplateContentVO> buildProjectPreview(GeneratorQuery query) {
-        Long projectId = query.getProductIds().getFirst();
-        //查询项目
-        ProjectEntity project = projectService.getById(projectId);
-        ProjectFilter filter = query.getProjectFilter();
-        List<Long> tableIdList = filter == null ? null : filter.getTableIds();
-        List<Long> enumIdList = filter == null ? null : filter.getEnumIds();
-        List<Long> tableTemplateIdList = filter == null ? null : filter.getTableTemplateIds();
-        List<Long> enumTemplateIdList = filter == null ? null : filter.getEnumTemplateIds();
-
-        List<TemplateContentVO> allPreviewList = new ArrayList<>();
-
-        //获取表预览数据
-        //查询该项目下的表
-        List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
-        if (CollUtil.isNotEmpty(tableIdList)) {
-            tableList = tableList.stream()
-                    .filter(table -> tableIdList.contains(table.getId()))
-                    .toList();
-        }
-        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, tableTemplateIdList);
-        allPreviewList.addAll(tablePreviewList);
-
-        //获取枚举预览数据
-        if (project.getEnumTemplateGroupId() != null) {
-            List<TemplateContentVO> enumPreviewList = enumListPreview(project, enumIdList, enumTemplateIdList);
-            allPreviewList.addAll(enumPreviewList);
-        }
-
-        //获取项目预览数据
-        List<TemplateContentVO> projectPreviewList = projectPreview(project, query.getTemplateIds());
-        allPreviewList.addAll(projectPreviewList);
-
-        return allPreviewList;
+    private List<TemplateContentVO> renderGroupTemplates(
+            TemplateGroupEntity templateGroup,
+            List<Long> templateIdFilter,
+            Object dataModel,
+            Consumer<TemplateContentVO> contentFiller) {
+        return renderLeafTemplates(templateGroup.getType(),
+                leafTemplates(templateGroup, templateIdFilter), dataModel, contentFiller);
     }
 
-    /**
-     * 构建单表预览
-     */
-    public List<TemplateContentVO> tablePreview(Long tableId, List<Long> templateIds) {
-        // 表信息
-        TableEntity table = tableService.getById(tableId);
-
-        ProjectEntity project = projectService.getById(table.getProjectId());
-
-        //获取数据模型
-        TableModel tableModel = dataModelBuilder.buildTableDataModel(table, project);
-
-        Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
-
-        TemplateGroupEntity templateGroup = templateGroupService.getById(tableTemplateGroupId, true);
-        return renderGroupTemplates(templateGroup, templateIds, tableModel,
-                templateContentVO -> templateContentVO.setTableId(tableId));
-    }
+    // ==================== private：产品预览实现 ====================
 
     /**
-     * 构建单枚举预览
+     * 项目预览的内部实现，datasource 由 DataModelBuilder 内部按需解析
      */
-    public List<TemplateContentVO> enumPreview(Long enumId, List<Long> templateIds) {
-        EnumEntity enumEntity = enumService.getById(enumId);
-        ProjectEntity project = projectService.getById(enumEntity.getProjectId());
-        EnumModel enumModel = dataModelBuilder.buildEnumDataModel(enumEntity, project);
-
-        //查询项目对应的枚举模板
-        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId(), true);
-        return renderGroupTemplates(templateGroup, templateIds, enumModel,
-                templateContentVO -> templateContentVO.setEnumId(enumId));
-    }
-
-    /**
-     * 构建项目自身模板预览
-     */
-    public List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) {
-        //获取数据源信息
-        DatasourceEntity datasource = dataModelBuilder.resolveDatasource(project);
-        //获取项目模板组信息
-        Long projectTemplateGroupId = project.getProjectTemplateGroupId();
-        TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId, true);
-
-        ProjectModel projectModel = dataModelBuilder.buildProjectDataModel(project, datasource);
+    private List<TemplateContentVO> doProjectPreview(ProjectEntity project, List<Long> templateIdList) {
+        TemplateGroupEntity templateGroup = requireTemplateGroup(project, project.getProjectTemplateGroupId(), "项目模板组");
+        ProjectModel projectModel = dataModelBuilder.buildProjectDataModel(project);
         return renderGroupTemplates(templateGroup, templateIdList, projectModel, null);
     }
 
     /**
-     * 构建多表预览
+     * 多表预览：模板组与叶子路径只计算一次，逐表复用 {@link #renderLeafTemplates}
      */
-    private List<TemplateContentVO> tableListPreview(List<TableEntity> tableList, List<Long> tableTemplateIdList) {
+    private List<TemplateContentVO> tableListPreview(ProjectEntity project, List<Long> tableIdList, List<Long> tableTemplateIdList) {
+        LambdaQueryWrapper<TableEntity> wrapper = Wrappers.<TableEntity>lambdaQuery()
+                .eq(TableEntity::getProjectId, project.getId())
+                .in(CollUtil.isNotEmpty(tableIdList), TableEntity::getId, tableIdList);
+        List<TableEntity> tableList = tableService.list(wrapper);
+        if (tableList.isEmpty()) {
+            return List.of();
+        }
+
+        TemplateGroupEntity templateGroup = requireTemplateGroup(project, project.getTableTemplateGroupId(), "表模板组");
+        Integer groupType = templateGroup.getType();
+        List<TemplateVO> leaves = leafTemplates(templateGroup, tableTemplateIdList);
+
         return tableList.stream()
-                .map(table -> tablePreview(table.getId(), tableTemplateIdList))
-                .flatMap(Collection::stream)
+                .flatMap(table -> {
+                    TableModel tableModel = dataModelBuilder.buildTableDataModel(table, project);
+                    Long tableId = table.getId();
+                    return renderLeafTemplates(groupType, leaves, tableModel,
+                            vo -> vo.setTableId(tableId)).stream();
+                })
                 .toList();
     }
 
     /**
-     * 构建项目下多枚举预览
+     * 多枚举预览：模板组与叶子路径只计算一次，逐枚举复用 {@link #renderLeafTemplates}。
+     * 枚举查询必须走 enumList（JOIN 装配枚举项），通用 list 只查主表会导致枚举项缺失；
+     * 未配置枚举模板组时静默跳过枚举段，不阻断其余产物。
      */
     private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enumIdList, List<Long> enumTemplateIdList) {
-        List<EnumModel> enumModelList = new ArrayList<>();
-        List<EnumEntity> enumList = enumService.enumList(project.getId());
-        enumList = enumList.stream()
-                .filter(enumEntity -> CollUtil.isEmpty(enumIdList) || enumIdList.contains(enumEntity.getId()))
-                .toList();
-        for (EnumEntity enumEntity : enumList) {
-            EnumModel dataModel = dataModelBuilder.buildEnumDataModel(enumEntity, project);
-            enumModelList.add(dataModel);
+        if (project.getEnumTemplateGroupId() == null) {
+            return List.of();
+        }
+        List<EnumEntity> enumList = enumService.enumList(project.getId(), enumIdList);
+        if (enumList.isEmpty()) {
+            return List.of();
         }
 
-        //查询项目对应的枚举模板
-        TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId(), true);
-        List<TemplateVO> templateList = leafTemplates(templateGroup, enumTemplateIdList);
-        return enumModelList.stream()
-                .flatMap(enumModel -> templateList.stream()
-                        .filter(template -> checkCondition(template.getConditionExpression(), enumModel))
-                        .map(template -> {
-                            TemplateContentVO templateContentVO = render(templateGroup.getType(), template, enumModel);
-                            templateContentVO.setEnumId(enumModel.getEnumId());
-                            return templateContentVO;
-                        })
-                )
+        TemplateGroupEntity templateGroup = requireTemplateGroup(project, project.getEnumTemplateGroupId(), "枚举模板组");
+        Integer groupType = templateGroup.getType();
+        List<TemplateVO> leaves = leafTemplates(templateGroup, enumTemplateIdList);
+
+        return enumList.stream()
+                .map(enumEntity -> dataModelBuilder.buildEnumDataModel(enumEntity, project))
+                .flatMap(enumModel -> renderLeafTemplates(groupType, leaves, enumModel,
+                        vo -> vo.setEnumId(enumModel.getEnumId())).stream())
                 .toList();
+    }
+
+    // ==================== private：通用辅助 ====================
+
+    /**
+     * 加载模板组；未配置时按项目上下文抛出明确业务异常，
+     * 避免深入 selectById(null) 报出含糊错误或 NPE
+     */
+    private TemplateGroupEntity requireTemplateGroup(ProjectEntity project, Long templateGroupId, String label) {
+        if (templateGroupId == null) {
+            throw new BusinessException("项目[" + project.getProjectName() + "]未配置" + label);
+        }
+        return templateGroupService.getById(templateGroupId, true);
+    }
+
+    /**
+     * ProjectFilter 为 null 或字段为 null 时统一兜底为空列表，避免展开 4 段 Optional 样板
+     */
+    private static List<Long> filterValue(ProjectFilter filter, Function<ProjectFilter, List<Long>> getter) {
+        if (filter == null) {
+            return List.of();
+        }
+        List<Long> value = getter.apply(filter);
+        return value == null ? List.of() : value;
     }
 }

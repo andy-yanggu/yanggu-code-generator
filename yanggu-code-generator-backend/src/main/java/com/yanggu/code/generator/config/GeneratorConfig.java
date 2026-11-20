@@ -16,7 +16,7 @@ public class GeneratorConfig {
     /**
      * 逻辑删除字段列表
      */
-    @Value("#{'${generator.logic-delete.column-list:is_deleted,del_flag,is_del,del_status,is_del,del_status,is_delete}'.split(',')}")
+    @Value("#{'${generator.logic-delete.column-list:is_deleted,del_flag,del_status,is_delete,is_del}'.split(',')}")
     private List<String> logicDeleteColumnList;
 
     /**

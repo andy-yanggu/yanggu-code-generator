@@ -57,6 +57,11 @@ public interface EnumService extends IService<EnumEntity> {
 
     List<EnumEntity> enumList(Long projectId);
 
+    /**
+     * 枚举列表（含枚举项装配，可按枚举 ID 过滤，空列表表示不过滤）
+     */
+    List<EnumEntity> enumList(Long projectId, List<Long> enumIdList);
+
     EnumEntity getById(Long id);
 
     EnumGenerateCheckVO generateCheck(List<Long> idList);

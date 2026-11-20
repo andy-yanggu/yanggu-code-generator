@@ -51,6 +51,7 @@ public class EnumGenerator implements ProductGenerator {
 
     @Override
     public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
-        return dataModelBuilder.buildEnumDataModel(enumService.getById(query.getTestId()), project);
+        EnumEntity enumEntity = enumService.getById(query.getTestId());
+        return dataModelBuilder.buildEnumDataModel(enumEntity, project);
     }
 }
