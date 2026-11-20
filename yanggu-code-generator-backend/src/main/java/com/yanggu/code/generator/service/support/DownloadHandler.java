@@ -28,7 +28,6 @@ import static cn.hutool.v7.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
 
 /**
  * 生成结果下载处理器
- *
  * 统一收口模板内容的输出：zip 打包下载、按模板类型写入本地文件、下载响应头构建。
  * DIRECTORY/TEMPLATE_FILE/BINARY_FILE 三种类型的写入分发集中于此管理。
  */
