@@ -68,17 +68,17 @@ public class GeneratorServiceImpl implements GeneratorService {
             case PROJECT -> {
                 GeneratorProjectQuery projectQuery = new GeneratorProjectQuery();
                 projectQuery.setProjectId(previewProductId);
-                templateContentList = previewBuilder.buildProjectPreview(projectQuery);
+                templateContentList = previewBuilder.buildProjectPreview(toGeneratorQuery(projectQuery));
             }
             case TABLE -> {
                 GeneratorTableQuery tableQuery = new GeneratorTableQuery();
                 tableQuery.setTableIdList(List.of(previewProductId));
-                templateContentList = previewBuilder.tablePreview(tableQuery);
+                templateContentList = previewBuilder.tablePreview(tableQuery.getTableIdList().getFirst(), tableQuery.getTemplateIdList());
             }
             case ENUM -> {
                 GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
                 enumQuery.setEnumIdList(List.of(previewProductId));
-                templateContentList = previewBuilder.enumPreview(enumQuery);
+                templateContentList = previewBuilder.enumPreview(enumQuery.getEnumIdList().getFirst(), enumQuery.getTemplateIdList());
             }
             default -> throw new BusinessException("Invalid generator product type: " + generatorProductType);
         }
@@ -98,12 +98,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void projectDownloadLocal(GeneratorProjectQuery projectQuery) throws Exception {
-        downloadHandler.downloadLocal(previewBuilder.buildProjectPreview(projectQuery));
+        downloadHandler.downloadLocal(previewBuilder.buildProjectPreview(toGeneratorQuery(projectQuery)));
     }
 
     @Override
     public ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception {
-        List<TemplateContentVO> list = previewBuilder.buildProjectPreview(projectQuery);
+        List<TemplateContentVO> list = previewBuilder.buildProjectPreview(toGeneratorQuery(projectQuery));
 
         //构建zip文件名
         ProjectEntity project = projectService.getById(projectQuery.getProjectId());
@@ -114,12 +114,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void tableDownloadLocal(GeneratorTableQuery tableQuery) {
-        downloadHandler.downloadLocal(previewBuilder.tablePreview(tableQuery));
+        downloadHandler.downloadLocal(previewBuilder.tablePreview(tableQuery.getTableIdList().getFirst(), tableQuery.getTemplateIdList()));
     }
 
     @Override
     public ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) {
-        List<TemplateContentVO> list = previewBuilder.tablePreview(tableQuery);
+        List<TemplateContentVO> list = previewBuilder.tablePreview(tableQuery.getTableIdList().getFirst(), tableQuery.getTemplateIdList());
 
         // 拼接表名
         String tableNameConcat = tableService.listByIds(tableQuery.getTableIdList()).stream()
@@ -131,12 +131,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public void enumDownloadLocal(GeneratorEnumQuery enumQuery) {
-        downloadHandler.downloadLocal(previewBuilder.enumPreview(enumQuery));
+        downloadHandler.downloadLocal(previewBuilder.enumPreview(enumQuery.getEnumIdList().getFirst(), enumQuery.getTemplateIdList()));
     }
 
     @Override
     public ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery) {
-        List<TemplateContentVO> enumPreviewData = previewBuilder.enumPreview(enumQuery);
+        List<TemplateContentVO> enumPreviewData = previewBuilder.enumPreview(enumQuery.getEnumIdList().getFirst(), enumQuery.getTemplateIdList());
 
         //拼接枚举名称
         List<Long> enumIdList = enumQuery.getEnumIdList();
@@ -155,7 +155,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
         return switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
             case PROJECT -> renderForTest(templateGroup, templateVO,
-                    dataModelBuilder.buildProjectDataModel(project, previewBuilder.resolveDatasource(project)));
+                    dataModelBuilder.buildProjectDataModel(project, dataModelBuilder.resolveDatasource(project)));
             case TABLE -> renderForTest(templateGroup, templateVO,
                     dataModelBuilder.buildTableDataModel(tableService.getById(templateTestQuery.getTestId()), project));
             case ENUM -> renderForTest(templateGroup, templateVO,
@@ -177,15 +177,32 @@ public class GeneratorServiceImpl implements GeneratorService {
                 GeneratorTableQuery tableQuery = new GeneratorTableQuery();
                 tableQuery.setTableIdList(List.of(id));
                 tableQuery.setTemplateIdList(templateIdList);
-                yield previewBuilder.tablePreview(tableQuery);
+                yield previewBuilder.tablePreview(tableQuery.getTableIdList().getFirst(), tableQuery.getTemplateIdList());
             }
             case ENUM -> {
                 GeneratorEnumQuery enumQuery = new GeneratorEnumQuery();
                 enumQuery.setEnumIdList(List.of(id));
                 enumQuery.setTemplateIdList(templateIdList);
-                yield previewBuilder.enumPreview(enumQuery);
+                yield previewBuilder.enumPreview(enumQuery.getEnumIdList().getFirst(), enumQuery.getTemplateIdList());
             }
         };
+    }
+
+    /**
+     * 过渡适配：旧项目查询转统一查询（Task 5 随旧端点一并删除）
+     */
+    private GeneratorQuery toGeneratorQuery(GeneratorProjectQuery projectQuery) {
+        GeneratorQuery query = new GeneratorQuery();
+        query.setProductType(TemplateGroupTypeEnum.PROJECT.getCode());
+        query.setProductIds(List.of(projectQuery.getProjectId()));
+        query.setTemplateIds(projectQuery.getProjectTemplateIdList());
+        ProjectFilter filter = new ProjectFilter();
+        filter.setTableIds(projectQuery.getTableIdList());
+        filter.setEnumIds(projectQuery.getEnumIdList());
+        filter.setTableTemplateIds(projectQuery.getTableTemplateIdList());
+        filter.setEnumTemplateIds(projectQuery.getEnumTemplateIdList());
+        query.setProjectFilter(filter);
+        return query;
     }
 
     /**

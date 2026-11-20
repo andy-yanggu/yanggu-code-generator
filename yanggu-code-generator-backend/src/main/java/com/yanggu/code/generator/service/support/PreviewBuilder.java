@@ -12,14 +12,12 @@ import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.model.EnumModel;
 import com.yanggu.code.generator.domain.model.ProjectModel;
 import com.yanggu.code.generator.domain.model.TableModel;
-import com.yanggu.code.generator.domain.query.GeneratorEnumQuery;
-import com.yanggu.code.generator.domain.query.GeneratorProjectQuery;
-import com.yanggu.code.generator.domain.query.GeneratorTableQuery;
+import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.ProjectFilter;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
-import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
 import com.yanggu.code.generator.service.TableService;
@@ -51,9 +49,6 @@ public class PreviewBuilder {
     private ProjectService projectService;
 
     @Autowired
-    private DatasourceService datasourceService;
-
-    @Autowired
     private TemplateGroupService templateGroupService;
 
     @Autowired
@@ -64,14 +59,6 @@ public class PreviewBuilder {
 
     @Autowired
     private DataModelBuilder dataModelBuilder;
-
-    /**
-     * 解析项目的数据源（无数据源时返回 null）
-     */
-    public DatasourceEntity resolveDatasource(ProjectEntity project) {
-        Long datasourceId = project.getDatasourceId();
-        return datasourceId == null ? null : datasourceService.getById(datasourceId);
-    }
 
     /**
      * 获取模板组内配置了生成路径的叶子模板列表（可按模板 ID 过滤）
@@ -139,42 +126,50 @@ public class PreviewBuilder {
                                                         Object dataModel, Consumer<TemplateContentVO> contentFiller) {
         return leafTemplates(templateGroup, templateIdFilter).stream()
                 .filter(template -> checkCondition(template.getConditionExpression(), dataModel))
-                .map(template -> render(templateGroup, template, dataModel))
-                .peek(contentFiller == null ? vo -> {
-                } : contentFiller)
+                .map(template -> {
+                    TemplateContentVO vo = render(templateGroup, template, dataModel);
+                    if (contentFiller != null) {
+                        contentFiller.accept(vo);
+                    }
+                    return vo;
+                })
                 .toList();
     }
 
     /**
      * 构建项目维度的完整预览（表模板 + 枚举模板 + 项目模板）
      */
-    public List<TemplateContentVO> buildProjectPreview(GeneratorProjectQuery projectQuery) throws Exception {
-        Long projectId = projectQuery.getProjectId();
+    public List<TemplateContentVO> buildProjectPreview(GeneratorQuery query) {
+        Long projectId = query.getProductIds().getFirst();
         //查询项目
         ProjectEntity project = projectService.getById(projectId);
+        ProjectFilter filter = query.getProjectFilter();
+        List<Long> tableIdList = filter == null ? null : filter.getTableIds();
+        List<Long> enumIdList = filter == null ? null : filter.getEnumIds();
+        List<Long> tableTemplateIdList = filter == null ? null : filter.getTableTemplateIds();
+        List<Long> enumTemplateIdList = filter == null ? null : filter.getEnumTemplateIds();
 
         List<TemplateContentVO> allPreviewList = new ArrayList<>();
 
         //获取表预览数据
         //查询该项目下的表
         List<TableEntity> tableList = tableService.list(Wrappers.<TableEntity>lambdaQuery().eq(TableEntity::getProjectId, projectId));
-        List<Long> tableIdList = projectQuery.getTableIdList();
         if (CollUtil.isNotEmpty(tableIdList)) {
             tableList = tableList.stream()
                     .filter(table -> tableIdList.contains(table.getId()))
                     .toList();
         }
-        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, projectQuery.getTableTemplateIdList());
+        List<TemplateContentVO> tablePreviewList = tableListPreview(tableList, tableTemplateIdList);
         allPreviewList.addAll(tablePreviewList);
 
         //获取枚举预览数据
         if (project.getEnumTemplateGroupId() != null) {
-            List<TemplateContentVO> enumPreviewList = enumListPreview(project, projectQuery.getEnumIdList(), projectQuery.getEnumTemplateIdList());
+            List<TemplateContentVO> enumPreviewList = enumListPreview(project, enumIdList, enumTemplateIdList);
             allPreviewList.addAll(enumPreviewList);
         }
 
         //获取项目预览数据
-        List<TemplateContentVO> projectPreviewList = projectPreview(project, projectQuery.getProjectTemplateIdList());
+        List<TemplateContentVO> projectPreviewList = projectPreview(project, query.getTemplateIds());
         allPreviewList.addAll(projectPreviewList);
 
         return allPreviewList;
@@ -183,9 +178,7 @@ public class PreviewBuilder {
     /**
      * 构建单表预览
      */
-    public List<TemplateContentVO> tablePreview(GeneratorTableQuery tableQuery) {
-        Long tableId = tableQuery.getTableIdList().getFirst();
-
+    public List<TemplateContentVO> tablePreview(Long tableId, List<Long> templateIds) {
         // 表信息
         TableEntity table = tableService.getById(tableId);
 
@@ -197,31 +190,30 @@ public class PreviewBuilder {
         Long tableTemplateGroupId = tableService.getTableTemplateGroupId(tableId);
 
         TemplateGroupEntity templateGroup = templateGroupService.getById(tableTemplateGroupId, true);
-        return renderGroupTemplates(templateGroup, tableQuery.getTemplateIdList(), tableModel,
+        return renderGroupTemplates(templateGroup, templateIds, tableModel,
                 templateContentVO -> templateContentVO.setTableId(tableId));
     }
 
     /**
      * 构建单枚举预览
      */
-    public List<TemplateContentVO> enumPreview(GeneratorEnumQuery enumQuery) {
-        Long enumId = enumQuery.getEnumIdList().getFirst();
+    public List<TemplateContentVO> enumPreview(Long enumId, List<Long> templateIds) {
         EnumEntity enumEntity = enumService.getById(enumId);
         ProjectEntity project = projectService.getById(enumEntity.getProjectId());
         EnumModel enumModel = dataModelBuilder.buildEnumDataModel(enumEntity, project);
 
         //查询项目对应的枚举模板
         TemplateGroupEntity templateGroup = templateGroupService.getById(project.getEnumTemplateGroupId(), true);
-        return renderGroupTemplates(templateGroup, enumQuery.getTemplateIdList(), enumModel,
+        return renderGroupTemplates(templateGroup, templateIds, enumModel,
                 templateContentVO -> templateContentVO.setEnumId(enumId));
     }
 
     /**
      * 构建项目自身模板预览
      */
-    public List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) throws Exception {
+    public List<TemplateContentVO> projectPreview(ProjectEntity project, List<Long> templateIdList) {
         //获取数据源信息
-        DatasourceEntity datasource = resolveDatasource(project);
+        DatasourceEntity datasource = dataModelBuilder.resolveDatasource(project);
         //获取项目模板组信息
         Long projectTemplateGroupId = project.getProjectTemplateGroupId();
         TemplateGroupEntity templateGroup = templateGroupService.getById(projectTemplateGroupId, true);
@@ -235,14 +227,7 @@ public class PreviewBuilder {
      */
     private List<TemplateContentVO> tableListPreview(List<TableEntity> tableList, List<Long> tableTemplateIdList) {
         return tableList.stream()
-                .map(
-                        table -> {
-                            GeneratorTableQuery tableQuery = new GeneratorTableQuery();
-                            tableQuery.setTableIdList(List.of(table.getId()));
-                            tableQuery.setTemplateIdList(tableTemplateIdList);
-                            return tablePreview(tableQuery);
-                        }
-                )
+                .map(table -> tablePreview(table.getId(), tableTemplateIdList))
                 .flatMap(Collection::stream)
                 .toList();
     }

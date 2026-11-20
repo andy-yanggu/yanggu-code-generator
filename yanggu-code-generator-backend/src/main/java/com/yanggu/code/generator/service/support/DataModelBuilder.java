@@ -26,6 +26,7 @@ import com.yanggu.code.generator.enums.DbType;
 import com.yanggu.code.generator.mapstruct.BaseClassMapstruct;
 import com.yanggu.code.generator.mapstruct.TableFieldMapstruct;
 import com.yanggu.code.generator.service.BaseClassService;
+import com.yanggu.code.generator.service.DatasourceService;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.FieldTypeService;
 import com.yanggu.code.generator.service.TableFieldService;
@@ -74,6 +75,17 @@ public class DataModelBuilder {
 
     @Autowired
     private BaseClassMapstruct baseClassMapstruct;
+
+    @Autowired
+    private DatasourceService datasourceService;
+
+    /**
+     * 解析项目的数据源（无数据源时返回 null）
+     */
+    public DatasourceEntity resolveDatasource(ProjectEntity project) {
+        Long datasourceId = project.getDatasourceId();
+        return datasourceId == null ? null : datasourceService.getById(datasourceId);
+    }
 
     /**
      * 项目公共命名信息（一次计算，多处填充）
