@@ -11,17 +11,8 @@ import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.BusinessResultError;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
-import com.yanggu.code.generator.service.EnumService;
-import com.yanggu.code.generator.service.GeneratorService;
-import com.yanggu.code.generator.service.ProjectService;
-import com.yanggu.code.generator.service.TableService;
-import com.yanggu.code.generator.service.TemplateGroupService;
-import com.yanggu.code.generator.service.TemplateService;
-import com.yanggu.code.generator.service.support.DataModelBuilder;
-import com.yanggu.code.generator.service.support.DownloadHandler;
-import com.yanggu.code.generator.service.support.PreviewBuilder;
-import com.yanggu.code.generator.service.support.PreviewTreeBuilder;
-import com.yanggu.code.generator.service.support.ProductGenerator;
+import com.yanggu.code.generator.service.*;
+import com.yanggu.code.generator.service.support.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -76,20 +67,26 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public List<PreviewTemplateVO> preview(GeneratorQuery query) {
         query.validate(false);
-        return PreviewTreeBuilder.buildTree(generator(query).generate(query));
+        ProductGenerator generator = generator(query);
+        List<TemplateContentVO> templateContentList = generator.generate(query);
+        return PreviewTreeBuilder.buildTree(templateContentList);
     }
 
     @Override
     public ResponseEntity<byte[]> downloadZip(GeneratorQuery query) {
         query.validate(false);
         ProductGenerator generator = generator(query);
-        return downloadHandler.downloadZip(generator.artifactName(query), generator.generate(query));
+        String originFileName = generator.artifactName(query);
+        List<TemplateContentVO> templateContentList = generator.generate(query);
+        return downloadHandler.downloadZip(originFileName, templateContentList);
     }
 
     @Override
     public void downloadLocal(GeneratorQuery query) {
         query.validate(false);
-        downloadHandler.downloadLocal(generator(query).generate(query));
+        ProductGenerator generator = generator(query);
+        List<TemplateContentVO> templateContentList = generator.generate(query);
+        downloadHandler.downloadLocal(templateContentList);
     }
 
     @Override
@@ -124,6 +121,11 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     private ProductGenerator generator(GeneratorQuery query) {
         return generatorMap.get(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, query.getProductType()));
+    }
+    
+    private List<TemplateContentVO> test(GeneratorQuery query) {
+        ProductGenerator generator = generator(query);
+        return generator.generate(query);
     }
 
     /**
