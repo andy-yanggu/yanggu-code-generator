@@ -15,7 +15,7 @@ import { createBuiltinCreateTime, createBuiltinIndex, createBuiltinSelection, cr
 import { genGeneratorApi, genTemplateApi } from '@/api'
 import { TEMPLATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
-import type { GenTemplateEntity, GenTemplateQuery, UseCrudTableOptions } from '@/types'
+import type { GeneratorQuery, GenTemplateEntity, GenTemplateQuery, UseCrudTableOptions } from '@/types'
 import { Close, DocumentAdd } from '@element-plus/icons-vue'
 import QueryTable from '@/components/crud/QueryTable.vue'
 
@@ -61,11 +61,11 @@ const tableHook = useCrudTable(tableConfig)
 // ====== 弹窗与提交逻辑 ======
 const dialogVisible = ref(false)
 const initData = reactive({
-	enumIdList: [] as string[],
+	enumIdList: [] as number[],
 	generatorType: -1
 })
 
-const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: string[]) => {
+const init = (enumTemplateGroupId: number, generatorType: number, enumIdList: number[]) => {
 	dialogVisible.value = true
 	initData.enumIdList = enumIdList
 	initData.generatorType = generatorType
@@ -86,13 +86,14 @@ const generateCode = () => {
 		return
 	}
 
-	const dataForm = {
-		enumIdList: initData.enumIdList,
-		templateIdList: selectedRows.map((row: GenTemplateEntity) => row.id)
+	const dataForm: GeneratorQuery = {
+		productType: 2,
+		productIds: initData.enumIdList,
+		templateIds: selectedRows.map((row: GenTemplateEntity) => Number(row.id))
 	}
 
 	const generatorType = initData.generatorType
-	const submitApi = generatorType === 0 ? genGeneratorApi.enumDownloadZip : genGeneratorApi.enumDownloadLocal
+	const submitApi = generatorType === 0 ? genGeneratorApi.downloadZip : genGeneratorApi.downloadLocal
 	const successMessage = generatorType === 0 ? '代码已经下载到本地，请查看' : '代码已经生成到服务器本地，请查看'
 
 	submitLoading.value = true

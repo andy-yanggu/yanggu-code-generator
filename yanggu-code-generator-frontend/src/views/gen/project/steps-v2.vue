@@ -72,7 +72,7 @@ import TableIndex from '@/views/gen/project/table-index.vue'
 import EnumIndex from '@/views/gen/project/enum-index.vue'
 import GenerateResultV2 from '@/views/gen/project/generate-result-v2.vue'
 import { ArrowLeft, ArrowRight, Back, Close, DocumentAdd } from '@element-plus/icons-vue'
-import { GenProjectEntity } from '@/types'
+import { GenProjectEntity, ProjectGeneratorQuery } from '@/types'
 
 defineOptions({
 	name: 'GenProjectStepsV2'
@@ -174,13 +174,16 @@ const nextStep = () => {
 // 生成代码
 const generateCode = () => {
 	activeRef.value = 3
-	const dataForm = {
-		projectId: projectReactive.id,
-		projectTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
-		tableTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
-		enumTemplateIdList: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id),
-		tableIdList: tableListRef.value.map(item => item.id),
-		enumIdList: enumListRef.value.map(item => item.id)
+	const dataForm: ProjectGeneratorQuery = {
+		productType: 0,
+		productIds: [projectReactive.id],
+		templateIds: templateListRef.value.filter(item => item.templateGroupType === 0).map(item => item.id),
+		projectFilter: {
+			tableIds: tableListRef.value.map(item => item.id),
+			enumIds: enumListRef.value.map(item => item.id),
+			tableTemplateIds: templateListRef.value.filter(item => item.templateGroupType === 1).map(item => item.id),
+			enumTemplateIds: templateListRef.value.filter(item => item.templateGroupType === 2).map(item => item.id)
+		}
 	}
 	nextTick(() => {
 		generateResultRef.value.init(dataForm, projectReactive.generatorType)

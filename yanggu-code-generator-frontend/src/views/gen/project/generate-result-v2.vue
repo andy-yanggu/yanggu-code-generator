@@ -32,6 +32,7 @@
 import { Back } from '@element-plus/icons-vue'
 import LoadingIcon from '@/components/loading-icon/index.vue'
 import { genGeneratorApi } from '@/api'
+import type { GeneratorQuery } from '@/types'
 
 defineOptions({
 	name: 'GenProjectGenerateResultV2'
@@ -115,18 +116,18 @@ const emitBack = () => {
 }
 
 // 初始化方法
-const init = (dataForm: any, generatorType: number) => {
+const init = (dataForm: GeneratorQuery, generatorType: number) => {
 	generatorTypeRef.value = generatorType
 	status.value = INIT_STATUS
 	remainSeconds.value = AUTO_CLOSE_SECONDS
 	waitingMs.value = 0
 	stopWaiting()
 	finish.value = false
-	let submitHandler: (dataForm: any) => Promise<any> = _ => Promise.resolve()
+	let submitHandler: (dataForm: GeneratorQuery) => Promise<any> = _ => Promise.resolve()
 	if (generatorType === 0) {
-		submitHandler = genGeneratorApi.projectDownloadZip
+		submitHandler = genGeneratorApi.downloadZip
 	} else if (generatorType === 1) {
-		submitHandler = genGeneratorApi.projectDownloadLocal
+		submitHandler = genGeneratorApi.downloadLocal
 	} else if (generatorType === 2) {
 		status.value = 'error'
 		errorMessage.value = `生成方式异常：${generatorType}`

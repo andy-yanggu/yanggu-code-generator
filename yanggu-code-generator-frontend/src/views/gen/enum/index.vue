@@ -222,17 +222,17 @@ const previewHandle = (row: any) => {
 }
 
 const generatorBatchHandler = () => {
-	const data = tableHook.selection.rows
-	if (data.length === 0) {
+	const ids = tableHook.selection.ids
+	if (ids.length === 0) {
 		ElMessage.warning('请选择要生成代码的枚举')
 		return
 	}
-	genEnumApi.generateCheck(tableHook.selection.ids).then(resData => {
+	genEnumApi.generateCheck(ids).then(resData => {
 		const { checkResult, enumTemplateGroupId, generatorType } = resData
 		if (!checkResult) {
 			ElMessage.warning('当前选择的枚举不是同一个项目')
 		} else {
-			templateIndexRef.value.init(enumTemplateGroupId, generatorType, data)
+			templateIndexRef.value.init(enumTemplateGroupId, generatorType, ids.map(Number))
 		}
 	})
 }
@@ -242,7 +242,7 @@ const clearSelectionHandler = () => {
 }
 
 const generatorHandler = (row: any) => {
-	templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [row.id])
+	templateIndexRef.value.init(row.enumTemplateGroupId, row.generatorType, [Number(row.id)])
 }
 </script>
 

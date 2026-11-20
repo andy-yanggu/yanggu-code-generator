@@ -154,7 +154,7 @@ import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } f
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
-import { Result, SubmitOptions } from '@/types'
+import { GeneratorQuery, Result, SubmitOptions } from '@/types'
 import { useInitForm, useSubmitHandler } from '@/hooks'
 import OptionLabel from '@/components/option/label/index.vue'
 import GenTemplateForm from '@/views/gen/template/form.vue'
@@ -439,10 +439,10 @@ const generatorHandler = () => {
 	} else {
 		id = Number.parseInt(testData.cascaderValue[0].split('_')[1])
 	}
-	const dataForm = {
-		id: id,
-		templateId: testData.templateId,
-		templateGroupType: testData.templateGroupType
+	const dataForm: GeneratorQuery = {
+		productType: testData.templateGroupType,
+		productIds: [id],
+		templateIds: [testData.templateId]
 	}
 	const generatorType = testData.cascaderData.find(item => item.id === projectId)!.generatorType
 	if (generatorType === 0) {

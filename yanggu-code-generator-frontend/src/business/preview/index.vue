@@ -140,7 +140,7 @@ import { copyToClipboard, isNotEmpty } from '@/utils/tool'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 import { useSubmitHandler } from '@/hooks'
-import { SubmitOptions } from '@/types'
+import { GeneratorQuery, SubmitOptions } from '@/types'
 import IconTextTooltip from '@/components/icon-text-tooltip/index.vue'
 
 defineOptions({
@@ -265,9 +265,9 @@ const init = async (id: number, name: string, projectId: number, generatorType: 
 	await nextTick()
 	const loadingInstance = ElLoading.service({ target: '.preview-container', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
 	try {
-		const previewData = {
-			previewProductId: id,
-			generatorProductType: generatorProductType
+		const previewData: GeneratorQuery = {
+			productType: generatorProductType,
+			productIds: [id]
 		}
 		const data: Tree[] = await genGeneratorApi.preview(previewData)
 		templateTreeData.treeList = data
@@ -441,10 +441,14 @@ const downloadTemplateData = (item: Tree) => {
 		ElMessage.error('暂不支持该类型模板下载')
 		return
 	}
-	const dataForm = {
-		id: id,
-		templateId: item.templateId,
-		templateGroupType: item.templateGroupType
+	if (id === undefined) {
+		ElMessage.error('模板缺少产物ID，无法下载')
+		return
+	}
+	const dataForm: GeneratorQuery = {
+		productType: item.templateGroupType,
+		productIds: [id],
+		templateIds: [item.templateId]
 	}
 	if (templateTreeData.generatorType === 0) {
 		submitState.submitApi = genGeneratorApi.downloadSingle

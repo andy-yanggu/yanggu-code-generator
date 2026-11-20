@@ -15,7 +15,7 @@ import { TEMPLATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
 import { Close, DocumentAdd } from '@element-plus/icons-vue'
 import QueryTable from '@/components/crud/QueryTable.vue'
-import type { GenTemplateEntity, GenTemplateQuery, SubmitOptions, UseCrudTableOptions } from '@/types'
+import type { GeneratorQuery, GenTemplateEntity, GenTemplateQuery, SubmitOptions, UseCrudTableOptions } from '@/types'
 
 defineOptions({
 	name: 'GenTableTemplate'
@@ -95,16 +95,17 @@ const generateCode = () => {
 		ElMessage.warning('请选择模板')
 		return
 	}
-	const dataForm = {
-		templateIdList,
-		tableIdList: tableIdRef.value
+	const dataForm: GeneratorQuery = {
+		productType: 1,
+		productIds: tableIdRef.value,
+		templateIds: templateIdList.map(Number)
 	}
 	const generatorType = generatorTypeRef.value
 	if (generatorType === 0) {
-		submitState.submitApi = genGeneratorApi.tableDownloadZip
+		submitState.submitApi = genGeneratorApi.downloadZip
 		submitState.successMessage = '代码已经下载到浏览器'
 	} else if (generatorType === 1) {
-		submitState.submitApi = genGeneratorApi.tableDownloadLocal
+		submitState.submitApi = genGeneratorApi.downloadLocal
 		submitState.successMessage = '代码已经生成到本地'
 	} else {
 		ElMessage.warning('生成类型异常')
