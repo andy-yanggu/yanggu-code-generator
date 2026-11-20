@@ -3,7 +3,6 @@ package com.yanggu.code.generator.service.impl;
 import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
@@ -34,9 +33,6 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private TemplateGroupService templateGroupService;
 
     @Autowired
     private TemplateService templateService;
@@ -91,12 +87,11 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public TemplateContentVO templateTest(TemplateTestQuery templateTestQuery) {
-        TemplateGroupEntity templateGroup = templateGroupService.getById(templateTestQuery.getTemplateGroupId(), false);
         TemplateVO templateVO = templateService.detail(templateTestQuery.getTemplateId(), true);
         templateVO.setTemplateContent(templateTestQuery.getTemplateContent());
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
         ProductGenerator generator = generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType()));
-        return renderForTest(templateGroup, templateVO, generator.testDataModel(templateTestQuery, project));
+        return renderForTest(templateTestQuery.getTemplateGroupType(), templateVO, generator.testDataModel(templateTestQuery, project));
     }
 
     private ProductGenerator generator(GeneratorQuery query) {
@@ -119,11 +114,11 @@ public class GeneratorServiceImpl implements GeneratorService {
     /**
      * 模板测试渲染：条件表达式不通过则抛业务异常，通过则渲染
      */
-    private TemplateContentVO renderForTest(TemplateGroupEntity templateGroup, TemplateVO templateVO, Object dataModel) {
+    private TemplateContentVO renderForTest(Integer templateGroupType, TemplateVO templateVO, Object dataModel) {
         if (!previewBuilder.checkCondition(templateVO.getConditionExpression(), dataModel)) {
             throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
         }
-        return previewBuilder.render(templateGroup, templateVO, dataModel);
+        return previewBuilder.render(templateGroupType, templateVO, dataModel);
     }
 
 }

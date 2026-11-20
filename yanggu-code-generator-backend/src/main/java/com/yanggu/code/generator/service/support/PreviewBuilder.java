@@ -86,7 +86,7 @@ public class PreviewBuilder {
     /**
      * 渲染单个模板为内容 VO
      */
-    public TemplateContentVO render(TemplateGroupEntity templateGroup, TemplateVO template, Object dataModel) {
+    public TemplateContentVO render(Integer templateGroupType, TemplateVO template, Object dataModel) {
         String templateName = template.getTemplateName();
         Integer templateType = template.getTemplateType();
         String templateContent = template.getTemplateContent();
@@ -108,7 +108,7 @@ public class PreviewBuilder {
         templateContentVO.setFileName(fileName);
         templateContentVO.setFilePath(filePath);
         templateContentVO.setTemplateId(template.getId());
-        templateContentVO.setTemplateGroupType(templateGroup.getType());
+        templateContentVO.setTemplateGroupType(templateGroupType);
         templateContentVO.setTemplateType(templateType);
         return templateContentVO;
     }
@@ -127,7 +127,7 @@ public class PreviewBuilder {
         return leafTemplates(templateGroup, templateIdFilter).stream()
                 .filter(template -> checkCondition(template.getConditionExpression(), dataModel))
                 .map(template -> {
-                    TemplateContentVO vo = render(templateGroup, template, dataModel);
+                    TemplateContentVO vo = render(templateGroup.getType(), template, dataModel);
                     if (contentFiller != null) {
                         contentFiller.accept(vo);
                     }
@@ -253,7 +253,7 @@ public class PreviewBuilder {
                 .flatMap(enumModel -> templateList.stream()
                         .filter(template -> checkCondition(template.getConditionExpression(), enumModel))
                         .map(template -> {
-                            TemplateContentVO templateContentVO = render(templateGroup, template, enumModel);
+                            TemplateContentVO templateContentVO = render(templateGroup.getType(), template, enumModel);
                             templateContentVO.setEnumId(enumModel.getEnumId());
                             return templateContentVO;
                         })
