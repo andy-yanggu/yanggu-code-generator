@@ -2,6 +2,7 @@ package com.yanggu.code.generator.service.support;
 
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.ProjectService;
@@ -22,6 +23,9 @@ public class ProjectGenerator implements ProductGenerator {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private DataModelBuilder dataModelBuilder;
+
     @Override
     public TemplateGroupTypeEnum type() {
         return TemplateGroupTypeEnum.PROJECT;
@@ -41,5 +45,10 @@ public class ProjectGenerator implements ProductGenerator {
     @Override
     public String artifactName(GeneratorQuery query) {
         return projectService.getById(query.getProductIds().getFirst()).getProjectName();
+    }
+
+    @Override
+    public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
+        return dataModelBuilder.buildProjectDataModel(project, dataModelBuilder.resolveDatasource(project));
     }
 }

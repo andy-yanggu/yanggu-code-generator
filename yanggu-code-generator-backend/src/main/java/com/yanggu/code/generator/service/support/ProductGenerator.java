@@ -1,6 +1,8 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 
@@ -24,4 +26,9 @@ public interface ProductGenerator {
     }
 
     String artifactName(GeneratorQuery query);
+
+    /**
+     * 模板测试数据模型：按产物类型构建渲染用数据模型，project 由调用方查好传入避免重复查询
+     */
+    Object testDataModel(TemplateTestQuery query, ProjectEntity project);
 }

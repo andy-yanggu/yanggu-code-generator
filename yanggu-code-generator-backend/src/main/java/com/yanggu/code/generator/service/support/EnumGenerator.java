@@ -1,7 +1,9 @@
 package com.yanggu.code.generator.service.support;
 
 import com.yanggu.code.generator.domain.entity.EnumEntity;
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.EnumService;
@@ -24,6 +26,9 @@ public class EnumGenerator implements ProductGenerator {
     @Autowired
     private EnumService enumService;
 
+    @Autowired
+    private DataModelBuilder dataModelBuilder;
+
     @Override
     public TemplateGroupTypeEnum type() {
         return TemplateGroupTypeEnum.ENUM;
@@ -42,5 +47,10 @@ public class EnumGenerator implements ProductGenerator {
         return enumService.listByIds(query.getProductIds()).stream()
                 .map(EnumEntity::getEnumName)
                 .collect(Collectors.joining("_"));
+    }
+
+    @Override
+    public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
+        return dataModelBuilder.buildEnumDataModel(enumService.getById(query.getTestId()), project);
     }
 }

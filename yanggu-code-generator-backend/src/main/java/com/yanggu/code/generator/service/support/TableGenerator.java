@@ -1,7 +1,9 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.TableService;
@@ -24,6 +26,9 @@ public class TableGenerator implements ProductGenerator {
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private DataModelBuilder dataModelBuilder;
+
     @Override
     public TemplateGroupTypeEnum type() {
         return TemplateGroupTypeEnum.TABLE;
@@ -42,5 +47,10 @@ public class TableGenerator implements ProductGenerator {
         return tableService.listByIds(query.getProductIds()).stream()
                 .map(TableEntity::getTableName)
                 .collect(Collectors.joining("_"));
+    }
+
+    @Override
+    public Object testDataModel(TemplateTestQuery query, ProjectEntity project) {
+        return dataModelBuilder.buildTableDataModel(tableService.getById(query.getTestId()), project);
     }
 }

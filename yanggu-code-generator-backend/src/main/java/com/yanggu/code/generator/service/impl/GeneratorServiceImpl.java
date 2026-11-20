@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * 代码生成服务实现类
- * 仅负责入参校验、产物处理器路由与模板测试；生成编排/数据模型/下载输出委托 support 协作组件。
+ * 仅负责入参校验、产物处理器路由与模板测试共用流程；生成编排/数据模型/下载输出委托 support 协作组件。
  */
 @Service
 public class GeneratorServiceImpl implements GeneratorService {
@@ -33,13 +33,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     private List<ProductGenerator> productGenerators;
 
     @Autowired
-    private TableService tableService;
-
-    @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private EnumService enumService;
 
     @Autowired
     private TemplateGroupService templateGroupService;
@@ -49,9 +43,6 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Autowired
     private PreviewBuilder previewBuilder;
-
-    @Autowired
-    private DataModelBuilder dataModelBuilder;
 
     @Autowired
     private DownloadHandler downloadHandler;
@@ -104,19 +95,20 @@ public class GeneratorServiceImpl implements GeneratorService {
         TemplateVO templateVO = templateService.detail(templateTestQuery.getTemplateId(), true);
         templateVO.setTemplateContent(templateTestQuery.getTemplateContent());
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
-        return switch (EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType())) {
-            case PROJECT -> renderForTest(templateGroup, templateVO,
-                    dataModelBuilder.buildProjectDataModel(project, dataModelBuilder.resolveDatasource(project)));
-            case TABLE -> renderForTest(templateGroup, templateVO,
-                    dataModelBuilder.buildTableDataModel(tableService.getById(templateTestQuery.getTestId()), project));
-            case ENUM -> renderForTest(templateGroup, templateVO,
-                    dataModelBuilder.buildEnumDataModel(enumService.getById(templateTestQuery.getTestId()), project));
-            default -> throw new IllegalArgumentException("Invalid template group type: " + templateTestQuery.getTemplateGroupType());
-        };
+        ProductGenerator generator = generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType()));
+        return renderForTest(templateGroup, templateVO, generator.testDataModel(templateTestQuery, project));
     }
 
     private ProductGenerator generator(GeneratorQuery query) {
-        return generatorMap.get(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, query.getProductType()));
+        return generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, query.getProductType()));
+    }
+
+    private ProductGenerator generator(TemplateGroupTypeEnum type) {
+        ProductGenerator generator = generatorMap.get(type);
+        if (generator == null) {
+            throw new IllegalArgumentException("Invalid product type: " + type);
+        }
+        return generator;
     }
     
     private List<TemplateContentVO> renderTemplateList(GeneratorQuery query) {

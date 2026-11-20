@@ -1,9 +1,14 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TableEntity;
+import com.yanggu.code.generator.domain.model.EnumModel;
+import com.yanggu.code.generator.domain.model.ProjectModel;
+import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.EnumService;
@@ -18,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +31,8 @@ class ProductGeneratorTest {
 
     @Mock
     private PreviewBuilder previewBuilder;
+    @Mock
+    private DataModelBuilder dataModelBuilder;
     @Mock
     private TableService tableService;
     @Mock
@@ -119,5 +127,39 @@ class ProductGeneratorTest {
         when(projectService.getById(100L)).thenReturn(project);
         assertEquals("demo", projectGenerator.artifactName(q));
         assertEquals(TemplateGroupTypeEnum.PROJECT, projectGenerator.type());
+    }
+
+    @Test
+    void projectTestDataModelUsesResolvedDatasource() {
+        ProjectEntity project = new ProjectEntity();
+        DatasourceEntity datasource = new DatasourceEntity();
+        ProjectModel model = new ProjectModel();
+        when(dataModelBuilder.resolveDatasource(project)).thenReturn(datasource);
+        when(dataModelBuilder.buildProjectDataModel(project, datasource)).thenReturn(model);
+        assertSame(model, projectGenerator.testDataModel(new TemplateTestQuery(), project));
+    }
+
+    @Test
+    void tableTestDataModelLoadsTestTable() {
+        TemplateTestQuery q = new TemplateTestQuery();
+        q.setTestId(201L);
+        ProjectEntity project = new ProjectEntity();
+        TableEntity table = new TableEntity();
+        TableModel model = new TableModel();
+        when(tableService.getById(201L)).thenReturn(table);
+        when(dataModelBuilder.buildTableDataModel(table, project)).thenReturn(model);
+        assertSame(model, tableGenerator.testDataModel(q, project));
+    }
+
+    @Test
+    void enumTestDataModelLoadsTestEnum() {
+        TemplateTestQuery q = new TemplateTestQuery();
+        q.setTestId(301L);
+        ProjectEntity project = new ProjectEntity();
+        EnumEntity enumEntity = new EnumEntity();
+        EnumModel model = new EnumModel();
+        when(enumService.getById(301L)).thenReturn(enumEntity);
+        when(dataModelBuilder.buildEnumDataModel(enumEntity, project)).thenReturn(model);
+        assertSame(model, enumGenerator.testDataModel(q, project));
     }
 }
