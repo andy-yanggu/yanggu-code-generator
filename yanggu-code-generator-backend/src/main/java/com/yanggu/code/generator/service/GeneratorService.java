@@ -1,34 +1,24 @@
 package com.yanggu.code.generator.service;
 
-
-import com.yanggu.code.generator.domain.query.*;
+import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface GeneratorService {
 
-    List<PreviewTemplateVO> preview(CodePreviewQuery codePreviewQuery) throws Exception;
+    List<PreviewTemplateVO> preview(GeneratorQuery query);
 
-    ResponseEntity<byte[]> downloadSingle(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception;
+    ResponseEntity<byte[]> downloadZip(GeneratorQuery query);
 
-    void singleLocal(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception;
+    void downloadLocal(GeneratorQuery query);
 
-    void projectDownloadLocal(GeneratorProjectQuery projectQuery) throws Exception;
+    ResponseEntity<byte[]> downloadSingle(GeneratorQuery query);
 
-    ResponseEntity<byte[]> projectDownloadZip(GeneratorProjectQuery projectQuery) throws Exception;
+    void singleLocal(GeneratorQuery query);
 
-    void tableDownloadLocal(GeneratorTableQuery tableQuery);
-
-    ResponseEntity<byte[]> tableDownloadZip(GeneratorTableQuery tableQuery) throws IOException;
-
-    void enumDownloadLocal(GeneratorEnumQuery enumQuery);
-
-    ResponseEntity<byte[]> enumDownloadZip(GeneratorEnumQuery enumQuery);
-
-    TemplateContentVO templateTest(TemplateTestQuery templateTestQuery) throws Exception;
-
+    TemplateContentVO templateTest(TemplateTestQuery templateTestQuery);
 }

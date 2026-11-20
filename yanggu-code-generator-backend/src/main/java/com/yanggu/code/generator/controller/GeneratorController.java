@@ -1,19 +1,21 @@
 package com.yanggu.code.generator.controller;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.yanggu.code.generator.domain.query.*;
+import com.yanggu.code.generator.domain.query.GeneratorQuery;
+import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.service.GeneratorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -28,104 +30,45 @@ public class GeneratorController {
     @Autowired
     private GeneratorService generatorService;
 
-    /**
-     * 预览数据
-     */
     @PostMapping("/preview")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "预览数据")
-    public List<PreviewTemplateVO> preview(@RequestBody CodePreviewQuery codePreviewQuery) throws Exception {
-        return generatorService.preview(codePreviewQuery);
+    public List<PreviewTemplateVO> preview(@RequestBody GeneratorQuery query) {
+        return generatorService.preview(query);
     }
 
-    /**
-     * 生成代码（下载单个文件代码）
-     */
-    @GetMapping("/downloadSingle")
+    @PostMapping("/downloadZip")
     @ApiOperationSupport(order = 2)
-    @Operation(summary = "生成代码（下载单个文件代码）")
-    public ResponseEntity<byte[]> downloadSingle(CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception {
-        return generatorService.downloadSingle(singleGeneratorQuery);
+    @Operation(summary = "生成代码（zip压缩包）")
+    public ResponseEntity<byte[]> downloadZip(@RequestBody GeneratorQuery query) {
+        return generatorService.downloadZip(query);
     }
 
-    /**
-     * 生成代码（本地）
-     */
-    @PostMapping("/singleLocal")
+    @PostMapping("/downloadLocal")
     @ApiOperationSupport(order = 3)
-    @Operation(summary = "生成代码（本地）")
-    public void singleLocal(@RequestBody CodeSingleGeneratorQuery singleGeneratorQuery) throws Exception {
-        generatorService.singleLocal(singleGeneratorQuery);
+    @Operation(summary = "生成代码（服务器本地）")
+    public void downloadLocal(@RequestBody GeneratorQuery query) {
+        generatorService.downloadLocal(query);
     }
 
-    /**
-     * 项目生成代码（本地）
-     */
-    @PostMapping("/project/downloadLocal")
+    @PostMapping("/downloadSingle")
     @ApiOperationSupport(order = 4)
-    @Operation(summary = "项目生成代码（本地）")
-    public void projectDownloadLocal(@RequestBody GeneratorProjectQuery projectQuery) throws Exception {
-        generatorService.projectDownloadLocal(projectQuery);
+    @Operation(summary = "生成代码（下载单个文件）")
+    public ResponseEntity<byte[]> downloadSingle(@RequestBody GeneratorQuery query) {
+        return generatorService.downloadSingle(query);
     }
 
-    /**
-     * 项目生成代码（zip压缩包）
-     */
-    @GetMapping("/project/downloadZip")
+    @PostMapping("/singleLocal")
     @ApiOperationSupport(order = 5)
-    @Operation(summary = "项目生成代码（zip压缩包）")
-    public ResponseEntity<byte[]> projectDownloadZip(@ParameterObject GeneratorProjectQuery projectQuery) throws Exception {
-        return generatorService.projectDownloadZip(projectQuery);
+    @Operation(summary = "生成代码（单文件到服务器本地）")
+    public void singleLocal(@RequestBody GeneratorQuery query) {
+        generatorService.singleLocal(query);
     }
 
-    /**
-     * 表生成代码（本地）
-     */
-    @PostMapping("/table/downloadLocal")
-    @ApiOperationSupport(order = 6)
-    @Operation(summary = "表生成代码（本地）")
-    public void tableDownloadLocal(@RequestBody GeneratorTableQuery tableQuery) {
-        generatorService.tableDownloadLocal(tableQuery);
-    }
-
-    /**
-     * 表生成代码（zip压缩包）
-     */
-    @GetMapping("/table/downloadZip")
-    @ApiOperationSupport(order = 7)
-    @Operation(summary = "表生成代码（zip压缩包）")
-    public ResponseEntity<byte[]> tableDownloadZip(@ParameterObject GeneratorTableQuery tableQuery) throws IOException {
-        return generatorService.tableDownloadZip(tableQuery);
-    }
-
-    /**
-     * 枚举生成代码（本地）
-     */
-    @PostMapping("/enum/downloadLocal")
-    @ApiOperationSupport(order = 8)
-    @Operation(summary = "枚举生成代码（本地）")
-    public void enumDownloadLocal(@RequestBody GeneratorEnumQuery enumQuery) {
-        generatorService.enumDownloadLocal(enumQuery);
-    }
-
-    /**
-     * 枚举生成代码（zip压缩包）
-     */
-    @GetMapping("/enum/downloadZip")
-    @ApiOperationSupport(order = 9)
-    @Operation(summary = "枚举生成代码（zip压缩包）")
-    public ResponseEntity<byte[]> enumDownloadZip(@ParameterObject GeneratorEnumQuery enumQuery) {
-        return generatorService.enumDownloadZip(enumQuery);
-    }
-
-    /**
-     * 模板测试
-     */
     @PostMapping("/template/test")
-    @ApiOperationSupport(order = 10)
+    @ApiOperationSupport(order = 6)
     @Operation(summary = "模板测试")
-    public TemplateContentVO templateTest(@RequestBody TemplateTestQuery templateTestQuery) throws Exception {
+    public TemplateContentVO templateTest(@RequestBody TemplateTestQuery templateTestQuery) {
         return generatorService.templateTest(templateTestQuery);
     }
-
 }
