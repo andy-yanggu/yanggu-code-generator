@@ -2,13 +2,7 @@ package com.yanggu.code.generator.service.support;
 
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * 模板生成路径解析器
@@ -56,6 +50,6 @@ public final class TemplatePathResolver {
         // 3. 筛选叶子节点（无子节点的节点）
         return allTemplates.stream()
                 .filter(t -> parentChildrenMap.getOrDefault(t.getId(), Collections.emptyList()).isEmpty())
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 }
