@@ -33,9 +33,9 @@ public class ProjectGenerator implements ProductGenerator {
     }
 
     @Override
-    public List<TemplateContentVO> generateSingle(GeneratorQuery query) {
+    public TemplateContentVO generateSingle(GeneratorQuery query) {
         ProjectEntity project = projectService.getById(query.getProductIds().getFirst());
-        return previewBuilder.projectPreview(project, query.getTemplateIds());
+        return previewBuilder.projectPreview(project, query.getTemplateIds()).getFirst();
     }
 
     @Override

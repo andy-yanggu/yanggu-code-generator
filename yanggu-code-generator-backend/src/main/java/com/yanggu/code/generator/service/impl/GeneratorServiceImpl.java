@@ -88,14 +88,14 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public ResponseEntity<byte[]> downloadSingle(GeneratorQuery query) {
         query.validate(true);
-        TemplateContentVO content = generator(query).generateSingle(query).getFirst();
+        TemplateContentVO content = generator(query).generateSingle(query);
         return downloadHandler.buildResponseEntity(content.getFileName(), content.getContent().getBytes());
     }
 
     @Override
     public void singleLocal(GeneratorQuery query) {
         query.validate(true);
-        downloadHandler.downloadLocal(generator(query).generateSingle(query));
+        downloadHandler.downloadLocal(List.of(generator(query).generateSingle(query)));
     }
 
     @Override
