@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.entity.TemplateEntity;
@@ -24,10 +25,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 /**
  * 项目全量预览批量段测试：
  * 批量枚举必须走带枚举项装配的查询（enumList），不能用只查主表的通用 list；
- * 未配置枚举模板组时枚举段静默跳过，不阻断其余产物。
+ * 项目下无枚举时枚举段跳过不报错，有枚举但未配置枚举模板组则抛业务异常（与多表预览一致）。
  */
 @ExtendWith(MockitoExtension.class)
 class PreviewBuilderBatchTest {
@@ -82,7 +82,7 @@ class PreviewBuilderBatchTest {
 
     /** 表段置空、项目模板组置空叶子，让枚举段成为唯一产物来源 */
     private void stubEmptyTableAndProjectSegments(ProjectEntity project) {
-        when(tableService.list(any())).thenReturn(List.of());
+        when(tableService.list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class))).thenReturn(List.of());
         when(templateGroupService.getById(29L, true)).thenReturn(group(0, List.of()));
         when(templateMapstruct.entityToVO(List.of())).thenReturn(List.of());
         when(dataModelBuilder.buildProjectDataModel(project)).thenReturn(new ProjectModel());
@@ -125,15 +125,33 @@ class PreviewBuilderBatchTest {
         verify(enumService, never()).list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class));
     }
 
+    /** 项目下无枚举：未配枚举模板组也不报错，枚举段直接跳过 */
     @Test
-    void missingEnumTemplateGroupSkipsEnumSegmentSilently() {
+    void emptyEnumListSkipsEnumSegmentWithoutTemplateGroup() {
         ProjectEntity project = project(null);
         when(projectService.getById(100L)).thenReturn(project);
         stubEmptyTableAndProjectSegments(project);
+        when(enumService.enumList(100L, List.of())).thenReturn(List.of());
 
         List<TemplateContentVO> result = previewBuilder.fullProjectPreview(query(null));
 
         assertTrue(result.isEmpty());
-        verify(enumService, never()).enumList(anyLong(), anyList());
+        verify(enumService).enumList(100L, List.of());
+    }
+
+    /** 有枚举但未配枚举模板组：报错且提示明确，与多表预览行为一致 */
+    @Test
+    void enumWithUnconfiguredTemplateGroupThrows() {
+        ProjectEntity project = project(null);
+        when(projectService.getById(100L)).thenReturn(project);
+        when(tableService.list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class))).thenReturn(List.of());
+
+        EnumEntity enumEntity = new EnumEntity();
+        enumEntity.setId(4L);
+        when(enumService.enumList(100L, List.of())).thenReturn(List.of(enumEntity));
+
+        BusinessException ex = assertThrows(BusinessException.class,
+                () -> previewBuilder.fullProjectPreview(query(null)));
+        assertEquals("项目[demo]未配置枚举模板组", ex.getMessage());
     }
 }

@@ -248,12 +248,9 @@ public class PreviewBuilder {
     /**
      * 多枚举预览：模板组与叶子路径只计算一次，逐枚举复用 {@link #renderLeafTemplates}。
      * 枚举查询必须走 enumList（JOIN 装配枚举项），通用 list 只查主表会导致枚举项缺失；
-     * 未配置枚举模板组时静默跳过枚举段，不阻断其余产物。
+     * 项目下无枚举时跳过枚举段，有枚举但未配置枚举模板组则报错，与多表预览保持一致。
      */
     private List<TemplateContentVO> enumListPreview(ProjectEntity project, List<Long> enumIdList, List<Long> enumTemplateIdList) {
-        if (project.getEnumTemplateGroupId() == null) {
-            return List.of();
-        }
         List<EnumEntity> enumList = enumService.enumList(project.getId(), enumIdList);
         if (enumList.isEmpty()) {
             return List.of();

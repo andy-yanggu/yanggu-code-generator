@@ -194,7 +194,11 @@ public class DataModelBuilder {
         fillEnumNaming(enumModel, enumEntity.getEnumName());
         enumModel.setEnumId(enumEntity.getId());
         enumModel.setEnumDesc(enumEntity.getEnumDesc());
+        // 枚举可能未配置枚举项：JOIN 装配时嵌套集合为 null，统一兜底为空列表，避免下游 stream NPE
         List<EnumItemEntity> enumItemList = enumEntity.getEnumItemList();
+        if (CollUtil.isEmpty(enumItemList)) {
+            enumItemList = List.of();
+        }
         List<EnumItemModel> list = enumItemList.stream()
                 .map(enumItemEntity -> {
                     EnumItemModel enumItemModel = new EnumItemModel();
