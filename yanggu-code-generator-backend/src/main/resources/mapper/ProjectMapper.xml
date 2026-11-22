@@ -77,34 +77,6 @@
                 typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
     </resultMap>
 
-    <!-- Entity分页 -->
-    <select id="entityPage" resultMap="projectMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_project AS gp
-        <where>
-            gp.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <bind name="columnPrefix" value="'gp'"/>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
-    </select>
-
-    <!-- Entity列表 -->
-    <select id="entityList" resultMap="projectMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_project AS gp
-        <where>
-            gp.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <bind name="columnPrefix" value="'gp'"/>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
-    </select>
-
     <!-- VO分页 -->
     <select id="voPage" resultMap="projectVOMap">
         SELECT

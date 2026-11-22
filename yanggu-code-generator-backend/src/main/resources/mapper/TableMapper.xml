@@ -80,20 +80,6 @@
                 typeHandler="com.yanggu.code.generator.common.mybatis.typehandler.map.MapDataTypeHandler"/>
     </resultMap>
 
-    <!-- Entity分页 -->
-    <select id="entityPage" resultMap="tableMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_table AS t
-        <where>
-            t.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <bind name="columnPrefix" value="'t'"/>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
-    </select>
-
     <!-- Entity列表 -->
     <select id="entityList" resultMap="tableMap">
         SELECT

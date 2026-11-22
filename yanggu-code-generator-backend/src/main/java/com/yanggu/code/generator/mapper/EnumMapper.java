@@ -19,16 +19,6 @@ import java.util.List;
 public interface EnumMapper extends BaseMapperPlus<EnumEntity> {
 
     /**
-     * Entity分页
-     */
-    IPage<EnumEntity> entityPage(IPage<EnumEntity> page, @Param("query") EnumQuery query);
-
-    /**
-     * Entity列表
-     */
-    List<EnumEntity> entityList(@Param("query") EnumQuery query);
-
-    /**
      * VO分页
      */
     IPage<EnumVO> voPage(IPage<EnumVO> page, @Param("query") EnumQuery query);

@@ -19,11 +19,6 @@ import java.util.List;
 public interface TableMapper extends BaseMapperPlus<TableEntity> {
 
     /**
-     * Entity分页
-     */
-    IPage<TableEntity> entityPage(IPage<TableEntity> page, @Param("query") TableQuery query);
-
-    /**
      * Entity列表
      */
     List<TableEntity> entityList(@Param("query") TableQuery query);

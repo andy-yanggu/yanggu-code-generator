@@ -19,16 +19,6 @@ import java.util.List;
 public interface ProjectMapper extends BaseMapperPlus<ProjectEntity> {
 
     /**
-     * Entity分页
-     */
-    IPage<ProjectEntity> entityPage(IPage<ProjectEntity> page, @Param("query") ProjectQuery query);
-
-    /**
-     * Entity列表
-     */
-    List<ProjectEntity> entityList(@Param("query") ProjectQuery query);
-
-    /**
      * VO分页
      */
     IPage<ProjectVO> voPage(IPage<ProjectVO> page, @Param("query") ProjectQuery query);

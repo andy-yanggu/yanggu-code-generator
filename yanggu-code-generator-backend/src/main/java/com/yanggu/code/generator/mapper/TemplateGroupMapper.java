@@ -19,16 +19,6 @@ import java.util.List;
 public interface TemplateGroupMapper extends BaseMapperPlus<TemplateGroupEntity> {
 
     /**
-     * Entity分页
-     */
-    IPage<TemplateGroupEntity> entityPage(IPage<TemplateGroupEntity> page, @Param("query") TemplateGroupQuery query);
-
-    /**
-     * Entity列表
-     */
-    List<TemplateGroupEntity> entityList(@Param("query") TemplateGroupQuery query);
-
-    /**
      * VO分页
      */
     IPage<TemplateGroupVO> voPage(IPage<TemplateGroupVO> page, @Param("query") TemplateGroupQuery query);

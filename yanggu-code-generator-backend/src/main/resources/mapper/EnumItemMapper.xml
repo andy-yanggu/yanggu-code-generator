@@ -46,47 +46,8 @@
         <result property="isDelete" column="is_delete"/>
     </resultMap>
 
-    <!-- Entity分页 -->
-    <select id="entityPage" resultMap="enumItemMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_enum_item
-        <where>
-            is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
-
     <!-- Entity列表 -->
     <select id="entityList" resultMap="enumItemMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_enum_item
-        <where>
-            is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
-
-    <!-- VO分页 -->
-    <select id="voPage" resultType="com.yanggu.code.generator.domain.vo.EnumItemVO">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_enum_item
-        <where>
-            is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.orderBySQL"/>
-    </select>
-
-    <!-- VO列表 -->
-    <select id="voList" resultType="com.yanggu.code.generator.domain.vo.EnumItemVO">
         SELECT
             <include refid="allColumns"/>
         FROM

@@ -52,34 +52,6 @@
         </collection>
     </resultMap>
 
-    <!-- Entity分页 -->
-    <select id="entityPage" resultMap="enumMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_enum AS e
-        <where>
-            e.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <bind name="columnPrefix" value="'e'"/>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
-    </select>
-
-    <!-- Entity列表 -->
-    <select id="entityList" resultMap="enumMap">
-        SELECT
-            <include refid="allColumns"/>
-        FROM
-            gen_enum AS e
-        <where>
-            e.is_delete = 0
-            <include refid="whereSQL"/>
-        </where>
-        <bind name="columnPrefix" value="'e'"/>
-        <include refid="com.yanggu.code.generator.common.mybatis.mapper.BaseMapperPlus.prefixOrderBySQL"/>
-    </select>
-
     <!-- VO分页 -->
     <select id="voPage" resultMap="enumVOMap">
         SELECT
