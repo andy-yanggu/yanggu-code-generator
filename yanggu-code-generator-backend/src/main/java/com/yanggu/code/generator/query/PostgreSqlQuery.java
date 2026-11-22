@@ -22,7 +22,7 @@ public class PostgreSqlQuery extends AbstractQuery {
         if (StrUtil.isNotBlank(tableName)) {
             if (isLike) {
                 sql.append("and t1.tablename like '%").append(tableName).append("%' ")
-                        .append(" order by t1.tablename acs");
+                        .append(" order by t1.tablename asc");
             } else {
                 sql.append("and t1.tablename = '").append(tableName).append("' ");
             }

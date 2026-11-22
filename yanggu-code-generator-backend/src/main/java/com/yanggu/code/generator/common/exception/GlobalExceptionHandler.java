@@ -190,7 +190,7 @@ public class GlobalExceptionHandler {
     public Result<Void> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         log.error("请求参数解析失败, 请求方式: {}, 请求uri: {}, 异常信息: {}",
                 request.getMethod(), request.getRequestURI(), exception.getMessage(), exception);
-        return fail(REQUEST_ERR.getCode(), exception.getMessage());
+        return fail(REQUEST_ERR.getCode(), REQUEST_ERR.getMessage());
     }
 
     /**
