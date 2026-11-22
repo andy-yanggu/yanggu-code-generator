@@ -179,7 +179,8 @@ public class DataModelBuilder {
         tableModel.setGeneratorType(project.getGeneratorType());
 
         //模板属性数据
-        tableModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
+        // 项目属性同样要经 getData 兜上项目模板组的默认值，与 buildProjectDataModel 保持一致
+        tableModel.setProjectTemplatePropertyData(templateGroupPropertyDataService.getData(project.getProjectTemplateGroupId(), project.getTemplateGroupPropertyData()));
         tableModel.setTableTemplatePropertyData(templateGroupPropertyDataService.getData(project.getTableTemplateGroupId(), table.getTemplateGroupPropertyData()));
         return tableModel;
     }
@@ -211,7 +212,7 @@ public class DataModelBuilder {
         enumModel.setEnumItemList(list);
         enumModel.setEnumCodeType(getEnumCodeType(list));
 
-        enumModel.setProjectTemplatePropertyData(project.getTemplateGroupPropertyData());
+        enumModel.setProjectTemplatePropertyData(templateGroupPropertyDataService.getData(project.getProjectTemplateGroupId(), project.getTemplateGroupPropertyData()));
         enumModel.setEnumTemplatePropertyData(templateGroupPropertyDataService.getData(project.getEnumTemplateGroupId(), enumEntity.getTemplateGroupPropertyData()));
         return enumModel;
     }

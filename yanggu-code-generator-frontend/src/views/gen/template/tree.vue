@@ -113,105 +113,144 @@
 			</el-splitter-panel>
 			<!-- 右侧：模板编辑 -->
 			<el-splitter-panel>
-				<el-container v-if="templateTreeData.tabList.length > 0" style="height: 100%" :class="{ 'full-screen-mode': treeFullScreen }">
-					<!-- 头部操作区域 -->
-					<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
-						<el-row style="margin-bottom: 5px">
-							<el-col :span="17" style="padding-left: 10px">
-								<text-tooltip :title="`路径：${fullFilePath}`" :tooltip-content="fullFilePath" max-width="100%"></text-tooltip>
-							</el-col>
-							<el-col :span="7" style="text-align: right">
-								<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent"> 测试 </el-button>
-								<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent"> 保存 </el-button>
-								<el-button size="small" @click="handleToggleFullScreen()">
-									<svg-icon :icon="treeFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
-									{{ treeFullScreen ? '退出' : '全屏' }}
-								</el-button>
-							</el-col>
-						</el-row>
-						<el-divider style="margin: 5px 0"></el-divider>
-						<el-tabs
-							ref="tabsRef"
-							v-model="templateTreeData.activeItemId"
-							style="--el-tabs-header-height: 35px"
-							tab-position="top"
-							type="card"
-							@tab-click="handleTabClick"
-							@tab-remove="handleTabRemove"
-						>
-							<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
-								<template #label>
-									<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
-										<div class="tab-label">
-											<!-- 修改时添加小红点 -->
-											<el-badge is-dot :hidden="!tabItem.isEdited">
-												<div style="display: flex; align-items: center; gap: 5px">
-													<svg-icon :icon="getIcon({ expanded: false }, tabItem)"></svg-icon>
-													{{ tabItem.fileName }}
-												</div>
-											</el-badge>
-										</div>
-									</el-tooltip>
-								</template>
-							</el-tab-pane>
-						</el-tabs>
-						<!-- tab右键菜单 -->
-						<div v-if="tabContextMenu.visible">
-							<ul class="context-menu" :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }">
-								<li @click="closeCurrentTab">
-									<el-icon size="10"><CloseBold></CloseBold></el-icon>
-									<span>关闭当前</span>
-								</li>
-								<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
-									<svg-icon icon="icon-close-others" size="10px"></svg-icon>
-									<span>关闭其他</span>
-								</li>
-								<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
-									<el-icon size="10"><Back></Back></el-icon>
-									<span>关闭左侧</span>
-								</li>
-								<li v-if="tabContextMenu.index < templateTreeData.tabList.length - 1" @click="closeRightTabs">
-									<el-icon size="10"><Right></Right></el-icon>
-									<span>关闭右侧</span>
-								</li>
-								<li v-if="templateTreeData.tabList.some(item => !item.isEdited)" @click="closeUneditedTabs">
-									<el-icon size="10"><Remove></Remove></el-icon>
-									<span>关闭未改</span>
-								</li>
-								<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
-									<svg-icon icon="icon-close-all" size="10px"></svg-icon>
-									<span>关闭全部</span>
-								</li>
-							</ul>
-						</div>
-						<!-- 测试页面 -->
-						<template-test ref="templateTestRef" @refresh-data-list="refreshActiveItemContent"></template-test>
-					</el-header>
+				<div class="editor-area" :class="{ 'full-screen-mode': treeFullScreen }">
+					<el-splitter ref="editorSplitterRef" class="editor-splitter" style="height: 100%">
+						<!-- 两块 panel 的尺寸一律由本组件按实测容器宽度算出 px 后断言，且编辑区也带 min：
+						     EP useSize 只在有 panel 未设 size 时才走 avgRest 保留 px，而一旦用户拖拽过（useResize
+						     会把 px 同时写回两块 panel），容器宽度一变就变等比缩放，实测全屏后面板 438→627 超出 max 560（评审 I2）。
+						     min 必须同时给到编辑区：EP 注册 panel 时是一次性 ...props 展开（split-panel2.mjs:113-120），
+						     拖拽路径的 clamp 用的是挂载时的 min（常规宽度下 editorFloor 就是 320），动态部分由
+						     watch(props.size) 里的 min/max clamp 兜；两边不同步声明时，拖拽能把编辑区压到 138
+						     而宿主仍断言 320，此后 props 与 EP 内部 size 各算一套，下次 resize 又等比放大（复审 I2 ①） -->
+						<el-splitter-panel :min="editorFloor" :size="editorPanelSize">
+							<el-container v-if="templateTreeData.tabList.length > 0" style="height: 100%">
+								<!-- 头部操作区域 -->
+								<el-header style="display: flex; flex-direction: column; padding: 0 5px 5px 5px; margin-bottom: 10px">
+									<el-row style="margin-bottom: 5px">
+										<el-col :span="17" style="padding-left: 10px">
+											<text-tooltip :title="`路径：${fullFilePath}`" :tooltip-content="fullFilePath" max-width="100%"></text-tooltip>
+										</el-col>
+										<el-col :span="7" style="text-align: right">
+											<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent">
+												测试
+											</el-button>
+											<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">
+												保存
+											</el-button>
+											<el-button size="small" @click="handleToggleFullScreen()">
+												<svg-icon :icon="treeFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
+												{{ treeFullScreen ? '退出' : '全屏' }}
+											</el-button>
+											<el-button size="small" :type="variablePanelVisible ? 'primary' : 'default'" plain @click="toggleVariablePanel">
+												<svg-icon icon="icon-variable" style="margin-right: 5px"></svg-icon>
+												变量
+											</el-button>
+										</el-col>
+									</el-row>
+									<el-divider style="margin: 5px 0"></el-divider>
+									<el-tabs
+										ref="tabsRef"
+										v-model="templateTreeData.activeItemId"
+										style="--el-tabs-header-height: 35px"
+										tab-position="top"
+										type="card"
+										@tab-click="handleTabClick"
+										@tab-remove="handleTabRemove"
+									>
+										<el-tab-pane v-for="tabItem in templateTreeData.tabList" :key="tabItem.id" :name="tabItem.id" closable>
+											<template #label>
+												<el-tooltip :content="tabItem.templateDesc" :disabled="!tabItem.templateDesc" placement="top">
+													<div class="tab-label">
+														<!-- 修改时添加小红点 -->
+														<el-badge is-dot :hidden="!tabItem.isEdited">
+															<div style="display: flex; align-items: center; gap: 5px">
+																<svg-icon :icon="getIcon({ expanded: false }, tabItem)"></svg-icon>
+																{{ tabItem.fileName }}
+															</div>
+														</el-badge>
+													</div>
+												</el-tooltip>
+											</template>
+										</el-tab-pane>
+									</el-tabs>
+									<!-- tab右键菜单 -->
+									<div v-if="tabContextMenu.visible">
+										<ul class="context-menu" :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }">
+											<li @click="closeCurrentTab">
+												<el-icon size="10"><CloseBold></CloseBold></el-icon>
+												<span>关闭当前</span>
+											</li>
+											<li v-if="templateTreeData.tabList.length > 1" @click="closeOtherTabs">
+												<svg-icon icon="icon-close-others" size="10px"></svg-icon>
+												<span>关闭其他</span>
+											</li>
+											<li v-if="tabContextMenu.index > 0" @click="closeLeftTabs">
+												<el-icon size="10"><Back></Back></el-icon>
+												<span>关闭左侧</span>
+											</li>
+											<li v-if="tabContextMenu.index < templateTreeData.tabList.length - 1" @click="closeRightTabs">
+												<el-icon size="10"><Right></Right></el-icon>
+												<span>关闭右侧</span>
+											</li>
+											<li v-if="templateTreeData.tabList.some(item => !item.isEdited)" @click="closeUneditedTabs">
+												<el-icon size="10"><Remove></Remove></el-icon>
+												<span>关闭未改</span>
+											</li>
+											<li v-if="templateTreeData.tabList.length > 1" @click="closeAllTabs">
+												<svg-icon icon="icon-close-all" size="10px"></svg-icon>
+												<span>关闭全部</span>
+											</li>
+										</ul>
+									</div>
+									<!-- 测试页面 -->
+									<template-test ref="templateTestRef" @refresh-data-list="refreshActiveItemContent"></template-test>
+								</el-header>
 
-					<!-- 代码区域 -->
-					<el-main style="padding: 5px; overflow: hidden">
-						<template v-if="activeTabItem.templateType === 1">
-							<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
-								<code-mirror v-model="activeTabItem.templateContent!" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
-							</el-scrollbar>
-						</template>
-						<template v-else-if="activeTabItem.templateType === 2">
-							<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-								<template v-if="imageTypeList.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
-									<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
-								</template>
-								<template v-else>
-									<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
-								</template>
-							</div>
-						</template>
-					</el-main>
-				</el-container>
-				<el-main v-else style="display: flex; flex-direction: column; height: 100%">
-					<div style="flex: 1; display: flex; align-items: center; justify-content: center">
-						<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
-					</div>
-				</el-main>
+								<!-- 代码区域 -->
+								<el-main style="padding: 5px; overflow: hidden">
+									<template v-if="activeTabItem.templateType === 1">
+										<el-scrollbar ref="codeScrollbarRef" style="height: 100%">
+											<code-mirror ref="codeMirrorRef" v-model="activeTabItem.templateContent!" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
+										</el-scrollbar>
+									</template>
+									<template v-else-if="activeTabItem.templateType === 2">
+										<div style="display: flex; align-items: center; justify-content: center; height: 100%">
+											<template v-if="imageTypeList.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
+												<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
+											</template>
+											<template v-else>
+												<el-text size="large" tag="b">文件暂不支持预览（目前只支持图片）</el-text>
+											</template>
+										</div>
+									</template>
+								</el-main>
+							</el-container>
+							<el-main v-else style="display: flex; flex-direction: column; height: 100%">
+								<div style="flex: 1; display: flex; align-items: center; justify-content: center">
+									<el-text size="large" tag="b">请点击左侧的模板进行查看和修改</el-text>
+								</div>
+							</el-main>
+						</el-splitter-panel>
+						<el-splitter-panel v-if="variablePanelVisible" :size="clampedVariableSize" :min="240" :max="560" @update:size="variablePanelSize = $event">
+							<variable-panel
+								:catalog="variableCatalog"
+								:loading="variableLoading"
+								:error="variableError"
+								:disabled="!canInsertVariable"
+								:insert="insertVariable"
+								@reload="reloadVariableCatalog"
+							></variable-panel>
+						</el-splitter-panel>
+					</el-splitter>
+					<!-- 收起态常驻编辑区右缘的 28px 竖柄（规格 5.2），与头部「变量」按钮控制同一个状态 -->
+					<el-tooltip v-if="!variablePanelVisible" content="展开变量面板" placement="left">
+						<div class="variable-edge" @click="toggleVariablePanel">
+							<el-icon class="variable-edge-arrow"><ArrowLeft></ArrowLeft></el-icon>
+							<span class="variable-edge-text">变量</span>
+							<span v-if="variableTotal !== null" class="variable-edge-count">{{ variableTotal }}</span>
+						</div>
+					</el-tooltip>
+				</div>
 			</el-splitter-panel>
 		</el-splitter>
 	</el-drawer>
@@ -224,13 +263,16 @@ import CodeMirror from '@/business/code-mirror/index.vue'
 import TemplateForm from '@/views/gen/template/form.vue'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
-import { Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
+import { ArrowLeft, Back, CloseBold, Delete, DocumentChecked, Edit, Refresh, Remove, Right } from '@element-plus/icons-vue'
 import TemplateTest from '@/views/gen/template/test.vue'
+import VariablePanel from '@/views/gen/template/variable-panel/index.vue'
 import Sortable from 'sortablejs'
 import { useInitForm } from '@/hooks/use-init-form'
 import { genTemplateApi } from '@/api'
 import { isEmpty } from '@/utils/tool'
 import { buildFileList, buildTree, findByIdFromTree, getFullPathById, getIcon as resolveNodeIcon, joinFileName, type Tree } from './tree-utils'
+import { useVariableCatalog } from './variable-panel/use-variable-catalog'
+import { countVariables } from './variable-utils'
 
 defineOptions({
 	name: 'GenTemplateTree'
@@ -364,6 +406,104 @@ watch(isFullscreen, value => {
 // 否则点了「退出」浏览器仍是全屏，看起来像按钮没生效
 const handleToggleFullScreen = () => {
 	treeFullScreen.value = !treeFullScreen.value
+}
+
+// 变量面板默认收起：展开才挂载面板。目录状态改由宿主持有（评审 M1）——面板卸载后
+// 收起态徽标仍要有总数，且首轮加载押到抽屉真正打开，避开列表页 setup 时就拉 268 条
+const variablePanelVisible = ref(false)
+const {
+	catalog: variableCatalog,
+	loading: variableLoading,
+	error: variableError,
+	loaded: variableCatalogLoaded,
+	ensureLoaded: ensureVariableCatalog,
+	reload: reloadVariableCatalog
+} = useVariableCatalog(toRef(props, 'templateGroupId'), { immediate: false })
+
+// null 表示该组目录尚未就绪，此时竖柄不渲染徽标。
+// countVariables 被从面板后代上移到宿主 computed，跳出了 VariablePanel 的 onErrorCaptured 边界：
+// 畸形目录（children: null）会在宿主 render 阶段抛错而把整块抽屉带上，故这里失败就撤下徽标，
+// 局部降级仍由面板负责（复审新增 Important）
+const variableTotal = computed(() => {
+	if (!variableCatalogLoaded.value) {
+		return null
+	}
+	try {
+		return countVariables(variableCatalog.value)
+	} catch {
+		return null
+	}
+})
+
+// 抽屉打开才加载：init() 会把 visible 置 true，这里覆盖所有打开入口；缓存命中不会重复请求
+watch(
+	() => templateTreeData.visible,
+	visible => {
+		if (visible) {
+			ensureVariableCatalog()
+		}
+	}
+)
+
+const toggleVariablePanel = () => {
+	variablePanelVisible.value = !variablePanelVisible.value
+}
+
+// 面板宽度用 px 自持（拖拽时 EP 会回写 px）；上面板已改用 @update:size 手动接，避免与夹紧后的值互相覆盖
+const editorSplitterRef = ref()
+const editorSplitterSize = useElementSize(editorSplitterRef)
+const variablePanelSize = ref(320)
+let panelSizeInitialized = false
+
+// 编辑区下限 320px；容器窄到放不下「320 + 面板下界 240」时退让，优先保住面板的 240（复审 I2 ②）
+const editorFloor = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return 320
+	}
+	return Math.max(0, Math.min(320, width - 240))
+})
+
+// 面板区间 [240, min(560, 容器 - 编辑区下限)]：与两块 panel 上声明的 min/max 完全等价，
+// 这样 EP 拖拽路径 clamp 出来的结果就等于我算的结果，不会两套值并存
+const clampedVariableSize = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return variablePanelSize.value
+	}
+	const upper = Math.max(240, Math.min(560, width - editorFloor.value))
+	return Math.min(Math.max(variablePanelSize.value, 240), upper)
+})
+
+// 面板收起时第二块已卸载，第一块必须铺满整个容器；展开时直接取容器减去面板，
+// 不留毫厘给 EP 的归一化分支（两块之和只要不等于容器就会触发等比缩放）
+const editorPanelSize = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return undefined
+	}
+	return variablePanelVisible.value ? Math.max(0, width - clampedVariableSize.value) : width
+})
+
+// 首次展开按规格取容器 28%，之后保留用户拖拽宽度
+watch(variablePanelVisible, visible => {
+	if (visible && !panelSizeInitialized && editorSplitterSize.width.value) {
+		panelSizeInitialized = true
+		variablePanelSize.value = Math.round(editorSplitterSize.width.value * 0.28)
+	}
+})
+
+// 带组件实例类型，让 vue-tsc 能校验 code-mirror 新暴露的 insertAtCursor 契约
+const codeMirrorRef = ref<InstanceType<typeof CodeMirror> | null>(null)
+
+// 只有模板文件（templateType 1）有编辑器可插入，目录与二进制文件无处可插
+// activeTabItem 在上方声明为 `const activeTabItem: Ref<Tree> = computed(...)`，脚本里必须 .value（模板里自动解包），写法对齐下方那个既有 watch
+const canInsertVariable = computed(() => activeTabItem.value.templateType === 1)
+
+// 插入入口：把文本交给 code-mirror 新暴露的 insertAtCursor；
+// 返回值由面板用于在编辑器尚未就绪时给出提示，而不是静默失败
+const insertVariable = (text: string, caret: number): boolean => {
+	return codeMirrorRef.value?.insertAtCursor(text, caret) ?? false
 }
 // 模板树右键菜单状态
 const contextMenu = reactive({
@@ -1265,6 +1405,70 @@ defineExpose({
 :deep(.el-badge__content.is-dot) {
 	height: 6px;
 	width: 6px;
+}
+
+.editor-area {
+	position: relative;
+	display: flex;
+	height: 100%;
+	/* 容器被外层分栏挤到极窄时不让分栏被压扁，而是横向滚动（配合下面 splitter 的 min-width） */
+	overflow-x: auto;
+}
+
+.editor-splitter {
+	flex: 1;
+	/* 不能是 0：一旦实测宽度 < 面板下界 240，两块之和就无法同时满足「面板 ≥ 240」与「两块之和 = 容器」，
+	   EP 会退回等比归一化把面板压到 240 以下（复审 I2 ②残留）；给分栏一个 240 硬底，面板就能守住规格下界 */
+	min-width: 240px;
+}
+
+/* el-header 是 flex-shrink: 0 的固定 60px 盒：展开面板后按钮换成两行，内容会直接溢出
+   盒外压住编辑器首行（编辑器位置不变），改成随内容自适应（评审 I1）。
+   收起态内容本身就≤ 60px，自适应后高度不变，不会引入与本次无关的布局变化 */
+.editor-area :deep(.el-header) {
+	height: auto;
+}
+
+/* 收起态的变量面板竖柄：规格 5.2 的 28px 右缘入口 */
+.variable-edge {
+	flex: none;
+	width: 28px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	border-left: 1px solid var(--el-border-color-lighter);
+	background: var(--el-fill-color-lighter);
+	color: var(--el-text-color-secondary);
+	user-select: none;
+}
+
+.variable-edge:hover {
+	background: var(--el-color-primary-light-9);
+	color: var(--el-color-primary);
+}
+
+.variable-edge-arrow {
+	font-size: 12px;
+}
+
+.variable-edge-text {
+	writing-mode: vertical-lr;
+	letter-spacing: 4px;
+	font-size: 12px;
+}
+
+.variable-edge-count {
+	min-width: 18px;
+	padding: 0 5px;
+	border-radius: 8px;
+	background: var(--el-color-primary);
+	color: #fff;
+	font-size: 11px;
+	line-height: 16px;
+	text-align: center;
 }
 
 .full-screen-mode {

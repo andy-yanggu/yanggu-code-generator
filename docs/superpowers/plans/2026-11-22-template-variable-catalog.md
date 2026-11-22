@@ -438,9 +438,9 @@ cd F:\project\idea\self\yanggu-code-generator; git add yanggu-code-generator-bac
         for (String listName : List.of("fieldList", "primaryList", "formList", "gridList", "queryList")) {
             assertEquals(34, nodeMap.get(listName).getChildren().size(), listName);
         }
-        // 内容相同但 path 不同，不做子树共享
-        assertEquals("fieldList.attrName", nodeMap.get("fieldList").getChildren().getFirst().getPath());
-        assertEquals("formList.attrName", nodeMap.get("formList").getChildren().getFirst().getPath());
+        // 内容相同但 path 不同，不做子树共享（TableFieldModel 声明顺序首个字段是 id，故用 find 取 attrName）
+        assertEquals("fieldList.attrName", find(nodeMap.get("fieldList").getChildren(), "attrName").getPath());
+        assertEquals("formList.attrName", find(nodeMap.get("formList").getChildren(), "attrName").getPath());
     }
 
     @Test
@@ -1052,8 +1052,9 @@ import java.util.List;
 
 /**
  * 模板变量目录服务层
- * 独立于 TemplateService：TemplateGroupPropertyServiceImpl 已注入 TemplateService，
- * 若把目录编排塞进 TemplateServiceImpl 会形成字段注入环，Spring 启动期失败
+ * 独立于 TemplateService：TemplateGroupPropertyServiceImpl 已反向注入 TemplateService，
+ * 目录编排若塞进 TemplateServiceImpl 会新增一条字段注入环（本项目开启了
+ * allow-circular-references，成环不会启动失败，但不应继续累积）
  */
 public interface VariableCatalogService {
 
@@ -1167,9 +1168,10 @@ public class VariableCatalogServiceImpl implements VariableCatalogService {
             node.setPath(mapNode.getPath() + "." + property.getPropKey());
             node.setJavaType("Object");
             node.setKind(VariableKindEnum.SCALAR);
-            node.setDesc(StrUtil.blankToDefault(property.getPropTitle(), ""));
+            // 等价于 blankToDefault(title, "")：hutool v7 的 StrUtil 没有 blankToDefault
+            node.setDesc(StrUtil.isBlank(property.getPropTitle()) ? "" : property.getPropTitle());
             node.setLoopVar("");
-            // 无默认值时，getData 兜不出该 key，模板需 ?? 保护
+            // 没配默认值的属性，getData 兜出来是空串（产品未配置时），模板做判空/拼接时需额外保护
             node.setNullable(StrUtil.isBlank(property.getPropDefaultValue()));
             node.setChildren(new ArrayList<>());
             nodeList.add(node);
@@ -1218,7 +1220,7 @@ cd F:\project\idea\self\yanggu-code-generator\yanggu-code-generator-backend; mvn
 cd F:\project\idea\self\yanggu-code-generator\yanggu-code-generator-backend; mvn -q test
 ```
 
-预期：全部通过。随后经 IDEA MCP 以 Debug 模式启动后端，打开 knife4j 文档确认「模板变量目录」端点出现（这一步同时验证规格 4.4 的无环结论——有环会在启动期直接失败）。
+预期：全部通过。随后经 IDEA MCP 以 Debug 模式启动后端，打开 knife4j 文档确认「模板变量目录」端点出现。（注：本项目 `application.yaml` 开启了 `allow-circular-references: true`，启动成功**不能**证明无注入环；真正的结论靠静态依赖分析——`VariableCatalogService` 的消费者只有 `TemplateController`，而 `VariableCatalogServiceImpl` 只依赖两个既有 bean。）
 
 - [ ] **Step 7: Commit（须先取得用户同意）**
 
@@ -1556,7 +1558,7 @@ describe('decorateVariables', () => {
 
 		expect(node.children.length).toBe(1)
 		expect(node.children[0].kind).toBe('GROUP')
-		expect(node.children[0].name).toBe('该模板组未配置属性')
+		expect(node.children[0].name).toBe('无子变量（未配置属性或属于其他模板组）')
 		expect(canInsert(node.children[0].kind)).toBe(false)
 		// 说明行不计入面板标题的总项数
 		expect(countVariables([makeNode('tableTemplatePropertyData', 'MAP')])).toBe(1)
@@ -1683,9 +1685,10 @@ const appendName = (prefix: string, name: string): string => {
 
 const isList = (kind: VariableKind): boolean => kind === 'MODEL_LIST' || kind === 'SCALAR_LIST'
 
-// MAP 节点无属性时的说明行：避免用户以为面板加载不完整（规格 6.3）
+// MAP 节点无子变量时的说明行：避免用户以为面板加载不完整（规格 6.3）
+// 文案对两种成因都为真：当前组确实未配属性，或是其他模板组的 MAP（后端有意不展开）——见 ledger R16
 const makeEmptyMapNode = (uid: string): DisplayVariableNode => ({
-	name: '该模板组未配置属性',
+	name: '无子变量（未配置属性或属于其他模板组）',
 	path: '',
 	javaType: '',
 	kind: 'GROUP',

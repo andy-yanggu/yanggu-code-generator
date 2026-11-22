@@ -11,16 +11,19 @@ public class ModuleModel {
     /**
      * 模块名称
      */
+    @VarDesc("模块名称")
     private String moduleName;
 
     /**
      * 模块描述
      */
+    @VarDesc("模块描述")
     private String moduleDesc;
 
     /**
      * 模块路径
      */
+    @VarDesc("模块路径")
     private String modulePath;
 
 }

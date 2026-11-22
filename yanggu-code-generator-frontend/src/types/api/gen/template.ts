@@ -47,3 +47,30 @@ export interface GenTemplateQuery extends PageQuery {
 	// 文件名称
 	fileName?: string
 }
+
+/**
+ * 模板变量分类
+ */
+export type VariableKind = 'SCALAR' | 'SCALAR_LIST' | 'MODEL_LIST' | 'OBJECT' | 'MAP'
+
+/**
+ * 模板变量目录节点
+ */
+export interface VariableNode {
+	// 属性名，MAP 节点的子项为模板组属性 propKey
+	name: string
+	// 从根算起的完整属性路径
+	path: string
+	// Java 类型简名
+	javaType: string
+	// 变量分类
+	kind: VariableKind
+	// 中文说明，字段缺 @VarDesc 时为空串
+	desc: string
+	// 默认循环变量名，集合类有值
+	loopVar: string
+	// 渲染时是否可能为 null
+	nullable: boolean
+	// 子变量列表
+	children: VariableNode[]
+}

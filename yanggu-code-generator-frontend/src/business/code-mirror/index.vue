@@ -66,4 +66,29 @@ const view = ref()
 const handleReady = (payload: any) => {
 	view.value = payload.view
 }
+
+/**
+ * 在当前光标处插入文本，并把光标落到 caret 偏移位（模板变量插入用）
+ *
+ * @returns 是否插入成功；编辑器尚未 ready 或处于只读时返回 false，由调用方提示而不是静默失败
+ */
+const insertAtCursor = (text: string, caret: number = text.length): boolean => {
+	const editorView = view.value as EditorView | undefined
+	if (!editorView || props.readOnly) {
+		return false
+	}
+	const from = editorView.state.selection.main.from
+	// selection 与 changes 同处一个事务，EditorState 会直接应用，不需要 @codemirror/commands 的 dispatchWithSelection
+	editorView.dispatch({
+		changes: { from, insert: text },
+		selection: { anchor: from + caret }
+	})
+	// dispatch 触发 vue-codemirror 的 update 监听 -> v-model 回写 -> 宿主的既有 watch 自动置 isEdited
+	editorView.focus()
+	return true
+}
+
+defineExpose({
+	insertAtCursor
+})
 </script>

@@ -15,221 +15,265 @@ public class TableModel {
     /**
      * 项目ID
      */
+    @VarDesc("项目ID")
     private Long projectId;
 
     /**
      * 项目名称（test1-demo）
      */
+    @VarDesc("项目名称（test1-demo）")
     private String projectName;
 
     /**
      * 项目名称（下划线）（test1_demo）
      */
+    @VarDesc("项目名称（下划线）（test1_demo）")
     private String projectNameUnderline;
 
     /**
      * 项目名称（大驼峰）（Test1Demo）
      */
+    @VarDesc("项目名称（大驼峰）（Test1Demo）")
     private String projectNamePascal;
 
     /**
      * 项目名称（点）（test1.demo）
      */
+    @VarDesc("项目名称（点）（test1.demo）")
     private String projectNameDot;
 
     /**
      * 项目名称（斜杠）（test1/demo）
      */
+    @VarDesc("项目名称（斜杠）（test1/demo）")
     private String projectNameSlash;
 
     /**
      * 项目包名（com.yanggu）
      */
+    @VarDesc("项目包名（com.yanggu）")
     private String projectPackage;
 
     /**
      * 项目包名（斜杠）（com/yanggu）
      */
+    @VarDesc("项目包名（斜杠）（com/yanggu）")
     private String projectPackageSlash;
 
     /**
      * 版本
      */
+    @VarDesc("版本")
     private String version;
 
     /**
      * 功能名（小驼峰）例如表名为template_group，则功能名为templateGroup
      */
+    @VarDesc("功能名（小驼峰）例如表名为template_group，则功能名为templateGroup")
     private String functionName;
 
     /**
      * 功能名（大驼峰）例如表名为template_group，则功能名为TemplateGroup
      */
+    @VarDesc("功能名（大驼峰）例如表名为template_group，则功能名为TemplateGroup")
     private String functionNamePascal;
 
     /**
      * 功能名（中横线）例如表名为template_group，则功能名为template-group
      */
+    @VarDesc("功能名（中横线）例如表名为template_group，则功能名为template-group")
     private String functionNameKebabCase;
 
     /**
      * 模块名（中横线）
      */
+    @VarDesc("模块名（中横线）")
     private String moduleName;
 
     /**
      * 模块名（小驼峰）
      */
+    @VarDesc("模块名（小驼峰）")
     private String moduleNameCase;
 
     /**
      * 模块名（大驼峰）
      */
+    @VarDesc("模块名（大驼峰）")
     private String moduleNamePascal;
 
     /**
      * 模块路径
      */
+    @VarDesc(value = "模块路径", nullable = true)
     private String modulePath;
 
     /**
      * 模块描述
      */
+    @VarDesc(value = "模块描述", nullable = true)
     private String moduleDesc;
 
     /**
      * 权限标识
      */
+    @VarDesc("权限标识")
     private String permissionFlag;
 
     /**
      * 表单布局  1：一列   2：两列
      */
+    @VarDesc("表单布局  1：一列   2：两列")
     private int formLayout;
 
     /**
      * 弹窗方式（0-对话框，1-抽屉）
      */
+    @VarDesc("弹窗方式（0-对话框，1-抽屉）")
     private int popupType;
 
     /**
      * 作者
      */
+    @VarDesc("作者")
     private String author;
 
     /**
      * 日期时间：yyyy-MM-dd HH:mm:ss
      */
+    @VarDesc("日期时间：yyyy-MM-dd HH:mm:ss")
     private String datetime;
 
     /**
      * 日期：yyyy-MM-dd
      */
+    @VarDesc("日期：yyyy-MM-dd")
     private String date;
 
     /**
      * Entity基类ID
      */
+    @VarDesc("Entity基类ID")
     private Long entityBaseClassId;
 
     /**
      * VO基类ID
      */
+    @VarDesc("VO基类ID")
     private Long voBaseClassId;
 
     /**
      * Entity继承基类
      */
+    @VarDesc(value = "Entity继承基类", nullable = true)
     private BaseClassModel entityBaseClass;
 
     /**
      * VO继承基类
      */
+    @VarDesc(value = "VO继承基类", nullable = true)
     private BaseClassModel voBaseClass;
 
     /**
      * 导入列表
      */
+    @VarDesc(value = "导入列表", loopVar = "i")
     private Set<String> importList;
 
     /**
      * 表名
      */
+    @VarDesc("表名")
     private String tableName;
 
     /**
      * 数据库名
      */
+    @VarDesc("数据库名")
     private String databaseName;
 
     /**
      * 表注释
      */
+    @VarDesc("表注释")
     private String tableComment;
 
     /**
      * 类名（小写）
      */
+    @VarDesc("类名（小写）")
     private String className;
 
     /**
      * 类名（大写）
      */
+    @VarDesc("类名（大写）")
     private String classNameUpper;
 
     /**
      * 字段列表
      */
+    @VarDesc(value = "字段列表", loopVar = "field")
     private List<TableFieldModel> fieldList;
 
     /**
      * 后端路径
      */
+    @VarDesc("后端路径")
     private String backendPath;
 
     /**
      * 前端路径
      */
+    @VarDesc("前端路径")
     private String frontendPath;
 
     /**
      * 生成方式  0：zip压缩包   1：服务器本地
      */
+    @VarDesc("生成方式  0：zip压缩包   1：服务器本地")
     private Integer generatorType;
 
     /**
      * 生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）
      */
+    @VarDesc(value = "生成功能（新增、修改、删除、详情、分页、列表、导入、导出和复制）", loopVar = "funcCode")
     private List<Integer> generatorFunction;
 
     /**
      * 主键列表 (支持多主键)
      */
+    @VarDesc(value = "主键列表 (支持多主键)", loopVar = "field")
     private List<TableFieldModel> primaryList;
 
     /**
      * 表单列表
      */
+    @VarDesc(value = "表单列表", loopVar = "formField")
     private List<TableFieldModel> formList;
 
     /**
      * 网格列表
      */
+    @VarDesc(value = "网格列表", loopVar = "field")
     private List<TableFieldModel> gridList;
 
     /**
      * 查询列表
      */
+    @VarDesc(value = "查询列表", loopVar = "field")
     private List<TableFieldModel> queryList;
 
     /**
      * 项目模板属性数据
      */
+    @VarDesc("项目模板属性数据")
     private Map<String, Object> projectTemplatePropertyData;
 
     /**
      * 表模板属性数据
      */
+    @VarDesc("表模板属性数据")
     private Map<String, Object> tableTemplatePropertyData;
 
 }

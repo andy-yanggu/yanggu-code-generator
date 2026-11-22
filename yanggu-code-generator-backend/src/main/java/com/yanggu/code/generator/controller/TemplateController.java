@@ -9,7 +9,9 @@ import com.yanggu.code.generator.domain.dto.TemplateDTO;
 import com.yanggu.code.generator.domain.dto.TemplateDragDTO;
 import com.yanggu.code.generator.domain.query.TemplateQuery;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.service.TemplateService;
+import com.yanggu.code.generator.service.VariableCatalogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +35,8 @@ public class TemplateController {
 
     @Autowired
     private TemplateService templateService;
+    @Autowired
+    private VariableCatalogService variableCatalogService;
 
     /**
      * 新增模板
@@ -154,6 +158,19 @@ public class TemplateController {
     @Operation(summary = "批量更新模板内容")
     public void updateContentBatch(@RequestBody @Validated(UpdateGroup.class) List<TemplateContentDTO> contentDTOList) {
         templateService.updateContentBatch(contentDTOList);
+    }
+
+    /**
+     * 模板变量目录
+     *
+     * @param templateGroupId 模板组ID
+     */
+    @GetMapping("/variableCatalog")
+    @ApiOperationSupport(order = 12)
+    @Operation(summary = "模板变量目录")
+    @Parameter(name = "templateGroupId", description = "模板组ID", required = true)
+    public List<VariableNodeVO> variableCatalog(@RequestParam("templateGroupId") @NotNull(message = "模板组ID不能为空") Long templateGroupId) {
+        return variableCatalogService.variableCatalog(templateGroupId);
     }
 
 }

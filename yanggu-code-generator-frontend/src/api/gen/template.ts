@@ -1,11 +1,13 @@
 import { service } from '@/utils/request'
 import { createCrudApi, EnabledCrudApi } from '@/api/common'
-import { GenTemplateEntity, GenTemplateQuery } from '@/types'
+import type { AxiosRequestConfig } from 'axios'
+import type { GenTemplateEntity, GenTemplateQuery, VariableNode } from '@/types'
 
 // 特定api
 interface CustomApi {
 	detailData: (queryForm: any) => Promise<any>
 	treeData: (templateGroupId: number) => Promise<any[]>
+	variableCatalog: (templateGroupId: number) => Promise<VariableNode[]>
 	updateContent: (dataForm: any) => Promise<void>
 	updateParent: (dataForm: any) => Promise<void>
 	updateContentList: (dataFormList: any[]) => Promise<void>
@@ -24,6 +26,10 @@ export const genTemplateApi: EnabledCrudApi<GenTemplateEntity, GenTemplateQuery>
 	// 树形数据
 	treeData: (templateGroupId: number): Promise<any[]> => {
 		return service.get(baseUrl + '/tree', { params: { templateGroupId } })
+	},
+	// 模板变量目录：失败提示与重试由变量面板承载，故关闭全局错误提示
+	variableCatalog: (templateGroupId: number, config?: AxiosRequestConfig): Promise<VariableNode[]> => {
+		return service.get(baseUrl + '/variableCatalog', { params: { templateGroupId }, noErrorMessage: true, ...config })
 	},
 	// 修改模板内容
 	updateContent: (dataForm: any) => {
