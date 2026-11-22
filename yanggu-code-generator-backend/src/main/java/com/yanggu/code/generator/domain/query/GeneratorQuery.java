@@ -5,6 +5,8 @@ import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -16,9 +18,11 @@ import java.util.List;
 @Schema(description = "代码生成统一查询")
 public class GeneratorQuery {
 
+    @NotNull(message = "产物类型不能为空")
     @Schema(description = "产物类型：0项目 1表 2枚举")
     private Integer productType;
 
+    @NotEmpty(message = "产物ID列表不能为空")
     @Schema(description = "产物ID列表：项目=[projectId]，表=tableIds，枚举=enumIds")
     private List<Long> productIds;
 
@@ -29,7 +33,8 @@ public class GeneratorQuery {
     private ProjectFilter projectFilter;
 
     /**
-     * 统一入参校验
+     * 统一入参校验：条件类业务规则在此校验（注解仅承担必填非空的前置拦截与文档 required 渲染，
+     * 此处判空为直调场景的防御性兜底）
      *
      * @param singleMode 单品模式（downloadSingle/singleLocal）要求恰好一个产物与一个模板
      */
