@@ -1,26 +1,38 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { RouteMetaData } from '@/utils/router-guard'
-import { router } from '@/router'
+import { computed, ref } from 'vue'
+import { useSystemSettingStore } from '@/store'
+import { useDark, useEventListener, useFullscreen, useToggle } from '@vueuse/core'
+import { PersistenceOptions } from 'pinia-plugin-persistedstate'
+import { IframeInfo, LayOutSize, NavbarTag } from '@/types'
 
-// 标签数据
-export interface NavbarTag {
-	// 完整路径
-	fullPath: string
-	// 组件名称
-	name: string
-	// 标题
-	title: string
-	// 图标
-	icon: string
-}
-
-// 面包屑
-export interface Breadcrumb {
-	// 标题
-	title: string
-	// 图标
-	icon: string
+// 持久化配置
+const getPersistConfig = () => {
+	const key = 'appStore'
+	// 根据环境设置持久化配置
+	// if (import.meta.env.PROD) {
+	//
+	// }
+	return {
+		key,
+		storage: localStorage,
+		// 支持动态配置忽略字段
+		omit: (_: never) => {
+			const systemSettingStore = useSystemSettingStore()
+			// 忽略字段
+			const originOmitList: string[] = ['layoutMainRef', 'currentFullscreenElement', 'layoutScrollbarRef', 'globalLoading']
+			const tagOmitList: string[] = ['tagList', 'activeTabPath']
+			if (!systemSettingStore.tag.isOpenTagCache) {
+				originOmitList.push(...tagOmitList)
+			} else {
+				for (let i = originOmitList.length - 1; i >= 0; i--) {
+					if (tagOmitList.includes(originOmitList[i])) {
+						originOmitList.splice(i, 1)
+					}
+				}
+			}
+			return originOmitList
+		}
+	} as unknown as PersistenceOptions
 }
 
 export const useAppStore = defineStore(
@@ -29,18 +41,40 @@ export const useAppStore = defineStore(
 		// 状态
 		// 折叠状态
 		const isCollapse = ref(false)
+		// 全局loading
+		const globalLoading = ref(false)
+		// 激活tab
+		const activeTabPath = ref('')
 		// 标签列表
 		const tagList = ref<NavbarTag[]>([])
-		// 面包屑列表
-		const breadcrumbList = ref<Breadcrumb[]>([])
 		// 缓存组件列表
 		const cacheList = ref<string[]>([])
+		// 布局大小
+		const layoutSize = ref<LayOutSize>('default')
+		// iframe缓存列表
+		const iframeCacheList = ref<IframeInfo[]>([])
+		// 主题模式
+		const isDark = useDark({
+			selector: 'html',
+			attribute: 'class',
+			valueDark: 'dark',
+			valueLight: 'light'
+		})
+		// Layout Main Ref
+		const layoutMainRef = ref()
+		// Layout Main滚动条ref
+		const layoutScrollbarRef = ref()
+
+		// 全屏元素
+		const currentFullscreenElement = ref<HTMLElement | null>(null)
+
+		useEventListener(document, 'fullscreenchange', () => {
+			currentFullscreenElement.value = document.fullscreenElement as HTMLElement | null
+		})
 
 		// 计算属性
 		// 标签数量
 		const tagLength = computed(() => tagList.value.length)
-
-		// 缓存组件列表
 
 		// actions
 		// 切换折叠状态
@@ -48,21 +82,8 @@ export const useAppStore = defineStore(
 			isCollapse.value = !isCollapse.value
 		}
 
-		// 设置面包屑
-		const setBreadcrumb = (routeMetaData: RouteMetaData) => {
-			const matched: Breadcrumb[] = []
-			const paths = routeMetaData.path.split('/').filter((p: any) => p)
-
-			let currentPath = ''
-			for (const path of paths) {
-				currentPath += `/<#noparse>${path}</#noparse>`
-				const breadcrumb = findRouteByPath(currentPath)
-				if (breadcrumb && breadcrumb.title && breadcrumb.icon) {
-					matched.push(breadcrumb)
-				}
-			}
-			breadcrumbList.value = matched
-		}
+		// 全屏展开
+		const { toggle: toolFullscreen } = useFullscreen(layoutMainRef)
 
 		// 添加标签
 		const addTag = (tag: NavbarTag) => {
@@ -78,14 +99,45 @@ export const useAppStore = defineStore(
 			tagList.value = tagList.value.filter(item => item.fullPath !== tag.fullPath)
 		}
 
+		// 批量删除标签
+		const removeTags = (removeTagList: NavbarTag[]) => {
+			tagList.value = tagList.value.filter(item => !removeTagList.some(tag => tag.fullPath === item.fullPath))
+		}
+
 		// 添加所有标签
-		const addAllTags = (tagList: NavbarTag[]) => {
-			tagList.value = tagList
+		const addAllTags = (addTagList: NavbarTag[]) => {
+			tagList.value = addTagList
 		}
 
 		// 删除所有标签
 		const removeAllTags = () => {
 			tagList.value = []
+		}
+
+		// 添加固定标签相关方法
+		const togglePinTag = (tag: NavbarTag) => {
+			const targetTag = tagList.value.find(t => t.fullPath === tag.fullPath)
+			if (!targetTag) {
+				return
+			}
+
+			if (targetTag.pinned) {
+				targetTag.pinned = false
+				targetTag.pinnedAt = null
+			} else {
+				targetTag.pinned = true
+				targetTag.pinnedAt = Date.now()
+			}
+
+			// 排序固定标签置顶
+			addAllTags(sortTags(tagList.value))
+		}
+
+		// 标签排序：固定标签置顶 + 固定标签按 pinnedAt 顺序
+		const sortTags = (tags: NavbarTag[]) => {
+			const pinnedTags = tags.filter(t => t.pinned).sort((a, b) => a.pinnedAt! - b.pinnedAt!)
+			const normalTags = tags.filter(t => !t.pinned)
+			return [...pinnedTags, ...normalTags]
 		}
 
 		// 添加缓存路由
@@ -97,7 +149,10 @@ export const useAppStore = defineStore(
 
 		// 删除缓存路由
 		const removeCacheComponent = (name: string) => {
-			cacheList.value.splice(cacheList.value.indexOf(name), 1)
+			const indexOf = cacheList.value.indexOf(name)
+			if (indexOf > -1) {
+				cacheList.value.splice(indexOf, 1)
+			}
 		}
 
 		// 批量删除缓存路由
@@ -106,7 +161,7 @@ export const useAppStore = defineStore(
 				return
 			}
 			for (const name of nameList) {
-				cacheList.value.splice(cacheList.value.indexOf(name), 1)
+				removeCacheComponent(name)
 			}
 		}
 
@@ -115,45 +170,77 @@ export const useAppStore = defineStore(
 			cacheList.value = []
 		}
 
+		// 添加iframe路由
+		const addIframeCache = (iframeInfo: IframeInfo) => {
+			if (iframeCacheList.value.some(item => item.fullPath === iframeInfo.fullPath)) {
+				return
+			}
+			iframeCacheList.value.push(iframeInfo)
+		}
+
+		// 删除iframe路由
+		const removeIframeCache = (name: string) => {
+			iframeCacheList.value = iframeCacheList.value.filter(item => item.name !== name)
+		}
+
+		// 批量删除iframe路由
+		const removeIframeCacheList = (nameList: string[]) => {
+			if (!nameList || nameList.length === 0) {
+				return
+			}
+			for (const name of nameList) {
+				removeIframeCache(name)
+			}
+		}
+
+		// 删除全部iframe路由
+		const removeAllIframeCache = () => {
+			iframeCacheList.value = []
+		}
+
+		// 设置布局大小
+		const setLayoutSize = (size: LayOutSize) => {
+			layoutSize.value = size
+		}
+
+		// 切换主题模式
+		const toggleDark = useToggle(isDark)
+
 		return {
 			isCollapse,
-			breadcrumbList,
+			globalLoading,
+			activeTabPath,
 			tagList,
+			layoutSize,
 			cacheList,
+			iframeCacheList,
+			isDark,
+			layoutMainRef,
+			layoutScrollbarRef,
+			currentFullscreenElement,
 			tagLength,
 			toggleCollapse,
-			setBreadcrumb,
+			toolFullscreen,
 			addTag,
 			removeTag,
 			addAllTags,
 			removeAllTags,
+			removeTags,
+			togglePinTag,
+			sortTags,
 			addCacheComponent,
 			removeCacheComponent,
 			removeCacheComponentList,
-			removeAllCache
+			removeAllCache,
+			addIframeCache,
+			removeIframeCache,
+			removeIframeCacheList,
+			removeAllIframeCache,
+			setLayoutSize,
+			toggleDark
 		}
 	},
 	{
-		persist: {
-			key: 'appStore',
-			storage: localStorage
-		}
+		persist: getPersistConfig()
 	}
 )
-
-/**
- * 查找路径对应的 meta.title
- */
-const findRouteByPath = (targetPath: string): Breadcrumb => {
-	// 使用 Vue Router 的路径匹配算法
-	const matchedRoute = router.resolve(targetPath)
-
-	if (matchedRoute?.meta?.title) {
-		return {
-			title: matchedRoute.meta.title as string,
-			icon: matchedRoute.meta.icon as string
-		}
-	} else {
-		return { title: '', icon: '' }
-	}
-}

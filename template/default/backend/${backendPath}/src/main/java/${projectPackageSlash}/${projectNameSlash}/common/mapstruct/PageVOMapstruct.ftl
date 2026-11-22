@@ -1,6 +1,6 @@
 package ${projectPackage}.${projectNameDot}.common.mapstruct;
 
-import ${projectPackage}.${projectNameDot}.common.domain.query.PageQuery;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
 
 /**
@@ -8,13 +8,13 @@ import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
  *
  * @param <V> vo实体类泛型（controller返回参数）
  */
-public interface PageVOMapstruct<V> extends PageVOOtherMapstruct {
+public interface PageVOMapstruct<V> {
 
     /**
      * 将VO分页数据转换成PageVO分页数据
      */
-    default PageVO<V> voToPageVO(PageQuery<V> voPageQuery) {
-        return toPageVO(voPageQuery);
+    default PageVO<V> voToPageVO(IPage<V> page) {
+        return new PageVO<>(page);
     }
 
 }

@@ -1,96 +1,168 @@
-// cover some element-plus styles
-
+// 覆盖 element-plus 样式
+/* 基础菜单样式 */
 .el-menu {
   border-right: none !important;
-  &:not(.el-menu--collapse) {
-    width: var(--theme-aside-width);
-  }
 }
 
 .el-menu-item,
 .el-sub-menu__title {
+  display: flex;
+  align-items: center; /* 图标+文字垂直居中 */
   color: var(--theme-menu-text-color) !important;
   height: 48px !important;
+  line-height: 48px !important;
   overflow: hidden;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 .el-menu.el-menu--horizontal {
   border-bottom: none !important;
 }
 
-.el-menu-item {
-  height: 45px !important;
-  line-height: 45px !important;
-}
-
-.el-menu-item a,
-.el-menu-item a:hover,
-.el-menu-item i,
-.el-sub-menu__title i {
-  color: inherit;
-  text-decoration: none;
-}
-
+/* 图标样式 */
 .el-menu-item .svg-icon,
-.el-sub-menu .svg-icon {
+.el-sub-menu__title .svg-icon {
   font-size: 16px !important;
   display: inline-block;
-  vertical-align: middle;
-  margin-right: 5px;
-  width: 24px;
+  width: 20px; /* 固定宽度，保证对齐 */
+  margin-right: 8px;
+  flex-shrink: 0;
   text-align: center;
+  color: var(--theme-menu-text-color) !important;
+  transition: color 0.3s; /* 添加过渡效果 */
 }
 
-.el-sub-menu.is-active > :first-child {
+/* 折叠时隐藏文字 */
+.el-menu--collapse .menu-title {
+  width: 0;
   overflow: hidden;
-  color: var(--theme-menu-hover-color) !important;
 }
 
-.el-menu-item.is-active{
-  border-right: 2px solid var(--theme-menu-border-color);
-  position: relative;
-  right:1px;
-  overflow: hidden;
-  color: var(--theme-menu-hover-color) !important;
+/* 选中状态：文字和图标都高亮 */
+.el-menu-item.is-active {
+  box-shadow: inset 3px 0 0 var(--theme-menu-border-color), inset -3px 0 0 var(--theme-menu-border-color);
   background-color: var(--theme-menu-hover-bg-color) !important;
-  &:hover{
-    background-color: var(--theme-menu-hover-bg-color) !important;
-  }
 }
 
-.el-sub-menu.is-active.is-opened {
-  .el-sub-menu__title {
-    background-color: unset !important;
-    color: var(--theme-menu-hover-color);
-  }
-}
-
-// 鼠标 hover 时
-.el-menu-item:hover,
-.el-sub-menu__title:hover {
-  background-color: unset !important;
+/* 文字高亮 */
+.el-menu-item.is-active .menu-title {
   color: var(--theme-menu-hover-color) !important;
 }
 
-.el-pagination{
+/* 图标高亮 */
+.el-menu-item.is-active .svg-icon {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+/* 子菜单选中状态：只高亮文字和图标，不添加背景色 */
+.el-sub-menu.is-active > .el-sub-menu__title .menu-title {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+.el-sub-menu.is-active > .el-sub-menu__title .svg-icon {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+/* 悬浮状态：只高亮文字和图标，不更改背景颜色 */
+.el-menu-item:hover {
+  background-color: transparent !important; /* 移除背景色 */
+}
+
+.el-menu-item:hover .menu-title,
+.el-sub-menu__title:hover .menu-title {
+  color: var(--theme-menu-hover-color) !important;
+}
+
+.el-menu-item:hover .svg-icon,
+.el-sub-menu__title:hover .svg-icon {
+  color: var(--theme-menu-hover-color) !important;
+  transform: scale(var(--icon-hover-transform-scale)) translateY(var(--icon-hover-transform-translate-y)); /* 添加悬浮缩放效果 */
+}
+
+/* 子菜单悬浮状态：不添加背景色 */
+.el-sub-menu__title:hover {
+  background-color: transparent !important; /* 移除背景色 */
+}
+
+// 分页
+.el-pagination {
   margin-top: 15px;
   justify-content: flex-end;
 }
 
-.el-form--inline .el-form-item{
+// 表单
+.el-form .el-form-item__label {
+  font-weight: 700;
+}
+
+.el-form--inline .el-form-item {
   margin-right: 16px !important;
 }
 
+// 对话框
+.el-dialog {
+  padding: 0;
+}
+
+.el-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px 5px;
+  border-bottom: 1px solid var(--el-border-color);
+}
+
+.el-dialog__headerbtn {
+  position: relative !important;
+}
+
+.el-dialog__header.show-close {
+  padding-right: 0;
+}
+
+.el-dialog__body {
+  padding: 20px 20px 15px;
+}
+
+.el-dialog__footer {
+  padding: 15px 25px 15px 15px;
+  border-top: 1px solid var(--el-border-color);
+}
+
+// 抽屉
 .el-drawer .el-drawer__header {
   display: flex;
   align-items: center;
-  height: 60px;
+  height: 50px;
   padding: 0 15px;
   margin-bottom: 0 !important;
   font-size: 15px;
   border-bottom: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
 }
-.el-card.is-always-shadow{
+
+// 卡片
+.el-card {
+  &:not(:first-child) {
+    margin-top: 10px;
+  }
+}
+
+.el-card.is-always-shadow {
   box-shadow: none !important;
+}
+
+// 消息弹出框，确定在前，取消在后
+.el-message-box__btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.el-message-box__btns .el-button--primary {
+  order: -1; /* 让“是(Y)”排到最前 */
+}
+
+.el-message-box__btns .el-button + .el-button {
+  margin-left: 0 !important;
 }

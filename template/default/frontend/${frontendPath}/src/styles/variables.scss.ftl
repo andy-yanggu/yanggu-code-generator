@@ -1,25 +1,5 @@
 :root {
-  --el-color-primary: #1e97f8;
-
-  --theme-aside-width: 200px;
-  --theme-header-height: 80px;
-  --theme-border-color-light: #f1f2f3;
-  --theme-logo-text-color: #ffffff;
-
-  --theme-menu-text-color: #333333;
-  --theme-menu-bg-color: #ffffff;
-  --theme-menu-border-color: var(--el-color-primary);
-  --theme-menu-hover-color: var(--el-color-primary);
-  --theme-menu-hover-bg-color: var(--el-color-primary-light-9);
-
-  --theme-header-bg-color: var(--el-color-primary);
-  --theme-header-text-color: #ffffff;
-  --theme-header-hover-color: rgba(0, 0, 0, 0.1);
-
-  --theme-main-bg-color: #f0f2f5;
-}
-.el-card {
-  &:not(:first-child) {
-    margin-top: 10px;
-  }
+  /* Icon hover动画效果 */
+  --icon-hover-transform-scale: 1.1;
+  --icon-hover-transform-translate-y: -1px;
 }

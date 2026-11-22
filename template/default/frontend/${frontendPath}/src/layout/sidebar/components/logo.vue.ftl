@@ -1,28 +1,44 @@
 <template>
-	<div class="logo-container">
+	<div class="logo-container" @click="clickHandler()">
 		<el-avatar src="./favicon.ico" size="small" class="logo-avatar"></el-avatar>
 		<el-text v-if="!appStore.isCollapse" tag="b">{{ appTitle }}</el-text>
 	</div>
 </template>
 <script setup lang="ts">
-import { useAppStore } from '@/store/app-store'
+import { useAppStore, useSystemSettingStore } from '@/store'
+import { useRoute, useRouter } from 'vue-router'
+
+defineOptions({
+	name: 'Logo'
+})
 
 const appTitle = import.meta.env.VITE_APP_TITLE
 const appStore = useAppStore()
+const systemConfigStore = useSystemSettingStore()
+const router = useRouter()
+const route = useRoute()
+
+const clickHandler = () => {
+	if (route.fullPath !== systemConfigStore.menu.menuDefault) {
+		router.push(systemConfigStore.menu.menuDefault)
+	}
+}
 </script>
 
 <style scoped>
 .logo-container {
-	margin-left: 11px;
+	cursor: pointer;
+	margin-left: 7px;
 	display: flex;
 	align-items: center;
 	padding: 8px;
+	margin-top: 5px;
 }
 
 .logo-avatar {
 	margin-right: 9px;
 	color: #2c3e50;
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: 550;
 }
 </style>

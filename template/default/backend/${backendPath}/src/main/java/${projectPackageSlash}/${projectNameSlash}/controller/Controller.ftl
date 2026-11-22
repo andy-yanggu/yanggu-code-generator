@@ -11,8 +11,7 @@ import ${projectPackage}.${projectNameDot}.common.validation.group.InsertGroup;
 import ${projectPackage}.${projectNameDot}.common.validation.group.UpdateGroup;
 import ${projectPackage}.${projectNameDot}.service.${classNameUpper}Service;
 import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}Query;
 import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
 import org.springframework.web.bind.annotation.*;
 <#if hasFunction(generatorFunction, 7)>
@@ -140,49 +139,25 @@ public class ${classNameUpper}Controller {
 </#if>
 <#if hasFunction(generatorFunction, 4)>
     /**
-     * ${tableComment}简单分页
+     * ${tableComment}分页
      */
-    @PostMapping("/entityPage")
+    @PostMapping("/page")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 7)
-    @Operation(summary = "${tableComment}简单分页")
-    public PageVO<${classNameUpper}VO> entityPage(@RequestBody @Validated ${classNameUpper}EntityQuery query) {
-        return ${className}Service.entityPage(query);
+    @Operation(summary = "${tableComment}分页")
+    public PageVO<${classNameUpper}VO> page(@RequestBody @Validated ${classNameUpper}Query query) {
+        return ${className}Service.page(query);
     }
 
 </#if>
 <#if hasFunction(generatorFunction, 5)>
     /**
-     * ${tableComment}简单列表
+     * ${tableComment}列表
      */
-    @PostMapping("/entityList")
+    @PostMapping("/list")
     @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 8)
-    @Operation(summary = "${tableComment}简单列表")
-    public List<${classNameUpper}VO> entityList(@RequestBody @Validated ${classNameUpper}EntityQuery query) {
-        return ${className}Service.entityList(query);
-    }
-
-</#if>
-<#if hasFunction(generatorFunction, 4)>
-    /**
-     * ${tableComment}复杂分页
-     */
-    @PostMapping("/voPage")
-    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 9)
-    @Operation(summary = "${tableComment}复杂分页")
-    public PageVO<${classNameUpper}VO> voPage(@RequestBody @Validated ${classNameUpper}VOQuery query) {
-        return ${className}Service.voPage(query);
-    }
-
-</#if>
-<#if hasFunction(generatorFunction, 5)>
-    /**
-     * ${tableComment}复杂列表
-     */
-    @PostMapping("/voList")
-    @ApiOperationSupport(<#if author!?length gt 0>author = "${author}", </#if>order = 10)
-    @Operation(summary = "${tableComment}复杂列表")
-    public List<${classNameUpper}VO> voList(@RequestBody @Validated ${classNameUpper}VOQuery query) {
-        return ${className}Service.voList(query);
+    @Operation(summary = "${tableComment}列表")
+    public List<${classNameUpper}VO> list(@RequestBody @Validated ${classNameUpper}Query query) {
+        return ${className}Service.list(query);
     }
 
 </#if>

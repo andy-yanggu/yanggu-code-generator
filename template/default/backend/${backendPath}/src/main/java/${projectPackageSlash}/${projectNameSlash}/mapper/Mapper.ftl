@@ -4,8 +4,7 @@ import ${projectPackage}.${projectNameDot}.common.mybatis.mapper.BaseMapperPlus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
 import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}Query;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -30,28 +29,28 @@ public interface ${classNameUpper}Mapper extends BaseMapperPlus<${classNameUpper
     /**
      * Entity分页
      */
-    IPage<${classNameUpper}Entity> entityPage(@Param("query") ${classNameUpper}EntityQuery query);
+    IPage<${classNameUpper}Entity> entityPage(IPage<${classNameUpper}Entity> page, @Param("query") ${classNameUpper}Query query);
 
 </#if>
 <#if hasFunction(generatorFunction, 5)>
     /**
      * Entity列表
      */
-    List<${classNameUpper}Entity> entityList(@Param("query") ${classNameUpper}EntityQuery query);
+    List<${classNameUpper}Entity> entityList(@Param("query") ${classNameUpper}Query query);
 
 </#if>
 <#if hasFunction(generatorFunction, 4)>
     /**
      * VO分页
      */
-    IPage<${classNameUpper}VO> voPage(@Param("query") ${classNameUpper}VOQuery query);
+    IPage<${classNameUpper}VO> voPage(IPage<${classNameUpper}VO> page, @Param("query") ${classNameUpper}Query query);
 
 </#if>
 <#if hasFunction(generatorFunction, 5)>
     /**
      * VO列表
      */
-    List<${classNameUpper}VO> voList(@Param("query") ${classNameUpper}VOQuery query);
+    List<${classNameUpper}VO> voList(@Param("query") ${classNameUpper}Query query);
 
 </#if>
 }

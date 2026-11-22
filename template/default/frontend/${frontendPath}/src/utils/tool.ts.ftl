@@ -1,6 +1,7 @@
-import type { App, Component, Plugin } from 'vue' // 添加 Component 类型
-import { useClipboard } from '@vueuse/core'
+import { App, Component, Plugin } from 'vue'
+import { useClipboard, useTitle } from '@vueuse/core'
 import { ElMessage } from 'element-plus/es'
+import { isEmpty, isNil, isString } from 'lodash-unified'
 
 const { copy, isSupported } = useClipboard()
 
@@ -18,12 +19,75 @@ export const copyToClipboard = (text: string): Promise<void> => {
 					reject()
 				})
 		} else {
-			// 不支持时的降级处理
-			console.warn('当前浏览器不支持 Clipboard API')
-			ElMessage.warning('当前浏览器不支持自动复制功能')
-			reject()
+			// ⚙️ 降级处理：使用 document.execCommand('copy')
+			try {
+				// 创建隐藏的 textarea
+				const textarea = document.createElement('textarea')
+				textarea.value = text
+				textarea.style.position = 'fixed'
+				textarea.style.top = '-9999px'
+				textarea.style.left = '-9999px'
+				document.body.appendChild(textarea)
+
+				// 选中并执行复制命令
+				textarea.select()
+				const successful = document.execCommand('copy')
+				document.body.removeChild(textarea)
+
+				if (successful) {
+					resolve()
+				} else {
+					ElMessage.warning('浏览器不支持自动复制，请手动复制')
+					reject(new Error('execCommand copy failed'))
+				}
+			} catch (err) {
+				console.error('复制失败（降级模式）:', err)
+				ElMessage.warning('浏览器不支持自动复制，请手动复制')
+				reject(err)
+			}
 		}
 	})
+}
+
+// 浏览器tab的标题
+const title = useTitle()
+
+// 默认标题
+const originalTitle = import.meta.env.VITE_APP_TITLE
+title.value = originalTitle
+
+// 设置标题
+export const setTitle = (newTitle: string) => {
+	title.value = newTitle + ' - ' + originalTitle
+}
+
+// 设置原始标题
+export const setDefaultTitle = () => {
+	title.value = originalTitle
+}
+
+// 导出非空函数
+export { isEmpty, isObject } from 'lodash-unified'
+
+// isNotEmpty，针对聚合量（对象和数组）
+export const isNotEmpty = (value: any): boolean => {
+	return !isEmpty(value)
+}
+
+// isBlank，针对标量场景
+export const isBlank = (val: any): boolean => {
+	if (isNil(val)) {
+		return true
+	}
+	if (isString(val)) {
+		return val.trim() === ''
+	}
+	return false
+}
+
+// isNotBlank，针对标量场景
+export const isNotBlank = (value: any): boolean => {
+	return !isBlank(value)
 }
 
 // 修改泛型约束为 Component

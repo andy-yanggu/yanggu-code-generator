@@ -1,63 +1,35 @@
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { IHooksOptions, Key, KeyArray, PageQuery, PageVO } from '@/types'
+import { isEmpty, isNotBlank, isNotEmpty } from '@/utils/tool'
 
-type DataListApi<T = any> = (params: any) => Promise<T>
-type DeleteListApi<T = any> = (params: any) => Promise<T>
-
-export interface IHooksOptions {
-	// 否在创建页面时，调用数据列表接口
-	createdIsNeed?: boolean
-	// 是否需要分页
-	isPage?: boolean
-	// 数据列表接口
-	dataListApi?: DataListApi
-	// 删除接口
-	deleteListApi?: DeleteListApi
-	// 主键key，用于删除场景
-	primaryKey?: string
-	// 查询条件
-	queryForm?: any
-	// 数据列表
-	dataList?: any[]
-	// 排序字段
-	order?: string
-	// 是否升序
-	asc?: boolean
-	// 当前页码
-	pageNum?: number
-	// 每页数
-	pageSize?: number
-	// 总条数
-	total?: number
-	// 每页数选择项
-	pageSizes?: number[]
-	// 数据列表，loading状态
-	dataListLoading?: boolean
-	// 数据列表，多选项
-	dataListSelections?: any[]
-	// 删除时提示语
-	deleteMessage?: string
-}
-
-export const useIndexQuery = (options: IHooksOptions) => {
+// 提供分页、批量删除、导出功能
+export const useTableAction = <Query extends PageQuery = PageQuery, VO = any>(state: IHooksOptions<VO, Query>) => {
 	// 表单查询引用
 	const queryRef = ref()
+	// 表单查询是否显示
+	const queryShow = ref(true)
+	// 表格卡片引用
+	const tableCardRef = ref()
+	// 表格引用
+	const tableRef = ref()
+	// 勾选的表格数据
+	const tableRowsRef = ref([] as VO[])
 
-	// 重置查询
-	const resetQueryHandle = () => {
-		if (queryRef.value) {
-			queryRef.value.resetFields()
-		}
-	}
-
-	const defaultOptions: IHooksOptions = {
-		dataListApi: () => Promise.resolve({ data: [] }),
-		deleteListApi: () => Promise.resolve(),
-		createdIsNeed: true,
+	// 默认值
+	const defaultOptions: IHooksOptions<VO, Query> = {
+		mountedGetData: true,
+		resetQueryGetData: true,
 		isPage: true,
-		primaryKey: 'id',
-		queryForm: {},
-		dataList: [],
+		dataListApi: undefined,
+		deleteListApi: undefined,
+		exportApi: undefined,
+		importApi: undefined,
+		primaryKey: 'id' as keyof VO,
+		queryContext: {} as Query,
+		initQueryFormData: () => ({}) as Query,
+		queryForm: {} as Query,
+		dataList: [] as VO[],
 		order: '',
 		asc: false,
 		pageNum: 1,
@@ -65,36 +37,80 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		total: 0,
 		pageSizes: [10, 20, 50, 100, 200],
 		dataListLoading: false,
-		dataListSelections: [],
-		deleteMessage: '确定进行删除操作?'
+		exportLoading: false,
+		deleteLoading: false,
+		dataListSelections: [] as KeyArray,
+		exportSuccessMessage: '导出成功，请查看下载的文件',
+		importSuccessMessage: '导入成功，请查看数据'
 	}
 
-	const mergeDefaultOptions = (options: any, props: any): IHooksOptions => {
-		for (const key in options) {
-			if (!Object.getOwnPropertyDescriptor(props, key)) {
-				props[key] = options[key]
+	// 合并默认值
+	Object.assign(state, Object.fromEntries(Object.entries(defaultOptions).filter(([key]) => !Object.hasOwn(state, key))))
+
+	// 初始化 queryForm
+	if (isEmpty(state.queryForm)) {
+		Object.assign(state.queryForm, state.initQueryFormData())
+	}
+
+	// 重置后查询
+	const resetQueryHandle = () => {
+		nextTick(() => {
+			// 1️⃣ 先重建查询表单
+			Object.assign(state.queryForm, state.initQueryFormData())
+
+			// 2️⃣ 自动合并上下文（无条件）
+			if (state.queryContext) {
+				Object.assign(state.queryForm, state.queryContext)
 			}
-		}
-		return props
+
+			// 3️⃣ 清校验（UI 行为）
+			queryRef.value.clearValidate()
+
+			// 4️⃣ 是否查询
+			if (state.resetQueryGetData) {
+				getDataList()
+			}
+		})
 	}
 
-	// 覆盖默认值
-	const state = mergeDefaultOptions(defaultOptions, options)
+	// 异步验证表单
+	const validateQueryForm = (): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			nextTick(() => {
+				// 查询表单隐藏时，查询表单未渲染，需要添加这个判断
+				if (!queryShow.value) {
+					resolve()
+					return
+				}
+				queryRef.value.validate((valid: boolean) => {
+					if (valid) {
+						resolve()
+					} else {
+						reject(new Error('表单校验失败'))
+					}
+				})
+			})
+		})
+	}
 
-	// 创建完毕
-	onMounted(() => {
-		if (state.createdIsNeed) {
-			query()
-		}
-	})
+	// 查询
+	const query = () => {
+		// 先进行表单验证，验证通过后再执行查询
+		validateQueryForm().then(() => {
+			executeQuery()
+		})
+	}
 
-	// 执行实际的查询逻辑
-	const executeQuery = () => {
-		//解构查询条件
-		const queryForm = {
-			...state.queryForm
+	// 构建查询条件
+	const buildQueryForm = (): Query => {
+		// 解构查询条件
+		const queryForm: Query = {
+			// 查询条件
+			...(state.queryForm ?? {}),
+			// 查询上下文
+			...(state.queryContext ?? {})
 		}
-		//如果queryForm包含dateRange
+		// 如果queryForm包含dateRange
 		if (queryForm.hasOwnProperty('dateRange')) {
 			if (queryForm.dateRange && queryForm.dateRange.length === 2) {
 				queryForm.startDate = queryForm.dateRange[0]
@@ -103,7 +119,7 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			delete queryForm.dateRange
 		}
 
-		//如果queryForm包含dateTimeRange
+		// 如果queryForm包含dateTimeRange
 		if (queryForm.hasOwnProperty('dateTimeRange')) {
 			if (queryForm.dateTimeRange && queryForm.dateTimeRange.length === 2) {
 				queryForm.startTime = queryForm.dateTimeRange[0]
@@ -112,58 +128,48 @@ export const useIndexQuery = (options: IHooksOptions) => {
 			delete queryForm.dateTimeRange
 		}
 
-		//如果是分页，添加分页参数
+		// 如果是分页，添加分页参数
 		if (state.isPage) {
-			queryForm.pageNum = state.pageNum
-			queryForm.pageSize = state.pageSize
+			queryForm.pageNum = state.pageNum!
+			queryForm.pageSize = state.pageSize!
+		}
+		// 排序字段
+		if (state.order) {
+			queryForm.orderItemList = [{ column: state.order, asc: state.asc! }]
+		}
+		return queryForm
+	}
+
+	// 执行实际的查询逻辑
+	const executeQuery = () => {
+		if (!state.dataListApi) {
+			ElMessage.warning('未配置查询接口')
+			return
 		}
 
-		//排序字段
-		if (state.order) {
-			queryForm.orderItemList = [{ column: state.order, asc: state.asc }]
-		}
+		// 构建查询条件
+		const queryForm = buildQueryForm()
 
 		state.dataListLoading = true
 
-		//调用接口
+		// 调用接口
 		state.dataListApi!(queryForm)
-			.then((res: any) => {
+			.then(data => {
 				if (state.isPage) {
-					state.dataList = res.data.records
-					state.total = res.data.total
+					const pageVO = data as PageVO<VO>
+					state.dataList = pageVO.records
+					state.total = pageVO.total
 				} else {
-					state.dataList = res.data
-					state.total = res.data.length
+					const dataList = data as VO[]
+					state.dataList = dataList
+					state.total = dataList.length
 					state.pageNum = 1
-					state.pageSize = res.data.length
+					state.pageSize = dataList.length
 				}
 			})
 			.finally(() => {
 				state.dataListLoading = false
 			})
-	}
-
-	// 异步验证表单
-	const validateQueryForm = (): Promise<boolean> => {
-		return new Promise(resolve => {
-			if (queryRef.value) {
-				queryRef.value.validate((valid: boolean) => {
-					resolve(valid)
-				})
-			} else {
-				resolve(true)
-			}
-		})
-	}
-
-	const query = () => {
-		// 先进行表单验证，验证通过后再执行查询
-		validateQueryForm().then(valid => {
-			if (!valid) {
-				return
-			}
-			executeQuery()
-		})
 	}
 
 	// 加载数据列表
@@ -186,8 +192,24 @@ export const useIndexQuery = (options: IHooksOptions) => {
 	}
 
 	// 多选
-	const selectionChangeHandle = (selections: any[]) => {
-		state.dataListSelections = selections.map((item: any) => state.primaryKey && item[state.primaryKey])
+	const selectionChangeHandle = (selections: VO[]) => {
+		tableRowsRef.value = selections
+		if (!state.primaryKey) {
+			console.error('未配置主键')
+			return
+		}
+		state.dataListSelections = selections.map(item => item[state.primaryKey!])
+	}
+
+	// 清空勾选
+	const clearSelectionHandle = () => {
+		if (isNotEmpty(state.dataListSelections)) {
+			nextTick(() => {
+				state.dataListSelections = []
+				tableRowsRef.value = []
+				tableRef.value.clearSelection()
+			})
+		}
 	}
 
 	// 排序
@@ -204,45 +226,185 @@ export const useIndexQuery = (options: IHooksOptions) => {
 		getDataList()
 	}
 
-	// 批量删除
-	const deleteBatchHandle = (key?: number | string) => {
-		let data: any[] = []
-		if (key) {
-			data = [key]
-		} else {
-			data = state.dataListSelections ? state.dataListSelections : []
-
-			if (data.length === 0) {
-				ElMessage.warning('请选择删除记录')
-				return
+	// 处理删除上下文
+	const resolveDeleteContext = (arg?: Key | VO) => {
+		// 行内删除（row）
+		if (arg && typeof arg === 'object') {
+			const row = arg as VO
+			return {
+				rows: [row],
+				idList: [row[state.primaryKey!] as Key]
 			}
 		}
 
-		ElMessageBox.confirm(state.deleteMessage, '提示', {
+		// 行内删除（id）
+		if (arg !== undefined) {
+			return {
+				rows: [],
+				idList: [arg as Key]
+			}
+		}
+
+		// 批量删除
+		const rows = (tableRowsRef.value as VO[]) ?? ([] as VO[])
+		return {
+			rows,
+			idList: rows.map(row => row[state.primaryKey!] as Key)
+		}
+	}
+
+	const getSubject = () => {
+		return state.tableSubject ?? '数据'
+	}
+
+	// 构建删除文案
+	const buildDeleteConfirmMessage = (rows: VO[], idList: KeyArray) => {
+		// 1️⃣ 完全自定义文案
+		if (isNotBlank(state.deleteConfirmMessage)) {
+			return state.deleteConfirmMessage
+		}
+
+		const subject = getSubject()
+
+		// 2️⃣ 没有行数据（只有 id）
+		if (isEmpty(rows)) {
+			<#noparse>return idList.length === 1 ? `确认删除该${subject}吗？` : `确认删除 ${idList.length} 个${subject}吗？`
+		}
+
+		// 3️⃣ 有行数据，提取名称
+		const names: string[] = state.deleteNameKey ? (rows.map(row => row[state.deleteNameKey!]).filter(isNotBlank) as string[]) : []
+
+		let targetText: string
+
+		if (names.length === 0) {
+			targetText = subject
+		} else if (names.length > 3) {
+			targetText = `【${names.slice(0, 3).join('、')}…】等${names.length}个${subject}`
+		} else {
+			targetText = `${subject}【${names.join('、')}】`
+		}
+
+		return `确认删除${targetText}吗？`
+	}
+
+	// 批量删除
+	const deleteBatchHandle = (arg?: Key | VO) => {
+		if (!state.deleteListApi) {
+			ElMessage.warning('未配置删除接口，请检查')
+			return
+		}
+
+		const { idList, rows } = resolveDeleteContext(arg)
+
+		const subject = getSubject()
+		if (isEmpty(idList)) {
+			ElMessage.warning(`请选择要删除的${subject}`)
+			return
+		}
+
+		ElMessageBox.confirm(buildDeleteConfirmMessage(rows, idList), '提示', {
 			confirmButtonText: '确定',
 			cancelButtonText: '取消',
 			type: 'warning'
-		}).then(() => {
-			state.deleteListApi!(data).then(() => {
-				ElMessage.success('删除成功')
-				query()
-			})
 		})
+			.then(() => {
+				state.deleteLoading = true
+				state.deleteListApi!(idList)
+					.then(() => {
+						ElMessage.success(`${subject}删除成功`)</#noparse>
+						clearSelectionHandle()
+						getDataList()
+					})
+					.finally(() => {
+						state.deleteLoading = false
+					})
+			})
+			.catch(() => {})
 	}
 
+	// 表格序号列计算
 	const tableIndex = (index: number) => {
 		return (state.pageNum! - 1) * state.pageSize! + index + 1
 	}
+
+	// 勾选导出和单个导出
+	const exportHandle = (id?: Key) => {
+		if (!state.exportApi) {
+			ElMessage.warning('未配置导出接口')
+			return
+		}
+
+		const idList = (id ? [id] : [...(state.dataListSelections ?? [])]) as KeyArray
+
+		if (isEmpty(idList)) {
+			ElMessage.warning('请选择要导出的数据')
+			return
+		}
+
+		state.exportLoading = true
+		state.exportApi!(idList)
+			.then(() => {
+				ElMessage.success(state.exportSuccessMessage)
+				// 删除勾选数据
+				clearSelectionHandle()
+			})
+			.finally(() => {
+				state.exportLoading = false
+			})
+	}
+
+	// 导入数据
+	const importHandle = (file: File, params: Record<string, any> = {}) => {
+		if (!file) {
+			ElMessage.warning('请选择要导入的文件')
+			return
+		}
+
+		if (!state.importApi) {
+			ElMessage.warning('未配置导入接口')
+			return
+		}
+		// 表单参数
+		const formData = new FormData()
+		// 文件
+		formData.append('file', file)
+		// 添加其他参数
+		Object.keys(params).forEach(key => formData.append(key, params[key]))
+
+		// 调用导入接口
+		state.importApi!(formData)
+			.then(() => {
+				ElMessage.success(state.importSuccessMessage)
+			})
+			.then(() => {
+				getDataList()
+			})
+	}
+
+	// 生命周期函数
+	onMounted(() => {
+		if (state.mountedGetData) {
+			nextTick(() => {
+				resetQueryHandle()
+			})
+		}
+	})
 
 	return {
 		getDataList,
 		sizeChangeHandle,
 		currentChangeHandle,
 		selectionChangeHandle,
+		clearSelectionHandle,
 		sortChangeHandle,
 		deleteBatchHandle,
 		queryRef,
+		queryShow,
+		tableCardRef,
+		tableRef,
 		resetQueryHandle,
-		tableIndex
+		tableIndex,
+		exportHandle,
+		importHandle
 	}
 }

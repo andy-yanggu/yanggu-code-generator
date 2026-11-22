@@ -17,14 +17,14 @@ import org.springframework.http.ResponseEntity;
 </#if>
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
 import ${projectPackage}.${projectNameDot}.common.exception.BusinessException;
 import ${projectPackage}.${projectNameDot}.common.mybatis.util.MybatisUtil;
 import ${projectPackage}.${projectNameDot}.mapstruct.${classNameUpper}Mapstruct;
 import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}Query;
 import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
 import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
 import ${projectPackage}.${projectNameDot}.mapper.${classNameUpper}Mapper;
@@ -163,53 +163,32 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
 </#if>
 <#if hasFunction(generatorFunction, 4)>
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
     @Override
-    public PageVO<${classNameUpper}VO> entityPage(${classNameUpper}EntityQuery query) {
-        //简单sql使用QueryWrapper
-        ${className}Mapper.selectPage(query, buildQueryWrapper(query));
-        //较复杂sql，使用xml
-        //${className}Mapper.entityPage(query);
-        return ${className}Mapstruct.entityToPageVO(query);
+    public PageVO<${classNameUpper}VO> page(${classNameUpper}Query query) {
+        //无JOIN需求，使用QueryWrapper
+        Page<${classNameUpper}Entity> page = query.toPage();
+        ${className}Mapper.selectPage(page, buildQueryWrapper(query));
+        return ${className}Mapstruct.entityToPageVO(page);
+        //需要JOIN关联字段，改用xml（注释上面3行，启用下面3行）
+        //Page<${classNameUpper}VO> page = query.toPage();
+        //${className}Mapper.voPage(page, query);
+        //return ${className}Mapstruct.voToPageVO(page);
     }
 
 </#if>
 <#if hasFunction(generatorFunction, 5)>
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
     @Override
-    public List<${classNameUpper}VO> entityList(${classNameUpper}EntityQuery query) {
-        query.setPageSize(-1L);
-        //简单sql使用QueryWrapper
+    public List<${classNameUpper}VO> list(${classNameUpper}Query query) {
+        //无JOIN需求，使用QueryWrapper
         List<${classNameUpper}Entity> entityList = ${className}Mapper.selectList(buildQueryWrapper(query));
-        //复杂sql，使用xml
-        //List<${classNameUpper}Entity> entityList = ${className}Mapper.entityList(query);
         return ${className}Mapstruct.entityToVO(entityList);
-    }
-
-</#if>
-<#if hasFunction(generatorFunction, 4)>
-    /**
-     * 复杂分页
-     */
-    @Override
-    public PageVO<${classNameUpper}VO> voPage(${classNameUpper}VOQuery query) {
-        ${className}Mapper.voPage(query);
-        return ${className}Mapstruct.voToPageVO(query);
-    }
-
-</#if>
-<#if hasFunction(generatorFunction, 5)>
-    /**
-     * 复杂列表
-     */
-    @Override
-    public List<${classNameUpper}VO> voList(${classNameUpper}VOQuery query) {
-        //查询全部数据
-        query.setPageSize(-1L);
-        return ${className}Mapper.voList(query);
+        //需要JOIN关联字段，改用xml（注释上面2行，启用下面1行）
+        //return ${className}Mapper.voList(query);
     }
 
 </#if>
@@ -301,7 +280,7 @@ public class ${classNameUpper}ServiceImpl extends ServiceImpl<${classNameUpper}M
         }
     }
 
-    private LambdaQueryWrapper<${classNameUpper}Entity> buildQueryWrapper(${classNameUpper}EntityQuery query) {
+    private LambdaQueryWrapper<${classNameUpper}Entity> buildQueryWrapper(${classNameUpper}Query query) {
         LambdaQueryWrapper<${classNameUpper}Entity> wrapper = Wrappers.lambdaQuery(${classNameUpper}Entity.class);
         <#if queryList?has_content>
 

@@ -3,8 +3,7 @@ package ${projectPackage}.${projectNameDot}.service;
 import ${projectPackage}.${projectNameDot}.common.domain.vo.PageVO;
 import ${projectPackage}.${projectNameDot}.domain.vo.${classNameUpper}VO;
 import ${projectPackage}.${projectNameDot}.domain.dto.${classNameUpper}DTO;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}EntityQuery;
-import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}VOQuery;
+import ${projectPackage}.${projectNameDot}.domain.query.${classNameUpper}Query;
 import ${projectPackage}.${projectNameDot}.domain.entity.${classNameUpper}Entity;
 import com.baomidou.mybatisplus.extension.service.IService;
 <#if hasFunction(generatorFunction, 6)>
@@ -77,30 +76,16 @@ public interface ${classNameUpper}Service extends IService<${classNameUpper}Enti
 </#if>
 <#if hasFunction(generatorFunction, 4)>
     /**
-     * 简单分页
+     * 分页（完整VO）
      */
-    PageVO<${classNameUpper}VO> entityPage(${classNameUpper}EntityQuery query);
+    PageVO<${classNameUpper}VO> page(${classNameUpper}Query query);
 
 </#if>
 <#if hasFunction(generatorFunction, 5)>
     /**
-     * 简单列表
+     * 列表（完整VO）
      */
-    List<${classNameUpper}VO> entityList(${classNameUpper}EntityQuery query);
-
-</#if>
-<#if hasFunction(generatorFunction, 4)>
-    /**
-     * 复杂分页
-     */
-    PageVO<${classNameUpper}VO> voPage(${classNameUpper}VOQuery query);
-
-</#if>
-<#if hasFunction(generatorFunction, 5)>
-    /**
-     * 复杂列表
-     */
-    List<${classNameUpper}VO> voList(${classNameUpper}VOQuery query);
+    List<${classNameUpper}VO> list(${classNameUpper}Query query);
 
 </#if>
 <#if hasFunction(generatorFunction, 6)>

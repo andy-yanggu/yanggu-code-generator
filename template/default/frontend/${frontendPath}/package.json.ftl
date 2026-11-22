@@ -1,6 +1,7 @@
 {
   "name": "${projectName}",
   "version": "${projectVersion}",
+	"description": "${projectDesc}",    
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,17 +12,22 @@
   "dependencies": {
     "@element-plus/icons-vue": "2.3.1",
     "@vueuse/core": "^9.1.1",
-    "axios": "1.8.2",
+    "@types/lodash-es": "^4.17.12",
+    "axios": "1.12.0",
     "dayjs": "^1.11.15",
-    "element-plus": "2.9.3",
+    "element-plus": "2.11.3",
+    "lodash-es": "^4.17.21",
+    "lodash-unified": "^1.0.3",  
     "nprogress": "^0.2.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.4.1",
-    "qs": "6.10.3",
+    "qs": "6.14.1",
     "sortablejs": "^1.15.6",
     "vue": "^3.5.17",
     "vue-router": "4.2.5",
-    "xe-utils": "^3.5.4"
+    "xe-utils": "^3.5.4",
+    "echarts": "^6.0.0",
+    "vue-echarts": "^8.0.1"
   },
   "devDependencies": {
     "@babel/types": "7.24.0",
@@ -43,7 +49,7 @@
     "prettier": "3.2.5",
     "sass": "1.72.0",
     "typescript": "5.4.2",
-    "vite": "6.3.4",
+    "vite": "7.1.11",
     "vite-plugin-svg-icons": "2.0.1",
     "vite-plugin-vue-setup-extend": "0.4.0",
     "vue-eslint-parser": "^10.2.0",

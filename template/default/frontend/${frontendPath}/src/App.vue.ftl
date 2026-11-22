@@ -1,5 +1,5 @@
 <template>
-	<el-config-provider :locale="zhCn">
+	<el-config-provider :locale="zhCn" :size="appStore.layoutSize">
 		<router-view></router-view>
 	</el-config-provider>
 </template>
@@ -9,6 +9,9 @@ import { RouterView } from 'vue-router'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import { useAppStore } from '@/store/app-store'
 
 dayjs.locale('zh-cn')
+
+const appStore = useAppStore()
 </script>
