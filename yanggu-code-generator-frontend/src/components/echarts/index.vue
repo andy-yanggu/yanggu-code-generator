@@ -17,7 +17,18 @@
 
 <script setup lang="ts">
 import LoadingIcon from '@/components/loading-icon/index.vue'
+import * as echarts from 'echarts/core'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { BarChart, LineChart, PieChart } from 'echarts/charts'
+import { GraphicComponent, GridComponent, LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
+
+// ECharts 按需注册（渲染器 + 图表 + 组件）。
+// 这里刻意不做 app.component 全局注册：全局注册要求 main.ts 静态引入 echarts，
+// echarts（567 kB）会因此进入入口依赖图并被 index.html modulepreload，
+// 导致每个页面首屏都要下载它。放在本文件里注册，只有真正渲染图表的页面才会加载 echarts。
+echarts.use([CanvasRenderer, LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent, GraphicComponent])
 
 const props = defineProps({
 	option: {

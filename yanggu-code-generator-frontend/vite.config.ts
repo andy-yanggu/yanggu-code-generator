@@ -66,10 +66,12 @@ export default defineConfig({
 					}
 				},
 				// 依赖与业务代码分离，大依赖独立 chunk 提升缓存命中率
+				// echarts 组必须把 vue-echarts 一起收进来：否则 vue-echarts 落在 vendor（入口静态可达），
+				// 它对 echarts 的静态 import 会把 567 kB 的 echarts 重新拉进首屏 modulepreload
 				codeSplitting: {
 					groups: [
 						{ test: /node_modules[\\/]element-plus/, name: 'element-plus' },
-						{ test: /node_modules[\\/](echarts|zrender)/, name: 'echarts' },
+						{ test: /node_modules[\\/](echarts|zrender|vue-echarts)/, name: 'echarts' },
 						{ test: /node_modules[\\/]/, name: 'vendor' }
 					]
 				}

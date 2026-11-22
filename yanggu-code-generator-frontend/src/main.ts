@@ -7,7 +7,6 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 css
 import '@/styles/index.scss'
 import directive from '@/directive'
-import { setupEcharts } from '@/components/echarts'
 
 const app = createApp(App)
 
@@ -15,9 +14,6 @@ const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
-
-// 注册echarts
-setupEcharts(app)
 
 // 自定义指令
 directive(app)
