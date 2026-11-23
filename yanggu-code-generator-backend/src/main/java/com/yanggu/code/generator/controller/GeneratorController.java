@@ -5,6 +5,7 @@ import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
+import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.service.GeneratorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -70,5 +71,12 @@ public class GeneratorController {
     @Operation(summary = "模板测试")
     public TemplateContentVO templateTest(@RequestBody TemplateTestQuery templateTestQuery) {
         return generatorService.templateTest(templateTestQuery);
+    }
+
+    @PostMapping("/testDataModel")
+    @ApiOperationSupport(order = 7)
+    @Operation(summary = "模板测试数据模型")
+    public List<VariableNodeVO> testDataModel(@RequestBody TemplateTestQuery templateTestQuery) {
+        return generatorService.testDataModel(templateTestQuery);
     }
 }

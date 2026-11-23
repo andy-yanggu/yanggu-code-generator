@@ -60,82 +60,111 @@
 				</el-row>
 			</el-splitter-panel>
 
-			<!-- 右侧：内容区 -->
+			<!-- 右侧：内容区（内层再分「编辑容器 + 变量面板」，宽度数值体系对齐 tree.vue） -->
 			<el-splitter-panel>
-				<el-container direction="vertical" class="right-container">
-					<!-- 顶部工具栏（固定） -->
-					<el-header class="header-fixed">
-						<el-row>
-							<!-- 文件路径	-->
-							<el-col :span="19">
-								<div class="path-container">
-									<text-tooltip :title="'路径：' + fullFilePath" max-width="100%" :tooltip-content="fullFilePath"></text-tooltip>
-									<el-tooltip v-if="testData.activeName === 'render'" :disabled="copyIconState === Check" content="复制文件路径" placement="top">
-										<el-icon style="cursor: pointer; margin-left: 5px" @click="copyPath(fullFilePath)">
-											<component :is="copyIconState"></component>
-										</el-icon>
-									</el-tooltip>
-								</div>
-							</el-col>
-							<el-col :span="5" style="text-align: right">
-								<template v-if="testData.activeName === 'template'">
-									<el-button
-										:icon="Document"
-										size="small"
-										:disabled="isEmpty(testData.cascaderValue)"
-										@click="handleCascaderChange(testData.cascaderValue)">
-										渲染
-									</el-button>
-									<el-button size="small" type="primary" :icon="Edit" :loading="loading" :disabled="!isEdit" @click="saveTemplateContent()">
-										保存
-									</el-button>
-								</template>
-								<template v-else>
-									<el-tooltip content="复制代码" :disabled="copyCodeState.icon === Check" placement="top">
-										<el-button
-											size="small"
-											type="primary"
-											:icon="copyCodeState.icon"
-											:disabled="!testData.renderedTemplateContent"
-											@click="copyTemplateContent()">
-											{{ copyCodeState.text }}
-										</el-button>
-									</el-tooltip>
-									<el-tooltip :content="generatorState.tooltip" placement="top">
-										<el-button
-											size="small"
-											:icon="generatorState.icon"
-											:disabled="isEmpty(testData.cascaderValue)"
-											type="success"
-											:loading="submitLoading"
-											@click="generatorHandler()">
-											{{ generatorState.text }}
-										</el-button>
-									</el-tooltip>
-								</template>
-							</el-col>
-						</el-row>
+				<div class="editor-area">
+					<el-splitter ref="editorSplitterRef" class="editor-splitter" style="height: 100%">
+						<el-splitter-panel :min="editorFloor" :size="editorPanelSize">
+							<el-container direction="vertical" class="right-container">
+								<!-- 顶部工具栏（固定） -->
+								<el-header class="header-fixed">
+									<el-row>
+										<!-- 文件路径	-->
+										<el-col :span="19">
+											<div class="path-container">
+												<text-tooltip :title="'路径：' + fullFilePath" max-width="100%" :tooltip-content="fullFilePath"></text-tooltip>
+												<el-tooltip v-if="testData.activeName === 'render'" :disabled="copyIconState === Check" content="复制文件路径" placement="top">
+													<el-icon style="cursor: pointer; margin-left: 5px" @click="copyPath(fullFilePath)">
+														<component :is="copyIconState"></component>
+													</el-icon>
+												</el-tooltip>
+											</div>
+										</el-col>
+										<el-col :span="5" style="text-align: right">
+											<el-button size="small" :type="variablePanelVisible ? 'primary' : 'default'" plain @click="toggleVariablePanel">
+												<svg-icon icon="icon-variable" style="margin-right: 5px"></svg-icon>
+												变量
+											</el-button>
+											<template v-if="testData.activeName === 'template'">
+												<el-button
+													:icon="Document"
+													size="small"
+													:disabled="isEmpty(testData.cascaderValue)"
+													@click="handleCascaderChange(testData.cascaderValue)">
+													渲染
+												</el-button>
+												<el-button size="small" type="primary" :icon="Edit" :loading="loading" :disabled="!isEdit" @click="saveTemplateContent()">
+													保存
+												</el-button>
+											</template>
+											<template v-else>
+												<el-tooltip content="复制代码" :disabled="copyCodeState.icon === Check" placement="top">
+													<el-button
+														size="small"
+														type="primary"
+														:icon="copyCodeState.icon"
+														:disabled="!testData.renderedTemplateContent"
+														@click="copyTemplateContent()">
+														{{ copyCodeState.text }}
+													</el-button>
+												</el-tooltip>
+												<el-tooltip :content="generatorState.tooltip" placement="top">
+													<el-button
+														size="small"
+														:icon="generatorState.icon"
+														:disabled="isEmpty(testData.cascaderValue)"
+														type="success"
+														:loading="submitLoading"
+														@click="generatorHandler()">
+														{{ generatorState.text }}
+													</el-button>
+												</el-tooltip>
+											</template>
+										</el-col>
+									</el-row>
 
-						<el-tabs v-model="testData.activeName">
-							<el-tab-pane name="template">
-								<template #label>
-									<el-badge is-dot :hidden="!isEdit">原始模板</el-badge>
-								</template>
-							</el-tab-pane>
-							<el-tab-pane name="render" :disabled="isEmpty(testData.cascaderValue)" label="渲染结果"></el-tab-pane>
-						</el-tabs>
-					</el-header>
+									<el-tabs v-model="testData.activeName">
+										<el-tab-pane name="template">
+											<template #label>
+												<el-badge is-dot :hidden="!isEdit">原始模板</el-badge>
+											</template>
+										</el-tab-pane>
+										<el-tab-pane name="render" :disabled="isEmpty(testData.cascaderValue)" label="渲染结果"></el-tab-pane>
+									</el-tabs>
+								</el-header>
 
-					<!-- 主体内容（独立滚动） -->
-					<el-main class="main-scroll">
-						<el-scrollbar v-show="testData.activeName === 'template'">
-							<code-mirror v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
-						</el-scrollbar>
-						<el-scrollbar v-show="testData.activeName === 'render'">
-							<code-mirror v-model="testData.renderedTemplateContent" read-only></code-mirror>
-						</el-scrollbar>
-					</el-main>
-				</el-container>
+								<!-- 主体内容（独立滚动） -->
+								<el-main class="main-scroll">
+									<el-scrollbar v-show="testData.activeName === 'template'">
+										<code-mirror ref="codeMirrorRef" v-model="testData.editTemplateContent" @keydown.ctrl.s.prevent="saveTemplateContent()"></code-mirror>
+									</el-scrollbar>
+									<el-scrollbar v-show="testData.activeName === 'render'">
+										<code-mirror v-model="testData.renderedTemplateContent" read-only></code-mirror>
+									</el-scrollbar>
+								</el-main>
+							</el-container>
+						</el-splitter-panel>
+						<el-splitter-panel v-if="variablePanelVisible" :size="clampedVariableSize" :min="240" :max="560" @update:size="variablePanelSize = $event">
+							<variable-panel
+								:catalog="variableCatalog"
+								:loading="variableLoading"
+								:error="variableError"
+								:disabled="!canInsertVariable"
+								value-mode
+								:insert="insertVariable"
+								@reload="reloadVariableCatalog"
+							></variable-panel>
+						</el-splitter-panel>
+					</el-splitter>
+					<!-- 收起态常驻右缘的 28px 竖柄，与头部「变量」按钮控制同一个状态 -->
+					<el-tooltip v-if="!variablePanelVisible" content="展开变量面板" placement="left">
+						<div class="variable-edge" @click="toggleVariablePanel">
+							<el-icon class="variable-edge-arrow"><ArrowLeft></ArrowLeft></el-icon>
+							<span class="variable-edge-text">变量</span>
+							<span v-if="variableTotal !== null" class="variable-edge-count">{{ variableTotal }}</span>
+						</div>
+					</el-tooltip>
+				</div>
 			</el-splitter-panel>
 		</el-splitter>
 		<gen-template-form
@@ -150,15 +179,19 @@
 <script setup lang="ts">
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, CascaderValue } from 'element-plus'
-import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
+import { ArrowLeft, Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
+import SvgIcon from '@/components/svg-icon/index.vue'
+import VariablePanel from '@/views/gen/template/variable-panel/index.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { GeneratorQuery, Result, SubmitOptions } from '@/types'
 import { useInitForm, useSubmitHandler } from '@/hooks'
 import OptionLabel from '@/components/option/label/index.vue'
 import GenTemplateForm from '@/views/gen/template/form.vue'
 import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
+import { useVariableValueCatalog } from './variable-panel/use-variable-value-catalog'
+import { countVariables } from './variable-utils'
 
 defineOptions({
 	name: 'GenTemplateTest'
@@ -199,6 +232,100 @@ const testData = reactive(initTestData())
 const editTemplateList = ref(new Set<number>())
 const treeList = ref([] as any[])
 
+// 带值变量目录：数据模型只由「选中的测试对象」决定，与模板内容无关，故单独持有一对引用
+const valueProjectId = ref(0)
+const valueTestId = ref(0)
+const {
+	catalog: variableCatalog,
+	loading: variableLoading,
+	error: variableError,
+	loaded: variableCatalogLoaded,
+	load: loadVariableCatalog
+} = useVariableValueCatalog(
+	toRef(testData, 'templateGroupId'),
+	toRef(testData, 'templateGroupType'),
+	valueProjectId,
+	valueTestId
+)
+
+// 面板默认收起；总项数上到宿主 computed 后跳过了面板的 onErrorCaptured 边界，
+// 目录数据畸形时会在宿主 render 阶段抛错把整个抽屉带上，故失败时直接撤下徽标（与 tree.vue 同款策略）
+const variablePanelVisible = ref(false)
+const variableTotal = computed(() => {
+	if (!variableCatalogLoaded.value) {
+		return null
+	}
+	try {
+		return countVariables(variableCatalog.value, true)
+	} catch {
+		return null
+	}
+})
+
+const toggleVariablePanel = () => {
+	variablePanelVisible.value = !variablePanelVisible.value
+}
+
+// 面板宽度数值体系完全对齐 tree.vue（默认 320px、区间 [240, 560]、首次展开取容器 28%），
+// 这里不抽 composable：第三处重复出现时再合并，本次只新增不重构
+const editorSplitterRef = ref()
+const editorSplitterSize = useElementSize(editorSplitterRef)
+const variablePanelSize = ref(320)
+let panelSizeInitialized = false
+
+// 编辑区下限 320px；容器窄到放不下「320 + 面板下界 240」时退让，优先保住面板的 240
+const editorFloor = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return 320
+	}
+	return Math.max(0, Math.min(320, width - 240))
+})
+
+// 面板区间 [240, min(560, 容器 - 编辑区下限)]：与两块 panel 上声明的 min/max 完全等价，
+// 这样 EP 拖拽路径 clamp 出来的结果就等于我算的结果，不会两套值并存
+const clampedVariableSize = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return variablePanelSize.value
+	}
+	const upper = Math.max(240, Math.min(560, width - editorFloor.value))
+	return Math.min(Math.max(variablePanelSize.value, 240), upper)
+})
+
+// 面板收起时第二块已卸载，第一块必须铺满整个容器；展开时直接取容器减去面板，
+// 不留毫厘给 EP 的归一化分支（两块之和只要不等于容器就会触发等比缩放）
+const editorPanelSize = computed(() => {
+	const width = editorSplitterSize.width.value
+	if (!width) {
+		return undefined
+	}
+	return variablePanelVisible.value ? Math.max(0, width - clampedVariableSize.value) : width
+})
+
+// 首次展开按容器 28% 取宽，之后保留用户拖拽宽度
+watch(variablePanelVisible, visible => {
+	if (visible && !panelSizeInitialized && editorSplitterSize.width.value) {
+		panelSizeInitialized = true
+		variablePanelSize.value = Math.round(editorSplitterSize.width.value * 0.28)
+	}
+})
+
+// 只有「原始模板」 tab 有可写编辑器，渲染结果 tab 是 read-only
+const canInsertVariable = computed(() => testData.activeName === 'template')
+
+const codeMirrorRef = ref<InstanceType<typeof CodeMirror> | null>(null)
+
+// 插入入口：把文本交给 code-mirror 暴露的 insertAtCursor；返回 false 让面板提示「编辑器未就绪」
+const insertVariable = (text: string, caret: number): boolean => {
+	return codeMirrorRef.value?.insertAtCursor(text, caret) ?? false
+}
+
+// 面板重试：值目录不做缓存，直接重查当前对象
+const reloadVariableCatalog = () => {
+	return loadVariableCatalog()
+}
+
 const isEdit = computed(() => testData.editTemplateContent !== testData.originalTemplateContent)
 const initGeneratorStateArray = () => [
 	{
@@ -236,6 +363,18 @@ const { start: startTimer } = useTimeoutFn(() => {
 	copyIconState.value = CopyDocument
 }, 2000)
 
+// 带值目录入参：数据模型只取决于选中的测试对象，从级联值里拆出 projectId / testId。
+// 项目组（type 0）只靠 projectId，后端不读 testId，故保持 0；表/枚举组取二级节点 id
+const syncValueCatalogParams = (val: string[]) => {
+	if (isEmpty(val)) {
+		valueProjectId.value = 0
+		valueTestId.value = 0
+		return
+	}
+	valueProjectId.value = Number(val[0].split('_')[1])
+	valueTestId.value = testData.templateGroupType === 0 ? 0 : Number(val[1]?.split('_')[1] ?? 0)
+}
+
 const init = async (templateGroupId: number, templateGroupType: number, templateId: number, templateContent: string) => {
 	Object.assign(testData, initTestData())
 	testData.visible = true
@@ -245,6 +384,13 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 	testData.templateGroupType = templateGroupType
 	testData.templateId = templateId
 	testData.editTemplateContent = templateContent
+
+	// 面板与值目录都是上次打开的遗留状态，抽屉 destroy-on-close 只销毁 DOM、组件实例常驻，需手动复位
+	variablePanelVisible.value = false
+	panelSizeInitialized = false
+	valueProjectId.value = 0
+	valueTestId.value = 0
+	loadVariableCatalog()
 
 	// 获取模板详情数据
 	await setTemplateData()
@@ -317,8 +463,15 @@ const saveTemplateContent = (callBack?: (() => void) | undefined) => {
 const handleCascaderChange = async (value: CascaderValue | null | undefined) => {
 	const val = (value ?? []) as string[]
 	if (isEmpty(val)) {
+		// 级联清空：值目录入参与已缓存的目录一并清掉，避免上一个对象的值停留在面板里
+		syncValueCatalogParams(val)
+		loadVariableCatalog()
 		return
 	}
+	// 值目录与渲染并发：请求在渲染前发起，但不 await——目录加载失败不能拖死渲染（规格 6.2「辅助不阻断主体」），
+	// 渲染报条件表达式 false（code 700）时面板仍应可读，那正是定位表达式为什么 false 的现场
+	syncValueCatalogParams(val)
+	loadVariableCatalog()
 	// val 是选中节点的值数组
 	const queryForm = {
 		projectId: val[0].split('_')[1],
@@ -551,6 +704,64 @@ defineExpose({
 }
 </style>
 <style scoped>
+/* 右侧内容区变成「内层分栏 + 收起态竖柄」的容器，竖柄要贴右缘故取定位上下文 */
+.editor-area {
+	position: relative;
+	display: flex;
+	height: 100%;
+	/* 容器被外层分栏挤到极窄时不让分栏被压扁，而是横向滚动（配合下面 splitter 的 min-width） */
+	overflow-x: auto;
+}
+
+.editor-splitter {
+	flex: 1;
+	/* 不能是 0：一旦实测宽度 < 面板下界 240，两块之和就无法同时满足「面板 ≥ 240」与「两块之和 = 容器」，
+	   EP 会退回等比归一化把面板压到 240 以下；给分栏一个 240 硬底，面板就能守住下界 */
+	min-width: 240px;
+}
+
+/* 收起态的变量面板竖柄：右缘 28px 常驻入口 */
+.variable-edge {
+	flex: none;
+	width: 28px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	border-left: 1px solid var(--el-border-color-lighter);
+	background: var(--el-fill-color-lighter);
+	color: var(--el-text-color-secondary);
+	user-select: none;
+}
+
+.variable-edge:hover {
+	background: var(--el-color-primary-light-9);
+	color: var(--el-color-primary);
+}
+
+.variable-edge-arrow {
+	font-size: 12px;
+}
+
+.variable-edge-text {
+	writing-mode: vertical-lr;
+	letter-spacing: 4px;
+	font-size: 12px;
+}
+
+.variable-edge-count {
+	min-width: 18px;
+	padding: 0 5px;
+	border-radius: 8px;
+	background: var(--el-color-primary);
+	color: #fff;
+	font-size: 11px;
+	line-height: 16px;
+	text-align: center;
+}
+
 .right-container {
 	display: flex;
 	flex-direction: column;

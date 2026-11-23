@@ -1,7 +1,16 @@
 <template>
 	<div class="variable-panel">
 		<el-empty v-if="broken" description="变量面板不可用，请刷新页面后重试" :image-size="60"></el-empty>
-		<PanelBody v-else :catalog="catalog" :loading="loading" :error="error" :disabled="disabled" :insert="insert" @reload="emit('reload')"></PanelBody>
+		<PanelBody
+			v-else
+			:catalog="catalog"
+			:loading="loading"
+			:error="error"
+			:disabled="disabled"
+			:value-mode="valueMode"
+			:insert="insert"
+			@reload="emit('reload')"
+		></PanelBody>
 	</div>
 </template>
 
@@ -39,6 +48,11 @@ defineProps({
 	error: {
 		type: String,
 		default: ''
+	},
+	// 带值目录模式（测试页）透传给 PanelBody；编辑器不传，行为不变
+	valueMode: {
+		type: Boolean,
+		default: false
 	}
 })
 

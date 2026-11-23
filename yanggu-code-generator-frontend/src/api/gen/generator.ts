@@ -1,6 +1,6 @@
 import { downloadFile, service } from '@/utils/request'
 import type { AxiosRequestConfig } from 'axios'
-import type { GeneratorQuery, TemplateTestQuery } from '@/types'
+import type { GeneratorQuery, TemplateTestQuery, VariableNode } from '@/types'
 
 const baseUrl: string = '/gen/generator'
 
@@ -29,5 +29,9 @@ export const genGeneratorApi = {
 	// 模板测试
 	templateTest: (query: TemplateTestQuery, config?: AxiosRequestConfig): Promise<any> => {
 		return service.post(baseUrl + '/template/test', query, config)
+	},
+	// 模板测试带值变量目录：失败提示与重试由变量面板承载，与 genTemplateApi.variableCatalog 同款 noErrorMessage
+	testDataModel: (query: TemplateTestQuery, config?: AxiosRequestConfig): Promise<VariableNode[]> => {
+		return service.post(baseUrl + '/testDataModel', query, { noErrorMessage: true, ...config })
 	}
 }

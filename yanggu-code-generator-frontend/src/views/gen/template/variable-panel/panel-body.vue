@@ -12,7 +12,7 @@
 			<el-button link size="small" type="primary" @click="emit('reload')">重试</el-button>
 		</div>
 		<el-skeleton v-if="loading && totalCount === 0" :rows="6" animated></el-skeleton>
-		<el-empty v-else-if="totalCount === 0" :description="error || '该模板组无可用变量'" :image-size="60">
+		<el-empty v-else-if="totalCount === 0" :description="error || emptyDescription" :image-size="60">
 			<el-button v-if="error" size="small" @click="emit('reload')">重试</el-button>
 		</el-empty>
 		<el-scrollbar v-else class="panel-scrollbar">
@@ -38,10 +38,13 @@
 							<el-tag v-if="kindTag(data.kind)" size="small" :type="kindTag(data.kind)!.type" effect="plain">
 								{{ kindTag(data.kind)!.label }}
 							</el-tag>
+							<el-tooltip v-if="data.value" :content="data.value" placement="left" :show-after="400">
+								<el-tag class="variable-value" size="small" type="info" effect="plain">{{ data.value }}</el-tag>
+							</el-tooltip>
 							<el-tooltip v-if="data.nullable" content="该变量渲染时可能为 null，模板需用 <#if xxx??> 保护" placement="left">
 								<el-tag size="small" type="warning" effect="plain">可空</el-tag>
 							</el-tooltip>
-							<el-tooltip v-if="canInsert(data.kind)" :content="disabled ? '请先打开一个模板文件' : '插入到光标处'" placement="left">
+							<el-tooltip v-if="canInsert(data)" :content="disabled ? '请先打开一个模板文件' : '插入到光标处'" placement="left">
 								<el-button class="row-icon insert-button" link size="small" :disabled="disabled" @click.stop="handleInsert(data)">
 									{{ data.kind === 'SCALAR' ? '插' : '插循环' }}
 								</el-button>
@@ -88,6 +91,12 @@ const props = defineProps({
 	error: {
 		type: String,
 		default: ''
+	},
+	// 带值目录模式（测试页）：SCALAR_LIST 展开真实元素，行内显示 value 文本；
+	// 编辑器结构目录不传，行为与引入口径完全不变
+	valueMode: {
+		type: Boolean,
+		default: false
 	}
 })
 
@@ -100,8 +109,12 @@ const treeRef = ref()
 const keyword = ref('')
 
 const treeProps = { children: 'children', label: 'name' }
-const treeData = computed(() => buildVariableTree(props.catalog))
-const totalCount = computed(() => countVariables(props.catalog))
+const treeData = computed(() => buildVariableTree(props.catalog, props.valueMode))
+const totalCount = computed(() => countVariables(props.catalog, props.valueMode))
+
+// 空态文案分两种口径：测试页目录要选了测试对象才有值可合成，此时说「该模板组无可用变量」会误导，
+// 改成指向级联选择器；编辑器目录与选择无关，保留原文案
+const emptyDescription = computed(() => (props.valueMode ? '请先选择测试对象' : '该模板组无可用变量'))
 
 // 默认只展开顶层分组，268 条全展开反而看不到东西
 const expandedKeyList = computed(() => treeData.value.filter(item => item.kind === 'GROUP').map(item => item.uid))
@@ -167,6 +180,19 @@ const handleInsert = (data: DisplayVariableNode) => {
 
 .variable-name {
 	font-family: var(--el-font-family-mono, Consolas, Monaco, monospace);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* 带值目录的行内值：与变量名同用等宽字体，灰底弱一档，占满剩余宽度后省略 */
+.variable-value {
+	max-width: 60%;
+	flex-shrink: 1;
+	font-family: var(--el-font-family-mono, Consolas, Monaco, monospace);
+}
+
+.variable-value :deep(.el-tag__content) {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

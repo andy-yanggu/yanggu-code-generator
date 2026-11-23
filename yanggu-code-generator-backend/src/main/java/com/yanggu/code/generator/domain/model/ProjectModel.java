@@ -92,25 +92,25 @@ public class ProjectModel {
     /**
      * 数据库驱动类名
      */
-    @VarDesc(value = "数据库驱动类名", nullable = true)
+    @VarDesc(value = "数据库驱动类名", nullable = true, sensitive = true)
     private String databaseDriverClassName;
 
     /**
      * 数据库连接
      */
-    @VarDesc(value = "数据库连接", nullable = true)
+    @VarDesc(value = "数据库连接", nullable = true, sensitive = true)
     private String databaseUrl;
 
     /**
      * 数据库用户名
      */
-    @VarDesc(value = "数据库用户名", nullable = true)
+    @VarDesc(value = "数据库用户名", nullable = true, sensitive = true)
     private String databaseUsername;
 
     /**
      * 数据库密码
      */
-    @VarDesc(value = "数据库密码", nullable = true)
+    @VarDesc(value = "数据库密码", nullable = true, sensitive = true)
     private String databasePassword;
 
     /**

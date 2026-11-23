@@ -3,11 +3,15 @@ package com.yanggu.code.generator.service.impl;
 import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
+import com.yanggu.code.generator.domain.model.EnumModel;
+import com.yanggu.code.generator.domain.model.ProjectModel;
+import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
+import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.enums.BusinessResultError;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.*;
@@ -42,6 +46,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Autowired
     private DownloadHandler downloadHandler;
+
+    // 构建器无状态、不带 Spring 依赖，与 VariableCatalogServiceImpl 同款直接实例化
+    private final VariableCatalogBuilder variableCatalogBuilder = new VariableCatalogBuilder();
 
     private Map<TemplateGroupTypeEnum, ProductGenerator> generatorMap;
 
@@ -92,6 +99,23 @@ public class GeneratorServiceImpl implements GeneratorService {
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
         ProductGenerator generator = generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType()));
         return renderForTest(templateTestQuery.getTemplateGroupType(), templateVO, generator.testDataModel(templateTestQuery, project));
+    }
+
+    @Override
+    public List<VariableNodeVO> testDataModel(TemplateTestQuery templateTestQuery) {
+        TemplateGroupTypeEnum groupType = EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType());
+        if (groupType == null) {
+            // 不静默返回空列表，否则面板只会显示「无变量」而说不出原因（与 VariableCatalogServiceImpl 同款报错）
+            throw new BusinessException("模板组类型错误, 模板组id: {}", templateTestQuery.getTemplateGroupId());
+        }
+        ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
+        Object dataModel = generator(groupType).testDataModel(templateTestQuery, project);
+        Class<?> rootModelClass = switch (groupType) {
+            case PROJECT -> ProjectModel.class;
+            case TABLE -> TableModel.class;
+            case ENUM -> EnumModel.class;
+        };
+        return variableCatalogBuilder.build(rootModelClass, dataModel);
     }
 
     private ProductGenerator generator(GeneratorQuery query) {

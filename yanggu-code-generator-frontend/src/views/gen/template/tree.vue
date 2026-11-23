@@ -7,6 +7,7 @@
 		:modal="false"
 		body-class="template-tree-drawer-body"
 		:before-close="handleClose"
+		destroy-on-close
 	>
 		<el-splitter class="tree-splitter" style="height: 100%">
 			<!-- 左侧：树结构 -->
@@ -320,7 +321,9 @@ watch(
 	id => {
 		// 等待 el-tree 渲染完成
 		nextTick(() => {
-			const dom = treeRef.value.$el.querySelector(`[data-key="${id}"]`)
+			// 抽屉 destroy-on-close 后本 watch 仍可能触发一次，此时 treeRef 已卸载为 null，
+			// 与下方 codeScrollbarRef 同样用可选链，避免 nextTick 回调里抛 TypeError
+			const dom = treeRef.value?.$el?.querySelector(`[data-key="${id}"]`)
 			if (dom) {
 				// 树节点滚动到可视区域
 				dom.scrollIntoView({
@@ -560,6 +563,15 @@ const handleNodeCollapse = (data: Tree) => {
 
 // 初始化方法
 const init = async () => {
+	// destroy-on-close 只销毁抽屉内容 DOM、组件实例常驻，需手动复位上次打开遗留的状态，保证每次打开都是干净开局
+	templateTreeData.tabList = []
+	templateTreeData.activeItemId = -1
+	expandedKeys.value = []
+	treeSearchText.value = ''
+	treeFullScreen.value = false
+	variablePanelVisible.value = false
+	panelSizeInitialized = false
+
 	const loadingInstance = ElLoading.service({ target: '.tree-splitter', text: '数据加载中...', ...LOADING_MASK_OPTIONS })
 	try {
 		const data = await genTemplateApi.treeData(props.templateGroupId)

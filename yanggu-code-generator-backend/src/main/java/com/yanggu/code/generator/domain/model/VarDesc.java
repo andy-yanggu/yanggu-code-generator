@@ -26,4 +26,9 @@ public @interface VarDesc {
      * 渲染时可能为 null，模板需 &lt;#if xxx??&gt; 保护
      */
     boolean nullable() default false;
+
+    /**
+     * 敏感字段（数据源口令等），带值目录展示时一律掩码，不靠字段名白名单防止重命名漏脱敏
+     */
+    boolean sensitive() default false;
 }

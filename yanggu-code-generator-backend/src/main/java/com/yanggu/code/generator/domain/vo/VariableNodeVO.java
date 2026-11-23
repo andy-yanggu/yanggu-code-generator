@@ -56,6 +56,12 @@ public class VariableNodeVO {
     private Boolean nullable;
 
     /**
+     * 渲染时的实际值文本（仅带值目录填充；敏感值已掩码，集合类为「共 N 条」）；结构目录为 null
+     */
+    @Schema(description = "渲染时的实际值文本，结构目录为 null")
+    private String value;
+
+    /**
      * 子变量列表
      */
     @Schema(description = "子变量列表")

@@ -71,6 +71,8 @@ export interface VariableNode {
 	loopVar: string
 	// 渲染时是否可能为 null
 	nullable: boolean
+	// 渲染时的实际值文本（敏感值已掩码，集合类为「共 N 条」）；仅测试页带值目录填充，结构目录为 undefined
+	value?: string
 	// 子变量列表
 	children: VariableNode[]
 }
