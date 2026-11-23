@@ -8,13 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 模板变量目录构建器：反射 Model 类生成变量树
@@ -94,7 +88,7 @@ public class VariableCatalogBuilder {
         if (Collection.class.isAssignableFrom(rawType)) {
             Class<?> elementType = resolveElementType(field.getGenericType());
             node.setJavaType(describeCollection(rawType, elementType));
-            if (elementType != null && isModel(elementType)) {
+            if (isModel(elementType)) {
                 node.setKind(VariableKindEnum.MODEL_LIST);
                 if (owner == null) {
                     node.setChildren(buildModel(elementType, null, node.getPath(), visiting));

@@ -3,9 +3,6 @@ package com.yanggu.code.generator.service.impl;
 import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
-import com.yanggu.code.generator.domain.model.EnumModel;
-import com.yanggu.code.generator.domain.model.ProjectModel;
-import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.PreviewTemplateVO;
@@ -110,12 +107,8 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
         Object dataModel = generator(groupType).testDataModel(templateTestQuery, project);
-        Class<?> rootModelClass = switch (groupType) {
-            case PROJECT -> ProjectModel.class;
-            case TABLE -> TableModel.class;
-            case ENUM -> EnumModel.class;
-        };
-        return variableCatalogBuilder.build(rootModelClass, dataModel);
+        // 根模型类型与变量目录链路共用 TemplateModelMapping，新增类型时只需改那一处
+        return variableCatalogBuilder.build(TemplateModelMapping.of(groupType).rootModelClass(), dataModel);
     }
 
     private ProductGenerator generator(GeneratorQuery query) {

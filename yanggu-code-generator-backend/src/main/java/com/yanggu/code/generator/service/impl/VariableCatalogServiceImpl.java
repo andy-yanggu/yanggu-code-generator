@@ -5,15 +5,13 @@ import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
-import com.yanggu.code.generator.domain.model.EnumModel;
-import com.yanggu.code.generator.domain.model.ProjectModel;
-import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.enums.VariableKindEnum;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
 import com.yanggu.code.generator.service.TemplateGroupService;
 import com.yanggu.code.generator.service.VariableCatalogService;
+import com.yanggu.code.generator.service.support.TemplateModelMapping;
 import com.yanggu.code.generator.service.support.VariableCatalogBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,10 @@ public class VariableCatalogServiceImpl implements VariableCatalogService {
 
     @Autowired
     private TemplateGroupService templateGroupService;
+
     @Autowired
     private TemplateGroupPropertyService templateGroupPropertyService;
+
     // 构建器无状态、不起 Spring 依赖，保持规格 4.3 的「非 bean」约束，直接实例化
     private final VariableCatalogBuilder variableCatalogBuilder = new VariableCatalogBuilder();
 
@@ -45,21 +45,13 @@ public class VariableCatalogServiceImpl implements VariableCatalogService {
             // 不静默返回空列表，否则面板只会显示「无变量」而说不出原因
             throw new BusinessException("模板组类型错误, 模板组id: {}", templateGroupId);
         }
-        Class<?> rootModelClass = switch (groupType) {
-            case PROJECT -> ProjectModel.class;
-            case TABLE -> TableModel.class;
-            case ENUM -> EnumModel.class;
-        };
-        // 决策 4：只展开当前模板组自己的属性 Map
-        String matchName = switch (groupType) {
-            case PROJECT -> "projectTemplatePropertyData";
-            case TABLE -> "tableTemplatePropertyData";
-            case ENUM -> "enumTemplatePropertyData";
-        };
+        // 类型→根模型/自身属性 Map 的映射收拢到 TemplateModelMapping，与测试数据模型链路共用
+        TemplateModelMapping mapping = TemplateModelMapping.of(groupType);
 
         List<TemplateGroupPropertyEntity> propertyList = templateGroupPropertyService.listByGroupId(List.of(templateGroupId));
-        List<VariableNodeVO> catalog = variableCatalogBuilder.build(rootModelClass);
-        fillMapNode(catalog, matchName, propertyList);
+        List<VariableNodeVO> catalog = variableCatalogBuilder.build(mapping.rootModelClass());
+        // 决策 4：只展开当前模板组自己的属性 Map
+        fillMapNode(catalog, mapping.propertyMapName(), propertyList);
         log.debug("模板组 {} 类型 {} 根变量数 {}", templateGroupId, groupType, catalog.size());
         return catalog;
     }
