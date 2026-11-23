@@ -11,6 +11,7 @@ export type ComponentType =
 	| 'switch'
 	| 'radio'
 	| 'checkbox'
+	| 'segmented'
 	| 'date-picker'
 	| 'datetime-picker'
 	| 'date-range'

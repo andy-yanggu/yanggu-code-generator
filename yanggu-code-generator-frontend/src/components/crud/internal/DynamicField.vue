@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ElCascader, ElCheckboxGroup, ElDatePicker, ElInput, ElInputNumber, ElRadioGroup, ElSelect, ElSwitch, ElTreeSelect } from 'element-plus'
+import { ElCascader, ElCheckboxGroup, ElDatePicker, ElInput, ElInputNumber, ElRadioGroup, ElSegmented, ElSelect, ElSwitch, ElTreeSelect } from 'element-plus'
 import type { ComponentType, FormFieldSchema } from '@/types/schema'
 import { DEFAULT_FIELD_CLEARABLE, DEFAULT_FIELD_FILTERABLE } from '@/config/crud'
 
@@ -46,6 +46,8 @@ const currentComponent = computed(() => {
 			return ElRadioGroup
 		case 'checkbox':
 			return ElCheckboxGroup
+		case 'segmented':
+			return ElSegmented
 		case 'switch':
 			return ElSwitch
 		case 'date-picker':
@@ -101,6 +103,10 @@ const getComponentProps = computed(() => {
 		case 'radio':
 		case 'checkbox':
 			return { options }
+		// 分段器只消费 options + 宽度：placeholder / clearable / filterable 非其声明 props，
+		// 下发会落为无效 DOM 属性，故不走 baseProps
+		case 'segmented':
+			return { options, style }
 		case 'date-picker':
 			return { ...baseProps, type: 'date', valueFormat: 'YYYY-MM-DD' }
 		case 'datetime-picker':

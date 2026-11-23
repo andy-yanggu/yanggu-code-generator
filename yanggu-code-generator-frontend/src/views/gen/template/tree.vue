@@ -132,20 +132,31 @@
 											<text-tooltip :title="`路径：${fullFilePath}`" :tooltip-content="fullFilePath" max-width="100%"></text-tooltip>
 										</el-col>
 										<el-col :span="7" style="text-align: right">
-											<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent">
-												测试
-											</el-button>
-											<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">
-												保存
-											</el-button>
-											<el-button size="small" @click="handleToggleFullScreen()">
-												<svg-icon :icon="treeFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
-												{{ treeFullScreen ? '退出' : '全屏' }}
-											</el-button>
-											<el-button size="small" :type="variablePanelVisible ? 'primary' : 'default'" plain @click="toggleVariablePanel">
-												<svg-icon icon="icon-variable" style="margin-right: 5px"></svg-icon>
-												变量
-											</el-button>
+											<el-tooltip content="用当前编辑内容试渲染" placement="bottom">
+												<el-button v-if="![0, 2].includes(activeTabItem.templateType)" size="small" type="warning" :icon="DocumentChecked" @click="testTemplateContent">
+													测试
+												</el-button>
+											</el-tooltip>
+											<!-- 禁用态也照弹：实测 disabled 只抑制 click，mouseenter/mouseover 与 :hover 仍命中按钮本身，
+											     所以不必外层再包一个 span 去承载 tooltip -->
+											<el-tooltip :content="activeTabItem.isEdited ? '保存当前文件（Ctrl+S）' : '当前文件无改动'" placement="bottom">
+												<el-button :disabled="!activeTabItem.isEdited" size="small" type="primary" :icon="Edit" :loading="submitLoading" @click="saveTemplateContent">
+													保存
+												</el-button>
+											</el-tooltip>
+											<!-- 文案说清行为边界：只翻 treeFullScreen 走 CSS 铺满，没走原生全屏，所以 ESC 退不掉 -->
+											<el-tooltip content="编辑区铺满窗口（ESC 无效）" placement="bottom">
+												<el-button size="small" @click="handleToggleFullScreen()">
+													<svg-icon :icon="treeFullScreen ? 'icon-fullscreen-exit' : 'icon-fullscreen'" style="margin-right: 5px"></svg-icon>
+													{{ treeFullScreen ? '退出' : '全屏' }}
+												</el-button>
+											</el-tooltip>
+											<el-tooltip content="Freemarker 变量目录" placement="bottom">
+												<el-button size="small" :type="variablePanelVisible ? 'primary' : 'default'" plain @click="toggleVariablePanel">
+													<svg-icon icon="icon-variable" style="margin-right: 5px"></svg-icon>
+													变量
+												</el-button>
+											</el-tooltip>
 										</el-col>
 									</el-row>
 									<el-divider style="margin: 5px 0"></el-divider>

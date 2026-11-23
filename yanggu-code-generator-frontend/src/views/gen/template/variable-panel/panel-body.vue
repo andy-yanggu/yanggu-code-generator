@@ -1,11 +1,26 @@
 <template>
 	<div class="panel-body">
+		<!-- 左右分组：标题与问号同属「这是什么」贴左，统计与刷新靠右。之前四个元素用同一个 6px 间距在左端串成一排，
+		     实测 257px 的行只用了 173px、右边 84px 全程空着，拥挤感来自堆积而不是宽度不够 -->
 		<div class="panel-header">
-			<el-text tag="b" size="small">Freemarker变量</el-text>
-			<el-tag size="small" type="info" effect="plain">{{ totalCount }}</el-tag>
-			<el-button link size="small" :icon="Refresh" :loading="loading" title="重新加载" @click="emit('reload')"></el-button>
+			<el-text class="panel-title" tag="b" size="small" truncated>Freemarker变量</el-text>
+			<!-- 双击是个隐形交互，行内插入按钮又只在 hover 时出现，解释性文案需要一个落脚处 -->
+			<el-tooltip placement="bottom-start" :show-after="200">
+				<template #content>
+					<div style="max-width: 240px; line-height: 1.6; white-space: pre-line">{{ usageTip }}</div>
+				</template>
+				<el-icon class="header-tip-icon"><QuestionFilled></QuestionFilled></el-icon>
+			</el-tooltip>
+			<div class="header-actions">
+				<!-- 总数不用 el-tag：面板每一行都在用 tag（类型 / 值 / 可空），标题栏再带边框会把统计读成又一个标签 -->
+				<el-text class="panel-count" size="small" type="info">共 {{ totalCount }} 项</el-text>
+				<el-tooltip content="重新加载">
+					<el-button link size="small" :icon="Refresh" :loading="loading" @click="emit('reload')"></el-button>
+				</el-tooltip>
+			</div>
 		</div>
-		<el-input v-model="keyword" size="small" clearable :prefix-icon="Search" placeholder="搜索变量名 / 说明" style="margin-bottom: 6px"></el-input>
+		<!-- 行间距由 .panel-body 的 row-gap 统一掌控，不在子项上再挂内联 margin -->
+		<el-input v-model="keyword" size="small" clearable :prefix-icon="Search" placeholder="搜索变量名 / 说明"></el-input>
 		<!-- 已有目录时失败只加一条面板内提示，不把旧树换掉（规格 6.2 ①「保留上一次成功加载的目录」、6.3「保留上次目录 + 面板内提示重试」） -->
 		<div v-if="error && totalCount > 0" class="panel-error">
 			<el-text size="small" type="danger">{{ error }}</el-text>
@@ -27,7 +42,9 @@
 				class="panel-tree"
 			>
 				<template #default="{ data }">
-					<div class="variable-row">
+					<!-- 双击整行即插入：热区比 hover 才出现的「插」按钮大很多；不可插的行（元素行 / 对象 / MAP / 分组）
+					     由 buildInsertText 返回 null 静默兜住，与这些行本来就不显示插入按钮一致 -->
+					<div class="variable-row" @dblclick="handleRowDblclick($event, data)">
 						<template v-if="data.kind === 'GROUP'">
 							<el-text tag="b" size="small">{{ data.name }}（{{ data.children.length }}）</el-text>
 						</template>
@@ -44,11 +61,6 @@
 							<el-tooltip v-if="data.nullable" content="该变量渲染时可能为 null，模板需用 <#if xxx??> 保护" placement="left">
 								<el-tag size="small" type="warning" effect="plain">可空</el-tag>
 							</el-tooltip>
-							<el-tooltip v-if="canInsert(data)" :content="disabled ? '请先打开一个模板文件' : '插入到光标处'" placement="left">
-								<el-button class="row-icon insert-button" link size="small" :disabled="disabled" @click.stop="handleInsert(data)">
-									{{ data.kind === 'SCALAR' ? '插' : '插循环' }}
-								</el-button>
-							</el-tooltip>
 						</template>
 					</div>
 				</template>
@@ -58,9 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { Refresh, Search } from '@element-plus/icons-vue'
+import { QuestionFilled, Refresh, Search } from '@element-plus/icons-vue'
 import type { VariableNode } from '@/types'
-import { buildInsertText, buildVariableTree, canInsert, countVariables, type DisplayVariableNode, kindTag, matchKeyword } from '../variable-utils'
+import { buildInsertText, buildVariableTree, countVariables, type DisplayVariableNode, kindTag, matchKeyword } from '../variable-utils'
 
 defineOptions({
 	name: 'VariablePanelBody'
@@ -116,6 +128,14 @@ const totalCount = computed(() => countVariables(props.catalog, props.valueMode)
 // 改成指向级联选择器；编辑器目录与选择无关，保留原文案
 const emptyDescription = computed(() => (props.valueMode ? '请先选择测试对象' : '该模板组无可用变量'))
 
+// 两种目录要多交代一句的东西不一样：带值目录的灰底标签看着像硬编码样例值，得说明它来自真实渲染数据且敏感字段已掩码；
+// 结构目录则要点明口径来自 Model 类。文案里的 <#list> 只能放在脚本字符串里，写进模板会被当成标签解析
+const usageTip = computed(() =>
+	props.valueMode
+		? '双击任意一行即可把变量插到编辑器光标处\n列表行插入 <#list …> 循环骨架，元素行（field[0]）与对象 / 属性行不参与插入\n灰底标签是所选测试对象的真实渲染值，敏感字段已由后端掩码'
+		: '双击任意一行即可把变量插到编辑器光标处\n列表行插入 <#list …> 循环骨架\n目录来自模板组绑定的 Model 类'
+)
+
 // 默认只展开顶层分组，268 条全展开反而看不到东西
 const expandedKeyList = computed(() => treeData.value.filter(item => item.kind === 'GROUP').map(item => item.uid))
 
@@ -127,6 +147,11 @@ watch([keyword, treeData, treeRef], () => treeRef.value?.filter?.(keyword.value)
 const filterNodeMethod = (value: string, data: Record<string, any>) => matchKeyword(data as DisplayVariableNode, value)
 
 const handleInsert = (data: DisplayVariableNode) => {
+	// 禁用态判定收在这里而不是只给按钮加 :disabled：按钮挡得住单击，挡不住行级双击，
+	// 而测试页切到「渲染结果」时编辑器仍挂在 v-model 上，绕开门控会往看不见的模板正文里写内容
+	if (props.disabled) {
+		return
+	}
 	const result = buildInsertText(data)
 	if (!result) {
 		return
@@ -137,6 +162,17 @@ const handleInsert = (data: DisplayVariableNode) => {
 		ElMessage.warning('编辑器尚未就绪，请稍后重试')
 	}
 }
+
+// 按钮上连击会派生两次 click（各插一次），再叠加一次冒泡到行的 dblclick 就变成插三次，
+// 所以这里按事件源把插入按钮排除。本来想用 @dblclick.stop 拦，实测拦不住：
+// EP Button 只把 click 声明成 emit，dblclick 只能走 attrs 透传，而外层 el-tooltip 会重建 trigger 属性，
+// 这条链不可靠；改成看 target 就不依赖任何组件内部实现
+const handleRowDblclick = (event: MouseEvent, data: DisplayVariableNode) => {
+	if ((event.target as HTMLElement).closest('.insert-button')) {
+		return
+	}
+	handleInsert(data)
+}
 </script>
 
 <style scoped>
@@ -145,13 +181,54 @@ const handleInsert = (data: DisplayVariableNode) => {
 	flex: 1;
 	min-height: 0;
 	flex-direction: column;
+	/* 纵向节奏统一由这里给：之前靠 header 的 margin-bottom 加搜索框的内联 margin-bottom 两段各自拼，
+		改一处就漏一处（实测去掉内联值后搜索框与目录之间直接贴成了 0） */
+	row-gap: 8px;
 }
 
 .panel-header {
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	margin-bottom: 6px;
+	/* 行高对齐下方 24px 的搜索框：原来 header 只有 20px，两行基线错位也是这一带显得紧的原因之一 */
+	height: 24px;
+	/* 标题与问号靠这个间距 + 图标自身 padding 拉开，视觉上约 6px */
+	gap: 4px;
+}
+
+/* flex 子项默认 min-width:auto 撑不开省略号，这里必须归零，面板拖到 240 下限时标题自己缩而不挤右侧控件 */
+.panel-title {
+	min-width: 0;
+}
+
+/* 右组用 margin-left:auto 顶到行尾，把原本堆在末尾的空白让给两组之间 */
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.panel-count {
+	/* 数字等宽，加载后项数变化时不会把右边的刷新按钮推得左右跳 */
+	font-variant-numeric: tabular-nums;
+}
+
+/* 说明图标：14px 本体热区太小，补 padding 抬到 18px。
+   必须同时改 content-box：EP 全局重置了 box-sizing:border-box，否则 padding 会吃掉 el-icon 的 1em 宽高、
+   盒子仍是 14px 而字形被挤小 */
+.header-tip-icon {
+	box-sizing: content-box;
+	padding: 2px;
+	font-size: 14px;
+	color: var(--el-text-color-secondary);
+	/* tooltip 是 hover 触发，点它没有任何动作，用 help 说「这里有解释」；
+		pointer 承诺的是「我能点」，反而给了个兑现不了的空头承诺 */
+	cursor: help;
+}
+
+/* 可交互感靠 hover 变色给，不靠光标：tooltip 弹出来本身就是最直接的反应 */
+.header-tip-icon:hover {
+	color: var(--el-color-primary);
 }
 
 .panel-error {
@@ -159,7 +236,6 @@ const handleInsert = (data: DisplayVariableNode) => {
 	align-items: center;
 	justify-content: space-between;
 	gap: 6px;
-	margin-bottom: 6px;
 	padding: 4px 6px;
 	border-radius: 4px;
 	background: var(--el-color-danger-light-9);
@@ -176,6 +252,9 @@ const handleInsert = (data: DisplayVariableNode) => {
 	gap: 4px;
 	width: 100%;
 	font-size: 12px;
+	/* 双击插入是本行的主交互，默认的双击选词高亮会看着像行被选中了，这里关掉；
+	   代价是这行的文字不能再拖选复制 */
+	user-select: none;
 }
 
 .variable-name {
