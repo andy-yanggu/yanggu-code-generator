@@ -144,7 +144,7 @@
 								</el-main>
 							</el-container>
 						</el-splitter-panel>
-						<el-splitter-panel v-if="variablePanelVisible" :size="clampedVariableSize" :min="240" :max="560" @update:size="variablePanelSize = $event">
+						<el-splitter-panel v-if="variablePanelVisible" :size="clampedSize" :min="240" :max="560" @update:size="panelSize = $event">
 							<variable-panel
 								:catalog="variableCatalog"
 								:loading="variableLoading"
@@ -156,14 +156,8 @@
 							></variable-panel>
 						</el-splitter-panel>
 					</el-splitter>
-					<!-- 收起态常驻右缘的 28px 竖柄，与头部「变量」按钮控制同一个状态 -->
-					<el-tooltip v-if="!variablePanelVisible" content="展开变量面板" placement="left">
-						<div class="variable-edge" @click="toggleVariablePanel">
-							<el-icon class="variable-edge-arrow"><ArrowLeft></ArrowLeft></el-icon>
-							<span class="variable-edge-text">变量</span>
-							<span v-if="variableTotal !== null" class="variable-edge-count">{{ variableTotal }}</span>
-						</div>
-					</el-tooltip>
+					<!-- 收起态常驻右缘的 28px 竖柄，与头部「变量」按钮控制同一个状态（共享件自带 tooltip 与「目录未就绪不渲染徽标」降级） -->
+					<variable-edge v-if="!variablePanelVisible" :count="variableTotal" @toggle="toggleVariablePanel"></variable-edge>
 				</div>
 			</el-splitter-panel>
 		</el-splitter>
@@ -179,11 +173,12 @@
 <script setup lang="ts">
 import CodeMirror from '@/business/code-mirror/index.vue'
 import { Action, CascaderValue } from 'element-plus'
-import { ArrowLeft, Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
+import { Check, CopyDocument, Document, DocumentAdd, Download, Edit, Refresh } from '@element-plus/icons-vue'
 import { copyToClipboard, isEmpty } from '@/utils/tool'
 import TextTooltip from '@/components/text-tooltip/index.vue'
 import SvgIcon from '@/components/svg-icon/index.vue'
 import VariablePanel from '@/views/gen/template/variable-panel/index.vue'
+import VariableEdge from '@/views/gen/template/variable-panel/variable-edge.vue'
 import { genGeneratorApi, genTemplateApi, genTemplateGroupApi } from '@/api'
 import { GeneratorQuery, Result, SubmitOptions } from '@/types'
 import { useInitForm, useSubmitHandler } from '@/hooks'
@@ -191,6 +186,7 @@ import OptionLabel from '@/components/option/label/index.vue'
 import GenTemplateForm from '@/views/gen/template/form.vue'
 import { LOADING_MASK_OPTIONS } from '@/components/loading-icon/loading-mask'
 import { useVariableValueCatalog } from './variable-panel/use-variable-value-catalog'
+import { useVariablePanelSize } from './variable-panel/use-variable-panel-size'
 import { countVariables } from './variable-utils'
 
 defineOptions({
@@ -266,50 +262,10 @@ const toggleVariablePanel = () => {
 	variablePanelVisible.value = !variablePanelVisible.value
 }
 
-// 面板宽度数值体系完全对齐 tree.vue（默认 320px、区间 [240, 560]、首次展开取容器 28%），
-// 这里不抽 composable：第三处重复出现时再合并，本次只新增不重构
+// 面板宽度数值体系走共享件 use-variable-panel-size（默认 320px、区间 [240, 560]、编辑区下限 320 且窄容器退让、首次展开取容器 28%），
+// 与 tree-v2.vue 同源：实测容器同样取编辑区的内层 el-splitter
 const editorSplitterRef = ref()
-const editorSplitterSize = useElementSize(editorSplitterRef)
-const variablePanelSize = ref(320)
-let panelSizeInitialized = false
-
-// 编辑区下限 320px；容器窄到放不下「320 + 面板下界 240」时退让，优先保住面板的 240
-const editorFloor = computed(() => {
-	const width = editorSplitterSize.width.value
-	if (!width) {
-		return 320
-	}
-	return Math.max(0, Math.min(320, width - 240))
-})
-
-// 面板区间 [240, min(560, 容器 - 编辑区下限)]：与两块 panel 上声明的 min/max 完全等价，
-// 这样 EP 拖拽路径 clamp 出来的结果就等于我算的结果，不会两套值并存
-const clampedVariableSize = computed(() => {
-	const width = editorSplitterSize.width.value
-	if (!width) {
-		return variablePanelSize.value
-	}
-	const upper = Math.max(240, Math.min(560, width - editorFloor.value))
-	return Math.min(Math.max(variablePanelSize.value, 240), upper)
-})
-
-// 面板收起时第二块已卸载，第一块必须铺满整个容器；展开时直接取容器减去面板，
-// 不留毫厘给 EP 的归一化分支（两块之和只要不等于容器就会触发等比缩放）
-const editorPanelSize = computed(() => {
-	const width = editorSplitterSize.width.value
-	if (!width) {
-		return undefined
-	}
-	return variablePanelVisible.value ? Math.max(0, width - clampedVariableSize.value) : width
-})
-
-// 首次展开按容器 28% 取宽，之后保留用户拖拽宽度
-watch(variablePanelVisible, visible => {
-	if (visible && !panelSizeInitialized && editorSplitterSize.width.value) {
-		panelSizeInitialized = true
-		variablePanelSize.value = Math.round(editorSplitterSize.width.value * 0.28)
-	}
-})
+const { editorFloor, clampedSize, editorPanelSize, panelSize, resetInit } = useVariablePanelSize(editorSplitterRef, variablePanelVisible)
 
 // 只有「原始模板」 tab 有可写编辑器，渲染结果 tab 是 read-only
 const canInsertVariable = computed(() => testData.activeName === 'template')
@@ -387,7 +343,7 @@ const init = async (templateGroupId: number, templateGroupType: number, template
 
 	// 面板与值目录都是上次打开的遗留状态，抽屉 destroy-on-close 只销毁 DOM、组件实例常驻，需手动复位
 	variablePanelVisible.value = false
-	panelSizeInitialized = false
+	resetInit()
 	valueProjectId.value = 0
 	valueTestId.value = 0
 	loadVariableCatalog()
@@ -718,48 +674,6 @@ defineExpose({
 	/* 不能是 0：一旦实测宽度 < 面板下界 240，两块之和就无法同时满足「面板 ≥ 240」与「两块之和 = 容器」，
 	   EP 会退回等比归一化把面板压到 240 以下；给分栏一个 240 硬底，面板就能守住下界 */
 	min-width: 240px;
-}
-
-/* 收起态的变量面板竖柄：右缘 28px 常驻入口 */
-.variable-edge {
-	flex: none;
-	width: 28px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	cursor: pointer;
-	border-left: 1px solid var(--el-border-color-lighter);
-	background: var(--el-fill-color-lighter);
-	color: var(--el-text-color-secondary);
-	user-select: none;
-}
-
-.variable-edge:hover {
-	background: var(--el-color-primary-light-9);
-	color: var(--el-color-primary);
-}
-
-.variable-edge-arrow {
-	font-size: 12px;
-}
-
-.variable-edge-text {
-	writing-mode: vertical-lr;
-	letter-spacing: 4px;
-	font-size: 12px;
-}
-
-.variable-edge-count {
-	min-width: 18px;
-	padding: 0 5px;
-	border-radius: 8px;
-	background: var(--el-color-primary);
-	color: #fff;
-	font-size: 11px;
-	line-height: 16px;
-	text-align: center;
 }
 
 .right-container {

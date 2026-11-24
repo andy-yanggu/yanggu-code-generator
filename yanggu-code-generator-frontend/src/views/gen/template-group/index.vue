@@ -18,20 +18,26 @@
 				<el-button type="primary" link @click="propertyHandler(row)">{{ row.groupPropertyCount }}个</el-button>
 			</template>
 
-			<!-- 操作列：模板 + 属性 + 修改 + 更多（2×2 网格） -->
+			<!-- 操作列：模板 + 模板v2 + 属性 + 修改 + 更多（2×2 网格 + 对照切换） -->
 			<template #table-action="{ row, tableHook: t, dialog }">
 				<el-row>
 					<el-col :span="12">
 						<el-button type="primary" link :icon="Files" @click="treeData(row)">模板</el-button>
 					</el-col>
 					<el-col :span="12">
-						<el-button type="primary" link :icon="List" @click="propertyHandler(row)">属性</el-button>
+						<!-- v2 并行对照入口：走拆分后的 tree-v2 组件集，v1 冻结不动 -->
+						<el-button type="primary" link :icon="Files" @click="treeDataV2(row)">模板v2</el-button>
 					</el-col>
 				</el-row>
 				<el-row>
 					<el-col :span="12">
+						<el-button type="primary" link :icon="List" @click="propertyHandler(row)">属性</el-button>
+					</el-col>
+					<el-col :span="12">
 						<el-button type="primary" link :icon="Edit" @click="dialog?.open('update', row[t.refs.primaryKey])">修改</el-button>
 					</el-col>
+				</el-row>
+				<el-row>
 					<el-col :span="12">
 						<el-dropdown>
 							<el-button type="primary" link :icon="More">更多</el-button>
@@ -60,13 +66,21 @@
 			</template>
 		</crud-page>
 
-		<!-- 模板树弹窗 -->
+		<!-- 模板树弹窗（v1，冻结） -->
 		<template-tree
 			ref="treeUpdateRef"
 			:template-group-id="currentTemplateGroup.id"
 			:template-group-name="currentTemplateGroup.groupName"
 			:template-group-type="currentTemplateGroup.type"
 		></template-tree>
+
+		<!-- 模板树弹窗（v2，拆分对照） -->
+		<template-tree-v2
+			ref="treeV2UpdateRef"
+			:template-group-id="currentTemplateGroup.id"
+			:template-group-name="currentTemplateGroup.groupName"
+			:template-group-type="currentTemplateGroup.type"
+		></template-tree-v2>
 
 		<!-- 属性管理弹窗 -->
 		<template-group-property
@@ -86,6 +100,7 @@ import type { CrudField, GenTemplateGroupCopyDTO, GenTemplateGroupEntity, GenTem
 import { useCrud } from '@/hooks/use-crud'
 import CrudPage from '@/components/crud/CrudPage.vue'
 import TemplateTree from '@/views/gen/template/tree.vue'
+import TemplateTreeV2 from '@/views/gen/template/tree-v2.vue'
 import TemplateGroupProperty from '@/views/gen/template-group-property/index.vue'
 import { CopyDocument, Delete, Download, Edit, Files, List, More, Plus, Upload } from '@element-plus/icons-vue'
 
@@ -178,12 +193,21 @@ const { tableHook, formHook } = useCrud<GenTemplateGroupEntity, GenTemplateGroup
 // 子弹窗状态
 const currentTemplateGroup = reactive({ id: -1, groupName: '', type: -1 })
 const treeUpdateRef = ref()
+const treeV2UpdateRef = ref()
 const propertyRef = ref()
 
 const treeData = (row: any) => {
 	Object.assign(currentTemplateGroup, row)
 	nextTick(() => {
 		treeUpdateRef.value.init(row.id)
+	})
+}
+
+// v2 入口：共用 currentTemplateGroup 绑定，区别只在挂载的组件集
+const treeDataV2 = (row: any) => {
+	Object.assign(currentTemplateGroup, row)
+	nextTick(() => {
+		treeV2UpdateRef.value.init(row.id)
 	})
 }
 
