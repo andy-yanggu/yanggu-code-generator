@@ -9,6 +9,7 @@ import com.yanggu.code.generator.domain.model.EnumModel;
 import com.yanggu.code.generator.domain.model.ProjectModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.ProjectFilter;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.mapstruct.TemplateMapstruct;
@@ -72,6 +73,13 @@ class PreviewBuilderBatchTest {
         return group;
     }
 
+    /**
+     * 与 PreviewBuilder#requireTemplateGroup 内部构造的查询参数对齐（只要模板列表），靠 Lombok equals 做参数匹配
+     */
+    private TemplateGroupDetailQuery detailQuery(long id) {
+        return TemplateGroupDetailQuery.of(id, true, false);
+    }
+
     private GeneratorQuery query(ProjectFilter filter) {
         GeneratorQuery query = new GeneratorQuery();
         query.setProductType(0);
@@ -83,7 +91,7 @@ class PreviewBuilderBatchTest {
     /** 表段置空、项目模板组置空叶子，让枚举段成为唯一产物来源 */
     private void stubEmptyTableAndProjectSegments(ProjectEntity project) {
         when(tableService.list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class))).thenReturn(List.of());
-        when(templateGroupService.getById(29L, true)).thenReturn(group(0, List.of()));
+        when(templateGroupService.getDetailById(detailQuery(29L))).thenReturn(group(0, List.of()));
         when(templateMapstruct.entityToVO(List.of())).thenReturn(List.of());
         when(dataModelBuilder.buildProjectDataModel(project)).thenReturn(new ProjectModel());
     }
@@ -101,7 +109,7 @@ class PreviewBuilderBatchTest {
         when(enumService.enumList(100L, List.of(4L))).thenReturn(List.of(enumEntity));
 
         TemplateGroupEntity enumGroup = group(2, List.of(new TemplateEntity()));
-        when(templateGroupService.getById(31L, true)).thenReturn(enumGroup);
+        when(templateGroupService.getDetailById(detailQuery(31L))).thenReturn(enumGroup);
         TemplateVO leaf = new TemplateVO();
         leaf.setId(221L);
         leaf.setParentId(0L);

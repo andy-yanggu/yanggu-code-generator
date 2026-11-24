@@ -76,12 +76,7 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
     void importTemplateGroup(MultipartFile file) throws IOException;
 
     /**
-     * 根据ID查询（包含所有模板）
-     */
-    TemplateGroupEntity getById(Long id, Boolean isIncludeTemplateList);
-
-    /**
-     * 根据ID查询详情
+     * 根据ID查询详情（模板列表、属性列表按查询参数开关按需装配）
      */
     TemplateGroupEntity getDetailById(TemplateGroupDetailQuery query);
 

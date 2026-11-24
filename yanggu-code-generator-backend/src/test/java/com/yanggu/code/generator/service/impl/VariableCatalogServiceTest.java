@@ -3,6 +3,7 @@ package com.yanggu.code.generator.service.impl;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.enums.VariableKindEnum;
 import com.yanggu.code.generator.service.TemplateGroupPropertyService;
@@ -38,6 +39,13 @@ class VariableCatalogServiceTest {
         return entity;
     }
 
+    /**
+     * 与 Impl 内部构造的查询参数对齐（两个开关均 false），靠 Lombok equals 做参数匹配
+     */
+    private TemplateGroupDetailQuery detailQuery(long id) {
+        return TemplateGroupDetailQuery.of(id, false, false);
+    }
+
     private TemplateGroupPropertyEntity property(String key, String title, String defaultValue) {
         TemplateGroupPropertyEntity entity = new TemplateGroupPropertyEntity();
         entity.setPropKey(key);
@@ -52,7 +60,7 @@ class VariableCatalogServiceTest {
 
     @Test
     void tableGroupExpandsOnlyItsOwnPropertyMap() {
-        when(templateGroupService.getById(1L, false)).thenReturn(group(1));
+        when(templateGroupService.getDetailById(detailQuery(1L))).thenReturn(group(1));
         when(templateGroupPropertyService.listByGroupId(List.of(1L)))
                 .thenReturn(List.of(property("useSwagger", "是否启用 swagger", "1"),
                         property("api-prefix", "接口路径前缀", "")));
@@ -75,7 +83,7 @@ class VariableCatalogServiceTest {
 
     @Test
     void nestedMapNodesInsideProjectCatalogAreFilled() {
-        when(templateGroupService.getById(2L, false)).thenReturn(group(0));
+        when(templateGroupService.getDetailById(detailQuery(2L))).thenReturn(group(0));
         when(templateGroupPropertyService.listByGroupId(List.of(2L)))
                 .thenReturn(List.of(property("authMode", "鉴权方式", "token")));
 
@@ -91,7 +99,7 @@ class VariableCatalogServiceTest {
 
     @Test
     void unknownGroupTypeThrowsInsteadOfEmptyCatalog() {
-        when(templateGroupService.getById(3L, false)).thenReturn(group(9));
+        when(templateGroupService.getDetailById(detailQuery(3L))).thenReturn(group(9));
 
         assertThrows(BusinessException.class, () -> variableCatalogService.variableCatalog(3L));
     }

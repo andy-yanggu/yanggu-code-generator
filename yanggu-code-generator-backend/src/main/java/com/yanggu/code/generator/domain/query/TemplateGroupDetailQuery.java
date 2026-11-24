@@ -16,4 +16,15 @@ public class TemplateGroupDetailQuery {
     @Schema(description = "是否包含属性列表")
     private Boolean isIncludePropertyList;
 
+    /**
+     * 按需装配工厂：调用处显式声明要不要模板列表/属性列表，省去逐个 set 的样板
+     */
+    public static TemplateGroupDetailQuery of(Long id, Boolean isIncludeTemplateList, Boolean isIncludePropertyList) {
+        TemplateGroupDetailQuery query = new TemplateGroupDetailQuery();
+        query.setId(id);
+        query.setIsIncludeTemplateList(isIncludeTemplateList);
+        query.setIsIncludePropertyList(isIncludePropertyList);
+        return query;
+    }
+
 }

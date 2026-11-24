@@ -5,6 +5,7 @@ import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.TemplateGroupEntity;
 import com.yanggu.code.generator.domain.entity.TemplateGroupPropertyEntity;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.enums.VariableKindEnum;
@@ -38,8 +39,10 @@ public class VariableCatalogServiceImpl implements VariableCatalogService {
 
     @Override
     public List<VariableNodeVO> variableCatalog(Long templateGroupId) {
-        // 目录不需要模板内容，isIncludeTemplateList 传 false；组不存在时 getById 内部已抛 BusinessException
-        TemplateGroupEntity templateGroup = templateGroupService.getById(templateGroupId, false);
+        // 目录不需要模板列表，属性列表另走 templateGroupPropertyService，两个开关均置 false
+        // 组不存在时 getDetailById 内部已抛 BusinessException
+        TemplateGroupEntity templateGroup = templateGroupService.getDetailById(
+                TemplateGroupDetailQuery.of(templateGroupId, false, false));
         TemplateGroupTypeEnum groupType = EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateGroup.getType());
         if (groupType == null) {
             // 不静默返回空列表，否则面板只会显示「无变量」而说不出原因

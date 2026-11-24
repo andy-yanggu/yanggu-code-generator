@@ -178,26 +178,6 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         return voList;
     }
 
-    /**
-     * 填充模板组属性清单
-     */
-    private void fillPropertyList(List<TemplateGroupVO> voList) {
-        if (CollUtil.isEmpty(voList)) {
-            return;
-        }
-        List<Long> groupIdList = voList.stream()
-                .map(TemplateGroupVO::getId)
-                .toList();
-        Map<Long, List<TemplateGroupPropertyEntity>> collectMap = templateGroupPropertyService.listByGroupId(groupIdList).stream()
-                .collect(Collectors.groupingBy(TemplateGroupPropertyEntity::getTemplateGroupId));
-
-        voList.forEach(vo -> {
-            List<TemplateGroupPropertyEntity> propertyList = collectMap.get(vo.getId());
-            List<TemplateGroupPropertyVO> propertyVOList = templateGroupPropertyMapstruct.entityToVO(propertyList);
-            vo.setPropertyList(propertyVOList);
-        });
-    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void copy(TemplateGroupCopyDTO dto) {
@@ -209,11 +189,8 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
         TemplateGroupEntity add = add(dto);
         Long newTemplateGroupId = add.getId();
 
-        TemplateGroupDetailQuery query = new TemplateGroupDetailQuery();
-        query.setId(oldGroupId);
-        query.setIsIncludeTemplateList(true);
-        query.setIsIncludePropertyList(true);
-        TemplateGroupEntity oldTemplateGroup = getDetailById(query);
+        // 复制需要连带模板树与属性清单，两个开关均开
+        TemplateGroupEntity oldTemplateGroup = getDetailById(TemplateGroupDetailQuery.of(oldGroupId, true, true));
 
         // 先保存所有顶级模板（parentId为null的模板）
         List<TemplateEntity> templateList = oldTemplateGroup.getTemplateList();
@@ -238,13 +215,7 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     @Override
     public ResponseEntity<byte[]> export(List<Long> idList) {
         List<TemplateGroupEntity> list = idList.stream()
-                .map(temp -> {
-                    TemplateGroupDetailQuery query = new TemplateGroupDetailQuery();
-                    query.setId(temp);
-                    query.setIsIncludeTemplateList(true);
-                    query.setIsIncludePropertyList(true);
-                    return getDetailById(query);
-                })
+                .map(id -> getDetailById(TemplateGroupDetailQuery.of(id, true, true)))
                 .toList();
 
         //转换成导出对象
@@ -302,25 +273,15 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
     }
 
     @Override
-    public TemplateGroupEntity getById(Long id, Boolean isIncludeTemplateList) {
-        TemplateGroupEntity templateGroup = selectById(id);
-        if (!isIncludeTemplateList) {
-            return templateGroup;
-        }
-        List<TemplateEntity> templateList = templateService.selectByGroupId(id);
-        templateGroup.setTemplateList(templateList);
-        return templateGroup;
-    }
-
-    @Override
     public TemplateGroupEntity getDetailById(TemplateGroupDetailQuery query) {
         Long id = query.getId();
         TemplateGroupEntity templateGroup = selectById(id);
-        if (query.getIsIncludeTemplateList()) {
+        // 开关未显式赋值时按不装配处理，避免 Boolean 拆箱 NPE
+        if (Boolean.TRUE.equals(query.getIsIncludeTemplateList())) {
             List<TemplateEntity> templateList = templateService.selectByGroupId(id);
             templateGroup.setTemplateList(templateList);
         }
-        if (query.getIsIncludePropertyList()) {
+        if (Boolean.TRUE.equals(query.getIsIncludePropertyList())) {
             List<TemplateGroupPropertyEntity> propertyList = templateGroupPropertyService.listByGroupId(List.of(id));
             templateGroup.setPropertyList(propertyList);
         }
@@ -395,6 +356,26 @@ public class TemplateGroupServiceImpl extends ServiceImpl<TemplateGroupMapper, T
             return List.of();
         }
         return function.apply(projectList);
+    }
+
+    /**
+     * 填充模板组属性清单
+     */
+    private void fillPropertyList(List<TemplateGroupVO> voList) {
+        if (CollUtil.isEmpty(voList)) {
+            return;
+        }
+        List<Long> groupIdList = voList.stream()
+                .map(TemplateGroupVO::getId)
+                .toList();
+        Map<Long, List<TemplateGroupPropertyEntity>> collectMap = templateGroupPropertyService.listByGroupId(groupIdList).stream()
+                .collect(Collectors.groupingBy(TemplateGroupPropertyEntity::getTemplateGroupId));
+
+        voList.forEach(vo -> {
+            List<TemplateGroupPropertyEntity> propertyList = collectMap.get(vo.getId());
+            List<TemplateGroupPropertyVO> propertyVOList = templateGroupPropertyMapstruct.entityToVO(propertyList);
+            vo.setPropertyList(propertyVOList);
+        });
     }
 
     private CascaderDataVO buildProjectCascaderData(ProjectEntity project) {

@@ -15,6 +15,7 @@ import com.yanggu.code.generator.domain.model.ProjectModel;
 import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.ProjectFilter;
+import com.yanggu.code.generator.domain.query.TemplateGroupDetailQuery;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
@@ -277,7 +278,8 @@ public class PreviewBuilder {
         if (templateGroupId == null) {
             throw new BusinessException("项目[" + project.getProjectName() + "]未配置" + label);
         }
-        return templateGroupService.getById(templateGroupId, true);
+        // 渲染链只用模板列表；属性数据由 DataModelBuilder 走 TemplateGroupPropertyDataService 另行取，这里不装配属性清单
+        return templateGroupService.getDetailById(TemplateGroupDetailQuery.of(templateGroupId, true, false));
     }
 
     /**
