@@ -80,6 +80,9 @@ public interface TemplateGroupService extends IService<TemplateGroupEntity> {
      */
     TemplateGroupEntity getDetailById(TemplateGroupDetailQuery query);
 
+    /**
+     * 获取级联数据：按模板组类型分发到对应产物策略，列出该模板组可关联的候选产物
+     */
     List<CascaderDataVO> cascaderData(Integer templateGroupType, Long templateGroupId);
 
 }

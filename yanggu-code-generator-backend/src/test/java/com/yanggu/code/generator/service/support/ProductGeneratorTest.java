@@ -1,5 +1,6 @@
 package com.yanggu.code.generator.service.support;
 
+import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.DatasourceEntity;
 import com.yanggu.code.generator.domain.entity.EnumEntity;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
@@ -9,6 +10,7 @@ import com.yanggu.code.generator.domain.model.ProjectModel;
 import com.yanggu.code.generator.domain.model.TableModel;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
+import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.EnumService;
@@ -19,11 +21,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -157,5 +165,65 @@ class ProductGeneratorTest {
         when(enumService.getById(301L)).thenReturn(enumEntity);
         when(dataModelBuilder.buildEnumDataModel(enumEntity, project)).thenReturn(model);
         assertSame(model, enumGenerator.testDataModel(q, project));
+    }
+
+    // ==================== 候选产物级联数据 ====================
+
+    private ProjectEntity project(Long id, Integer generatorType) {
+        ProjectEntity project = new ProjectEntity();
+        project.setId(id);
+        project.setGeneratorType(generatorType);
+        return project;
+    }
+
+    private TableEntity table(Long id, Long projectId, String tableName) {
+        TableEntity table = new TableEntity();
+        table.setId(id);
+        table.setProjectId(projectId);
+        table.setTableName(tableName);
+        return table;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void tableCascaderGroupsChildrenByProjectInSingleQuery() {
+        // 100 有两张表、101 一张也没有：101 不作为候选
+        when(projectService.listByTableTemplateGroupId(7L)).thenReturn(List.of(project(100L, 1), project(101L, 0)));
+        when(tableService.list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class)))
+                .thenReturn(List.of(table(201L, 100L, "sys_user"), table(202L, 100L, "sys_role")));
+
+        List<CascaderDataVO> nodeList = tableGenerator.cascaderData(7L);
+
+        // 两个项目只触发一次表查询：逐项目查询的 N+1 不得回退
+        verify(tableService, times(1)).list(any(com.baomidou.mybatisplus.core.conditions.Wrapper.class));
+        assertEquals(1, nodeList.size());
+        assertEquals("project_100", nodeList.getFirst().getValue());
+        // value 前缀与 type 同值，前端按 '_' 反解取 ID，改名即破坏契约
+        CascaderDataVO tableNode = nodeList.getFirst().getChildren().getFirst();
+        assertEquals("table", tableNode.getType());
+        assertEquals("table_201", tableNode.getValue());
+        assertEquals(Integer.valueOf(1), tableNode.getGeneratorType());
+    }
+
+    @Test
+    void projectCascaderKeepsProjectsWithoutChildren() {
+        // 项目模板组的候选就是项目本身，无子级可过滤，children 保持不下发
+        when(projectService.listByProjectTemplateGroupId(7L)).thenReturn(List.of(project(100L, 1), project(101L, 0)));
+
+        List<CascaderDataVO> nodeList = projectGenerator.cascaderData(7L);
+
+        assertEquals(2, nodeList.size());
+        assertNull(nodeList.getFirst().getChildren());
+    }
+
+    @Test
+    void invalidTemplateGroupTypeCodeFailsFast() {
+        // 路由组件走字段注入 + @PostConstruct（避开与 TemplateGroupService 之间的构造注入环），测试里手动装配
+        ProductGenerators productGenerators = new ProductGenerators();
+        ReflectionTestUtils.setField(productGenerators, "productGenerators", List.of(tableGenerator, enumGenerator, projectGenerator));
+        productGenerators.initGeneratorMap();
+        assertSame(tableGenerator, productGenerators.getByCode(1));
+        // EnumUtil.getBy 未命中返回 null，交给 switch 只会 NPE，路由必须给明确业务异常
+        assertThrows(BusinessException.class, () -> productGenerators.getByCode(9));
     }
 }

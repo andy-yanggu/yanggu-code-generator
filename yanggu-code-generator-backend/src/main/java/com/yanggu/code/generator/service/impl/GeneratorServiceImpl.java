@@ -1,6 +1,5 @@
 package com.yanggu.code.generator.service.impl;
 
-import cn.hutool.v7.core.util.EnumUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
@@ -10,17 +9,13 @@ import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.domain.vo.TemplateVO;
 import com.yanggu.code.generator.domain.vo.VariableNodeVO;
 import com.yanggu.code.generator.enums.BusinessResultError;
-import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.*;
 import com.yanggu.code.generator.service.support.*;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 代码生成服务实现类
@@ -30,7 +25,7 @@ import java.util.Map;
 public class GeneratorServiceImpl implements GeneratorService {
 
     @Autowired
-    private List<ProductGenerator> productGenerators;
+    private ProductGenerators productGenerators;
 
     @Autowired
     private ProjectService projectService;
@@ -46,14 +41,6 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     // 构建器无状态、不带 Spring 依赖，与 VariableCatalogServiceImpl 同款直接实例化
     private final VariableCatalogBuilder variableCatalogBuilder = new VariableCatalogBuilder();
-
-    private Map<TemplateGroupTypeEnum, ProductGenerator> generatorMap;
-
-    @PostConstruct
-    void initGeneratorMap() {
-        generatorMap = new EnumMap<>(TemplateGroupTypeEnum.class);
-        productGenerators.forEach(generator -> generatorMap.put(generator.type(), generator));
-    }
 
     @Override
     public List<PreviewTemplateVO> preview(GeneratorQuery query) {
@@ -94,33 +81,22 @@ public class GeneratorServiceImpl implements GeneratorService {
         TemplateVO templateVO = templateService.detail(templateTestQuery.getTemplateId(), true);
         templateVO.setTemplateContent(templateTestQuery.getTemplateContent());
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
-        ProductGenerator generator = generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType()));
-        return renderForTest(templateTestQuery.getTemplateGroupType(), templateVO, generator.testDataModel(templateTestQuery, project));
+        Object dataModel = productGenerators.getByCode(templateTestQuery.getTemplateGroupType()).testDataModel(templateTestQuery, project);
+        return renderForTest(templateTestQuery.getTemplateGroupType(), templateVO, dataModel);
     }
 
     @Override
     public List<VariableNodeVO> testDataModel(TemplateTestQuery templateTestQuery) {
-        TemplateGroupTypeEnum groupType = EnumUtil.getBy(TemplateGroupTypeEnum::getCode, templateTestQuery.getTemplateGroupType());
-        if (groupType == null) {
-            // 不静默返回空列表，否则面板只会显示「无变量」而说不出原因（与 VariableCatalogServiceImpl 同款报错）
-            throw new BusinessException("模板组类型错误, 模板组id: {}", templateTestQuery.getTemplateGroupId());
-        }
+        // 类型非法不再静默返回空列表：由路由组件直接报错，此处不重复判空
+        ProductGenerator generator = productGenerators.getByCode(templateTestQuery.getTemplateGroupType());
         ProjectEntity project = projectService.getById(templateTestQuery.getProjectId());
-        Object dataModel = generator(groupType).testDataModel(templateTestQuery, project);
+        Object dataModel = generator.testDataModel(templateTestQuery, project);
         // 根模型类型与变量目录链路共用 TemplateModelMapping，新增类型时只需改那一处
-        return variableCatalogBuilder.build(TemplateModelMapping.of(groupType).rootModelClass(), dataModel);
+        return variableCatalogBuilder.build(TemplateModelMapping.of(generator.type()).rootModelClass(), dataModel);
     }
 
     private ProductGenerator generator(GeneratorQuery query) {
-        return generator(EnumUtil.getBy(TemplateGroupTypeEnum::getCode, query.getProductType()));
-    }
-
-    private ProductGenerator generator(TemplateGroupTypeEnum type) {
-        ProductGenerator generator = generatorMap.get(type);
-        if (generator == null) {
-            throw new IllegalArgumentException("Invalid product type: " + type);
-        }
-        return generator;
+        return productGenerators.getByCode(query.getProductType());
     }
     
     private List<TemplateContentVO> renderTemplateList(GeneratorQuery query) {

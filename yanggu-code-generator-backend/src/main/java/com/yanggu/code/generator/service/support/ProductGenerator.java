@@ -3,13 +3,14 @@ package com.yanggu.code.generator.service.support;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
+import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 
 import java.util.List;
 
 /**
- * 产物生成处理器：按产物类型收口生成编排与 zip 命名，新增产物类型只需新增实现
+ * 产物类型策略：按产物类型收口生成编排、zip 命名、模板测试数据模型与候选产物清单，新增产物类型只需新增实现
  */
 public interface ProductGenerator {
 
@@ -41,5 +42,10 @@ public interface ProductGenerator {
      * 模板测试数据模型：按产物类型构建渲染用数据模型，project 由调用方查好传入避免重复查询
      */
     Object testDataModel(TemplateTestQuery query, ProjectEntity project);
+
+    /**
+     * 候选产物级联数据：给定模板组，列出本产物类型可关联的候选（一级为项目，二级为本类型产物），由各实现自行构建
+     */
+    List<CascaderDataVO> cascaderData(Long templateGroupId);
 
 }
