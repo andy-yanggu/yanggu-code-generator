@@ -12,7 +12,6 @@ import cn.hutool.v7.http.meta.HttpHeaderUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
 import com.yanggu.code.generator.enums.TemplateTypeEnum;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,6 @@ import static cn.hutool.v7.core.date.DateFormatPool.PURE_DATETIME_PATTERN;
  * 统一收口模板内容的输出：zip 打包下载、按模板类型写入本地文件、下载响应头构建。
  * DIRECTORY/TEMPLATE_FILE/BINARY_FILE 三种类型的写入分发集中于此管理。
  */
-@Slf4j
 @Component
 public class DownloadHandler {
 
@@ -102,8 +100,8 @@ public class DownloadHandler {
      */
     public void downloadLocal(List<TemplateContentVO> list) {
         if (CollUtil.isEmpty(list)) {
-            log.warn("待写入数据为空");
-            return;
+            // 与 downloadZip 同源：空产出要报业务异常，静默返回会让调用方拿到 200 后误报“已生成”
+            throw new BusinessException("待写入数据为空");
         }
         for (TemplateContentVO templateContentVO : list) {
             Integer templateType = templateContentVO.getTemplateType();

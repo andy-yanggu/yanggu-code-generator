@@ -12,6 +12,7 @@ import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
+import com.yanggu.code.generator.enums.BusinessResultError;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 import com.yanggu.code.generator.service.EnumService;
 import com.yanggu.code.generator.service.ProjectService;
@@ -121,6 +122,24 @@ class ProductGeneratorTest {
         GeneratorQuery q = query(1, List.of(201L));
         when(previewBuilder.tablePreview(201L, q.getTemplateIds())).thenReturn(List.of(vo("A.java")));
         assertEquals("A.java", tableGenerator.generateSingle(q).getFileName());
+    }
+
+    @Test
+    void tableGenerateSingleRejectsEmptyArtifact() {
+        GeneratorQuery q = query(1, List.of(201L));
+        // 条件表达式为 false 时渲染链产出空列表：必须转成 700 业务异常，不得落到 NoSuchElementException
+        when(previewBuilder.tablePreview(201L, q.getTemplateIds())).thenReturn(List.of());
+        BusinessException exception = assertThrows(BusinessException.class, () -> tableGenerator.generateSingle(q));
+        assertEquals(BusinessResultError.EXECUTION_EXPRESS_ERROR.getCode(), exception.getCode());
+    }
+
+    @Test
+    void projectGenerateSingleRejectsEmptyArtifact() {
+        GeneratorQuery q = query(0, List.of(100L));
+        // 项目覆写了 generateSingle，空产出的处理必须与接口 default 同源
+        when(previewBuilder.projectPreview(100L, q.getTemplateIds())).thenReturn(List.of());
+        BusinessException exception = assertThrows(BusinessException.class, () -> projectGenerator.generateSingle(q));
+        assertEquals(BusinessResultError.EXECUTION_EXPRESS_ERROR.getCode(), exception.getCode());
     }
 
     @Test

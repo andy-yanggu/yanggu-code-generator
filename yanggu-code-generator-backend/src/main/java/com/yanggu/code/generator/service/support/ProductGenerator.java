@@ -1,10 +1,13 @@
 package com.yanggu.code.generator.service.support;
 
+import cn.hutool.v7.core.collection.CollUtil;
+import com.yanggu.code.generator.common.exception.BusinessException;
 import com.yanggu.code.generator.domain.entity.ProjectEntity;
 import com.yanggu.code.generator.domain.query.GeneratorQuery;
 import com.yanggu.code.generator.domain.query.TemplateTestQuery;
 import com.yanggu.code.generator.domain.vo.CascaderDataVO;
 import com.yanggu.code.generator.domain.vo.TemplateContentVO;
+import com.yanggu.code.generator.enums.BusinessResultError;
 import com.yanggu.code.generator.enums.TemplateGroupTypeEnum;
 
 import java.util.List;
@@ -26,11 +29,23 @@ public interface ProductGenerator {
     List<TemplateContentVO> generate(GeneratorQuery query);
 
     /**
-     * 单品生成：单产物 + 单模板维度渲染，校验保证结果恰好一条。表/枚举 generate 已按模板 ID 过滤可直接复用；
+     * 单品生成：单产物 + 单模板维度渲染，入参校验保证结果至多一条。表/枚举 generate 已按模板 ID 过滤可直接复用；
      * 项目需覆写为仅渲染项目自身模板，避免全量预览中排在前面的表/枚举产物被误取
      */
     default TemplateContentVO generateSingle(GeneratorQuery query) {
-        return generate(query).getFirst();
+        return requireSingle(generate(query));
+    }
+
+    /**
+     * 取单品生成的唯一结果：条件表达式为 false 时渲染链会产出空列表，这里统一转成 700 业务异常，
+     * 与模板测试路径同源（前端按 code 播报“表达式不渲染”），不得让它落到 NoSuchElementException
+     * 再被全局兜底成含糊的服务器内部错误
+     */
+    static TemplateContentVO requireSingle(List<TemplateContentVO> contentList) {
+        if (CollUtil.isEmpty(contentList)) {
+            throw new BusinessException(BusinessResultError.EXECUTION_EXPRESS_ERROR);
+        }
+        return contentList.getFirst();
     }
 
     /**

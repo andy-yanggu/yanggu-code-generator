@@ -40,7 +40,8 @@ public class ProjectGenerator implements ProductGenerator {
     @Override
     public TemplateContentVO generateSingle(GeneratorQuery query) {
         // 与 tablePreview/enumPreview 保持入参一致：仅传 ID，项目实体由 PreviewBuilder 内部加载
-        return previewBuilder.projectPreview(query.getProductIds().getFirst(), query.getTemplateIds()).getFirst();
+        return ProductGenerator.requireSingle(
+                previewBuilder.projectPreview(query.getProductIds().getFirst(), query.getTemplateIds()));
     }
 
     @Override
