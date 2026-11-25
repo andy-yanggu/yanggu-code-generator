@@ -22,8 +22,8 @@ public class OracleQuery extends AbstractQuery {
         // 表名查询
         if (StrUtil.isNotBlank(tableName)) {
             if (isLike) {
-                sql.append("and dt.table_name like '%").append(tableName).append("%' ")
-                        .append(" order by dt.table_name asc");
+                // 排序统一由方法末尾的 order by 承担，此处不再追加，避免拼出重复 ORDER BY 的无效 SQL
+                sql.append("and dt.table_name like '%").append(tableName).append("%' ");
             } else {
                 sql.append("and dt.table_name = '").append(tableName).append("' ");
             }

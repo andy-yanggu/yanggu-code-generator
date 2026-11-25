@@ -3,6 +3,7 @@ package com.yanggu.code.generator.util;
 import cn.hutool.v7.core.text.StrUtil;
 import com.yanggu.code.generator.common.exception.BusinessException;
 import freemarker.core.InvalidReferenceException;
+import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.experimental.UtilityClass;
@@ -24,6 +25,9 @@ public class TemplateUtil {
         cfg = new Configuration(Configuration.VERSION_2_3_32);
         // 不要千分位，从根源解决
         cfg.setNumberFormat("0");
+        // 沙箱：禁止模板通过 ?new 实例化任意 Java 类（默认 UNRESTRICTED_RESOLVER 可用 Execute 类执行命令），
+        // 用户可编辑的模板内容不可信，一律拒绝内建类解析
+        cfg.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
     }
 
     /**
