@@ -232,7 +232,7 @@ const handleThemeToggle = (event: MouseEvent) => {
  */
 :root[data-theme-transition='to-dark']::view-transition-old(root) {
 	z-index: 2;
-	animation: 0.4s linear both theme-transition-circle;
+	animation: 0.35s linear both theme-transition-circle;
 }
 
 :root[data-theme-transition='to-dark']::view-transition-new(root) {
@@ -248,7 +248,7 @@ const handleThemeToggle = (event: MouseEvent) => {
  */
 :root[data-theme-transition='to-light']::view-transition-new(root) {
 	z-index: 2;
-	animation: 0.4s linear 1 reverse both theme-transition-circle;
+	animation: 0.35s linear 1 reverse both theme-transition-circle;
 }
 
 :root[data-theme-transition='to-light']::view-transition-old(root) {
