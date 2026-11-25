@@ -23,7 +23,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 生成器数据模型组装器
@@ -117,13 +120,25 @@ public class DataModelBuilder {
         TableModel tableModel = new TableModel();
         fieldModelList.sort(Comparator.comparing(TableFieldModel::getFieldSort));
 
+        // 一次性批量加载本表字段涉及的枚举，消除逐字段 getById 的 N+1
+        Set<Long> enumIdSet = fieldModelList.stream()
+                .map(TableFieldModel::getEnumId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<Long, String> enumNameMap = enumIdSet.isEmpty() ? Map.of()
+                : enumService.listByIds(enumIdSet).stream()
+                .collect(Collectors.toMap(EnumEntity::getId, EnumEntity::getEnumName));
+
         fieldModelList.forEach(fieldModel -> {
             // 属性名首字母大写
             fieldModel.setAttrNamePascal(StrUtil.upperFirst(fieldModel.getAttrName()));
             Long enumId = fieldModel.getEnumId();
             if (enumId != null) {
-                EnumEntity enumEntity = enumService.getById(enumId);
-                fillEnumNaming(fieldModel, enumEntity.getEnumName());
+                String enumName = enumNameMap.get(enumId);
+                // 枚举被删的脏数据：原逐条 getById 会 NPE，此处缺映射则跳过枚举命名填充
+                if (enumName != null) {
+                    fillEnumNaming(fieldModel, enumName);
+                }
             }
         });
         tableModel.setFieldList(fieldModelList);

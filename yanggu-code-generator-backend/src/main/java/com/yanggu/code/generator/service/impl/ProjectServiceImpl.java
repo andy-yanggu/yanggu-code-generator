@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_ALREADY_EXIST;
 import static com.yanggu.code.generator.common.response.ResultEnum.DATA_NOT_EXIST;
@@ -177,13 +179,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, ProjectEntity
             // 根据数据源，获取全部数据表
             tableList = DbUtil.getTableList(datasource, query.getTableName());
         }
-        tableList.forEach(table -> {
-            LambdaQueryWrapper<TableEntity> queryWrapper = Wrappers.lambdaQuery(TableEntity.class);
-            queryWrapper.eq(TableEntity::getProjectId, projectId);
-            queryWrapper.eq(TableEntity::getTableName, table.getTableName());
-            boolean exists = tableService.exists(queryWrapper);
-            table.setExist(exists);
-        });
+        // 一次性查出本项目已导入的表名集合
+        List<String> dbTableNameList = tableList.stream()
+                .map(TableImportVO::getTableName)
+                .toList();
+        Set<String> importedTableNameSet;
+        if (dbTableNameList.isEmpty()) {
+            importedTableNameSet = Set.of();
+        } else {
+            importedTableNameSet = tableService.list(Wrappers.lambdaQuery(TableEntity.class)
+                    .eq(TableEntity::getProjectId, projectId)
+                    .in(TableEntity::getTableName, dbTableNameList))
+                    .stream().map(TableEntity::getTableName).collect(Collectors.toSet());
+        }
+        tableList.forEach(table -> table.setExist(importedTableNameSet.contains(table.getTableName())));
 
         return tableList;
     }

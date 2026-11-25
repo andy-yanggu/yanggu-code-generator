@@ -69,14 +69,14 @@ public class GeneratorController {
     @PostMapping("/template/test")
     @ApiOperationSupport(order = 6)
     @Operation(summary = "模板测试")
-    public TemplateContentVO templateTest(@RequestBody TemplateTestQuery templateTestQuery) {
+    public TemplateContentVO templateTest(@RequestBody @Validated TemplateTestQuery templateTestQuery) {
         return generatorService.templateTest(templateTestQuery);
     }
 
     @PostMapping("/testDataModel")
     @ApiOperationSupport(order = 7)
     @Operation(summary = "模板测试数据模型")
-    public List<VariableNodeVO> testDataModel(@RequestBody TemplateTestQuery templateTestQuery) {
+    public List<VariableNodeVO> testDataModel(@RequestBody @Validated TemplateTestQuery templateTestQuery) {
         return generatorService.testDataModel(templateTestQuery);
     }
 }
