@@ -53,19 +53,21 @@ export const loadIframeComponent = (item: MenuInfo): (() => Promise<Record<strin
 		return loadView(item.component)
 	}
 
-	// 使用公共 iframe 组件，并动态设置 name
+	// 使用公共 iframe 组件，但为每个路由起各自独立的 name（见下方方案A说明）
 	const iframeLoader = Object.values(iframeModules)[0]
 	if (!iframeLoader) {
 		console.warn('未找到 iframe 组件')
 		return () => import('@/views/error/404.vue')
 	}
 
+	// iframeModules 只有一个 loader，iframeLoader() 每次 resolve 出的是同一个 ESM 缓存 module，
+	// comp.default 是共享引用。若直接改 comp.default.name，所有 iframe 路由会 last-write-wins 变成同一个名字。
+	// 方案A：为每个路由浅拷贝一份 module 与选项对象（复用原 setup/render），只覆盖 name/__name，得到各自独立的组件身份。
 	return () =>
-		iframeLoader().then((comp: any) => {
-			const component = comp.default as { name?: string }
-			component.name = item.name
-			return comp
-		})
+		iframeLoader().then((comp: any) => ({
+			...comp,
+			default: { ...comp.default, name: item.name, __name: item.name }
+		}))
 }
 
 /**
