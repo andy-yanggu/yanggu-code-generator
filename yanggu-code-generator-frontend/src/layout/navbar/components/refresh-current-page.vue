@@ -1,11 +1,5 @@
 <template>
-	<icon-button
-		:el-icon="Refresh"
-		:loading-icon="Refresh"
-		:loading="appStore.globalLoading"
-		tooltip="刷新页面"
-		size="18px"
-		@click="refreshPage()"></icon-button>
+	<icon-button :el-icon="Refresh" :loading-icon="Refresh" :loading="appStore.globalLoading" tooltip="刷新页面" size="18px" @click="refreshPage()"> </icon-button>
 </template>
 
 <script setup lang="ts">

@@ -24,11 +24,18 @@ export const useAppStore = defineStore(
 		// 布局大小
 		const layoutSize = ref<LayoutSize>('default')
 		// 主题模式
+		// disableTransition: false 关闭 vueuse 的「临时注入 *{transition:none} + 强制样式重算」保护。
+		// 实测该保护在 3400+ 节点页面上要多花两次全量样式重算（注入约 20ms + 移除约 20ms），
+		// 且这两次重算全部落在主题切换动画的「点击 → 动画开始」冻结窗口内。
+		// 关闭后类名变更引发的那一次重算（约 25ms）本来就必须做，属于切换主题的固有成本。
+		// 代价是切换过程中 el-menu 等带 color 过渡的元素在新快照里颜色略有滞后（约 12%），
+		// 而 View Transition 期间实时页面被快照遮挡，过渡在动画结束前早已完成，肉眼不可见。
 		const isDark = useDark({
 			selector: 'html',
 			attribute: 'class',
 			valueDark: 'dark',
-			valueLight: 'light'
+			valueLight: 'light',
+			disableTransition: false
 		})
 
 		// 切换折叠状态
