@@ -70,7 +70,7 @@
 			</template>
 			<template v-else-if="activeTabItem.templateType === 2">
 				<div style="display: flex; align-items: center; justify-content: center; height: 100%">
-					<template v-if="imageTypeList.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
+					<template v-if="IMAGE_TYPE_LIST.some(tempType => activeTabItem.binaryOriginalFileName?.endsWith(tempType))">
 						<el-image :src="activeTabItem.templateContent" fit="fill"></el-image>
 					</template>
 					<template v-else>
@@ -97,7 +97,7 @@ import ContextMenu from '@/components/context-menu/index.vue'
 import type { ContextMenuItem } from '@/components/context-menu/types'
 import { Back, CloseBold, DocumentChecked, Edit, Remove, Right } from '@element-plus/icons-vue'
 import Sortable from 'sortablejs'
-import type { Tree } from './tree-utils'
+import { IMAGE_TYPE_LIST, type Tree } from './tree-utils'
 import type { TemplateTreeState } from './use-template-tree-state'
 
 defineOptions({
@@ -119,7 +119,6 @@ const emit = defineEmits<{
 
 const {
 	state,
-	imageTypeList,
 	submitLoading,
 	activeTabItem,
 	fullFilePath,

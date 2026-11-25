@@ -14,7 +14,7 @@ export interface Tree {
 	templateDesc?: string
 	// 模板类型（0-目录，1-模板文件，2-二进制文件）
 	templateType: number
-	// 原始内容（用于恢复）
+	// 原始内容（用于恢复）；归属域=edit-tabs（会话标记，随编辑侦测/保存回滚变化），见 2026-11-24 状态域拆分设计
 	originalTemplateContent?: string
 	// 模板内容
 	templateContent?: string
@@ -22,9 +22,13 @@ export interface Tree {
 	binaryOriginalFileName?: string
 	// 子节点列表
 	children?: Tree[]
-	// 新增编辑状态属性
+	// 新增编辑状态属性；归属域=edit-tabs（会话标记），禁止在数据装载链路赋值
 	isEdited?: boolean // 标记是否已编辑但未保存
 }
+
+// 图片扩展名清单：从不运行期变更，状态域拆分（Q3）后由 reactive 提为常量；
+// v1 tree.vue 冻结不动，其同名 ref 属旧版内部实现
+export const IMAGE_TYPE_LIST = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico']
 
 // 根据 id 递归查找树节点
 export const findByIdFromTree = (id: number, treeList: Tree[]): Tree | undefined => {
@@ -100,7 +104,7 @@ export const joinFileName = (editTabs: Tree[]): string => {
 }
 
 // 获取节点的图标：目录区分展开/收起，二进制按扩展名区分图片/未知
-// imageTypeList 由调用方注入，避免本模块持有组件级状态
+// imageTypeList 由调用方注入（v2 侧传 IMAGE_TYPE_LIST 常量），保持本模块无状态
 export const getIcon = (node: { expanded?: boolean }, data: Tree, imageTypeList: string[]): string => {
 	if (data.templateType === 0) {
 		if (node.expanded) {

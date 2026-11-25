@@ -185,7 +185,7 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 |--------|-----------|------|---------|
 | `createTreeState` / `state` / `reset` | L20-L26, L30, L156 | 三域各建 `createXxxSlice` + 编排层 `reset()` 依序调用 | 单工厂拆为 per-slice 工厂（决策 6） |
 | `loadTreeData` | L148-L153 | tree-data | 原样（返回文件列表，不再被期望触 tab） |
-| `initData` | L138-L145 | tree-data | 原样；`refreshTabData` 调用上移到消费方（决策 3 通道②） |
+| `initData` | L138-L145 | tree-data | **原定“刷新上移到消费方”作废**：跨 await 上移会引入 microtask 间隙导致丢未保存内容（评审 B1），改由数据域 `fetchTreeData(onLoaded?)` 同步回调 |
 | `imageTypeList` | L32 | 倾向移 `tree-utils.ts` 为 `IMAGE_TYPE_LIST` 常量（Q3） | 若移：tree-v2/tree-panel/editor-panel 三处消费点同步改 |
 | `activeTabItem` | L35-L42 | edit-tabs（`activeTab`），facade 以同名导出包装 | 占位对象回落语义不变 |
 | `fullFilePath` | L44-L49 | 编排层（`getFullPath(activeTab.id)`） | 依赖建立写法不变 |
@@ -194,7 +194,7 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 | `getElementFromTabList` | L57-L63 | edit-tabs | 原样 |
 | `tabPush` | L66-L75 | edit-tabs | 原样 |
 | `refreshTabData` | L77-L106 | edit-tabs | 原样（含 splice 换引用 + 编辑态保留） |
-| content-watch | L109-L135 | edit-tabs | 取值源从 tree 反查改为 tab 引用（决策 4，行为等价论证见该节） |
+| content-watch | L109-L135 | edit-tabs | 取值源**实际仍为 tree 反查**（决策 4 所述“改 tab 引用”未落地，也不宜落地，否则丢树侧内容侦测）；仅归属下沉，见评审修正记录 |
 | `saveTemplateContent` / `submitLoading` | L161-L184, L33 | persistence（`saveActive`） | 成功后落标记改调注入的 `applyEditRollback` |
 | `refreshActiveItemContent` | L187-L204 | persistence（`refreshAfterTest`） | 写内容后落标记经回调（决策 3 通道①） |
 | `handleCloseTabs` | L207-L250 | 编排层保留 | 内嵌 `updateContentList` 直调上收 `persistence.batchSave` |
@@ -217,7 +217,7 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 | K1 | 删除链路串 `handleCloseTabs` 弹窗 | 对照期登记缺陷，本次搬运不修 | 原样迁移，缺陷行号在文档留档更新 |
 | K2 | 确认框「X」不摘幽灵 tab | 同上 | 原样迁移 |
 | K3 | 多脏 tab 逐个弹确认 | 同上（`forEach handleTabRemove`） | 原样迁移 |
-| K6 | 「否(N)」丢弃不回滚内容 | 同上 | 原样迁移 |
+| K6 | 「否(N)」丢弃不回滚内容 | 对照期登记缺陷；**2026-11-25 复核定调：v2 侧已修（`discardEdits`），v1 冻结不动 → 该点 v1/v2 行为分叉** | 见「评审修正记录」K6 处置 |
 | Q1 | `initData` 与 `loadTreeData` 现状实现逐字相同（差异是前者内部调 `refreshTabData`）；改造后 loadTreeData 保留，initData 变为薄包装或合并为一个 | 属接口重塑决策 | 倾向：合并为 `fetchTreeData(): Promise<Tree[]>`，两个现名由 facade 别名保留 |
 | Q2 | facade 的 `state` 合并对象如何生成：保留单一 reactive（域直接写它，牺牲域自治）vs 三切片 + 编排层浅暴露 | 影响 reset 工厂与消费方模板 | 倾向：三切片各自 reactive，编排层 `state` 用 `computed` 属性 getter 聚合只读视图——消费方模板绑定零改动 |
 | Q3 | `imageTypeList` 归 tree-data（图标是节点属性）还是提为 tree-utils 常量 | 微小归属分歧 | 倾向：常量移出 reactive——清单从不运行期变更 |
@@ -242,3 +242,85 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 4. 改写编排层 facade（导出名/语义核对清单 = 迁移对照表全表）；
 5. 回归：按功能基线清单中 F06/F14/F19/F22（红点）、F08（删除）、F05（保存）、F30（状态机 Suite S）相关项双跑对照；
 6. 静态门禁：`vue-tsc` + ESLint（func-style 函数表达式约束）全绿。
+
+## 实施与验证记录（2026-11-25）
+
+### Q1-Q3 定稿
+
+- **Q1 采纳倾向**：数据域内合并为 `fetchTreeData(): Promise<Tree[]>`；facade 保留 `loadTreeData`（直通）与 `initData`（fetch + refreshTabData 薄包装）两名，消费方零感知。
+- **Q2 采纳倾向**：三切片各自 reactive，编排层 `state` 用 getter **+ 透传 setter** 聚合（activeItemId 有 v-model/手工写，treeList/tabList/expandedKeys 存在整体赋值点，纯只读 getter 不够）；存储仍按域分权，编排层自身零存储。
+- **Q3 采纳倾向**：`IMAGE_TYPE_LIST` 提为 tree-utils 常量；消费点改动实际只有 editor-panel 一处（tree-v2/tree-panel 本就经 getIcon 间接使用，未动）。
+
+### 实施偏差登记（相对设计文档契约）
+
+- `activeTabItem` 实为 `ComputedRef<Tree>`（仅属性写无 ref 本体写，显式 Writable 标注被 vue-tsc 拒）；
+- `persistence.reset` 额外清 `submitLoading`（现版 reset 不清），属安往全方向的对齐，非行为回归；
+- 单文件保存的成功提示时序微调：先落红点回滚再弹「保存成功」（现版同帧内顺序相反），功能等价；
+- 会话域 content-watch 取值源用 tab 引用项（决策 4 既定口径），依赖 F06 SAME_REF 与树侧同对象等价。
+
+### 验证结果
+
+- 静态：`vue-tsc --noEmit` 零错；IDE 诊断零错；tree-utils 单测 25/25 通过。
+- 浏览器实测（Docker MySQL 故障，走 MSW 纯 mock，临时 handlers 见 `src/mocks/handlers/template.ts`，后端恢复后在 index.ts 注释切回）：
+  - 首开装载：树 6 节点、首项 tab 自动激活、路径栏、变量徽标计数、保存钮置灰均正常；
+  - 展开/收起：箭头态 + `icon-folder ↔ icon-folder-open` 切换 + 子层显隐往返正常；
+  - 激活切换：点节点新增 tab 并激活、点 tab 回切、二进制图片预览分支正常；
+  - 右键菜单：文件节点「修改」、目录节点「修改/新建目录/新建模板文件/新建二进制文件」且新建弹窗可开；tab 六项菜单齐全，「关闭其他」纯数据动作生效且无脏不弹确认；
+  - 脏关闭链：编辑器输入→watch 侦测点亮保存钮→点 × 弹三态确认→「是(Y)」走 batchSave→「保存成功」→tab 关闭；
+  - 重开抽屉全新状态（per-slice reset 跨域生效）；控制台无错误（仅既有 ElLoading svg warn）。
+- 待补：真后端就绪后按功能基线清单 F06/F14/F19/F22/F08/F30 与 v1 双跑对照（本次 mock 验证覆盖不了库落盘与接口参数口径）。
+- 2026-11-25 真后端复测（MySQL 恢复，mock 已停用）：F05 保存落盘链路通过——脏标记→三态确认→updateContent 写库 detail 实测 6214→6231 字节→tab 异步关闭→红点清除，测试数据已还原并逐字校验一致；首开装载/展开收起/激活切换/右键菜单（文件修改、目录四项、tab 五项）/重开复位均走真接口通过；控制台零 error（仅存量 ElLoading innerHTML warn）。
+
+### v1/v2 双跑对照（2026-11-25，试验组 80「单体java项目模板_复制」，真后端）
+
+方法：同一份探针脚本仅改入口按钮文案（v2=`模板v2`，v1=`模板`），逐功能项采集行为指纹串对比。结论：**v2′（拆分后）与 v1（冻结基准）行为全等，含三个共有缺陷 K2/K6 同构复现，无回归差异。**
+
+| 功能项 | v2′ 实测 | v1 实测 | 判定 |
+|--------|---------|---------|------|
+| F06 红点·编辑同帧 | 输入后树红点 + tab 红点同帧亮、保存钮点亮 | 同 | 全等 |
+| F06 红点·还原同帧灭 | 删标记回原文后红点同帧灭（CM 文本节点合并噪声不影响判定） | 同 | 全等 |
+| F06 保存后基线推进 | 保存后 originalTemplateContent 推进，再插再退红点仍亮（符合语义） | 同四步串逐字全等 | 全等 |
+| F14 无脏直关 | 干净 tab 点 × 不弹框直接关 | 同 | 全等 |
+| F14 关闭回落规则 | 关中间→右侧优先激活、关末尾→回落左侧 | 同 | 全等 |
+| F14 脏关闭点 ×(K2) | 弹框消失但 tab 保留、红点仍在 | 同（tabStill=true） | 共有缺陷复现 |
+| F14 否(N)丢弃(K6) | tab 关闭但树红点残留、重开带脏 | 同（tabs=0 + treeDot 残留） | 共有缺陷复现 |
+| F16 tab 右键菜单显隐 | 单 tab 全脏仅「关闭当前」；全脏时「关闭未改」隐藏 | 同场景同为「关闭当前」 | 全等（早期「四项 vs 一项」经复测确认为 tab 数不同，非差异） |
+| F16 关闭全部含脏 | 弹框文案「1111.java、BaseUserVO.java模板文件已修改未保存，是否保存后再关闭？」→是(Y)→updateContentBatch 落库→tabs=0/treeDots=0 | 同文案同落库 | 全等 |
+| F02/F03 抽屉关闭三态 | × 不关、否(N) 关、重开复位（K6 脏被 init 重拉掩盖） | 同 | 全等 |
+| F08 删除链 | 级联勾选 3 节点→确认文案「此操作将删除目录或者文件, 是否继续?」→deleteList 请求体父在前→树移除 + 对应 tab 联动关闭 + 删除成功 toast | 同构，deleteList=[900129,900130] | 全等 |
+
+数据复原自证：1111.java(2891)=基线、BaseUserVO.java(2142)=868 字节、pom.xml(2118)=6214 字节，三文件 REGEXP 探测测试标记均 `has_mark=0`；夹具 900126–900130 已物理清理（`remaining=0`）。注：探针造夹具经 deleteList 走 UI 删除后仍残留库中，收尾用 SQL 直删兜底确认。
+
+## 评审修正记录（2026-11-25，独立复核后）
+
+### B1：装载与刷 tab 之间的 microtask 间隙导致未保存内容静默丢失（已修）
+
+- **现象链**：`initData` 拆成「`await fetchTreeData()` → `refreshTabData`」后，`treeList` 整表替换与 `tabList` 重指向之间多了一次 await。`activeTab` 走 treeList 反查，content-watch（`flush: 'pre'`）在下一个 microtask 就 flush，此时 tab 侧仍是旧对象，于是 `content(新树=DB 原文) === tab.originalTemplateContent(DB 基线)` 成立 → 旧 tab 的 `isEdited` 被抹掉 → `refreshTabData` 的 `editStatusSet` 收集不到脏项 → 未保存内容被库内原文覆盖，**无报错无提示**。HEAD 版两个动作在同一同步段内完成，不存在该窗口。
+- **触发入口**：`tree-panel.vue` L215（批量删除后）/ L283（拖拽改父级后）/ L374（新增·修改表单保存后），即“边改边整理目录结构”这一常规工作流。
+- **修法**：`fetchTreeData(onLoaded?)` 增加**同步**回调，在「换树 → buildTree → buildFileList」同一同步段内调完；编排层 `initData = () => treeData.fetchTreeData(editTabs.refreshTabData)`，`loadTreeData` 不传回调（首开 tabList 为空）。数据域仍只认泛化函数，不 import 会话域，主权边界未破。
+- **运行时双证**（组 80 / 2891 `1111.java`，全程只走 `GET /gen/template/tree`，零写接口）：
+  - 复现旧次序（`loadTreeData()` 后再 `refreshTabData(files)`）：置脏 176 字节→**树替换后 `isEdited` 已翻 false**→刷 tab 后内容回落 **165 字节（标记丢失）**；
+  - 修复后（`initData()`）：置脏 183 字节→`initData()` 后仍 **183 字节且 `isEdited` 仍 true**，同时 `activeTabItem.value === tabList 项` 引用同一性保持；收尾已将内存态还原为 165/未脏、保存钮回置 disabled。
+- **新增不变量**（后续任何改动必须守住）：**「treeList 整表替换」与「tabList 重指向」之间不得出现 microtask 间隙**；锚点注释已分别落在 `use-template-tree-data.ts`、`use-template-tree-state.ts`、`use-template-edit-tabs.ts`。
+
+### 注释纠偏（B1 的成因性误导）
+
+- `activeTab` 原注释称「取值源为 tab 引用项」不实：实为 `getNode` → 遍历 `treeList` 反查（保留树侧反查是为了树上的内容变更也能驱动侦测，以及 `fullFilePath` 随 `parentId` 变化）；
+- content-watch 原注释「SAME_REF 已证故与旧版等价」论证不成立：同一性只在树未重载的稳态成立，装载中间态是两批对象。
+
+两处注释已改写为如实口径并指向上面的原子性不变量。
+
+### K6 处置：修复保留（本轮定调）
+
+`handleCloseTabs` 的「否(N)」分支新增 `discardEdits`（内容回滚到基线 + 清红点；多 tab 一起丢弃时必须逐个显式回滚，watch 只观察当前激活项）与 info 提示，`handleClose` 的 cancel 分支补 info 提示——**经确认按正确行为保留，不回退**。由此：
+
+- 上方双跑表「F14 否(N)丢弃(K6)｜共有缺陷复现」是修复落地**之前**测得的历史记录，对最终代码不再成立；
+- K6 在 v2 已修、v1 仍保留该缺陷 → v1/v2 在这一点行为分叉，T3 切流前若继续拿 v1 当行为基准，该行需重测。
+
+### 其他
+
+- **B2**：`src/mocks/handlers/template.ts` 两个保存 handler 的 `request.json()` 缺请求体类型（4 个 TS 错）→ 加 `ContentPayload` 与 `readJson<T>` 断言助手。注：`_shared` 的 `http` 是 Proxy 包装（返回类型退化为 `(url, ...args: any[])`），走不了 `http.put<Params, Body>` 泛型，所以只能对 `json()` 结果做断言。同文件的节点写接口（updateParent/add/update/delete/deleteList）仍是**空成功占位**，已在文件内注明不能用作「节点操作后刷新」类场景的取证依据。
+- facade 成员数 24 → 23（移除 `imageTypeList`，改由 `editor-panel` 直接 import `IMAGE_TYPE_LIST` 常量），唯一消费点已同步迁移，无断链。
+- 静态门禁：`vue-tsc --noEmit` 零错、ESLint 零问题、既有单测 79/79（5 文件）通过。三个新 composable 仍无单测；B1 这类跨域时序问题只有「脏态下调 `initData` + `await`」这一条用例能静态拦住（断言前的 `await` 正是给 flush 让路，旧代码会红、新代码会绿），T4 前可考虑补。
+- 本轮已改：`persistence.reset` 原注释称「保持空实现不触 submitLoading」与函数体矛盾，已改写为如实说明。
+- 保留不回退的行为差异：`saveActive` 的落标记对象由「响应时的激活项」改为「请求发起时捕获的项」。现版在请求期间切 tab 会把红点清到新激活项上（误清未保存标记），新版更安全，属有意改进，不归入行为回归。
