@@ -84,7 +84,7 @@ export const DEFAULT_BUSINESS_MENUS: MenuInfo[] = [
 					title: 'element-plus',
 					icon: 'icon-java',
 					type: 3,
-					externalUrl: 'https://cn.element-plus.org/zh-CN/guide/design.html',
+					externalUrl: 'https://element-plus.org/zh-CN/component/overview',
 					cache: true
 				}
 			},
