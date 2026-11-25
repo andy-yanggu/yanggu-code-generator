@@ -7,8 +7,12 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css' // ✅ 引入暗黑模式 css
 import '@/styles/index.scss'
 import directive from '@/directive'
+import { registerGlobalErrorHandler } from '@/utils/error-handler'
 
 const app = createApp(App)
+
+// 全局错误兜底（必须在 mount 之前注册）
+registerGlobalErrorHandler(app)
 
 // 创建和注册pinia实例
 const pinia = createPinia()
