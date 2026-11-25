@@ -89,7 +89,7 @@ const props = defineProps({
 		type: Function as PropType<(text: string, caret: number) => boolean>,
 		required: true
 	},
-	// 目录状态一律由宿主（tree.vue）持有并下传：面板只在展开时才挂载，而规格 5.2 要求收起态
+	// 目录状态一律由宿主（tree-v2.vue / test.vue）持有并下传：面板只在展开时才挂载，而规格 5.2 要求收起态
 	// 也要有总项数徽标，故不能由面板自持加载（评审 M1）
 	catalog: {
 		type: Array as PropType<VariableNode[]>,
@@ -282,7 +282,7 @@ const handleRowDblclick = (event: MouseEvent, data: DisplayVariableNode) => {
 	color: var(--el-text-color-secondary);
 }
 
-/* 插入按钮 hover 才出现；此处用 visibility 而非 tree.vue 的 display，
+/* 插入按钮 hover 才出现；用 visibility 而非 display，
    避免按钮出现/消失把同一行的标签挤得左右移动 */
 .insert-button {
 	visibility: hidden;

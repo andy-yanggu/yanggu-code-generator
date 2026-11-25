@@ -60,7 +60,7 @@
 				</el-row>
 			</el-splitter-panel>
 
-			<!-- 右侧：内容区（内层再分「编辑容器 + 变量面板」，宽度数值体系对齐 tree.vue） -->
+			<!-- 右侧：内容区（内层再分「编辑容器 + 变量面板」，宽度数值体系对齐 tree-v2.vue） -->
 			<el-splitter-panel>
 				<div class="editor-area">
 					<el-splitter ref="editorSplitterRef" class="editor-splitter" style="height: 100%">
@@ -245,7 +245,7 @@ const {
 )
 
 // 面板默认收起；总项数上到宿主 computed 后跳过了面板的 onErrorCaptured 边界，
-// 目录数据畸形时会在宿主 render 阶段抛错把整个抽屉带上，故失败时直接撤下徽标（与 tree.vue 同款策略）
+// 目录数据畸形时会在宿主 render 阶段抛错把整个抽屉带上，故失败时直接撤下徽标（与 tree-v2.vue 同款策略）
 const variablePanelVisible = ref(false)
 const variableTotal = computed(() => {
 	if (!variableCatalogLoaded.value) {

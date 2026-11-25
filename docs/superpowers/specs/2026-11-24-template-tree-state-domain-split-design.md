@@ -232,7 +232,8 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 | `use-template-tree-state.ts` | **改造** | 组装三域 + MessageBox/Message 交互编排 + 对外 facade（导出名全保留） |
 | `tree-utils.ts` | **注释级微调** | Tree 两字段归属标注；（若 Q3 定稿）+`IMAGE_TYPE_LIST` 常量 |
 | `tree-v2.vue` / `tree-panel.vue` / `editor-panel.vue` | **不动**（Q3 若定稿移出常量则三处 import 微调） | facade 零变化约束（决策 5） |
-| `tree.vue`（v1）/ `test.vue` / `form.vue` | **不动** | 对照期冻结 |
+| `tree.vue`（v1） | ~~**不动**~~ → **已删除**（2026-11-25，见「v1 删除与对照期结束」） | 对照期已提前终止 |
+| `test.vue` / `form.vue` | **不动**（仅更新指向已删文件的失效注释） | — |
 
 ## 实施顺序建议（供 writing-plans）
 
@@ -321,6 +322,37 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 
 - **B2**：`src/mocks/handlers/template.ts` 两个保存 handler 的 `request.json()` 缺请求体类型（4 个 TS 错）→ 加 `ContentPayload` 与 `readJson<T>` 断言助手。注：`_shared` 的 `http` 是 Proxy 包装（返回类型退化为 `(url, ...args: any[])`），走不了 `http.put<Params, Body>` 泛型，所以只能对 `json()` 结果做断言。同文件的节点写接口（updateParent/add/update/delete/deleteList）仍是**空成功占位**，已在文件内注明不能用作「节点操作后刷新」类场景的取证依据。
 - facade 成员数 24 → 23（移除 `imageTypeList`，改由 `editor-panel` 直接 import `IMAGE_TYPE_LIST` 常量），唯一消费点已同步迁移，无断链。
-- 静态门禁：`vue-tsc --noEmit` 零错、ESLint 零问题、既有单测 79/79（5 文件）通过。三个新 composable 仍无单测；B1 这类跨域时序问题只有「脏态下调 `initData` + `await`」这一条用例能静态拦住（断言前的 `await` 正是给 flush 让路，旧代码会红、新代码会绿），T4 前可考虑补。
+- 静态门禁：`vue-tsc --noEmit` 零错、既有单测 79/79（5 文件）通过。**注：本行原写「ESLint 零问题」不实**——`src/components/crud/SearchForm.vue:68` 的 `rangeFields` unused-var error 是存量问题（该文件自 `ece0ad10` 未改动，`ece0ad10` 是 `b67bb8a1` 的祖先提交），与本次拆分无关，详见「v1 删除与对照期结束」。
+- 三个新 composable 仍无单测；B1 这类跨域时序问题只有「脏态下调 `initData` + `await`」这一条用例能静态拦住（断言前的 `await` 正是给 flush 让路，旧代码会红、新代码会绿），尚未补。
 - 本轮已改：`persistence.reset` 原注释称「保持空实现不触 submitLoading」与函数体矛盾，已改写为如实说明。
 - 保留不回退的行为差异：`saveActive` 的落标记对象由「响应时的激活项」改为「请求发起时捕获的项」。现版在请求期间切 tab 会把红点清到新激活项上（误清未保存标记），新版更安全，属有意改进，不归入行为回归。
+
+## v1 删除与对照期结束（2026-11-25）
+
+### 改动
+
+- 删除 `src/views/gen/template/tree.vue`（1509 行）。
+- `template-group/index.vue`：移除 v1 按钮、v1 弹窗块、v1 import、`treeV2UpdateRef`、`treeDataV2()`；操作列由「v1 + v2 双入口三行」重排为 2×2（模板 / 属性 / 修改 / 更多）；剩余弹窗统一用 `<template-tree>` 标签，`import TemplateTree` 现指向 `tree-v2.vue`，ref 名与 `treeData()` 沿用不带版本号的写法。
+- 本轮只删不改名：`tree-v2.vue` 文件名、`GenTemplateTreeV2` 组件名、`use-template-*` 三文件均保持原状。**该口径已定**：入口层（index.vue 的标签名、ref、方法名与按钮文案）已统一为不带版本号的写法，文件与组件名里的 v2 后缀仅作历史来源标记保留，不再跟进重命名。
+- 注释纠偏（均为指向已删文件的失效说明）：`tree-utils.ts`（删「v1 tree.vue 冻结不动」一行）、`form.vue`（宿主 v1 tree.vue → `tree-panel.vue` / `test.vue`）、`test.vue`（两处 → `tree-v2.vue`）、`panel-body.vue`（宿主 → `tree-v2.vue` / `test.vue`，并删去与 v1 `display` 的对比措辞）、`use-variable-catalog.test.ts`、`use-variable-panel-size.ts`（含「对齐 v1 init」）、`tree-v2.vue`（抽屉全局样式注释由「不再依赖 v1 注入」改为直接说明为何是非 scoped 块）。
+
+### 依赖核查（删除是否留孤儿）
+
+- `tree.vue` 的唯一引用点是 `template-group/index.vue`；无路由、无单测、无异步组件引用。
+- v1 自身依赖（CodeMirror、`form.vue`、TextTooltip、SvgIcon、`test.vue`、variable-panel、`tree-utils`、`use-variable-catalog`、`countVariables`、`LOADING_MASK_OPTIONS`）全部为 v2 与 test.vue 共用件，删后无孤儿文件。
+- 样式：v1 的非 scoped 块只有一条 `.template-tree-drawer-body { padding: 10px 20px 20px }`，`tree-v2.vue` 已自带逐字副本（拆分时就为这一步预埋）；其余均为 scoped，不外泄。
+
+### 验证
+
+- `vue-tsc --noEmit` 零错；既有单测 79/79（5 文件）通过。
+- ESLint 剩 1 error 为**存量**、与本轮无关：`components/crud/SearchForm.vue:68` `rangeFields` is defined but never used。已核实该文件自 `ece0ad10` 起未改动，且 `ece0ad10` 是 `b67bb8a1` 的祖先提交，故上一节「ESLint 零问题」的表述不实，已就地更正。本轮未顺手修，以免把无关改动混进删除提交。
+- **工具约束提醒**：`tsconfig` 未开 `vueCompilerOptions.strictTemplates`，vue-tsc 不校验模板标签与组件的映射。本轮这类「标签名与 import 别名不一致 / 闭合标签残留」错误静态检查看不住，必须靠运行时冒烟兜底。
+- 运行时冒烟（dev 5000 + 真后端 8888，组 80）：操作列按钮实测为「模板 / 属性 / 修改 / 更多」；点「模板」打开抽屉「模板配置（单体java项目模板_复制）」，DOM 内实例为 `GenTemplateTreeV2` 且 treeState 就绪（树 23 节点、首项 tab 自动激活）；全 DOM 扫描 v1 组件名 `GenTemplateTree` 命中 0；`.template-tree-drawer-body` 计算样式实测 `10px 20px 20px 20px`；控制台 0 error。网络仅 `POST gen/templateGroup/page` + `GET gen/template/tree` + `GET gen/template/variableCatalog`，零写接口。
+
+### 对照期终止与影响
+
+- v1/v2 双跑对照通道永久消失：T2 的探针脚本（`docs/superpowers/specs/2026-11-24-t2-suite-*.js`、`_run-suite-H.js`）靠 `window.__BTN = '模板'` 打开 v1，现已无入口，v1 侧不可再跑；后续回归只能在 v2 单侧做绝对验证。
+- 风险表 K6 行「v1 仍保留该缺陷 → v1/v2 行为分叉」失效：基准侧已不存在，分叉不再可比，v2 的修复即最终行为。
+- 上一节的双跑表（F02/F03/F05/F06/F08/F14/F16）作为拆分时的等价性证据保留，但不再具备「随时复跑」能力。
+- 原计划 T3（切流）与 T4（删 v1 + 全量回归）合并落地为本次删除，切流默认口径直接落到 v2。
+- 未补的跨域时序回归用例（脏态下调 `initData`）现在更没有对照基准，价值反而更高，建议下一步补上。

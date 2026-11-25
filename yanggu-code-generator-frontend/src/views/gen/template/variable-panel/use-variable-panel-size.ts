@@ -2,7 +2,7 @@ import { computed, ref, watch, type Ref } from 'vue'
 import { useElementSize } from '@vueuse/core'
 
 /**
- * 变量面板宽度 px 体系（从 tree.vue 逐字抽出，数值与边界口径保持现状）。
+ * 变量面板宽度 px 体系（数值沿用拆分前的单体 tree.vue，该文件已删除，边界口径保持现状）。
  * 见设计文档 2026-11-24 F25；v2 容器与 test.vue（T4）共同消费本 composable。
  *
  * 面板宽度用 px 自持（拖拽时 EP 会回写 px）；两块 panel 的尺寸一律按实测容器宽度算出 px 后断言，
@@ -67,7 +67,7 @@ export const useVariablePanelSize = (containerRef: Ref<any>, visible: Ref<boolea
 		}
 	})
 
-	// 抽屉重复打开时复位「首次展开」标记（对齐 v1 init 里的 panelSizeInitialized = false）
+	// 抽屉重复打开时复位「首次展开」标记（tree-v2.vue 与 test.vue 的 init 均调用）
 	const resetInit = (): void => {
 		panelSizeInitialized = false
 	}

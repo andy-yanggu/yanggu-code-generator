@@ -26,8 +26,7 @@ export interface Tree {
 	isEdited?: boolean // 标记是否已编辑但未保存
 }
 
-// 图片扩展名清单：从不运行期变更，状态域拆分（Q3）后由 reactive 提为常量；
-// v1 tree.vue 冻结不动，其同名 ref 属旧版内部实现
+// 图片扩展名清单：从不运行期变更，状态域拆分（Q3）后由 reactive 提为常量
 export const IMAGE_TYPE_LIST = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp', 'git', 'ico']
 
 // 根据 id 递归查找树节点

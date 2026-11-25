@@ -203,7 +203,7 @@ defineExpose({
 	init
 })
 </script>
-<!-- v2 自带抽屉 body padding 全局样式：不再隐式依赖 v1 tree.vue 的非 scoped 块注入，删除 v1 后样式不丢失 -->
+<!-- 抽屉 body padding 写成非 scoped 的全局块：类名落在 el-drawer 内部 DOM 上，scoped 选择器追不到；本组件自带，不依赖其他组件的样式注入 -->
 <style>
 .template-tree-drawer-body {
 	padding: 10px 20px 20px;

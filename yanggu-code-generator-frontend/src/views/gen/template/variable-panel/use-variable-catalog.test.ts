@@ -244,7 +244,7 @@ describe('useVariableCatalog', () => {
 		expect(loading.value).toBe(false)
 	})
 
-	// 评审 M1：目录状态改由宿主（tree.vue）持有，首轮加载时机必须可由宿主控制
+	// 评审 M1：目录状态改由宿主（tree-v2.vue）持有，首轮加载时机必须可由宿主控制
 	it('immediate:false 不抢跑，启动前的切组也不请求，ensureLoaded 后加载当前组', async () => {
 		mocks.variableCatalog.mockImplementation((groupId: number) => Promise.resolve([nodeOf(`g${groupId}`)]))
 		const groupId = ref(9020)

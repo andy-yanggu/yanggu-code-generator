@@ -54,7 +54,7 @@ const props = defineProps({
 const emit = defineEmits(['refreshDataList'])
 
 // ====== 上下文 ======
-// 右键菜单入口决定 parentId / templateType / templatePath（tree.vue 的 contextMenu），
+// 右键菜单入口决定 parentId / templateType / templatePath（tree-panel.vue 的 contextMenu），
 // 连同当前模板组 id 组成 formContext：add 经 initFormData(ctx) 注入，update 在 afterDataAssign 覆盖（旧 initAfterHandle 语义）
 const formContext = computed(() => ({
 	templateGroupId: props.templateGroupId,
@@ -193,7 +193,7 @@ const handleRemove: UploadProps['onRemove'] = () => {
 	fileList.value = []
 }
 
-// ====== 对外契约（与旧版一致，tree.vue 的 useInitForm 继续以 formRef.value.init({ type, id }) 调用） ======
+// ====== 对外契约（与旧版一致，tree-panel.vue / test.vue 的 useInitForm 继续以 formRef.value.init({ type, id }) 调用） ======
 const init = (options: FormInitOptions) => {
 	formHook.dialog.open(options.type, options.id)
 }
