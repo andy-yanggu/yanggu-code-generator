@@ -96,6 +96,7 @@ import CrudPage from '@/components/crud/CrudPage.vue'
 import { genEnumApi, genProjectApi, genTemplateGroupPropertyApi } from '@/api'
 import type { CrudField, GenEnumEntity, GenEnumQuery, GenProjectEntity, GenTemplateGroupPropertyEntity, UseCrudFormOptions, UseCrudTableOptions } from '@/types'
 import { useCrud } from '@/hooks/use-crud'
+import { useOnActivatedRefresh } from '@/hooks/use-on-activated-refresh'
 import { getDictTag } from '@/utils/enum'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { isBlank, isNotEmpty } from '@/utils/tool'
@@ -111,15 +112,16 @@ const templateIndexRef = ref()
 const projectList = ref([] as GenProjectEntity[])
 const enumTemplateGroupPropertyList = ref([] as GenTemplateGroupPropertyEntity[])
 
-const getProjectList = () => {
+// 加载页面下拉数据（项目）
+const loadOptions = () => {
+	// 项目下拉（查询插槽 + 表单项目选择，且 watch 里靠它反查 enumTemplateGroupId）
 	genProjectApi.list().then(data => {
 		projectList.value = data
 	})
 }
 
-onMounted(() => {
-	getProjectList()
-})
+// 项目下拉在页面被缓存后不会重新挂载，且 watch 里的 enumTemplateGroupId 反查依赖它，走 hook 在页面重新激活时补拉一次
+useOnActivatedRefresh(loadOptions)
 
 // ====== 统一字段声明 ======
 const fields: CrudField[] = [

@@ -142,6 +142,7 @@ import OptionLabel from '@/components/option/label/index.vue'
 import { GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
 import { useCrud } from '@/hooks/use-crud'
+import { useOnActivatedRefresh } from '@/hooks/use-on-activated-refresh'
 import { isNotEmpty } from '@/utils/tool'
 import { Bottom, Delete, DocumentAdd, Edit, Plus, Top, View } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
@@ -160,7 +161,8 @@ const projectTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const tableTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 const enumTemplateGroupList = ref([] as GenTemplateGroupEntity[])
 
-onMounted(() => {
+// 加载页面下拉数据（数据源 / 模板组）
+const loadOptions = () => {
 	// 数据源下拉
 	genDatasourceApi.list().then(data => {
 		datasourceList.value = data
@@ -171,7 +173,10 @@ onMounted(() => {
 		tableTemplateGroupList.value = data.filter(item => item.type === 1)
 		enumTemplateGroupList.value = data.filter(item => item.type === 2)
 	})
-})
+}
+
+// 数据源与模板组下拉在页面被缓存后不会重新挂载，走 hook 在页面重新激活时补拉一次
+useOnActivatedRefresh(loadOptions)
 
 // 模块行稳定 key：单调递增种子保证即便删行/重开也不会与现存行重复；
 // 用不可枚举属性挂载 → JSON 序列化提交时自动忽略，不污染后端数据

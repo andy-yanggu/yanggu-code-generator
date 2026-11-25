@@ -140,6 +140,7 @@ import OptionLabel from '@/components/option/label/index.vue'
 import { FORM_LAYOUT_TYPES, GENERATOR_PRODUCT_TYPES, PROJECT_GENERATE_TYPES, TABLE_GENERATOR_FUNCTION_TYPES, TABLE_POPUP_TYPES } from '@/constant/enum'
 import { getDictTag } from '@/utils/enum'
 import { useCrud } from '@/hooks/use-crud'
+import { useOnActivatedRefresh } from '@/hooks/use-on-activated-refresh'
 import { isNotEmpty } from '@/utils/tool'
 import { Delete, DocumentAdd, Edit, More, Refresh, Setting, Upload, View } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
@@ -180,19 +181,8 @@ const loadOptions = () => {
 	})
 }
 
-// 首次进入（无缓存场景由此加载；有缓存场景后续激活由 onActivated 负责）
-onMounted(loadOptions)
-
-// 页面被重新激活时再拉取一次；首次激活紧随 onMounted，跳过以避免重复请求
-let activatedOnce = false
-onActivated(() => {
-	// console.log('activated')
-	if (!activatedOnce) {
-		activatedOnce = true
-		return
-	}
-	loadOptions()
-})
+// 项目下拉缓存后不重新挂载，走 hook 在页面重新激活时补拉一次
+useOnActivatedRefresh(loadOptions)
 
 // ====== 统一字段声明 ======
 // 单份 fields 同时派生表单/查询/表格：表单是天然单列（每个字段一整行 el-form-item）。
