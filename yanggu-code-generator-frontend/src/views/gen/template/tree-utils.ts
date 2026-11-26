@@ -88,6 +88,29 @@ export const buildFileList = (treeList: Tree[]) => {
 	return templateContentList
 }
 
+// 回滚-勾选脏文件收集：每个勾选 key 经 findById 反查（stale key 静默过滤），
+// 目录递归收集后代脏文件、文件节点直接判定；只收模板文件（1），目录/二进制（2）无编辑通道天然不可达。
+// 返回原节点引用（tabList 与 treeList 共享引用，红点双向同步靠此同一性，禁止 clone）；Map 按 id 去重保持首次插入顺序
+export const collectDirtyFiles = (checkedKeys: number[], findById: (id: number) => Tree | undefined): Tree[] => {
+	const map = new Map<number, Tree>()
+	const walk = (node: Tree) => {
+		if (node.templateType !== 0) {
+			if (node.templateType === 1 && node.isEdited) {
+				map.set(node.id, node)
+			}
+		} else {
+			node.children?.forEach(walk)
+		}
+	}
+	checkedKeys.forEach(key => {
+		const node = findById(key)
+		if (node) {
+			walk(node)
+		}
+	})
+	return [...map.values()]
+}
+
 // 拼接文件名提示语：超过 3 个折叠为「前 3 个...等 N 个模板文件」
 export const joinFileName = (editTabs: Tree[]): string => {
 	if (editTabs.length > 3) {

@@ -1,10 +1,10 @@
 import { computed, nextTick, type Ref } from 'vue'
 import type { Action, TabPaneName } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getIcon as resolveNodeIcon, IMAGE_TYPE_LIST, joinFileName, type Tree } from './tree-utils'
+import { collectDirtyFiles, getIcon as resolveNodeIcon, IMAGE_TYPE_LIST, joinFileName, type Tree } from './tree-utils'
 import { useTemplateTreeData } from './use-template-tree-data'
 import { useTemplateEditTabs } from './use-template-edit-tabs'
-import { useTemplatePersistence, type TemplatePersistenceDeps } from './use-template-persistence'
+import { type TemplatePersistenceDeps, useTemplatePersistence } from './use-template-persistence'
 
 /**
  * 模板树状态编排层（见 2026-11-24 状态域拆分设计，方案 A 四刀）：
@@ -107,6 +107,48 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 
 	// 刷新当前模板内容（测试页回传编辑过的 id 列表 → 写域逐个 detailData 刷内容清红点）
 	const refreshActiveItemContent = persistence.refreshAfterTest
+
+	// ===== 内容回滚（内存基线，零接口）=====
+	// 共用编排链：确认 → 丢弃回滚 → 提示。复用会话域 discardEdits（与关 tab「否(N)」同一落点），
+	// 禁止误用 applyEditRollback——那是保存成功推进基线的反方向动作（见 2026-11-25 回滚设计 决策 2）。
+	// 三态口径与关闭确认对齐：点 X（action=close）no-op，仅「取消」给提示（决策已登记既有确认）
+	const confirmAndRollback = (dirtyNodes: Tree[]) => {
+		ElMessageBox.confirm(`${joinFileName(dirtyNodes)}存在未保存的修改，回滚将丢弃这些修改并恢复到上次保存（或打开时）的内容，此操作不可恢复，确定回滚吗？`, '提示', {
+			distinguishCancelAndClose: true,
+			confirmButtonText: '是(Y)',
+			cancelButtonText: '否(N)',
+			type: 'warning'
+		})
+			.then(() => {
+				editTabs.discardEdits(dirtyNodes)
+				ElMessage.success('已回滚到上次保存的内容')
+			})
+			.catch((action: Action) => {
+				if (action === 'cancel') {
+					ElMessage.info('回滚已取消')
+				}
+			})
+	}
+
+	// 单个回滚：树节点右键 / tab 右键共用（tab 元素与树节点同一引用，无需区分来源）；
+	// 菜单显隐已保证不可达，此处守卫为双保险
+	const rollbackNode = (node: Tree) => {
+		if (node.templateType !== 1 || !node.isEdited) {
+			return
+		}
+		confirmAndRollback([node])
+	}
+
+	// 批量回滚：入参为 getCheckedKeys 的勾选 key 列表（口径与工具栏删除一致：勾目录连带后代文件）
+	const rollbackCheckedNodes = (checkedKeys: number[]) => {
+		const dirtyNodes = collectDirtyFiles(checkedKeys, treeData.findById)
+		// 全干净不弹空确认框，直接 info 收口（决策 6）
+		if (dirtyNodes.length === 0) {
+			ElMessage.info('勾选范围内没有未保存的修改')
+			return
+		}
+		confirmAndRollback(dirtyNodes)
+	}
 
 	// 通用关闭处理（含未保存三态确认）
 	const handleCloseTabs = (toCloseTabs: Tree[], closeTab: () => void) => {
@@ -281,6 +323,8 @@ export const useTemplateTreeState = (templateGroupId: Ref<number>) => {
 		reset,
 		saveTemplateContent,
 		refreshActiveItemContent,
+		rollbackNode,
+		rollbackCheckedNodes,
 		handleCloseTabs,
 		handleTabRemove,
 		closeCurrentTab,

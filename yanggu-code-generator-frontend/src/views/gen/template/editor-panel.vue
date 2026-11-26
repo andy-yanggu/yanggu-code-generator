@@ -132,7 +132,8 @@ const {
 	closeLeftTabs,
 	closeRightTabs,
 	closeUneditedTabs,
-	closeAllTabs
+	closeAllTabs,
+	rollbackNode
 } = props.treeState
 
 const tabsRef = ref()
@@ -206,6 +207,8 @@ const handleTabClick = (tab: TabsPaneContext, _: Event) => {
 type TabMenuTarget = { item: Tree; index: number }
 
 const tabMenuItems = computed<ContextMenuItem<TabMenuTarget>[]>(() => [
+	// 回滚置顶：只丢内容不关 tab（区别于关闭确认的「否(N)」退出链路），仅脏 tab 显示
+	{ key: 'rollback', label: '回滚当前', icon: 'icon-rollback', visible: t => !!t.item.isEdited, onClick: t => rollbackNode(t.item) },
 	{ key: 'closeCurrent', label: '关闭当前', icon: CloseBold, onClick: t => closeCurrentTab(t.item, t.index) },
 	{ key: 'closeOthers', label: '关闭其他', icon: 'icon-close-others', visible: () => state.tabList.length > 1, onClick: t => closeOtherTabs(t.item) },
 	{ key: 'closeLeft', label: '关闭左侧', icon: Back, visible: t => t.index > 0, onClick: t => closeLeftTabs(t.item, t.index) },

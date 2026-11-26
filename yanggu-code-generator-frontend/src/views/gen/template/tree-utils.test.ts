@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildFileList, buildTree, findByIdFromTree, getFullPathById, getIcon, joinFileName, type Tree } from './tree-utils'
+import { buildFileList, buildTree, collectDirtyFiles, findByIdFromTree, getFullPathById, getIcon, joinFileName, type Tree } from './tree-utils'
 
 // 构造树节点的最小工厂：只必填 id/fileName/templateType，其余给合理默认，便于各用例覆写
 const makeNode = (over: Partial<Tree> & { id: number; fileName: string; templateType: number }): Tree => ({
@@ -108,6 +108,59 @@ describe('joinFileName', () => {
 
 	it('空数组返回裸的模板文件文案（锁定当前行为）', () => {
 		expect(joinFileName([])).toBe('模板文件')
+	})
+})
+
+describe('collectDirtyFiles', () => {
+	// 样例树：1=根目录(子:2脏文件, 3子目录(子:4脏文件, 5脏二进制)), 6=根层级脏文件, 7=根层级干净二进制；8=干净文件
+	const buildDirtyFixture = (): Tree[] => [
+		makeNode({ id: 1, fileName: 'root', templateType: 0, isEdited: false, children: [makeNode({ id: 2, fileName: 'a.ftl', templateType: 1, parentId: 1, isEdited: true }), makeNode({ id: 3, fileName: 'sub', templateType: 0, parentId: 1, children: [makeNode({ id: 4, fileName: 'b.ftl', templateType: 1, parentId: 3, isEdited: true }), makeNode({ id: 5, fileName: 'logo', templateType: 2, parentId: 3, isEdited: true })] })] }),
+		makeNode({ id: 6, fileName: 'top.ftl', templateType: 1, isEdited: true }),
+		makeNode({ id: 7, fileName: 'lib', templateType: 2, binaryOriginalFileName: 'app.jar' }),
+		makeNode({ id: 8, fileName: 'clean.ftl', templateType: 1, isEdited: false })
+	]
+
+	const makeFinder = (treeList: Tree[]) => (id: number) => findByIdFromTree(id, treeList)
+
+	it('勾选目录连带后代脏文件，排除干净文件与二进制', () => {
+		const tree = buildDirtyFixture()
+		const result = collectDirtyFiles([1], makeFinder(tree))
+		// id5 是脏二进制（不会真脏，防御性排除），只应收到后代脏文件 2、4
+		expect(result.map(item => item.id)).toEqual([2, 4])
+	})
+
+	it('勾选文件节点直接入集合（仅脏文件）', () => {
+		const tree = buildDirtyFixture()
+		const result = collectDirtyFiles([6, 8], makeFinder(tree))
+		expect(result.map(item => item.id)).toEqual([6])
+	})
+
+	it('父目录与子文件同时勾选按 id 去重', () => {
+		const tree = buildDirtyFixture()
+		const result = collectDirtyFiles([1, 2, 4], makeFinder(tree))
+		expect(result.map(item => item.id)).toEqual([2, 4])
+	})
+
+	it('stale key（已不在树上）静默过滤不报错', () => {
+		const tree = buildDirtyFixture()
+		const result = collectDirtyFiles([1, 999], makeFinder(tree))
+		expect(result.map(item => item.id)).toEqual([2, 4])
+	})
+
+	it('全部干净返回空数组', () => {
+		const tree = buildDirtyFixture()
+		expect(collectDirtyFiles([7, 8], makeFinder(tree))).toEqual([])
+	})
+
+	it('空勾选返回空数组', () => {
+		const tree = buildDirtyFixture()
+		expect(collectDirtyFiles([], makeFinder(tree))).toEqual([])
+	})
+
+	it('返回的是原节点引用（回滚靠共享引用双向同步，禁止 clone）', () => {
+		const tree = buildDirtyFixture()
+		const result = collectDirtyFiles([1], makeFinder(tree))
+		expect(result[0]).toBe(findByIdFromTree(2, tree))
 	})
 })
 

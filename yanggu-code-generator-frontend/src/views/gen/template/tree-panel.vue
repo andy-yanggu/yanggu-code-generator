@@ -2,11 +2,18 @@
 	<div class="tree-panel">
 		<el-affix :offset="20">
 			<el-row style="margin-bottom: 10px" :gutter="10">
-				<el-col :span="14">
+				<el-col :span="10">
 					<el-input v-model="treeSearchText" placeholder="请输入目录/文件名称" size="small" clearable prefix-icon="Search" style="width: 100%; margin-left: 10px"></el-input>
 				</el-col>
-				<el-col :span="10" style="display: flex; justify-content: center; align-items: center">
+				<el-col :span="14" style="display: flex; justify-content: center; align-items: center">
 					<el-button size="small" type="primary" :icon="Refresh" @click="emit('refresh')">刷新</el-button>
+					<!-- 回滚＝丢弃未保存修改恢复到内存基线，未勾选置灰，与删除按钮同口径 -->
+					<el-tooltip content="丢弃勾选范围内未保存的修改" placement="bottom">
+						<el-button size="small" type="warning" :disabled="checkedNodeListLength === 0" @click="rollbackCheckedNodes(treeRef.getCheckedKeys())">
+							<svg-icon icon="icon-rollback" style="margin-right: 5px"></svg-icon>
+							回滚
+						</el-button>
+					</el-tooltip>
 					<el-button size="small" type="danger" :icon="Delete" :disabled="checkedNodeListLength === 0" @click="deleteCheckedNode()"> 删除 </el-button>
 				</el-col>
 			</el-row>
@@ -110,7 +117,7 @@ const emit = defineEmits<{
 }>()
 
 // 解构共享同一批对象引用（红点/编辑态双向同步依赖此同一性），不得 clone
-const { state, getIcon, tabPush, initData, handleTabRemove } = props.treeState
+const { state, getIcon, tabPush, initData, handleTabRemove, rollbackNode, rollbackCheckedNodes } = props.treeState
 
 const treeRef = ref()
 const treeMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
@@ -304,6 +311,18 @@ const treeMenuItems = computed<ContextMenuItem<TreeMenuTarget>[]>(() => [
 		onClick: t => {
 			if (t.kind === 'treeNode') {
 				updateTemplate(t.node)
+			}
+		}
+	},
+	{
+		key: 'rollback',
+		label: '回滚',
+		icon: 'icon-rollback',
+		// 目录/二进制/干净文件不显示：只有脏模板文件有可丢弃的编辑（与 tab 菜单「关闭未改」按脏态隐藏同理）
+		visible: t => t.kind === 'treeNode' && t.node.templateType === 1 && !!t.node.isEdited,
+		onClick: t => {
+			if (t.kind === 'treeNode') {
+				rollbackNode(t.node)
 			}
 		}
 	},
