@@ -15,6 +15,7 @@ import org.springframework.web.bind.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -111,6 +112,22 @@ public class GlobalExceptionHandler {
         log.error("参数绑定不通过, 请求方式: {}, 请求uri: {}, 异常信息: {}",
                 request.getMethod(), request.getRequestURI(), stringJoiner, exception);
         return fail(PARAM_ERR.getCode(), buildErrorMessage(stringJoiner));
+    }
+
+    /**
+     * 捕获参数类型不匹配异常（如 Long 型 id 传了字符串）
+     * <p>该异常发生在参数解析与类型转换阶段，属客户端入参错误；不单列处理器时会落到 RuntimeException
+     * 兜底成 500，调用方拿不到具体是哪个参数。响应体只回显参数名与期望类型，不回显原始值（值不可信）</p>
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Result<Void> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        Class<?> requiredType = exception.getRequiredType();
+        log.warn("参数类型不匹配, 请求方式: {}, 请求uri: {}, 参数名: {}, 参数值: {}, 期望类型: {}",
+                request.getMethod(), request.getRequestURI(), exception.getName(),
+                exception.getValue(), requiredType == null ? "unknown" : requiredType.getName());
+        String message = "参数[" + exception.getName() + "]类型不正确"
+                + (requiredType == null ? "" : "，应为" + requiredType.getSimpleName());
+        return fail(PARAM_ERR.getCode(), message);
     }
 
     /**

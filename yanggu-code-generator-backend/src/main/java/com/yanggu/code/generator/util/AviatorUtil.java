@@ -6,6 +6,8 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.AviatorEvaluatorInstance;
 import com.googlecode.aviator.Expression;
 import com.googlecode.aviator.runtime.JavaMethodReflectionFunctionMissing;
+import com.yanggu.code.generator.common.exception.BusinessException;
+import com.yanggu.code.generator.common.response.ResultEnum;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +25,7 @@ public class AviatorUtil {
      */
     public static Expression compile(String expression) {
         if (StrUtil.isBlank(expression)) {
-            throw new RuntimeException("Aviator表达式不能为空");
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(), "Aviator表达式不能为空");
         }
         AviatorEvaluatorInstance aviatorEvaluatorInstance = AviatorEvaluator.getInstance();
         //设置Java反射调用
@@ -34,8 +36,10 @@ public class AviatorUtil {
             //编译表达式
             return aviatorEvaluatorInstance.compile(expression, true);
         } catch (Exception e) {
-            log.error("Aviator表达式编译失败, 请检查表达式编写是否正确或者传参是否正确", e);
-            throw new RuntimeException("Aviator表达式编译失败, 请检查表达式编写是否正确或者传参是否正确");
+            //此处只补一句出问题的表达式，完整异常链交给重抛的 cause 与全局异常处理器输出，避免两处重复打栈
+            log.warn("Aviator表达式编译失败, 表达式: {}", expression);
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(),
+                    "Aviator表达式编译失败, 请检查表达式编写是否正确或者传参是否正确", e);
         }
     }
 
@@ -46,8 +50,8 @@ public class AviatorUtil {
         try {
             return expression.execute(BeanUtil.beanToMap(data));
         } catch (Exception e) {
-            log.error("Aviator表达式执行失败, 请检查表达式编写是否正确或者传参是否正确", e);
-            throw new RuntimeException("Aviator表达式执行失败, 请检查表达式编写是否正确或者传参是否正确");
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(),
+                    "Aviator表达式执行失败, 请检查表达式编写是否正确或者传参是否正确", e);
         }
     }
 

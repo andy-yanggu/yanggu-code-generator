@@ -11,6 +11,8 @@ import cn.hutool.v7.core.util.ObjUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.yanggu.code.generator.common.domain.query.OrderItemQuery;
+import com.yanggu.code.generator.common.exception.BusinessException;
+import com.yanggu.code.generator.common.response.ResultEnum;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,12 +63,14 @@ public class MybatisUtil {
             throw new IllegalArgumentException("clazz is null");
         }
         if (StrUtil.isBlank(column)) {
-            throw new IllegalArgumentException("column is blank");
+            //空字段名同样由调用方传入，不是框架内部误用
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(), "排序字段不能为空");
         }
         //获取字段对应的getter方法
         MethodInvoker getter = (MethodInvoker) BeanUtil.getBeanDesc(clazz).getGetter(column);
         if (getter == null) {
-            throw new IllegalArgumentException(StrUtil.format("column: {} is not exist", column));
+            //排序字段由调用方 JSON 传入，属客户端可触发错误，带出具体字段名便于定位
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(), "排序字段: {} 不存在", column);
         }
         return LambdaFactory.build(SFunction.class, getter.getMethod());
     }
@@ -77,10 +81,10 @@ public class MybatisUtil {
      */
     public static String toSafeUnderlineCase(String column) {
         if (StrUtil.isBlank(column)) {
-            throw new IllegalArgumentException("排序字段不能为空");
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(), "排序字段不能为空");
         }
         if (!COLUMN_PATTERN.matcher(column).matches()) {
-            throw new IllegalArgumentException(StrUtil.format("排序字段不合法: {}", column));
+            throw new BusinessException(ResultEnum.PARAM_ERR.getCode(), "排序字段不合法: {}", column);
         }
         return NamingCase.toUnderlineCase(column);
     }
