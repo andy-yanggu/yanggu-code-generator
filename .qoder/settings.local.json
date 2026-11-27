@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git show --stat --format=\"%h %s%n\" b3a665e1 | head -60)",
+      "Bash(find docs/superpowers -type f | sort && echo \"----\" && ls .superpowers 2>/dev/null || true)",
+      "Bash(find .superpowers/sdd -type f 2>/dev/null | head -20)",
+      "Bash(cd yanggu-code-generator-frontend && npm run type-check 2>&1 | tail -5; echo \"EXIT=$?\")",
+      "Bash(cd yanggu-code-generator-frontend && npx eslint src/ 2>&1 | tail -10; echo \"EXIT=$?\")",
+      "Bash(git status --porcelain | head -20; echo \"---cat-file---\"; for f in use-template-edit-tabs.ts use-template-tree-data.ts use-template-persistence.ts; do git cat-file -e \"HEAD:yanggu-code-generator-frontend/src/views/gen/template/$f\" && echo \"OK $f\"; done; echo \"---diff domains---\"; git diff --exit-code a6e6d586..b3a665e1 -- \"yanggu-code-generator-frontend/src/views/gen/template/use-template-edit-tabs.ts\" \"yanggu-code-generator-frontend/src/views/gen/template/use-template-tree-data.ts\" \"yanggu-code-generator-frontend/src/views/gen/template/use-template-persistence.ts\"; echo \"EXIT=$?\"; echo \"---diff popup---\"; git diff a6e6d586..b3a665e1 -- \"yanggu-code-generator-frontend/src/views/gen/template/tree-panel.vue\" \"yanggu-code-generator-frontend/src/views/gen/template/editor-panel.vue\" | grep -E '^\\\\+.*\\(ElMessageBox|ElMessage\\\\.\\)'; echo \"GREP_EXIT=$?\"; echo \"---imports---\"; grep -n '^import' yanggu-code-generator-frontend/src/views/gen/template/tree-utils.ts; echo \"IMPORT_EXIT=$?\")",
+      "Bash(npm run type-check > /tmp/tc.out 2>&1; echo \"EXIT=$?\"; tail -3 /tmp/tc.out)",
+      "Bash(npm run test > /tmp/vt.out 2>&1; echo \"EXIT=$?\"; tail -12 /tmp/vt.out)",
+      "Bash(npx eslint src/ > /tmp/lint.out 2>&1; echo \"EXIT=$?\"; tail -5 /tmp/lint.out)",
+      "Bash(grep -n '^import' src/views/gen/template/tree-utils.ts; echo \"IMPORT_EXIT=$?\"; echo \"---icon---\"; grep -rln 'icon-rollback' src/ | head -5; echo \"---log---\"; git log --oneline -3)",
+      "Bash(npx eslint src/ 2>&1 | head -15)",
+      "Bash(git checkout -b feature/template-rollback-p0; git branch --show-current; git rev-parse HEAD)"
+    ]
+  }
+}
